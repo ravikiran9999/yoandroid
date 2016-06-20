@@ -1,15 +1,23 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'sonar-runner'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
-
+    useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.yo.android"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+    }
+    productFlavors {
+        dev {
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+        }
+        stage {
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+        }
     }
     buildTypes {
         release {
@@ -25,5 +33,31 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.squareup.dagger:dagger:1.2.2'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
+
+    //
+    compile 'com.amazonaws:aws-android-sdk-core:2.+'
+    compile 'com.amazonaws:aws-android-sdk-cognito:2.+'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.+'
+
+
+}
+
+sonarRunner {
+    sonarProperties {
+        property 'sonar.projectKey', 'YO-AndroidApp'
+        property 'sonar.projectName', 'YOAndroid'
+        property 'sonar.sources', 'src'
+        property 'sonar.tests', 'test'
+        property 'sonar.test.inclusion', '**/*Test.*'
+        property 'sonar.binaries', 'build/intermediates/classes/release'
+        property 'sonar.java.binaries', 'build/intermediates/classes/release'
+        property 'sonar.junit.reportsPath', 'build/test-results/release'
+        property 'sonar.dynamicAnalysis', 'reuseReports'
+        property 'sonar.java.coveragePlugin', 'jacoco'
+        property 'sonar.jacoco.reportPath', 'build/jacoco/jacoco.merged.exec'
+        property 'sonar.sourceEncoding', 'windows-1252'
+        property 'sonar.scm.disabled', 'true'
+        property 'sonar.exclusions', '**/R.class, **/R$*.class,**/BuildConfig.*,**/Manifest*.*,**/*.xml'
+    }
 
 }
