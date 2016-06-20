@@ -1,11 +1,14 @@
 package com.yo.android.ui;
 
 import android.app.Dialog;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.orion.android.common.logger.Log;
-import com.orion.android.common.util.ActivityHelper;
+import com.orion.android.common.logging.Logger;
+import com.orion.android.common.logging.ParadigmExceptionHandler;
 import com.orion.android.common.util.ResourcesHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.di.Injector;
@@ -25,9 +28,6 @@ public class BaseActivity extends AppCompatActivity {
     protected ToastFactory mToastFactory;
 
     @Inject
-    protected ActivityHelper mActivityHelper;
-
-    @Inject
     protected ResourcesHelper mResourcesHelper;
 
     @Inject
@@ -40,10 +40,19 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Injector.obtain(getApplication()).inject(this);
-        //
-//        if (BuildConfig.DEV == false) {
-//            Fabric.with(this, new Crashlytics());
-//        }
+
+    }
+
+    /**
+     * Initializing AWS logs
+     * Sending Crash report when crash occurs
+     */
+    protected void awsLogs() {
+        Logger.init(this);
+        PendingIntent intent = PendingIntent.getActivity(getBaseContext(), 0, new Intent(getIntent()),
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        ParadigmExceptionHandler mParadigmException = new ParadigmExceptionHandler(this, intent);
+        Thread.setDefaultUncaughtExceptionHandler(mParadigmException);
     }
 
     public void showProgressDialog() {

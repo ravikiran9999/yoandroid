@@ -8,7 +8,11 @@ import android.text.style.CharacterStyle;
  */
 public class SpannableHelper {
 
-    public static CharSequence applySpannable(CharSequence text, final String token, final CharacterStyle... cs) {
+    private SpannableHelper(){
+        //Default constructor
+    }
+
+    public static CharSequence applySpannable(final CharSequence text, final String token, final CharacterStyle... cs) {
         final int tokenLen = token.length();
         final int start = text.toString().indexOf(token) + tokenLen;
         final int end = text.toString().indexOf(token, start);
@@ -21,7 +25,7 @@ public class SpannableHelper {
             ssb.delete(end, end + tokenLen);
             ssb.delete(start - tokenLen, start);
 
-            text = ssb;
+            return ssb;
         }
         return text;
     }

@@ -8,9 +8,9 @@ import dagger.ObjectGraph;
  * Created by Ramesh on 8/3/16.
  */
 public final class Injector {
-    private static final String INJECTOR_SERVICE = "com.i2space.etravos.injector";
-
-    @SuppressWarnings({"ResourceType", "WrongConstant"}) // Explicitly doing a custom service.
+    private static final String INJECTOR_SERVICE = "com.yo.android.di.injector";
+    // Explicitly doing a custom service.
+    @SuppressWarnings({"ResourceType", "WrongConstant"})
     public static ObjectGraph obtain(Context context) {
         return (ObjectGraph) context.getSystemService(INJECTOR_SERVICE);
     }
