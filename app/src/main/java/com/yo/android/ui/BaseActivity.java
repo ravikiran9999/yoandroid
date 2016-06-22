@@ -46,6 +46,9 @@ public class BaseActivity extends AppCompatActivity {
 //        }
     }
 
+    /**
+     * show progress dialog
+     */
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = mProgressDialogFactory.createTransparentDialog(this);
@@ -54,13 +57,16 @@ public class BaseActivity extends AppCompatActivity {
             mProgressDialog.show();
     }
 
+    /**
+     * dismiss progress dialog
+     */
     public void dismissProgressDialog() {
         if (mProgressDialog != null && !isFinishing()) {
             mProgressDialog.dismiss();
             mProgressDialog = null;
+
         }
 
     }
-
 
 }

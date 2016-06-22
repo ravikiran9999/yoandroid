@@ -16,7 +16,6 @@ import dagger.Provides;
         injects = {
                 BaseApp.class,
 
-
         },
         includes = {
                 AppModule.class,
@@ -37,6 +36,5 @@ public class RootModule {
     public Context provideApplicationContext() {
         return app;
     }
-
 
 }

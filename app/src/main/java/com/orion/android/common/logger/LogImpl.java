@@ -27,7 +27,7 @@ public class LogImpl implements Log {
     }
 
     public int e(String tag, String format, Object... args) {
-        return this.e(tag, format, (Throwable) null, args);
+        return this.e(tag, format, null, args);
     }
 
     public int i(String tag, String format, Object... args) {
@@ -39,11 +39,11 @@ public class LogImpl implements Log {
     }
 
     public int v(String tag, String format, Object... args) {
-        return this.v(tag, format, (Throwable) null, args);
+        return this.v(tag, format, null, args);
     }
 
     public int w(String tag, String format, Object... args) {
-        return this.w(tag, format, (Throwable) null, args);
+        return this.w(tag, format, null, args);
     }
 
     public int w(String tag, Throwable throwable) {
@@ -55,6 +55,6 @@ public class LogImpl implements Log {
     }
 
     private static String getThreadId() {
-        return String.format("[%d]\t ", new Object[]{Long.valueOf(Thread.currentThread().getId())});
+        return String.format("[%d]\t ", Long.valueOf(Thread.currentThread().getId()));
     }
 }

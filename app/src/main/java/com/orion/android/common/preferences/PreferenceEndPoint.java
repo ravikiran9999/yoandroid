@@ -12,7 +12,7 @@ public interface PreferenceEndPoint {
      *
      * @return the shared preferences
      */
-    public SharedPreferences getSharedPreferences();
+    SharedPreferences getSharedPreferences();
 
     /**
      * Save preferences.
@@ -20,7 +20,7 @@ public interface PreferenceEndPoint {
      * @param key   the key
      * @param value the value
      */
-    public void saveStringPreference(String key, String value);
+    void saveStringPreference(String key, String value);
 
     /**
      * Save boolean preference.
@@ -28,7 +28,7 @@ public interface PreferenceEndPoint {
      * @param key   the key
      * @param value the value
      */
-    public void saveBooleanPreference(String key, boolean value);
+    void saveBooleanPreference(String key, boolean value);
 
     /**
      * Save int preference.
@@ -36,7 +36,7 @@ public interface PreferenceEndPoint {
      * @param key   the key
      * @param value the value
      */
-    public void saveIntPreference(String key, int value);
+    void saveIntPreference(String key, int value);
 
     /**
      * Save long preference.
@@ -44,7 +44,7 @@ public interface PreferenceEndPoint {
      * @param key   the key
      * @param value the value
      */
-    public void saveLongPreference(String key, long value);
+    void saveLongPreference(String key, long value);
 
     /**
      * Read preferences.
@@ -52,7 +52,7 @@ public interface PreferenceEndPoint {
      * @param key the key
      * @return String the preference
      */
-    public String getStringPreference(String key);
+    String getStringPreference(String key);
 
     /**
      * Read preferences.
@@ -61,7 +61,7 @@ public interface PreferenceEndPoint {
      * @param defValue the def value
      * @return String the preference
      */
-    public String getStringPreference(String key, String defValue);
+    String getStringPreference(String key, String defValue);
 
     /**
      * Gets the boolean preference.
@@ -69,7 +69,7 @@ public interface PreferenceEndPoint {
      * @param key the key
      * @return boolean the preference
      */
-    public boolean getBooleanPreference(String key);
+    boolean getBooleanPreference(String key);
 
     /**
      * Gets the boolean preference.
@@ -78,7 +78,7 @@ public interface PreferenceEndPoint {
      * @param defValue the def value
      * @return boolean the preference
      */
-    public boolean getBooleanPreference(String key, boolean defValue);
+    boolean getBooleanPreference(String key, boolean defValue);
 
     /**
      * Gets the int preference.
@@ -86,7 +86,7 @@ public interface PreferenceEndPoint {
      * @param key the key
      * @return integer the preference
      */
-    public int getIntPreference(String key);
+    int getIntPreference(String key);
 
     /**
      * Gets the int preference.
@@ -95,7 +95,7 @@ public interface PreferenceEndPoint {
      * @param defValue the def value
      * @return integer the preference
      */
-    public int getIntPreference(String key, int defValue);
+    int getIntPreference(String key, int defValue);
 
     /**
      * Gets the long preference.
@@ -105,17 +105,17 @@ public interface PreferenceEndPoint {
      * @return long the preference
      */
 
-    public long getLongPreference(String key, long defValue);
+    long getLongPreference(String key, long defValue);
 
     /**
      * Remove preferences.
      *
      * @param key the key
      */
-    public void removePreference(String key);
+    void removePreference(String key);
 
     /**
      * Clear all.
      */
-    public void clearAll();
+    void clearAll();
 }

@@ -5,12 +5,12 @@ package com.orion.android.common.util;
  */
 public interface ToastFactory {
 
-    public void newToast(final CharSequence text, @Duration final int duration);
+    void newToast(final CharSequence text, @Duration final int duration);
 
-    public void newToast(final int textResId, @Duration final int duration);
+    void newToast(final int textResId, @Duration final int duration);
 
-    public void showToast(final CharSequence text);
+    void showToast(final CharSequence text);
 
-    public void showToast(final int textResId);
+    void showToast(final int textResId);
 
 }
