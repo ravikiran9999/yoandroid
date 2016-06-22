@@ -7,7 +7,7 @@ package com.orion.android.common.logging;
 public class GlobalClass {
 
     public static final boolean DEBUG = true;
-    public static final String BUCKET_NAME = "cimparking";
+    public static final String BUCKET_NAME = "yo-android";
     public static final String LOG_FB_USER_NAME = "AWS_LOGS";
 
     private GlobalClass(){

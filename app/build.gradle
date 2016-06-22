@@ -65,3 +65,10 @@ sonarRunner {
     }
 
 }
+
+public Properties getAwsProperties() {
+    Properties props = new Properties()
+    File propsFile = new File("gradle.properties");
+    props.load(propsFile.newDataInputStream());
+    return props;
+}

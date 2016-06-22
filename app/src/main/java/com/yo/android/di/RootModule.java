@@ -3,6 +3,7 @@ package com.yo.android.di;
 import android.content.Context;
 
 import com.yo.android.app.BaseApp;
+import com.yo.android.ui.MainActivity;
 
 import javax.inject.Singleton;
 
@@ -15,6 +16,7 @@ import dagger.Provides;
 @Module(
         injects = {
                 BaseApp.class,
+                MainActivity.class
 
         },
         includes = {

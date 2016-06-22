@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.orion.android.common.logger.Log;
 import com.yo.android.R;
 
 import java.lang.reflect.Field;
@@ -26,24 +27,28 @@ import javax.inject.Singleton;
 public class ProgressDialogFactory {
 
     final Context mContext;
+    final Log mLog;
 
     @Inject
-    public ProgressDialogFactory(Context context) {
+    public ProgressDialogFactory(Context context, Log log) {
         mContext = context;
+        mLog = log;
     }
 
     /**
      * The Class HideProgressNumbersDialog.
      */
     public static class HideProgressNumbersDialog extends ProgressDialog {
+        final Log mLog;
 
         /**
          * Instantiates a new hide progress numbers dialog.
          *
          * @param context the context
          */
-        public HideProgressNumbersDialog(final Context context) {
+        public HideProgressNumbersDialog(final Context context, final Log log) {
             super(context);
+            mLog = log;
         }
 
         /**
@@ -78,7 +83,7 @@ public class ProgressDialogFactory {
                     }
                 }
             } catch (final Exception e) {
-                e.printStackTrace();
+                mLog.w("ProgressDialogFactory", e);
             }
         }
 
@@ -89,7 +94,7 @@ public class ProgressDialogFactory {
         progressDialog.setIndeterminate(true);
         final boolean hasNewApis = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
         final ProgressDialog dialog = (hasNewApis) ? new ProgressDialog(activity)
-                : new HideProgressNumbersDialog(activity);
+                : new HideProgressNumbersDialog(activity, mLog);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setOwnerActivity(activity);
         dialog.setIndeterminate(true);

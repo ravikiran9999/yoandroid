@@ -231,7 +231,7 @@ public class Logger {
         exception = e.toString() + "\n";
         StackTraceElement[] temp = e.getStackTrace();
         for (int i = 0; i < temp.length; i++) {
-            exception = exception + "Fabula Exception at " + temp[i].toString() + "\n";
+            exception = exception + " Exception at " + temp[i].toString() + "\n";
         }
 
         Log.w(TAG, exception);
