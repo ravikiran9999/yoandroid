@@ -11,6 +11,7 @@ import com.orion.android.common.logging.Logger;
 import com.orion.android.common.logging.ParadigmExceptionHandler;
 import com.orion.android.common.util.ResourcesHelper;
 import com.orion.android.common.util.ToastFactory;
+import com.yo.android.BuildConfig;
 import com.yo.android.di.Injector;
 import com.yo.android.util.ProgressDialogFactory;
 
@@ -40,7 +41,9 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Injector.obtain(getApplication()).inject(this);
-
+        if (!BuildConfig.AWS_LOGS_ENABLE) {
+            awsLogs();
+        }
     }
 
     /**

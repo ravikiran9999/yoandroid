@@ -176,8 +176,6 @@ public class Logger {
         if (!(context == null)) {
             if (isExternalStorageAvailable && isExternalStorageWriteable && isMemoryAvailable) {
                 try {
-//                    FileWriter writer = new FileWriter(context.getResources().getString(R.string.log_folder_path) + "/" + generateTheFileName(), true);
-
                     FileWriter writer = new FileWriter(DeviceInfoUtil.getSdCardPath() + "/" + context.getResources().getString(LogConstants.LOG_FOLDER_PTH) + "/" + generateTheFileName(), true);
                     BufferedWriter out = new BufferedWriter(writer);
                     out.write("\n" + DateFormat.getDateTimeInstance().format(new Date()) + "\t\t" + severity.name() + "\t\t" + logString);

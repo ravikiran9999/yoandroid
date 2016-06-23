@@ -11,6 +11,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.orion.android.common.logger.Log;
 import com.yo.android.R;
+import com.yo.android.di.Injector;
 import com.yo.android.ui.MainActivity;
 
 import java.util.Map;
@@ -27,6 +28,13 @@ public class PushNotificationService extends FirebaseMessagingService {
     @Inject
     protected Log mLog;
 
+    /**
+     * Constructor
+     */
+    public PushNotificationService() {
+        Injector.obtain(getApplication()).inject(this);
+    }
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -35,8 +43,8 @@ public class PushNotificationService extends FirebaseMessagingService {
         String title = remoteMessage.getNotification().getTitle();
         Map data = remoteMessage.getData();
 
-        mLog.d(TAG, "From: " + remoteMessage.getFrom());
-        mLog.d(TAG, "Notification ChatMessage Body: " + body);
+        mLog.i(TAG, "From: %s", remoteMessage.getFrom());
+        mLog.i(TAG, "onMessageReceived: title- %s and data- %s", title, data.toString());
         createNotification(body);
     }
 

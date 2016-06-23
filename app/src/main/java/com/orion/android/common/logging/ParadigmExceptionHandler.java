@@ -73,6 +73,7 @@ public class ParadigmExceptionHandler implements
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         if (thread != null) {
             //

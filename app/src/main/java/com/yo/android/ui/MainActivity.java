@@ -1,7 +1,6 @@
 package com.yo.android.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.yo.android.R;
 

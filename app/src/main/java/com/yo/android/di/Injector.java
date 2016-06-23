@@ -9,6 +9,14 @@ import dagger.ObjectGraph;
  */
 public final class Injector {
     private static final String INJECTOR_SERVICE = "com.yo.android.di.injector";
+
+    /**
+     * Constructor
+     */
+    private Injector() {
+        throw new AssertionError("No instances.");
+    }
+
     // Explicitly doing a custom service.
     @SuppressWarnings({"ResourceType", "WrongConstant"})
     public static ObjectGraph obtain(Context context) {
@@ -19,7 +27,4 @@ public final class Injector {
         return INJECTOR_SERVICE.equals(name);
     }
 
-    private Injector() {
-        throw new AssertionError("No instances.");
-    }
 }
