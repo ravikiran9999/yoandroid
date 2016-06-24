@@ -41,7 +41,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Injector.obtain(getApplication()).inject(this);
-        if (!BuildConfig.AWS_LOGS_ENABLE) {
+        if (BuildConfig.AWS_LOGS_ENABLE) {
             awsLogs();
         }
     }

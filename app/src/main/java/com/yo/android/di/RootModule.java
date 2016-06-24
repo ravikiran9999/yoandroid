@@ -6,6 +6,7 @@ import com.yo.android.app.BaseApp;
 import com.yo.android.notification.MyInstanceIDListenerService;
 import com.yo.android.notification.PushNotificationService;
 import com.yo.android.ui.MainActivity;
+import com.yo.android.ui.NavigationDrawerActivity;
 
 import javax.inject.Singleton;
 
@@ -18,9 +19,12 @@ import dagger.Provides;
 @Module(
         injects = {
                 BaseApp.class,
-                MainActivity.class,
                 MyInstanceIDListenerService.class,
-                PushNotificationService.class
+                PushNotificationService.class,
+
+                //Activities
+                MainActivity.class,
+                NavigationDrawerActivity.class
 
         },
         includes = {
