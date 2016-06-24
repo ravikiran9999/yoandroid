@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yo.android">
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".app.BaseApp"
@@ -22,8 +22,9 @@
             </intent-filter>
         </activity>
 
-        <!--uncomment below lines to enable notifications-->
-        <!--<service
+        <!-- uncomment below lines to enable notifications -->
+        <!--
+        <service
             android:name=".notification.PushNotificationService"
             android:exported="false">
             <intent-filter>
@@ -36,8 +37,10 @@
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
-        </service>-->
+        </service>
+        -->
 
+        <activity android:name=".ui.SettingsActivity"></activity>
     </application>
 
 </manifest>
