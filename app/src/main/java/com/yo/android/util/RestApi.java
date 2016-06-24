@@ -3,9 +3,8 @@ package com.yo.android.util;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 
 import java.io.File;
 
@@ -44,7 +43,7 @@ public class RestApi {
         });
     }
 
-    public void upload(Context context) {
+    /*public void upload(Context context) {
         Ion.getDefault(context).configure().setLogging("MyLogs", Log.DEBUG);
         Ion.with(context)
                 .load("http://ec2-52-74-44-63.ap-southeast-1.compute.amazonaws.com/api/v1/files/upload")
@@ -59,7 +58,7 @@ public class RestApi {
                     }
                 });
 
-    }
+    }*/
 
     public interface UploadService {
         @Multipart

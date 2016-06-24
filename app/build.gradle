@@ -47,12 +47,10 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
 
 }
-//uncomment below line after placing google-services.json file under app
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
 
 sonarRunner {
     sonarProperties {
-        //property "sonar.host.url", "http://localhost:9000"
         property 'sonar.projectKey', 'YO-AndroidApp'
         property 'sonar.projectName', 'YOAndroid'
         property 'sonar.sources', 'src/main/java'
