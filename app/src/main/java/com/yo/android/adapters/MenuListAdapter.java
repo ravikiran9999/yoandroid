@@ -29,5 +29,6 @@ public class MenuListAdapter extends AbstractBaseAdapter<MenuData, MenuViewHolde
     @Override
     public void bindView(int position, MenuViewHolder holder, MenuData item) {
         holder.getTitleView().setText(item.getName());
+        holder.getImageView().setImageResource(item.getIcon());
     }
 }
