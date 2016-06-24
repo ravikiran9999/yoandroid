@@ -32,7 +32,7 @@ public class NavigationDrawerActivity extends BaseActivity {
 
     private Toolbar toolbar;
 
-    MenuListAdapter menuAdapter;
+    protected MenuListAdapter menuAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +68,7 @@ public class NavigationDrawerActivity extends BaseActivity {
 
     public void prepareNavigationDrawerOptions() {
         //
+        menuAdapter = new MenuListAdapter(this);
         ListView menuListView = (ListView) findViewById(R.id.menuListView);
         menuAdapter.addItems(getMenuList());
 

@@ -65,7 +65,7 @@ public abstract class AbstractBaseAdapter<T, ViewHolder extends AbstractViewHold
             holder = (ViewHolder) view.getTag();
         }
         bindView(position, holder, getItem(position));
-        return convertView;
+        return view;
     }
 
     public abstract int getLayoutId();
