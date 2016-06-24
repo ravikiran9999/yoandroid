@@ -22,8 +22,9 @@
             </intent-filter>
         </activity>
 
-        <!--uncomment below lines to enable notifications-->
-        <!--<service
+        <!-- uncomment below lines to enable notifications -->
+        <!--
+        <service
             android:name=".notification.PushNotificationService"
             android:exported="false">
             <intent-filter>
@@ -36,8 +37,10 @@
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
-        </service>-->
+        </service>
+        -->
 
+        <activity android:name=".ui.SettingsActivity"></activity>
     </application>
 
 </manifest>

@@ -88,14 +88,30 @@ public class NavigationDrawerActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mDrawerLayout.closeDrawers();
+                switch (position) {
+                    case 8:
+                        Intent settingsIntent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
+                        startActivity(settingsIntent);
+                        break;
+                    default:
+                        break;
+                }
             }
         });
     }
 
     public List<MenuData> getMenuList() {
         List<MenuData> menuDataList = new ArrayList<>();
-        menuDataList.add(new MenuData("Dialer", R.drawable.ic_launcher));
-        menuDataList.add(new MenuData("Magazines", R.drawable.ic_launcher));
+        menuDataList.add(new MenuData("Dialer", R.drawable.ic_menu_settings));
+        menuDataList.add(new MenuData("Magazines", R.drawable.ic_menu_settings));
+        menuDataList.add(new MenuData("Magazines", R.drawable.ic_menu_settings));
+        menuDataList.add(new MenuData("Broadcast", R.drawable.ic_menu_settings));
+        menuDataList.add(new MenuData("Wallet", R.drawable.ic_menu_settings));
+        menuDataList.add(new MenuData("Invite Friends", R.drawable.ic_menu_settings));
+        menuDataList.add(new MenuData("Notifications", R.drawable.ic_menu_settings));
+        menuDataList.add(new MenuData("Profile", R.drawable.ic_menu_settings));
+        menuDataList.add(new MenuData("Settings", R.drawable.ic_menu_settings));
+        menuDataList.add(new MenuData("Logout", R.drawable.ic_menu_settings));
         return menuDataList;
     }
 
