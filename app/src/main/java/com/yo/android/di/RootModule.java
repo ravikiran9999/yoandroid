@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.yo.android.app.BaseApp;
 import com.yo.android.notification.MyInstanceIDListenerService;
+import com.yo.android.notification.PushNotificationService;
 import com.yo.android.ui.MainActivity;
 
 import javax.inject.Singleton;
@@ -18,7 +19,8 @@ import dagger.Provides;
         injects = {
                 BaseApp.class,
                 MainActivity.class,
-                MyInstanceIDListenerService.class
+                MyInstanceIDListenerService.class,
+                PushNotificationService.class
 
         },
         includes = {
