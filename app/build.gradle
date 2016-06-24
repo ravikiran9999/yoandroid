@@ -29,7 +29,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
     //Support libs
     compile "com.android.support:appcompat-v7:${supportAppcompatVersion}"
     compile "com.android.support:design:${supportDesignVersion}"
@@ -37,22 +36,22 @@ dependencies {
     compile "com.android.support:recyclerview-v7:${supportRecyclerViewVersion}"
 
 
-    compile 'com.squareup.dagger:dagger:1.2.2'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-    compile 'com.google.firebase:firebase-messaging:9.0.2'
 
+
+    compile 'com.squareup.dagger:dagger:1.2.2'
+    compile 'com.google.firebase:firebase-messaging:9.0.2'
     compile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-
+    compile 'com.android.support:support-v4:23.4.0'
+    testCompile 'junit:junit:4.12'
+    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
 }
-//uncomment below line after placing google-services.json file under app
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
 
 sonarRunner {
     sonarProperties {
-        //property "sonar.host.url", "http://localhost:9000"
         property 'sonar.projectKey', 'YO-AndroidApp'
         property 'sonar.projectName', 'YOAndroid'
         property 'sonar.sources', 'src/main/java'

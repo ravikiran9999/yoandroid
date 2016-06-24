@@ -4,4 +4,9 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="chat_fragment">Hello chat fragment</string>
+    <string name="contacts_fragment">Hello contacts fragment</string>
+    <string name="call_fragment">Hello call fragment</string>
+
 </resources>

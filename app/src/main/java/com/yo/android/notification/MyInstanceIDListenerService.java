@@ -37,7 +37,7 @@ public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
 
         mLog.d(TAG, "onTokenRefresh: Refreshed token: %s", refreshedToken);
         // Subscribe to topic.
-        FirebaseMessaging.getInstance().subscribeToTopic(FCM_TOPIC);
+        //FirebaseMessaging.getInstance().subscribeToTopic(FCM_TOPIC);
 
         sendRegistrationToServer(refreshedToken);
 
