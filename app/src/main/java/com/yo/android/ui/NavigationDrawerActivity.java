@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +17,7 @@ import android.widget.ListView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.MenuListAdapter;
+import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.model.MenuData;
 
 import java.util.ArrayList;
@@ -64,10 +67,16 @@ public class NavigationDrawerActivity extends BaseActivity {
                 });
         prepareNavigationDrawerOptions();
 
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(mAdapter);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
     }
 
     public void prepareNavigationDrawerOptions() {
-        //
+
         menuAdapter = new MenuListAdapter(this);
         ListView menuListView = (ListView) findViewById(R.id.menuListView);
         menuAdapter.addItems(getMenuList());
