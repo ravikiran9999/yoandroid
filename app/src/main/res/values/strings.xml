@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">YO</string>
+    <string name="app_name">Yo App</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
@@ -8,5 +8,9 @@
     <string name="chat_fragment">Hello chat fragment</string>
     <string name="contacts_fragment">Hello contacts fragment</string>
     <string name="call_fragment">Hello call fragment</string>
+    <string name="magazines_fragment">Hello magazine fragment</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

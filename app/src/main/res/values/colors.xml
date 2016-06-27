@@ -4,4 +4,9 @@
     <color name="colorPrimaryDark">#B63A2B</color>
     <color name="colorAccent">#7A24AB</color>
     <color name="grey_divider">#EEEEEE</color>
+
+    <!-- Background color of dialer -->
+    <color name="background_dialer_light">#fafafa</color>
+    <color name="floating_action_button_touch_tint">#80ffffff</color>
+
 </resources>
