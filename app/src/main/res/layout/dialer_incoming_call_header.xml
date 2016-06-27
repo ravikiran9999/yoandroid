@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary">
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp">
+
+        <TextView android:id="@+id/tv_incoming_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Incoming call"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:layout_centerHorizontal="true"/>
+
+        <ImageView android:id="@+id/imv_caller_pic"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/dialer_default_avatar"
+            android:layout_below="@+id/tv_incoming_call"
+            android:layout_marginTop="30dp"/>
+
+        <TextView android:id="@+id/tv_caller_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sandip Dave"
+            android:textColor="@android:color/white"
+            android:textSize="26sp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/imv_caller_pic"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"/>
+
+        <TextView android:id="@+id/tv_caller_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+91 9876543210"
+            android:layout_below="@+id/tv_caller_name"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
