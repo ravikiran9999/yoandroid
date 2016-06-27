@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+
+    <com.yo.android.voip.DialPadView
+        android:id="@+id/dialPadView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#FAFAFA"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/txt_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Balance $0"
+                android:textColor="@color/colorPrimary" />
+
+            <ImageButton
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/txt_balance" />
+
+            <TextView
+                android:id="@+id/txt_call_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="India\n$0.5/min"
+                android:textColor="@color/colorPrimary" />
+
+            <com.yo.android.voip.DigitsEditText
+                android:id="@+id/digits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/txt_balance"
+                android:layout_toRightOf="@+id/txt_call_rate"
+                android:background="@android:color/transparent"
+                android:cursorVisible="false"
+                android:focusableInTouchMode="true"
+                android:fontFamily="sans-serif-light"
+                android:freezesText="true"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/dialpad_digits_text_color"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/dialpad_digits_text_size"
+                android:textStyle="normal" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/grey_divider"></View>
+
+        <include layout="@layout/dialpad" />
+    </com.yo.android.voip.DialPadView>
+
+    <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_margin="10dp"
+        android:src="@drawable/fab_ic_call"
+        android:text="Dial"
+        app:backgroundTint="@color/dial_green" />
+
+</FrameLayout>

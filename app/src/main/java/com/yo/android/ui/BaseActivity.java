@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.logging.Logger;
@@ -35,6 +36,7 @@ public class BaseActivity extends AppCompatActivity {
     protected ProgressDialogFactory mProgressDialogFactory;
 
     protected Dialog mProgressDialog;
+    private boolean enableBack;
 
 
     @Override
@@ -44,6 +46,15 @@ public class BaseActivity extends AppCompatActivity {
         if (BuildConfig.AWS_LOGS_ENABLE) {
             awsLogs();
         }
+    }
+
+    protected void enableBack() {
+        enableBack = true;
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
     }
 
     /**
@@ -81,4 +92,17 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (enableBack) {
+                    finish();
+                    return true;
+                }
+                return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

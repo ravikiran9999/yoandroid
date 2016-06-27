@@ -96,13 +96,12 @@ public class NavigationDrawerActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mDrawerLayout.closeDrawers();
-                switch (position) {
-                    case 7:
-                        Intent settingsIntent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
-                        startActivity(settingsIntent);
-                        break;
-                    default:
-                        break;
+                MenuData menuData = (MenuData) menuAdapter.getItem(position);
+                if (menuData.getName().equalsIgnoreCase("Dialer")) {
+                    startActivity(new Intent(NavigationDrawerActivity.this, DialerActivity.class));
+                } else if (menuData.getName().equalsIgnoreCase("Settings")) {
+                    Intent settingsIntent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
+                    startActivity(settingsIntent);
                 }
             }
         });
