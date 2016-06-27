@@ -4,9 +4,24 @@
     <color name="colorPrimaryDark">#B63A2B</color>
     <color name="colorAccent">#7A24AB</color>
     <color name="grey_divider">#EEEEEE</color>
+    <color name="dial_green">#09D261</color>
 
     <!-- Background color of dialer -->
     <color name="background_dialer_light">#fafafa</color>
     <color name="floating_action_button_touch_tint">#80ffffff</color>
+
+    <!-- Colors for the dialpad -->
+    <color name="dialer_theme_color">#0288d1</color>
+    <color name="dialer_theme_color_dark">#0277bd</color>
+    <color name="background_dialpad">#fcfcfc</color>
+    <color name="background_dialpad_pressed">#ececec</color>
+    <!--<color name="dialpad_primary_text_color">@color/dialer_theme_color</color>-->
+    <color name="dialpad_primary_text_color">#333</color>
+    <color name="dialpad_secondary_text_color">#737373</color>
+    <color name="dialpad_digits_text_color">#333</color>
+    <color name="dialpad_separator_line_color">#dadada</color>
+    <color name="dialpad_icon_tint">#b3b3b3</color>
+    <color name="dialpad_voicemail_tint">#919191</color>
+
 
 </resources>

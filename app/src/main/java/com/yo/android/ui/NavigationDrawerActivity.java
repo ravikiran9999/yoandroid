@@ -74,9 +74,9 @@ public class NavigationDrawerActivity extends BaseActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), "MAGAZINES");
+        mAdapter.addFragment(new CallFragment(), "CALLS");
         mAdapter.addFragment(new ChatFragment(), "CHATS");
         mAdapter.addFragment(new ContactsFragment(), "CONTACTS");
-        mAdapter.addFragment(new CallFragment(), "CALLS");
         viewPager.setAdapter(mAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -96,13 +96,12 @@ public class NavigationDrawerActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mDrawerLayout.closeDrawers();
-                switch (position) {
-                    case 8:
-                        Intent settingsIntent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
-                        startActivity(settingsIntent);
-                        break;
-                    default:
-                        break;
+                MenuData menuData = (MenuData) menuAdapter.getItem(position);
+                if (menuData.getName().equalsIgnoreCase("Dialer")) {
+                    startActivity(new Intent(NavigationDrawerActivity.this, DialerActivity.class));
+                } else if (menuData.getName().equalsIgnoreCase("Settings")) {
+                    Intent settingsIntent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
+                    startActivity(settingsIntent);
                 }
             }
         });
@@ -111,7 +110,6 @@ public class NavigationDrawerActivity extends BaseActivity {
     public List<MenuData> getMenuList() {
         List<MenuData> menuDataList = new ArrayList<>();
         menuDataList.add(new MenuData("Dialer", R.drawable.ic_menu_settings));
-        menuDataList.add(new MenuData("Magazines", R.drawable.ic_menu_settings));
         menuDataList.add(new MenuData("Magazines", R.drawable.ic_menu_settings));
         menuDataList.add(new MenuData("Broadcast", R.drawable.ic_menu_settings));
         menuDataList.add(new MenuData("Wallet", R.drawable.ic_menu_settings));

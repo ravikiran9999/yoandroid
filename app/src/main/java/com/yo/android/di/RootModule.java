@@ -6,6 +6,7 @@ import com.yo.android.app.BaseApp;
 import com.yo.android.notification.MyInstanceIDListenerService;
 import com.yo.android.notification.PushNotificationService;
 import com.yo.android.ui.LoginActivity;
+import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.SettingsActivity;
@@ -28,7 +29,9 @@ import dagger.Provides;
                 MainActivity.class,
                 NavigationDrawerActivity.class,
                 SettingsActivity.class,
-                LoginActivity.class
+                LoginActivity.class,
+                SettingsActivity.class,
+                DialerActivity.class
 
         },
         includes = {
