@@ -19,6 +19,10 @@ import com.yo.android.R;
 import com.yo.android.adapters.MenuListAdapter;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.model.MenuData;
+import com.yo.android.ui.fragments.CallFragment;
+import com.yo.android.ui.fragments.ChatFragment;
+import com.yo.android.ui.fragments.ContactsFragment;
+import com.yo.android.ui.fragments.MagazinesFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +73,10 @@ public class NavigationDrawerActivity extends BaseActivity {
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        mAdapter.addFragment(new MagazinesFragment(), "MAGAZINES");
+        mAdapter.addFragment(new ChatFragment(), "CHATS");
+        mAdapter.addFragment(new ContactsFragment(), "CONTACTS");
+        mAdapter.addFragment(new CallFragment(), "CALLS");
         viewPager.setAdapter(mAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
