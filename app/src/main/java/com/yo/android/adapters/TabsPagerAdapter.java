@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.yo.android.ui.fragments.CallFragment;
 import com.yo.android.ui.fragments.ChatFragment;
 import com.yo.android.ui.fragments.ContactsFragment;
+import com.yo.android.ui.fragments.MagazinesFragment;
 
 /**
  * Created by rdoddapaneni on 6/24/2016.
@@ -14,7 +15,7 @@ import com.yo.android.ui.fragments.ContactsFragment;
 
 public class TabsPagerAdapter extends FragmentPagerAdapter {
 
-    private String[] tabs = {"chats", "contacts", "calls"};
+    private String[] tabs = {"magazines", "calls", "chats", "contacts"};
 
     /**
      *
@@ -27,13 +28,16 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0) {
-            return new ChatFragment();
+            return new MagazinesFragment();
         }
         if(position == 1) {
-            return new ContactsFragment();
+            return new CallFragment();
         }
         if(position == 2) {
-            return new CallFragment();
+            return new ChatFragment();
+        }
+        if(position == 3) {
+            return new ContactsFragment();
         }
         return new ChatFragment();
     }
