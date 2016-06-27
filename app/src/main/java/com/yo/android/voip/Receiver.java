@@ -29,9 +29,7 @@ public class Receiver extends InjectedBroadcastReceiver {
     private UserAgent callAgent;
     private String username;
     private String password;
-
-    public static int call_state;
-    public static int call_end_reason = -1;
+    private static int call_state;
     protected PreferenceEndPoint mPreferenceEndPoint;
     private static String DOMAIN_ADDRESS = "209.239.120.239";
 
@@ -58,7 +56,7 @@ public class Receiver extends InjectedBroadcastReceiver {
                 }
             }
 
-        } else if (intentAction.equals("com.yo.NewAccountSipRegistration")) {
+        } else if ("com.yo.NewAccountSipRegistration".equals(intentAction)) {
             if (isOnline(context)) {
                 mLog.d(TAG, "USER ONLINE <<<<< USER IS ONLINE >>>>");
                 if (SipManager.isApiSupported(context) && SipManager.isVoipSupported(context)) {
@@ -71,10 +69,8 @@ public class Receiver extends InjectedBroadcastReceiver {
             mLog.d("Yo.RECEIVER", "BOOT COMPLETE RECEIVED");
             Intent i = new Intent(context, SipService.class);
             context.startService(i);
-        } else if (intentAction.equals("android.SipPrac.INCOMING_CALL")) {
-            if (register == null)
-                return;
-            if (register.currentState == RegisterSip.REGISTERED) {
+        } else if ("android.SipPrac.INCOMING_CALL".equals(intentAction)) {
+            if (register != null && register.getCurrentState() == RegisterSip.REGISTERED) {
                 if (call_state == UserAgent.CALL_STATE_INCOMING_CALL || call_state == UserAgent.CALL_STATE_INCALL
                         || call_state == UserAgent.CALL_STATE_OUTGOING_CALL) {
                     sendBusySignal(context, intent);
@@ -83,14 +79,16 @@ public class Receiver extends InjectedBroadcastReceiver {
                 callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
                 callAgent.onCallIncoming();
             }
-        } else if (intentAction.equals("android.yo.OUTGOING_CALL")) {
+        } else if ("android.yo.OUTGOING_CALL".equals(intentAction)) {
             Bundle callData = intent.getExtras();
-            if (register != null && register.currentState == RegisterSip.REGISTERED) {
-                if (profile == null)
+            if (register != null && register.getCurrentState() == RegisterSip.REGISTERED) {
+                if (profile == null) {
                     profile = register.getProfile();
-                if (callAgent == null)
+                }
+                if (callAgent == null) {
                     callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
-                if (callAgent.call_state == UserAgent.CALL_STATE_IDLE) {
+                }
+                if (callAgent.getCallState() == UserAgent.CALL_STATE_IDLE) {
                     callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
                     callAgent.doOutgoingCall(callData);
                 } else {
@@ -106,7 +104,7 @@ public class Receiver extends InjectedBroadcastReceiver {
     }
 
     public void doSipRegistration(Context context, Intent intent) {
-        if (register != null && register.currentState == RegisterSip.REGISTERED) {
+        if (register != null && register.getCurrentState() == RegisterSip.REGISTERED) {
             mLog.d("Receiver/doSipRegistration()", "RETURNED");
             return;
         }
@@ -122,7 +120,7 @@ public class Receiver extends InjectedBroadcastReceiver {
             if (manager == null) {
                 manager = SipManager.newInstance(context);
                 register = new RegisterSip(mLog, manager, profile, context, username, password,
-                        "209.239.120.239");
+                        DOMAIN_ADDRESS);
                 profile = register.getProfile();
             }
         } else {
@@ -150,12 +148,13 @@ public class Receiver extends InjectedBroadcastReceiver {
         return isConnected;
     }
 
+    public static void setCallState(int callState) {
+        Receiver.call_state = callState;
+    }
+
     public static void onState(int state, String caller) {
 
         if (call_state != state) {
-            if (state != UserAgent.CALL_STATE_IDLE) {
-                call_end_reason = -1;
-            }
             call_state = state;
             switch (call_state) {
                 case UserAgent.CALL_STATE_INCOMING_CALL:

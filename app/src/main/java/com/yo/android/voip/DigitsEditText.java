@@ -20,8 +20,8 @@ public class DigitsEditText extends ResizingTextEditText {
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
-        final InputMethodManager imm = ((InputMethodManager) getContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE));
+        final InputMethodManager imm = (InputMethodManager) getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && imm.isActive(this)) {
             imm.hideSoftInputFromWindow(getApplicationWindowToken(), 0);
         }
@@ -31,8 +31,8 @@ public class DigitsEditText extends ResizingTextEditText {
     public boolean onTouchEvent(MotionEvent event) {
         final boolean ret = super.onTouchEvent(event);
         // Must be done after super.onTouchEvent()
-        final InputMethodManager imm = ((InputMethodManager) getContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE));
+        final InputMethodManager imm = (InputMethodManager) getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && imm.isActive(this)) {
             imm.hideSoftInputFromWindow(getApplicationWindowToken(), 0);
         }

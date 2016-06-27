@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * The Settings screen
  */
-public class SettingsActivity extends BaseActivity {
+public class SettingsActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     protected MenuListAdapter menuAdapter;
 
@@ -49,12 +49,7 @@ public class SettingsActivity extends BaseActivity {
         menuListView.setAdapter(menuAdapter);
         menuListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         menuListView.setSelection(0);
-        menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-        });
+        menuListView.setOnItemClickListener(this);
     }
 
     /**
@@ -75,12 +70,15 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
     }
 }

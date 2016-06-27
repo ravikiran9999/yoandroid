@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Ramesh on 14/1/16.
  */
-public abstract class AbstractBaseAdapter<T, ViewHolder extends AbstractViewHolder> extends BaseAdapter {
+public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> extends BaseAdapter {
 
     private List<T> mList;
     protected final Context mContext;
@@ -55,14 +55,14 @@ public abstract class AbstractBaseAdapter<T, ViewHolder extends AbstractViewHold
 
     @Override
     public View getView(final int position, final View convertView, final ViewGroup parent) {
-        ViewHolder holder;
+        V holder;
         View view = convertView;
         if (view == null) {
             view = LayoutInflater.from(mContext).inflate(getLayoutId(), null);
             holder = getViewHolder(view);
             view.setTag(holder);
         } else {
-            holder = (ViewHolder) view.getTag();
+            holder = (V) view.getTag();
         }
         bindView(position, holder, getItem(position));
         return view;
@@ -70,8 +70,8 @@ public abstract class AbstractBaseAdapter<T, ViewHolder extends AbstractViewHold
 
     public abstract int getLayoutId();
 
-    public abstract ViewHolder getViewHolder(View convertView);
+    public abstract V getViewHolder(View convertView);
 
-    public abstract void bindView(int position, ViewHolder holder, T item);
+    public abstract void bindView(int position, V holder, T item);
 
 }
