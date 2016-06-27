@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.orion.android.common.logger.Log;
 import com.yo.android.di.Injector;
 
@@ -16,7 +15,6 @@ import javax.inject.Inject;
 
 public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
     private static final String TAG = "MyInstanceIDListenerService";
-    private static final String FCM_TOPIC = "FCMTopic";
 
     @Inject
     protected Log mLog;
@@ -32,13 +30,8 @@ public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();
-
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-
         mLog.d(TAG, "onTokenRefresh: Refreshed token: %s", refreshedToken);
-        // Subscribe to topic.
-        //FirebaseMessaging.getInstance().subscribeToTopic(FCM_TOPIC);
-
         sendRegistrationToServer(refreshedToken);
 
     }

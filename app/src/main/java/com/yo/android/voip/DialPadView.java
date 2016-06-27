@@ -25,7 +25,7 @@ public class DialPadView extends LinearLayout {
     private View mBalanceView;
     private ColorStateList mRippleColor;
     private boolean mCanDigitsBeEdited;
-    private final int[] mButtonIds = new int[]{R.id.zero, R.id.one, R.id.two, R.id.three,
+    private static final int[] mButtonIds = new int[]{R.id.zero, R.id.one, R.id.two, R.id.three,
             R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.star,
             R.id.pound};
 

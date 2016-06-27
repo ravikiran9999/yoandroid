@@ -71,7 +71,7 @@ public class Card {
     public static final int Y_10 = 10;
     public static final int Z_10 = 11;
 
-    private float cardVertices[];
+    private float[] cardVertices;
 
     private short[] indices = {0, 1, 2, 0, 2, 3};
 
@@ -79,7 +79,7 @@ public class Card {
 
     private ShortBuffer indexBuffer;
 
-    private float textureCoordinates[];
+    private float[] textureCoordinates;
 
     private FloatBuffer textureBuffer;
 

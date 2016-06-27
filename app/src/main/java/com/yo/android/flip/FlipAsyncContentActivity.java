@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,6 +162,7 @@ public class FlipAsyncContentActivity extends Activity {
                 task.execute();
             }
 
+
             return layout;
         }
     }
@@ -218,8 +220,10 @@ public class FlipAsyncContentActivity extends Activity {
         @Override
         protected Bitmap doInBackground(Void... params) {
             try {
-                Thread.sleep(500 + RANDOM.nextInt(2000)); //wait for a random time
+                //wait for a random time
+                Thread.sleep(500 + RANDOM.nextInt(2000));
             } catch (InterruptedException e) {
+                Log.e("TAG", "doInBackground", e);
             }
 
             return IO.readBitmap(assetManager, imageName);

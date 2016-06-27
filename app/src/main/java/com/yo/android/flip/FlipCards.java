@@ -170,30 +170,9 @@ public class FlipCards {
             case STATE_INIT:
             case STATE_TOUCH:
                 break;
-            case STATE_AUTO_ROTATE: {
-                animatedFrame++;
-                float delta = (forward ? ACCELERATION : -ACCELERATION) * animatedFrame % ONE_EIGHTY_DEGREES;
-
-                float oldAngle = accumulatedAngle;
-
-                accumulatedAngle += delta;
-                //bouncing back after flip backward and over the first page
-                if (oldAngle < 0) {
-                    Assert.assertTrue(forward);
-                    if (accumulatedAngle >= 0) {
-                        accumulatedAngle = 0;
-                        setState(STATE_INIT);
-                    }
-                } else {
-                    flipForward(oldAngle);
-                }
-                if (state == STATE_INIT) {
-                    controller.postHideFlipAnimation();
-                } else {
-                    controller.getSurfaceView().requestRender();
-                }
-            }
-            break;
+            case STATE_AUTO_ROTATE:
+                autoRotate();
+                break;
             default:
                 AphidLog.e("Invalid state: " + state);
                 break;
@@ -241,6 +220,30 @@ public class FlipCards {
         }
     }
 
+    private void autoRotate() {
+        animatedFrame++;
+        float delta = (forward ? ACCELERATION : -ACCELERATION) * animatedFrame % ONE_EIGHTY_DEGREES;
+
+        float oldAngle = accumulatedAngle;
+
+        accumulatedAngle += delta;
+        //bouncing back after flip backward and over the first page
+        if (oldAngle < 0) {
+            Assert.assertTrue(forward);
+            if (accumulatedAngle >= 0) {
+                accumulatedAngle = 0;
+                setState(STATE_INIT);
+            }
+        } else {
+            flipForward(oldAngle);
+        }
+        if (state == STATE_INIT) {
+            controller.postHideFlipAnimation();
+        } else {
+            controller.getSurfaceView().requestRender();
+        }
+    }
+
     private void flipForward(float oldAngle) {
         //bouncing back after flip forward and over the last page
         if (frontCards.getIndex() == maxIndex - 1 && oldAngle > frontCards.getIndex()
@@ -255,7 +258,8 @@ public class FlipCards {
                 Assert.assertTrue(
                         "index of backCards should not be -1 when automatically flipping forward",
                         backCards.getIndex() != -1);
-                if (accumulatedAngle >= backCards.getIndex() * ONE_EIGHTY_DEGREES) { //moved to the next page
+                //moved to the next page
+                if (accumulatedAngle >= backCards.getIndex() * ONE_EIGHTY_DEGREES) {
                     accumulatedAngle = backCards.getIndex() * ONE_EIGHTY_DEGREES;
                     setState(STATE_INIT);
                     controller.postFlippedToView(backCards.getIndex());
@@ -265,7 +269,8 @@ public class FlipCards {
                 }
             } else {
                 //backward
-                if (accumulatedAngle <= frontCards.getIndex() * ONE_EIGHTY_DEGREES) { //firstCards restored
+                //firstCards restored
+                if (accumulatedAngle <= frontCards.getIndex() * ONE_EIGHTY_DEGREES) {
                     accumulatedAngle = frontCards.getIndex() * ONE_EIGHTY_DEGREES;
                     setState(STATE_INIT);
                 }
@@ -286,94 +291,105 @@ public class FlipCards {
                 lastPosition = orientationVertical ? event.getY() : event.getX();
                 return isOnTouchEvent;
             case MotionEvent.ACTION_MOVE:
-                float delta = orientationVertical ? (lastPosition - event.getY()) : (lastPosition - event.getX());
-
-                if (Math.abs(delta) > controller.getTouchSlop()) {
-                    setState(STATE_TOUCH);
-                    forward = delta > 0;
-                }
-                if (state == STATE_TOUCH) {
-                    //ignore small movements
-                    if (Math.abs(delta) > MIN_MOVEMENT) {
-                        forward = delta > 0;
-                    }
-
-                    controller.showFlipAnimation();
-
-                    float angleDelta;
-                    if (orientationVertical) {
-                        angleDelta = ONE_EIGHTY_DEGREES * delta / controller.getContentHeight() * MOVEMENT_RATE;
-                    } else {
-                        angleDelta = ONE_EIGHTY_DEGREES * delta / controller.getContentWidth() * MOVEMENT_RATE;
-                    }
-                    //prevent large delta when moving too fast
-                    if (Math.abs(angleDelta) > MAX_TOUCH_MOVE_ANGLE) {
-                        angleDelta = Math.signum(angleDelta) * MAX_TOUCH_MOVE_ANGLE;
-                    }
-                    // do not flip more than one page with one touch...
-                    if (Math.abs(getPageIndexFromAngle(accumulatedAngle + angleDelta) - lastPageIndex) <= 1) {
-                        accumulatedAngle += angleDelta;
-                    }
-
-                    //Bounce the page for the first and the last page
-                    if (frontCards.getIndex() == maxIndex - 1) { //the last page
-                        if (accumulatedAngle > frontCards.getIndex() * ONE_EIGHTY_DEGREES) {
-                            accumulatedAngle =
-                                    Math.min(accumulatedAngle,
-                                            controller.isOverFlipEnabled() ? (frontCards.getIndex() * ONE_EIGHTY_DEGREES
-                                                    + MAX_TIP_ANGLE)
-                                                    : (frontCards.getIndex() * ONE_EIGHTY_DEGREES));
-                        }
-                    }
-
-                    if (accumulatedAngle < 0) {
-                        accumulatedAngle =
-                                Math.max(accumulatedAngle, controller.isOverFlipEnabled() ? -MAX_TIP_ANGLE : 0);
-                    }
-
-                    int anglePageIndex = getPageIndexFromAngle(accumulatedAngle);
-
-                    if (accumulatedAngle >= 0) {
-                        if (anglePageIndex != frontCards.getIndex()) {
-                            if (anglePageIndex == frontCards.getIndex() - 1) { //moved to previous page
-                                swapCards(); //frontCards becomes the backCards
-                                frontCards.resetWithIndex(backCards.getIndex() - 1);
-                                controller.flippedToView(anglePageIndex, false);
-                            } else if (anglePageIndex == frontCards.getIndex() + 1) { //moved to next page
-                                swapCards();
-                                backCards.resetWithIndex(frontCards.getIndex() + 1);
-                                controller.flippedToView(anglePageIndex, false);
-                            } else {
-                                throw new RuntimeException(AphidLog.format(
-                                        "Inconsistent states: anglePageIndex: %d, accumulatedAngle %.1f, frontCards %d, backCards %d",
-                                        anglePageIndex, accumulatedAngle, frontCards.getIndex(), backCards.getIndex()));
-                            }
-                        }
-                    }
-
-                    lastPosition = orientationVertical ? event.getY() : event.getX();
-
-                    controller.getSurfaceView().requestRender();
+                if (actionMove(event)) {
                     return true;
                 }
-
                 return isOnTouchEvent;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (state == STATE_TOUCH) {
-                    if (accumulatedAngle < 0) {
-                        forward = true;
-                    } else if (accumulatedAngle >= frontCards.getIndex() * ONE_EIGHTY_DEGREES
-                            && frontCards.getIndex() == maxIndex - 1) {
-                        forward = false;
-                    }
-
-                    setState(STATE_AUTO_ROTATE);
-                    controller.getSurfaceView().requestRender();
-                }
+                actionCancel();
                 return isOnTouchEvent;
+            default:
+                break;
         }
 
+        return false;
+    }
+
+    private void actionCancel() {
+        if (state == STATE_TOUCH) {
+            if (accumulatedAngle < 0) {
+                forward = true;
+            } else if (accumulatedAngle >= frontCards.getIndex() * ONE_EIGHTY_DEGREES
+                    && frontCards.getIndex() == maxIndex - 1) {
+                forward = false;
+            }
+
+            setState(STATE_AUTO_ROTATE);
+            controller.getSurfaceView().requestRender();
+        }
+    }
+
+    private boolean actionMove(MotionEvent event) {
+        float delta = orientationVertical ? lastPosition - event.getY() : lastPosition - event.getX();
+
+        if (Math.abs(delta) > controller.getTouchSlop()) {
+            setState(STATE_TOUCH);
+            forward = delta > 0;
+        }
+        if (state == STATE_TOUCH) {
+            //ignore small movements
+            if (Math.abs(delta) > MIN_MOVEMENT) {
+                forward = delta > 0;
+            }
+
+            controller.showFlipAnimation();
+
+            float angleDelta;
+            if (orientationVertical) {
+                angleDelta = ONE_EIGHTY_DEGREES * delta / controller.getContentHeight() * MOVEMENT_RATE;
+            } else {
+                angleDelta = ONE_EIGHTY_DEGREES * delta / controller.getContentWidth() * MOVEMENT_RATE;
+            }
+            //prevent large delta when moving too fast
+            if (Math.abs(angleDelta) > MAX_TOUCH_MOVE_ANGLE) {
+                angleDelta = Math.signum(angleDelta) * MAX_TOUCH_MOVE_ANGLE;
+            }
+            // do not flip more than one page with one touch...
+            if (Math.abs(getPageIndexFromAngle(accumulatedAngle + angleDelta) - lastPageIndex) <= 1) {
+                accumulatedAngle += angleDelta;
+            }
+
+            //Bounce the page for the first and the last page
+            if (frontCards.getIndex() == maxIndex - 1
+                    && accumulatedAngle > frontCards.getIndex() * ONE_EIGHTY_DEGREES) {
+                accumulatedAngle =
+                        Math.min(accumulatedAngle,
+                                controller.isOverFlipEnabled() ? (frontCards.getIndex() * ONE_EIGHTY_DEGREES
+                                        + MAX_TIP_ANGLE)
+                                        : (frontCards.getIndex() * ONE_EIGHTY_DEGREES));
+            }
+
+            if (accumulatedAngle < 0) {
+                accumulatedAngle =
+                        Math.max(accumulatedAngle, controller.isOverFlipEnabled() ? -MAX_TIP_ANGLE : 0);
+            }
+
+            int anglePageIndex = getPageIndexFromAngle(accumulatedAngle);
+
+            if (accumulatedAngle >= 0 && anglePageIndex != frontCards.getIndex()) {
+                //moved to previous page
+                if (anglePageIndex == frontCards.getIndex() - 1) {
+                    swapCards(); //frontCards becomes the backCards
+                    frontCards.resetWithIndex(backCards.getIndex() - 1);
+                    controller.flippedToView(anglePageIndex, false);
+                } else if (anglePageIndex == frontCards.getIndex() + 1) {
+                    //moved to next page
+                    swapCards();
+                    backCards.resetWithIndex(frontCards.getIndex() + 1);
+                    controller.flippedToView(anglePageIndex, false);
+                } else {
+                    throw new RuntimeException(AphidLog.format(
+                            "Inconsistent states: anglePageIndex: %d, accumulatedAngle %.1f, frontCards %d, backCards %d",
+                            anglePageIndex, accumulatedAngle, frontCards.getIndex(), backCards.getIndex()));
+                }
+            }
+
+            lastPosition = orientationVertical ? event.getY() : event.getX();
+
+            controller.getSurfaceView().requestRender();
+            return true;
+        }
         return false;
     }
 

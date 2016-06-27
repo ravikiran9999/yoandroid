@@ -5,6 +5,7 @@ import android.opengl.GLU;
 import android.view.View;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -31,7 +32,7 @@ public class FlipRenderer implements GLSurfaceView.Renderer {
 
     private boolean created = false;
 
-    private final LinkedList<Texture> postDestroyTextures = new LinkedList<Texture>();
+    private final List<Texture> postDestroyTextures = new LinkedList<Texture>();
     private static float[] light0Position = {0, 0, 100f, 0f};
 
     public FlipRenderer(FlipViewController flipViewController, FlipCards cards) {
