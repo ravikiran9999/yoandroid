@@ -97,9 +97,9 @@ public class NavigationDrawerActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mDrawerLayout.closeDrawers();
                 MenuData menuData = (MenuData) menuAdapter.getItem(position);
-                if (menuData.getName().equalsIgnoreCase("Dialer")) {
+                if ("Dialer".equalsIgnoreCase(menuData.getName())) {
                     startActivity(new Intent(NavigationDrawerActivity.this, DialerActivity.class));
-                } else if (menuData.getName().equalsIgnoreCase("Settings")) {
+                } else if ("Settings".equalsIgnoreCase(menuData.getName())) {
                     Intent settingsIntent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
                     startActivity(settingsIntent);
                 }

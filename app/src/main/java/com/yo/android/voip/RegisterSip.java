@@ -28,7 +28,8 @@ public class RegisterSip {
     private String password;
     private String domain;
     private int attempts = 0;
-    public int currentState = UNDEFINED;
+
+    private int currentState = UNDEFINED;
     private Log mLog;
 
     public RegisterSip(Log log, SipManager manager, SipProfile profile, Context context,
@@ -88,6 +89,9 @@ public class RegisterSip {
         }
     }
 
+    public int getCurrentState() {
+        return currentState;
+    }
 
     private SipRegistrationListener listener = new SipRegistrationListener() {
 

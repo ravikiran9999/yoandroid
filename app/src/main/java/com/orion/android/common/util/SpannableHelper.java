@@ -8,7 +8,7 @@ import android.text.style.CharacterStyle;
  */
 public class SpannableHelper {
 
-    private SpannableHelper(){
+    private SpannableHelper() {
         //Default constructor
     }
 
@@ -19,8 +19,9 @@ public class SpannableHelper {
 
         if (start > -1 && end > -1) {
             final SpannableStringBuilder ssb = new SpannableStringBuilder(text);
-            for (final CharacterStyle c : cs)
+            for (final CharacterStyle c : cs) {
                 ssb.setSpan(c, start, end, 0);
+            }
 
             ssb.delete(end, end + tokenLen);
             ssb.delete(start - tokenLen, start);
