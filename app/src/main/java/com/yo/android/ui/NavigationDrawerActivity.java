@@ -20,7 +20,7 @@ import com.yo.android.adapters.MenuListAdapter;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.model.MenuData;
 import com.yo.android.ui.fragments.CallFragment;
-import com.yo.android.ui.fragments.ChatFragment;
+import com.yo.android.chat.ui.ChatFragment;
 import com.yo.android.ui.fragments.ContactsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 
