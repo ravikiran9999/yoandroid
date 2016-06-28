@@ -3,9 +3,9 @@ package com.yo.android.di;
 import android.content.Context;
 
 import com.yo.android.app.BaseApp;
-import com.yo.android.notification.MyInstanceIDListenerService;
-import com.yo.android.notification.PushNotificationService;
-import com.yo.android.ui.LoginActivity;
+import com.yo.android.chat.notification.MyInstanceIDListenerService;
+import com.yo.android.chat.notification.PushNotificationService;
+import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NavigationDrawerActivity;

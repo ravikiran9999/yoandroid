@@ -1,10 +1,9 @@
-package com.yo.android.notification;
+package com.yo.android.chat.notification;
 
 import android.support.annotation.NonNull;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.orion.android.common.logger.Log;
 import com.yo.android.di.Injector;
 

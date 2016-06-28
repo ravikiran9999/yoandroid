@@ -1,4 +1,4 @@
-package com.yo.android.notification;
+package com.yo.android.chat.notification;
 
 import android.app.Notification;
 import android.app.NotificationManager;
