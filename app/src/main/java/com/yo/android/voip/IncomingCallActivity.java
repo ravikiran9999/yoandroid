@@ -12,7 +12,7 @@ public class IncomingCallActivity {
     public static final int SPEAKER_ON = 3;
     public static final int SPEAKER_OFF = 4;
     public static final int CALL_ACCEPTED_START_TIMER = 10;
-    
+
     private IncomingCallActivity() {
 
     }
