@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="10dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imv_chat_contact_pic"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp"
+        android:background="@drawable/dialer_default_avatar" />
+
+    <TextView
+        android:id="@+id/tv_chat_contact_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/imv_chat_contact_pic"
+        android:text="Chris Jung"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_chat_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_chat_contact_name"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/imv_chat_contact_pic"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:layout_marginRight="16dp"
+        android:text="This is a dummy text for a chat message. This is the second line of the message"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_chat_datetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="16dp"
+        android:text="2 hours ago"
+        android:textSize="12sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/tv_chat_text"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/grey_divider" />
+
+</RelativeLayout>
