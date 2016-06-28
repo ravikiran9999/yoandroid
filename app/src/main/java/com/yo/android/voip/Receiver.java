@@ -57,49 +57,61 @@ public class Receiver extends InjectedBroadcastReceiver {
             }
 
         } else if ("com.yo.NewAccountSipRegistration".equals(intentAction)) {
-            if (isOnline(context)) {
-                mLog.d(TAG, "USER ONLINE <<<<< USER IS ONLINE >>>>");
-                if (SipManager.isApiSupported(context) && SipManager.isVoipSupported(context)) {
-                    doSipRegistration(context, intent);
-                } else {
-                    mLog.e(TAG, "DEVICE ERROR : SIP NOT SUPPORTED");
-                }
-            }
+            doNewAccountRegistration(context, intent);
         } else if (intentAction.equals(Intent.ACTION_BOOT_COMPLETED)) {
             mLog.d("Yo.RECEIVER", "BOOT COMPLETE RECEIVED");
             Intent i = new Intent(context, SipService.class);
             context.startService(i);
         } else if ("android.SipPrac.INCOMING_CALL".equals(intentAction)) {
-            if (register != null && register.getCurrentState() == RegisterSip.REGISTERED) {
-                if (call_state == UserAgent.CALL_STATE_INCOMING_CALL || call_state == UserAgent.CALL_STATE_INCALL
-                        || call_state == UserAgent.CALL_STATE_OUTGOING_CALL) {
-                    sendBusySignal(context, intent);
-                    return;
-                }
-                callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
-                callAgent.onCallIncoming();
-            }
+            doInComingCall(context, intent);
         } else if ("android.yo.OUTGOING_CALL".equals(intentAction)) {
-            Bundle callData = intent.getExtras();
-            if (register != null && register.getCurrentState() == RegisterSip.REGISTERED) {
-                if (profile == null) {
-                    profile = register.getProfile();
-                }
-                if (callAgent == null) {
-                    callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
-                }
-                if (callAgent.getCallState() == UserAgent.CALL_STATE_IDLE) {
-                    callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
-                    callAgent.doOutgoingCall(callData);
-                } else {
-                    mLog.e(TAG, "Receiver/OUTGOING_CALL : CALL STATE NOT IDLE");
-                }
-            } else {
-                mLog.e(TAG, "Receiver/OUTGOING_CALL: %s", "VoIP not Registered");
-                Toast.makeText(context, "VoIP Not Registered - Check Internet Connection / Restart Phone",
-                        Toast.LENGTH_SHORT).show();
+            doOutGoingCall(context, intent);
+        }
+    }
+
+    private void doNewAccountRegistration(Context context, Intent intent) {
+        if (isOnline(context)) {
+            mLog.d(TAG, "USER ONLINE <<<<< USER IS ONLINE >>>>");
+            if (SipManager.isApiSupported(context) && SipManager.isVoipSupported(context)) {
                 doSipRegistration(context, intent);
+            } else {
+                mLog.e(TAG, "DEVICE ERROR : SIP NOT SUPPORTED");
             }
+        }
+    }
+
+    private void doInComingCall(Context context, Intent intent) {
+        if (register != null && register.getCurrentState() == RegisterSip.REGISTERED) {
+            if (call_state == UserAgent.CALL_STATE_INCOMING_CALL || call_state == UserAgent.CALL_STATE_INCALL
+                    || call_state == UserAgent.CALL_STATE_OUTGOING_CALL) {
+                sendBusySignal(context, intent);
+                return;
+            }
+            callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
+            callAgent.onCallIncoming();
+        }
+    }
+
+    private void doOutGoingCall(Context context, Intent intent) {
+        Bundle callData = intent.getExtras();
+        if (register != null && register.getCurrentState() == RegisterSip.REGISTERED) {
+            if (profile == null) {
+                profile = register.getProfile();
+            }
+            if (callAgent == null) {
+                callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
+            }
+            if (callAgent.getCallState() == UserAgent.CALL_STATE_IDLE) {
+                callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
+                callAgent.doOutgoingCall(callData);
+            } else {
+                mLog.e(TAG, "Receiver/OUTGOING_CALL : CALL STATE NOT IDLE");
+            }
+        } else {
+            mLog.e(TAG, "Receiver/OUTGOING_CALL: %s", "VoIP not Registered");
+            Toast.makeText(context, "VoIP Not Registered - Check Internet Connection / Restart Phone",
+                    Toast.LENGTH_SHORT).show();
+            doSipRegistration(context, intent);
         }
     }
 
@@ -152,22 +164,4 @@ public class Receiver extends InjectedBroadcastReceiver {
         Receiver.call_state = callState;
     }
 
-    public static void onState(int state, String caller) {
-
-        if (call_state != state) {
-            call_state = state;
-            switch (call_state) {
-                case UserAgent.CALL_STATE_INCOMING_CALL:
-                    break;
-                case UserAgent.CALL_STATE_OUTGOING_CALL:
-                    break;
-                case UserAgent.CALL_STATE_IDLE:
-                    break;
-                case UserAgent.CALL_STATE_INCALL:
-                    break;
-                case UserAgent.CALL_STATE_HOLD:
-                    break;
-            }
-        }
-    }
 }

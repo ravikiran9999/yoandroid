@@ -7,7 +7,6 @@ import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
-import android.net.sip.SipSession;
 import android.os.Bundle;
 
 import com.orion.android.common.logger.Log;
@@ -31,9 +30,7 @@ public class UserAgent {
     private static SipAudioCall call;
     private SipProfile profile;
     private Context context;
-    private SipAudioCall.Listener listener;
     private Intent intent;
-    private UserAgentListener callback;
     private final Log mLog;
     protected String callerName;
 
@@ -66,6 +63,7 @@ public class UserAgent {
 
     protected synchronized void changeStatus(int state, String caller) {
         callState = state;
+        mLog.i(TAG, "caller: %s", caller);
     }
 
     protected void changeStatus(int state) {
@@ -97,9 +95,9 @@ public class UserAgent {
         changeStatus(CALL_STATE_OUTGOING_CALL);
         try {
             String callAddress = callData.getString("callerNo");
-            callAddress = callAddress + "@209.239.120.239";
+            callAddress = String.format("%s@209.239.120.239", callAddress);
             mLog.d("SIP/CALLING_NUMBER", callAddress);
-            call = manager.makeAudioCall(profile.getUriString(), callAddress, OutgoingCallListener, TIME_OUT);
+            call = manager.makeAudioCall(profile.getUriString(), callAddress, outgoingCallListener, TIME_OUT);
         } catch (SipException e) {
             mLog.w(TAG, e);
         }
@@ -141,6 +139,13 @@ public class UserAgent {
             hangup();
             mLog.d("OUTGOING_CALL - MODEL VALUE", "false");
         }
+        processEvents(model);
+        if (model.getEvent() != IncomingCallActivity.CALL_ACCEPTED_START_TIMER) {
+            model.setEvent(IncomingCallActivity.NOEVENT);
+        }
+    }
+
+    private void processEvents(SipCallModel model) {
         switch (model.getEvent()) {
             case IncomingCallActivity.MUTE_ON:
                 mute(true);
@@ -156,9 +161,6 @@ public class UserAgent {
                 break;
             default:
                 break;
-        }
-        if (model.getEvent() != IncomingCallActivity.CALL_ACCEPTED_START_TIMER) {
-            model.setEvent(IncomingCallActivity.NOEVENT);
         }
     }
 
@@ -203,7 +205,7 @@ public class UserAgent {
         if (!call.isMuted() && mute) {
             call.toggleMute();
             mLog.d("CALL MUTE", "=== CALL MUTED ==== ");
-        } else if (call.isMuted() && mute == false) {
+        } else if (call.isMuted() && !mute) {
             // If call is muted and wants to unmute
             call.toggleMute();
             mLog.d("CALL MUTE", "=== CALL UN-MUTED ==== ");
@@ -234,13 +236,13 @@ public class UserAgent {
 
         @Override
         public void onCalling(SipAudioCall call) {
-            mLog.d("UserAgent.INCOMING_CALL", "ON CALLING");
+            mLog.d(TAG, "UserAgent.INCOMING_CALL %s", "ON CALLING");
             super.onCalling(call);
         }
 
         @Override
         public void onCallEstablished(SipAudioCall call) {
-            mLog.d("UserAgent.INCOMING_CALL", "CALL ESTABLISHED");
+            mLog.d(TAG, "UserAgent.INCOMING_CALL - CALL ESTABLISHED");
             callerName = call.getPeerProfile().getDisplayName();
             if (callerName == null) {
                 callerName = call.getPeerProfile().getUserName();
@@ -251,7 +253,7 @@ public class UserAgent {
         @Override
         public void onRinging(SipAudioCall call, SipProfile caller) {
             try {
-                mLog.d("UserAgent.INCOMING_CALL", "CALL RINGING");
+                mLog.d(TAG, "UserAgent.INCOMING_CALL - CALL RINGING");
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
@@ -259,7 +261,7 @@ public class UserAgent {
 
         @Override
         public void onCallEnded(SipAudioCall call) {
-            mLog.d("UserAgent.INCOMING_CALL", "CALL ENDED");
+            mLog.d(TAG, "UserAgent.INCOMING_CALL - CALL ENDED");
             try {
                 changeStatus(CALL_STATE_IDLE);
                 callModel.setOnCall(false);
@@ -275,7 +277,7 @@ public class UserAgent {
 
         @Override
         public void onCallBusy(SipAudioCall call) {
-            mLog.d("UserAgent.INCOMING_CALL", "CALL BUSY");
+            mLog.d(TAG, "UserAgent.INCOMING_CALL - CALL BUSY");
             super.onCallBusy(call);
         }
 
@@ -284,7 +286,7 @@ public class UserAgent {
          */
         @Override
         public void onReadyToCall(SipAudioCall call) {
-            mLog.d("UserAgent.INCOMING_CALL", "ON READY TO CALL");
+            mLog.d(TAG, "UserAgent.INCOMING_CALL - ON READY TO CALL");
             super.onReadyToCall(call);
         }
 
@@ -293,7 +295,7 @@ public class UserAgent {
          */
         @Override
         public void onRingingBack(SipAudioCall call) {
-            mLog.d("UserAgent.INCOMING_CALL", "ON RINGING BACK");
+            mLog.d(TAG, "UserAgent.INCOMING_CALL - ON RINGING BACK");
             super.onRingingBack(call);
         }
 
@@ -302,14 +304,14 @@ public class UserAgent {
          */
         @Override
         public void onError(SipAudioCall call, int errorCode, String errorMessage) {
-            mLog.d("UserAgent.INCOMING_CALL", "ON ERROR");
+            mLog.d(TAG, "UserAgent.INCOMING_CALL - ON ERROR");
             super.onError(call, errorCode, errorMessage);
         }
 
 
     };
 
-    SipAudioCall.Listener OutgoingCallListener = new SipAudioCall.Listener() {
+    SipAudioCall.Listener outgoingCallListener = new SipAudioCall.Listener() {
 
 
         /* (non-Javadoc)
@@ -317,7 +319,7 @@ public class UserAgent {
          */
         @Override
         public void onCallBusy(SipAudioCall call) {
-            mLog.d(TAG, "UserAgent.OutgoingCallListener - OnCallBusy");
+            mLog.d(TAG, "UserAgent.outgoingCallListener - OnCallBusy");
             callModel.setOnCall(false);
             bus.post(callModel);
             super.onCallBusy(call);
@@ -328,15 +330,15 @@ public class UserAgent {
          */
         @Override
         public void onError(SipAudioCall call, int errorCode, String errorMessage) {
-            mLog.d("UserAgent.OutgoingCallListener", "Error Code= " + errorCode);
-            mLog.d("UserAgent.OutgoingCallListener", "Error Message= " + errorMessage);
+            mLog.d(TAG, "UserAgent.outgoingCallListener: Error Code= %d", errorCode);
+            mLog.d(TAG, "UserAgent.outgoingCallListener Error Message= %s", errorMessage);
             callModel.setOnCall(false);
             super.onError(call, errorCode, errorMessage);
         }
 
         @Override
         public void onCallEstablished(SipAudioCall call) {
-            mLog.d("UserAgent.OutgoingCallListener", "OnCallEstablished");
+            mLog.d(TAG, "UserAgent.outgoingCallListener", "OnCallEstablished");
             call.startAudio();
             speaker(false);
             changeStatus(CALL_STATE_OUTGOING_CALL);
@@ -358,59 +360,25 @@ public class UserAgent {
                     UserAgent.call.endCall();
                 }
             } catch (SipException e) {
-                mLog.e(TAG, "UserAgent/OutgoingCallListener", e);
+                mLog.e(TAG, "UserAgent/outgoingCallListener", e);
             }
             callModel.setOnCall(false);
             bus.post(callModel);
         }
 
-        /* (non-Javadoc)
-        * @see android.net.sip.SipAudioCall.Listener#onRingingBack(android.net.sip.SipAudioCall)
-		*/
+
         @Override
         public void onRingingBack(SipAudioCall call) {
-
             super.onRingingBack(call);
-            mLog.d("OUTGOINGCALL/ONRINGINGBACK", "onRingingBack");
+            mLog.d(TAG, "OUTGOINGCALL/ONRINGINGBACK - %s", "onRingingBack");
         }
 
 
         @Override
         public void onChanged(SipAudioCall call) {
 
-            mLog.d("UserAgent.OutgoingCallListener", "onChanged");
             int state = call.getState();
-            switch (state) {
-                case SipSession.State.OUTGOING_CALL_CANCELING:
-                    mLog.d("SESSION-STATE", "OUTGOING_CALL_CANCELING");
-                    break;
-                case SipSession.State.INCOMING_CALL_ANSWERING:
-                    mLog.d("SESSION-STATE", "INCOMING_CALL_ANSWERING");
-                    break;
-                case SipSession.State.INCOMING_CALL:
-                    mLog.d("SESSION-STATE", "INCOMING_CALL");
-                    break;
-                case SipSession.State.OUTGOING_CALL_RING_BACK:
-                    mLog.d("SESSION-STATE", "OUTGOING_CALL_RING_BACK");
-                    break;
-                case SipSession.State.PINGING:
-                    mLog.d("SESSION-STATE", "PINGING");
-                    break;
-                case SipSession.State.IN_CALL:
-                    mLog.d("SESSION-STATE", "IN_CALL");
-                    break;
-                case SipSession.State.DEREGISTERING:
-                    mLog.d("SESSION-STATE", "DEREGISTERING");
-                    break;
-                case SipSession.State.REGISTERING:
-                    mLog.d("SESSION-STATE", "REGISTERING");
-                    break;
-                case SipSession.State.READY_TO_CALL:
-                    mLog.d("SESSION-STATE", "READY_TO_CALL");
-                    break;
-                default:
-                    break;
-            }
+            mLog.d(TAG, "UserAgent.outgoingCallListener: onChanged state is - %d", state);
             super.onChanged(call);
         }
     };

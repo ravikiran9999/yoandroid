@@ -76,8 +76,9 @@ public class BaseActivity extends AppCompatActivity {
         if (mProgressDialog == null) {
             mProgressDialog = mProgressDialogFactory.createTransparentDialog(this);
         }
-        if (mProgressDialog != null)
+        if (mProgressDialog != null) {
             mProgressDialog.show();
+        }
     }
 
     /**
@@ -94,15 +95,10 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (enableBack) {
-                    finish();
-                    return true;
-                }
-                return false;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 }

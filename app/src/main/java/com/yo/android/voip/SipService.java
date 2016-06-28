@@ -40,14 +40,9 @@ public class SipService extends InjectedService {
             intentfilter.addAction("android.IncomingCall.CALL_ACCEPTED");
             intentfilter.addAction("android.yo.OUTGOING_CALL");
             intentfilter.addAction("com.yo.NewAccountSipRegistration");
-            registerReceiver(receiver = new Receiver(), intentfilter);
-            intentfilter = new IntentFilter();
+            receiver = new Receiver();
+            registerReceiver(receiver, intentfilter);
         }
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
     }
 
     /* (non-Javadoc)

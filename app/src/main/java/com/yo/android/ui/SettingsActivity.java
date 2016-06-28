@@ -79,6 +79,6 @@ public class SettingsActivity extends BaseActivity implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        //do something
     }
 }

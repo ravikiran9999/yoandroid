@@ -11,7 +11,7 @@ import com.yo.android.voip.DialPadView;
  * Created by Ramesh on 27/6/16.
  */
 public class DialerActivity extends BaseActivity {
-    private final int[] mButtonIds = new int[]{R.id.zero, R.id.one, R.id.two, R.id.three,
+    private static final int[] mButtonIds = new int[]{R.id.zero, R.id.one, R.id.two, R.id.three,
             R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.star,
             R.id.pound};
 
