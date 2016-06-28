@@ -1,4 +1,4 @@
-package com.yo.android.ui;
+package com.yo.android.chat.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -37,6 +37,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.yo.android.R;
+import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.NavigationDrawerActivity;
 
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -104,10 +106,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     // User is signed out
                     mLog.d(TAG, "onAuthStateChanged:signed_out");
                 }
-                // ...
             }
         };
-
 
     }
 
@@ -308,8 +308,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()) {
-                          // logic on success
+                        if (task.isSuccessful()) {
+                            // logic on success
                             showProgress(false);
                             startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
                         }

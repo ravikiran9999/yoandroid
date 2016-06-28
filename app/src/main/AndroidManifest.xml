@@ -50,7 +50,7 @@
             android:name=".ui.NavigationDrawerActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />-->
-        <activity android:name=".ui.LoginActivity" />
+        <activity android:name=".chat.ui.LoginActivity" />
         <activity android:name=".ui.DialerActivity"></activity>
     </application>
 
