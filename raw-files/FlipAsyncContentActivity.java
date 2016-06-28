@@ -39,10 +39,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.aphidmobile.flip.FlipViewController;
-import com.aphidmobile.utils.AphidLog;
-import com.aphidmobile.utils.IO;
-import com.aphidmobile.utils.UI;
 import com.yo.android.R;
 
 import java.lang.ref.WeakReference;
