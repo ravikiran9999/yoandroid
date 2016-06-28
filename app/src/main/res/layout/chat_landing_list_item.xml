@@ -33,6 +33,7 @@
         android:layout_toRightOf="@+id/imv_chat_contact_pic"
         android:ellipsize="end"
         android:maxLines="2"
+        android:layout_marginRight="16dp"
         android:text="This is a dummy text for a chat message. This is the second line of the message"
         android:textSize="14sp" />
 
