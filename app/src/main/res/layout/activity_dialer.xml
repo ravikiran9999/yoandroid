@@ -29,10 +29,12 @@
 
             <ImageButton
                 android:id="@+id/deleteButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/txt_balance" />
+                android:layout_below="@+id/txt_balance"
+                android:background="@android:color/transparent"
+                android:src="@drawable/on_clear2" />
 
             <TextView
                 android:id="@+id/txt_call_rate"
@@ -74,7 +76,7 @@
     </com.yo.android.voip.DialPadView>
 
     <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/button"
+        android:id="@+id/btnCall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
@@ -82,5 +84,15 @@
         android:src="@drawable/fab_ic_call"
         android:text="Dial"
         app:backgroundTint="@color/dial_green" />
+
+    <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/btnDialer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_margin="10dp"
+        android:src="@drawable/fab_ic_dial"
+        android:text="Dial"
+        app:backgroundTint="@color/colorPrimaryDark" />
 
 </FrameLayout>

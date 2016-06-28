@@ -12,6 +12,7 @@ import android.os.Bundle;
 import com.orion.android.common.logger.Log;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 
 public class UserAgent {
@@ -112,7 +113,7 @@ public class UserAgent {
         } catch (SipException e) {
             mLog.w(TAG, e);
         }
-        Intent i = new Intent(context, IncomingCallActivity.class);
+        Intent i = new Intent(context, OutGoingCallActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
             String useName = call.getPeerProfile().getDisplayName();
@@ -127,6 +128,7 @@ public class UserAgent {
         }
     }
 
+    @Subscribe
     public void onEvent(SipCallModel model) {
         mLog.d("BUSSS CALLED", "<><> USER-AGENT BUS CALLED <><>");
         if (model.isOnCall() && callState == CALL_STATE_INCOMING_CALL) {
@@ -140,23 +142,23 @@ public class UserAgent {
             mLog.d("OUTGOING_CALL - MODEL VALUE", "false");
         }
         processEvents(model);
-        if (model.getEvent() != IncomingCallActivity.CALL_ACCEPTED_START_TIMER) {
-            model.setEvent(IncomingCallActivity.NOEVENT);
+        if (model.getEvent() != OutGoingCallActivity.CALL_ACCEPTED_START_TIMER) {
+            model.setEvent(OutGoingCallActivity.NOEVENT);
         }
     }
 
     private void processEvents(SipCallModel model) {
         switch (model.getEvent()) {
-            case IncomingCallActivity.MUTE_ON:
+            case OutGoingCallActivity.MUTE_ON:
                 mute(true);
                 break;
-            case IncomingCallActivity.MUTE_OFF:
+            case OutGoingCallActivity.MUTE_OFF:
                 mute(false);
                 break;
-            case IncomingCallActivity.SPEAKER_ON:
+            case OutGoingCallActivity.SPEAKER_ON:
                 speaker(true);
                 break;
-            case IncomingCallActivity.SPEAKER_OFF:
+            case OutGoingCallActivity.SPEAKER_OFF:
                 speaker(false);
                 break;
             default:
@@ -343,7 +345,7 @@ public class UserAgent {
             speaker(false);
             changeStatus(CALL_STATE_OUTGOING_CALL);
             callModel.setOnCall(true);
-            callModel.setEvent(IncomingCallActivity.CALL_ACCEPTED_START_TIMER);
+            callModel.setEvent(OutGoingCallActivity.CALL_ACCEPTED_START_TIMER);
             bus.post(callModel);
         }
 

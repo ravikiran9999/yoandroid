@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.RippleDrawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -73,15 +74,17 @@ public class DialPadView extends LinearLayout {
             numberView = (TextView) dialpadKey.findViewById(R.id.dialpad_key_number);
             lettersView = (TextView) dialpadKey.findViewById(R.id.dialpad_key_letters);
             final String numberString = resources.getString(numberIds[i]);
-            final RippleDrawable rippleBackground =
-                    (RippleDrawable) getContext().getDrawable(R.drawable.btn_dialpad_key);
-            if (mRippleColor != null) {
-                rippleBackground.setColor(mRippleColor);
+            if (Build.VERSION.SDK_INT > 20) {
+                final RippleDrawable rippleBackground =
+                        (RippleDrawable) getContext().getDrawable(R.drawable.btn_dialpad_key);
+                if (mRippleColor != null) {
+                    rippleBackground.setColor(mRippleColor);
+                }
+                dialpadKey.setBackground(rippleBackground);
+                numberView.setElegantTextHeight(false);
             }
             numberView.setText(numberString);
-            numberView.setElegantTextHeight(false);
             dialpadKey.setContentDescription(numberString);
-            dialpadKey.setBackground(rippleBackground);
             if (lettersView != null) {
                 lettersView.setText(resources.getString(letterIds[i]));
             }

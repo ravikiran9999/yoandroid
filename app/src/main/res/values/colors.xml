@@ -5,6 +5,7 @@
     <color name="colorAccent">#7A24AB</color>
     <color name="grey_divider">#EEEEEE</color>
     <color name="dial_green">#09D261</color>
+    <color name="dial_out_going">#E9DC53</color>
 
     <!-- Background color of dialer -->
     <color name="background_dialer_light">#fafafa</color>

@@ -14,10 +14,10 @@ import android.widget.Toast;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.orion.android.common.preferences.PreferenceEndPointImpl;
 import com.yo.android.di.InjectedBroadcastReceiver;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 
 public class Receiver extends InjectedBroadcastReceiver {
@@ -30,17 +30,18 @@ public class Receiver extends InjectedBroadcastReceiver {
     private String username;
     private String password;
     private static int call_state;
-    protected PreferenceEndPoint mPreferenceEndPoint;
     private static String DOMAIN_ADDRESS = "209.239.120.239";
 
     @Inject
     protected Log mLog;
+    @Inject
+    @Named("sip_user")
+    protected PreferenceEndPoint mPreferenceEndPoint;
 
 
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        mPreferenceEndPoint = new PreferenceEndPointImpl(context, "sip_data");
         String intentAction = intent.getAction();
         mLog.d(TAG, "INTENT-ACTION: %s", intentAction);
         if (intentAction.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
@@ -56,15 +57,15 @@ public class Receiver extends InjectedBroadcastReceiver {
                 }
             }
 
-        } else if ("com.yo.NewAccountSipRegistration".equals(intentAction)) {
+        } else if (VoipConstants.NEW_ACCOUNT_REGISTRATION.equals(intentAction)) {
             doNewAccountRegistration(context, intent);
         } else if (intentAction.equals(Intent.ACTION_BOOT_COMPLETED)) {
             mLog.d("Yo.RECEIVER", "BOOT COMPLETE RECEIVED");
             Intent i = new Intent(context, SipService.class);
             context.startService(i);
-        } else if ("android.SipPrac.INCOMING_CALL".equals(intentAction)) {
+        } else if (VoipConstants.CALL_ACTION_IN_COMING.equals(intentAction)) {
             doInComingCall(context, intent);
-        } else if ("android.yo.OUTGOING_CALL".equals(intentAction)) {
+        } else if (VoipConstants.CALL_ACTION_OUT_GOING.equals(intentAction)) {
             doOutGoingCall(context, intent);
         }
     }
