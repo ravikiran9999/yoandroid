@@ -38,6 +38,7 @@ public class BaseActivity extends AppCompatActivity {
     protected Dialog mProgressDialog;
     private boolean enableBack;
 
+    private boolean isDestroyed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,12 @@ public class BaseActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isDestroyed = true;
     }
 
     /**
@@ -100,5 +107,9 @@ public class BaseActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean hasDestroyed() {
+        return isDestroyed;
     }
 }

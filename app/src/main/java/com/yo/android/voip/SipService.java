@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 public class SipService extends InjectedService {
 
-    Receiver receiver;
+    private Receiver receiver;
     @Inject
     Log mLog;
 
@@ -31,7 +31,13 @@ public class SipService extends InjectedService {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+    @Override
     public void onCreate() {
+        super.onCreate();
         mLog.d("YO.SipService", "SipService CREATED");
         if (receiver == null) {
             IntentFilter intentfilter = new IntentFilter();

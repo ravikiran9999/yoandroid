@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include layout="@layout/dialer_received_call_header" />
+
         <include layout="@layout/dialer_incoming_call_header" />
+        <include layout="@layout/dialer_received_call_header" />
 
 
-    </LinearLayout>
+    </FrameLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -23,9 +25,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_dialer_call_end"
-            android:layout_alignParentBottom="true" />
+            android:background="@drawable/ic_dialer_call_end" />
 
     </RelativeLayout>
 
@@ -37,26 +39,26 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/ic_dialer_call_end"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="40dp"/>
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/ic_dialer_call_end" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_dialer_call"
-            android:layout_alignParentBottom="true" />
+            android:background="@drawable/ic_dialer_call" />
 
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/ic_dialer_message"
             android:layout_alignParentBottom="true"
-            android:layout_marginRight="40dp"/>
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/ic_dialer_message" />
 
 
     </RelativeLayout>

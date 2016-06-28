@@ -15,8 +15,8 @@
 
         <ImageView
             android:id="@+id/imv_caller_pic"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="20dp"
             android:background="@drawable/dialer_default_avatar" />
@@ -28,7 +28,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/imv_caller_pic"
             android:text="Sandip Dave"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="20sp" />
 
         <TextView
@@ -37,9 +37,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_caller_name"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             android:layout_toRightOf="@+id/imv_caller_pic"
             android:text="Mobile +91 9876543210"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="14sp" />
 
         <TextView
@@ -50,7 +51,7 @@
             android:layout_below="@+id/tv_caller_name"
             android:layout_marginRight="20dp"
             android:text="05:45"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="14sp" />
 
     </RelativeLayout>
@@ -67,7 +68,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="60dp"
-            android:background="@drawable/ic_dialer_speaker" />
+            android:background="@drawable/ic_dialer_speaker"
+            android:tint="@color/colorAccent" />
 
         <ImageView
             android:id="@+id/imv_mic_off"
