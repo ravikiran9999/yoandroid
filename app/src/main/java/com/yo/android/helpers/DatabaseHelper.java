@@ -13,7 +13,6 @@ import com.j256.ormlite.table.TableUtils;
 import com.yo.android.model.ChatMessage;
 
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 /**
  * Created by rdoddapaneni on 6/27/2016.
@@ -50,8 +49,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     /**
-     * Returns an instance of the data access object
-     * @return
+     * @return Returns an instance of the data access object
      * @throws SQLException
      */
     private Dao<ChatMessage, Integer> getChatDao() throws SQLException {
@@ -65,8 +63,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     /**
      * Insert chat message object to ChatMessage table
-     * @param obj
-     * @return
+     * @param obj ChatMessage object
+     * @return true or false
      */
     public boolean insertChatObjectToDatabase(ChatMessage obj) {
         Dao<ChatMessage, Integer> chatDao;
@@ -82,6 +80,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    // Delete data
+
+    /**
+     * Delete chat message from ChatMessage table
+     * @param message delete selected message
+     * @return true or false
+     */
     public boolean deleteRowFromDatabase( String message) {
         Dao<ChatMessage, Integer> chatDao;
 
