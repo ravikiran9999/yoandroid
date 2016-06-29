@@ -84,7 +84,9 @@ public class BaseActivity extends AppCompatActivity {
             mProgressDialog = mProgressDialogFactory.createTransparentDialog(this);
         }
         if (mProgressDialog != null) {
-            mProgressDialog.show();
+            if (!mProgressDialog.isShowing()) {
+                mProgressDialog.show();
+            }
         }
     }
 
@@ -97,7 +99,6 @@ public class BaseActivity extends AppCompatActivity {
             mProgressDialog = null;
 
         }
-
     }
 
     @Override

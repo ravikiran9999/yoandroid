@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,7 +31,7 @@ import java.util.List;
 /**
  * Created by Ramesh on 23/6/16.
  */
-public class NavigationDrawerActivity extends BaseActivity {
+public class NavigationDrawerActivity extends BaseActivity implements TabsPagerAdapter.ProgressBar {
     private DrawerLayout mDrawerLayout;
 
     private NavigationView navigationView;
@@ -72,12 +73,13 @@ public class NavigationDrawerActivity extends BaseActivity {
         prepareNavigationDrawerOptions();
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), this);
         mAdapter.addFragment(new MagazinesFragment(), "MAGAZINES");
         mAdapter.addFragment(new CallFragment(), "CALLS");
         mAdapter.addFragment(new ChatFragment(), "CHATS");
         mAdapter.addFragment(new ContactsFragment(), "CONTACTS");
         viewPager.setAdapter(mAdapter);
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -133,4 +135,8 @@ public class NavigationDrawerActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void showProgress() {
+        showProgressDialog();
+    }
 }
