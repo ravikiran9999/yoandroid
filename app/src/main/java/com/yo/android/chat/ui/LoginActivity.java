@@ -36,9 +36,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yo.android.R;
+import com.yo.android.model.Registration;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
+import com.yo.android.util.DatabaseConstant;
 
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -57,6 +61,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private EditText mPhoneNumberView;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -83,6 +88,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 return false;
             }
         });
+
+        mPhoneNumberView = (EditText) findViewById(R.id.phone);
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -169,6 +176,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String phoneNumber = mPhoneNumberView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -199,7 +207,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            signin(email, password);
+            //signin(email, password, phoneNumber);
+            sendRegistrationToServer(email, password, phoneNumber);
 
         }
     }
@@ -209,7 +218,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() >= 12;
+        return password.length() >= 6;
     }
 
     /**
@@ -302,7 +311,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         int IS_PRIMARY = 1;
     }
 
-    private void signin(String email, String password) {
+    private void signin(final String email, final String password, final String phoneNumber) {
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -311,6 +320,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                         if (task.isSuccessful()) {
                             // logic on success
                             showProgress(false);
+                            //sendRegistrationToServer(email, password, phoneNumber);
                             startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
                         }
                         mLog.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
@@ -327,6 +337,16 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
                     }
                 });
+    }
+
+    private void sendRegistrationToServer(@NonNull String email, @NonNull String password, @NonNull String phoneNumber) {
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.APP_USERS);
+        Registration registration = new Registration(email, password, phoneNumber);
+        DatabaseReference reference = databaseReference.push();
+        reference.setValue(registration);
+        showProgress(false);
+        startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
     }
 
     @Override
