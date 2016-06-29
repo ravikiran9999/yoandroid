@@ -40,7 +40,7 @@ public class ChatFragment extends Fragment {
             insertChatMessage("Welcome" + i);
         }*/
 
-        getUsersList();
+        //getUsersList();
         return view;
     }
 
