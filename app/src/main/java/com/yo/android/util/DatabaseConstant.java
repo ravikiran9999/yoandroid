@@ -9,4 +9,7 @@ public class DatabaseConstant {
     public static final String LOGED_IN_USER_ID = "logedInUserId";
     public static final String TYPE = "type";
 
+    // Firebase tables
+    public static final String APP_USERS = "AppUsers";
+
 }
