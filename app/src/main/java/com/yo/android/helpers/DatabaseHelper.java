@@ -8,11 +8,15 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.util.DatabaseConstant;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by rdoddapaneni on 6/27/2016.
@@ -93,12 +97,28 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             chatDao = OpenHelperManager.getHelper(context, DatabaseHelper.class).getChatDao();
             DeleteBuilder<ChatMessage, Integer> deleteBuilder = chatDao.deleteBuilder();
-            deleteBuilder.where().eq("message", message);
+            deleteBuilder.where().eq(DatabaseConstant.MESSAGE, message);
             deleteBuilder.delete();
             return true;
         } catch (SQLException e) {
             Log.e(TAG , e.toString());
             return false;
         }
+    }
+
+    public List<ChatMessage> getChatUsersList() {
+        Dao<ChatMessage, Integer> chatDao;
+        List<ChatMessage> chatUsersList = null;
+        try {
+            chatDao = OpenHelperManager.getHelper(context, DatabaseHelper.class).getChatDao();
+            QueryBuilder<ChatMessage, Integer> queryBuilder = chatDao.queryBuilder();
+            for(int i = 0; i < 5; i++) {
+                PreparedQuery<ChatMessage> preparedQuery = queryBuilder.where().eq(DatabaseConstant.MESSAGE, "Welcome" + i).prepare();
+                chatUsersList = chatDao.query(preparedQuery);
+            }
+        } catch (SQLException e) {
+            Log.e(TAG , e.toString());
+        }
+        return chatUsersList;
     }
 }

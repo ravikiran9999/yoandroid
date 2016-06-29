@@ -5,6 +5,7 @@ package com.yo.android.model;
  */
 
 import com.j256.ormlite.field.DatabaseField;
+import com.yo.android.util.DatabaseConstant;
 
 /**
  * Class name will be tablename
@@ -13,7 +14,7 @@ public class ChatMessage {
 
     @DatabaseField(id = true)
     private String msgID;
-    @DatabaseField
+    @DatabaseField(columnName = DatabaseConstant.MESSAGE)
     private String message;
     @DatabaseField
     private String senderID;

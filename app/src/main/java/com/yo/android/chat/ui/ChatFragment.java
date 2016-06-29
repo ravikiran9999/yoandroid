@@ -34,10 +34,13 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
-        deleteChatMessage();
-        for(int i = 0; i < 5; i++ ) {
+        //deleteChatMessage();
+
+        /*for(int i = 0; i < 5; i++ ) {
             insertChatMessage("Welcome" + i);
-        }
+        }*/
+
+        getUsersList();
         return view;
     }
 
@@ -50,5 +53,9 @@ public class ChatFragment extends Fragment {
 
     private void deleteChatMessage() {
         databaseHelper.deleteRowFromDatabase("Welcome");
+    }
+
+    private void getUsersList () {
+        databaseHelper.getChatUsersList();
     }
 }
