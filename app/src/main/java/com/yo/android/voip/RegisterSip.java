@@ -54,6 +54,7 @@ public class RegisterSip {
         mLog.d("ATTEMPTS = ", Integer.toString(attempts));
         if (attempts < MAX_ATTEMPTS) {
             try {
+                closeLocalProfile();
                 SipProfile.Builder builder = new SipProfile.Builder(username, domain);
                 builder.setPassword(password);
                 profile = builder.build();

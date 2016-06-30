@@ -22,6 +22,9 @@ public class UserAgent {
     public static final int CALL_STATE_OUTGOING_CALL = 2;
     public static final int CALL_STATE_INCALL = 3;
     public static final int CALL_STATE_HOLD = 4;
+    public static final int CALL_STATE_BUSY = 5;
+    public static final int CALL_STATE_END = 6;
+    public static final int CALL_STATE_ERROR = 7;
     public static final int TIME_OUT = 30;
 
     private EventBus bus = EventBus.getDefault();
@@ -113,7 +116,7 @@ public class UserAgent {
         } catch (SipException e) {
             mLog.w(TAG, e);
         }
-        Intent i = new Intent(context, OutGoingCallActivity.class);
+        Intent i = new Intent(context, InComingCallActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
             String useName = call.getPeerProfile().getDisplayName();
@@ -264,23 +267,15 @@ public class UserAgent {
         @Override
         public void onCallEnded(SipAudioCall call) {
             mLog.d(TAG, "UserAgent.INCOMING_CALL - CALL ENDED");
-            try {
-                changeStatus(CALL_STATE_IDLE);
-                callModel.setOnCall(false);
-                bus.post(callModel);
-
-                UserAgent.call.endCall();
-                UserAgent.call.close();
-
-            } catch (Exception e) {
-                mLog.w(TAG, e);
-            }
+            endCall(CALL_STATE_END);
         }
 
         @Override
         public void onCallBusy(SipAudioCall call) {
-            mLog.d(TAG, "UserAgent.INCOMING_CALL - CALL BUSY");
             super.onCallBusy(call);
+            endCall(CALL_STATE_BUSY);
+            mLog.d(TAG, "UserAgent.INCOMING_CALL - CALL BUSY");
+
         }
 
         /* (non-Javadoc)
@@ -308,8 +303,23 @@ public class UserAgent {
         public void onError(SipAudioCall call, int errorCode, String errorMessage) {
             mLog.d(TAG, "UserAgent.INCOMING_CALL - ON ERROR");
             super.onError(call, errorCode, errorMessage);
+            endCall(CALL_STATE_ERROR);
         }
 
+        private void endCall(int reason) {
+            try {
+                changeStatus(reason);
+                callModel.setOnCall(false);
+                bus.post(callModel);
+
+                UserAgent.call.endCall();
+                UserAgent.call.close();
+                changeStatus(CALL_STATE_IDLE);
+                bus.post(callModel);
+            } catch (Exception e) {
+                mLog.w(TAG, e);
+            }
+        }
 
     };
 
@@ -323,6 +333,7 @@ public class UserAgent {
         public void onCallBusy(SipAudioCall call) {
             mLog.d(TAG, "UserAgent.outgoingCallListener - OnCallBusy");
             callModel.setOnCall(false);
+            callModel.setEvent(SipCallModel.CALL_BUSY);
             bus.post(callModel);
             super.onCallBusy(call);
         }
@@ -334,6 +345,7 @@ public class UserAgent {
         public void onError(SipAudioCall call, int errorCode, String errorMessage) {
             mLog.d(TAG, "UserAgent.outgoingCallListener: Error Code= %d", errorCode);
             mLog.d(TAG, "UserAgent.outgoingCallListener Error Message= %s", errorMessage);
+            callModel.setEvent(SipCallModel.CALL_ERROR);
             callModel.setOnCall(false);
             super.onError(call, errorCode, errorMessage);
         }

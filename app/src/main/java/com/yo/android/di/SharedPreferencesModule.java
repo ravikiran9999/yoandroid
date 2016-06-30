@@ -32,7 +32,8 @@ public class SharedPreferencesModule {
     @Named("sip_user")
     PreferenceEndPoint provideSipUserShareEndPoint(Context context) {
         PreferenceEndPoint endPoint = new PreferenceEndPointImpl(context, "sip_user");
-        endPoint.saveStringPreference("username", "9701449817");
+//        endPoint.saveStringPreference("username", "9701449817");
+        endPoint.saveStringPreference("username", "8341569102");
         endPoint.saveStringPreference("password", "123456");
         return endPoint;
     }

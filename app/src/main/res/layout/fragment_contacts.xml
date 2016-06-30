@@ -4,14 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.yo.android.ui.fragments.ContactsFragment">
-    <!-- Login progress -->
-    <ProgressBar
-        android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
 
     <ListView
         android:id="@+id/lv_contacts"

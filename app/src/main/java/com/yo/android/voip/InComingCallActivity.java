@@ -1,9 +1,11 @@
 package com.yo.android.voip;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -17,7 +19,7 @@ import org.greenrobot.eventbus.Subscribe;
 /**
  * Created by Ramesh on 26/6/16.
  */
-public class OutGoingCallActivity extends BaseActivity implements View.OnClickListener {
+public class InComingCallActivity extends BaseActivity implements View.OnClickListener {
     //
     public static final int NOEVENT = 0;
     public static final int MUTE_ON = 1;
@@ -26,22 +28,28 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     public static final int SPEAKER_OFF = 4;
     public static final int CALL_ACCEPTED_START_TIMER = 10;
     public static final String CALLER_NO = "callerNo";
+    public static final String CALLER = "caller";
     public static final String CALLER_NAME = "callerName";
     private SipCallModel callModel;
     private CallLogsModel log;
     private boolean isMute;
     private boolean isSpeakerOn;
     private TextView callerName;
+    private TextView callerName2;
     private TextView callerNumber;
+    private TextView callerNumber2;
     private TextView callDuration;
     int sec = 0, min = 0, hr = 0;
     private Handler handler;
     private EventBus bus = EventBus.getDefault();
+    private MediaPlayer player;
+    private View mReceivedCallHeader;
+    private View mInComingHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialer_outgoing_call);
+        setContentView(R.layout.dialer_received_call);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
@@ -54,10 +62,11 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         } else {
             callerName.setText(getIntent().getStringExtra(CALLER_NO));
         }
-        callerName.setText(getIntent().getStringExtra(CALLER_NO));
+        callerName.setText(getIntent().getStringExtra(CALLER));
+        callerName2.setText(getIntent().getStringExtra(CALLER));
         callDuration.setText("Connecting...");
         Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(VoipConstants.CALL_ACTION_OUT_GOING);
+        broadcastIntent.setAction(VoipConstants.CALL_ACTION_IN_COMING);
         Bundle callBundle = new Bundle();
         callBundle.putString(CALLER_NO, getIntent().getStringExtra(CALLER_NO));
         broadcastIntent.putExtras(callBundle);
@@ -65,20 +74,28 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callModel.setOnCall(true);
         //CallLogs Model
         log = new CallLogsModel();
-        log.setCallerName("Sandeep Dev");
+        log.setCallerName(getIntent().getStringExtra(CALLER));
         log.setCallTime(System.currentTimeMillis() / 1000L);
-        log.setCallerNo(getIntent().getStringExtra("CallNo"));
-        log.setCallType(VoipConstants.CALL_DIRECTION_OUT);
+        log.setCallerNo(getIntent().getStringExtra(CALLER));
+        log.setCallType(VoipConstants.CALL_DIRECTION_IN_MISSED);
         log.setCallMode(VoipConstants.CALL_MODE_VOIP);
+        player = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
+        player.start();
+
     }
 
     private void initViews() {
         findViewById(R.id.imv_speaker).setOnClickListener(this);
         findViewById(R.id.imv_mic_off).setOnClickListener(this);
         findViewById(R.id.btnEndCall).setOnClickListener(this);
-        callerName = (TextView) findViewById(R.id.tv_caller_name);
-        callerNumber = (TextView) findViewById(R.id.tv_caller_number);
-        callDuration = (TextView) findViewById(R.id.tv_call_duration);
+        findViewById(R.id.btnAcceptCall).setOnClickListener(this);
+        mReceivedCallHeader = findViewById(R.id.received_call_header);
+        mInComingHeader = findViewById(R.id.incoming_call_header);
+        callerName = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_name);
+        callerName2 = (TextView) mInComingHeader.findViewById(R.id.tv_caller_name);
+        callerNumber = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
+        callerNumber2 = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_number);
+        callDuration = (TextView) mReceivedCallHeader.findViewById(R.id.tv_call_duration);
     }
 
     @Override
@@ -112,13 +129,33 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.btnEndCall:
                 callModel.setOnCall(false);
+                log.setCallType(VoipConstants.CALL_DIRECTION_IN);
                 bus.post(callModel);
                 finish();
+            case R.id.btnAcceptCall:
+                onCallAccepted();
                 break;
             default:
                 break;
         }
     }
+
+    public void onCallAccepted() {
+        log.setCallType(VoipConstants.CALL_DIRECTION_IN);
+        mReceivedCallHeader.setVisibility(View.VISIBLE);
+        mInComingHeader.setVisibility(View.GONE);
+        try {
+            player.stop();
+            player.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mLog.d("BUS", "ONCALLACCEPTED");
+        callModel.setOnCall(true);
+        bus.post(callModel);
+        startTimer();
+    }
+
 
     @Subscribe
     public void onEvent(SipCallModel model) {
@@ -128,15 +165,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                     startTimer();
                 }
             });
-        } else if (!model.isOnCall()) {
-            if (model.getEvent() == SipCallModel.CALL_BUSY
-                    || model.getEvent() == SipCallModel.CALL_ERROR
-                    || model.getEvent() == SipCallModel.CALL_END
-                    ) {
-                finish();
-                mToastFactory.showToast("Call ended.");
-            }
-
         }
     }
 

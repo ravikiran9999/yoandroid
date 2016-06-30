@@ -90,6 +90,8 @@ public class Receiver extends InjectedBroadcastReceiver {
             }
             callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
             callAgent.onCallIncoming();
+        } else {
+            doSipRegistration(context, intent);
         }
     }
 
@@ -130,7 +132,7 @@ public class Receiver extends InjectedBroadcastReceiver {
         }
         if (!TextUtils.isEmpty(username)
                 && !TextUtils.isEmpty(password)) {
-            if (manager == null) {
+            if (manager == null || register.getCurrentState() == RegisterSip.UNDEFINED) {
                 manager = SipManager.newInstance(context);
                 register = new RegisterSip(mLog, manager, profile, context, username, password,
                         DOMAIN_ADDRESS);

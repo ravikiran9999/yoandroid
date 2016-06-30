@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/header_outgoing_call"
+    android:id="@+id/received_call_header"
     android:layout_width="match_parent"
     android:layout_height="250dp"
-    android:background="@color/dial_out_going"
+    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
 

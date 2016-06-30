@@ -30,10 +30,6 @@ public class SipService extends InjectedService {
         }
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
-    }
 
     @Override
     public void onCreate() {

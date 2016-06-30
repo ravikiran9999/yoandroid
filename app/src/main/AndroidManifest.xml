@@ -33,10 +33,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.NavigationDrawerActivity"
+            android:name=".ui.SplashScreenActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -66,28 +65,35 @@
             android:name=".ui.SettingsActivity"
 
             android:screenOrientation="portrait" />
-        <!--<activity
+        <activity
             android:name=".ui.NavigationDrawerActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
-            />-->
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".chat.ui.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.DialerActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".voip.InComingCallActivity"
+            android:label="@string/yo_app_call"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:taskAffinity=".incoming"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".voip.OutGoingCallActivity"
             android:label="@string/yo_app_call"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity=".outgoing"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".voip.SipService"
-            android:screenOrientation="portrait"/>
+
+            android:screenOrientation="portrait" />
 
     </application>
 
