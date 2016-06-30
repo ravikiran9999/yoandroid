@@ -6,6 +6,12 @@ public class SipCallModel {
     private boolean mute = false;
     private boolean speaker = false;
     private int event = 0;
+    public static final int IDLE = 0;
+    public static final int BUSY = 1;
+    public static final int IN_CALL = 2;
+    public static final int CALL_END = 3;
+    public static final int CALL_BUSY = 4;
+    public static final int CALL_ERROR = 5;
 
     public SipCallModel() {
 

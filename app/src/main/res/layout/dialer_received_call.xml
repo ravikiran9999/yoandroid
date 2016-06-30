@@ -6,11 +6,12 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         android:orientation="vertical">
 
 
         <include layout="@layout/dialer_incoming_call_header" />
+
         <include layout="@layout/dialer_received_call_header" />
 
 
@@ -37,19 +38,23 @@
         android:layout_marginBottom="40dp">
 
         <ImageView
+            android:id="@+id/btnEndCall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="40dp"
-            android:background="@drawable/ic_dialer_call_end" />
+            android:background="@color/colorPrimary"
+            android:src="@drawable/ic_dialer_call_end" />
 
         <ImageView
+            android:id="@+id/btnAcceptCall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_dialer_call" />
+            android:background="@color/dial_green"
+            android:src="@drawable/ic_dialer_call" />
 
 
         <ImageView

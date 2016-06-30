@@ -13,6 +13,7 @@ public interface VoipConstants {
     int BASE = 100;
     int CALL_DIRECTION_OUT = BASE + 1;
     int CALL_DIRECTION_IN = BASE + 2;
-    int CALL_MODE_VOIP = BASE + 3;
+    int CALL_DIRECTION_IN_MISSED = BASE + 3;
+    int CALL_MODE_VOIP = BASE + 10;
 
 }

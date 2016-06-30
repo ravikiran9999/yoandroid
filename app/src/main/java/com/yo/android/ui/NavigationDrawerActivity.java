@@ -19,11 +19,12 @@ import android.widget.ListView;
 import com.yo.android.R;
 import com.yo.android.adapters.MenuListAdapter;
 import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.chat.ui.ChatFragment;
 import com.yo.android.model.MenuData;
 import com.yo.android.ui.fragments.CallFragment;
-import com.yo.android.chat.ui.ChatFragment;
 import com.yo.android.ui.fragments.ContactsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
+import com.yo.android.voip.SipService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,11 @@ public class NavigationDrawerActivity extends BaseActivity implements TabsPagerA
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        //
+        //
+        Intent in = new Intent(getApplicationContext(), SipService.class);
+        startService(in);
+
 
     }
 

@@ -3,7 +3,7 @@
     android:id="@+id/header_outgoing_call"
     android:layout_width="match_parent"
     android:layout_height="250dp"
-    android:background="@color/dial_out_going"
+    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
 
@@ -28,7 +28,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/imv_caller_pic"
             android:text="Sandip Dave"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="20sp" />
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_marginTop="5dp"
             android:layout_toRightOf="@+id/imv_caller_pic"
             android:text="Mobile +91 9876543210"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="14sp" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:layout_below="@+id/tv_caller_name"
             android:layout_marginRight="20dp"
             android:text="05:45"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="14sp" />
 
     </RelativeLayout>
