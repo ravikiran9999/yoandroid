@@ -16,21 +16,21 @@ public class Travels {
     private static final List<Data> IMG_DESCRIPTIONS = new ArrayList<Data>();
 
     static {
-        Travels.IMG_DESCRIPTIONS.add(new Data("Potala Palace", "potala_palace.jpg",
+        Travels.IMG_DESCRIPTIONS.add(new Data("Top Stories", "Potala Palace", "potala_palace.jpg",
                 "The <b>Potala Palace</b> is located in Lhasa, Tibet Autonomous Region, China. It is named after Mount Potalaka, the mythical abode of Chenresig or Avalokitesvara.",
                 "China", "Lhasa2", "http://en.wikipedia.org/wiki/Potala_Palace"));
-        Travels.IMG_DESCRIPTIONS.add(new Data("Drepung Monastery", "drepung_monastery.jpg",
+        Travels.IMG_DESCRIPTIONS.add(new Data("Top Stories", "Drepung Monastery", "drepung_monastery.jpg",
                 "<b>Drepung Monastery</b>, located at the foot of Mount Gephel, is one of the \"great three\" Gelukpa university monasteries of Tibet.",
                 "China", "Lhasa",
                 "http://en.wikipedia.org/wiki/Drepung"));
-        Travels.IMG_DESCRIPTIONS.add(new Data("Sera Monastery", "sera_monastery.jpg",
+        Travels.IMG_DESCRIPTIONS.add(new Data("Entrepreneurship", "Sera Monastery", "sera_monastery.jpg",
                 "<b>Sera Monastery</b> is one of the 'great three' Gelukpa university monasteries of Tibet, located 1.25 miles (2.01 km) north of Lhasa.",
                 "China", "Lhasa1", "http://en.wikipedia.org/wiki/Sera_Monastery"));
-        Travels.IMG_DESCRIPTIONS.add(new Data("Samye Monastery", "samye_monastery.jpg",
+        Travels.IMG_DESCRIPTIONS.add(new Data("Entrepreneurship","Samye Monastery", "samye_monastery.jpg",
                 "<b>Samye Monastery</b> is the first Buddhist monastery built in Tibet, was most probably first constructed between 775 and 779 CE.",
                 "China", "Samye",
                 "http://en.wikipedia.org/wiki/Samye"));
-        Travels.IMG_DESCRIPTIONS.add(
+        /*Travels.IMG_DESCRIPTIONS.add(
                 new Data("Tashilunpo Monastery", "tashilunpo_monastery.jpg",
                         "<b>Tashilhunpo Monastery</b>, founded in 1447 by Gendun Drup, the First Dalai Lama, is a historic and culturally important monastery next to Shigatse, the second-largest city in Tibet.",
                         "China", "Shigatse",
@@ -50,10 +50,11 @@ public class Travels {
         Travels.IMG_DESCRIPTIONS.add(new Data("Patan", "patan.jpg",
                 "<b>Patan</b>, officially Lalitpur Sub-Metropolitan City, is one of the major cities of Nepal located in the south-central part of Kathmandu Valley.",
                 "Nepal", "Patan",
-                "http://en.wikipedia.org/wiki/Patan,_Nepal"));
+                "http://en.wikipedia.org/wiki/Patan,_Nepal"));*/
     }
 
     public static final class Data {
+        private final String topicName;
         private final String title;
         private final String imageFilename;
         private final String description;
@@ -61,7 +62,7 @@ public class Travels {
         private final String city;
         private final String link;
 
-        private Data(String title, String imageFilename, String description, String country,
+        private Data(String topicName, String title, String imageFilename, String description, String country,
                      String city, String link) {
             this.title = title;
             this.imageFilename = imageFilename;
@@ -69,6 +70,11 @@ public class Travels {
             this.country = country;
             this.city = city;
             this.link = link;
+            this.topicName = topicName;
+        }
+
+        public String getTopicName() {
+            return topicName;
         }
 
         public String getTitle() {

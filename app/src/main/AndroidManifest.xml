@@ -88,6 +88,7 @@
         <service
             android:name=".voip.SipService"
             android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>
