@@ -35,7 +35,7 @@ public class Receiver extends InjectedBroadcastReceiver {
     @Inject
     protected Log mLog;
     @Inject
-    @Named("sip_user")
+    @Named("login")
     protected PreferenceEndPoint mPreferenceEndPoint;
 
 
@@ -125,14 +125,16 @@ public class Receiver extends InjectedBroadcastReceiver {
         }
         if (TextUtils.isEmpty(username)
                 || TextUtils.isEmpty(password)) {
-            username = mPreferenceEndPoint.getStringPreference("username", null);
+            username = mPreferenceEndPoint.getStringPreference("phone", null);
             password = mPreferenceEndPoint.getStringPreference("password", null);
             mLog.d(TAG, "Username is %s", username);
             mLog.d(TAG, "Password is %s", password);
         }
         if (!TextUtils.isEmpty(username)
                 && !TextUtils.isEmpty(password)) {
-            if (manager == null || register.getCurrentState() == RegisterSip.UNDEFINED) {
+            if (manager == null || register.getCurrentState() == RegisterSip.UNDEFINED
+                    ||
+                    register.getCurrentState() == RegisterSip.UNREGISTERED) {
                 manager = SipManager.newInstance(context);
                 register = new RegisterSip(mLog, manager, profile, context, username, password,
                         DOMAIN_ADDRESS);

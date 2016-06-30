@@ -77,6 +77,11 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
+        String phone = preferenceEndPoint.getStringPreference("phone");
+        if(!TextUtils.isEmpty(phone)){
+            startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
+            finish();
+        }
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
