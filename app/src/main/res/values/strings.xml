@@ -79,4 +79,9 @@
     <string name="dialpad_pound_letters"></string>
     <string name="yo_app_call">Yo App Call</string>
 
+    <string-array name="topics_arrays">
+        <item>Top Stories</item>
+        <item>Entrepreneurship</item>
+    </string-array>
+
 </resources>
