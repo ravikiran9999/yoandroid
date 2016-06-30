@@ -6,7 +6,7 @@ package com.yo.android.model;
 
 public class Registration {
 
-    private String emailId;
+    //private String emailId;
     private String password;
     private String phoneNumber;
 
@@ -14,15 +14,15 @@ public class Registration {
         // empty default constructor, necessary for Firebase to be able to deserialize
     }
 
-    public Registration(String emailId, String password, String phoneNumber) {
-        this.emailId = emailId;
+    public Registration(String password, String phoneNumber) {
+        //this.emailId = emailId;
         this.password = password;
         this.phoneNumber = phoneNumber;
     }
 
-    public String getEmailId() {
+    /*public String getEmailId() {
         return emailId;
-    }
+    }*/
 
     public String getPassword() {
         return password;

@@ -10,6 +10,7 @@ import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.SettingsActivity;
+import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.Receiver;
@@ -39,7 +40,8 @@ import dagger.Provides;
                 OutGoingCallActivity.class,
                 SipService.class,
                 Receiver.class,
-                InComingCallActivity.class
+                InComingCallActivity.class,
+                SplashScreenActivity.class
 
         },
         includes = {

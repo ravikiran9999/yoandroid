@@ -31,8 +31,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.model.Registration;
@@ -77,9 +81,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -95,8 +96,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         mPhoneNumberView = (EditText) findViewById(R.id.phone);
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        Button mPhoneSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mPhoneSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -174,11 +175,10 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private void attemptLogin() {
 
         // Reset errors.
-        mEmailView.setError(null);
+        mPhoneNumberView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
         String phoneNumber = mPhoneNumberView.getText().toString();
 
@@ -193,15 +193,15 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(phoneNumber)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } /*else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
-        }
+        }*/
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -212,7 +212,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             // perform the user login attempt.
             showProgress(true);
             //signin(email, password, phoneNumber);
-            sendRegistrationToServer(email, password, phoneNumber);
+            sendRegistrationToServer( password, phoneNumber);
 
         }
     }
@@ -343,15 +343,16 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 });
     }
 
-    private void sendRegistrationToServer(@NonNull String email, @NonNull String password, @NonNull String phoneNumber) {
+    private void sendRegistrationToServer(@NonNull String password, @NonNull String phoneNumber) {
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.APP_USERS);
-        Registration registration = new Registration(email, password, phoneNumber);
+
+        Registration registration = new Registration(password, phoneNumber);
         DatabaseReference reference = databaseReference.push();
         reference.setValue(registration);
         showProgress(false);
         preferenceEndPoint.saveStringPreference("phone", phoneNumber);
-        preferenceEndPoint.saveStringPreference("email", email);
+        //preferenceEndPoint.saveStringPreference("email", email);
         preferenceEndPoint.saveStringPreference("password", password);
         startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
     }
@@ -368,6 +369,40 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    private void getRegisteredAppUsers() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.APP_USERS);
+
+        // Retrieve new posts as they are added to the database
+        reference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Registration registeredUsers = dataSnapshot.getValue(Registration.class);
+
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
     }
 }
 
