@@ -3,6 +3,11 @@ package com.yo.android.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.ViewGroup;
+
+import com.yo.android.R;
+import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.fragments.ContactsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +20,11 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
-    public TabsPagerAdapter(final FragmentManager manager) {
+    private ProgressBar progressBar;
+
+    public TabsPagerAdapter(final FragmentManager manager, ProgressBar progressBar) {
         super(manager);
+        this.progressBar = progressBar;
     }
 
     @Override
@@ -43,4 +51,16 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         return mFragmentTitleList.get(position);
     }
 
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        if (position == 3) {
+            //progressBar.showProgress();
+        }
+
+        super.setPrimaryItem(container, position, object);
+    }
+
+    public interface ProgressBar {
+        void showProgress();
+    }
 }
