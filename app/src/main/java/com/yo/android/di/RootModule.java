@@ -5,11 +5,16 @@ import android.content.Context;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
+import com.yo.android.chat.ui.BaseFragment;
+import com.yo.android.chat.ui.ContactsFragment;
 import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.chat.ui.OTPFragment;
+import com.yo.android.chat.ui.SignupActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.SettingsActivity;
+import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.Receiver;
@@ -39,7 +44,15 @@ import dagger.Provides;
                 OutGoingCallActivity.class,
                 SipService.class,
                 Receiver.class,
-                InComingCallActivity.class
+                InComingCallActivity.class,
+                SplashScreenActivity.class,
+                SignupActivity.class,
+
+                //Fragments
+                ContactsFragment.class,
+                BaseFragment.class,
+                OTPFragment.class
+
 
         },
         includes = {

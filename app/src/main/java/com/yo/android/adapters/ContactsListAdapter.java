@@ -30,6 +30,6 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
     @Override
     public void bindView(int position, RegisteredContactsViewHolder holder, Registration item) {
         holder.getContactNumber().setText(item.getPhoneNumber());
-        holder.getContactMail().setText(item.getEmailId());
+        //holder.getContactMail().setText(item.getEmailId());
     }
 }
