@@ -21,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,8 +48,9 @@ public class MagazineFlipArticlesFragment extends Fragment {
     private static List<Travels.Data> articlesList = new ArrayList<Travels.Data>();
     private MyReceiver myReceiver;
 
-    public MagazineFlipArticlesFragment() {
+    public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
         // Required empty public constructor
+        magazineTopicsSelectionFragment = fragment;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class MagazineFlipArticlesFragment extends Fragment {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_magazines, container, false);
 
-        magazineTopicsSelectionFragment = (MagazineTopicsSelectionFragment) getFragmentManager().findFragmentById(R.id.topics_selection_fragment);
+//        magazineTopicsSelectionFragment = (MagazineTopicsSelectionFragment) getFragmentManager().findFragmentById(R.id.topics_selection_fragment);
         /*for(int i=0; i<Travels.getImgDescriptions().size(); i++) {
             if (magazineTopicsSelectionFragment.getSelectedTopic().equals(Travels.getImgDescriptions().get(i).getTopicName())) {
                 //articlesList = new ArrayList<Travels.Data>();
@@ -74,8 +77,8 @@ public class MagazineFlipArticlesFragment extends Fragment {
         }
         flipView = new FlipViewController(getActivity());
         flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));*/
-        loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
         flipView = new FlipViewController(getActivity());
+        loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
         flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));
 
         return flipView;
@@ -176,6 +179,15 @@ public class MagazineFlipArticlesFragment extends Fragment {
                 UI
                         .<TextView>findViewById(layout, R.id.tv_article_short_desc)
                         .setText(Html.fromHtml(data.getDescription()));
+
+                UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            Toast.makeText(context, "You have liked the article " + data.getTitle() , Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
 
            /* UI
                     .<Button>findViewById(layout, R.id.wikipedia)

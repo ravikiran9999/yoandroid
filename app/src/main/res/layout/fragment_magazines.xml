@@ -1,18 +1,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
 
-<fragment android:name="com.yo.android.flip.MagazineTopicsSelectionFragment"
+    <FrameLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
+
+<!--
+    <fragment
         android:id="@+id/topics_selection_fragment"
+        android:name="com.yo.android.flip.MagazineTopicsSelectionFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <fragment android:name="com.yo.android.flip.MagazineFlipArticlesFragment"
+    <fragment
         android:id="@+id/flip_articles_fragment"
+        android:name="com.yo.android.flip.MagazineFlipArticlesFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+-->
 
 </LinearLayout>
