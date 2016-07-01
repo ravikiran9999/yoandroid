@@ -76,28 +76,27 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".voip.InComingCallActivity"
+            android:excludeFromRecents="true"
             android:label="@string/yo_app_call"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity=".incoming"
-            android:excludeFromRecents="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".voip.OutGoingCallActivity"
+            android:excludeFromRecents="true"
             android:label="@string/yo_app_call"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity=".outgoing"
-            android:excludeFromRecents="true"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".voip.SipService"
-
             android:screenOrientation="portrait" />
 
-        <activity android:name=".chat.ui.SignupActivity"/>
-
+        <activity android:name=".chat.ui.SignupActivity" />
+        <activity android:name=".flip.MagazineArticleDetailsActivity"></activity>
     </application>
 
 </manifest>
