@@ -51,8 +51,8 @@ public class Receiver extends InjectedBroadcastReceiver {
                     doSipRegistration(context, intent);
                 } else {
                     mLog.e(TAG, "DEVICE ERROR - %s", "SIP NOT SUPPORTED");
-                    Toast.makeText(context, "VoIP is not supported in your device",
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "VoIP is not supported in your device",
+//                            Toast.LENGTH_SHORT).show();
 
                 }
             }

@@ -44,7 +44,7 @@
                 android:text="India\n$0.5/min"
                 android:textColor="@color/colorPrimary" />
 
-            <com.yo.android.voip.DigitsEditText
+            <com.yo.android.voip.DigitsEditText xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/digits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,7 +62,8 @@
                 android:textColor="@color/dialpad_digits_text_color"
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/dialpad_digits_text_size"
-                android:textStyle="normal" />
+                android:textStyle="normal"
+                app:resizing_text_min_size="14sp" />
         </RelativeLayout>
 
         <View

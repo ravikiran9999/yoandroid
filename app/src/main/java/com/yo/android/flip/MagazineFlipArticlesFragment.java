@@ -12,13 +12,17 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,21 +48,27 @@ public class MagazineFlipArticlesFragment extends Fragment {
     private static List<Travels.Data> articlesList = new ArrayList<Travels.Data>();
     private MyReceiver myReceiver;
 
-    public MagazineFlipArticlesFragment() {
+    public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
         // Required empty public constructor
+        magazineTopicsSelectionFragment = fragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        IntentFilter filter = new IntentFilter("com.yo.magazine.SendBroadcast");
+        myReceiver = new MyReceiver();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myReceiver, filter);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_magazines, container, false);
-        IntentFilter filter = new IntentFilter("com.yo.magazine.SendBroadcast");
-        myReceiver = new MyReceiver();
-        getActivity().getApplicationContext().registerReceiver(myReceiver, filter);
 
-        magazineTopicsSelectionFragment = (MagazineTopicsSelectionFragment)getFragmentManager().findFragmentById(R.id.topics_selection_fragment);
+//        magazineTopicsSelectionFragment = (MagazineTopicsSelectionFragment) getFragmentManager().findFragmentById(R.id.topics_selection_fragment);
         /*for(int i=0; i<Travels.getImgDescriptions().size(); i++) {
             if (magazineTopicsSelectionFragment.getSelectedTopic().equals(Travels.getImgDescriptions().get(i).getTopicName())) {
                 //articlesList = new ArrayList<Travels.Data>();
@@ -67,30 +77,36 @@ public class MagazineFlipArticlesFragment extends Fragment {
         }
         flipView = new FlipViewController(getActivity());
         flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));*/
-        loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
         flipView = new FlipViewController(getActivity());
+        loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
         flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));
 
         return flipView;
     }
 
     public void loadArticles(String selectedTopic) {
-        for(int i=0; i<Travels.getImgDescriptions().size(); i++) {
+        articlesList.clear();
+        for (int i = 0; i < Travels.getImgDescriptions().size(); i++) {
             //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(Travels.getImgDescriptions().get(i).getTopicName())) {
-            if (selectedTopic.equals(Travels.getImgDescriptions().get(i).getTopicName())) {
+            if (selectedTopic.equalsIgnoreCase(Travels.getImgDescriptions().get(i).getTopicName())) {
                 //articlesList = new ArrayList<Travels.Data>();
                 articlesList.add(Travels.getImgDescriptions().get(i));
             }
         }
-        MyBaseAdapter adapter = new MyBaseAdapter(getActivity(),flipView);
+        MyBaseAdapter adapter = new MyBaseAdapter(getActivity(), flipView);
+        flipView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        /*flipView = new FlipViewController(getActivity());
-        flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));*/
     }
 
     public void onDestroyView() {
         super.onDestroyView();
-        getActivity().getApplicationContext().unregisterReceiver(myReceiver);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myReceiver);
     }
 
     @Override
@@ -99,7 +115,6 @@ public class MagazineFlipArticlesFragment extends Fragment {
         flipView.onResume();
     }
 
-    @Override
     public void onPause() {
         super.onPause();
         flipView.onPause();
@@ -149,21 +164,30 @@ public class MagazineFlipArticlesFragment extends Fragment {
             }
 
             final Travels.Data data = Travels.getImgDescriptions().get(position);
-            if(magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
+            if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
                 //articlesList = new ArrayList<Travels.Data>();
                 articlesList.add(data);
 
                 UI
                         .<TextView>findViewById(layout, R.id.tv_category_name)
-                        .setText(AphidLog.format("%d. %s", position, data.getTopicName()));
+                        .setText(AphidLog.format("%s", data.getTopicName()));
 
                 UI
                         .<TextView>findViewById(layout, R.id.tv_article_title)
-                        .setText(AphidLog.format("%d. %s", position, data.getTitle()));
+                        .setText(AphidLog.format("%s", data.getTitle()));
 
                 UI
                         .<TextView>findViewById(layout, R.id.tv_article_short_desc)
                         .setText(Html.fromHtml(data.getDescription()));
+
+                UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            Toast.makeText(context, "You have liked the article " + data.getTitle() , Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
 
            /* UI
                     .<Button>findViewById(layout, R.id.wikipedia)
@@ -293,7 +317,6 @@ public class MagazineFlipArticlesFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub
             Toast.makeText(context, "Broadcast Intent Detected." + intent.getStringExtra("SelectedTopic"),
                     Toast.LENGTH_LONG).show();
             String selectedTopic = intent.getStringExtra("SelectedTopic");
@@ -302,4 +325,4 @@ public class MagazineFlipArticlesFragment extends Fragment {
     }
 
 
-    }
+}

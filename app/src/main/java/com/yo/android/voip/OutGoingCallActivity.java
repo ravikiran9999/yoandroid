@@ -55,7 +55,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             callerName.setText(getIntent().getStringExtra(CALLER_NO));
         }
         callerName.setText(getIntent().getStringExtra(CALLER_NO));
-        callDuration.setText("Connecting...");
+        callDuration.setText("Calling...");
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(VoipConstants.CALL_ACTION_OUT_GOING);
         Bundle callBundle = new Bundle();
