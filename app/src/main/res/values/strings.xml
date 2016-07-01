@@ -27,6 +27,10 @@
     <string name="verify">Verify</string>
     <string name="enter_otp">Enetr OTP</string>
 
+    <!--chat-->
+    <string name="send">Send</string>
+
+
     <string name="enter_mobile_number">Enter your mobile number to get started!</string>
 
     <string name="magazines_fragment">Hello magazine fragment</string>
