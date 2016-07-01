@@ -15,18 +15,15 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,12 +37,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.util.DatabaseConstant;
+import com.yo.android.vox.OTPBody;
+import com.yo.android.vox.VoxApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static android.Manifest.permission.READ_CONTACTS;
+
 
 /**
  * A login screen that offers login via email/password.
@@ -80,12 +86,20 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
+    @Inject
+    VoxApi.VoxService voxService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
+        String phone = preferenceEndPoint.getStringPreference("phone");
+        if (!TextUtils.isEmpty(phone)) {
+            startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
+            finish();
+        }
+
 
         mPhoneNumberView = (EditText) findViewById(R.id.sign_in_phone);
 
@@ -111,7 +125,22 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 }
             }
         };
+        OTPBody otpBody = new com.yo.android.vox.OTPBody();
+        Gson gson = new Gson();
+        String json = gson.toJson(otpBody);
+        Log.d("Ramesh", json);
 
+        voxService.sendOTP(otpBody).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     private void populateAutoComplete() {
@@ -173,7 +202,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         boolean cancel = false;
         View focusView = null;
-
 
 
         // Check for a valid email address.

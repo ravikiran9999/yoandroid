@@ -57,7 +57,8 @@ import dagger.Provides;
         },
         includes = {
                 AppModule.class,
-                SharedPreferencesModule.class
+                SharedPreferencesModule.class,
+                NetWorkModule.class
         }
 )
 
