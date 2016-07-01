@@ -184,10 +184,27 @@ public class MagazineFlipArticlesFragment extends Fragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
-                            Toast.makeText(context, "You have liked the article " + data.getTitle() , Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
+
+                UI
+                        .<TextView>findViewById(layout, R.id.tv_category_full_story)
+                        .setText(AphidLog.format("%s", data.getTitle()));
+                UI
+                        .<TextView>findViewById(layout, R.id.tv_category_full_story)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                                intent.putExtra("Title", data.getTitle());
+                                String detailedDesc = Html.fromHtml(data.getDescription()).toString();
+                                intent.putExtra("DetailedDesc", detailedDesc);
+                                intent.putExtra("Image", data.getImageFilename());
+                                context.startActivity(intent);
+                            }
+                        });
 
            /* UI
                     .<Button>findViewById(layout, R.id.wikipedia)
