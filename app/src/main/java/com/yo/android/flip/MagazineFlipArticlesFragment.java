@@ -335,8 +335,8 @@ public class MagazineFlipArticlesFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "Broadcast Intent Detected." + intent.getStringExtra("SelectedTopic"),
-                    Toast.LENGTH_LONG).show();
+            /*Toast.makeText(context, "Broadcast Intent Detected." + intent.getStringExtra("SelectedTopic"),
+                    Toast.LENGTH_LONG).show();*/
             String selectedTopic = intent.getStringExtra("SelectedTopic");
             loadArticles(selectedTopic);
         }

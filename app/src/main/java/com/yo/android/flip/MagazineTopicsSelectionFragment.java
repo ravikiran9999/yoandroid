@@ -43,9 +43,9 @@ public class MagazineTopicsSelectionFragment extends Fragment implements Adapter
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(parent.getContext(),
+        /*Toast.makeText(parent.getContext(),
                 "Selected topic : " + parent.getItemAtPosition(position).toString(),
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT).show();*/
         selectedTopic = parent.getItemAtPosition(position).toString();
         Intent intent = new Intent();
         intent.setAction("com.yo.magazine.SendBroadcast");
