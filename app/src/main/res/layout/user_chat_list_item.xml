@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linear"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <!--<TextView
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
         android:id="@+id/time_stamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Message"
-        android:layout_margin="10dp"
-        />-->
+        android:layout_gravity="right"
+        android:textColor="@android:color/black"
+        tools:text="3:53" />
+
     <TextView
         android:id="@+id/tv_chat_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:layout_below="@+id/time_stamp"
         android:textColor="@android:color/black"
-        android:text="Message"
-        android:layout_margin="10dp"
-        />
+        tools:text="Message" />
 
 </LinearLayout>

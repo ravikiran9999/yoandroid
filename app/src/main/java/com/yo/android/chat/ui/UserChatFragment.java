@@ -28,7 +28,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends Fragment implements View.OnClickListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener {
 
     private DatabaseHelper databaseHelper;
     private UserChatAdapter userChatAdapter;
@@ -46,8 +46,11 @@ public class UserChatFragment extends Fragment implements View.OnClickListener {
         databaseHelper = new DatabaseHelper(getActivity().getApplicationContext());
 
         Bundle bundle = this.getArguments();
+        String child = bundle.getString(DatabaseConstant.CHAT_ROOM_ID);
         DatabaseReference roomReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.ROOM_ID);
-        roomIdReference = roomReference.child(bundle.getString(DatabaseConstant.CHAT_ROOM_ID));
+        if (child != null) {
+            roomIdReference = roomReference.child(child);
+        }
         getMessageFromDatabase();
 
     }
@@ -62,7 +65,7 @@ public class UserChatFragment extends Fragment implements View.OnClickListener {
         Button button = (Button) view.findViewById(R.id.send);
         chatText = (TextView) view.findViewById(R.id.chat_text);
         chatMessageArray = new ArrayList<>();
-        userChatAdapter = new UserChatAdapter(getActivity().getApplicationContext());
+        userChatAdapter = new UserChatAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference("phone"));
         listView.setAdapter(userChatAdapter);
 
         button.setOnClickListener(this);
@@ -72,24 +75,24 @@ public class UserChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         String message = chatText.getText().toString();
-
-        //sendChatMessage(message, userName);
-        sendChatMessage(message);
+        String userId = preferenceEndPoint.getStringPreference("phone");
+        sendChatMessage(message, userId);
         if (chatText.getText() != null) {
             chatText.setText("");
         }
     }
 
-    //private void sendChatMessage(@NonNull String message, @NonNull String userName) {
-    private void sendChatMessage(@NonNull String message) {
-
+    private void sendChatMessage(@NonNull String message, @NonNull String userId) {
+        long timestamp = System.currentTimeMillis();
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(message);
-        //chatMessage.setSenderID(userName);
+        chatMessage.setTime(timestamp);
+        chatMessage.setSenderID(userId);
 
         DatabaseReference reference = roomIdReference.push();
         reference.setValue(chatMessage);
     }
+
     private void getMessageFromDatabase() {
 
         // Retrieve new posts as they are added to the database
