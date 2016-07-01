@@ -41,7 +41,7 @@ dependencies {
 
     // ormlite
     // firebase
-    
+
 
     compile project(":flip")
 
@@ -58,11 +58,9 @@ dependencies {
     compile 'com.android.support:support-v4:23.4.0'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
+    compile 'de.greenrobot:eventbus:2.4.0'
     testCompile 'junit:junit:4.12'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-    compile 'de.greenrobot:eventbus:2.4.0'
-    compile project(":flip")
-
 }
 apply plugin: 'com.google.gms.google-services'
 

@@ -6,8 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.di.Injector;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by Ramesh on 14/1/16.
@@ -21,6 +27,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     public AbstractBaseAdapter(Context context) {
         mContext = context;
         mList = new ArrayList<>();
+
     }
 
 
