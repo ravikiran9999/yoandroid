@@ -21,6 +21,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     public AbstractBaseAdapter(Context context) {
         mContext = context;
         mList = new ArrayList<>();
+
     }
 
 

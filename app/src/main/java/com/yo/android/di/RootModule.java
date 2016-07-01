@@ -10,6 +10,7 @@ import com.yo.android.chat.ui.ContactsFragment;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.OTPFragment;
 import com.yo.android.chat.ui.SignupActivity;
+import com.yo.android.chat.ui.UserChatFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
@@ -53,7 +54,8 @@ import dagger.Provides;
                 //Fragments
                 ContactsFragment.class,
                 BaseFragment.class,
-                OTPFragment.class
+                OTPFragment.class,
+                UserChatFragment.class
 
 
         },

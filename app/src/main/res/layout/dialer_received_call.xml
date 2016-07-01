@@ -44,8 +44,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="40dp"
-            android:background="@color/colorPrimary"
-            android:src="@drawable/ic_dialer_call_end" />
+            android:src="@drawable/ic_incoming_disconnect_call" />
 
         <ImageView
             android:id="@+id/btnAcceptCall"
@@ -53,8 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@color/dial_green"
-            android:src="@drawable/ic_dialer_call" />
+            android:src="@drawable/ic_call" />
 
 
         <ImageView
@@ -63,7 +61,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="40dp"
-            android:background="@drawable/ic_dialer_message" />
+            android:background="@drawable/ic_sms_to_incoming_call" />
 
 
     </RelativeLayout>

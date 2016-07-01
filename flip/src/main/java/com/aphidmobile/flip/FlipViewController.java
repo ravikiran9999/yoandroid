@@ -309,7 +309,7 @@ public class FlipViewController extends AdapterView<Adapter> {
       return;
     }
 
-    Assert.assertTrue("Invalid selection position", position >= 0 && position < adapterDataCount);
+
 
     releaseViews();
 

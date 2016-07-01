@@ -59,6 +59,9 @@ public class MagazineTopicsSelectionFragment extends Fragment implements Adapter
     }
 
     public String getSelectedTopic() {
+        if (selectedTopic == null) {
+            selectedTopic = "";
+        }
         return selectedTopic;
     }
 

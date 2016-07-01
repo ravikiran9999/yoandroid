@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="10dp">
 
 
     <com.yo.android.voip.DialPadView
@@ -41,6 +42,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:drawableLeft="@drawable/ic_country_list"
+                android:drawablePadding="10dp"
                 android:text="India\n$0.5/min"
                 android:textColor="@color/colorPrimary" />
 
@@ -76,24 +79,43 @@
         <include layout="@layout/dialpad" />
     </com.yo.android.voip.DialPadView>
 
-    <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/btnCall"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_margin="10dp"
-        android:src="@drawable/fab_ic_call"
-        android:text="Dial"
-        app:backgroundTint="@color/dial_green" />
+        android:gravity="center_vertical">
 
-    <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
+        <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_message"
+            android:text="Dial" />
+
+        <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/btnCall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_call"
+            android:text="Dial" />
+
+
+        <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_phonebook" />
+
+    </LinearLayout>
+
+    <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/btnDialer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_margin="10dp"
-        android:src="@drawable/fab_ic_dial"
-        android:text="Dial"
-        app:backgroundTint="@color/colorPrimaryDark" />
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_red_dialer"
+        android:text="Dial" />
+
 
 </FrameLayout>
