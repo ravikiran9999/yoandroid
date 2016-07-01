@@ -91,9 +91,11 @@
 
         <service
             android:name=".voip.SipService"
+
             android:screenOrientation="portrait" />
 
-        <activity android:name=".chat.ui.SignupActivity"></activity>
+        <activity android:name=".chat.ui.SignupActivity"/>
+
     </application>
 
 </manifest>

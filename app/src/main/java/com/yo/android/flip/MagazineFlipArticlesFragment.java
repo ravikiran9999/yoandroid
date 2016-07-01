@@ -1,44 +1,25 @@
-/*
-Copyright 2012 Aphid Mobile
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
- 
-	 http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
- */
-
 package com.yo.android.flip;
 
-import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,34 +30,77 @@ import com.aphidmobile.utils.UI;
 import com.yo.android.R;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public class FlipAsyncContentActivity extends Activity {
+/**
+ * Created by creatives on 6/30/2016.
+ */
+public class MagazineFlipArticlesFragment extends Fragment {
 
     private FlipViewController flipView;
+    private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
+    private static List<Travels.Data> articlesList = new ArrayList<Travels.Data>();
+    private MyReceiver myReceiver;
 
-    //private Spinner topicsSpinner;
+    public MagazineFlipArticlesFragment() {
+        // Required empty public constructor
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        //return inflater.inflate(R.layout.fragment_magazines, container, false);
+        IntentFilter filter = new IntentFilter("com.yo.magazine.SendBroadcast");
+        myReceiver = new MyReceiver();
+        getActivity().getApplicationContext().registerReceiver(myReceiver, filter);
 
-        setTitle("FlipPagesSample");
+        magazineTopicsSelectionFragment = (MagazineTopicsSelectionFragment)getFragmentManager().findFragmentById(R.id.topics_selection_fragment);
+        /*for(int i=0; i<Travels.getImgDescriptions().size(); i++) {
+            if (magazineTopicsSelectionFragment.getSelectedTopic().equals(Travels.getImgDescriptions().get(i).getTopicName())) {
+                //articlesList = new ArrayList<Travels.Data>();
+                articlesList.add(Travels.getImgDescriptions().get(i));
+            }
+        }
+        flipView = new FlipViewController(getActivity());
+        flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));*/
+        loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
+        flipView = new FlipViewController(getActivity());
+        flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));
 
-        flipView = new FlipViewController(this);
-        flipView.setAdapter(new MyBaseAdapter(this, flipView));
+        return flipView;
+    }
 
-        setContentView(flipView);
+    public void loadArticles(String selectedTopic) {
+        for(int i=0; i<Travels.getImgDescriptions().size(); i++) {
+            //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(Travels.getImgDescriptions().get(i).getTopicName())) {
+            if (selectedTopic.equals(Travels.getImgDescriptions().get(i).getTopicName())) {
+                //articlesList = new ArrayList<Travels.Data>();
+                articlesList.add(Travels.getImgDescriptions().get(i));
+            }
+        }
+        MyBaseAdapter adapter = new MyBaseAdapter(getActivity(),flipView);
+        adapter.notifyDataSetChanged();
+        /*flipView = new FlipViewController(getActivity());
+        flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));*/
+    }
+
+    public void onDestroyView() {
+        super.onDestroyView();
+        getActivity().getApplicationContext().unregisterReceiver(myReceiver);
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         flipView.onResume();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         flipView.onPause();
     }
@@ -103,7 +127,8 @@ public class FlipAsyncContentActivity extends Activity {
 
         @Override
         public int getCount() {
-            return Travels.getImgDescriptions().size();
+            return articlesList.size();
+            //return Travels.getImgDescriptions().size();
         }
 
         @Override
@@ -124,14 +149,21 @@ public class FlipAsyncContentActivity extends Activity {
             }
 
             final Travels.Data data = Travels.getImgDescriptions().get(position);
+            if(magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
+                //articlesList = new ArrayList<Travels.Data>();
+                articlesList.add(data);
 
-            UI
-                    .<TextView>findViewById(layout, R.id.tv_article_title)
-                    .setText(AphidLog.format("%d. %s", position, data.getTitle()));
+                UI
+                        .<TextView>findViewById(layout, R.id.tv_category_name)
+                        .setText(AphidLog.format("%d. %s", position, data.getTopicName()));
 
-            UI
-                    .<TextView>findViewById(layout, R.id.tv_article_short_desc)
-                    .setText(Html.fromHtml(data.getDescription()));
+                UI
+                        .<TextView>findViewById(layout, R.id.tv_article_title)
+                        .setText(AphidLog.format("%d. %s", position, data.getTitle()));
+
+                UI
+                        .<TextView>findViewById(layout, R.id.tv_article_short_desc)
+                        .setText(Html.fromHtml(data.getDescription()));
 
            /* UI
                     .<Button>findViewById(layout, R.id.wikipedia)
@@ -146,29 +178,30 @@ public class FlipAsyncContentActivity extends Activity {
                         }
                     });
 */
-            ImageView photoView = UI.findViewById(layout, R.id.photo);
-            //Use an async task to load the bitmap
-            boolean needReload = true;
-            AsyncImageTask previousTask = AsyncDrawable.getTask(photoView);
-            if (previousTask != null) {
-                //check if the convertView happens to be previously used
-                if (previousTask.getPageIndex() == position && previousTask.getImageName()
-                        .equals(data.getImageFilename())) {
-                    needReload = false;
-                } else {
-                    previousTask.cancel(true);
+                ImageView photoView = UI.findViewById(layout, R.id.photo);
+                //Use an async task to load the bitmap
+                boolean needReload = true;
+                AsyncImageTask previousTask = AsyncDrawable.getTask(photoView);
+                if (previousTask != null) {
+                    //check if the convertView happens to be previously used
+                    if (previousTask.getPageIndex() == position && previousTask.getImageName()
+                            .equals(data.getImageFilename())) {
+                        needReload = false;
+                    } else {
+                        previousTask.cancel(true);
+                    }
                 }
-            }
 
-            if (needReload) {
-                AsyncImageTask
-                        task =
-                        new AsyncImageTask(layout.getContext().getAssets(), photoView, controller, position,
-                                data.getImageFilename());
-                photoView
-                        .setImageDrawable(new AsyncDrawable(context.getResources(), placeholderBitmap, task));
+                if (needReload) {
+                    AsyncImageTask
+                            task =
+                            new AsyncImageTask(layout.getContext().getAssets(), photoView, controller, position,
+                                    data.getImageFilename());
+                    photoView
+                            .setImageDrawable(new AsyncDrawable(context.getResources(), placeholderBitmap, task));
 
-                task.execute();
+                    task.execute();
+                }
             }
 
 
@@ -255,4 +288,18 @@ public class FlipAsyncContentActivity extends Activity {
             }
         }
     }
-}
+
+    public class MyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            Toast.makeText(context, "Broadcast Intent Detected." + intent.getStringExtra("SelectedTopic"),
+                    Toast.LENGTH_LONG).show();
+            String selectedTopic = intent.getStringExtra("SelectedTopic");
+            loadArticles(selectedTopic);
+        }
+    }
+
+
+    }

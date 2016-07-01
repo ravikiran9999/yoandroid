@@ -8,15 +8,17 @@ import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.orion.android.common.logger.Log;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
+import de.greenrobot.event.EventBus;
 
 
 public class UserAgent {
+
     private static final String TAG = "UserAgent";
+    public static final String ACTION_CALL_END = "com.yo.android.voip.UserAgent.CALL_END";
     public static final int CALL_STATE_IDLE = 0;
     public static final int CALL_STATE_INCOMING_CALL = 1;
     public static final int CALL_STATE_OUTGOING_CALL = 2;
@@ -131,7 +133,7 @@ public class UserAgent {
         }
     }
 
-    @Subscribe
+    //    @Subscribe
     public void onEvent(SipCallModel model) {
         mLog.d("BUSSS CALLED", "<><> USER-AGENT BUS CALLED <><>");
         if (model.isOnCall() && callState == CALL_STATE_INCOMING_CALL) {
@@ -266,6 +268,7 @@ public class UserAgent {
 
         @Override
         public void onCallEnded(SipAudioCall call) {
+            super.onCallEnded(call);
             mLog.d(TAG, "UserAgent.INCOMING_CALL - CALL ENDED");
             endCall(CALL_STATE_END);
         }
@@ -306,22 +309,23 @@ public class UserAgent {
             endCall(CALL_STATE_ERROR);
         }
 
-        private void endCall(int reason) {
-            try {
-                changeStatus(reason);
-                callModel.setOnCall(false);
-                bus.post(callModel);
-
-                UserAgent.call.endCall();
-                UserAgent.call.close();
-                changeStatus(CALL_STATE_IDLE);
-                bus.post(callModel);
-            } catch (Exception e) {
-                mLog.w(TAG, e);
-            }
-        }
 
     };
+
+    private void endCall(int reason) {
+        try {
+            changeStatus(reason);
+            callModel.setEvent(reason);
+            callModel.setOnCall(false);
+            UserAgent.call.endCall();
+            UserAgent.call.close();
+            changeStatus(CALL_STATE_IDLE);
+            bus.post(callModel);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_CALL_END));
+        } catch (Exception e) {
+            mLog.w(TAG, e);
+        }
+    }
 
     SipAudioCall.Listener outgoingCallListener = new SipAudioCall.Listener() {
 
@@ -333,8 +337,9 @@ public class UserAgent {
         public void onCallBusy(SipAudioCall call) {
             mLog.d(TAG, "UserAgent.outgoingCallListener - OnCallBusy");
             callModel.setOnCall(false);
-            callModel.setEvent(SipCallModel.CALL_BUSY);
+            callModel.setEvent(CALL_STATE_BUSY);
             bus.post(callModel);
+            endCall(CALL_STATE_BUSY);
             super.onCallBusy(call);
         }
 
@@ -345,8 +350,10 @@ public class UserAgent {
         public void onError(SipAudioCall call, int errorCode, String errorMessage) {
             mLog.d(TAG, "UserAgent.outgoingCallListener: Error Code= %d", errorCode);
             mLog.d(TAG, "UserAgent.outgoingCallListener Error Message= %s", errorMessage);
-            callModel.setEvent(SipCallModel.CALL_ERROR);
+            callModel.setEvent(CALL_STATE_ERROR);
             callModel.setOnCall(false);
+            bus.post(callModel);
+            endCall(CALL_STATE_ERROR);
             super.onError(call, errorCode, errorMessage);
         }
 
@@ -377,7 +384,9 @@ public class UserAgent {
                 mLog.e(TAG, "UserAgent/outgoingCallListener", e);
             }
             callModel.setOnCall(false);
+            endCall(CALL_STATE_ERROR);
             bus.post(callModel);
+
         }
 
 
@@ -386,7 +395,6 @@ public class UserAgent {
             super.onRingingBack(call);
             mLog.d(TAG, "OUTGOINGCALL/ONRINGINGBACK - %s", "onRingingBack");
         }
-
 
         @Override
         public void onChanged(SipAudioCall call) {

@@ -1,11 +1,15 @@
 package com.yo.android.voip;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -13,8 +17,8 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.ui.BaseActivity;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
+import de.greenrobot.event.EventBus;
+
 
 /**
  * Created by Ramesh on 26/6/16.
@@ -81,6 +85,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         log.setCallMode(VoipConstants.CALL_MODE_VOIP);
         player = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
         player.start();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
 
     }
 
@@ -102,6 +107,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     protected void onDestroy() {
         super.onDestroy();
         bus.unregister(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 
     @Override
@@ -144,20 +150,23 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         log.setCallType(VoipConstants.CALL_DIRECTION_IN);
         mReceivedCallHeader.setVisibility(View.VISIBLE);
         mInComingHeader.setVisibility(View.GONE);
-        try {
-            player.stop();
-            player.release();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        stopRinging();
         mLog.d("BUS", "ONCALLACCEPTED");
         callModel.setOnCall(true);
         bus.post(callModel);
         startTimer();
     }
 
+    private void stopRinging() {
+        try {
+            player.stop();
+            player.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    @Subscribe
+    //    @Subscribe
     public void onEvent(SipCallModel model) {
         if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
             runOnUiThread(new Runnable() {
@@ -165,6 +174,21 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     startTimer();
                 }
             });
+        } else if (!model.isOnCall()) {
+            if (model.getEvent() == UserAgent.CALL_STATE_BUSY
+                    || model.getEvent() == UserAgent.CALL_STATE_ERROR
+                    || model.getEvent() == UserAgent.CALL_STATE_END
+                    ) {
+                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mToastFactory.showToast("Call ended.");
+                    }
+                });
+
+            }
+
         }
     }
 
@@ -193,4 +217,19 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 //        super.onBackPressed();
         moveTaskToBack(true);
     }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            stopRinging();
+            finish();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mToastFactory.showToast("Call ended.");
+                }
+            });
+
+        }
+    };
 }

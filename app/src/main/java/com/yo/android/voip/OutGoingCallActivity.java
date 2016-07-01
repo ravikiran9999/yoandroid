@@ -11,8 +11,8 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.ui.BaseActivity;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
+import de.greenrobot.event.EventBus;
+
 
 /**
  * Created by Ramesh on 26/6/16.
@@ -120,7 +120,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-    @Subscribe
+    //    @Subscribe
     public void onEvent(SipCallModel model) {
         if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
             runOnUiThread(new Runnable() {
@@ -129,12 +129,17 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 }
             });
         } else if (!model.isOnCall()) {
-            if (model.getEvent() == SipCallModel.CALL_BUSY
-                    || model.getEvent() == SipCallModel.CALL_ERROR
-                    || model.getEvent() == SipCallModel.CALL_END
+            if (model.getEvent() == UserAgent.CALL_STATE_BUSY
+                    || model.getEvent() == UserAgent.CALL_STATE_ERROR
+                    || model.getEvent() == UserAgent.CALL_STATE_END
                     ) {
                 finish();
-                mToastFactory.showToast("Call ended.");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mToastFactory.showToast("Call ended.");
+                    }
+                });
             }
 
         }
