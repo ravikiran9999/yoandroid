@@ -10,11 +10,8 @@ import com.yo.android.chat.ui.ContactsFragment;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.OTPFragment;
 import com.yo.android.chat.ui.SignupActivity;
-<<<<<<< HEAD
 import com.yo.android.chat.ui.UserChatFragment;
-=======
 import com.yo.android.flip.MagazineArticleDetailsActivity;
->>>>>>> 40ae3d0d49ef10fd3e873ec7efa5a05ea2b864fc
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
