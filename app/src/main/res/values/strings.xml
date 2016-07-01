@@ -78,6 +78,7 @@
     <!--  Do not translate. -->
     <string name="dialpad_pound_letters"></string>
     <string name="yo_app_call">Yo App Call</string>
+    <string name="voip_not_supported_error_message">App to app calls are not supported to your device.</string>
 
     <string-array name="topics_arrays">
         <item>Top Stories</item>

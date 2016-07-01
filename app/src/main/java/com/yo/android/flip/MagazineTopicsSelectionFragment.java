@@ -3,6 +3,7 @@ package com.yo.android.flip;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import com.yo.android.R;
 /**
  * Created by creatives on 6/30/2016.
  */
-public class MagazineTopicsSelectionFragment extends Fragment  implements AdapterView.OnItemSelectedListener {
+public class MagazineTopicsSelectionFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private Spinner topicsSpinner;
     private String selectedTopic;
@@ -49,7 +50,7 @@ public class MagazineTopicsSelectionFragment extends Fragment  implements Adapte
         Intent intent = new Intent();
         intent.setAction("com.yo.magazine.SendBroadcast");
         intent.putExtra("SelectedTopic", selectedTopic);
-        getActivity().sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
     }
 
     @Override
