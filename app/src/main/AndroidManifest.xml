@@ -81,6 +81,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity=".incoming"
+            android:excludeFromRecents="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".voip.OutGoingCallActivity"
@@ -88,6 +89,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity=".outgoing"
+            android:excludeFromRecents="true"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service

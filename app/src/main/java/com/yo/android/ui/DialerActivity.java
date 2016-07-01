@@ -1,6 +1,7 @@
 package com.yo.android.ui;
 
 import android.content.Intent;
+import android.net.sip.SipManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yo.android.R;
 import com.yo.android.voip.DialPadView;
@@ -86,6 +88,11 @@ public class DialerActivity extends BaseActivity {
 
             }
         });
+        boolean isVoipSupported = SipManager.isApiSupported(this) && SipManager.isVoipSupported(this);
+        if (!isVoipSupported) {
+            btnDialer.setEnabled(false);
+            mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
+        }
     }
 
     private void showDialPad() {
