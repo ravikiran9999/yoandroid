@@ -17,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -40,6 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.api.YoApi;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
@@ -88,6 +88,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     PreferenceEndPoint preferenceEndPoint;
     @Inject
     VoxApi.VoxService voxService;
+    @Inject
+    YoApi.YoService yoService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,9 +130,20 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         OTPBody otpBody = new com.yo.android.vox.OTPBody();
         Gson gson = new Gson();
         String json = gson.toJson(otpBody);
-        Log.d("Ramesh", json);
-
+        mLog.d(TAG, "Body: %s", json);
+        //Debug purpose
         voxService.sendOTP(otpBody).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+        yoService.loginUserAPI("9573535345").enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
@@ -206,8 +219,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(phoneNumber)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            mPhoneNumberView.setError(getString(R.string.error_field_required));
+            focusView = mPhoneNumberView;
             cancel = true;
         } /*else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));

@@ -3,11 +3,11 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.net.sip.SipManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +25,9 @@ public class DialerActivity extends BaseActivity {
     private static final int[] mButtonIds = new int[]{R.id.zero, R.id.one, R.id.two, R.id.three,
             R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.star,
             R.id.pound};
-    private FloatingActionButton btnCallGreen;
-    private FloatingActionButton btnDialer;
+    private ImageView btnCallGreen;
+    private ImageView btnDialer;
+    private View bottom_layout;
     private boolean show;
 
     @Override
@@ -40,8 +41,9 @@ public class DialerActivity extends BaseActivity {
         startService(in);
 
         dialPadView = (DialPadView) findViewById(R.id.dialPadView);
-        btnCallGreen = (FloatingActionButton) findViewById(R.id.btnCall);
-        btnDialer = (FloatingActionButton) findViewById(R.id.btnDialer);
+        bottom_layout = findViewById(R.id.bottom_layout);
+        btnCallGreen = (ImageView) findViewById(R.id.btnCall);
+        btnDialer = (ImageView) findViewById(R.id.btnDialer);
         deleteButton = (ImageButton) findViewById(R.id.deleteButton);
         for (int id : mButtonIds) {
             dialPadView.findViewById(id).setOnClickListener(new View.OnClickListener() {
@@ -56,7 +58,7 @@ public class DialerActivity extends BaseActivity {
             });
         }
         dialPadView.setVisibility(View.GONE);
-        btnCallGreen.setVisibility(View.GONE);
+        bottom_layout.setVisibility(View.GONE);
         btnDialer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,15 +92,15 @@ public class DialerActivity extends BaseActivity {
         });
         boolean isVoipSupported = SipManager.isApiSupported(this) && SipManager.isVoipSupported(this);
         if (!isVoipSupported) {
-            btnDialer.setEnabled(false);
+//            btnDialer.setEnabled(false);
             mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
         }
     }
 
     private void showDialPad() {
         show = true;
+        dialPadView.setVisibility(View.VISIBLE);
         Animation bottomUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.bottom_up);
-        dialPadView.startAnimation(bottomUp);
         bottomUp.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -108,6 +110,7 @@ public class DialerActivity extends BaseActivity {
             public void onAnimationEnd(Animation animation) {
                 dialPadView.setVisibility(View.VISIBLE);
                 btnCallGreen.setVisibility(View.VISIBLE);
+                bottom_layout.setVisibility(View.VISIBLE);
                 btnDialer.setVisibility(View.GONE);
             }
 
@@ -116,7 +119,8 @@ public class DialerActivity extends BaseActivity {
 
             }
         });
-        bottomUp.start();
+        dialPadView.startAnimation(bottomUp);
+//        bottomUp.start();
     }
 
     private void hideDialPad() {
@@ -132,6 +136,7 @@ public class DialerActivity extends BaseActivity {
             public void onAnimationEnd(Animation animation) {
                 dialPadView.setVisibility(View.GONE);
                 btnCallGreen.setVisibility(View.GONE);
+                bottom_layout.setVisibility(View.GONE);
                 btnDialer.setVisibility(View.VISIBLE);
             }
 

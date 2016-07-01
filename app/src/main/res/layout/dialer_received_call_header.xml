@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="60dp"
-            android:background="@drawable/ic_dialer_speaker" />
+            android:background="@drawable/ic_speaker_on" />
 
         <ImageView
             android:id="@+id/imv_mic_off"
@@ -75,6 +75,18 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
             android:background="@drawable/ic_dialer_mic_off" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/ic_dialer_on_call" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/ic_hold" />
 
     </LinearLayout>
 </LinearLayout>
