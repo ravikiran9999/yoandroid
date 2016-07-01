@@ -90,5 +90,6 @@
         <item>Top Stories</item>
         <item>Entrepreneurship</item>
     </string-array>
+    <string name="title_activity_magazine_article_details">MagazineArticleDetailsActivity</string>
 
 </resources>
