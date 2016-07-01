@@ -99,7 +99,6 @@ public class MagazineFlipArticlesFragment extends Fragment {
         flipView.onResume();
     }
 
-    @Override
     public void onPause() {
         super.onPause();
         flipView.onPause();
@@ -155,11 +154,11 @@ public class MagazineFlipArticlesFragment extends Fragment {
 
                 UI
                         .<TextView>findViewById(layout, R.id.tv_category_name)
-                        .setText(AphidLog.format("%d. %s", position, data.getTopicName()));
+                        .setText(AphidLog.format("%s", data.getTopicName()));
 
                 UI
                         .<TextView>findViewById(layout, R.id.tv_article_title)
-                        .setText(AphidLog.format("%d. %s", position, data.getTitle()));
+                        .setText(AphidLog.format("%s", data.getTitle()));
 
                 UI
                         .<TextView>findViewById(layout, R.id.tv_article_short_desc)
