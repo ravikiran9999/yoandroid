@@ -16,5 +16,6 @@ public class DatabaseConstant {
     // Firebase tables
     public static final String APP_USERS = "AppUsers";
     public static final String ROOM = "Room";
+    public static final String ROOM_ID = "RoomID";
 
 }

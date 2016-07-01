@@ -63,7 +63,6 @@
 
         <activity
             android:name=".ui.SettingsActivity"
-
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.NavigationDrawerActivity"
@@ -96,6 +95,8 @@
             android:name=".voip.SipService"
 
             android:screenOrientation="portrait" />
+
+        <activity android:name=".chat.ui.SignupActivity"/>
 
     </application>
 

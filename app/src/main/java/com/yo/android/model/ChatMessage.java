@@ -75,4 +75,5 @@ public class ChatMessage {
     public void setTime(long time) {
         this.time = time;
     }
+
 }
