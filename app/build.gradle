@@ -40,16 +40,15 @@ dependencies {
     compile "com.android.support:recyclerview-v7:${supportRecyclerViewVersion}"
 
     // ormlite
-    // firebase
-
-
-    compile project(":flip")
-
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
+    // firebase
     compile 'com.google.firebase:firebase-messaging:9.0.2'
     compile 'com.google.firebase:firebase-auth:9.0.2'
     compile 'com.google.firebase:firebase-database:9.0.2'
+
+    compile project(":flip")
+
     compile 'com.squareup.dagger:dagger:1.2.2'
     compile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
@@ -57,25 +56,15 @@ dependencies {
 
     compile 'com.android.support:support-v4:23.4.0'
     compile 'org.greenrobot:eventbus:3.0.0'
-<<<<<<< HEAD
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
-    compile 'de.greenrobot:eventbus:2.4.0'
-    testCompile 'junit:junit:4.12'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-=======
-    //compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
     testCompile 'junit:junit:4.12'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile 'de.greenrobot:eventbus:2.4.0'
-    //
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 //    compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.0'
-    compile project(":flip")
 
->>>>>>> 48c3863a5b7e48a3b3e4e68b3856ace1480a808b
 }
 apply plugin: 'com.google.gms.google-services'
 
