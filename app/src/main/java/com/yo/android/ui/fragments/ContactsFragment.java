@@ -144,8 +144,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private String getRoomId(String yourPhoneNumber, String opponentPhoneNumber) {
-        String rId = databaseHelper.getRoomId(yourPhoneNumber, opponentPhoneNumber);
-        return rId;
+        return databaseHelper.getRoomId(yourPhoneNumber, opponentPhoneNumber);
     }
 
 

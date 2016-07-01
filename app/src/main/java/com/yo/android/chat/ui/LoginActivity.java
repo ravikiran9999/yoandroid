@@ -25,6 +25,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,7 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.model.Registration;
@@ -72,6 +73,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
@@ -212,7 +214,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             // perform the user login attempt.
             showProgress(true);
             //signin(email, password, phoneNumber);
-            sendRegistrationToServer( password, phoneNumber);
+            sendRegistrationToServer(password, phoneNumber);
 
         }
     }
@@ -343,18 +345,26 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 });
     }
 
-    private void sendRegistrationToServer(@NonNull String password, @NonNull String phoneNumber) {
+    private void sendRegistrationToServer(@NonNull final String password, @NonNull final String phoneNumber) {
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.APP_USERS);
 
-        Registration registration = new Registration(password, phoneNumber);
-        DatabaseReference reference = databaseReference.push();
-        reference.setValue(registration);
-        showProgress(false);
-        preferenceEndPoint.saveStringPreference("phone", phoneNumber);
-        //preferenceEndPoint.saveStringPreference("email", email);
-        preferenceEndPoint.saveStringPreference("password", password);
-        startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean value = dataSnapshot.hasChild(phoneNumber);
+                if (!value) {
+                    startActivity(new Intent(LoginActivity.this, SignupActivity.class));
+                } else {
+                    startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(LoginActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -404,5 +414,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         });
     }
+
 }
 

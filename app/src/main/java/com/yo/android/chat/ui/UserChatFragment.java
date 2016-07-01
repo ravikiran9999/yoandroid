@@ -97,7 +97,6 @@ public class UserChatFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
             }

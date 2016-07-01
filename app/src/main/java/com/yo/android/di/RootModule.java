@@ -6,6 +6,7 @@ import com.yo.android.app.BaseApp;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
 import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.chat.ui.SignupActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
@@ -41,7 +42,8 @@ import dagger.Provides;
                 SipService.class,
                 Receiver.class,
                 InComingCallActivity.class,
-                SplashScreenActivity.class
+                SplashScreenActivity.class,
+                SignupActivity.class
 
         },
         includes = {
