@@ -5,10 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
-import com.yo.android.R;
-import com.yo.android.ui.BaseActivity;
-import com.yo.android.ui.fragments.ContactsFragment;
-
 import java.util.ArrayList;
 import java.util.List;
 

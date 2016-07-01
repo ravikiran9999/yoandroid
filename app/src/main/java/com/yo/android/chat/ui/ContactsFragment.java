@@ -1,6 +1,7 @@
-package com.yo.android.ui.fragments;
+package com.yo.android.chat.ui;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -15,9 +16,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.ui.UserChatFragment;
+import com.yo.android.di.Injector;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.model.Registration;
@@ -25,17 +29,23 @@ import com.yo.android.util.DatabaseConstant;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 
-public class ContactsFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private ArrayList<Registration> arrayOfUsers;
     private ContactsListAdapter contactsListAdapter;
     private int incrementalContactsCount;
     private ListView listView;
     private DatabaseHelper databaseHelper;
+    private String existingRoomId;
+
+
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -44,8 +54,13 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         databaseHelper = new DatabaseHelper(getActivity().getApplicationContext());
-        getRoomIdFromDatabase();
+
+
+        //getRoomIdFromDatabase();
     }
 
     @Override
@@ -116,37 +131,65 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Registration registration = (Registration) listView.getItemAtPosition(position);
-        String yourPhoneNumber = "1234567899";
+        String yourPhoneNumber = preferenceEndPoint.getStringPreference("phone");
         String opponentPhoneNumber = registration.getPhoneNumber();
-        ChatRoom chatRoom = null;
-        String chatRoomId = getRoomId(yourPhoneNumber, opponentPhoneNumber);
-        if (chatRoomId.equals("")) {
-            if (!yourPhoneNumber.isEmpty() && !opponentPhoneNumber.isEmpty()) {
-                chatRoomId = yourPhoneNumber + ":" + opponentPhoneNumber;
-                chatRoom = new ChatRoom(yourPhoneNumber, opponentPhoneNumber, chatRoomId);
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.ROOM);
-                DatabaseReference reference = databaseReference.push();
-                reference.setValue(chatRoom);
+
+        showUserChatScreen(yourPhoneNumber, opponentPhoneNumber);
+
+
+        //getRoomId(yourPhoneNumber, opponentPhoneNumber);
+    }
+
+    private void showUserChatScreen(@NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {
+        final String roomCombination1 = yourPhoneNumber + ":" + opponentPhoneNumber;
+        final String roomCombination2 = opponentPhoneNumber + ":" + yourPhoneNumber;
+        DatabaseReference databaseRoomReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.ROOM);
+
+        databaseRoomReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean value1 = dataSnapshot.hasChild(roomCombination1);
+                boolean value2 = dataSnapshot.hasChild(roomCombination2);
+                if (value1) {
+
+                    showUserChatScreen(roomCombination1);
+
+                } else if (value2) {
+                    showUserChatScreen(roomCombination2);
+                } else {
+
+                    String chatRoomId = yourPhoneNumber + ":" + opponentPhoneNumber;
+                    ChatRoom chatRoom = new ChatRoom(yourPhoneNumber, opponentPhoneNumber, chatRoomId);
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.ROOM);
+                    DatabaseReference databaseRoomReference = databaseReference.child(chatRoomId);
+                    databaseRoomReference.setValue(chatRoom);
+                    showUserChatScreen(chatRoomId);
+
+                    //databaseHelper.insertChatRoomObjectToDatabase(chatRoom);
+                }
+
             }
 
-            databaseHelper.insertChatRoomObjectToDatabase(chatRoom);
-        }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void showUserChatScreen(String roomId) {
+
 
         UserChatFragment userChatFragment = new UserChatFragment();
         Bundle args = new Bundle();
-        args.putString(DatabaseConstant.CHAT_ROOM_ID, chatRoomId);
+        args.putString(DatabaseConstant.CHAT_ROOM_ID, roomId);
         userChatFragment.setArguments(args);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.drawer_layout, userChatFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-        //getRoomId(yourPhoneNumber, opponentPhoneNumber);
     }
-
-    private String getRoomId(String yourPhoneNumber, String opponentPhoneNumber) {
-        return databaseHelper.getRoomId(yourPhoneNumber, opponentPhoneNumber);
-    }
-
 
     private void getRoomIdFromDatabase() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.ROOM);
@@ -177,7 +220,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
             public void onCancelled(DatabaseError databaseError) {
 
             }
-
         });
     }
+
 }

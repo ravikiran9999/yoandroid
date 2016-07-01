@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -64,16 +66,17 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
+    private static final String FRAGMENT_TAG = "OTPFragment";
+
     // UI references.
     private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+
     private EditText mPhoneNumberView;
     private View mProgressView;
     private View mLoginFormView;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
@@ -84,28 +87,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
 
-        String phone = preferenceEndPoint.getStringPreference("phone");
-        if(!TextUtils.isEmpty(phone)){
-            startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
-            finish();
-        }
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
-
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id != R.id.login || id != EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        mPhoneNumberView = (EditText) findViewById(R.id.phone);
+        mPhoneNumberView = (EditText) findViewById(R.id.sign_in_phone);
 
         Button mPhoneSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mPhoneSignInButton.setOnClickListener(new OnClickListener() {
@@ -115,8 +97,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -187,21 +167,14 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         // Reset errors.
         mPhoneNumberView.setError(null);
-        mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String password = mPasswordView.getText().toString();
         String phoneNumber = mPhoneNumberView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
+
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(phoneNumber)) {
@@ -221,9 +194,18 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
+            //showProgress(true);
             //signin(email, password, phoneNumber);
-            sendRegistrationToServer(password, phoneNumber);
+            //sendRegistrationToServer(phoneNumber);
+
+            OTPFragment otpFragment = new OTPFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("phone", phoneNumber);
+            otpFragment.setArguments(bundle);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
+            transaction.disallowAddToBackStack();
+            transaction.commit();
 
         }
     }
@@ -334,7 +316,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // logic on success
-                            showProgress(false);
+                            //showProgress(false);
                             //sendRegistrationToServer(email, password, phoneNumber);
                             startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
                         }
@@ -344,17 +326,15 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            mPasswordView.setError(getString(R.string.error_incorrect_password));
-                            mPasswordView.requestFocus();
                             mToastFactory.showToast("Authentication failed.");
-                            showProgress(false);
+                            //showProgress(false);
                         }
 
                     }
                 });
     }
 
-    private void sendRegistrationToServer(@NonNull final String password, @NonNull final String phoneNumber) {
+    private void sendRegistrationToServer(@NonNull final String phoneNumber) {
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.APP_USERS);
 
@@ -365,6 +345,9 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 if (!value) {
                     startActivity(new Intent(LoginActivity.this, SignupActivity.class));
                 } else {
+                    preferenceEndPoint.saveStringPreference("phone", phoneNumber);
+                    //preferenceEndPoint.saveStringPreference("email", email);
+                    //preferenceEndPoint.saveStringPreference("password", password);
                     startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
                 }
             }

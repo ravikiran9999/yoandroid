@@ -5,7 +5,10 @@ import android.content.Context;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
+import com.yo.android.chat.ui.BaseFragment;
+import com.yo.android.chat.ui.ContactsFragment;
 import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.chat.ui.OTPFragment;
 import com.yo.android.chat.ui.SignupActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
@@ -43,7 +46,13 @@ import dagger.Provides;
                 Receiver.class,
                 InComingCallActivity.class,
                 SplashScreenActivity.class,
-                SignupActivity.class
+                SignupActivity.class,
+
+                //Fragments
+                ContactsFragment.class,
+                BaseFragment.class,
+                OTPFragment.class
+
 
         },
         includes = {
