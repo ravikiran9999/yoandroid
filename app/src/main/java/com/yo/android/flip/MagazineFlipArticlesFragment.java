@@ -163,10 +163,11 @@ public class MagazineFlipArticlesFragment extends Fragment {
                 layout = inflater.inflate(R.layout.magazine_flip_layout, null);
             }
 
-            final Travels.Data data = Travels.getImgDescriptions().get(position);
+            //final Travels.Data data = Travels.getImgDescriptions().get(position);
+            final Travels.Data data = articlesList.get(position);
             if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
                 //articlesList = new ArrayList<Travels.Data>();
-                articlesList.add(data);
+                //articlesList.add(data);
 
                 UI
                         .<TextView>findViewById(layout, R.id.tv_category_name)
@@ -334,8 +335,8 @@ public class MagazineFlipArticlesFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "Broadcast Intent Detected." + intent.getStringExtra("SelectedTopic"),
-                    Toast.LENGTH_LONG).show();
+            /*Toast.makeText(context, "Broadcast Intent Detected." + intent.getStringExtra("SelectedTopic"),
+                    Toast.LENGTH_LONG).show();*/
             String selectedTopic = intent.getStringExtra("SelectedTopic");
             loadArticles(selectedTopic);
         }
