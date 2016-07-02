@@ -61,12 +61,13 @@
                 android:gravity="center"
                 android:inputType="number"
                 android:maxLines="1"
+                android:layout_centerVertical="true"
                 android:singleLine="true"
                 android:textColor="@color/dialpad_digits_text_color"
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/dialpad_digits_text_size"
                 android:textStyle="normal"
-                app:resizing_text_min_size="14sp" />
+                app:resizing_text_min_size="22sp" />
         </RelativeLayout>
 
         <View
@@ -87,6 +88,7 @@
         android:gravity="center_vertical">
 
         <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/btnMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_message"
@@ -102,6 +104,7 @@
 
 
         <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/btnContacts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_phonebook" />

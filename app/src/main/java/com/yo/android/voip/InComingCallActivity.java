@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yo.android.R;
@@ -23,13 +24,8 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Ramesh on 26/6/16.
  */
-public class InComingCallActivity extends BaseActivity implements View.OnClickListener {
+public class InComingCallActivity extends BaseActivity implements View.OnClickListener, CallEvents {
     //
-    public static final int NOEVENT = 0;
-    public static final int MUTE_ON = 1;
-    public static final int MUTE_OFF = 2;
-    public static final int SPEAKER_ON = 3;
-    public static final int SPEAKER_OFF = 4;
     public static final int CALL_ACCEPTED_START_TIMER = 10;
     public static final String CALLER_NO = "callerNo";
     public static final String CALLER = "caller";
@@ -37,6 +33,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private SipCallModel callModel;
     private CallLogsModel log;
     private boolean isMute;
+    private boolean isHoldOn;
     private boolean isSpeakerOn;
     private TextView callerName;
     private TextView callerName2;
@@ -93,9 +90,13 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.imv_speaker).setOnClickListener(this);
         findViewById(R.id.imv_mic_off).setOnClickListener(this);
         findViewById(R.id.btnEndCall).setOnClickListener(this);
+        findViewById(R.id.btnRejectCall).setOnClickListener(this);
         findViewById(R.id.btnAcceptCall).setOnClickListener(this);
+        findViewById(R.id.btnHold).setOnClickListener(this);
         mReceivedCallHeader = findViewById(R.id.received_call_header);
         mInComingHeader = findViewById(R.id.incoming_call_header);
+        mReceivedCallHeader.setVisibility(View.GONE);
+        //
         callerName = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_name);
         callerName2 = (TextView) mInComingHeader.findViewById(R.id.tv_caller_name);
         callerNumber = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
@@ -113,33 +114,60 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btnHold:
+                if (!callModel.isOnCall()) {
+                    return;
+                }
+                isHoldOn = !isHoldOn;
+                if (isHoldOn) {
+                    callModel.setEvent(HOLD_ON);
+                } else {
+                    callModel.setEvent(HOLD_OFF);
+                }
+                bus.post(callModel);
+                mToastFactory.showToast("Hold " + (isHoldOn ? "ON" : "OFF"));
+                break;
             case R.id.imv_mic_off:
+                if (!callModel.isOnCall()) {
+                    return;
+                }
                 isMute = !isMute;
                 if (isMute) {
                     callModel.setEvent(MUTE_ON);
+                    ((ImageView) v).setImageResource(R.drawable.ic_mute_on);
                 } else {
                     callModel.setEvent(MUTE_OFF);
+                    ((ImageView) v).setImageResource(R.drawable.ic_mute_off);
                 }
                 bus.post(callModel);
                 mToastFactory.showToast("Mute " + (isMute ? "ON" : "OFF"));
                 break;
             case R.id.imv_speaker:
+                if (!callModel.isOnCall()) {
+                    return;
+                }
                 isSpeakerOn = !isSpeakerOn;
                 if (isSpeakerOn) {
                     callModel.setEvent(SPEAKER_ON);
+                    ((ImageView) v).setImageResource(R.drawable.ic_speaker_on);
                 } else {
                     callModel.setEvent(SPEAKER_OFF);
+                    ((ImageView) v).setImageResource(R.drawable.ic_speaker_off);
                 }
                 bus.post(callModel);
                 mToastFactory.showToast("Speaker " + (isSpeakerOn ? "ON" : "OFF"));
                 break;
             case R.id.btnEndCall:
+            case R.id.btnRejectCall:
                 callModel.setOnCall(false);
                 log.setCallType(VoipConstants.CALL_DIRECTION_IN);
                 bus.post(callModel);
                 finish();
             case R.id.btnAcceptCall:
                 onCallAccepted();
+                break;
+            case R.id.btnMessage:
+                mToastFactory.showToast("Message: Need to implement");
                 break;
             default:
                 break;
@@ -149,6 +177,10 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     public void onCallAccepted() {
         log.setCallType(VoipConstants.CALL_DIRECTION_IN);
         mReceivedCallHeader.setVisibility(View.VISIBLE);
+        findViewById(R.id.btnEndCall).setVisibility(View.VISIBLE);
+        findViewById(R.id.btnRejectCall).setVisibility(View.GONE);
+        findViewById(R.id.btnMessage).setVisibility(View.GONE);
+        findViewById(R.id.btnHold).setAlpha(1);
         mInComingHeader.setVisibility(View.GONE);
         stopRinging();
         mLog.d("BUS", "ONCALLACCEPTED");

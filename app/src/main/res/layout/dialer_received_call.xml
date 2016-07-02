@@ -38,7 +38,7 @@
         android:layout_marginBottom="40dp">
 
         <ImageView
-            android:id="@+id/btnEndCall"
+            android:id="@+id/btnRejectCall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -54,8 +54,18 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/ic_call" />
 
+        <ImageView
+            android:id="@+id/btnEndCall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_disconnect"
+            android:visibility="gone" />
+
 
         <ImageView
+            android:id="@+id/btnMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

@@ -11,10 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.SipService;
+
+import javax.inject.Inject;
 
 /**
  * Created by Ramesh on 27/6/16.
@@ -29,6 +32,9 @@ public class DialerActivity extends BaseActivity {
     private ImageView btnDialer;
     private View bottom_layout;
     private boolean show;
+    @Inject
+    ConnectivityHelper mConnectivityHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,18 @@ public class DialerActivity extends BaseActivity {
         bottom_layout = findViewById(R.id.bottom_layout);
         btnCallGreen = (ImageView) findViewById(R.id.btnCall);
         btnDialer = (ImageView) findViewById(R.id.btnDialer);
+        findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mToastFactory.showToast("Message: Need to implement");
+            }
+        });
+        findViewById(R.id.btnContacts).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mToastFactory.showToast("Contacts: Need to implement");
+            }
+        });
         deleteButton = (ImageButton) findViewById(R.id.deleteButton);
         for (int id : mButtonIds) {
             dialPadView.findViewById(id).setOnClickListener(new View.OnClickListener() {
@@ -70,7 +88,9 @@ public class DialerActivity extends BaseActivity {
             public void onClick(View v) {
                 hideDialPad();
                 String number = dialPadView.getDigits().getText().toString();
-                if (number.length() > 0) {
+                if (!mConnectivityHelper.isConnected()) {
+                    mToastFactory.showToast(getString(R.string.connectivity_network_settings));
+                } else if (number.length() > 0) {
                     Intent intent = new Intent(DialerActivity.this, OutGoingCallActivity.class);
                     intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
                     startActivity(intent);
@@ -92,9 +112,11 @@ public class DialerActivity extends BaseActivity {
         });
         boolean isVoipSupported = SipManager.isApiSupported(this) && SipManager.isVoipSupported(this);
         if (!isVoipSupported) {
-//            btnDialer.setEnabled(false);
+            btnDialer.setEnabled(false);
             mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
         }
+
+
     }
 
     private void showDialPad() {

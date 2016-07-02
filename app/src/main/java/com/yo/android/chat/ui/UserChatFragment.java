@@ -17,6 +17,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.helpers.DatabaseHelper;
@@ -91,6 +93,26 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         DatabaseReference reference = roomIdReference.push();
         reference.setValue(chatMessage);
+    }
+
+    private void getTimeFromFireBaseServer(DatabaseReference reference) {
+        //Get the server time stamp
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Long timestamp = (Long) (snapshot.getValue());
+                System.out.println(timestamp);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
+
+        reference.setValue(ServerValue.TIMESTAMP);
+
     }
 
     private void getMessageFromDatabase() {

@@ -1,15 +1,20 @@
 package com.yo.android.voip;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.Util;
 
 import de.greenrobot.event.EventBus;
 
@@ -17,13 +22,8 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Ramesh on 26/6/16.
  */
-public class OutGoingCallActivity extends BaseActivity implements View.OnClickListener {
+public class OutGoingCallActivity extends BaseActivity implements View.OnClickListener, CallEvents {
     //
-    public static final int NOEVENT = 0;
-    public static final int MUTE_ON = 1;
-    public static final int MUTE_OFF = 2;
-    public static final int SPEAKER_ON = 3;
-    public static final int SPEAKER_OFF = 4;
     public static final int CALL_ACCEPTED_START_TIMER = 10;
     public static final String CALLER_NO = "callerNo";
     public static final String CALLER_NAME = "callerName";
@@ -65,11 +65,14 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callModel.setOnCall(true);
         //CallLogs Model
         log = new CallLogsModel();
+        String mobile = getIntent().getStringExtra(CALLER_NO);
         log.setCallerName("Sandeep Dev");
         log.setCallTime(System.currentTimeMillis() / 1000L);
-        log.setCallerNo(getIntent().getStringExtra("CallNo"));
+        log.setCallerNo(mobile);
         log.setCallType(VoipConstants.CALL_DIRECTION_OUT);
         log.setCallMode(VoipConstants.CALL_MODE_VOIP);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
+        Util.createNotification(this, mobile, "Outgoing call", OutGoingCallActivity.class);
     }
 
     private void initViews() {
@@ -82,9 +85,17 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Util.createNotification(this, "Yo App Calling", "Outgoing call", OutGoingCallActivity.class);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         bus.unregister(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+
     }
 
     @Override
@@ -170,4 +181,19 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 //        super.onBackPressed();
         moveTaskToBack(true);
     }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mToastFactory.showToast("Call ended.");
+                }
+            });
+
+        }
+    };
+
 }

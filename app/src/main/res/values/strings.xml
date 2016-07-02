@@ -95,5 +95,6 @@
         <item>Entrepreneurship</item>
     </string-array>
     <string name="title_activity_magazine_article_details">MagazineArticleDetailsActivity</string>
+    <string name="connectivity_network_settings">Please check your internet connection.</string>
 
 </resources>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#D84A38</color>
-    <color name="colorPrimaryDark">#B63A2B</color>
+    <color name="colorPrimary">#E12828</color>
+    <color name="colorPrimaryDark">#C82121</color>
     <color name="colorAccent">#7A24AB</color>
     <color name="grey_divider">#EEEEEE</color>
     <color name="dial_green">#09D261</color>

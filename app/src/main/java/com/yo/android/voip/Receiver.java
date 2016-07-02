@@ -24,7 +24,7 @@ public class Receiver extends InjectedBroadcastReceiver {
     private static final String TAG = "Receiver";
     private RegisterSip register;
     private SipManager manager;
-    private SipAudioCall call;
+    private SipAudioCall sipAudioCall;
     private SipProfile profile;
     private UserAgent callAgent;
     private String username;
@@ -88,7 +88,7 @@ public class Receiver extends InjectedBroadcastReceiver {
                 sendBusySignal(context, intent);
                 return;
             }
-            callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
+            callAgent = new UserAgent(mLog, manager, sipAudioCall, context, intent, profile);
             callAgent.onCallIncoming();
         } else {
             doSipRegistration(context, intent);
@@ -102,10 +102,10 @@ public class Receiver extends InjectedBroadcastReceiver {
                 profile = register.getProfile();
             }
             if (callAgent == null) {
-                callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
+                callAgent = new UserAgent(mLog, manager, sipAudioCall, context, intent, profile);
             }
             if (callAgent.getCallState() == UserAgent.CALL_STATE_IDLE) {
-                callAgent = new UserAgent(mLog, manager, call, context, intent, profile);
+                callAgent = new UserAgent(mLog, manager, sipAudioCall, context, intent, profile);
                 callAgent.doOutgoingCall(callData);
             } else {
                 mLog.e(TAG, "Receiver/OUTGOING_CALL : CALL STATE NOT IDLE");

@@ -8,16 +8,15 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import com.yo.android.R;
-import com.yo.android.voip.InComingCallActivity;
 
 /**
  * Created by Ramesh on 1/7/16.
  */
 public class Util {
 
-    private void createNotification(Context context, String title, String body) {
+    public static <T> void createNotification(Context context, String title, String body, Class<T> clzz) {
         //
-        Intent destinationIntent = new Intent(context, InComingCallActivity.class);
+        Intent destinationIntent = new Intent(context, clzz);
         destinationIntent.putExtra("from_notification", true);
         int notificationId = body.hashCode();
         PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);

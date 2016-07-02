@@ -3,6 +3,7 @@ package com.yo.android.voip;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
@@ -15,7 +16,7 @@ import com.orion.android.common.logger.Log;
 import de.greenrobot.event.EventBus;
 
 
-public class UserAgent {
+public class UserAgent implements CallEvents {
 
     private static final String TAG = "UserAgent";
     public static final String ACTION_CALL_END = "com.yo.android.voip.UserAgent.CALL_END";
@@ -39,7 +40,8 @@ public class UserAgent {
     private Intent intent;
     private final Log mLog;
     protected String callerName;
-
+    private ToneGenerator mRingbackTone;
+    private boolean mRingbackToneEnabled = true;
 
     public UserAgent(Log log, SipManager manager, SipAudioCall call, Context context, Intent intent, SipProfile profile) {
         this.manager = manager;
@@ -54,9 +56,6 @@ public class UserAgent {
         }
     }
 
-    public interface UserAgentListener {
-        boolean hangup();
-    }
 
     public void setCallState(int callState) {
         this.callState = callState;
@@ -135,7 +134,7 @@ public class UserAgent {
 
     //    @Subscribe
     public void onEvent(SipCallModel model) {
-        mLog.d("BUSSS CALLED", "<><> USER-AGENT BUS CALLED <><>");
+        mLog.d(TAG, "onEvent", "<><> BUS CALLED <><>");
         if (model.isOnCall() && callState == CALL_STATE_INCOMING_CALL) {
             accept();
             mLog.d("MODEL VALUE", "true");
@@ -146,28 +145,46 @@ public class UserAgent {
             hangup();
             mLog.d("OUTGOING_CALL - MODEL VALUE", "false");
         }
-        processEvents(model);
+        try {
+            processEvents(model);
+        } catch (final SipException e) {
+            mLog.w(TAG, "onEvent: exception in processEvents", e);
+        }
         if (model.getEvent() != OutGoingCallActivity.CALL_ACCEPTED_START_TIMER) {
             model.setEvent(OutGoingCallActivity.NOEVENT);
         }
     }
 
-    private void processEvents(SipCallModel model) {
+    private void processEvents(SipCallModel model) throws SipException {
         switch (model.getEvent()) {
-            case OutGoingCallActivity.MUTE_ON:
+            case MUTE_ON:
                 mute(true);
                 break;
-            case OutGoingCallActivity.MUTE_OFF:
+            case MUTE_OFF:
                 mute(false);
                 break;
-            case OutGoingCallActivity.SPEAKER_ON:
+            case SPEAKER_ON:
                 speaker(true);
                 break;
-            case OutGoingCallActivity.SPEAKER_OFF:
+            case HOLD_ON:
+                hold(true);
+                break;
+            case HOLD_OFF:
+                hold(false);
+                break;
+            case SPEAKER_OFF:
                 speaker(false);
                 break;
             default:
                 break;
+        }
+    }
+
+    private void hold(boolean value) throws SipException {
+        if (value) {
+            call.holdCall(0);
+        } else {
+            call.continueCall(0);
         }
     }
 
@@ -207,36 +224,38 @@ public class UserAgent {
 
     // To mute mic while in call
     public synchronized void mute(boolean mute) {
-        mLog.d("mute", "<<< MUTE METHOD CALLED >>>>");
+        mLog.d(TAG, "mute", "<<< MUTE METHOD CALLED >>>>");
         // If call is not muted and wants to mute
         if (!call.isMuted() && mute) {
             call.toggleMute();
-            mLog.d("CALL MUTE", "=== CALL MUTED ==== ");
+            mLog.d(TAG, "CALL MUTE", "=== CALL MUTED ==== ");
         } else if (call.isMuted() && !mute) {
             // If call is muted and wants to unmute
             call.toggleMute();
-            mLog.d("CALL MUTE", "=== CALL UN-MUTED ==== ");
+            mLog.d(TAG, "CALL MUTE", "=== CALL UN-MUTED ==== ");
         }
     }
 
     // To set speaker on/off while in call
     public synchronized void speaker(boolean val) {
         mLog.d("speaker", "<<< SPEAKER METHOD CALLED >>>>");
-        if (call.isInCall()) {
-            if (val) {
-                AudioManager audioManager = (AudioManager) context.getApplicationContext()
-                        .getSystemService(Context.AUDIO_SERVICE);
-                audioManager.setMode(AudioManager.MODE_IN_CALL);
-                audioManager.setSpeakerphoneOn(true);
-                mLog.d("CALL SPEAKER", "=== SPEAKER ON ==== ");
-            } else {
-                AudioManager audioManager = (AudioManager) context.getApplicationContext()
-                        .getSystemService(Context.AUDIO_SERVICE);
-                audioManager.setMode(AudioManager.MODE_IN_CALL);
-                audioManager.setSpeakerphoneOn(false);
-                mLog.d("CALL SPEAKER", "=== SPEAKER OFF ==== ");
-            }
-        }
+        call.setSpeakerMode(val);
+
+//        if (call.isInCall()) {
+//            if (val) {
+//                AudioManager audioManager = (AudioManager) context.getApplicationContext()
+//                        .getSystemService(Context.AUDIO_SERVICE);
+//                audioManager.setMode(AudioManager.MODE_IN_CALL);
+//                audioManager.setSpeakerphoneOn(true);
+//                mLog.d("CALL SPEAKER", "=== SPEAKER ON ==== ");
+//            } else {
+//                AudioManager audioManager = (AudioManager) context.getApplicationContext()
+//                        .getSystemService(Context.AUDIO_SERVICE);
+//                audioManager.setMode(AudioManager.MODE_IN_CALL);
+//                audioManager.setSpeakerphoneOn(false);
+//                mLog.d("CALL SPEAKER", "=== SPEAKER OFF ==== ");
+//            }
+//        }
     }
 
     SipAudioCall.Listener listener2 = new SipAudioCall.Listener() {
@@ -314,6 +333,7 @@ public class UserAgent {
 
     private void endCall(int reason) {
         try {
+
             changeStatus(reason);
             callModel.setEvent(reason);
             callModel.setOnCall(false);
@@ -326,6 +346,7 @@ public class UserAgent {
             mLog.w(TAG, e);
         }
     }
+
 
     SipAudioCall.Listener outgoingCallListener = new SipAudioCall.Listener() {
 
@@ -340,6 +361,7 @@ public class UserAgent {
             callModel.setEvent(CALL_STATE_BUSY);
             bus.post(callModel);
             endCall(CALL_STATE_BUSY);
+            stopRingbackTone();
             super.onCallBusy(call);
         }
 
@@ -354,6 +376,7 @@ public class UserAgent {
             callModel.setOnCall(false);
             bus.post(callModel);
             endCall(CALL_STATE_ERROR);
+            stopRingbackTone();
             super.onError(call, errorCode, errorMessage);
         }
 
@@ -365,6 +388,7 @@ public class UserAgent {
             changeStatus(CALL_STATE_OUTGOING_CALL);
             callModel.setOnCall(true);
             callModel.setEvent(OutGoingCallActivity.CALL_ACCEPTED_START_TIMER);
+            stopRingbackTone();
             bus.post(callModel);
         }
 
@@ -374,6 +398,7 @@ public class UserAgent {
         @Override
         public void onCallEnded(SipAudioCall call) {
             changeStatus(CALL_STATE_IDLE);
+            stopRingbackTone();
             try {
                 UserAgent.call.endCall();
                 UserAgent.call.close();
@@ -394,6 +419,40 @@ public class UserAgent {
         public void onRingingBack(SipAudioCall call) {
             super.onRingingBack(call);
             mLog.d(TAG, "OUTGOINGCALL/ONRINGINGBACK - %s", "onRingingBack");
+            startRingbackTone();
+        }
+
+        private synchronized void startRingbackTone() {
+            if (!mRingbackToneEnabled) return;
+            if (mRingbackTone == null) {
+                // The volume relative to other sounds in the stream
+                int toneVolume = 80;
+                mRingbackTone = new ToneGenerator(
+                        AudioManager.STREAM_MUSIC, toneVolume);
+            }
+            setInCallMode();
+//            mRingbackTone.startTone(ToneGenerator.TONE_CDMA_LOW_PBX_L);
+            mRingbackTone.startTone(ToneGenerator.TONE_CDMA_NETWORK_USA_RINGBACK);
+        }
+
+        private synchronized void stopRingbackTone() {
+            if (mRingbackTone != null) {
+                mRingbackTone.stopTone();
+                setSpeakerMode();
+                mRingbackTone.release();
+                mRingbackTone = null;
+            }
+        }
+
+
+        private void setInCallMode() {
+            AudioManager audioManager = ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE));
+            audioManager.setMode(AudioManager.MODE_IN_CALL);
+        }
+
+        private void setSpeakerMode() {
+            ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE))
+                    .setMode(AudioManager.MODE_NORMAL);
         }
 
         @Override

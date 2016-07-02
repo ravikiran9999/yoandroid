@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <uses-feature
         android:name="android.hardware.sip.voip"
@@ -79,6 +80,7 @@
             android:excludeFromRecents="true"
             android:label="@string/yo_app_call"
             android:launchMode="singleTask"
+            android:noHistory="true"
             android:screenOrientation="portrait"
             android:taskAffinity=".incoming"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -87,6 +89,7 @@
             android:excludeFromRecents="true"
             android:label="@string/yo_app_call"
             android:launchMode="singleTask"
+            android:noHistory="true"
             android:screenOrientation="portrait"
             android:taskAffinity=".outgoing"
             android:theme="@style/AppTheme.NoActionBar" />

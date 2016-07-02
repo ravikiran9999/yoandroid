@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.logger.LogImpl;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ResourcesHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.orion.android.common.util.ToastFactoryImpl;
@@ -42,6 +43,12 @@ public class AppModule {
     @Provides
     ResourcesHelper provideResourcesHelper(Context context) {
         return new ResourcesHelper(context);
+    }
+
+    @Singleton
+    @Provides
+    ConnectivityHelper provideConnectivityHelper(Context context) {
+        return new ConnectivityHelper(context);
     }
 
 }
