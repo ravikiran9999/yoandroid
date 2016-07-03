@@ -6,6 +6,7 @@ import com.yo.android.app.BaseApp;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
 import com.yo.android.chat.ui.BaseFragment;
+import com.yo.android.chat.ui.ChatFragment;
 import com.yo.android.chat.ui.ContactsFragment;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.OTPFragment;
@@ -61,7 +62,10 @@ import dagger.Provides;
                 BaseFragment.class,
                 OTPFragment.class,
                 UserChatFragment.class,
-                DialerFragment.class
+                DialerFragment.class,
+                ChatFragment.class,
+                ChatFragment.class,
+
 
 
         },

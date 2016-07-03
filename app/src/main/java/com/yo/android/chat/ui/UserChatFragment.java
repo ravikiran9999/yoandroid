@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,7 +21,6 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
-import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.util.DatabaseConstant;
 
@@ -32,11 +31,12 @@ import java.util.ArrayList;
  */
 public class UserChatFragment extends BaseFragment implements View.OnClickListener {
 
-    private DatabaseHelper databaseHelper;
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
     DatabaseReference roomIdReference;
     TextView chatText;
+    ListView listView;
+
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -45,7 +45,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        databaseHelper = new DatabaseHelper(getActivity().getApplicationContext());
 
         Bundle bundle = this.getArguments();
         String child = bundle.getString(DatabaseConstant.CHAT_ROOM_ID);
@@ -63,14 +62,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
 
-        ListView listView = (ListView) view.findViewById(R.id.listView);
-        Button button = (Button) view.findViewById(R.id.send);
+        listView = (ListView) view.findViewById(R.id.listView);
+        View send = view.findViewById(R.id.send);
         chatText = (TextView) view.findViewById(R.id.chat_text);
         chatMessageArray = new ArrayList<>();
         userChatAdapter = new UserChatAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference("phone"));
         listView.setAdapter(userChatAdapter);
 
-        button.setOnClickListener(this);
+        send.setOnClickListener(this);
         return view;
     }
 
@@ -78,9 +77,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View v) {
         String message = chatText.getText().toString();
         String userId = preferenceEndPoint.getStringPreference("phone");
-        sendChatMessage(message, userId);
-        if (chatText.getText() != null) {
-            chatText.setText("");
+        if (!TextUtils.isEmpty(message)) {
+            sendChatMessage(message, userId);
+            if (chatText.getText() != null) {
+                chatText.setText("");
+            }
         }
     }
 
@@ -103,7 +104,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Long timestamp = (Long) (snapshot.getValue());
-                System.out.println(timestamp);
             }
 
             @Override
@@ -127,6 +127,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                     chatMessageArray.add(chatMessage);
                     userChatAdapter.addItems(chatMessageArray);
+                    listView.smoothScrollToPosition(userChatAdapter.getCount());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

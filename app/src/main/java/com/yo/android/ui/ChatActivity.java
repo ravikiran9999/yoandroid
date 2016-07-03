@@ -21,5 +21,8 @@ public class ChatActivity extends BaseActivity {
                 .beginTransaction()
                 .add(android.R.id.content, userChatFragment)
                 .commit();
+        enableBack();
+        String opponent = getIntent().getStringExtra(DatabaseConstant.OPPONENT_PHONE_NUMBER);
+        getSupportActionBar().setTitle(opponent);
     }
 }

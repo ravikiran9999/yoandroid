@@ -1,18 +1,19 @@
 package com.yo.android.chat.ui;
 
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
+import com.yo.android.util.ProgressDialogFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,6 +26,10 @@ public class BaseFragment extends Fragment {
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
+    @Inject
+    protected ProgressDialogFactory mProgressDialogFactory;
+
+    protected Dialog mProgressDialog;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -44,5 +49,31 @@ public class BaseFragment extends Fragment {
         textView.setText(R.string.hello_blank_fragment);
         return textView;
     }
+
+    /**
+     * show progress dialog
+     */
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = mProgressDialogFactory.createTransparentDialog(getActivity());
+        }
+        if (mProgressDialog != null) {
+            if (!mProgressDialog.isShowing()) {
+                mProgressDialog.show();
+            }
+        }
+    }
+
+    /**
+     * dismiss progress dialog
+     */
+    public void dismissProgressDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+
+        }
+    }
+
 
 }

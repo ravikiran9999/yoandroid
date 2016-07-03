@@ -2,7 +2,6 @@ package com.yo.android.helpers;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
@@ -12,6 +11,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.orion.android.common.logger.Log;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.util.DatabaseConstant;
@@ -19,11 +19,14 @@ import com.yo.android.util.DatabaseConstant;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 
 /**
  * Created by rdoddapaneni on 6/27/2016.
  */
-
+@Singleton
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
@@ -35,10 +38,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private Dao<ChatMessage, Integer> chatMessageDao;
     private Dao<ChatRoom, Integer> chatRoomDao;
+    private Log mLog;
 
-    public DatabaseHelper(Context context) {
+    @Inject
+    public DatabaseHelper(Context context, Log log) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
+        this.mLog = log;
     }
 
     @Override
@@ -47,7 +53,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, ChatMessage.class);
             TableUtils.createTable(connectionSource, ChatRoom.class);
         } catch (SQLException e) {
-            Log.e(DatabaseHelper.class.getName(), "Unable to create datbases", e);
+            mLog.e(DatabaseHelper.class.getName(), "Unable to create datbases", e);
         }
     }
 
@@ -88,10 +94,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             chatDao = OpenHelperManager.getHelper(context, DatabaseHelper.class).getChatMessageDao();
             chatDao.create(obj);
-            Log.i(TAG, "AddedChatObjectToDatabase");
+            mLog.i(TAG, "AddedChatObjectToDatabase");
             return true;
         } catch (SQLException e) {
-            Log.e(TAG, e.toString());
+            mLog.e(TAG, e.toString());
             return false;
         }
     }
@@ -107,10 +113,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             chatRoomDao = OpenHelperManager.getHelper(context, DatabaseHelper.class).getChatRoomDao();
             chatRoomDao.create(obj);
-            Log.i(TAG, "Added Chat Room Object To Database");
+            mLog.i(TAG, "Added Chat Room Object To Database");
             return true;
         } catch (SQLException e) {
-            Log.e(TAG, e.toString());
+            mLog.e(TAG, e.toString());
             return false;
         }
     }
@@ -133,7 +139,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             deleteBuilder.delete();
             return true;
         } catch (SQLException e) {
-            Log.e(TAG, e.toString());
+            mLog.e(TAG, e.toString());
             return false;
         }
     }
@@ -151,7 +157,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 chatUsersList = chatDao.query(preparedQuery);
             }
         } catch (SQLException e) {
-            Log.e(TAG, e.toString());
+            mLog.e(TAG, e.toString());
         }
         return chatUsersList;
     }
@@ -164,11 +170,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             QueryBuilder<ChatRoom, Integer> queryBuilder = chatRoomDao.queryBuilder();
             PreparedQuery<ChatRoom> preparedQuery = queryBuilder.where().eq(DatabaseConstant.YOUR_PHONE_NUMBER, yourPhoneNumber).and().eq(DatabaseConstant.OPPONENT_PHONE_NUMBER, opponentPhoneNumber).prepare();
             chatRoomList = chatRoomDao.query(preparedQuery);
-            if(chatRoomList.size() > 0) {
+            if (chatRoomList.size() > 0) {
                 return chatRoomList.get(0).getChatRoomId();
             }
         } catch (SQLException e) {
-            Log.e(TAG, e.toString());
+            mLog.e(TAG, e.toString());
         }
         return "";
     }

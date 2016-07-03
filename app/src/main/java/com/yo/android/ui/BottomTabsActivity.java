@@ -1,6 +1,8 @@
 package com.yo.android.ui;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -49,11 +51,10 @@ public class BottomTabsActivity extends BaseActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-//        initTabs();
-        dataList = getData();
+        dataList = createTabsList();
         for (int i = 0; i < dataList.size(); i++) {
             final TabLayout.Tab tab = tabLayout.getTabAt(i);
-            tab.setCustomView(setTabs(dataList.get(i).getTitle(), dataList.get(i).getDrawableId()));
+            tab.setCustomView(setTabs(dataList.get(i).getTitle(), dataList.get(i).getDrawable()));
         }
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -97,60 +98,49 @@ public class BottomTabsActivity extends BaseActivity {
         }
     }
 
-    private void initTabs() {
-        //
-        //
-        final TabLayout.Tab magazinesTab = tabLayout.getTabAt(0);
-        magazinesTab.setCustomView(setTabs("Magazines", R.drawable.ic_magazine));
-        //
-        final TabLayout.Tab dialerTab = tabLayout.getTabAt(1);
-        dialerTab.setCustomView(setTabs("Dialer", R.drawable.ic_dialer));
-        //
-        final TabLayout.Tab chatTab = tabLayout.getTabAt(2);
-        chatTab.setCustomView(setTabs("Chats", R.drawable.ic_chat));
-
-        final TabLayout.Tab contactsTab = tabLayout.getTabAt(3);
-        contactsTab.setCustomView(setTabs("Contacts", R.drawable.ic_contacts));
-        //
-        final TabLayout.Tab moreTab = tabLayout.getTabAt(4);
-        moreTab.setCustomView(setTabs("More", R.drawable.ic_more));
-    }
-
-    public View setTabs(final String title, final int resId) {
+    public View setTabs(final String title, final Drawable drawable) {
         final View view = LayoutInflater.from(this).inflate(R.layout.acivity_tab_holder, null);
         // We need to manually set the LayoutParams here because we don't have a view root
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        ((ImageView) view.findViewById(R.id.image)).setImageResource(resId);
+        ((ImageView) view.findViewById(R.id.image)).setImageDrawable(drawable);
         ((TextView) view.findViewById(R.id.text)).setText(title);
         return view;
     }
 
-    protected List<TabsData> getData() {
+    protected List<TabsData> createTabsList() {
         List<TabsData> list = new ArrayList<>();
-        list.add(new TabsData("Magazines", R.drawable.ic_magazine));
-        list.add(new TabsData("Dialer", R.drawable.ic_dialer));
-        list.add(new TabsData("Chats", R.drawable.ic_chat));
-        list.add(new TabsData("Contacts", R.drawable.ic_contacts));
-        list.add(new TabsData("More", R.drawable.ic_more));
+        list.add(new TabsData("Magazines", getResources().getDrawable(R.drawable.tab_magazines)));
+        list.add(new TabsData("Dialer", getResources().getDrawable(R.drawable.tab_dialer)));
+        list.add(new TabsData("Chats", getResources().getDrawable(R.drawable.tab_chats)));
+        list.add(new TabsData("Contacts", getResources().getDrawable(R.drawable.tab_contacts)));
+        list.add(new TabsData("More", getResources().getDrawable(R.drawable.tab_more)));
         return list;
     }
+
+    public Drawable createStateList(int normal, int selected) {
+        StateListDrawable states = new StateListDrawable();
+        states.addState(new int[]{}, getResources().getDrawable(selected));
+        states.addState(new int[]{android.R.attr.state_selected}, getResources().getDrawable(normal));
+        return states;
+    }
+
 
     public class TabsData {
 
         private String title;
-        private int drawableId;
+        private Drawable drawable;
 
-        public TabsData(String title, int drawableId) {
+        public TabsData(String title, Drawable drawableId) {
             this.title = title;
-            this.drawableId = drawableId;
+            this.drawable = drawableId;
         }
 
         public String getTitle() {
             return title;
         }
 
-        public int getDrawableId() {
-            return drawableId;
+        public Drawable getDrawable() {
+            return drawable;
         }
     }
 
