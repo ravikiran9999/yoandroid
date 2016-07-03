@@ -70,6 +70,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ui.BottomTabsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.ChatActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".chat.ui.LoginActivity"
             android:screenOrientation="portrait" />
         <activity

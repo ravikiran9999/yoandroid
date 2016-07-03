@@ -45,8 +45,9 @@ public class MagazineFlipArticlesFragment extends Fragment {
 
     private FlipViewController flipView;
     private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
-    private static List<Travels.Data> articlesList = new ArrayList<Travels.Data>();
+    private List<Travels.Data> articlesList = new ArrayList<Travels.Data>();
     private MyReceiver myReceiver;
+    private MyBaseAdapter myBaseAdapter;
 
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
         // Required empty public constructor
@@ -65,23 +66,16 @@ public class MagazineFlipArticlesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_magazines, container, false);
-
-//        magazineTopicsSelectionFragment = (MagazineTopicsSelectionFragment) getFragmentManager().findFragmentById(R.id.topics_selection_fragment);
-        /*for(int i=0; i<Travels.getImgDescriptions().size(); i++) {
-            if (magazineTopicsSelectionFragment.getSelectedTopic().equals(Travels.getImgDescriptions().get(i).getTopicName())) {
-                //articlesList = new ArrayList<Travels.Data>();
-                articlesList.add(Travels.getImgDescriptions().get(i));
-            }
-        }
         flipView = new FlipViewController(getActivity());
-        flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));*/
-        flipView = new FlipViewController(getActivity());
-        loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
-        flipView.setAdapter(new MyBaseAdapter(getActivity(), flipView));
-
+        myBaseAdapter = new MyBaseAdapter(getActivity(), flipView);
+        flipView.setAdapter(myBaseAdapter);
         return flipView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
     }
 
     public void loadArticles(String selectedTopic) {
@@ -93,9 +87,7 @@ public class MagazineFlipArticlesFragment extends Fragment {
                 articlesList.add(Travels.getImgDescriptions().get(i));
             }
         }
-        MyBaseAdapter adapter = new MyBaseAdapter(getActivity(), flipView);
-        flipView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        myBaseAdapter.addItems(articlesList);
     }
 
     public void onDestroyView() {
@@ -129,6 +121,7 @@ public class MagazineFlipArticlesFragment extends Fragment {
         private LayoutInflater inflater;
 
         private Bitmap placeholderBitmap;
+        private List<Travels.Data> items;
 
         private MyBaseAdapter(Context context, FlipViewController controller) {
             inflater = LayoutInflater.from(context);
@@ -138,17 +131,20 @@ public class MagazineFlipArticlesFragment extends Fragment {
             //Use a system resource as the placeholder
             placeholderBitmap =
                     BitmapFactory.decodeResource(context.getResources(), android.R.drawable.dark_header);
+            items = new ArrayList<>();
         }
 
         @Override
         public int getCount() {
-            return articlesList.size();
-            //return Travels.getImgDescriptions().size();
+            return items.size();
         }
 
         @Override
-        public Object getItem(int position) {
-            return position;
+        public Travels.Data getItem(int position) {
+            if (getCount() > position) {
+                return items.get(position);
+            }
+            return null;
         }
 
         @Override
@@ -164,7 +160,10 @@ public class MagazineFlipArticlesFragment extends Fragment {
             }
 
             //final Travels.Data data = Travels.getImgDescriptions().get(position);
-            final Travels.Data data = articlesList.get(position);
+            final Travels.Data data = getItem(position);
+            if (data == null) {
+                return layout;
+            }
             if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
                 //articlesList = new ArrayList<Travels.Data>();
                 //articlesList.add(data);
@@ -207,19 +206,7 @@ public class MagazineFlipArticlesFragment extends Fragment {
                             }
                         });
 
-           /* UI
-                    .<Button>findViewById(layout, R.id.wikipedia)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(data.getLink())
-                            );
-                            inflater.getContext().startActivity(intent);
-                        }
-                    });
-*/
+
                 ImageView photoView = UI.findViewById(layout, R.id.photo);
                 //Use an async task to load the bitmap
                 boolean needReload = true;
@@ -248,6 +235,12 @@ public class MagazineFlipArticlesFragment extends Fragment {
 
 
             return layout;
+        }
+
+
+        public void addItems(List<Travels.Data> articlesList) {
+            items = new ArrayList<>(articlesList);
+            notifyDataSetChanged();
         }
     }
 
@@ -287,8 +280,8 @@ public class MagazineFlipArticlesFragment extends Fragment {
         public AsyncImageTask(AssetManager assetManager, ImageView imageView,
                               FlipViewController controller, int pageIndex, String imageName) {
             this.assetManager = assetManager;
-            imageViewRef = new WeakReference<ImageView>(imageView);
-            controllerRef = new WeakReference<FlipViewController>(controller);
+            imageViewRef = new WeakReference<>(imageView);
+            controllerRef = new WeakReference<>(controller);
             this.pageIndex = pageIndex;
             this.imageName = imageName;
         }
@@ -335,8 +328,6 @@ public class MagazineFlipArticlesFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            /*Toast.makeText(context, "Broadcast Intent Detected." + intent.getStringExtra("SelectedTopic"),
-                    Toast.LENGTH_LONG).show();*/
             String selectedTopic = intent.getStringExtra("SelectedTopic");
             loadArticles(selectedTopic);
         }

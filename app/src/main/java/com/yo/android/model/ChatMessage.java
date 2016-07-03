@@ -7,6 +7,8 @@ package com.yo.android.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.DatabaseConstant;
 
+import java.util.Map;
+
 /**
  * Class name will be tablename
  */
@@ -24,6 +26,7 @@ public class ChatMessage {
     private String path;
     @DatabaseField
     private long time;
+    private Map<String, String> timeStamp;
 
     public ChatMessage() {
     }
@@ -76,4 +79,7 @@ public class ChatMessage {
         this.time = time;
     }
 
+    public void setTimeStamp(Map<String, String> timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 }

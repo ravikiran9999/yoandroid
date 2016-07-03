@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#E12828</color>
     <color name="colorPrimaryDark">#C82121</color>
-    <color name="colorAccent">#7A24AB</color>
+    <color name="colorAccent">#23a8d1</color>
     <color name="grey_divider">#EEEEEE</color>
     <color name="dial_green">#09D261</color>
     <color name="dial_out_going">#E9DC53</color>

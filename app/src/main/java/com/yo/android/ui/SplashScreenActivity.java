@@ -37,7 +37,7 @@ public class SplashScreenActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         if (!preferenceEndPoint.getStringPreference("phone").isEmpty()) {
-            startActivity(new Intent(this, NavigationDrawerActivity.class));
+            startActivity(new Intent(this, BottomTabsActivity.class));
         } else {
             startActivity(new Intent(this, LoginActivity.class));
         }

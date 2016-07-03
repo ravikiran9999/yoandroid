@@ -11,22 +11,35 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <include layout="@layout/tool_bar" />
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize"
+        android:orientation="vertical">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_divider"></View>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@android:color/white"
-            app:tabIndicatorHeight="2dp"
+            android:layout_height="65dp"
+            app:tabGravity="center"
+            app:tabIndicatorColor="@android:color/transparent"
+            app:tabIndicatorHeight="0dp"
             app:tabMode="scrollable" />
 
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

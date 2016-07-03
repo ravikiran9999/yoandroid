@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
     android:orientation="vertical">
 
@@ -14,16 +14,16 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:background="@drawable/dialer_default_avatar" />
+        android:src="@drawable/ic_contacts" />
 
     <TextView
         android:id="@+id/tv_contact_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_toRightOf="@+id/imv_contact_pic"
-        tools:text="Chris Jung"
+        android:text="Name"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
 
@@ -32,14 +32,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_contact_email"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/imv_contact_pic"
         android:ellipsize="end"
         android:maxLines="2"
-        android:layout_marginRight="16dp"
-        tools:text="This is a dummy text for a chat message. This is the second line of the message"
-        android:textSize="14sp" />
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        tools:text="This is a dummy text for a chat message. This is the second line of the message" />
 
     <TextView
         android:id="@+id/tv_contact_type"
@@ -48,8 +49,9 @@
         android:layout_alignParentRight="true"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="16dp"
-        tools:text="2 hours ago"
-        android:textSize="12sp" />
+        android:textColor="@color/dialpad_icon_tint"
+        android:textSize="12sp"
+        tools:text="1 hours ago" />
 
     <View
         android:layout_width="match_parent"

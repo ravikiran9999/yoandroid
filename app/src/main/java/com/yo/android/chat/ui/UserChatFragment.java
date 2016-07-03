@@ -90,9 +90,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setMessage(message);
         chatMessage.setTime(timestamp);
         chatMessage.setSenderID(userId);
+        chatMessage.setTimeStamp(ServerValue.TIMESTAMP);
 
         DatabaseReference reference = roomIdReference.push();
         reference.setValue(chatMessage);
+        // getTimeFromFireBaseServer(reference);
     }
 
     private void getTimeFromFireBaseServer(DatabaseReference reference) {
@@ -121,9 +123,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         roomIdReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                chatMessageArray.add(chatMessage);
-                userChatAdapter.addItems(chatMessageArray);
+                try {
+                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                    chatMessageArray.add(chatMessage);
+                    userChatAdapter.addItems(chatMessageArray);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override

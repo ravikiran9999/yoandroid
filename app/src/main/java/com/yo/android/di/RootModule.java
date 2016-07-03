@@ -12,11 +12,14 @@ import com.yo.android.chat.ui.OTPFragment;
 import com.yo.android.chat.ui.SignupActivity;
 import com.yo.android.chat.ui.UserChatFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
+import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.ui.ChatActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.SplashScreenActivity;
+import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.Receiver;
@@ -39,6 +42,7 @@ import dagger.Provides;
                 //Activities
                 MainActivity.class,
                 NavigationDrawerActivity.class,
+                BottomTabsActivity.class,
                 SettingsActivity.class,
                 LoginActivity.class,
                 SettingsActivity.class,
@@ -50,12 +54,14 @@ import dagger.Provides;
                 SplashScreenActivity.class,
                 SignupActivity.class,
                 MagazineArticleDetailsActivity.class,
+                ChatActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
                 BaseFragment.class,
                 OTPFragment.class,
-                UserChatFragment.class
+                UserChatFragment.class,
+                DialerFragment.class
 
 
         },

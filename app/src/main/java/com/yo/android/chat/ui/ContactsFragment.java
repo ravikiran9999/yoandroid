@@ -1,10 +1,10 @@
 package com.yo.android.chat.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,20 +17,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
-import com.yo.android.chat.ui.UserChatFragment;
-import com.yo.android.di.Injector;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.model.Registration;
+import com.yo.android.ui.ChatActivity;
 import com.yo.android.util.DatabaseConstant;
 
 import java.util.ArrayList;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,7 +41,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     private String existingRoomId;
 
 
-
     public ContactsFragment() {
         // Required empty public constructor
     }
@@ -54,7 +48,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
 
         databaseHelper = new DatabaseHelper(getActivity().getApplicationContext());
@@ -179,16 +172,9 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     }
 
     private void showUserChatScreen(String roomId) {
-
-
-        UserChatFragment userChatFragment = new UserChatFragment();
-        Bundle args = new Bundle();
-        args.putString(DatabaseConstant.CHAT_ROOM_ID, roomId);
-        userChatFragment.setArguments(args);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.drawer_layout, userChatFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra(DatabaseConstant.CHAT_ROOM_ID, roomId);
+        startActivity(intent);
     }
 
     private void getRoomIdFromDatabase() {
