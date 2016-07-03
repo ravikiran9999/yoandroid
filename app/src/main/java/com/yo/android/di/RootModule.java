@@ -67,12 +67,12 @@ import dagger.Provides;
                 ChatFragment.class,
 
 
-
         },
         includes = {
                 AppModule.class,
                 SharedPreferencesModule.class,
-                NetWorkModule.class
+                NetWorkModule.class,
+                AwsModule.class
         }
 )
 

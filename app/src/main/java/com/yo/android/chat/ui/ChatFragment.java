@@ -107,7 +107,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         final String roomCombination1 = yourPhoneNumber + ":" + opponentPhoneNumber;
         final String roomCombination2 = opponentPhoneNumber + ":" + yourPhoneNumber;
         DatabaseReference databaseRoomReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.ROOM);
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         databaseRoomReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

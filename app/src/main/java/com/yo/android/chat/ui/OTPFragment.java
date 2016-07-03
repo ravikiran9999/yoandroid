@@ -17,7 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.yo.android.R;
 import com.yo.android.model.Registration;
-import com.yo.android.ui.NavigationDrawerActivity;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.DatabaseConstant;
 
 /**
@@ -48,14 +48,14 @@ public class OTPFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_ot, container, false);
 
 
-        Button verifyButton = (Button)view.findViewById(R.id.verify);
+        Button verifyButton = (Button) view.findViewById(R.id.verify);
         otp = (EditText) view.findViewById(R.id.otp);
 
         verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String password = otp.getText().toString();
-                if(password.equalsIgnoreCase(tempPassword)) {
+                if (password.equalsIgnoreCase(tempPassword)) {
                     signUp(phoneNumber, password);
                 } else {
                     Toast.makeText(getActivity(), "Invalid OTP", Toast.LENGTH_LONG).show();
@@ -74,7 +74,7 @@ public class OTPFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference("phone", phoneNumber);
         //preferenceEndPoint.saveStringPreference("email", email);
         preferenceEndPoint.saveStringPreference("password", password);
-        startActivity(new Intent(getActivity(), NavigationDrawerActivity.class));
+        startActivity(new Intent(getActivity(), BottomTabsActivity.class));
     }
 
 }

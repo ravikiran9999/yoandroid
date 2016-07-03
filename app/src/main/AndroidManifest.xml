@@ -101,12 +101,12 @@
             android:taskAffinity=".outgoing"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <service
-            android:name=".voip.SipService"
-            android:screenOrientation="portrait" />
+        <service android:name=".voip.SipService" />
 
         <activity android:name=".chat.ui.SignupActivity" />
-        <activity android:name=".flip.MagazineArticleDetailsActivity"></activity>
+        <activity
+            android:name=".flip.MagazineArticleDetailsActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
