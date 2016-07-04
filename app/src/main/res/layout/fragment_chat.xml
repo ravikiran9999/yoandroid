@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.yo.android.chat.ui.ContactsFragment">
+    tools:context="com.yo.android.chat.ui.fragments.ContactsFragment">
 
     <ProgressBar
         android:id="@+id/progress"
@@ -17,7 +17,6 @@
         android:id="@+id/lv_contacts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:divider="@android:color/transparent" />
     <!--<FrameLayout
         android:id="@+id/fragment_container"

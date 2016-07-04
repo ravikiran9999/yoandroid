@@ -40,11 +40,12 @@ import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
-import com.yo.android.util.DatabaseConstant;
+import com.yo.android.util.Constants;
 import com.yo.android.vox.OTPBody;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
@@ -267,7 +268,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             });
             OTPFragment otpFragment = new OTPFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("phone", phoneNumber);
+            bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
             otpFragment.setArguments(bundle);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
@@ -403,7 +404,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     private void sendRegistrationToServer(@NonNull final String phoneNumber) {
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.APP_USERS);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
 
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -412,7 +413,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 if (!value) {
                     startActivity(new Intent(LoginActivity.this, SignupActivity.class));
                 } else {
-                    preferenceEndPoint.saveStringPreference("phone", phoneNumber);
+                    preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
                     //preferenceEndPoint.saveStringPreference("email", email);
                     //preferenceEndPoint.saveStringPreference("password", password);
                     startActivity(new Intent(LoginActivity.this, BottomTabsActivity.class));
@@ -441,7 +442,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     }
 
     private void getRegisteredAppUsers() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.APP_USERS);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
 
         // Retrieve new posts as they are added to the database
         reference.addChildEventListener(new ChildEventListener() {

@@ -8,6 +8,7 @@ import android.widget.EditText;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.ui.BaseActivity;
 
 import javax.inject.Inject;
