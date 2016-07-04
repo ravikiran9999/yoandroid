@@ -43,10 +43,12 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.vox.OTPBody;
 import com.yo.android.vox.VoxApi;
+import com.yo.android.vox.VoxFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +91,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     PreferenceEndPoint preferenceEndPoint;
     @Inject
     VoxApi.VoxService voxService;
+    @Inject
+    VoxFactory voxFactory;
     @Inject
     YoApi.YoService yoService;
 
@@ -239,7 +243,29 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             //showProgress(true);
             //signin(email, password, phoneNumber);
             //sendRegistrationToServer(phoneNumber);
+            voxService.getData(voxFactory.newAddSubscriber(phoneNumber, phoneNumber)).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+
+            yoService.loginUserAPI(phoneNumber).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
             OTPFragment otpFragment = new OTPFragment();
             Bundle bundle = new Bundle();
             bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
@@ -390,7 +416,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
                     //preferenceEndPoint.saveStringPreference("email", email);
                     //preferenceEndPoint.saveStringPreference("password", password);
-                    startActivity(new Intent(LoginActivity.this, NavigationDrawerActivity.class));
+                    startActivity(new Intent(LoginActivity.this, BottomTabsActivity.class));
                 }
             }
 

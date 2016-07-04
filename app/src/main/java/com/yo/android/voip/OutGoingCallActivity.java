@@ -37,6 +37,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     int sec = 0, min = 0, hr = 0;
     private Handler handler;
     private EventBus bus = EventBus.getDefault();
+    int notificationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         log.setCallType(VoipConstants.CALL_DIRECTION_OUT);
         log.setCallMode(VoipConstants.CALL_MODE_VOIP);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
-        Util.createNotification(this, mobile, "Outgoing call", OutGoingCallActivity.class);
+        notificationId = Util.createNotification(this, mobile, "Outgoing call", OutGoingCallActivity.class, getIntent());
     }
 
     private void initViews() {
@@ -87,7 +88,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Util.createNotification(this, "Yo App Calling", "Outgoing call", OutGoingCallActivity.class);
+        Util.createNotification(this, "Yo App Calling", "Outgoing call", OutGoingCallActivity.class, intent);
     }
 
     @Override
@@ -124,6 +125,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             case R.id.btnEndCall:
                 callModel.setOnCall(false);
                 bus.post(callModel);
+                Util.cancelNotification(this, notificationId);
                 finish();
                 break;
             default:
@@ -144,13 +146,14 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                     || model.getEvent() == UserAgent.CALL_STATE_ERROR
                     || model.getEvent() == UserAgent.CALL_STATE_END
                     ) {
-                finish();
+                Util.cancelNotification(this, notificationId);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mToastFactory.showToast("Call ended.");
                     }
                 });
+                finish();
             }
 
         }
@@ -184,12 +187,13 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(final Context context, Intent intent) {
             finish();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mToastFactory.showToast("Call ended.");
+                    Util.cancelNotification(context, notificationId);
                 }
             });
 

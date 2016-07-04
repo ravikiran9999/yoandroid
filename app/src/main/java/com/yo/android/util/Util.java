@@ -14,12 +14,13 @@ import com.yo.android.R;
  */
 public class Util {
 
-    public static <T> void createNotification(Context context, String title, String body, Class<T> clzz) {
+    public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         //
         Intent destinationIntent = new Intent(context, clzz);
         destinationIntent.putExtra("from_notification", true);
+        destinationIntent.putExtras(intent);
         int notificationId = body.hashCode();
-        PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
         notificationStyle.bigText(body);
@@ -28,14 +29,20 @@ public class Util {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title == null ? "Yo App" : title)
                 .setContentText(body)
-                .setAutoCancel(true)
+                .setOngoing(true)
+//                .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setStyle(notificationStyle)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(notificationId, notification);
+        return notificationId;
+    }
 
+    public static void cancelNotification(Context context, int notificationId) {
+        NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(notificationId);
     }
 
 }
