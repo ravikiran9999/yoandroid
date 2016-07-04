@@ -45,7 +45,7 @@ public class MagazineFlipArticlesFragment extends Fragment {
 
     private FlipViewController flipView;
     private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
-    private List<Travels.Data> articlesList = new ArrayList<Travels.Data>();
+    private static List<Travels.Data> articlesList = new ArrayList<Travels.Data>();
     private MyReceiver myReceiver;
     private MyBaseAdapter myBaseAdapter;
 
@@ -154,9 +154,31 @@ public class MagazineFlipArticlesFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
             View layout = convertView;
-            if (convertView == null) {
+            if (layout == null) {
                 layout = inflater.inflate(R.layout.magazine_flip_layout, null);
+
+                holder = new ViewHolder();
+
+                holder.categoryName =  UI
+                        .<TextView>findViewById(layout, R.id.tv_category_name);
+
+                holder.articleTitle = UI.
+                        <TextView>findViewById(layout, R.id.tv_article_title);
+
+                holder.articleShortDesc = UI
+                        .<TextView>findViewById(layout, R.id.tv_article_short_desc);
+
+                holder.articlePhoto = UI.findViewById(layout, R.id.photo);
+
+                holder.magazineLike = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like);
+
+                layout.setTag(holder);
+            }
+            else
+            {
+                holder = (ViewHolder)layout.getTag();
             }
 
             //final Travels.Data data = Travels.getImgDescriptions().get(position);
@@ -164,30 +186,39 @@ public class MagazineFlipArticlesFragment extends Fragment {
             if (data == null) {
                 return layout;
             }
+            holder.magazineLike.setTag(position);
             if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
                 //articlesList = new ArrayList<Travels.Data>();
                 //articlesList.add(data);
 
-                UI
-                        .<TextView>findViewById(layout, R.id.tv_category_name)
+               holder.categoryName
                         .setText(AphidLog.format("%s", data.getTopicName()));
 
-                UI
-                        .<TextView>findViewById(layout, R.id.tv_article_title)
+                holder.articleTitle
                         .setText(AphidLog.format("%s", data.getTitle()));
 
-                UI
-                        .<TextView>findViewById(layout, R.id.tv_article_short_desc)
+                holder.articleShortDesc
                         .setText(Html.fromHtml(data.getDescription()));
 
-                UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        int pos = (int)buttonView.getTag();
+                        articlesList.get(pos).setChecked(isChecked);
                         if (isChecked) {
                             Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                         }
                     }
                 });
+
+                if (data.isChecked())
+                {
+                    holder.magazineLike.setChecked(true);
+                }
+                else
+                {
+                    holder.magazineLike.setChecked(false);
+                }
 
                 UI
                         .<TextView>findViewById(layout, R.id.tv_category_full_story)
@@ -207,7 +238,7 @@ public class MagazineFlipArticlesFragment extends Fragment {
                         });
 
 
-                ImageView photoView = UI.findViewById(layout, R.id.photo);
+                ImageView photoView = holder.articlePhoto;
                 //Use an async task to load the bitmap
                 boolean needReload = true;
                 AsyncImageTask previousTask = AsyncDrawable.getTask(photoView);
@@ -242,6 +273,18 @@ public class MagazineFlipArticlesFragment extends Fragment {
             items = new ArrayList<>(articlesList);
             notifyDataSetChanged();
         }
+    }
+
+    private static class ViewHolder {
+        private TextView categoryName;
+
+        private TextView articleTitle;
+
+        private TextView articleShortDesc;
+
+        private ImageView articlePhoto;
+
+        private CheckBox magazineLike;
     }
 
     /**
