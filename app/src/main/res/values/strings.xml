@@ -96,5 +96,6 @@
     </string-array>
     <string name="title_activity_magazine_article_details">MagazineArticleDetailsActivity</string>
     <string name="connectivity_network_settings">Please check your internet connection.</string>
+    <string name="enter_mobile_number_started">Enter your mobile number to get started!</string>
 
 </resources>

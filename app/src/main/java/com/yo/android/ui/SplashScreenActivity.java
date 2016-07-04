@@ -2,7 +2,9 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.widget.ImageView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -30,19 +32,36 @@ public class SplashScreenActivity extends BaseActivity {
     VoxFactory voxFactory;
     @Inject
     VoxApi.VoxService voxService;
+    private Handler mHandler = new Handler();
+    private static final long DURATION = 1000L;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        if (!preferenceEndPoint.getStringPreference("phone").isEmpty()) {
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        imageView.setImageResource(R.drawable.ic_splash);
+        mHandler.postDelayed(runnable, DURATION);
+       /* if (!preferenceEndPoint.getStringPreference("phone").isEmpty()) {
             startActivity(new Intent(this, BottomTabsActivity.class));
         } else {
             startActivity(new Intent(this, LoginActivity.class));
         }
-        finish();
+        finish();*/
     }
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!preferenceEndPoint.getStringPreference("phone").isEmpty()) {
+                startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
+            } else {
+                startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
+            }
+            finish();
+        }
+    };
 
     public void testVox() {
         //Debug purpose
