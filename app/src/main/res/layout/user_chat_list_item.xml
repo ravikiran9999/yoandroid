@@ -8,19 +8,20 @@
     android:padding="10dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:gravity="center_vertical"
         android:id="@+id/linear_text_back"
-        >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_sms_grey"
+        android:gravity="center_vertical"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/tv_chat_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/time_stamp"
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp"
-            android:layout_below="@+id/time_stamp"
             android:textColor="@android:color/black"
             tools:text="Message" />
     </LinearLayout>
@@ -31,7 +32,7 @@
         android:layout_height="wrap_content"
         android:gravity="right"
         android:textColor="@color/colorPrimary"
-        android:textSize="14sp"
+        android:textSize="10sp"
         tools:text="3:53" />
 
 </LinearLayout>
