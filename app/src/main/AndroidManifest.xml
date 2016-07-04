@@ -78,7 +78,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".chat.ui.LoginActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".ui.DialerActivity"
             android:screenOrientation="portrait" />

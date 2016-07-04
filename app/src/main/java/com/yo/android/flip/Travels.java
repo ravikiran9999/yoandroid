@@ -18,18 +18,18 @@ public class Travels {
     static {
         Travels.IMG_DESCRIPTIONS.add(new Data("Top Stories", "Potala Palace", "potala_palace.jpg",
                 "The <b>Potala Palace</b> is located in Lhasa, Tibet Autonomous Region, China. It is named after Mount Potalaka, the mythical abode of Chenresig or Avalokitesvara.",
-                "China", "Lhasa2", "http://en.wikipedia.org/wiki/Potala_Palace"));
+                "China", "Lhasa2", "http://en.wikipedia.org/wiki/Potala_Palace", false));
         Travels.IMG_DESCRIPTIONS.add(new Data("Top Stories", "Drepung Monastery", "drepung_monastery.jpg",
                 "<b>Drepung Monastery</b>, located at the foot of Mount Gephel, is one of the \"great three\" Gelukpa university monasteries of Tibet.",
                 "China", "Lhasa",
-                "http://en.wikipedia.org/wiki/Drepung"));
+                "http://en.wikipedia.org/wiki/Drepung", false));
         Travels.IMG_DESCRIPTIONS.add(new Data("Entrepreneurship", "Sera Monastery", "sera_monastery.jpg",
                 "<b>Sera Monastery</b> is one of the 'great three' Gelukpa university monasteries of Tibet, located 1.25 miles (2.01 km) north of Lhasa.",
-                "China", "Lhasa1", "http://en.wikipedia.org/wiki/Sera_Monastery"));
+                "China", "Lhasa1", "http://en.wikipedia.org/wiki/Sera_Monastery", false));
         Travels.IMG_DESCRIPTIONS.add(new Data("Entrepreneurship","Samye Monastery", "samye_monastery.jpg",
                 "<b>Samye Monastery</b> is the first Buddhist monastery built in Tibet, was most probably first constructed between 775 and 779 CE.",
                 "China", "Samye",
-                "http://en.wikipedia.org/wiki/Samye"));
+                "http://en.wikipedia.org/wiki/Samye", false));
         /*Travels.IMG_DESCRIPTIONS.add(
                 new Data("Tashilunpo Monastery", "tashilunpo_monastery.jpg",
                         "<b>Tashilhunpo Monastery</b>, founded in 1447 by Gendun Drup, the First Dalai Lama, is a historic and culturally important monastery next to Shigatse, the second-largest city in Tibet.",
@@ -61,9 +61,10 @@ public class Travels {
         private final String country;
         private final String city;
         private final String link;
+        private boolean isChecked;
 
         private Data(String topicName, String title, String imageFilename, String description, String country,
-                     String city, String link) {
+                     String city, String link, boolean isChecked) {
             this.title = title;
             this.imageFilename = imageFilename;
             this.description = description;
@@ -71,6 +72,7 @@ public class Travels {
             this.city = city;
             this.link = link;
             this.topicName = topicName;
+            this.isChecked = isChecked;
         }
 
         public String getTopicName() {
@@ -101,5 +103,11 @@ public class Travels {
             return link;
         }
 
+        public boolean isChecked() {
+            return isChecked;
+        }
+        public void setChecked(boolean isChecked) {
+            this.isChecked = isChecked;
+        }
     }
 }
