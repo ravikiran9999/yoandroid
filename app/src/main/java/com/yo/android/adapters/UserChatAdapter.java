@@ -63,6 +63,4 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             holder.getLinearLayoutText().setLayoutParams(layoutParams);
         }
     }
-
-
 }
