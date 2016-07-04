@@ -16,47 +16,44 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:orientation="horizontal"
         android:paddingBottom="10dp"
-        >
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <ImageView
             android:id="@+id/emoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:background="@drawable/ic_emoji" />
+            android:src="@drawable/ic_emoji" />
 
 
         <EditText
             android:id="@+id/chat_text"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:background="@color/grey_divider"
             android:ems="10"
-            android:hint="@string/type_a_message"
-            android:maxLines="1"
+            android:hint="Type a message"
+            android:singleLine="true"
 
             />
 
         <ImageView
             android:id="@+id/send"
+            android:scaleType="fitXY"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/ic_send" />
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_send" />
 
         <ImageView
             android:id="@+id/mic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:padding="10dp"
-            android:background="@drawable/ic_mic" />
+            android:src="@drawable/ic_mic" />
     </LinearLayout>
 </LinearLayout>
