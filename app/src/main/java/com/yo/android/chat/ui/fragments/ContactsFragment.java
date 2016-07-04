@@ -1,4 +1,4 @@
-package com.yo.android.chat.ui;
+package com.yo.android.chat.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
-    private ListView listView;
     @Inject
     DatabaseHelper databaseHelper;
 
@@ -34,7 +33,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
-        listView = (ListView) view.findViewById(R.id.lv_contacts);
+        ListView listView = (ListView) view.findViewById(R.id.lv_contacts);
 
         listView.setOnItemClickListener(this);
         return view;

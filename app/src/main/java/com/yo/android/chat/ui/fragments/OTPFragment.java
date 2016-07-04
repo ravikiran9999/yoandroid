@@ -1,4 +1,4 @@
-package com.yo.android.chat.ui;
+package com.yo.android.chat.ui.fragments;
 
 
 import android.content.Intent;
@@ -19,7 +19,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.util.DatabaseConstant;
+import com.yo.android.util.Constants;
 
 import javax.inject.Inject;
 
@@ -48,7 +48,7 @@ public class OTPFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle phoneNumberBundle = this.getArguments();
-        phoneNumber = phoneNumberBundle.getString("phone");
+        phoneNumber = phoneNumberBundle.getString(Constants.PHONE_NUMBER);
     }
 
     @Override
@@ -77,12 +77,11 @@ public class OTPFragment extends BaseFragment {
     }
 
     private void signUp(@NonNull String phoneNumber, @NonNull String password) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(DatabaseConstant.APP_USERS);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         DatabaseReference childReference = databaseReference.child(phoneNumber);
         Registration registration = new Registration(password, phoneNumber);
         childReference.setValue(registration);
-        preferenceEndPoint.saveStringPreference("phone", phoneNumber);
-        //preferenceEndPoint.saveStringPreference("email", email);
+        preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
         preferenceEndPoint.saveStringPreference("password", password);
         startActivity(new Intent(getActivity(), BottomTabsActivity.class));
         //

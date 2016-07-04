@@ -18,10 +18,10 @@ import android.widget.ListView;
 import com.yo.android.R;
 import com.yo.android.adapters.MenuListAdapter;
 import com.yo.android.adapters.TabsPagerAdapter;
-import com.yo.android.chat.ui.ChatFragment;
+import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.model.MenuData;
 import com.yo.android.ui.fragments.CallFragment;
-import com.yo.android.chat.ui.ContactsFragment;
+import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.voip.SipService;
 

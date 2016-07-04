@@ -14,7 +14,7 @@ import com.j256.ormlite.table.TableUtils;
 import com.orion.android.common.logger.Log;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
-import com.yo.android.util.DatabaseConstant;
+import com.yo.android.util.Constants;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -135,7 +135,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             chatDao = OpenHelperManager.getHelper(context, DatabaseHelper.class).getChatMessageDao();
             DeleteBuilder<ChatMessage, Integer> deleteBuilder = chatDao.deleteBuilder();
-            deleteBuilder.where().eq(DatabaseConstant.MESSAGE, message);
+            deleteBuilder.where().eq(Constants.MESSAGE, message);
             deleteBuilder.delete();
             return true;
         } catch (SQLException e) {
@@ -153,7 +153,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             chatDao = OpenHelperManager.getHelper(context, DatabaseHelper.class).getChatMessageDao();
             QueryBuilder<ChatMessage, Integer> queryBuilder = chatDao.queryBuilder();
             for (int i = 0; i < 5; i++) {
-                PreparedQuery<ChatMessage> preparedQuery = queryBuilder.where().eq(DatabaseConstant.MESSAGE, "Welcome" + i).prepare();
+                PreparedQuery<ChatMessage> preparedQuery = queryBuilder.where().eq(Constants.MESSAGE, "Welcome" + i).prepare();
                 chatUsersList = chatDao.query(preparedQuery);
             }
         } catch (SQLException e) {
@@ -168,7 +168,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             chatRoomDao = OpenHelperManager.getHelper(context, DatabaseHelper.class).getChatRoomDao();
             QueryBuilder<ChatRoom, Integer> queryBuilder = chatRoomDao.queryBuilder();
-            PreparedQuery<ChatRoom> preparedQuery = queryBuilder.where().eq(DatabaseConstant.YOUR_PHONE_NUMBER, yourPhoneNumber).and().eq(DatabaseConstant.OPPONENT_PHONE_NUMBER, opponentPhoneNumber).prepare();
+            PreparedQuery<ChatRoom> preparedQuery = queryBuilder.where().eq(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber).and().eq(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber).prepare();
             chatRoomList = chatRoomDao.query(preparedQuery);
             if (chatRoomList.size() > 0) {
                 return chatRoomList.get(0).getChatRoomId();

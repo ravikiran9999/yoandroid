@@ -1,9 +1,10 @@
-package com.yo.android.ui;
+package com.yo.android.chat.ui;
 
 import android.os.Bundle;
 
-import com.yo.android.chat.ui.UserChatFragment;
-import com.yo.android.util.DatabaseConstant;
+import com.yo.android.chat.ui.fragments.UserChatFragment;
+import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.Constants;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -12,9 +13,10 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         UserChatFragment userChatFragment = new UserChatFragment();
         Bundle args = new Bundle();
-        args.putString(DatabaseConstant.CHAT_ROOM_ID, getIntent().getStringExtra(DatabaseConstant.CHAT_ROOM_ID));
+        args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
         userChatFragment.setArguments(args);
 
         getSupportFragmentManager()
@@ -22,7 +24,7 @@ public class ChatActivity extends BaseActivity {
                 .add(android.R.id.content, userChatFragment)
                 .commit();
         enableBack();
-        String opponent = getIntent().getStringExtra(DatabaseConstant.OPPONENT_PHONE_NUMBER);
+        String opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
         getSupportActionBar().setTitle(opponent);
     }
 }
