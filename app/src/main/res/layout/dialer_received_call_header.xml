@@ -38,7 +38,7 @@
             android:layout_below="@+id/tv_caller_name"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/imv_caller_pic"
-            android:text="Mobile +91 9876543210"
+            android:text="Mobile"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 

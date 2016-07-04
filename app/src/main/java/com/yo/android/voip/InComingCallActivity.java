@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.Util;
 
 import de.greenrobot.event.EventBus;
 
@@ -43,9 +44,10 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     int sec = 0, min = 0, hr = 0;
     private Handler handler;
     private EventBus bus = EventBus.getDefault();
-    private MediaPlayer player;
+    private static MediaPlayer player;
     private View mReceivedCallHeader;
     private View mInComingHeader;
+    private int notificationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +82,17 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         log.setCallerNo(getIntent().getStringExtra(CALLER));
         log.setCallType(VoipConstants.CALL_DIRECTION_IN_MISSED);
         log.setCallMode(VoipConstants.CALL_MODE_VOIP);
-        player = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
-        player.start();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
+        try {
+            if (player == null || !player.isPlaying()) {
+                player = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
+                player.start();
+            }
+        } catch (IllegalStateException e) {
+            mLog.w("InComingCall", e);
+        }
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
+        notificationId = Util.createNotification(this, getIntent().getStringExtra(CALLER_NO), "Incoming call", InComingCallActivity.class, getIntent());
     }
 
     private void initViews() {
@@ -191,10 +200,13 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
     private void stopRinging() {
         try {
-            player.stop();
-            player.release();
+            if (player != null) {
+                player.stop();
+                player.release();
+                player = null;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            mLog.w("InComingCall", e);
         }
     }
 
@@ -211,6 +223,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     || model.getEvent() == UserAgent.CALL_STATE_ERROR
                     || model.getEvent() == UserAgent.CALL_STATE_END
                     ) {
+                Util.cancelNotification(this, notificationId);
                 finish();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -252,12 +265,13 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(final Context context, Intent intent) {
             stopRinging();
             finish();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Util.cancelNotification(context, notificationId);
                     mToastFactory.showToast("Call ended.");
                 }
             });
