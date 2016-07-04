@@ -18,27 +18,28 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="10dp">
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        >
 
         <ImageView
             android:id="@+id/emoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
             android:padding="5dp"
-            android:src="@drawable/ic_smiles_smile" />
+            android:background="@drawable/ic_emoji" />
 
 
         <EditText
             android:id="@+id/chat_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:background="@color/grey_divider"
             android:ems="10"
             android:hint="Type a message"
-            android:padding="10dp"
             android:singleLine="true"
 
             />
@@ -47,17 +48,15 @@
             android:id="@+id/send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:padding="10dp"
-            android:src="@drawable/attach_send2" />
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/ic_send" />
 
         <ImageView
             android:id="@+id/mic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:background="@color/colorPrimary"
             android:padding="10dp"
-            android:src="@drawable/mic" />
+            android:background="@drawable/ic_mic" />
     </LinearLayout>
 </LinearLayout>
