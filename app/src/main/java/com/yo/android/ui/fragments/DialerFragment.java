@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yo.android.R;
-import com.yo.android.chat.ui.BaseFragment;
+import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.ui.DialerActivity;
 
 /**

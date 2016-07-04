@@ -1,4 +1,4 @@
-package com.yo.android.chat.ui;
+package com.yo.android.chat.ui.fragments;
 
 
 import android.app.Dialog;
