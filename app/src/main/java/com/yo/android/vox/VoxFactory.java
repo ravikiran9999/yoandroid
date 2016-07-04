@@ -39,6 +39,13 @@ public class VoxFactory {
         return getSubscriberId;
     }
 
+    //{"STATUS":"SUCCESS","DATA":{"SUBSCRIBERID":"77","USERNAME":"9573535345","PASSWORD":"123456","CREDIT":"2","CALLINGCARDNUMBER":"4949349845","MESSAGE":"Subscriber data inserted successfully"}}
+    public AddSubscriberBody newAddSubscriber(String username, String mobile) {
+        AddSubscriberBody addSubscriberBody = new AddSubscriberBody(LOGINUSER, LOGINSECRET, "SUBSCRIBER", "ADD");
+        addSubscriberBody.addSubscriberBody(username, mobile);
+        return addSubscriberBody;
+    }
+
     public String get(String mobile) {
         Map<String, Object> jsonData = new HashMap<String, Object>();
         jsonData.put("LOGINUSER", LOGINUSER);

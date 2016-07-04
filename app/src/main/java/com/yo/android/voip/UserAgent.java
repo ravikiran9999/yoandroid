@@ -118,7 +118,7 @@ public class UserAgent implements CallEvents {
             mLog.w(TAG, e);
         }
         Intent i = new Intent(context, InComingCallActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         try {
             String useName = call.getPeerProfile().getDisplayName();
             if (useName == null) {
@@ -151,7 +151,7 @@ public class UserAgent implements CallEvents {
             mLog.w(TAG, "onEvent: exception in processEvents", e);
         }
         if (model.getEvent() != OutGoingCallActivity.CALL_ACCEPTED_START_TIMER) {
-            model.setEvent(OutGoingCallActivity.NOEVENT);
+            model.setEvent(OutGoingCallActivity.NO_EVENT);
         }
     }
 

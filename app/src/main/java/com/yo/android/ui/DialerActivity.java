@@ -115,7 +115,7 @@ public class DialerActivity extends BaseActivity {
             btnDialer.setEnabled(false);
             mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
         }
-
+        btnDialer.performClick();
 
     }
 
