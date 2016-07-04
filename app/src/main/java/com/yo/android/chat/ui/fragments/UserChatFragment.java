@@ -131,7 +131,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override

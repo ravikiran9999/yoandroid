@@ -18,7 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:divider="@android:color/transparent" />
+        android:divider="@android:color/transparent"
+        />
     <!--<FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
