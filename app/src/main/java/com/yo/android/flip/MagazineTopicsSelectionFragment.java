@@ -78,7 +78,7 @@ public class MagazineTopicsSelectionFragment extends BaseFragment implements Ada
                 }
 
                 //ArrayAdapter<Topics> topicsArrayAdapter = new ArrayAdapter<Topics>(getActivity(), android.R.layout.simple_spinner_item, topicsList);
-                TopicsSpinnerAdapter topicsArrayAdapter = new TopicsSpinnerAdapter (getActivity(), android.R.layout.simple_spinner_item, topicsList);
+                TopicsSpinnerAdapter topicsArrayAdapter = new TopicsSpinnerAdapter (getActivity(), android.R.layout.simple_list_item_1, topicsList);
                 topicsSpinner.setAdapter(topicsArrayAdapter);
 
                 //selectedTopic = "Top Stories";

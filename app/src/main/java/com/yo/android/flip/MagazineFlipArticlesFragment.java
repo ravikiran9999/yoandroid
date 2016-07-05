@@ -1,5 +1,6 @@
 package com.yo.android.flip;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
 import android.util.Log;
@@ -44,6 +44,7 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,6 +64,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
     YoApi.YoService yoService;
     private String topicName;
 
+    @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
         // Required empty public constructor
         magazineTopicsSelectionFragment = fragment;
@@ -105,15 +107,15 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         myBaseAdapter.addItems(articlesList);*/
 
         articlesList.clear();
-        String accessToken=preferenceEndPoint.getStringPreference("access_token");
-        if(accessToken==null){
-            accessToken="1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        if (accessToken == null) {
+            accessToken = "1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
         }
         yoService.getArticlesAPI(accessToken, topicId).enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
 
-                if(response.body().size() >0) {
+                if (response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
                         //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
                         //articlesList = new ArrayList<Travels.Data>();
@@ -121,8 +123,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                         // }
                     }
                     myBaseAdapter.addItems(articlesList);
-                }
-                else {
+                } else {
                     Toast.makeText(getActivity(), "No Articles", Toast.LENGTH_LONG).show();
                 }
 
@@ -206,7 +207,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
                 holder = new ViewHolder();
 
-                holder.categoryName =  UI
+                holder.categoryName = UI
                         .<TextView>findViewById(layout, R.id.tv_category_name);
 
                 holder.articleTitle = UI.
@@ -220,10 +221,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 holder.magazineLike = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like);
 
                 layout.setTag(holder);
-            }
-            else
-            {
-                holder = (ViewHolder)layout.getTag();
+            } else {
+                holder = (ViewHolder) layout.getTag();
             }
 
             //final Travels.Data data = Travels.getImgDescriptions().get(position);
@@ -233,109 +232,111 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
             }
             holder.magazineLike.setTag(position);
             //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
-                //articlesList = new ArrayList<Travels.Data>();
-                //articlesList.add(data);
+            //articlesList = new ArrayList<Travels.Data>();
+            //articlesList.add(data);
 
-               holder.categoryName
-                        .setText(AphidLog.format("%s", topicName));
+            holder.categoryName
+                    .setText(AphidLog.format("%s", topicName));
 
-                holder.articleTitle
-                        .setText(AphidLog.format("%s", data.getTitle()));
+            holder.articleTitle
+                    .setText(AphidLog.format("%s", data.getTitle()));
 
-            if(data.getSummary() != null) {
+            if (data.getSummary() != null) {
                 holder.articleShortDesc
                         .setText(Html.fromHtml(data.getSummary()));
             }
             //TODO:
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if(data.getLiked().equals("true")) {
-               // holder.magazineLike.setChecked(true);
+            if (data.getLiked().equals("true")) {
+                // holder.magazineLike.setChecked(true);
                 data.setIsChecked(true);
-            }
-            else {
+            } else {
                 //holder.magazineLike.setChecked(false);
                 data.setIsChecked(false);
             }
 
-                holder.magazineLike.setChecked(data.isChecked());
+            holder.magazineLike.setChecked(data.isChecked());
 
-                holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        int pos = (int)buttonView.getTag();
-                        articlesList.get(pos).setIsChecked(isChecked);
-                        if (isChecked) {
-                            String accessToken=preferenceEndPoint.getStringPreference("access_token");
-                            if(accessToken==null){
-                                accessToken="1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
-                            }
-                            yoService.likeArticlesAPI(data.getId(),accessToken).enqueue(new Callback<com.yo.android.model.Response>() {
-                                @Override
-                                public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
-                                    //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
-                                        mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                      //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
+            holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    int pos = (int) buttonView.getTag();
+                    data.setIsChecked(isChecked);
+                    if (isChecked) {
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        if (accessToken == null) {
+                            accessToken = "1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
+                        }
+                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
+                                mToastFactory.showToast("You have liked the article " + data.getTitle());
+                                //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     /*}
                                     else {
                                         Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     }*/
-                                }
-
-                                @Override
-                                public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
-                                    Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                        else {
-                            String accessToken=preferenceEndPoint.getStringPreference("access_token");
-                            if(accessToken==null){
-                                accessToken="1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
                             }
-                            yoService.unlikeArticlesAPI(data.getId(),accessToken).enqueue(new Callback<com.yo.android.model.Response>() {
-                                @Override
-                                public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
-                                    //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
-                                    mToastFactory.showToast("You have unliked the article " + data.getTitle());
-                                    //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                data.setIsChecked(false);
+                                notifyDataSetChanged();
+                            }
+                        });
+                    } else {
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        if (accessToken == null) {
+                            accessToken = "1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
+                        }
+                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
+                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
+                                //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     /*}
                                     else {
                                         Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     }*/
-                                }
+                            }
 
-                                @Override
-                                public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
-                                    Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                data.setIsChecked(true);
+                                notifyDataSetChanged();
+                            }
+                        });
                     }
-                });
+                }
+            });
             //TODO:
 
 
-                UI
-                        .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                        .setText(AphidLog.format("%s", data.getTitle()));
-                UI
-                        .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                                intent.putExtra("Title", data.getTitle());
+            UI
+                    .<TextView>findViewById(layout, R.id.tv_category_full_story)
+                    .setText(AphidLog.format("%s", data.getTitle()));
+            UI
+                    .<TextView>findViewById(layout, R.id.tv_category_full_story)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                            intent.putExtra("Title", data.getTitle());
                                 /*String detailedDesc = Html.fromHtml(data.getDescription()).toString();
                                 intent.putExtra("DetailedDesc", detailedDesc);*/
-                                intent.putExtra("Image", data.getUrl());
-                                context.startActivity(intent);
-                            }
-                        });
+                            intent.putExtra("Image", data.getUrl());
+                            context.startActivity(intent);
+                        }
+                    });
 
 
-                WebView photoView = holder.articlePhoto;
+            WebView photoView = holder.articlePhoto;
 
-            if(data.getImage_filename() != null) {
+            if (data.getImage_filename() != null) {
                 //Use an async task to load the bitmap
                 /*boolean needReload = true;
                 AsyncImageTask previousTask = AsyncDrawable.getTask(photoView);

@@ -2,7 +2,6 @@ package com.yo.android.api;
 
 import com.yo.android.model.Articles;
 import com.yo.android.model.OTPResponse;
-import com.yo.android.model.Response;
 import com.yo.android.model.Topics;
 
 import java.util.List;
@@ -51,11 +50,11 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("/api/articles/{article_id}/like.json")
-        Call<Response> likeArticlesAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
+        Call<ResponseBody> likeArticlesAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
 
         @FormUrlEncoded
         @POST("/api/articles/{article_id}/unlike.json")
-        Call<Response> unlikeArticlesAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
+        Call<ResponseBody> unlikeArticlesAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
 
     }
 

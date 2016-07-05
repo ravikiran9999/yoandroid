@@ -5,24 +5,25 @@ import android.content.Context;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
+import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.chat.ui.SignupActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
-import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.OTPFragment;
-import com.yo.android.chat.ui.SignupActivity;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.fragments.DialerFragment;
+import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.Receiver;
@@ -69,6 +70,7 @@ import dagger.Provides;
                 ChatFragment.class,
                 MagazineTopicsSelectionFragment.class,
                 MagazineFlipArticlesFragment.class,
+                MoreFragment.class
 
 
         },
