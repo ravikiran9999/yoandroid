@@ -13,6 +13,8 @@ import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.chat.ui.SignupActivity;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
+import com.yo.android.flip.MagazineFlipArticlesFragment;
+import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.ui.DialerActivity;
@@ -65,6 +67,8 @@ import dagger.Provides;
                 DialerFragment.class,
                 ChatFragment.class,
                 ChatFragment.class,
+                MagazineTopicsSelectionFragment.class,
+                MagazineFlipArticlesFragment.class,
 
 
         },
