@@ -29,6 +29,7 @@
 
     <!--chat-->
     <string name="send">Send</string>
+    <string name="type_a_message">Type a message</string>
 
 
     <string name="enter_mobile_number">Enter your mobile number to get started!</string>

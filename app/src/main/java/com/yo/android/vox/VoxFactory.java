@@ -46,12 +46,12 @@ public class VoxFactory {
         return addSubscriberBody;
     }
 
-    public String get(String mobile) {
+    public String getCDRBalance(String mobile) {
         Map<String, Object> jsonData = new HashMap<String, Object>();
         jsonData.put("LOGINUSER", LOGINUSER);
         jsonData.put("LOGINSECRET", LOGINSECRET);
         jsonData.put("SECTION", "BALANCE");
-        jsonData.put("ACTION", "RATES");
+        jsonData.put("ACTION", "CDR");
         Map<String, String> data = new HashMap<>();
         data.put("USERNAME", mobile);
         jsonData.put("DATA", data);

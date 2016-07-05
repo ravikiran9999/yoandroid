@@ -44,6 +44,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     @Override
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
+
         holder.getChatText().setText(item.getMessage());
         holder.getChatTimeStamp().setText(timeStamp);
         if (userId.equals(item.getSenderID())) {
@@ -51,7 +52,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.setMargins(60, 0, 0, 0);
             holder.getLinearLayout().setGravity(Gravity.RIGHT);
-
             holder.getLinearLayoutText().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_yellow));
             holder.getLinearLayoutText().setLayoutParams(layoutParams);
 

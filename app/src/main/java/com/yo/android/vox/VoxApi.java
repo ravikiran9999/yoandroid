@@ -31,5 +31,9 @@ public class VoxApi {
         @POST("api.php")
         Call<ResponseBody> getData(@Part("request") UserDetails task);
 
+        @Multipart
+        @POST("api.php")
+        Call<ResponseBody> executeAction(@Part("request") String task);
+
     }
 }

@@ -37,16 +37,16 @@
             android:layout_weight="1"
             android:background="@color/grey_divider"
             android:ems="10"
-            android:hint="Type a message"
+            android:hint="@string/type_a_message"
+            android:maxLines="1"
             android:padding="10dp"
-            android:singleLine="true"
             android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/send"
-            android:scaleType="fitXY"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:scaleType="fitXY"
             android:src="@drawable/ic_send" />
 
         <ImageView

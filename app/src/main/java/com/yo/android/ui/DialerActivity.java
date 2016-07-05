@@ -1,7 +1,6 @@
 package com.yo.android.ui;
 
 import android.content.Intent;
-import android.net.sip.SipManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -18,6 +17,7 @@ import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.SipService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by Ramesh on 27/6/16.
@@ -34,6 +34,9 @@ public class DialerActivity extends BaseActivity {
     private boolean show;
     @Inject
     ConnectivityHelper mConnectivityHelper;
+    @Inject
+    @Named("voip_support")
+    boolean isVoipSupported;
 
 
     @Override
@@ -75,8 +78,7 @@ public class DialerActivity extends BaseActivity {
                 }
             });
         }
-        dialPadView.setVisibility(View.GONE);
-        bottom_layout.setVisibility(View.GONE);
+        btnDialer.setVisibility(View.GONE);
         btnDialer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,10 +88,12 @@ public class DialerActivity extends BaseActivity {
         btnCallGreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideDialPad();
+
                 String number = dialPadView.getDigits().getText().toString();
                 if (!mConnectivityHelper.isConnected()) {
                     mToastFactory.showToast(getString(R.string.connectivity_network_settings));
+                } else if (!isVoipSupported) {
+                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
                 } else if (number.length() > 0) {
                     Intent intent = new Intent(DialerActivity.this, OutGoingCallActivity.class);
                     intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
@@ -110,13 +114,10 @@ public class DialerActivity extends BaseActivity {
 
             }
         });
-        boolean isVoipSupported = SipManager.isApiSupported(this) && SipManager.isVoipSupported(this);
         if (!isVoipSupported) {
             btnDialer.setEnabled(false);
             mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
         }
-        btnDialer.performClick();
-
     }
 
     private void showDialPad() {
@@ -142,7 +143,6 @@ public class DialerActivity extends BaseActivity {
             }
         });
         dialPadView.startAnimation(bottomUp);
-//        bottomUp.start();
     }
 
     private void hideDialPad() {
@@ -172,11 +172,6 @@ public class DialerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (show) {
-            hideDialPad();
-            return;
-        }
         super.onBackPressed();
-
     }
 }
