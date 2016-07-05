@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -49,6 +51,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_chat, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -80,7 +89,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 arrayOfUsers.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     Registration registeredUsers = child.getValue(Registration.class);
-                    if(!(registeredUsers.getPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)))) {
+                    if (!(registeredUsers.getPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)))) {
                         arrayOfUsers.add(registeredUsers);
                     }
                 }

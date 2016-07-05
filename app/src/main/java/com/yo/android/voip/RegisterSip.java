@@ -57,10 +57,13 @@ public class RegisterSip {
                 closeLocalProfile();
                 SipProfile.Builder builder = new SipProfile.Builder(username, domain);
                 builder.setPassword(password);
+                //Need to test it once
+//                builder.setPort(4460);
+//                builder.setAutoRegistration(true);
                 profile = builder.build();
-                Intent i = new Intent();
-                i.setAction("android.SipPrac.INCOMING_CALL");
-                PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, Intent.FILL_IN_DATA);
+                Intent intent = new Intent();
+                intent.setAction(VoipConstants.CALL_ACTION_IN_COMING);
+                PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA);
                 manager.open(profile, pi, null);
                 manager.setRegistrationListener(profile.getUriString(), listener);
             } catch (ParseException e) {
