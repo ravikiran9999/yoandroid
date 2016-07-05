@@ -422,6 +422,12 @@ public class UserAgent implements CallEvents {
             startRingbackTone();
         }
 
+        @Override
+        public void onReadyToCall(SipAudioCall call) {
+            super.onReadyToCall(call);
+            mLog.d(TAG, "OUTGOINGCALL/onReadyToCall - %s", "true");
+        }
+
         private synchronized void startRingbackTone() {
             if (!mRingbackToneEnabled) return;
             if (mRingbackTone == null) {
