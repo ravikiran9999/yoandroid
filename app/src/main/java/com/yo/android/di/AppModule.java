@@ -1,6 +1,7 @@
 package com.yo.android.di;
 
 import android.content.Context;
+import android.net.sip.SipManager;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.logger.LogImpl;
@@ -9,6 +10,7 @@ import com.orion.android.common.util.ResourcesHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.orion.android.common.util.ToastFactoryImpl;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -49,6 +51,13 @@ public class AppModule {
     @Provides
     ConnectivityHelper provideConnectivityHelper(Context context) {
         return new ConnectivityHelper(context);
+    }
+
+    @Singleton
+    @Provides
+    @Named("voip_support")
+    boolean provideIsVoipSupported(Context context) {
+        return SipManager.isApiSupported(context) && SipManager.isVoipSupported(context);
     }
 
 }

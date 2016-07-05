@@ -19,6 +19,7 @@ import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
+import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.voip.SipService;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class BottomTabsActivity extends BaseActivity {
         mAdapter.addFragment(new DialerFragment(), null);
         mAdapter.addFragment(new ChatFragment(), null);
         mAdapter.addFragment(new ContactsFragment(), null);
-        mAdapter.addFragment(new ContactsFragment(), null);
+        mAdapter.addFragment(new MoreFragment(), null);
         viewPager.setAdapter(mAdapter);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
