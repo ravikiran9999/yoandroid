@@ -79,7 +79,7 @@
         <activity
             android:name=".chat.ui.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.DialerActivity"
             android:screenOrientation="portrait" />
@@ -108,6 +108,10 @@
         <activity
             android:name=".flip.MagazineArticleDetailsActivity"
             android:screenOrientation="portrait" />
+
+        <service
+            android:name=".chat.MyIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
