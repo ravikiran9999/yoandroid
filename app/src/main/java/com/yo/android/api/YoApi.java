@@ -1,10 +1,20 @@
 package com.yo.android.api;
 
+import com.yo.android.model.Articles;
+import com.yo.android.model.OTPResponse;
+import com.yo.android.model.Response;
+import com.yo.android.model.Topics;
+
+import java.util.List;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Ramesh on 1/7/16.
@@ -24,13 +34,28 @@ public class YoApi {
         // &grant_type=password&phone_no=123456789&otp=1234
         @FormUrlEncoded
         @POST("oauth/token.json")
-        Call<ResponseBody> verifyOTP(
+        Call<OTPResponse> verifyOTP(
                 @Field("client_id") String client_id,
                 @Field("client_secret") String client_secret,
                 @Field("grant_type") String grant_type,
                 @Field("phone_no") String phone_no,
                 @Field("otp") String otp
         );
+
+        @GET("api/tags.json")
+        Call<List<Topics>> tagsAPI(@Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/tags/get_articles.json")
+        Call<List<Articles>> getArticlesAPI(@Field("access_token") String access_token, @Field("tag_ids[]") String tag_ids);
+
+        @FormUrlEncoded
+        @POST("/api/articles/{article_id}/like.json")
+        Call<Response> likeArticlesAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("/api/articles/{article_id}/unlike.json")
+        Call<Response> unlikeArticlesAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
 
     }
 

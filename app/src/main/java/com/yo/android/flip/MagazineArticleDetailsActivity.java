@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,14 +30,14 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("Title");
-        String detailedDesc = intent.getStringExtra("DetailedDesc");
+        //String detailedDesc = intent.getStringExtra("DetailedDesc");
         String image = intent.getStringExtra("Image");
 
         getSupportActionBar().setTitle(title);
-        UI
+       /* UI
                 .<TextView>findViewById(this, R.id.tv_article_long_desc)
-                .setText(detailedDesc);
-        ImageView photoView = UI.findViewById(this, R.id.photo);
+                .setText(detailedDesc);*/
+        /*ImageView photoView = UI.findViewById(this, R.id.photo);
         // load image
         try {
             // get input stream
@@ -46,7 +48,18 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
             photoView.setImageDrawable(d);
         } catch (IOException ex) {
             return;
-        }
+        }*/
+
+        WebView webview=(WebView)findViewById(R.id.webview);
+        webview.getSettings().setJavaScriptEnabled(true);
+
+        webview.setWebViewClient(new WebViewClient() {
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                //Toast.makeText(activity, description, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        webview.loadUrl(image);
     }
 
     @Override

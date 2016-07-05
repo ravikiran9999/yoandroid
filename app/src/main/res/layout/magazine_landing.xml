@@ -16,11 +16,10 @@
     <Spinner android:id="@+id/sp_topics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/topics_arrays"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="15dp"
-        android:spinnerMode="dialog"></Spinner>
+        android:spinnerMode="dialog"></Spinner>android:entries="@array/topics_arrays"
 
     <!--<include layout="@layout/magazine_flip_layout" />-->
 </LinearLayout>

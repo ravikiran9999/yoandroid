@@ -15,11 +15,16 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.JsonObject;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
+import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.inject.Inject;
 
@@ -76,26 +81,30 @@ public class OTPFragment extends BaseFragment {
         return view;
     }
 
-    private void signUp(@NonNull String phoneNumber, @NonNull String password) {
+    private void signUp(@NonNull final String phoneNumber, @NonNull final String password) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         DatabaseReference childReference = databaseReference.child(phoneNumber);
         Registration registration = new Registration(password, phoneNumber);
         childReference.setValue(registration);
-        preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
-        preferenceEndPoint.saveStringPreference("password", password);
-        startActivity(new Intent(getActivity(), BottomTabsActivity.class));
+
         //
+        showProgressDialog();
         yoService.verifyOTP("83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60",
                 "1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49",
-                "password", phoneNumber, "123456").enqueue(new Callback<ResponseBody>() {
+                "password", phoneNumber, "123456").enqueue(new Callback<OTPResponse>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
 
+                preferenceEndPoint.saveStringPreference("access_token", response.body().getAccess_token());
+                preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
+                preferenceEndPoint.saveStringPreference("password", password);
+                dismissProgressDialog();
+                startActivity(new Intent(getActivity(), BottomTabsActivity.class));
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+            public void onFailure(Call<OTPResponse> call, Throwable t) {
+                dismissProgressDialog();
             }
         });
         getActivity().finish();
