@@ -29,8 +29,6 @@ public class ChatMessage {
     @DatabaseField
     private boolean readUnreadStatus;
 
-    private Map<String, String> timeStamp;
-
     public ChatMessage() {
     }
 
@@ -82,10 +80,6 @@ public class ChatMessage {
         this.time = time;
     }
 
-    public void setTimeStamp(Map<String, String> timeStamp) {
-        this.timeStamp = timeStamp;
-    }
-
     public boolean isReadUnreadStatus() {
         return readUnreadStatus;
     }
@@ -94,7 +88,4 @@ public class ChatMessage {
         this.readUnreadStatus = readUnreadStatus;
     }
 
-    public Map<String, String> getTimeStamp() {
-        return timeStamp;
-    }
 }

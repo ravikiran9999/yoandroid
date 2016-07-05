@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/menu_search"
@@ -8,17 +9,9 @@
         android:title="Search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
-    <item
-        android:title="Message"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_newchat"
-        />
 
     <item
-        android:title="Clear chat history"
-        app:showAsAction="never" />
-    <item
-        android:title="Create group"
-        app:showAsAction="never" />
+        android:title=""
+         />
 
 </menu>

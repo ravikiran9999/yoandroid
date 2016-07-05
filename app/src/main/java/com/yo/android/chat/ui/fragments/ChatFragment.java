@@ -68,6 +68,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return view;
     }
 
+
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -108,8 +110,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void getChatRoomList() {
         showProgressDialog();
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 arrayOfUsers.clear();
