@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -53,7 +55,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             roomIdReference = roomReference.child(child);
         }
         getMessageFromDatabase();
-
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -74,6 +76,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_user_chat, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void onClick(View v) {
         String message = chatText.getText().toString();
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
@@ -91,7 +99,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setMessage(message);
         chatMessage.setTime(timestamp);
         chatMessage.setSenderID(userId);
-        chatMessage.setTimeStamp(ServerValue.TIMESTAMP);
+        //chatMessage.setTimeStamp(ServerValue.TIMESTAMP);
 
         DatabaseReference reference = roomIdReference.push();
         reference.setValue(chatMessage);
@@ -131,7 +139,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
