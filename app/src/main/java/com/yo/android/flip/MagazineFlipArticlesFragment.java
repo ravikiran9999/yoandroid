@@ -121,7 +121,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
-                    Toast.makeText(getActivity(), "No Articles", Toast.LENGTH_LONG).show();
+                    mToastFactory.showToast("No Articles");
                 }
 
             }

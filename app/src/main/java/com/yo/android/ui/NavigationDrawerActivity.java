@@ -19,9 +19,9 @@ import com.yo.android.R;
 import com.yo.android.adapters.MenuListAdapter;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.chat.ui.fragments.ChatFragment;
+import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.model.MenuData;
 import com.yo.android.ui.fragments.CallFragment;
-import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.voip.SipService;
 
@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by Ramesh on 23/6/16.
  */
-public class NavigationDrawerActivity extends BaseActivity implements TabsPagerAdapter.ProgressBar {
+public class NavigationDrawerActivity extends BaseActivity {
     private DrawerLayout mDrawerLayout;
 
     private NavigationView navigationView;
@@ -73,7 +73,7 @@ public class NavigationDrawerActivity extends BaseActivity implements TabsPagerA
         prepareNavigationDrawerOptions();
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), this);
+        TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), "MAGAZINES");
         mAdapter.addFragment(new CallFragment(), "CALLS");
         mAdapter.addFragment(new ChatFragment(), "CHATS");
@@ -140,8 +140,4 @@ public class NavigationDrawerActivity extends BaseActivity implements TabsPagerA
         }
     }
 
-    @Override
-    public void showProgress() {
-        showProgressDialog();
-    }
 }

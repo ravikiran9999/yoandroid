@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
@@ -26,12 +27,13 @@ public class BaseFragment extends Fragment {
 
     @Inject
     @Named("login")
-   protected PreferenceEndPoint preferenceEndPoint;
+    protected PreferenceEndPoint preferenceEndPoint;
     @Inject
     protected ProgressDialogFactory mProgressDialogFactory;
     @Inject
     protected ToastFactory mToastFactory;
-
+    @Inject
+    protected Log mLog;
     protected Dialog mProgressDialog;
 
     public BaseFragment() {

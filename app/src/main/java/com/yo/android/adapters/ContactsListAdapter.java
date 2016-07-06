@@ -18,8 +18,6 @@ import com.yo.android.model.Registration;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.OutGoingCallActivity;
 
-import java.util.List;
-
 /**
  * Created by rdoddapaneni on 6/29/2016.
  */
@@ -61,7 +59,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
                 Registration registration = getAllItems().get(position);
                 String yourPhoneNumber = userId;
                 String opponentPhoneNumber = registration.getPhoneNumber();
-                showUserChatScreen(yourPhoneNumber, opponentPhoneNumber);
+                showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
             }
         });
         holder.getCallView().setOnClickListener(new View.OnClickListener() {
@@ -80,7 +78,8 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
 
     }
 
-    private void showUserChatScreen(@NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {
+    //TODO: Move this code some util class
+    public static void showUserChatScreen(final Context context, @NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {
         final String roomCombination1 = yourPhoneNumber + ":" + opponentPhoneNumber;
         final String roomCombination2 = opponentPhoneNumber + ":" + yourPhoneNumber;
         DatabaseReference databaseRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
@@ -90,17 +89,16 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
                 boolean value1 = dataSnapshot.hasChild(roomCombination1);
                 boolean value2 = dataSnapshot.hasChild(roomCombination2);
                 if (value1) {
-                    navigateToChatScreen(roomCombination1, opponentPhoneNumber);
+                    navigateToChatScreen(context, roomCombination1, opponentPhoneNumber);
                 } else if (value2) {
-                    navigateToChatScreen(roomCombination2, opponentPhoneNumber);
+                    navigateToChatScreen(context, roomCombination2, opponentPhoneNumber);
                 } else {
                     String chatRoomId = yourPhoneNumber + ":" + opponentPhoneNumber;
                     ChatRoom chatRoom = new ChatRoom(yourPhoneNumber, opponentPhoneNumber, chatRoomId);
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
                     DatabaseReference databaseRoomReference = databaseReference.child(chatRoomId);
                     databaseRoomReference.setValue(chatRoom);
-                    navigateToChatScreen(chatRoomId, opponentPhoneNumber);
-                    //databaseHelper.insertChatRoomObjectToDatabase(chatRoom);
+                    navigateToChatScreen(context, chatRoomId, opponentPhoneNumber);
                 }
             }
 
@@ -112,7 +110,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
 
     }
 
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber) {
+    private static void navigateToChatScreen(Context context, String roomId, String opponentPhoneNumber) {
         Intent intent = new Intent(context, ChatActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);

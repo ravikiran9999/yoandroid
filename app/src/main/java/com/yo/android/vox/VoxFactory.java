@@ -46,16 +46,28 @@ public class VoxFactory {
         return addSubscriberBody;
     }
 
-    public String getCDRBalance(String mobile) {
-        Map<String, Object> jsonData = new HashMap<String, Object>();
+    public String getCallLogsBody(String mobile) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("USERNAME", mobile);
+        return prepareRequest("BALANCE", "CDR", data);
+    }
+
+    public String getSubscriberIdBody(String mobile) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("USERNAME", mobile);
+        return prepareRequest("SUBSCRIBER", "GETSUBSCRIBERID", data);
+    }
+
+    private String prepareRequest(String section, String action, Map<String, Object> data) {
+        Map<String, Object> jsonData = new HashMap<>();
         jsonData.put("LOGINUSER", LOGINUSER);
         jsonData.put("LOGINSECRET", LOGINSECRET);
-        jsonData.put("SECTION", "BALANCE");
-        jsonData.put("ACTION", "CDR");
-        Map<String, String> data = new HashMap<>();
-        data.put("USERNAME", mobile);
+        jsonData.put("SECTION", section);
+        jsonData.put("ACTION", action);
         jsonData.put("DATA", data);
         return new Gson().toJson(jsonData);
+
     }
+
 
 }

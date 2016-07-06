@@ -65,6 +65,8 @@ public class RegisterSip {
                 intent.setAction(VoipConstants.CALL_ACTION_IN_COMING);
                 PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA);
                 manager.open(profile, pi, null);
+                //Bug fix: http://stackoverflow.com/a/19540346/874752
+                manager.register(profile, 20, listener);
                 manager.setRegistrationListener(profile.getUriString(), listener);
             } catch (ParseException e) {
                 mLog.w(TAG, e);
