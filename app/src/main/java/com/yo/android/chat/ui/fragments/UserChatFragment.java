@@ -1,14 +1,18 @@
 package com.yo.android.chat.ui.fragments;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -24,9 +28,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.ui.DialerActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.voip.OutGoingCallActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,7 +45,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private DatabaseReference roomIdReference;
     private TextView chatText;
     private ListView listView;
-
+    private String opponentNumber;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -50,6 +57,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         Bundle bundle = this.getArguments();
         String child = bundle.getString(Constants.CHAT_ROOM_ID);
+        opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         DatabaseReference roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
         if (child != null) {
             roomIdReference = roomReference.child(child);
@@ -79,6 +87,20 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_user_chat, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.call:
+                if (opponentNumber != null) {
+                    Intent intent = new Intent(getActivity(), OutGoingCallActivity.class);
+                    intent.putExtra(OutGoingCallActivity.CALLER_NO, opponentNumber);
+                    startActivity(intent);
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -161,4 +183,5 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         });
     }
+
 }

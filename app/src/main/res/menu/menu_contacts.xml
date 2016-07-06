@@ -6,12 +6,15 @@
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search_white_36dp"
-        android:title="Search"
+        android:title="@string/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
 
     <item
-        android:title=""
+        android:title="@string/invite"
+        android:icon="@drawable/ic_add_new_contact"
+        app:showAsAction="always"
          />
+    <item android:title=""></item>
 
 </menu>
