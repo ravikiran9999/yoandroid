@@ -2,22 +2,17 @@ package com.yo.android.flip;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.yo.android.R;
 import com.yo.android.adapters.TopicsSpinnerAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
-import com.yo.android.model.Articles;
 import com.yo.android.model.Topics;
 
 import java.util.ArrayList;
@@ -25,7 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,23 +60,23 @@ public class MagazineTopicsSelectionFragment extends BaseFragment implements Ada
             selectedTopic = topicsList.get(0).getName();
         }*/
 
-        String accessToken=preferenceEndPoint.getStringPreference("access_token");
-        if(accessToken==null){
-            accessToken="1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
-        }
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
-                for(int i=0; i<response.body().size(); i ++) {
+                if (response == null || response.body() == null) {
+                    return;
+                }
+                for (int i = 0; i < response.body().size(); i++) {
                     topicsList.add(response.body().get(i));
                 }
 
                 //ArrayAdapter<Topics> topicsArrayAdapter = new ArrayAdapter<Topics>(getActivity(), android.R.layout.simple_spinner_item, topicsList);
-                TopicsSpinnerAdapter topicsArrayAdapter = new TopicsSpinnerAdapter (getActivity(), android.R.layout.simple_list_item_1, topicsList);
+                TopicsSpinnerAdapter topicsArrayAdapter = new TopicsSpinnerAdapter(getActivity(), android.R.layout.simple_list_item_1, topicsList);
                 topicsSpinner.setAdapter(topicsArrayAdapter);
 
                 //selectedTopic = "Top Stories";
-                if(topicsList.size() >0) {
+                if (topicsList.size() > 0) {
                     selectedTopic = topicsList.get(0).getName();
                 }
             }

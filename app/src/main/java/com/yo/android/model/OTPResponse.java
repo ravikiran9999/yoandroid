@@ -17,69 +17,56 @@ public class OTPResponse {
 
     private String access_token;
 
-    public String getScope ()
-    {
+    public String getScope() {
         return scope;
     }
 
-    public void setScope (String scope)
-    {
+    public void setScope(String scope) {
         this.scope = scope;
     }
 
-    public String getCreated_at ()
-    {
+    public String getCreatedAt() {
         return created_at;
     }
 
-    public void setCreated_at (String created_at)
-    {
+    public void setCreatedAt(String created_at) {
         this.created_at = created_at;
     }
 
-    public String getExpires_in ()
-    {
+    public String getExpiresIn() {
         return expires_in;
     }
 
-    public void setExpires_in (String expires_in)
-    {
+    public void setExpiresIn(String expires_in) {
         this.expires_in = expires_in;
     }
 
-    public String getToken_type ()
-    {
+    public String getTokenType() {
         return token_type;
     }
 
-    public void setToken_type (String token_type)
-    {
+    public void setTokenType(String token_type) {
         this.token_type = token_type;
     }
 
-    public String getRefresh_token ()
-    {
+    public String getRefreshToken() {
         return refresh_token;
     }
 
-    public void setRefresh_token (String refresh_token)
-    {
+    public void setRefreshToken(String refresh_token) {
         this.refresh_token = refresh_token;
     }
 
-    public String getAccess_token ()
-    {
+    public String getAccessToken() {
         return access_token;
     }
 
-    public void setAccess_token (String access_token)
-    {
+    public void setAccessToken(String access_token) {
         this.access_token = access_token;
     }
 
     @Override
-    public String toString()
-    {
-        return "ClassPojo [scope = "+scope+", created_at = "+created_at+", expires_in = "+expires_in+", token_type = "+token_type+", refresh_token = "+refresh_token+", access_token = "+access_token+"]";
+    public String toString() {
+        return "ClassPojo [scope = " + scope + ", created_at = " + created_at + ", expires_in = " + expires_in + ", token_type = " + token_type + ", refresh_token = " + refresh_token + ", access_token = " + access_token + "]";
     }
 }

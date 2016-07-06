@@ -108,9 +108,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
         articlesList.clear();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        if (accessToken == null) {
-            accessToken = "1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
-        }
         yoService.getArticlesAPI(accessToken, topicId).enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
@@ -264,9 +261,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                     data.setIsChecked(isChecked);
                     if (isChecked) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        if (accessToken == null) {
-                            accessToken = "1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
-                        }
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -288,9 +282,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                         });
                     } else {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        if (accessToken == null) {
-                            accessToken = "1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e";
-                        }
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
