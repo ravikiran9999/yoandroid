@@ -42,29 +42,16 @@
         android:textSize="14sp"
         tools:text="This is a dummy text for a chat message. This is the second line of the message" />
 
-    <ImageView
-        android:id="@+id/iv_message_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/iv_contact_type"
-        android:layout_toStartOf="@+id/iv_contact_type"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="16dp"
-        android:src="@drawable/ic_message" />
-
-    <ImageView
-        android:id="@+id/iv_contact_type"
+    <TextView
+        android:id="@+id/tv_contact_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="16dp"
-        android:src="@drawable/ic_receiver" />
+        android:textColor="@color/dialpad_icon_tint"
+        android:textSize="12sp"
+        tools:text="1 hours ago" />
 
     <View
         android:layout_width="match_parent"

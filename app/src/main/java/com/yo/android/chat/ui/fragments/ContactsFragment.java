@@ -1,8 +1,6 @@
 package com.yo.android.chat.ui.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -20,9 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
-import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.DatabaseHelper;
-import com.yo.android.model.ChatRoom;
 import com.yo.android.model.Registration;
 import com.yo.android.util.Constants;
 
@@ -36,7 +31,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A simple {@link Fragment} subclass.
  */
 
-public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class ContactsFragment extends BaseFragment {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1001;
     private ArrayList<Registration> arrayOfUsers;
@@ -62,7 +57,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         listView = (ListView) view.findViewById(R.id.lv_contacts);
-        listView.setOnItemClickListener(this);
 
         return view;
     }
@@ -72,7 +66,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         super.onActivityCreated(savedInstanceState);
         getRegisteredAppUsers();
         arrayOfUsers = new ArrayList<>();
-        contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext());
+        contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
 
     }
@@ -81,53 +75,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_contacts, menu);
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Registration registration = (Registration) listView.getItemAtPosition(position);
-        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        String opponentPhoneNumber = registration.getPhoneNumber();
-        showUserChatScreen(yourPhoneNumber, opponentPhoneNumber);
-    }
-
-    private void showUserChatScreen(@NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {
-        final String roomCombination1 = yourPhoneNumber + ":" + opponentPhoneNumber;
-        final String roomCombination2 = opponentPhoneNumber + ":" + yourPhoneNumber;
-        DatabaseReference databaseRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-        databaseRoomReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean value1 = dataSnapshot.hasChild(roomCombination1);
-                boolean value2 = dataSnapshot.hasChild(roomCombination2);
-                if (value1) {
-                    navigateToChatScreen(roomCombination1, opponentPhoneNumber);
-                } else if (value2) {
-                    navigateToChatScreen(roomCombination2, opponentPhoneNumber);
-                } else {
-                    String chatRoomId = yourPhoneNumber + ":" + opponentPhoneNumber;
-                    ChatRoom chatRoom = new ChatRoom(yourPhoneNumber, opponentPhoneNumber, chatRoomId);
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-                    DatabaseReference databaseRoomReference = databaseReference.child(chatRoomId);
-                    databaseRoomReference.setValue(chatRoom);
-                    navigateToChatScreen(chatRoomId, opponentPhoneNumber);
-                    //databaseHelper.insertChatRoomObjectToDatabase(chatRoom);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber) {
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
-        startActivity(intent);
     }
 
 

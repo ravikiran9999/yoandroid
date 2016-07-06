@@ -5,6 +5,7 @@ import android.content.Context;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
+import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.SignupActivity;
@@ -13,6 +14,7 @@ import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
+import com.yo.android.chat.ui.fragments.YoContactsFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
@@ -59,6 +61,7 @@ import dagger.Provides;
                 SignupActivity.class,
                 MagazineArticleDetailsActivity.class,
                 ChatActivity.class,
+                AppContactsActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -68,6 +71,7 @@ import dagger.Provides;
                 DialerFragment.class,
                 ChatFragment.class,
                 ChatFragment.class,
+                YoContactsFragment.class,
                 MagazineTopicsSelectionFragment.class,
                 MagazineFlipArticlesFragment.class,
                 MoreFragment.class

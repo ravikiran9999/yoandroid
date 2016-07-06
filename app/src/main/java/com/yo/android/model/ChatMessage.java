@@ -29,6 +29,8 @@ public class ChatMessage {
     @DatabaseField
     private boolean readUnreadStatus;
 
+    private String roomId;
+
     public ChatMessage() {
     }
 
@@ -88,4 +90,11 @@ public class ChatMessage {
         this.readUnreadStatus = readUnreadStatus;
     }
 
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
+    }
 }

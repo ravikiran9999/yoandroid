@@ -108,10 +108,7 @@
         <activity
             android:name=".flip.MagazineArticleDetailsActivity"
             android:screenOrientation="portrait" />
-
-        <service
-            android:name=".chat.MyIntentService"
-            android:exported="false"></service>
+        <activity android:name=".chat.ui.fragments.AppContactsActivity"></activity>
     </application>
 
 </manifest>
