@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.util.ProgressDialogFactory;
@@ -25,9 +26,11 @@ public class BaseFragment extends Fragment {
 
     @Inject
     @Named("login")
-    PreferenceEndPoint preferenceEndPoint;
+   protected PreferenceEndPoint preferenceEndPoint;
     @Inject
     protected ProgressDialogFactory mProgressDialogFactory;
+    @Inject
+    protected ToastFactory mToastFactory;
 
     protected Dialog mProgressDialog;
 
