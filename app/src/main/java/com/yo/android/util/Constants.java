@@ -14,6 +14,8 @@ public class Constants {
 
     //Preference
     public static final String PHONE_NUMBER = "phone";
+    public static final String CURRENT_BALANCE = "current_balance";
+    public static final String SUBSCRIBER_ID = "subscriber_id";
 
     // Firebase tables
     public static final String APP_USERS = "AppUsers";

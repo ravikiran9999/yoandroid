@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Util;
 
 import de.greenrobot.event.EventBus;
@@ -171,6 +172,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 callModel.setOnCall(false);
                 log.setCallType(VoipConstants.CALL_DIRECTION_IN);
                 bus.post(callModel);
+                bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 finish();
             case R.id.btnAcceptCall:
                 onCallAccepted();
@@ -225,6 +227,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     ) {
                 Util.cancelNotification(this, notificationId);
                 finish();
+                bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -273,6 +276,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 public void run() {
                     Util.cancelNotification(context, notificationId);
                     mToastFactory.showToast("Call ended.");
+                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
             });
 

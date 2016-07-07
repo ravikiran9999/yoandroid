@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Util;
 
 import de.greenrobot.event.EventBus;
@@ -126,6 +127,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 callModel.setOnCall(false);
                 bus.post(callModel);
                 Util.cancelNotification(this, notificationId);
+                bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 finish();
                 break;
             default:
@@ -153,6 +155,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                         mToastFactory.showToast("Call ended.");
                     }
                 });
+                bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 finish();
             }
 
@@ -194,6 +197,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 public void run() {
                     mToastFactory.showToast("Call ended.");
                     Util.cancelNotification(context, notificationId);
+                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
             });
 
