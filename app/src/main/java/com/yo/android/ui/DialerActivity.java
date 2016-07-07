@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.util.Constants;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.SipService;
@@ -30,6 +31,7 @@ public class DialerActivity extends BaseActivity {
             R.id.pound};
     private ImageView btnCallGreen;
     private ImageView btnDialer;
+    private TextView txtBalance;
     private View bottom_layout;
     private boolean show;
     @Inject
@@ -51,6 +53,7 @@ public class DialerActivity extends BaseActivity {
 
         dialPadView = (DialPadView) findViewById(R.id.dialPadView);
         bottom_layout = findViewById(R.id.bottom_layout);
+        txtBalance = (TextView) findViewById(R.id.txt_balance);
         btnCallGreen = (ImageView) findViewById(R.id.btnCall);
         btnDialer = (ImageView) findViewById(R.id.btnDialer);
         findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
@@ -118,6 +121,8 @@ public class DialerActivity extends BaseActivity {
             btnDialer.setEnabled(false);
             mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
         }
+        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "0");
+        txtBalance.setText("Balance $" + balance);
     }
 
     private void showDialPad() {

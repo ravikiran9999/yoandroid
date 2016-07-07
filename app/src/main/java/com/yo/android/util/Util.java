@@ -9,10 +9,17 @@ import android.support.v4.app.NotificationCompat;
 
 import com.yo.android.R;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.io.Writer;
+
 /**
  * Created by Ramesh on 1/7/16.
  */
 public class Util {
+    public static final int DEFAULT_BUFFER_SIZE = 1024;
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         //
@@ -44,5 +51,42 @@ public class Util {
         NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(notificationId);
     }
+
+    public static String toString(InputStream inputstream) throws IOException {
+        StringWriter stringwriter = new StringWriter();
+        copy(inputstream, stringwriter);
+        return stringwriter.toString();
+    }
+
+    /**
+     * Copy.
+     *
+     * @param input  the input
+     * @param output the output
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    @SuppressWarnings("resource")
+    private static void copy(final InputStream input, final Writer output) throws IOException {
+        InputStreamReader in = null;
+        try {
+            in = new InputStreamReader(input);
+            final char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+            long count = 0;
+            int n = 0;
+            while (-1 != (n = in.read(buffer))) {
+                output.write(buffer, 0, n);
+                count += n;
+            }
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (final IOException ex) {
+                    //
+                }
+            }
+        }
+    }
+
 
 }
