@@ -100,7 +100,6 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
                     DatabaseReference databaseRoomReference = databaseReference.child(chatRoomId);
                     databaseRoomReference.setValue(chatRoom);
                     navigateToChatScreen(chatRoomId, opponentPhoneNumber);
-                    //databaseHelper.insertChatRoomObjectToDatabase(chatRoom);
                 }
             }
 
