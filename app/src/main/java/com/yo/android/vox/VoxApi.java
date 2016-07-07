@@ -4,6 +4,7 @@ package com.yo.android.vox;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -32,7 +33,7 @@ public class VoxApi {
         @POST("api.php")
         Call<ResponseBody> getData(@Part("request") UserDetails task);
 
-        @Multipart
+        @FormUrlEncoded
         @POST("api.php")
         Call<ResponseBody> executeAction(@Field("request") String task);
 

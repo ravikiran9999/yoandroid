@@ -15,6 +15,9 @@ public class ChatRoom {
     @DatabaseField(columnName = Constants.CHAT_ROOM_ID, unique = true)
     private String chatRoomId;
 
+    private String message;
+    private String timeStamp;
+
     public ChatRoom() {
         // empty default constructor, necessary for Firebase to be able to deserialize
     }
@@ -35,5 +38,22 @@ public class ChatRoom {
 
     public String getChatRoomId() {
         return chatRoomId;
+    }
+
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

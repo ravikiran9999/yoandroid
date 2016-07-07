@@ -8,18 +8,8 @@
         android:title="@string/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
-    <item
-        android:id="@+id/chat_contact"
-        android:title="@string/message"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_newchat"
-        />
 
-    <item
-        android:title="Clear chat history"
-        app:showAsAction="never" />
-    <item
-        android:title="Create group"
-        app:showAsAction="never" />
+
+    <item android:title=""></item>
 
 </menu>

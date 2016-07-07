@@ -42,7 +42,7 @@ public class BottomTabsActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), null);
+        TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);
         mAdapter.addFragment(new DialerFragment(), null);
         mAdapter.addFragment(new ChatFragment(), null);

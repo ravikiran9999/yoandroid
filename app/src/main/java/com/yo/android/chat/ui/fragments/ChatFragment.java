@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -59,6 +61,18 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.chat_contact:
+                startActivity(new Intent(getActivity(), AppContactsActivity.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -67,8 +81,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         listView.setOnItemClickListener(this);
         return view;
     }
-
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -83,7 +95,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ChatRoom chatRoom = (ChatRoom) listView.getItemAtPosition(position);
-
         navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber());
     }
 
@@ -129,4 +140,5 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
     }
+
 }
