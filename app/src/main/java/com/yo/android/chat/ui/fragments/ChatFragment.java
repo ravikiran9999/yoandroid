@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -64,9 +63,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.chat_contact:
+            case R.id.chat_contact :
                 startActivity(new Intent(getActivity(), AppContactsActivity.class));
                 break;
+            case R.id.create_group :
+                
         }
         return super.onOptionsItemSelected(item);
 
@@ -87,7 +88,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onActivityCreated(savedInstanceState);
         getChatRoomList();
         arrayOfUsers = new ArrayList<>();
-        chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
+        chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(chatRoomListAdapter);
 
     }
@@ -120,6 +121,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getChatRoomList() {
+
         showProgressDialog();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
         reference.addValueEventListener(new ValueEventListener() {
@@ -128,7 +130,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 arrayOfUsers.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     ChatRoom chatRoom = child.getValue(ChatRoom.class);
-                    arrayOfUsers.add(chatRoom);
+                    if(chatRoom.getYourPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)) || chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                        arrayOfUsers.add(chatRoom);
+                    }
                 }
                 chatRoomListAdapter.addItems(arrayOfUsers);
                 dismissProgressDialog();
