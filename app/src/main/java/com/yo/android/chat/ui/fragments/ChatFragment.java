@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.util.Constants;
@@ -63,11 +64,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.chat_contact :
+            case R.id.chat_contact:
                 startActivity(new Intent(getActivity(), AppContactsActivity.class));
                 break;
-            case R.id.create_group :
-                
+            case R.id.create_group:
+                startActivity(new Intent(getActivity(), CreateGroupActivity.class));
+                break;
+            default:
+                break;
+
         }
         return super.onOptionsItemSelected(item);
 
@@ -130,7 +135,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 arrayOfUsers.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     ChatRoom chatRoom = child.getValue(ChatRoom.class);
-                    if(chatRoom.getYourPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)) || chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                    if (chatRoom.getYourPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)) || chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                         arrayOfUsers.add(chatRoom);
                     }
                 }
