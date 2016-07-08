@@ -28,7 +28,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
         this.yourPhoneNumber = yourPhoneNumber;
     }
 
-
     @Override
     public int getLayoutId() {
         return R.layout.chat_room_list_item;
