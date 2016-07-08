@@ -1,4 +1,4 @@
-package com.yo.android.chat;
+package com.yo.android.chat.firebase;
 
 import android.content.Context;
 import android.content.Intent;

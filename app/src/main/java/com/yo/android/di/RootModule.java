@@ -3,6 +3,7 @@ package com.yo.android.di;
 import android.content.Context;
 
 import com.yo.android.app.BaseApp;
+import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
 import com.yo.android.chat.ui.CreateGroupActivity;
@@ -75,8 +76,10 @@ import dagger.Provides;
                 YoContactsFragment.class,
                 MagazineTopicsSelectionFragment.class,
                 MagazineFlipArticlesFragment.class,
-                MoreFragment.class
+                MoreFragment.class,
 
+                //Managers
+                RetrieveContactsManager.class
 
         },
         includes = {

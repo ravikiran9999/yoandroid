@@ -1,13 +1,17 @@
 package com.yo.android.chat.ui.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,8 +19,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +34,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
+import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.util.Constants;
@@ -35,15 +43,17 @@ import com.yo.android.voip.OutGoingCallActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.OnItemLongClick;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemLongClickListener, View.OnLongClickListener {
 
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
     private DatabaseReference roomIdReference;
-    private TextView chatText;
+    private EditText chatText;
     private ListView listView;
     private String opponentNumber;
 
@@ -74,12 +84,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         listView = (ListView) view.findViewById(R.id.listView);
         View send = view.findViewById(R.id.send);
-        chatText = (TextView) view.findViewById(R.id.chat_text);
+        chatText = (EditText) view.findViewById(R.id.chat_text);
         chatMessageArray = new ArrayList<>();
         userChatAdapter = new UserChatAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(userChatAdapter);
-
+        listView.setOnItemLongClickListener(this);
         send.setOnClickListener(this);
+        chatText.setOnLongClickListener(this);
         return view;
     }
 
@@ -99,9 +110,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     startActivity(intent);
                 }
                 break;
+            case R.id.attach:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public void onClick(View v) {
@@ -184,4 +198,17 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         });
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
+        new Clipboard(getActivity()).copy(chatMessage.getMessage());
+        return true;
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+
+        chatText.setText(new Clipboard(getActivity()).paste(v));
+        return true;
+    }
 }

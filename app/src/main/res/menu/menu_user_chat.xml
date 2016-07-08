@@ -10,6 +10,7 @@
         />
 
     <item
+        android:id="@+id/attach"
         android:title="@string/attach"
         app:showAsAction="always"
         android:icon="@drawable/ic_attachpin"
