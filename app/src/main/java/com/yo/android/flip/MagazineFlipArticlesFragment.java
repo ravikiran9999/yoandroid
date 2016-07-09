@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -36,6 +37,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
+import com.yo.android.ui.FollowMoreTopics;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -355,6 +357,15 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 photoView.loadUrl(data.getImage_filename());
             }
             //}
+
+            Button followMoreTopics = (Button)layout.findViewById(R.id.btn_magazine_follow_topics);
+            followMoreTopics.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), FollowMoreTopics.class);
+                    startActivity(intent);
+                }
+            });
 
 
             return layout;

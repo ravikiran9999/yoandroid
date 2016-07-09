@@ -110,7 +110,16 @@
             android:name=".flip.MagazineArticleDetailsActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".chat.ui.fragments.AppContactsActivity" />
+
+        <activity android:name=".ui.FollowMoreTopics"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.NewMagazineActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.LoadMagazineActivity"
+            android:screenOrientation="portrait"></activity>
+
         <activity android:name=".chat.ui.CreateGroupActivity"></activity>
+
     </application>
 
 </manifest>

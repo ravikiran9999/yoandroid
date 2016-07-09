@@ -107,6 +107,9 @@
     <string name="view_contact">View Contact</string>
     <string name="call">Call</string>
     <string name="invite">Invite</string>
+
+    <string name="title_activity_load_magazine">LoadMagazineActivity</string>
+
     <string name="create_group">Create group</string>
     <string name="clear_chat_history">Clear chat history</string>
     <string name="delete">Delete</string>

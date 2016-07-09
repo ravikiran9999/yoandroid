@@ -60,6 +60,10 @@ public class YoApi {
         @POST("/api/articles/{article_id}/unlike.json")
         Call<ResponseBody> unlikeArticlesAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
 
+        @FormUrlEncoded
+        @POST("/api/magzines.json")
+        Call<ResponseBody> createMagazinesAPI(@Field("access_token") String access_token, @Field("magzine[name]") String magzine_name, @Field("magzine[description]") String magzine_description, @Field("magzine[privacy]") String magzine_privacy);
+
     }
 
     public interface YoRefreshTokenService {
