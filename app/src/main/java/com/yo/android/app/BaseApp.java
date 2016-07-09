@@ -2,6 +2,7 @@ package com.yo.android.app;
 
 import android.app.Application;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.yo.android.di.Injector;
 import com.yo.android.di.RootModule;
 
@@ -18,7 +19,9 @@ public class BaseApp extends Application {
     public void onCreate() {
         super.onCreate();
         injectDependencies();
-        //
+
+        /* Enable disk persistence  */
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     private void injectDependencies() {

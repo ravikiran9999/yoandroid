@@ -51,9 +51,11 @@ import retrofit2.Response;
  */
 public class DialerFragment extends BaseFragment {
 
+    public static final String REFRESH_CALL_LOGS = "com.yo.android.ACTION_REFRESH_CALL_LOGS";
     @Inject
     VoxApi.VoxService service;
     @Inject
+
     VoxFactory voxFactory;
     @Bind(R.id.listView)
     ListView listView;
@@ -232,5 +234,12 @@ public class DialerFragment extends BaseFragment {
             return s;
         }
     }
+
+    public void onEventMainThread(String action) {
+        if (action.equals(REFRESH_CALL_LOGS)) {
+            loadCallLogs();
+        }
+    }
+
 
 }

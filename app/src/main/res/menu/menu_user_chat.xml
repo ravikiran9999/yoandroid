@@ -1,21 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:title="@string/call"
         android:id="@+id/call"
-        app:showAsAction="always"
         android:icon="@drawable/ic_whitereceiver"
-        />
+        android:title="@string/call"
+        app:showAsAction="always" />
 
     <item
-        android:title="@string/attach"
-        app:showAsAction="always"
+        android:id="@+id/attach"
         android:icon="@drawable/ic_attachpin"
-        />
+        android:title="@string/attach"
+        app:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/camera"
+                android:menuCategory="container"
+                android:title="@string/camera"
+                app:showAsAction="always"
+                android:orderInCategory="100"
+                />
+            <item
+                android:id="@+id/image"
+                android:menuCategory="container"
+                android:title="@string/image"
+                app:showAsAction="always"
+                android:orderInCategory="99"
+                />
+        </menu>
+    </item>
     <item
         android:title="@string/view_contact"
         app:showAsAction="never" />
+
 
 </menu>

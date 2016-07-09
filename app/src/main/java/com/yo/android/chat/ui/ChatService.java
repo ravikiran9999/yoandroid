@@ -42,7 +42,7 @@ public class ChatService extends InjectedService {
         super.onCreate();
         mFriendsList = new ArrayList<>();
         chatMessageMap = new HashMap<>();
-        prepareListeners();
+        //prepareListeners();
     }
 
     @Nullable
@@ -163,6 +163,7 @@ public class ChatService extends InjectedService {
         });
 
     }
+
 
 
 }

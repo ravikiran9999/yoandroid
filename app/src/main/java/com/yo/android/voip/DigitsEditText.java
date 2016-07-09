@@ -14,7 +14,13 @@ public class DigitsEditText extends ResizingTextEditText {
     public DigitsEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         setInputType(getInputType() | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        setShowSoftInputOnFocus(false);
+        try {
+            setShowSoftInputOnFocus(false);
+        }catch (NoSuchMethodError e) {
+            e.printStackTrace();
+        } finally {
+
+        }
     }
 
     @Override

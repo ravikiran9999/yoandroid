@@ -21,10 +21,11 @@ import com.yo.android.util.Constants;
 
 public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomViewHolder> {
     private DatabaseReference roomReference;
-
-    public ChatRoomListAdapter(Context context) {
+    private String yourPhoneNumber;
+    public ChatRoomListAdapter(Context context, String yourPhoneNumber) {
         super(context);
         roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
+        this.yourPhoneNumber = yourPhoneNumber;
     }
 
     @Override
@@ -40,18 +41,25 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
     @Override
     public void bindView(int position, ChatRoomViewHolder holder, final ChatRoom item) {
 
-        holder.getOpponentName().setText(item.getOpponentPhoneNumber());
+        if(item.getOpponentPhoneNumber().equals(yourPhoneNumber)) {
+            holder.getOpponentName().setText(item.getYourPhoneNumber());
+        } else {
+            holder.getOpponentName().setText(item.getOpponentPhoneNumber());
+        }
 
         if (item.getChatRoomId() != null) {
             DatabaseReference roomIdReference = roomReference.child(item.getChatRoomId());
             roomIdReference.limitToLast(1).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                    item.setMessage(chatMessage.getMessage());
-                    item.setTimeStamp(DateUtils.getRelativeTimeSpanString(chatMessage.getTime()).toString());
-                    notifyDataSetChanged();
-
+                    try {
+                        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                        item.setMessage(chatMessage.getMessage());
+                        item.setTimeStamp(DateUtils.getRelativeTimeSpanString(chatMessage.getTime()).toString());
+                        notifyDataSetChanged();
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override

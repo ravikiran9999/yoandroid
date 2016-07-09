@@ -16,10 +16,12 @@
         />
 
     <item
-        android:title="Clear chat history"
+        android:id="@+id/clear_chat_history"
+        android:title="@string/clear_chat_history"
         app:showAsAction="never" />
     <item
-        android:title="Create group"
+        android:id="@+id/create_group"
+        android:title="@string/create_group"
         app:showAsAction="never" />
 
 </menu>

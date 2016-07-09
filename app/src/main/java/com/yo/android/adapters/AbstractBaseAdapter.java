@@ -35,6 +35,11 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         notifyDataSetChanged();
     }
 
+    public void removeItem(Object object) {
+        this.mList.remove(object);
+        notifyDataSetChanged();
+    }
+
     public List<T> getAllItems() {
         return mList;
     }
