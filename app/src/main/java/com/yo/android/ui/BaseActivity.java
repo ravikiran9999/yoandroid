@@ -13,6 +13,8 @@ import com.orion.android.common.util.ToastFactory;
 import com.yo.android.di.AwsLogsCallBack;
 import com.yo.android.di.Injector;
 import com.yo.android.util.ProgressDialogFactory;
+import com.yo.android.vox.VoxApi;
+import com.yo.android.vox.VoxFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,6 +42,11 @@ public class BaseActivity extends AppCompatActivity {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+
+    @Inject
+    VoxFactory voxFactory;
+    @Inject
+    VoxApi.VoxService voxService;
 
 
     protected Dialog mProgressDialog;

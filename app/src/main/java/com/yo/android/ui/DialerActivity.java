@@ -2,6 +2,7 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -32,6 +33,7 @@ public class DialerActivity extends BaseActivity {
     private ImageView btnCallGreen;
     private ImageView btnDialer;
     private TextView txtBalance;
+    private TextView txtCallRate;
     private View bottom_layout;
     private boolean show;
     @Inject
@@ -54,6 +56,7 @@ public class DialerActivity extends BaseActivity {
         dialPadView = (DialPadView) findViewById(R.id.dialPadView);
         bottom_layout = findViewById(R.id.bottom_layout);
         txtBalance = (TextView) findViewById(R.id.txt_balance);
+        txtCallRate = (TextView) findViewById(R.id.txt_call_rate);
         btnCallGreen = (ImageView) findViewById(R.id.btnCall);
         btnDialer = (ImageView) findViewById(R.id.btnDialer);
         findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
@@ -123,6 +126,14 @@ public class DialerActivity extends BaseActivity {
         }
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "0");
         txtBalance.setText("Balance $" + balance);
+        //
+        setCallRateText();
+        txtCallRate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(DialerActivity.this, CountryListActivity.class), 100);
+            }
+        });
     }
 
     private void showDialPad() {
@@ -178,5 +189,29 @@ public class DialerActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            setCallRateText();
+        }
+    }
+
+    private void setCallRateText() {
+        String cName = preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME, null);
+        String cRate = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_RATE, null);
+        String cPulse = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_PULSE, null);
+        if (!TextUtils.isEmpty(cName)) {
+            String pulse;
+            if (cPulse.equals("60")) {
+                pulse = "min";
+            } else {
+                pulse = "sec";
+            }
+
+            txtCallRate.setText(cName + "\n$" + cRate + "/" + pulse);
+        }
     }
 }

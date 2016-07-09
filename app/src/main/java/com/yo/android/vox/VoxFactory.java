@@ -59,6 +59,14 @@ public class VoxFactory {
         return prepareRequest("BALANCE", "CDR", data);
     }
 
+    public String getCallRatesBody(String packageId) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("PACKAGEID", packageId);
+        data.put("LIMIT", "50");
+        data.put("COUNT", "0");
+        return prepareRequest("PACKAGE", "RATES", data);
+    }
+
     public String getSubscriberIdBody(String mobile) {
         Map<String, Object> data = new HashMap<>();
         data.put("USERNAME", mobile);

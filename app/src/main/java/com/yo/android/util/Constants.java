@@ -19,6 +19,10 @@ public class Constants {
     public static final String CURRENT_BALANCE = "current_balance";
     public static final String SUBSCRIBER_ID = "subscriber_id";
 
+    public static final String COUNTRY_NAME = "country_name";
+    public static final String COUNTRY_CALL_RATE = "country_call_rate";
+    public static final String COUNTRY_CALL_PULSE = "country_call_pulse";
+
     // Firebase tables
     public static final String APP_USERS = "AppUsers";
     public static final String ROOM = "Room";
