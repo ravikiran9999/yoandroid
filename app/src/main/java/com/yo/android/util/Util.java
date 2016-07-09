@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.text.format.DateUtils;
 
 import com.yo.android.R;
 
@@ -14,6 +15,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Ramesh on 1/7/16.
@@ -88,5 +92,41 @@ public class Util {
         }
     }
 
+    public static String removeTrailingZeros(String str) {
+        if (str == null) {
+            return str;
+        }
+        char[] chars = str.toCharArray();
+        int length, index;
+        length = str.length();
+        index = length - 1;
+        for (; index >= 0; index--) {
+            if (chars[index] != '0') {
+                break;
+            }
+        }
+        return (index == length - 1) ? str : str.substring(0, index + 1);
+    }
+
+    public static String parseDate(String s) {
+        try {
+            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
+            String timeStamp = DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
+            return timeStamp;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return s;
+    }
+
+    public static long getTime(String str) {
+        try {
+            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(str);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
 }

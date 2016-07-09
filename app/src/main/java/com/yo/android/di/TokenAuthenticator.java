@@ -1,5 +1,7 @@
 package com.yo.android.di;
 
+import android.text.TextUtils;
+
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
@@ -27,7 +29,7 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
         String refreshToken = preferenceEndPoint.getStringPreference("refresh_token");
-        if (response.code() == 401) {
+        if (response.code() == 401 && !TextUtils.isEmpty(refreshToken)) {
             try {
                 OTPResponse responseBody
                         = tokenService.refreshToken(YoApi.CLIENT_ID, YoApi.CLIENT_SECRET, "refresh_token", refreshToken)
