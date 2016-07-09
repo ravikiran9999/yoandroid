@@ -127,7 +127,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 callModel.setOnCall(false);
                 bus.post(callModel);
                 Util.cancelNotification(this, notificationId);
-                bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 finish();
                 break;
             default:

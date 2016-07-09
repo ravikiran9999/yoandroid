@@ -73,6 +73,7 @@ public class DialerFragment extends BaseFragment {
     private SearchView searchView;
     private static final String TAG = "DialerFragment";
     private EventBus bus = EventBus.getDefault();
+    private CallLogsAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -117,7 +118,7 @@ public class DialerFragment extends BaseFragment {
     }
 
     private void loadCallLogs() {
-        final CallLogsAdapter adapter = new CallLogsAdapter(getActivity());
+        adapter = new CallLogsAdapter(getActivity());
         listView.setAdapter(adapter);
         showProgressDialog();
 
@@ -220,6 +221,14 @@ public class DialerFragment extends BaseFragment {
         }
 
         @Override
+        protected boolean hasData(CallLogsResult event, String key) {
+            if (event.getDialnumber().contains(key)) {
+                return true;
+            }
+            return super.hasData(event, key);
+        }
+
+        @Override
         public void bindView(int position, CallLogsViewHolder holder, final CallLogsResult item) {
             holder.getOpponentName().setText(item.getDialnumber());
             item.getDialedstatus();//NOT  ANSWER,ANSWER
@@ -268,19 +277,20 @@ public class DialerFragment extends BaseFragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG, "onQueryTextChange: " + query);
-                return false;
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
-                //TODO: need to implement search functionality
+                adapter.performSearch(newText);
                 return true;
             }
         });
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                adapter.performSearch("");
                 return true;
             }
         });

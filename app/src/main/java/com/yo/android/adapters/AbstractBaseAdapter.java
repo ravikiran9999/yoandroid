@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,23 +17,52 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
     private List<T> mList;
     protected final Context mContext;
-
+    private List<T> mOriginalList = new ArrayList<>();
 
     public AbstractBaseAdapter(Context context) {
         mContext = context;
         mList = new ArrayList<>();
-
     }
 
 
     public void addItems(List<T> list) {
         mList = new ArrayList<>(list);
+        if (mOriginalList.isEmpty()) {
+            mOriginalList = new ArrayList<>(list);
+        }
         notifyDataSetChanged();
     }
 
     public void addItemsAll(List<T> list) {
         this.mList.addAll(list);
+        this.mOriginalList.addAll(list);
         notifyDataSetChanged();
+    }
+
+    /**
+     * Use this method for search to clear data when calling addItems() multiple times.
+     */
+    public void clearData() {
+        mOriginalList.clear();
+        mList.clear();
+    }
+
+    public void performSearch(@NonNull String key) {
+        if (key.isEmpty()) {
+            addItems(mOriginalList);
+        } else {
+            List<T> temp = new ArrayList<>();
+            for (T event : mOriginalList) {
+                if (hasData(event, key)) {
+                    temp.add(event);
+                }
+            }
+            addItems(temp);
+        }
+    }
+
+    protected boolean hasData(T event, String key) {
+        return false;
     }
 
     public void removeItem(Object object) {
