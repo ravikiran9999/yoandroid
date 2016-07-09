@@ -12,6 +12,13 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/txtEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
     <ListView
         android:id="@+id/lv_app_contacts"
         android:layout_width="match_parent"

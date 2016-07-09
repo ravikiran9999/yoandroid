@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,25 +20,13 @@ import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
-import com.yo.android.util.Constants;
-import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
-import com.yo.android.vox.VoxApi;
-import com.yo.android.vox.VoxFactory;
+import com.yo.android.vox.BalanceHelper;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -50,9 +37,7 @@ public class BottomTabsActivity extends BaseActivity {
     private TabLayout tabLayout;
     private List<TabsData> dataList;
     @Inject
-    VoxFactory voxFactory;
-    @Inject
-    VoxApi.VoxService voxService;
+    BalanceHelper balanceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,63 +86,8 @@ public class BottomTabsActivity extends BaseActivity {
         //
         Intent in = new Intent(getApplicationContext(), SipService.class);
         startService(in);
-        if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.SUBSCRIBER_ID))) {
-            loadSubscriberId();
-        } else {
-            loadBalance();
-        }
+        balanceHelper.checkBalance();
 
-    }
-
-    private void loadSubscriberId() {
-        voxService.executeAction(voxFactory.getSubscriberIdBody(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    String str = Util.toString(response.body().byteStream());
-                    JSONObject jsonObject = new JSONObject(str);
-                    String subscriberId = jsonObject.getJSONObject("DATA").getString("SUBSCRIBERID");
-                    preferenceEndPoint.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);
-                    loadBalance();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
-    }
-
-    private void loadBalance() {
-        voxService.executeAction(voxFactory.getBalanceBody(preferenceEndPoint.getStringPreference(Constants.SUBSCRIBER_ID))).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    //TODO:save the balance
-                    try {
-                        String str = Util.toString(response.body().byteStream());
-                        JSONObject jsonObject = new JSONObject(str);
-                        String balance = jsonObject.getJSONObject("DATA").getString("CREDIT");
-                        preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, balance);
-                        mLog.i("loadBalance", "balance: %s", balance);
-                    } catch (IOException e) {
-                        mLog.w("loadBalance", e);
-                    } catch (JSONException e) {
-                        mLog.w("loadBalance", e);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
     }
 
 

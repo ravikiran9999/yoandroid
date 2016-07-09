@@ -331,10 +331,10 @@ public class ParadigmExceptionHandler implements
         Calendar currentDate = Calendar.getInstance();
         int month = currentDate.get(Calendar.MONTH) + 1;
         //Calendar.MONTH starts with 0
-        String now = "" + currentDate.get(Calendar.YEAR) + "-" + month + "-" + currentDate.get(Calendar.DATE);
+        final String now = "" + currentDate.get(Calendar.YEAR) + "-" + month + "-" + currentDate.get(Calendar.DATE);
 
         //To generate Universal Unique ID
-        String randomID = UUID.randomUUID().toString();
+        final String randomID = UUID.randomUUID().toString();
         String logFileFullPath = "";
         if (context != null) {
             logFileFullPath = DeviceInfoUtil.getSdCardPath() + context.getString(R.string.log_folder_path) + "/" +
@@ -342,13 +342,17 @@ public class ParadigmExceptionHandler implements
                     "." + context.getString(R.string.log_extension);
         }
 
-        String phoneModels = "";
-        phoneModels = phoneModels + android.os.Build.MODEL;
+        final String phoneModels = "" + android.os.Build.MODEL;
 
-        File logFile = new File(logFileFullPath);
-
-        StoreToS3.sendToS3(logFile, "android/logs/" + now + "/" + GlobalClass.LOG_FB_USER_NAME
-                + "_" + phoneModels + "_V" + versionName + "_" + randomID + ".log", null);
+        final File logFile = new File(logFileFullPath);
+        //TODO:Need to check with Rajesh
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                StoreToS3.sendToS3(logFile, "android/logs/" + now + "/" + GlobalClass.LOG_FB_USER_NAME
+                        + "_" + phoneModels + "_V" + versionName + "_" + randomID + ".log", null);
+            }
+        }).start();
 
     }
 
