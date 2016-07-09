@@ -34,6 +34,13 @@ public class NewMagazineActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_magazine);
 
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        String title = "New Magazine";
+
+        getSupportActionBar().setTitle(title);
+
         final EditText etTitle = (EditText) findViewById(R.id.magazine_title);
         final EditText etDesc = (EditText) findViewById(R.id.magazine_desc);
         ToggleButton togglePrivacy = (ToggleButton) findViewById(R.id.privacy_toggle);
