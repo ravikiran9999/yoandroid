@@ -31,6 +31,12 @@ android {
 
 }
 
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //Support libs
@@ -67,6 +73,7 @@ dependencies {
     stageCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     stageCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
     stageCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
+    compile 'com.github.Cutta:TagView:c15dd8288a'
 }
 apply plugin: 'com.google.gms.google-services'
 

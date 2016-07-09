@@ -107,5 +107,6 @@
     <string name="view_contact">View Contact</string>
     <string name="call">Call</string>
     <string name="invite">Invite</string>
+    <string name="title_activity_load_magazine">LoadMagazineActivity</string>
 
 </resources>

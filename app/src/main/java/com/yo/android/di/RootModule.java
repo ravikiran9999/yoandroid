@@ -20,8 +20,10 @@ import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.DialerActivity;
+import com.yo.android.ui.FollowMoreTopics;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NavigationDrawerActivity;
+import com.yo.android.ui.NewMagazineActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.fragments.DialerFragment;
@@ -62,6 +64,8 @@ import dagger.Provides;
                 MagazineArticleDetailsActivity.class,
                 ChatActivity.class,
                 AppContactsActivity.class,
+                NewMagazineActivity.class,
+                FollowMoreTopics.class,
 
                 //Fragments
                 ContactsFragment.class,
