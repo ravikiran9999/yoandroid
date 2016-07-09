@@ -22,9 +22,11 @@ import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CountryListActivity;
+import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.FollowMoreTopics;
 import com.yo.android.ui.MainActivity;
+import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
 import com.yo.android.ui.SettingsActivity;
@@ -71,6 +73,8 @@ import dagger.Provides;
                 FollowMoreTopics.class,
                 CreateGroupActivity.class,
                 CountryListActivity.class,
+                CreateMagazineActivity.class,
+                MyCollections.class,
 
                 //Fragments
                 ContactsFragment.class,

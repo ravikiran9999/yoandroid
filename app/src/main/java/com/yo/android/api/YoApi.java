@@ -1,6 +1,7 @@
 package com.yo.android.api;
 
 import com.yo.android.model.Articles;
+import com.yo.android.model.Collections;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Topics;
 
@@ -66,6 +67,9 @@ public class YoApi {
 
         @GET("api/articles.json")
         Call<List<Articles>> getAllArticlesAPI(@Query("access_token") String access_token);
+
+        @GET("api/collections.json")
+        Call<List<Collections>> getCollectionsAPI(@Query("access_token") String access_token);
 
     }
 

@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import com.yo.android.R;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
+import com.yo.android.ui.CreateMagazineActivity;
+import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NewMagazineActivity;
 
 /**
@@ -58,7 +60,13 @@ public class MagazinesFragment extends Fragment {
         switch(item.getItemId()) {
             case R.id.menu_create_magazines:
 
+                Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
+                startActivity(createMagazinesIntent);
 
+                break;
+            case R.id.menu_my_collections:
+                Intent myCollectionsIntent = new Intent(getActivity(), MyCollections.class);
+                startActivity(myCollectionsIntent);
                 break;
 
 
