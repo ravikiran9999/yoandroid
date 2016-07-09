@@ -3,6 +3,7 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -43,7 +44,7 @@ public class NewMagazineActivity extends BaseActivity {
 
         final EditText etTitle = (EditText) findViewById(R.id.magazine_title);
         final EditText etDesc = (EditText) findViewById(R.id.magazine_desc);
-        ToggleButton togglePrivacy = (ToggleButton) findViewById(R.id.privacy_toggle);
+        SwitchCompat togglePrivacy = (SwitchCompat) findViewById(R.id.privacy_toggle);
         TextView tvAddStory = (TextView) findViewById(R.id.add_story);
 
         magazinePrivacy = "";

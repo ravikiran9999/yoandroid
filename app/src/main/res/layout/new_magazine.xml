@@ -11,9 +11,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:hint="Title"
+        android:padding="10dp"
+        android:singleLine="true"
         android:textColor="@android:color/black"
-        android:textColorHint="@android:color/black"
-        android:textSize="28sp" />
+        android:textSize="22sp" />
 
     <EditText
         android:id="@+id/magazine_desc"
@@ -21,7 +22,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:hint="Write something for your magazines..."
-        android:textSize="24sp" />
+        android:lines="2"
+        android:maxLines="2"
+        android:padding="10dp"
+        android:textSize="20sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -37,20 +41,20 @@
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
-        <ToggleButton
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/privacy_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_magazine_privacy"
-            android:layout_marginTop="10dp"
-            android:text="Anyone can view and follow this magazine"
-            android:textColor="@android:color/black" />
     </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Anyone can view and follow this magazine"
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/add_story"
