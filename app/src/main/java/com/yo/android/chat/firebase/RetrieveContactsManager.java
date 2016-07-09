@@ -29,6 +29,7 @@ public class RetrieveContactsManager extends BaseActivity {
     public void getRegisteredAppUsers() {
 
         //showProgressDialog();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

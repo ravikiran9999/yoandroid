@@ -1,7 +1,9 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.os.Build;
 import android.text.format.DateUtils;
+import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -18,6 +20,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     private String userId;
     private Context context;
+    private  SparseBooleanArray mSelectedItemsIds;
 
     public UserChatAdapter(Context context) {
         super(context);
@@ -29,6 +32,36 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         super(context);
         this.context = context;
         this.userId = userId;
+        this.mSelectedItemsIds = new  SparseBooleanArray();
+    }
+
+
+    public void  toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    // Remove selection after unchecked
+    public void  removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    // Item checked on selection
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position,  value);
+        else
+            mSelectedItemsIds.delete(position);
+        notifyDataSetChanged();
+    }
+
+    // Get number of selected item
+    public int  getSelectedCount() {
+        return mSelectedItemsIds.size();
+    }
+
+    public  SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
     }
 
     @Override
@@ -43,24 +76,36 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     @Override
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
-        String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
+        try {
+            String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.WEEK_IN_MILLIS).toString();
 
-        holder.getChatText().setText(item.getMessage());
-        holder.getChatTimeStamp().setText(timeStamp);
-        if (userId.equals(item.getSenderID())) {
+            holder.getChatText().setText(item.getMessage());
+            holder.getChatTimeStamp().setText(timeStamp);
+            if (userId.equals(item.getSenderID())) {
 
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(60, 0, 0, 0);
-            holder.getLinearLayout().setGravity(Gravity.RIGHT);
-            holder.getLinearLayoutText().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_yellow));
-            holder.getLinearLayoutText().setLayoutParams(layoutParams);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(60, 0, 0, 0);
+                holder.getLinearLayout().setGravity(Gravity.RIGHT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    holder.getLinearLayoutText().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_yellow));
+                } else {
+                    holder.getLinearLayoutText().setBackgroundResource(R.drawable.bg_sms_yellow);
+                }
+                holder.getLinearLayoutText().setLayoutParams(layoutParams);
 
-        } else {
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(0, 0, 60, 0);
-            holder.getLinearLayout().setGravity(Gravity.LEFT);
-            holder.getLinearLayoutText().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_grey));
-            holder.getLinearLayoutText().setLayoutParams(layoutParams);
+            } else {
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(0, 0, 60, 0);
+                holder.getLinearLayout().setGravity(Gravity.LEFT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    holder.getLinearLayoutText().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_grey));
+                } else {
+                    holder.getLinearLayoutText().setBackgroundResource(R.drawable.bg_sms_grey);
+                }
+                holder.getLinearLayoutText().setLayoutParams(layoutParams);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

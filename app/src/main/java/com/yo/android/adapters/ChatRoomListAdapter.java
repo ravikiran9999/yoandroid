@@ -52,11 +52,14 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
             roomIdReference.limitToLast(1).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                    item.setMessage(chatMessage.getMessage());
-                    item.setTimeStamp(DateUtils.getRelativeTimeSpanString(chatMessage.getTime()).toString());
-                    notifyDataSetChanged();
-
+                    try {
+                        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                        item.setMessage(chatMessage.getMessage());
+                        item.setTimeStamp(DateUtils.getRelativeTimeSpanString(chatMessage.getTime()).toString());
+                        notifyDataSetChanged();
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
