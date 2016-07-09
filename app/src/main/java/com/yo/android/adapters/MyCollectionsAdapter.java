@@ -52,6 +52,9 @@ public class MyCollectionsAdapter extends BaseAdapter {
         }
         TextView textView = (TextView) convertView.findViewById(R.id.tv_title);
         textView.setText(collectionsList.get(position).getName());
+        if(position != 0) {
+            textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
+        }
 
         return convertView;
     }
