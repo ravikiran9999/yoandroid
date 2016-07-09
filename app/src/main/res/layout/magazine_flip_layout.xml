@@ -8,7 +8,7 @@
         android:orientation="vertical"
     android:background="@android:color/white">
 
-        <TextView
+        <!--<TextView
             android:id="@+id/tv_category_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -16,13 +16,11 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
 
-            android:textColor="@color/colorPrimary" />android:text="Top Stories"
+            android:textColor="@color/colorPrimary" />android:text="Top Stories"-->
 
         <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
             card_view:cardCornerRadius="4dp">
 
             <LinearLayout
@@ -53,7 +51,6 @@
                     android:id="@+id/photo"
                     android:layout_gravity="center_horizontal"
                     android:scaleType="centerCrop"
-                    android:layout_margin="5dp"
                     android:layout_weight="1"></WebView>
 
                     <Button
@@ -68,7 +65,8 @@
                         android:textAllCaps="false"
                         android:textColor="@android:color/white"
                         android:gravity="center"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:layout_marginTop="50dp"/>
 
                 </RelativeLayout>
 

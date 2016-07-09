@@ -47,9 +47,9 @@ public class MagazinesFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MagazineTopicsSelectionFragment fragment = new MagazineTopicsSelectionFragment();
-        getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
-        getChildFragmentManager().beginTransaction().add(R.id.bottom, new MagazineFlipArticlesFragment(fragment)).commit();
+        //MagazineTopicsSelectionFragment fragment = new MagazineTopicsSelectionFragment();
+        //getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
+        getChildFragmentManager().beginTransaction().add(R.id.bottom, new MagazineFlipArticlesFragment()).commit();
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

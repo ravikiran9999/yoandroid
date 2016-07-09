@@ -64,6 +64,9 @@ public class YoApi {
         @POST("/api/magzines.json")
         Call<ResponseBody> createMagazinesAPI(@Field("access_token") String access_token, @Field("magzine[name]") String magzine_name, @Field("magzine[description]") String magzine_description, @Field("magzine[privacy]") String magzine_privacy);
 
+        @GET("api/articles.json")
+        Call<List<Articles>> getAllArticlesAPI(@Query("access_token") String access_token);
+
     }
 
     public interface YoRefreshTokenService {
