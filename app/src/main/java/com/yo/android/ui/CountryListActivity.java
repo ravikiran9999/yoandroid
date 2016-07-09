@@ -14,6 +14,7 @@ import com.yo.android.helpers.CallRatesCountryViewHolder;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.model.dialer.CallRatesResponse;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.io.InputStreamReader;
 import java.util.List;
@@ -74,7 +75,6 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     private void showEmptyText() {
         txtEmptyView.setText("No country list available.");
         txtEmptyView.setVisibility(adapter.getCount() == 0 ? View.VISIBLE : View.GONE);
-
     }
 
     @Override
@@ -82,7 +82,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         Object object = parent.getAdapter().getItem(position);
         if (object instanceof CallRateDetail) {
             CallRateDetail callRateDetail = (CallRateDetail) object;
-            preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, callRateDetail.getRate());
+            preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_PULSE, callRateDetail.getPulse());
             setResult(RESULT_OK);
@@ -110,12 +110,13 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         public void bindView(int position, CallRatesCountryViewHolder holder, CallRateDetail item) {
             holder.getCountryView().setText(item.getDestination() + " (+" + item.getPrefix() + ")");
             String pulse;
+            String rate = Util.removeTrailingZeros(item.getRate());
             if (item.getPulse().equals("60")) {
                 pulse = "min";
             } else {
                 pulse = "sec";
             }
-            holder.getCallRateView().setText("$ " + item.getRate() + "/" + pulse);
+            holder.getCallRateView().setText("$ " + rate + "/" + pulse);
         }
     }
 }

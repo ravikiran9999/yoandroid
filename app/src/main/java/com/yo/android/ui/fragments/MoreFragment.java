@@ -86,7 +86,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         menuDataList.add(new MenuData("Notifications", R.drawable.ic_notifications));
         menuDataList.add(new MenuData("Profile", R.drawable.ic_profile));
         menuDataList.add(new MenuData("Settings", R.drawable.ic_settings));
-        menuDataList.add(new MenuData("Sign Out", R.drawable.ic_logout));
+        menuDataList.add(new MenuData("Signout", R.drawable.ic_logout));
         return menuDataList;
     }
 
@@ -94,7 +94,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String name = ((MenuData) parent.getAdapter().getItem(position)).getName();
-        if (name.equalsIgnoreCase("logout")) {
+        if (name.equalsIgnoreCase("signout")) {
             showLogoutDialog();
         }
     }
