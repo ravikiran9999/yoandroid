@@ -109,5 +109,11 @@
     <string name="invite">Invite</string>
     <string name="create_group">Create group</string>
     <string name="clear_chat_history">Clear chat history</string>
+    <string name="delete">Delete</string>
+    <string name="copy">Copy</string>
+    <string name="forward">Forward</string>
+    <string name="camera">Camera</string>
+    <string name="image">Image</string>
+    <string name="contact">Contacts</string>
 
 </resources>

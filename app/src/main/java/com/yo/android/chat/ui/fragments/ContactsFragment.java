@@ -54,6 +54,7 @@ public class ContactsFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     @Override
