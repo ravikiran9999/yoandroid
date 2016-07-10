@@ -7,8 +7,6 @@ package com.yo.android.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
 
-import java.util.Map;
-
 /**
  * Class name will be tablename
  */
@@ -28,6 +26,12 @@ public class ChatMessage {
     private long time;
     @DatabaseField
     private boolean readUnreadStatus;
+    @DatabaseField
+    private String imagePath;
+
+    public String getImagePath() {
+        return imagePath;
+    }
 
     private String roomId;
 

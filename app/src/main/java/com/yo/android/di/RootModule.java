@@ -24,7 +24,7 @@ import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.DialerActivity;
-import com.yo.android.ui.FollowMoreTopics;
+import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
@@ -70,7 +70,7 @@ import dagger.Provides;
                 ChatActivity.class,
                 AppContactsActivity.class,
                 NewMagazineActivity.class,
-                FollowMoreTopics.class,
+                FollowMoreTopicsActivity.class,
                 CreateGroupActivity.class,
                 CountryListActivity.class,
                 CreateMagazineActivity.class,

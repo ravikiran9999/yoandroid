@@ -24,7 +24,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FollowMoreTopics extends BaseActivity {
+public class FollowMoreTopicsActivity extends BaseActivity {
 
     @Inject
     YoApi.YoService yoService;
@@ -58,10 +58,7 @@ public class FollowMoreTopics extends BaseActivity {
                 if (response == null || response.body() == null) {
                     return;
                 }
-                for (int i = 0; i < response.body().size(); i++) {
-                    topicsList.add(response.body().get(i));
-                }
-
+                topicsList.addAll(response.body());
                 for (int i = 0; i < topicsList.size(); i++) {
                     //if (topicsList.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
                     Tag tag = new Tag(topicsList.get(i).getName());

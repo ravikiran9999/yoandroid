@@ -111,7 +111,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".chat.ui.fragments.AppContactsActivity" />
         <activity
-            android:name=".ui.FollowMoreTopics"
+            android:name=".ui.FollowMoreTopicsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.NewMagazineActivity"

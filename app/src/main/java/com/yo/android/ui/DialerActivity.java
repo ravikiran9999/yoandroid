@@ -95,12 +95,14 @@ public class DialerActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                String number = dialPadView.getDigits().getText().toString();
+                String number = dialPadView.getDigits().getText().toString().trim();
                 if (!mConnectivityHelper.isConnected()) {
                     mToastFactory.showToast(getString(R.string.connectivity_network_settings));
                 } else if (!isVoipSupported) {
                     mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
-                } else if (number.length() > 0) {
+                } else if (number.length() == 0) {
+                    mToastFactory.showToast("Please enter number.");
+                } else {
                     Intent intent = new Intent(DialerActivity.this, OutGoingCallActivity.class);
                     intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
                     startActivity(intent);

@@ -1,7 +1,6 @@
 package com.yo.android.ui;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,11 +8,9 @@ import android.widget.GridView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
-import com.yo.android.adapters.CreateMagazinesAdapter;
 import com.yo.android.adapters.MyCollectionsAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Collections;
-import com.yo.android.model.OwnMagazine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +79,7 @@ public class MyCollections extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(position ==0) {
-                    Intent intent = new Intent(MyCollections.this, FollowMoreTopics.class);
+                    Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
                     startActivity(intent);
                 }
             }

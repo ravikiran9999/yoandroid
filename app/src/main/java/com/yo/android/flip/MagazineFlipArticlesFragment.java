@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -37,7 +36,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
-import com.yo.android.ui.FollowMoreTopics;
+import com.yo.android.ui.FollowMoreTopicsActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -393,7 +392,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
             followMoreTopics.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), FollowMoreTopics.class);
+                    Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
                     startActivity(intent);
                 }
             });
