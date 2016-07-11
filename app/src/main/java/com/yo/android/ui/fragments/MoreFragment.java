@@ -1,6 +1,8 @@
 package com.yo.android.ui.fragments;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -84,7 +86,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         menuDataList.add(new MenuData("Notifications", R.drawable.ic_notifications));
         menuDataList.add(new MenuData("Profile", R.drawable.ic_profile));
         menuDataList.add(new MenuData("Settings", R.drawable.ic_settings));
-        menuDataList.add(new MenuData("Logout", R.drawable.ic_logout));
+        menuDataList.add(new MenuData("Signout", R.drawable.ic_logout));
         return menuDataList;
     }
 
@@ -92,10 +94,26 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String name = ((MenuData) parent.getAdapter().getItem(position)).getName();
-        if (name.equalsIgnoreCase("logout")) {
-            preferenceEndPoint.clearAll();
-            startActivity(new Intent(getActivity(), LoginActivity.class));
-            getActivity().finish();
+        if (name.equalsIgnoreCase("signout")) {
+            showLogoutDialog();
         }
     }
+
+    public void showLogoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Sign Out");
+        builder.setMessage("Are you sure you want to sign out ?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                preferenceEndPoint.clearAll();
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
+
+            }
+        });
+        builder.setNegativeButton("No", null);
+        builder.create().show();
+    }
+
 }

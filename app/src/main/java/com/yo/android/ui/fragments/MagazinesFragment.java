@@ -1,17 +1,22 @@
 package com.yo.android.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.yo.android.R;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
+import com.yo.android.ui.CreateMagazineActivity;
+import com.yo.android.ui.MyCollections;
+import com.yo.android.ui.NewMagazineActivity;
 
 /**
  * Created by creatives on 6/27/2016.
@@ -44,8 +49,29 @@ public class MagazinesFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MagazineTopicsSelectionFragment fragment = new MagazineTopicsSelectionFragment();
-        getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
-        getChildFragmentManager().beginTransaction().add(R.id.bottom, new MagazineFlipArticlesFragment(fragment)).commit();
+        //MagazineTopicsSelectionFragment fragment = new MagazineTopicsSelectionFragment();
+        //getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
+        getChildFragmentManager().beginTransaction().add(R.id.bottom, new MagazineFlipArticlesFragment()).commit();
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        switch(item.getItemId()) {
+            case R.id.menu_create_magazines:
+
+                Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
+                startActivity(createMagazinesIntent);
+
+                break;
+            case R.id.menu_my_collections:
+                Intent myCollectionsIntent = new Intent(getActivity(), MyCollections.class);
+                startActivity(myCollectionsIntent);
+                break;
+
+
+        }
+        return true;
+    }
+
 }

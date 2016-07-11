@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
         android:name="android.hardware.sip.voip"
@@ -110,7 +110,21 @@
             android:name=".flip.MagazineArticleDetailsActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".chat.ui.fragments.AppContactsActivity" />
-        <activity android:name=".chat.ui.CreateGroupActivity"></activity>
+        <activity
+            android:name=".ui.FollowMoreTopicsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.NewMagazineActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.LoadMagazineActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".chat.ui.CreateGroupActivity" />
+        <activity
+            android:name=".ui.CountryListActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.CreateMagazineActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.MyCollections" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

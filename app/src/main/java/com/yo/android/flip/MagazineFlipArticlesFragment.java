@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -22,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -36,6 +36,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
+import com.yo.android.ui.FollowMoreTopicsActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -70,12 +71,16 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         magazineTopicsSelectionFragment = fragment;
     }
 
+    public MagazineFlipArticlesFragment() {
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        IntentFilter filter = new IntentFilter("com.yo.magazine.SendBroadcast");
+       /* IntentFilter filter = new IntentFilter("com.yo.magazine.SendBroadcast");
         myReceiver = new MyReceiver();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myReceiver, filter);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myReceiver, filter);*/
 
     }
 
@@ -92,6 +97,33 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
+
+        articlesList.clear();
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getAllArticlesAPI(accessToken).enqueue(new Callback<List<Articles>>() {
+            @Override
+            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+
+                if (response.body().size() > 0) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                        //articlesList = new ArrayList<Travels.Data>();
+                        articlesList.add(response.body().get(i));
+                        // }
+                    }
+                    myBaseAdapter.addItems(articlesList);
+                } else {
+                    mToastFactory.showToast("No Articles");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Articles>> call, Throwable t) {
+                Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     public void loadArticles(String selectedTopic, String topicId) {
@@ -204,8 +236,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
                 holder = new ViewHolder();
 
-                holder.categoryName = UI
-                        .<TextView>findViewById(layout, R.id.tv_category_name);
+                /*holder.categoryName = UI
+                        .<TextView>findViewById(layout, R.id.tv_category_name);*/
 
                 holder.articleTitle = UI.
                         <TextView>findViewById(layout, R.id.tv_article_title);
@@ -232,8 +264,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
             //articlesList = new ArrayList<Travels.Data>();
             //articlesList.add(data);
 
-            holder.categoryName
-                    .setText(AphidLog.format("%s", topicName));
+            /*holder.categoryName
+                    .setText(AphidLog.format("%s", topicName));*/
 
             holder.articleTitle
                     .setText(AphidLog.format("%s", data.getTitle()));
@@ -356,6 +388,15 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
             }
             //}
 
+            Button followMoreTopics = (Button)layout.findViewById(R.id.btn_magazine_follow_topics);
+            followMoreTopics.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                    startActivity(intent);
+                }
+            });
+
 
             return layout;
         }
@@ -368,7 +409,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
     }
 
     private static class ViewHolder {
-        private TextView categoryName;
+        //private TextView categoryName;
 
         private TextView articleTitle;
 

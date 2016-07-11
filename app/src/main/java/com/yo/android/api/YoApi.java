@@ -1,6 +1,7 @@
 package com.yo.android.api;
 
 import com.yo.android.model.Articles;
+import com.yo.android.model.Collections;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Topics;
 
@@ -59,6 +60,16 @@ public class YoApi {
         @FormUrlEncoded
         @POST("/api/articles/{article_id}/unlike.json")
         Call<ResponseBody> unlikeArticlesAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("/api/magzines.json")
+        Call<ResponseBody> createMagazinesAPI(@Field("access_token") String access_token, @Field("magzine[name]") String magzine_name, @Field("magzine[description]") String magzine_description, @Field("magzine[privacy]") String magzine_privacy);
+
+        @GET("api/articles.json")
+        Call<List<Articles>> getAllArticlesAPI(@Query("access_token") String access_token);
+
+        @GET("api/collections.json")
+        Call<List<Collections>> getCollectionsAPI(@Query("access_token") String access_token);
 
     }
 

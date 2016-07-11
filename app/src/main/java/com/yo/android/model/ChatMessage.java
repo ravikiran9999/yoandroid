@@ -9,8 +9,6 @@ import android.net.Uri;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
 
-import java.util.Map;
-
 /**
  * Class name will be tablename
  */

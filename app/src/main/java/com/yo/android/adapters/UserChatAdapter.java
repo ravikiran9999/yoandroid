@@ -127,7 +127,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 holder.getLinearLayoutText().setLayoutParams(layoutParams);
                 addView(holder.getLinearLayoutText(), item);
 
-                //layout.addView(holder.getLinearLayoutText());
+                layout.addView(holder.getLinearLayoutText());
 
 
             } else {
@@ -153,7 +153,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 holder.getLinearLayoutText().setLayoutParams(layoutParams);
                 addView(holder.getLinearLayoutText(), item);
 
-                //layout.addView(holder.getLinearLayoutText());
+                layout.addView(holder.getLinearLayoutText());
 
 
             }
@@ -163,13 +163,13 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     }
 
-    private void addView(final LinearLayout linearLayout, ChatMessage item) {
+    private void addView(final LinearLayout linearLayoutviewHolder, ChatMessage item) {
 
         if (item.getType().equals(Constants.TEXT)) {
             TextView textView = new TextView(context);
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
-            linearLayout.addView(textView);
+            linearLayoutviewHolder.addView(textView);
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {
                 final ImageView imageView = new ImageView(context);
@@ -184,8 +184,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         imageView.setImageBitmap(bitmap);
-                        //linearLayout.addView(imageView, layoutParams);
-                        linearLayout.addView(imageView);
+                        linearLayoutviewHolder.addView(imageView);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override

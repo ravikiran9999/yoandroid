@@ -8,16 +8,16 @@
         android:title="Search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
-    <item
+    <item android:id="@+id/menu_followers"
         android:title="Followers"
         app:showAsAction="never" />
-    <item
-        android:title="Followings"
-        app:showAsAction="never" />
-    <item
+    <item android:id="@+id/menu_find_people"
         android:title="Find People"
         app:showAsAction="never" />
-    <item
-        android:title="Collections"
+    <item android:id="@+id/menu_create_magazines"
+        android:title="Create Magazines"
+        app:showAsAction="never" />
+    <item android:id="@+id/menu_my_collections"
+        android:title="My Collections"
         app:showAsAction="never" />
 </menu>

@@ -1,13 +1,16 @@
 package com.yo.android.ui.fragments;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.format.DateUtils;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -26,14 +29,14 @@ import com.yo.android.model.dialer.CallLogsResponse;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
 
 import java.io.InputStreamReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -41,6 +44,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,6 +69,11 @@ public class DialerFragment extends BaseFragment {
     TextView txtEmptyCallLogs;
     @Bind(R.id.txtAppCalls)
     TextView txtAppCalls;
+    private MenuItem searchMenuItem;
+    private SearchView searchView;
+    private static final String TAG = "DialerFragment";
+    private EventBus bus = EventBus.getDefault();
+    private CallLogsAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,11 +84,19 @@ public class DialerFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        bus.register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        bus.unregister(this);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_dialer, menu);
+        prepareSearch(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -101,7 +118,7 @@ public class DialerFragment extends BaseFragment {
     }
 
     private void loadCallLogs() {
-        final CallLogsAdapter adapter = new CallLogsAdapter(getActivity());
+        adapter = new CallLogsAdapter(getActivity());
         listView.setAdapter(adapter);
         showProgressDialog();
 
@@ -113,7 +130,15 @@ public class DialerFragment extends BaseFragment {
                 try {
                     CallLogsResponse callLogsResponse = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), CallLogsResponse.class);
                     List<CallLogsResult> list = callLogsResponse.getDATA().getRESULT();
-                    adapter.addItems(list);
+                    if (list != null) {
+                        Collections.sort(list, new Comparator<CallLogsResult>() {
+                            @Override
+                            public int compare(CallLogsResult lhs, CallLogsResult rhs) {
+                                return (int) (Util.getTime(rhs.getStime()) - Util.getTime(lhs.getStime()));
+                            }
+                        });
+                        adapter.addItems(list);
+                    }
                 } catch (JsonSyntaxException e) {
                     mLog.w("DialerFragment", "loadCallLogs", e);
                 }
@@ -196,14 +221,22 @@ public class DialerFragment extends BaseFragment {
         }
 
         @Override
+        protected boolean hasData(CallLogsResult event, String key) {
+            if (event.getDialnumber().contains(key)) {
+                return true;
+            }
+            return super.hasData(event, key);
+        }
+
+        @Override
         public void bindView(int position, CallLogsViewHolder holder, final CallLogsResult item) {
             holder.getOpponentName().setText(item.getDialnumber());
             item.getDialedstatus();//NOT  ANSWER,ANSWER
             if (item.getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
-                holder.getTimeStamp().setText(parseDate(item.getStime()));
+                holder.getTimeStamp().setText(Util.parseDate(item.getStime()));
                 holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
             } else {
-                holder.getTimeStamp().setText(parseDate(item.getStime()));
+                holder.getTimeStamp().setText(Util.parseDate(item.getStime()));
                 holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_greenarrowup, 0, 0, 0);
             }
             holder.getCallIcon().setOnClickListener(new View.OnClickListener() {
@@ -223,22 +256,44 @@ public class DialerFragment extends BaseFragment {
             });
         }
 
-        private String parseDate(String s) {
-            try {
-                Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
-                String timeStamp = DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
-                return timeStamp;
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            return s;
-        }
+
     }
 
     public void onEventMainThread(String action) {
         if (action.equals(REFRESH_CALL_LOGS)) {
             loadCallLogs();
         }
+    }
+
+    private void prepareSearch(Menu menu) {
+        final SearchManager searchManager =
+                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "onQueryTextChange: " + query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG, "onQueryTextChange: " + newText);
+                adapter.performSearch(newText);
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                adapter.performSearch("");
+                return true;
+            }
+        });
     }
 
 
