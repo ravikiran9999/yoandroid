@@ -63,7 +63,7 @@ import butterknife.OnItemLongClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemLongClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener {
 
     private static final String TAG = "UserChatFragment";
 
@@ -73,6 +73,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private EditText chatText;
     private ListView listView;
     private String opponentNumber;
+    private String chatForward;
     private File mFileTemp;
     private static String TEMP_PHOTO_FILE_NAME;
     private static final int ADD_IMAGE_CAPTURE = 1;
@@ -92,14 +93,20 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Bundle bundle = this.getArguments();
         String child = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
+
         DatabaseReference roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
         if (child != null) {
             roomIdReference = roomReference.child(child);
         }
-        getMessageFromDatabase();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
+
+        getMessageFromDatabase();
+        chatForward = bundle.getString(Constants.CHAT_FORWARD);
+        if(chatForward != null) {
+            sendChatMessage(chatForward);
+        }
 
         setHasOptionsMenu(true);
     }
@@ -157,15 +164,22 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
         String message = chatText.getText().toString();
+        sendChatMessage(message);
+    }
+
+    private void sendChatMessage(String chatMessage) {
+
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        if (!TextUtils.isEmpty(message)) {
-            sendChatMessage(message, userId);
-            if (chatText.getText() != null) {
-                chatText.setText("");
+        if (!TextUtils.isEmpty(chatMessage)) {
+            sendChatMessage(chatMessage, userId);
+
+            if (chatText != null) {
+                if(chatText.getText() != null) {
+                    chatText.setText("");
+                }
             }
         }
     }
-
     private void sendChatMessage(@NonNull String message, @NonNull String userId) {
         long timestamp = System.currentTimeMillis();
         String timeStp = Long.toString(timestamp);
@@ -240,19 +254,24 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         final ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
-        //parent.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
         isContextualMenuEnable = true;
         getActivity().invalidateOptionsMenu();
+       // parent.getChildAt(position).setBackgroundColor(Color.BLUE);
 
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                //listView.getChildAt(position).setBackgroundColor(Color.BLUE);
                 final int checkedCount = listView.getCheckedItemCount();
                 // Set the  CAB title according to total checked items
                 mode.setTitle(checkedCount + "");
                 // Calls  toggleSelection method from ListViewAdapter Class
                 userChatAdapter.toggleSelection(position);
+
+                chatMessage.setSelected(true);
+
+                userChatAdapter.removeSelection();
             }
 
             @Override
@@ -295,6 +314,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         break;
                     case R.id.copy:
                         new Clipboard(getActivity()).copy(chatMessage.getMessage());
+                        break;
+                    case R.id.forward :
+                        if(chatMessage.isSelected()) {
+                            forwardMessage(chatMessage.getMessage());
+                            chatMessage.setSelected(false);
+                        }
                         break;
 
                     default:
@@ -369,11 +394,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 try {
                     String mPartyPicUri = mFileTemp.getPath();
                     uploadImage(mPartyPicUri);
-                    //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageCaptureUri);
-                    //imageView.setImageBitmap(bitmap);
-
-                    //Uri tempUri = getImageUri(getActivity(), bitmap);
-                    //String mPartyPicUri = getRealPathFromURI(tempUri);
                 } catch (Exception e) {
                 }
                 break;
@@ -479,5 +499,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             Log.e(TAG, databaseError.getMessage());
         }
     }
+
+    private void forwardMessage(String message) {
+        ChatFragment chatFragment = new ChatFragment();
+        Bundle args = new Bundle();
+        args.putString(Constants.CHAT_FORWARD, message);
+        chatFragment.setArguments(args);
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, chatFragment)
+                .commit();
+        getActivity().finish();
+    }
+
 }
 
