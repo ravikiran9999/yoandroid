@@ -26,6 +26,7 @@ import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.MainActivity;
+import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
@@ -75,6 +76,7 @@ import dagger.Provides;
                 CountryListActivity.class,
                 CreateMagazineActivity.class,
                 MyCollections.class,
+                MyCollectionDetails.class,
 
                 //Fragments
                 ContactsFragment.class,

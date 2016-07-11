@@ -45,7 +45,7 @@ public class StoreToS3 {
 
         try {
             Log.e(TAG, "sendToS3: key=" + key);
-            AWSCredentials awsCredentials = new BasicAWSCredentials("", "");
+            AWSCredentials awsCredentials = new BasicAWSCredentials("AKIAISIWC3UKXGPO74SQ", "0SiIyI1pMKAkY8AmLYkdcClxTnBBKhcbneSE2HZS");
             s3Client = new AmazonS3Client(awsCredentials);
         } catch (Exception e) {
             Logger.logStackTrace(e);

@@ -44,13 +44,13 @@ public class MyCollections extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         final GridView gridView = (GridView) findViewById(R.id.create_magazines_gridview);
+        final List<Collections> collectionsList = new ArrayList<Collections>();
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
 
-                List<Collections> collectionsList = new ArrayList<Collections>();
                 Collections collections = new Collections();
                 collections.setName("Follow more topics");
                 collections.setImage("");
@@ -80,6 +80,12 @@ public class MyCollections extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(position ==0) {
                     Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
+                    intent.putExtra("TopicId", collectionsList.get(position).getId());
+                    intent.putExtra("TopicName", collectionsList.get(position).getName());
                     startActivity(intent);
                 }
             }

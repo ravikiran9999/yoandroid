@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -12,6 +15,7 @@ import android.widget.ToggleButton;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
+import com.yo.android.model.OwnMagazine;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,6 +33,9 @@ public class NewMagazineActivity extends BaseActivity {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    private EditText etTitle;
+    private EditText etDesc;
+    private SwitchCompat togglePrivacy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,45 +49,66 @@ public class NewMagazineActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(title);
 
-        final EditText etTitle = (EditText) findViewById(R.id.magazine_title);
-        final EditText etDesc = (EditText) findViewById(R.id.magazine_desc);
-        SwitchCompat togglePrivacy = (SwitchCompat) findViewById(R.id.privacy_toggle);
+        etTitle = (EditText) findViewById(R.id.magazine_title);
+        etDesc = (EditText) findViewById(R.id.magazine_desc);
+        togglePrivacy = (SwitchCompat) findViewById(R.id.privacy_toggle);
         TextView tvAddStory = (TextView) findViewById(R.id.add_story);
 
         magazinePrivacy = "";
-        if (togglePrivacy.isChecked()) {
-            magazinePrivacy = "Public";
-        } else {
-            magazinePrivacy = "Private";
-        }
+
         tvAddStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+
+            }
+        });
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_new_magazine, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        switch(item.getItemId()) {
+            case R.id.menu_save:
+
+
                 final String magazineTitle = etTitle.getText().toString();
                 final String magazineDesc = etDesc.getText().toString();
 
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (togglePrivacy.isChecked()) {
+                    magazinePrivacy = "Public";
+                } else {
+                    magazinePrivacy = "Private";
+                }
 
+                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
+                    @Override
+                    public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
+                        Intent intent=new Intent();
+                        setResult(2,intent);
+                        finish();//finishing activity
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<OwnMagazine> call, Throwable t) {
 
                     }
                 });
 
+                break;
 
-                /*Intent intent = new Intent(NewMagazineActivity.this, LoadMagazineActivity.class);
-                intent.putExtra("magazineTitle", magazineTitle);
-                intent.putExtra("magazineDesc", magazineDesc);
-                intent.putExtra("magazinePrivacy", magazinePrivacy);
-                startActivity(intent);*/
-            }
-        });
 
+        }
+        return true;
     }
 }
