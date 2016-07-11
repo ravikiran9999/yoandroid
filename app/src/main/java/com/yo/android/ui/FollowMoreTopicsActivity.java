@@ -55,9 +55,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         final List<Topics> topicsList = new ArrayList<Topics>();
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        showProgressDialog();
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
+                dismissProgressDialog();
                 if (response == null || response.body() == null) {
                     return;
                 }
@@ -81,7 +83,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<List<Topics>> call, Throwable t) {
-
+                dismissProgressDialog();
             }
         });
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,6 +44,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Inject
     DatabaseHelper databaseHelper;
 
+    String forward;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -52,6 +54,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (getArguments() != null) {
+            forward = getArguments().getString(Constants.CHAT_FORWARD);
+            Log.i("CF", forward);
+            preferenceEndPoint.saveStringPreference(Constants.CHAT_FORWARD, forward);
+        }
     }
 
     @Override
@@ -101,13 +109,25 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ChatRoom chatRoom = (ChatRoom) listView.getItemAtPosition(position);
-        navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber());
+
+         String vv = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
+        if(vv != null) {
+            Log.i("CF", vv);
+            navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), vv);
+            preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
+        } else {
+            navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), forward);
+        }
+
+
+
     }
 
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber) {
+    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, String forward) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
+        intent.putExtra(Constants.CHAT_FORWARD, forward);
         startActivity(intent);
     }
 
