@@ -1,14 +1,14 @@
 package com.yo.android.model;
 
 /**
- * Created by creatives on 7/9/2016.
+ * Created by creatives on 7/11/2016.
  */
-public class OwnMagazine {
+public class Magazine {
+
     private String id;
     private String name;
     private String description;
     private String privacy;
-    private String image;
 
     public String getId() {
         return id;
@@ -40,13 +40,5 @@ public class OwnMagazine {
 
     public void setPrivacy(String privacy) {
         this.privacy = privacy;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 }
