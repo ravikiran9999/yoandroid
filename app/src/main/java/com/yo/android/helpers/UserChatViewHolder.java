@@ -20,18 +20,17 @@ public class UserChatViewHolder extends AbstractViewHolder {
 
     public UserChatViewHolder(View view) {
         super(view);
-        chatText = (TextView) view.findViewById(R.id.tv_chat_text);
+        //chatText = (TextView) view.findViewById(R.id.tv_chat_text);
         chatTimeStamp = (TextView) view.findViewById(R.id.time_stamp);
         linearLayout = (LinearLayout) view.findViewById(R.id.linear);
         linearLayoutText = (LinearLayout) view.findViewById(R.id.linear_text_back);
-
         //contactNumber = (TextView) view.findViewById(R.id.tv_phone_number);
 
     }
 
-    public TextView getChatText() {
+/*    public TextView getChatText() {
         return chatText;
-    }
+    }*/
 
     public TextView getChatTimeStamp() {
         return chatTimeStamp;

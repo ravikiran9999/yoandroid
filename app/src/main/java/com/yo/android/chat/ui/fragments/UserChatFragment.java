@@ -29,7 +29,10 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +41,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnPausedListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.chat.firebase.Clipboard;
@@ -69,7 +78,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private static final int ADD_IMAGE_CAPTURE = 1;
     private static final int ADD_SELECT_PICTURE = 2;
     private boolean isContextualMenuEnable = false;
-
+    private Uri mImageCaptureUri = null;
+    StorageReference storageReference;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -87,6 +97,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             roomIdReference = roomReference.child(child);
         }
         getMessageFromDatabase();
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
+
         setHasOptionsMenu(true);
     }
 
@@ -156,6 +170,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         long timestamp = System.currentTimeMillis();
         String timeStp = Long.toString(timestamp);
         ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setType(Constants.TEXT);
         chatMessage.setMessage(message);
         chatMessage.setTime(timestamp);
         chatMessage.setSenderID(userId);
@@ -306,14 +321,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         try {
-            Uri mImageCaptureUri = null;
+
             String state = Environment.getExternalStorageState();
             TEMP_PHOTO_FILE_NAME = "" + System.currentTimeMillis() + ".jpg";
             if (Environment.MEDIA_MOUNTED.equals(state)) {
 
-                mFileTemp = new File(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                                + "/Camera", TEMP_PHOTO_FILE_NAME);
+                mFileTemp = new File(Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                        + "/Camera", TEMP_PHOTO_FILE_NAME);
             } else {
                 mFileTemp = new File(getActivity().getFilesDir(), TEMP_PHOTO_FILE_NAME);
             }
@@ -349,14 +364,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
+
             case ADD_IMAGE_CAPTURE:
                 try {
                     String mPartyPicUri = mFileTemp.getPath();
-                    if (data != null) {
-                        Bitmap cameraImageBitmap = (Bitmap) data.getExtras().get("data");
-                        Uri tempUri = getImageUri(getActivity(), cameraImageBitmap);
-                        //String mPartyPicUri = getRealPathFromURI(tempUri);
-                    }
+                    uploadImage(mPartyPicUri);
+                    //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageCaptureUri);
+                    //imageView.setImageBitmap(bitmap);
+
+                    //Uri tempUri = getImageUri(getActivity(), bitmap);
+                    //String mPartyPicUri = getRealPathFromURI(tempUri);
                 } catch (Exception e) {
                 }
                 break;
@@ -371,6 +388,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         cursor.moveToFirst();
                         int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
                         String filePath = cursor.getString(columnIndex);
+                        uploadImage(filePath);
                         if (filePath != null && filePath.length() > 0) {
                             if (filePath.endsWith(".jpg")
                                     || filePath.endsWith(".png")
@@ -394,10 +412,69 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         return Uri.parse(path);
     }
 
+    /**
+     * upload image to firebase storage
+     * @param path
+     */
+    private void uploadImage(String path) {
+
+        Uri file = Uri.fromFile(new File(path));
+
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build();
+
+        StorageReference riversRef = storageReference.child("images/" + file.getLastPathSegment());
+        UploadTask uploadTask = riversRef.putFile(file,metadata);
+
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Handle unsuccessful uploads
+                e.printStackTrace();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                sendImage(downloadUrl.getLastPathSegment());
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                double progress = 100.0 * (taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                System.out.println("Upload is " + progress + "% done");
+            }
+        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(getActivity(), "Upload is paused", Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    private void sendImage(@NonNull String imagePathName) {
+        String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+        long timestamp = System.currentTimeMillis();
+        String timeStp = Long.toString(timestamp);
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setType(Constants.IMAGE);
+        chatMessage.setTime(timestamp);
+        chatMessage.setImagePath(imagePathName);
+        chatMessage.setSenderID(userId);
+        //chatMessage.setTimeStamp(ServerValue.TIMESTAMP);
+
+        roomIdReference.child(timeStp).setValue(chatMessage, this);
+
+        // getTimeFromFireBaseServer(reference);
+    }
+
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         if (databaseError == null) {
-
+            // successfully inserted to database
         } else {
             Log.e(TAG, databaseError.getMessage());
         }

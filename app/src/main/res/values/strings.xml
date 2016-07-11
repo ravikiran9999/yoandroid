@@ -118,5 +118,7 @@
     <string name="camera">Camera</string>
     <string name="image">Image</string>
     <string name="contact">Contacts</string>
+    <string name="empty_country_list_message">No country list available.</string>
+    <string name="activity_contry_selection_title">Select Country</string>
 
 </resources>

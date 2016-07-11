@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tv_chat_text"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:layout_below="@+id/time_stamp"
+    android:layout_marginLeft="15dp"
+    android:layout_marginStart="15dp"
+    android:textColor="@android:color/black"
+    tools:src="@drawable/app_logo"
+     />
+

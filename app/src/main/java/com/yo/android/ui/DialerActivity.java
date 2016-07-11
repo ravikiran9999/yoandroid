@@ -114,11 +114,22 @@ public class DialerActivity extends BaseActivity {
             public void onClick(View v) {
                 String prev = dialPadView.getDigits().getText().toString();
                 String finalString = prev;
+                int startPos = dialPadView.getDigits().getSelectionStart();
+                int endPos = dialPadView.getDigits().getSelectionEnd();
+                try {
+                    String str = new StringBuilder(prev).replace(startPos - 1, endPos, "").toString();
+                    mLog.i("Dialer", "final:" + str);
+                    dialPadView.getDigits().setText(str);
+                    dialPadView.getDigits().setSelection(startPos - 1);
+                } catch (Exception e) {
+                    mLog.w("DialerActivity",e);
+                }
+
                 if (prev.length() > 0) {
                     finalString = new StringBuilder(prev).deleteCharAt(prev.length() - 1).toString();
                 }
-                dialPadView.getDigits().setText(finalString);
-                dialPadView.getDigits().setSelection(finalString.length());
+//                dialPadView.getDigits().setText(finalString);
+//                dialPadView.getDigits().setSelection(finalString.length());
 
             }
         });
@@ -126,7 +137,7 @@ public class DialerActivity extends BaseActivity {
             btnDialer.setEnabled(false);
             mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
         }
-        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "0");
+        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
         txtBalance.setText("Balance $" + balance);
         //
         setCallRateText();
