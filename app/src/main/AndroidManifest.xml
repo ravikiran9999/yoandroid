@@ -130,7 +130,10 @@
         <activity
             android:name=".ui.MyCollections"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.MyCollectionDetails"></activity>
+        <activity android:name=".ui.MyCollectionDetails"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.UserCreatedMagazineActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
