@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -32,10 +33,12 @@ import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.IO;
 import com.aphidmobile.utils.UI;
+import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
+import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 
 import java.lang.ref.WeakReference;
@@ -249,6 +252,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
                 holder.magazineLike = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like);
 
+                holder.magazineAdd = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -357,7 +362,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                     });
 
 
-            WebView photoView = holder.articlePhoto;
+            ImageView photoView = holder.articlePhoto;
 
             if (data.getImage_filename() != null) {
                 //Use an async task to load the bitmap
@@ -384,7 +389,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                     task.execute();
                 }*/
 
-                photoView.loadUrl(data.getImage_filename());
+                //photoView.loadUrl(data.getImage_filename());
+                Picasso.with(getActivity())
+                        .load(data.getImage_filename())
+                        .into(photoView);
             }
             //}
 
@@ -393,6 +401,17 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+
+            ImageView add = holder.magazineAdd;
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(getActivity(), CreateMagazineActivity.class);
                     startActivity(intent);
                 }
             });
@@ -415,9 +434,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
         private TextView articleShortDesc;
 
-        private WebView articlePhoto;
+        private ImageView articlePhoto;
 
         private CheckBox magazineLike;
+
+        private ImageView magazineAdd;
     }
 
     /**

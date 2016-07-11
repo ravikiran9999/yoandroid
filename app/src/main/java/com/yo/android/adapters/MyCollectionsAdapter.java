@@ -1,10 +1,12 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,6 +56,12 @@ public class MyCollectionsAdapter extends BaseAdapter {
         textView.setText(collectionsList.get(position).getName());
         if(position != 0) {
             textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
+        }
+        else {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER;
+            textView.setLayoutParams(params);
         }
 
         return convertView;

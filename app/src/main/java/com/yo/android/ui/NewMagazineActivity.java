@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -90,20 +91,26 @@ public class NewMagazineActivity extends BaseActivity {
                     magazinePrivacy = "Private";
                 }
 
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
-                    @Override
-                    public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
-                        Intent intent=new Intent();
-                        setResult(2,intent);
-                        finish();//finishing activity
-                    }
+                if(!TextUtils.isEmpty(magazineTitle)) {
 
-                    @Override
-                    public void onFailure(Call<OwnMagazine> call, Throwable t) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
+                        @Override
+                        public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
+                            Intent intent = new Intent();
+                            setResult(2, intent);
+                            finish();//finishing activity
+                        }
 
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<OwnMagazine> call, Throwable t) {
+
+                        }
+                    });
+                }
+                else {
+                    mToastFactory.showToast("Please enter the Magazine Title");
+                }
 
                 break;
 
