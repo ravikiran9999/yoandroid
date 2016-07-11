@@ -20,14 +20,50 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp">
 
-        <ImageView
-            android:id="@+id/btnEndCall"
-            android:layout_width="wrap_content"
+        <!--   <ImageView
+               android:id="@+id/btnEndCall"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_alignParentBottom="true"
+               android:layout_centerHorizontal="true"
+               android:background="@drawable/ic_disconnect"
+               android:padding="25dp" />
+        -->
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_disconnect"
-            android:padding="25dp" />
+            android:layout_marginBottom="30dp">
+
+            <ImageView
+                android:id="@+id/imv_speaker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="40dp"
+                android:src="@drawable/speaker_on" />
+
+
+            <ImageView
+                android:id="@+id/btnEndCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_disconnect" />
+
+
+            <ImageView
+                android:id="@+id/imv_mic_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="40dp"
+                android:src="@drawable/out_going_mute_on" />
+
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

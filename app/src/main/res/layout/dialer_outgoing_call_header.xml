@@ -6,27 +6,37 @@
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/tv_dialing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_caller_name"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:text="Dialing"
+        android:textColor="@android:color/white" />
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/imv_caller_pic"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:background="@drawable/dialer_default_avatar" />
 
         <TextView
             android:id="@+id/tv_caller_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/imv_caller_pic"
+            android:layout_centerHorizontal="true"
             android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/imv_caller_pic"
+            android:layout_marginTop="10dp"
             android:text="Sandip Dave"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
@@ -36,9 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_caller_name"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_toRightOf="@+id/imv_caller_pic"
+            android:layout_marginTop="10dp"
             android:text="Mobile"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
@@ -49,12 +57,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/tv_caller_name"
-            android:layout_marginRight="20dp"
             android:text="05:45"
             android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:visibility="gone" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -69,14 +77,16 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="60dp"
             android:background="@drawable/ic_dialer_speaker"
-            android:tint="@color/colorAccent" />
+            android:tint="@color/colorAccent"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/imv_mic_off"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
-            android:background="@drawable/ic_dialer_mic_off" />
+            android:background="@drawable/ic_dialer_mic_off"
+            android:visibility="gone" />
 
     </LinearLayout>
 </LinearLayout>

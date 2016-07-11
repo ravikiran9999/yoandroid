@@ -36,7 +36,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     ListView listView;
     @Bind(R.id.txtEmpty)
     TextView txtEmptyView;
-    CountyCallRatesAdapter adapter;
+    CountryCallRatesAdapter adapter;
 
 
     @Override
@@ -45,8 +45,8 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         setContentView(R.layout.fragment_yo_contacts);
         ButterKnife.bind(this);
         enableBack();
-        getSupportActionBar().setTitle("Select Country");
-        adapter = new CountyCallRatesAdapter(this);
+        getSupportActionBar().setTitle(R.string.activity_contry_selection_title);
+        adapter = new CountryCallRatesAdapter(this);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
         showProgressDialog();
@@ -73,7 +73,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     }
 
     private void showEmptyText() {
-        txtEmptyView.setText("No country list available.");
+        txtEmptyView.setText(R.string.empty_country_list_message);
         txtEmptyView.setVisibility(adapter.getCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
@@ -90,9 +90,9 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         }
     }
 
-    public class CountyCallRatesAdapter extends AbstractBaseAdapter<CallRateDetail, CallRatesCountryViewHolder> {
+    public class CountryCallRatesAdapter extends AbstractBaseAdapter<CallRateDetail, CallRatesCountryViewHolder> {
 
-        public CountyCallRatesAdapter(Context context) {
+        public CountryCallRatesAdapter(Context context) {
             super(context);
         }
 
