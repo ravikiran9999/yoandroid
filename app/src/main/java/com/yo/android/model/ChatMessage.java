@@ -31,6 +31,7 @@ public class ChatMessage {
 
     private String type;
     private String roomId;
+    private boolean selected;
 
     public ChatMessage() {
     }
@@ -105,5 +106,13 @@ public class ChatMessage {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

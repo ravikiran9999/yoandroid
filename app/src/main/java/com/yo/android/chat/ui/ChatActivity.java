@@ -18,6 +18,9 @@ public class ChatActivity extends BaseActivity {
         Bundle args = new Bundle();
         args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
         args.putString(Constants.OPPONENT_PHONE_NUMBER, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
+        if(getIntent().getStringExtra(Constants.CHAT_FORWARD) != null) {
+            args.putString(Constants.CHAT_FORWARD, getIntent().getStringExtra(Constants.CHAT_FORWARD));
+        }
         userChatFragment.setArguments(args);
 
         getSupportFragmentManager()

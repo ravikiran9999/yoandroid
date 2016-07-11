@@ -118,8 +118,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 holder.getLinearLayoutText().setLayoutParams(layoutParams);
                 addView(holder.getLinearLayoutText(), item, holder);
 
-
-
             } else {
                 holder.getLinearLayout().setGravity(Gravity.LEFT);
 
