@@ -4,6 +4,8 @@ package com.yo.android.model;
  * Created by rdoddapaneni on 6/27/2016.
  */
 
+import android.net.Uri;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
 
@@ -23,12 +25,13 @@ public class ChatMessage {
     @DatabaseField
     private int status;
     @DatabaseField
-    private String path;
+    private String imagePath;
     @DatabaseField
     private long time;
     @DatabaseField
     private boolean readUnreadStatus;
 
+    private String type;
     private String roomId;
 
     public ChatMessage() {
@@ -66,12 +69,12 @@ public class ChatMessage {
         this.status = status;
     }
 
-    public String getPath() {
-        return path;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public long getTime() {
@@ -96,5 +99,13 @@ public class ChatMessage {
 
     public void setRoomId(String roomId) {
         this.roomId = roomId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
