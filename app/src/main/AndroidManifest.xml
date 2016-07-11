@@ -123,8 +123,13 @@
         <activity
             android:name=".ui.CountryListActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.CreateMagazineActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.MyCollections" android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.CreateMagazineActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MyCollections"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.MyCollectionDetails"></activity>
     </application>
 
 </manifest>

@@ -1,9 +1,11 @@
 package com.yo.android.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.cunoraz.tagview.OnTagClickListener;
 import com.cunoraz.tagview.OnTagDeleteListener;
@@ -20,6 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -101,6 +104,20 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                             followedTopicsIdsList.add(topicsList.get(j).getId());
                     }
                 }
+
+                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Intent intent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Toast.makeText(FollowMoreTopicsActivity.this, "Error while adding topics", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
 

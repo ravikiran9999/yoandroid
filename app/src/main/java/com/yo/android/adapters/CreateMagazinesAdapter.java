@@ -50,7 +50,7 @@ public class CreateMagazinesAdapter extends BaseAdapter {
                     .into(imageView);
         }
         TextView textView = (TextView) convertView.findViewById(R.id.tv_title);
-        textView.setText(ownMagazineList.get(position).getTitle());
+        textView.setText(ownMagazineList.get(position).getName());
 
         if(position != 0) {
             textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
