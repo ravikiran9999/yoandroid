@@ -4,33 +4,25 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.yo.android.R;
 import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.Contacts;
 import com.yo.android.util.Constants;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by rdoddapaneni on 6/30/2016.
@@ -41,7 +33,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private String userId;
     private Context context;
     private SparseBooleanArray mSelectedItemsIds;
-    LinearLayout.LayoutParams layoutParams;
+    private LinearLayout.LayoutParams layoutParams;
 
     public UserChatAdapter(Context context) {
         super(context);
@@ -123,11 +115,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 } else {
                     holder.getLinearLayoutText().setBackgroundResource(R.drawable.bg_sms_yellow);
                 }
-
                 holder.getLinearLayoutText().setLayoutParams(layoutParams);
-                addView(holder.getLinearLayoutText(), item);
+                addView(holder.getLinearLayoutText(), item, holder);
 
-                layout.addView(holder.getLinearLayoutText());
 
 
             } else {
@@ -149,11 +139,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     holder.getLinearLayoutText().setBackgroundResource(R.drawable.bg_sms_grey);
                 }
 
-
                 holder.getLinearLayoutText().setLayoutParams(layoutParams);
-                addView(holder.getLinearLayoutText(), item);
 
-                layout.addView(holder.getLinearLayoutText());
+                addView(holder.getLinearLayoutText(), item, holder);
 
 
             }
@@ -163,13 +151,17 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     }
 
-    private void addView(final LinearLayout linearLayoutviewHolder, ChatMessage item) {
+    private void addView(final LinearLayout linearLayout, ChatMessage item,final UserChatViewHolder holder ) {
 
         if (item.getType().equals(Constants.TEXT)) {
             TextView textView = new TextView(context);
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
-            linearLayoutviewHolder.addView(textView);
+            if(linearLayout.getTag() == null) {
+                linearLayout.setTag(holder);
+                linearLayout.addView(textView);
+            }
+
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {
                 final ImageView imageView = new ImageView(context);
@@ -184,7 +176,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         imageView.setImageBitmap(bitmap);
-                        linearLayoutviewHolder.addView(imageView);
+                        if(linearLayout.getTag() == null) {
+                            linearLayout.setTag(holder);
+                            linearLayout.addView(imageView);
+                        }
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
