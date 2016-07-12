@@ -42,6 +42,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private ListView listView;
     private ArrayList<ChatRoom> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
+    private ChatMessage forwardChatMessage;
 
     @Inject
     DatabaseHelper databaseHelper;
@@ -103,15 +104,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         arrayOfUsers = new ArrayList<>();
         chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(chatRoomListAdapter);
-
+        String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
+        forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ChatRoom chatRoom = (ChatRoom) listView.getItemAtPosition(position);
-        String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
-        ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
-
+        ChatRoom chatRoom = (ChatRoom) chatRoomListAdapter.getItem(position);
         if(forwardChatMessage != null) {
             navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), forwardChatMessage);
             preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
@@ -124,7 +123,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
 
         }
-
     }
 
     private void navigateToChatScreen(String roomId, String opponentPhoneNumber) {
