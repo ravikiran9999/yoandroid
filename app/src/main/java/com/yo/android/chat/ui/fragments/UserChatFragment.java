@@ -90,6 +90,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        long time = System.currentTimeMillis();
+
+        mLog.e(TAG,"onCreate");
+
         Bundle bundle = this.getArguments();
         String child = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
@@ -98,11 +102,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if (child != null) {
             roomIdReference = roomReference.child(child);
         }
+        long now = System.currentTimeMillis();
+
+        mLog.e(TAG,"roomIdReference"+(now-time));
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
 
         getMessageFromDatabase();
+        now = System.currentTimeMillis();
+
+        mLog.e(TAG, "storageReference"+(now - time));
+
         chatForward = bundle.getString(Constants.CHAT_FORWARD);
         if(chatForward != null) {
             sendChatMessage(chatForward);
@@ -163,7 +174,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        String message = chatText.getText().toString();
+        String message = chatText.getText().toString().trim();
         sendChatMessage(message);
     }
 
