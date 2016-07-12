@@ -1,9 +1,11 @@
 package com.yo.android.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.telephony.TelephonyManager;
 import android.widget.ImageView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -49,6 +51,15 @@ public class SplashScreenActivity extends BaseActivity {
             startActivity(new Intent(this, LoginActivity.class));
         }
         finish();*/
+        try {
+            TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            String mPhoneNumber = tMgr.getLine1Number();
+            String zipCode = getCountryZipCode();
+            mLog.e("Splash", "zipcode:" + zipCode);
+
+        } catch (Exception e){
+            mLog.w("Splash",e);
+        }
     }
 
     private Runnable runnable = new Runnable() {
@@ -76,5 +87,24 @@ public class SplashScreenActivity extends BaseActivity {
 
             }
         });
+    }
+
+    public String getCountryZipCode() {
+
+        String CountryID = "";
+        String CountryZipCode = "";
+
+        TelephonyManager manager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        //getNetworkCountryIso
+        CountryID = manager.getSimCountryIso().toUpperCase();
+        String[] rl = this.getResources().getStringArray(R.array.CountryCodes);
+        for (int i = 0; i < rl.length; i++) {
+            String[] g = rl[i].split(",");
+            if (g[1].trim().equals(CountryID.trim())) {
+                CountryZipCode = g[0];
+                break;
+            }
+        }
+        return CountryID;
     }
 }

@@ -7,6 +7,7 @@ public class Topics {
 
     private String id;
     private String name;
+    private String selected;
 
     public String getId() {
         return id;
@@ -24,4 +25,11 @@ public class Topics {
         this.name = name;
     }
 
+    public String getSelected() {
+        return selected;
+    }
+
+    public void setSelected(String selected) {
+        this.selected = selected;
+    }
 }

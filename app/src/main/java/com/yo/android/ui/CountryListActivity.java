@@ -86,7 +86,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_dialer, menu);
+        getMenuInflater().inflate(R.menu.menu_country_list, menu);
         prepareSearch(menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -110,6 +110,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
                 adapter.performSearch(newText);
+                showEmptyText();
                 return true;
             }
         });
@@ -130,6 +131,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_PULSE, callRateDetail.getPulse());
+            preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_PREFIX, callRateDetail.getPrefix());
             setResult(RESULT_OK);
             finish();
         }
