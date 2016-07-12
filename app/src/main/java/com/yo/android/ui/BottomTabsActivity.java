@@ -58,10 +58,13 @@ public class BottomTabsActivity extends BaseActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         dataList = createTabsList();
-        for (int i = 0; i < dataList.size(); i++) {
-            final TabLayout.Tab tab = tabLayout.getTabAt(i);
-            tab.setCustomView(setTabs(dataList.get(i).getTitle(), dataList.get(i).getDrawable()));
+        int index =0;
+        for (TabsData data:dataList) {
+            final TabLayout.Tab tab = tabLayout.getTabAt(index);
+            tab.setCustomView(setTabs(data.getTitle(), data.getDrawable()));
+            index++;
         }
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
