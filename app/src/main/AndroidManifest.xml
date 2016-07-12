@@ -73,6 +73,7 @@
         <activity
             android:name=".ui.BottomTabsActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".chat.ui.ChatActivity"
@@ -129,7 +130,10 @@
         <activity
             android:name=".ui.MyCollections"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.MyCollectionDetails"></activity>
+        <activity android:name=".ui.MyCollectionDetails"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.UserCreatedMagazineActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

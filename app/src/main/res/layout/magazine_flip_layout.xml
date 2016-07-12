@@ -2,7 +2,7 @@
 <!--<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">-->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -18,15 +18,15 @@
 
             android:textColor="@color/colorPrimary" />android:text="Top Stories"-->
 
-        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<!--        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            card_view:cardCornerRadius="4dp">
+            card_view:cardCornerRadius="4dp">-->
 
-            <LinearLayout
+<!--            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical">-->
 
                 <!--<ImageView
                     android:id="@+id/photo"
@@ -41,17 +41,17 @@
                     android:layout_weight="1"
                     android:id="@+id/photo"
                     />-->
-                <RelativeLayout
+                <RelativeLayout android:id="@+id/rl_top"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="150dp">
 
-                <WebView
+                <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
+                    android:layout_height="150dp"
                     android:id="@+id/photo"
                     android:layout_gravity="center_horizontal"
                     android:scaleType="centerCrop"
-                    android:layout_weight="1"></WebView>
+                    android:layout_weight="1"></ImageView>
 
                     <Button
                         android:id="@+id/imv_magazine_follow"
@@ -66,9 +66,16 @@
                         android:textColor="@android:color/white"
                         android:gravity="center"
                         android:textSize="16sp"
-                        android:layout_marginTop="50dp"/>
+                        android:layout_alignParentBottom="true"/>
 
                 </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/rl_top"
+        android:layout_alignParentBottom="true">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -81,7 +88,7 @@
                         android:id="@+id/cb_magazine_like"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="20dp"
                         android:button="@drawable/magazine_like_selector" />
 
                     <ImageView
@@ -89,7 +96,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="20dp"
                         android:layout_toRightOf="@+id/cb_magazine_like"
                         android:background="@drawable/ic_new_chat_group_add_contact" />
 
@@ -98,7 +105,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="20dp"
                         android:layout_toRightOf="@+id/imv_magazine_add"
                         android:background="@drawable/ic_magazine_share" />
 
@@ -114,7 +121,8 @@
                         android:textColor="@color/tab_grey"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                        android:gravity="center" />
+                        android:gravity="center"
+                        android:layout_marginTop="10dp"/>
                 </RelativeLayout>
 
                 <TextView
@@ -122,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-
+                    android:textSize="14sp"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />android:text="Article 1"
 
@@ -156,13 +164,14 @@
                         android:maxLines="2"
                         android:ellipsize="end"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="16sp" />android:text="Business Standard"
+                        android:textSize="14sp" />android:text="Business Standard"
                 </LinearLayout>
+    </LinearLayout>
 
 
-            </LinearLayout>
+            <!--</LinearLayout>-->
 
-        </android.support.v7.widget.CardView>
+       <!-- </android.support.v7.widget.CardView>-->
 
         <!--<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
@@ -206,6 +215,6 @@
 
             </RelativeLayout>
         </android.support.v7.widget.CardView>-->
-    </LinearLayout>
+    </RelativeLayout>
 <!--
 </ScrollView>-->

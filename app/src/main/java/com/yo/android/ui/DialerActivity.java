@@ -122,14 +122,8 @@ public class DialerActivity extends BaseActivity {
                     dialPadView.getDigits().setText(str);
                     dialPadView.getDigits().setSelection(startPos - 1);
                 } catch (Exception e) {
-                    mLog.w("DialerActivity",e);
+                    mLog.w("DialerActivity", e);
                 }
-
-                if (prev.length() > 0) {
-                    finalString = new StringBuilder(prev).deleteCharAt(prev.length() - 1).toString();
-                }
-//                dialPadView.getDigits().setText(finalString);
-//                dialPadView.getDigits().setSelection(finalString.length());
 
             }
         });

@@ -15,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
@@ -170,6 +172,8 @@ public class MyCollectionDetails extends BaseActivity {
 
                 holder.magazineLike = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like);
 
+                holder.magazineAdd = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -278,7 +282,7 @@ public class MyCollectionDetails extends BaseActivity {
                     });
 
 
-            WebView photoView = holder.articlePhoto;
+            ImageView photoView = holder.articlePhoto;
 
             if (data.getImage_filename() != null) {
                 //Use an async task to load the bitmap
@@ -305,7 +309,10 @@ public class MyCollectionDetails extends BaseActivity {
                     task.execute();
                 }*/
 
-                photoView.loadUrl(data.getImage_filename());
+                //photoView.loadUrl(data.getImage_filename());
+                Picasso.with(MyCollectionDetails.this)
+                        .load(data.getImage_filename())
+                        .into(photoView);
             }
             //}
 
@@ -318,6 +325,16 @@ public class MyCollectionDetails extends BaseActivity {
                     startActivity(intent);
                 }
             });*/
+
+            ImageView add = holder.magazineAdd;
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(MyCollectionDetails.this, CreateMagazineActivity.class);
+                    startActivity(intent);
+                }
+            });
 
 
             return layout;
@@ -337,8 +354,10 @@ public class MyCollectionDetails extends BaseActivity {
 
         private TextView articleShortDesc;
 
-        private WebView articlePhoto;
+        private ImageView articlePhoto;
 
         private CheckBox magazineLike;
+
+        private ImageView magazineAdd;
     }
 }

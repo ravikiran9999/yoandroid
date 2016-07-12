@@ -2,6 +2,7 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,12 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     private List<T> mList;
     protected final Context mContext;
     private List<T> mOriginalList = new ArrayList<>();
+    private SparseBooleanArray mSelectedItemsIds;
 
     public AbstractBaseAdapter(Context context) {
         mContext = context;
         mList = new ArrayList<>();
+        mSelectedItemsIds = new SparseBooleanArray();
     }
 
 
@@ -32,6 +35,36 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
         notifyDataSetChanged();
     }
+
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    // Remove selection after unchecked
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    // Item checked on selection
+    public void selectView(int position, boolean value) {
+        if (value) {
+            mSelectedItemsIds.put(position, value);
+        } else {
+            mSelectedItemsIds.delete(position);
+        }
+        notifyDataSetChanged();
+    }
+
+    // Get number of selected item
+    public int getSelectedCount() {
+        return mSelectedItemsIds.size();
+    }
+
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
+    }
+
 
     public void addItemsAll(List<T> list) {
         this.mList.addAll(list);

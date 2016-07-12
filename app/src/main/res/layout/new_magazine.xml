@@ -62,6 +62,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Add a story"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"
+        android:drawableLeft="@drawable/ic_magazine_add_story"
+        android:drawablePadding="10dp"/>
 
 </LinearLayout>

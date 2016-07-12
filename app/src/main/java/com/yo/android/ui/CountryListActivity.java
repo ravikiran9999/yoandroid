@@ -1,7 +1,12 @@
 package com.yo.android.ui;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -36,7 +41,9 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     ListView listView;
     @Bind(R.id.txtEmpty)
     TextView txtEmptyView;
-    CountryCallRatesAdapter adapter;
+    private CountryCallRatesAdapter adapter;
+    private MenuItem searchMenuItem;
+    private SearchView searchView;
 
 
     @Override
@@ -78,6 +85,44 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_dialer, menu);
+        prepareSearch(menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void prepareSearch(Menu menu) {
+        final SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "onQueryTextChange: " + query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG, "onQueryTextChange: " + newText);
+                adapter.performSearch(newText);
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                adapter.performSearch("");
+                return true;
+            }
+        });
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Object object = parent.getAdapter().getItem(position);
         if (object instanceof CallRateDetail) {
@@ -104,6 +149,19 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         @Override
         public CallRatesCountryViewHolder getViewHolder(View convertView) {
             return new CallRatesCountryViewHolder(convertView);
+        }
+
+        @Override
+        protected boolean hasData(CallRateDetail event, String key) {
+            if (containsValue(event.getDestination().toLowerCase(), key)
+                    || containsValue(event.getPrefix().toLowerCase(), key)) {
+                return true;
+            }
+            return super.hasData(event, key);
+        }
+
+        private boolean containsValue(String str, String key) {
+            return str != null && str.toLowerCase().contains(key);
         }
 
         @Override

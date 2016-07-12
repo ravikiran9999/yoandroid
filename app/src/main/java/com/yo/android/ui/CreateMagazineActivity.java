@@ -33,6 +33,7 @@ public class CreateMagazineActivity extends BaseActivity {
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
     private GridView gridView;
+    private List<OwnMagazine> ownMagazineList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class CreateMagazineActivity extends BaseActivity {
             @Override
             public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
 
-                List<OwnMagazine> ownMagazineList = new ArrayList<OwnMagazine>();
+                ownMagazineList = new ArrayList<OwnMagazine>();
                 OwnMagazine ownMagazine = new OwnMagazine();
                 ownMagazine.setName("+ New Magazine");
                 ownMagazine.setImage("");
@@ -83,6 +84,11 @@ public class CreateMagazineActivity extends BaseActivity {
                     Intent intent = new Intent(CreateMagazineActivity.this, NewMagazineActivity.class);
                     startActivityForResult(intent, 2);// Activity is started with requestCode 2
                 }
+                else {
+                    Intent intent = new Intent(CreateMagazineActivity.this, UserCreatedMagazineActivity.class);
+                    intent.putExtra("OwnMagazineTitle", ownMagazineList.get(position).getName());
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -94,12 +100,13 @@ public class CreateMagazineActivity extends BaseActivity {
         // check if the request code is same as what is passed  here it is 2
         if(requestCode==2)
         {
+            ownMagazineList.clear();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getMagazinesAPI(accessToken).enqueue(new Callback<List<OwnMagazine>>() {
                 @Override
                 public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
 
-                    List<OwnMagazine> ownMagazineList = new ArrayList<OwnMagazine>();
+                    //List<OwnMagazine> ownMagazineList = new ArrayList<OwnMagazine>();
                     OwnMagazine ownMagazine = new OwnMagazine();
                     ownMagazine.setName("+ New Magazine");
                     ownMagazine.setImage("");
