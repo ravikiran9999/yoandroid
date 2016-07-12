@@ -126,6 +126,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         } else {
             if (position == 0) {
                 Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
+                intent.putExtra("From", "MyCollections");
                 startActivityForResult(intent, 2);
             } else {
                 Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
