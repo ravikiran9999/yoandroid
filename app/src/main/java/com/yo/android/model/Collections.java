@@ -9,6 +9,7 @@ public class Collections {
     private String name;
     private String image;
     private String type;
+    private boolean select;
 
     public String getId() {
         return id;
@@ -41,4 +42,17 @@ public class Collections {
     public void setType(String type) {
         this.type = type;
     }
+
+    public boolean isSelect() {
+        return select;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
+    }
+
+    public boolean toggleSelection() {
+        return select = !select;
+    }
+
 }
