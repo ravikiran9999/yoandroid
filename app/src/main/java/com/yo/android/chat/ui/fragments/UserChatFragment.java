@@ -89,6 +89,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        long time = System.currentTimeMillis();
+
+        mLog.e(TAG,"onCreate");
+
         Bundle bundle = this.getArguments();
         String child = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
@@ -174,6 +178,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+
         String message = chatText.getText().toString();
         sendChatMessage(message, Constants.TEXT);
     }

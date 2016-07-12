@@ -60,7 +60,7 @@
                 android:focusableInTouchMode="true"
                 android:fontFamily="sans-serif-light"
                 android:freezesText="true"
-                android:gravity="center"
+                android:gravity="left"
                 android:inputType="number"
                 android:maxLines="1"
                 android:singleLine="true"

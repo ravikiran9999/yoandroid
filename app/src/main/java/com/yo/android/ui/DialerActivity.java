@@ -222,6 +222,8 @@ public class DialerActivity extends BaseActivity {
         String cName = preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME, null);
         String cRate = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_RATE, null);
         String cPulse = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_PULSE, null);
+        String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
+
         if (!TextUtils.isEmpty(cName)) {
             String pulse;
             if (cPulse.equals("60")) {
@@ -231,6 +233,10 @@ public class DialerActivity extends BaseActivity {
             }
 
             txtCallRate.setText(cName + "\n$" + cRate + "/" + pulse);
+            if(!TextUtils.isEmpty(cPrefix)) {
+                dialPadView.getDigits().setText(cPrefix);
+                dialPadView.getDigits().setSelection(cPrefix.length());
+            }
         }
     }
 }
