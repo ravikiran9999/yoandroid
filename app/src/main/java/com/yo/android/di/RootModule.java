@@ -2,6 +2,7 @@ package com.yo.android.di;
 
 import android.content.Context;
 
+import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
@@ -93,8 +94,10 @@ import dagger.Provides;
                 MoreFragment.class,
 
                 //Managers
-                RetrieveContactsManager.class
+                RetrieveContactsManager.class,
 
+                //Adapters
+                ChatRoomListAdapter.class
         },
         includes = {
                 AppModule.class,

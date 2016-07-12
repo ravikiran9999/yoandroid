@@ -148,13 +148,13 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     }
 
-    private void addView(final LinearLayout linearLayout, ChatMessage item,final UserChatViewHolder holder ) {
+    private void addView(final LinearLayout linearLayout, ChatMessage item, final UserChatViewHolder holder) {
 
         if (item.getType().equals(Constants.TEXT)) {
             TextView textView = new TextView(context);
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
-            if(linearLayout.getTag() == null) {
+            if (linearLayout.getTag() == null) {
                 linearLayout.setTag(holder);
                 linearLayout.addView(textView);
             }
@@ -173,7 +173,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         imageView.setImageBitmap(bitmap);
-                        if(linearLayout.getTag() == null) {
+                        if (linearLayout.getTag() == null) {
                             linearLayout.setTag(holder);
                             linearLayout.addView(imageView);
                         }
