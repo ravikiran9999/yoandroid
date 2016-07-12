@@ -134,6 +134,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+        listView.setStackFromBottom(true);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_user_chat, menu);
         super.onCreateOptionsMenu(menu, inflater);
