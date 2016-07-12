@@ -10,26 +10,36 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.orion.android.common.util.DateFormatterImpl;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 /**
  * Created by rdoddapaneni on 7/5/2016.
  */
 
 public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomViewHolder> {
-    private DatabaseReference roomReference;
-    private String yourPhoneNumber;
 
-    public ChatRoomListAdapter(Context context, String yourPhoneNumber) {
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
+
+    private DatabaseReference roomReference;
+
+
+    public ChatRoomListAdapter(Context context) {
         super(context);
+        Injector.obtain(context.getApplicationContext()).inject(this);
+
         roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
-        this.yourPhoneNumber = yourPhoneNumber;
     }
 
     @Override
@@ -44,6 +54,9 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
 
     @Override
     public void bindView(int position, ChatRoomViewHolder holder, final ChatRoom item) {
+
+
+        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getOpponentPhoneNumber().equals(yourPhoneNumber)) {
             holder.getOpponentName().setText(item.getYourPhoneNumber());
