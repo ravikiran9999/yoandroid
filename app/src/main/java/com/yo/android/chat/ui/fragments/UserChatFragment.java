@@ -282,8 +282,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 userChatAdapter.toggleSelection(position);
 
                 chatMessage.setSelected(true);
-
-                //userChatAdapter.removeSelection();
             }
 
             @Override
