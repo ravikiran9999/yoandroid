@@ -2,6 +2,7 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -14,6 +15,8 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Topics;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    private String from;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +51,17 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(title);
 
+        final Intent intent = getIntent();
+        if(intent.hasExtra("From") && !TextUtils.isEmpty("from")) {
+            from = intent.getStringExtra("From");
+        }
+
         final TagView tagGroup = (TagView) findViewById(R.id.tag_group);
         Button done = (Button) findViewById(R.id.btn_done);
 
         final ArrayList<Tag> tags = new ArrayList<>();
         final List<Topics> topicsList = new ArrayList<Topics>();
+        final List<String> addedTopics = new ArrayList<String>();
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
@@ -73,6 +83,16 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     tag.tagTextColor = getResources().getColor(R.color.tab_grey);
                     // if (i % 2 == 0) // you can set deletable or not
                     //     tag.isDeletable = true;
+
+                    if(topicsList.get(i).getSelected().equals("true")) {
+                        tag.layoutColor = getResources().getColor(R.color.colorPrimary);
+                        tag.tagTextColor = getResources().getColor(android.R.color.white);
+                        addedTopics.add(tag.text);
+                    }
+                    else {
+                        tag.layoutColor = getResources().getColor(android.R.color.white);
+                        tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+                    }
                     tags.add(tag);
                     //}
                 }
@@ -86,7 +106,6 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             }
         });
 
-        final List<String> addedTopics = new ArrayList<String>();
         //set click listener
         tagGroup.setOnTagClickListener(new OnTagClickListener() {
             @Override
@@ -136,9 +155,15 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Intent intent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
-                        startActivity(intent);
-                        finish();
+                        if (from.equals("Magazines")) {
+                            Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
+                            startActivity(myCollectionsIntent);
+                            finish();
+                        } else {
+                            Intent intent = new Intent();
+                            setResult(2, intent);
+                            finish();
+                        }
                     }
 
                     @Override

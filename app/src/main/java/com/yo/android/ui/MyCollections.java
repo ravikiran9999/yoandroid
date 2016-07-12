@@ -126,7 +126,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         } else {
             if (position == 0) {
                 Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
-                startActivity(intent);
+                intent.putExtra("From", "MyCollections");
+                startActivityForResult(intent, 2);
             } else {
                 Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
                 intent.putExtra("TopicId", collections.getId());
@@ -205,5 +206,38 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 });
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==2)
+        {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
+                @Override
+                public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                    final List<Collections> collectionsList = new ArrayList<Collections>();
+                    Collections collections = new Collections();
+                    collections.setName("Follow more topics");
+                    collections.setImage("");
+                    collectionsList.add(0, collections);
+                    if (response == null || response.body() == null) {
+                        return;
+                    }
+                    collectionsList.addAll(response.body());
+                    myCollectionsAdapter.addItems(collectionsList);
+                    gridView.setAdapter(myCollectionsAdapter);
+
+                }
+
+                @Override
+                public void onFailure(Call<List<Collections>> call, Throwable t) {
+
+                }
+            });
+
+        }
     }
 }

@@ -401,6 +401,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                    intent.putExtra("From", "Magazines");
                     startActivity(intent);
                 }
             });
