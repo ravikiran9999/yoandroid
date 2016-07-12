@@ -3,6 +3,8 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.SipService;
@@ -143,6 +146,15 @@ public class DialerActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater  inflater  = getMenuInflater();
+        inflater.inflate(R.menu.menu_dialer, menu);
+        Util.prepareSearch(this,menu,null);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
     private void showDialPad() {
         show = true;
         dialPadView.setVisibility(View.VISIBLE);
@@ -210,6 +222,8 @@ public class DialerActivity extends BaseActivity {
         String cName = preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME, null);
         String cRate = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_RATE, null);
         String cPulse = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_PULSE, null);
+        String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
+
         if (!TextUtils.isEmpty(cName)) {
             String pulse;
             if (cPulse.equals("60")) {
@@ -219,6 +233,10 @@ public class DialerActivity extends BaseActivity {
             }
 
             txtCallRate.setText(cName + "\n$" + cRate + "/" + pulse);
+            if(!TextUtils.isEmpty(cPrefix)) {
+                dialPadView.getDigits().setText(cPrefix);
+                dialPadView.getDigits().setSelection(cPrefix.length());
+            }
         }
     }
 }

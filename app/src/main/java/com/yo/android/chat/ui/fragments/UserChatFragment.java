@@ -89,10 +89,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        long time = System.currentTimeMillis();
+
+        mLog.e(TAG,"onCreate");
+
         Bundle bundle = this.getArguments();
         String child = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
-
         DatabaseReference roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
         if (child != null) {
             roomIdReference = roomReference.child(child);
@@ -135,6 +138,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+        listView.setStackFromBottom(true);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_user_chat, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -168,6 +178,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+
         String message = chatText.getText().toString();
         sendChatMessage(message, Constants.TEXT);
     }
@@ -282,8 +293,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 userChatAdapter.toggleSelection(position);
 
                 chatMessage.setSelected(true);
-
-                userChatAdapter.removeSelection();
             }
 
             @Override

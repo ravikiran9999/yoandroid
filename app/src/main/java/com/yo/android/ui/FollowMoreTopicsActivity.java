@@ -2,7 +2,6 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -92,7 +91,33 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tagGroup.setOnTagClickListener(new OnTagClickListener() {
             @Override
             public void onTagClick(Tag tag, int position) {
-                addedTopics.add(tag.text);
+                try {
+                    if (tag.tagTextColor == getResources().getColor(R.color.white)) {
+                        addedTopics.remove(tag);
+                        tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.tab_grey);
+                        tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.white);
+                        tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.tab_grey);
+                    } else {
+                        addedTopics.add(tag.text);
+                        tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.white);
+                        tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.colorPrimary);
+                        tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.white);
+                    }
+
+
+                    Tag tagDummy = new Tag("Android");
+                    tagDummy.radius = 1f;
+                    tagDummy.layoutBorderColor = getResources().getColor(R.color.tab_grey);
+                    tagDummy.layoutBorderSize = 1f;
+                    tagDummy.layoutColor = getResources().getColor(android.R.color.white);
+                    tagDummy.tagTextColor = getResources().getColor(R.color.tab_grey);
+
+                    tagGroup.addTag(tagDummy);
+                    tagGroup.remove(tagGroup.getTags().size() - 1);
+                } catch (Exception e) {
+                    mLog.e("TAGS", "Exception" + e);
+                }
+
             }
         });
 
