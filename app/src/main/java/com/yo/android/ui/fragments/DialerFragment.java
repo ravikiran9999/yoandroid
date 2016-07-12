@@ -96,7 +96,7 @@ public class DialerFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_dialer, menu);
-        prepareSearch(menu);
+        Util.prepareSearch(getActivity(),menu,adapter);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -265,36 +265,6 @@ public class DialerFragment extends BaseFragment {
         }
     }
 
-    private void prepareSearch(Menu menu) {
-        final SearchManager searchManager =
-                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        searchMenuItem = menu.findItem(R.id.menu_search);
-        searchView =
-                (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.i(TAG, "onQueryTextChange: " + query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                Log.i(TAG, "onQueryTextChange: " + newText);
-                adapter.performSearch(newText);
-                return true;
-            }
-        });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                adapter.performSearch("");
-                return true;
-            }
-        });
-    }
 
 
 }
