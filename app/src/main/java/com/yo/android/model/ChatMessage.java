@@ -5,6 +5,8 @@ package com.yo.android.model;
  */
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
@@ -12,7 +14,7 @@ import com.yo.android.util.Constants;
 /**
  * Class name will be tablename
  */
-public class ChatMessage {
+public class ChatMessage implements Parcelable{
 
     @DatabaseField(id = true)
     private String msgID;
@@ -115,4 +117,46 @@ public class ChatMessage {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(msgID);
+        dest.writeString(message);
+        dest.writeString(senderID);
+        dest.writeInt(status);
+        dest.writeString(imagePath);
+        dest.writeLong(time);
+        dest.writeString(type);
+        dest.writeString(roomId);
+
+    }
+
+    private ChatMessage(Parcel in) {
+        this.msgID = in.readString();
+        this.message = in.readString();
+        this.senderID = in.readString();
+        this.status = in.readInt();
+        this.imagePath = in.readString();
+        this.time = in.readLong();
+        this.type = in.readString();
+        this.roomId = in.readString();
+    }
+
+    public static final Parcelable.Creator<ChatMessage> CREATOR = new Parcelable.Creator<ChatMessage>() {
+        @Override
+        public ChatMessage createFromParcel(Parcel source) {
+            return new ChatMessage(source);
+        }
+
+        @Override
+        public ChatMessage[] newArray(int size) {
+            return new ChatMessage[size];
+        }
+    };
+
 }

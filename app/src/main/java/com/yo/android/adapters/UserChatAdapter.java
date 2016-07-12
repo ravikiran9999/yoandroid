@@ -143,7 +143,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                 addView(holder.getLinearLayoutText(), item, holder);
 
-
             }
 
         } catch (Exception e) {
