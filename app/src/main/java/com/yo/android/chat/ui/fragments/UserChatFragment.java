@@ -73,7 +73,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private EditText chatText;
     private ListView listView;
     private String opponentNumber;
-    private String chatForward;
     private File mFileTemp;
     private static String TEMP_PHOTO_FILE_NAME;
     private static final int ADD_IMAGE_CAPTURE = 1;
@@ -97,7 +96,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Bundle bundle = this.getArguments();
         String child = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
-
         DatabaseReference roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
         if (child != null) {
             roomIdReference = roomReference.child(child);
@@ -107,10 +105,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
 
         getMessageFromDatabase();
+        ChatMessage chatForward = bundle.getParcelable(Constants.CHAT_FORWARD);
 
-        chatForward = bundle.getString(Constants.CHAT_FORWARD);
-        if(chatForward != null) {
-            sendChatMessage(chatForward);
+        if (chatForward != null) {
+            if(chatForward.getType().equals(Constants.IMAGE)) {
+                sendChatMessage(chatForward.getImagePath(), chatForward.getType());
+            } else if(chatForward.getType().equals(Constants.TEXT)) {
+                sendChatMessage(chatForward.getMessage(), chatForward.getType());
+            }
+            chatForward.setSelected(false);
         }
 
         setHasOptionsMenu(true);
@@ -132,6 +135,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         send.setOnClickListener(this);
         chatText.setOnLongClickListener(this);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+        listView.setStackFromBottom(true);
     }
 
     @Override
@@ -168,31 +178,39 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        String message = chatText.getText().toString().trim();
-        sendChatMessage(message);
+
+        String message = chatText.getText().toString();
+        sendChatMessage(message, Constants.TEXT);
     }
 
-    private void sendChatMessage(String chatMessage) {
+    private void sendChatMessage(String chatMessage, String type) {
 
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         if (!TextUtils.isEmpty(chatMessage)) {
-            sendChatMessage(chatMessage, userId);
+            sendChatMessage(chatMessage, userId, type);
 
             if (chatText != null) {
-                if(chatText.getText() != null) {
+                if (chatText.getText() != null) {
                     chatText.setText("");
                 }
             }
         }
     }
-    private void sendChatMessage(@NonNull String message, @NonNull String userId) {
+
+    private void sendChatMessage(@NonNull String message, @NonNull String userId, @NonNull String type ) {
         long timestamp = System.currentTimeMillis();
         String timeStp = Long.toString(timestamp);
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setType(Constants.TEXT);
-        chatMessage.setMessage(message);
+        chatMessage.setType(type);
         chatMessage.setTime(timestamp);
         chatMessage.setSenderID(userId);
+
+        if(type.equals(Constants.TEXT)) {
+            chatMessage.setMessage(message);
+        } else if(type.equals(Constants.IMAGE)) {
+            chatMessage.setImagePath(message);
+        }
+
         //chatMessage.setTimeStamp(ServerValue.TIMESTAMP);
 
         roomIdReference.child(timeStp).setValue(chatMessage, this);
@@ -261,7 +279,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         final ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
         isContextualMenuEnable = true;
         getActivity().invalidateOptionsMenu();
-       // parent.getChildAt(position).setBackgroundColor(Color.BLUE);
+        // parent.getChildAt(position).setBackgroundColor(Color.BLUE);
 
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -320,10 +338,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     case R.id.copy:
                         new Clipboard(getActivity()).copy(chatMessage.getMessage());
                         break;
-                    case R.id.forward :
-                        if(chatMessage.isSelected()) {
-                            forwardMessage(chatMessage.getMessage());
-                            chatMessage.setSelected(false);
+                    case R.id.forward:
+                        if (chatMessage.isSelected()) {
+                            forwardMessage(chatMessage);
                         }
                         break;
 
@@ -439,6 +456,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     /**
      * upload image to firebase storage
+     *
      * @param path
      */
     private void uploadImage(String path) {
@@ -450,7 +468,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 .build();
 
         StorageReference riversRef = storageReference.child("images/" + file.getLastPathSegment());
-        UploadTask uploadTask = riversRef.putFile(file,metadata);
+        UploadTask uploadTask = riversRef.putFile(file, metadata);
 
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -505,10 +523,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    private void forwardMessage(String message) {
+    private void forwardMessage(ChatMessage message) {
         ChatFragment chatFragment = new ChatFragment();
         Bundle args = new Bundle();
-        args.putString(Constants.CHAT_FORWARD, message);
+        args.putParcelable(Constants.CHAT_FORWARD, message);
         chatFragment.setArguments(args);
         getActivity().getSupportFragmentManager()
                 .beginTransaction()

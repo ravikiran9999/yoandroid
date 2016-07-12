@@ -19,10 +19,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.orion.android.common.util.DateFormatterImpl;
 import com.yo.android.R;
 import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 
 /**
@@ -93,7 +95,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         try {
             String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.WEEK_IN_MILLIS).toString();
             LinearLayout layout = new LinearLayout(context);
-            holder.getChatTimeStamp().setText(timeStamp);
+            holder.getChatTimeStamp().setText(Util.getTimeFormat(mContext,item.getTime()));
 
             if (userId.equals(item.getSenderID())) {
 
@@ -140,7 +142,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 holder.getLinearLayoutText().setLayoutParams(layoutParams);
 
                 addView(holder.getLinearLayoutText(), item, holder);
-
 
             }
 

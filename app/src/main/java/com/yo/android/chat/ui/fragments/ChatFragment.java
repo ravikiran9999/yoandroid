@@ -20,11 +20,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.DatabaseHelper;
+import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.util.Constants;
 
@@ -44,7 +46,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Inject
     DatabaseHelper databaseHelper;
 
-    String forward;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -56,9 +57,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         setHasOptionsMenu(true);
 
         if (getArguments() != null) {
-            forward = getArguments().getString(Constants.CHAT_FORWARD);
-            Log.i("CF", forward);
-            preferenceEndPoint.saveStringPreference(Constants.CHAT_FORWARD, forward);
+
+            preferenceEndPoint.saveStringPreference(Constants.CHAT_FORWARD, new Gson().toJson(getArguments().getParcelable(Constants.CHAT_FORWARD)));
         }
     }
 
@@ -109,21 +109,26 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ChatRoom chatRoom = (ChatRoom) listView.getItemAtPosition(position);
+        String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
+        ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
 
-         String vv = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
-        if(vv != null) {
-            Log.i("CF", vv);
-            navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), vv);
-            preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
+
+        if(forwardChatMessage != null) {
+            navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), forwardChatMessage);
         } else {
-            navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), forward);
+            navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber());
         }
-
-
 
     }
 
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, String forward) {
+    private void navigateToChatScreen(String roomId, String opponentPhoneNumber) {
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
+        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
+        startActivity(intent);
+    }
+
+    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, ChatMessage forward) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);

@@ -63,7 +63,7 @@ public class ContactsFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         listView = (ListView) view.findViewById(R.id.lv_contacts);
-        ArrayList<Contacts> contact = readContacts();
+        //ArrayList<Contacts> contact = readContacts();
         return view;
     }
 

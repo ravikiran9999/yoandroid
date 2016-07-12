@@ -10,11 +10,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.orion.android.common.util.DateFormatterImpl;
 import com.yo.android.R;
 import com.yo.android.helpers.ChatRoomViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 /**
  * Created by rdoddapaneni on 7/5/2016.
@@ -62,7 +64,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
                         } else {
                             item.setIsImage(true);
                         }
-                        item.setTimeStamp(DateUtils.getRelativeTimeSpanString(chatMessage.getTime()).toString());
+                        item.setTimeStamp(Util.getChatListTimeFormat(mContext,chatMessage.getTime()));
                         notifyDataSetChanged();
                     } catch (Exception e) {
                         e.printStackTrace();
