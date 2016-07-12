@@ -80,6 +80,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private boolean isContextualMenuEnable = false;
     private Uri mImageCaptureUri = null;
     StorageReference storageReference;
+    String child;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -94,8 +95,25 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         mLog.e(TAG,"onCreate");
 
         Bundle bundle = this.getArguments();
-        String child = bundle.getString(Constants.CHAT_ROOM_ID);
+        child = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
+
+     /*   DatabaseReference databaseRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
+        databaseRoomReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean value1 = dataSnapshot.hasChild(child);
+                if(value1) {
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+
         DatabaseReference roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
         if (child != null) {
             roomIdReference = roomReference.child(child);
@@ -108,9 +126,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         ChatMessage chatForward = bundle.getParcelable(Constants.CHAT_FORWARD);
 
         if (chatForward != null) {
-            if(chatForward.getType().equals(Constants.IMAGE)) {
+            if (chatForward.getType().equals(Constants.IMAGE)) {
                 sendChatMessage(chatForward.getImagePath(), chatForward.getType());
-            } else if(chatForward.getType().equals(Constants.TEXT)) {
+            } else if (chatForward.getType().equals(Constants.TEXT)) {
                 sendChatMessage(chatForward.getMessage(), chatForward.getType());
             }
             chatForward.setSelected(false);
@@ -140,8 +158,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-        listView.setStackFromBottom(true);
+        //listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+        //listView.setStackFromBottom(true);
     }
 
     @Override
@@ -197,7 +215,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    private void sendChatMessage(@NonNull String message, @NonNull String userId, @NonNull String type ) {
+    private void sendChatMessage(@NonNull String message, @NonNull String userId, @NonNull String type) {
         long timestamp = System.currentTimeMillis();
         String timeStp = Long.toString(timestamp);
         ChatMessage chatMessage = new ChatMessage();
@@ -205,9 +223,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setTime(timestamp);
         chatMessage.setSenderID(userId);
 
-        if(type.equals(Constants.TEXT)) {
+        if (type.equals(Constants.TEXT)) {
             chatMessage.setMessage(message);
-        } else if(type.equals(Constants.IMAGE)) {
+        } else if (type.equals(Constants.IMAGE)) {
             chatMessage.setImagePath(message);
         }
 

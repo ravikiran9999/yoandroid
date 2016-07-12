@@ -65,6 +65,8 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
         }
 
         if (item.getChatRoomId() != null) {
+            //String vv = preferenceEndPoint.getStringPreference(item.getChatRoomId());
+            //item.setMessage(preferenceEndPoint.getStringPreference(item.getChatRoomId()));
             DatabaseReference roomIdReference = roomReference.child(item.getChatRoomId());
             roomIdReference.limitToLast(1).addChildEventListener(new ChildEventListener() {
                 @Override
