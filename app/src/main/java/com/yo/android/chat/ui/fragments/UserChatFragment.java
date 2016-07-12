@@ -63,7 +63,7 @@ import butterknife.OnItemLongClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener,AdapterView.OnItemClickListener {
 
     private static final String TAG = "UserChatFragment";
 
@@ -80,6 +80,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private boolean isContextualMenuEnable = false;
     private Uri mImageCaptureUri = null;
     StorageReference storageReference;
+    private ActionMode activeMode=null;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -122,6 +123,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
 
         listView = (ListView) view.findViewById(R.id.listView);
+        listView.setOnItemLongClickListener(this);
+        listView.setMultiChoiceModeListener(this);
+
+
         View send = view.findViewById(R.id.send);
         chatText = (EditText) view.findViewById(R.id.chat_text);
         chatMessageArray = new ArrayList<>();
@@ -130,6 +135,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setOnItemLongClickListener(this);
         send.setOnClickListener(this);
         chatText.setOnLongClickListener(this);
+        listView.setOnItemClickListener(this);
         return view;
     }
 
@@ -156,9 +162,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     startActivity(intent);
                 }
                 break;
-
             case R.id.attach:
-
                 break;
 
             case R.id.camera:
@@ -272,82 +276,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         final ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setItemChecked(position, true);
         isContextualMenuEnable = true;
         getActivity().invalidateOptionsMenu();
-        // parent.getChildAt(position).setBackgroundColor(Color.BLUE);
-
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                //listView.getChildAt(position).setBackgroundColor(Color.BLUE);
-                final int checkedCount = listView.getCheckedItemCount();
-                // Set the  CAB title according to total checked items
-                mode.setTitle(checkedCount + "");
-                // Calls  toggleSelection method from ListViewAdapter Class
-                userChatAdapter.toggleSelection(position);
-
-                chatMessage.setSelected(true);
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                mode.getMenuInflater().inflate(R.menu.menu_change, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
-                switch (item.getItemId()) {
-
-                    case R.id.delete:
-
-                        SparseBooleanArray selected = userChatAdapter.getSelectedIds();
-                        for (int i = (selected.size() - 1); i >= 0; i--) {
-                            if (selected.valueAt(i)) {
-
-                                //parent.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-                                //view.setBackgroundColor(Color.GREEN);
-
-                                ChatMessage selectedItem = userChatAdapter.getItem(selected.keyAt(i));
-                                String timesmp = Long.toString(selectedItem.getTime());
-                                roomIdReference.child(timesmp).removeValue();
-
-                                // Remove  selected items following the ids
-                                userChatAdapter.removeItem(selectedItem);
-                            }
-                        }
-
-                        // Close CAB
-                        mode.finish();
-                        selected.clear();
-                        break;
-                    case R.id.copy:
-                        new Clipboard(getActivity()).copy(chatMessage.getMessage());
-                        break;
-                    case R.id.forward:
-                        if (chatMessage.isSelected()) {
-                            forwardMessage(chatMessage);
-                        }
-                        break;
-
-                    default:
-                        return false;
-                }
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-
-            }
-        });
         return true;
     }
 
@@ -528,5 +460,82 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         getActivity().finish();
     }
 
+
+
+    @Override
+    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+        final ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
+        final int checkedCount = listView.getCheckedItemCount();
+        // Set the  CAB title according to total checked items
+        mode.setTitle(checkedCount + "");
+        // Calls  toggleSelection method from ListViewAdapter Class
+        userChatAdapter.toggleSelection(position);
+        chatMessage.setSelected(true);
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        MenuInflater inflater=getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_change, menu);
+        activeMode=mode;
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+         return false;
+    }
+
+    private void updateSubtitle(ActionMode mode) {
+        mode.setSubtitle("(" + listView.getCheckedItemCount() + ")");
+    }
+    public boolean performActions(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete:
+                SparseBooleanArray selected = userChatAdapter.getSelectedIds();
+                for (int i = (selected.size() - 1); i >= 0; i--) {
+                    if (selected.valueAt(i)) {
+                        ChatMessage selectedItem = userChatAdapter.getItem(selected.keyAt(i));
+                        String timesmp = Long.toString(selectedItem.getTime());
+                        roomIdReference.child(timesmp).removeValue();
+                        userChatAdapter.removeItem(selectedItem);
+                    }
+                }
+             listView.clearChoices();
+                return true;
+            case R.id.copy:
+              //  new Clipboard(getActivity()).copy(chatMessage.getMessage());
+                return true;
+            case R.id.forward:
+               /* if (chatMessage.isSelected()) {
+                    forwardMessage(chatMessage);
+                }*/
+                return true;
+
+            default:
+                return false;
+        }
+    }
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        boolean result=performActions(item);
+        updateSubtitle(activeMode);
+        return(result);
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        if (activeMode != null) {
+            activeMode=null;
+            listView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+            listView.setAdapter(listView.getAdapter());
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        listView.setItemChecked(position, true);
+
+    }
 }
 
