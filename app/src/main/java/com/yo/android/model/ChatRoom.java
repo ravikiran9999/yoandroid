@@ -18,6 +18,8 @@ public class ChatRoom {
     private String message;
     private String timeStamp;
 
+    private boolean isImage;
+
     public ChatRoom() {
         // empty default constructor, necessary for Firebase to be able to deserialize
     }
@@ -55,5 +57,13 @@ public class ChatRoom {
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public boolean isImage() {
+        return isImage;
+    }
+
+    public void setIsImage(boolean isImage) {
+        this.isImage = isImage;
     }
 }

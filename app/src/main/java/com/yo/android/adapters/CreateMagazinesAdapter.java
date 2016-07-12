@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.model.OwnMagazine;
+import com.yo.android.widgets.SquareItemLinearLayout;
 
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class CreateMagazinesAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.create_magazine_item, parent, false);
         }
         ImageView imageView = (ImageView) convertView.findViewById(R.id.img_magazine);
+        SquareItemLinearLayout squareItemLinearLayout = (SquareItemLinearLayout) convertView.findViewById(R.id.sq_layout);
         if(ownMagazineList.get(position).getImage() != "") {
             Picasso.with(mContext)
                     .load(ownMagazineList.get(position).getImage())
@@ -57,6 +59,7 @@ public class CreateMagazinesAdapter extends BaseAdapter {
 
         if(position != 0) {
             textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
+            squareItemLinearLayout.setBackgroundColor(mContext.getResources().getColor(android.R.color.black));
         }
         else {
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(

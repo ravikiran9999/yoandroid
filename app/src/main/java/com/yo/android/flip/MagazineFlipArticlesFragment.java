@@ -116,14 +116,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
-                    mToastFactory.showToast("No Articles");
+//                    mToastFactory.showToast("No Articles");
                 }
 
             }
 
             @Override
             public void onFailure(Call<List<Articles>> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -401,6 +401,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                    intent.putExtra("From", "Magazines");
                     startActivity(intent);
                 }
             });

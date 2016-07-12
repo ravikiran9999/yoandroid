@@ -25,6 +25,7 @@ public class Constants {
     public static final String COUNTRY_NAME = "country_name";
     public static final String COUNTRY_CALL_RATE = "country_call_rate";
     public static final String COUNTRY_CALL_PULSE = "country_call_pulse";
+    public static final String COUNTRY_CODE_PREFIX = "country_code_prefix";
 
     // Firebase tables
     public static final String APP_USERS = "AppUsers";

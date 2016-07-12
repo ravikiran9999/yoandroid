@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.View;
@@ -92,7 +93,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
             String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.WEEK_IN_MILLIS).toString();
-
             LinearLayout layout = new LinearLayout(context);
             holder.getChatTimeStamp().setText(Util.getTimeFormat(mContext,item.getTime()));
 

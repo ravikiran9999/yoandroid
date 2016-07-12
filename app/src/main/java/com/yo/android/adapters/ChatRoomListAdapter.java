@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.View;
 
@@ -33,6 +34,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
 
     private DatabaseReference roomReference;
 
+
     public ChatRoomListAdapter(Context context) {
         super(context);
         Injector.obtain(context.getApplicationContext()).inject(this);
@@ -53,6 +55,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
     @Override
     public void bindView(int position, ChatRoomViewHolder holder, final ChatRoom item) {
 
+
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getOpponentPhoneNumber().equals(yourPhoneNumber)) {
@@ -71,7 +74,11 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
                     try {
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                         item.setMessage(chatMessage.getMessage());
-                        //item.setTimeStamp(DateUtils.getRelativeTimeSpanString(chatMessage.getTime()).toString());
+                        if (TextUtils.isEmpty(chatMessage.getImagePath())) {
+                            item.setIsImage(false);
+                        } else {
+                            item.setIsImage(true);
+                        }
                         item.setTimeStamp(Util.getChatListTimeFormat(mContext,chatMessage.getTime()));
                         notifyDataSetChanged();
                     } catch (Exception e) {
@@ -100,7 +107,14 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
                 }
             });
         }
-        holder.getChat().setText(item.getMessage());
+
+        if (item.isImage()) {
+            holder.getChat().setText(mContext.getResources().getString(R.string.image));
+            holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
+        } else if (!TextUtils.isEmpty(item.getMessage())) {
+            holder.getChat().setText(item.getMessage());
+            holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
+        }
         holder.getTimeStamp().setText(item.getTimeStamp());
     }
 }
