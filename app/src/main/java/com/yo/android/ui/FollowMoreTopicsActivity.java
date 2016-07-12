@@ -113,6 +113,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         Intent intent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
                         startActivity(intent);
+                        finish();
                     }
 
                     @Override

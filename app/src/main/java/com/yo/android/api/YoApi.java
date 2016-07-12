@@ -80,6 +80,10 @@ public class YoApi {
         @GET("api/magzines.json")
         Call<List<OwnMagazine>> getMagazinesAPI(@Query("access_token") String access_token);
 
+        @FormUrlEncoded
+        @POST("api/tags/remove_tags.json")
+        Call<ResponseBody> removeTopicsAPI(@Field("access_token") String access_token, @Field("tag_ids[]") List<String> tag_ids);
+
     }
 
     public interface YoRefreshTokenService {
