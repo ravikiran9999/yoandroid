@@ -86,7 +86,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_dialer, menu);
+        getMenuInflater().inflate(R.menu.menu_country_list, menu);
         prepareSearch(menu);
         return super.onCreateOptionsMenu(menu);
     }
