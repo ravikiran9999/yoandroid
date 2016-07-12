@@ -140,7 +140,7 @@ public class Util {
         if(now.get(Calendar.DATE) == smsTime.get(Calendar.DATE) ){
             return getTimeFormat(context,time);
         }else if(now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1 ){
-            return "Yesterday ";
+            return context.getString(R.string.yesterday);
         }else {
             Format format = android.text.format.DateFormat.getDateFormat(context);
             return format.format(new Date(time));
