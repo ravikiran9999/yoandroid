@@ -432,7 +432,7 @@ public class UserAgent implements CallEvents {
             if (!mRingbackToneEnabled) return;
             if (mRingbackTone == null) {
                 // The volume relative to other sounds in the stream
-                int toneVolume = 80;
+                int toneVolume = 60;
                 mRingbackTone = new ToneGenerator(
                         AudioManager.STREAM_MUSIC, toneVolume);
             }
