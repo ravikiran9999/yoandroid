@@ -130,6 +130,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_PULSE, callRateDetail.getPulse());
+            preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_PREFIX, callRateDetail.getPrefix());
             setResult(RESULT_OK);
             finish();
         }
