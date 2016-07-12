@@ -23,4 +23,5 @@ public interface Formatter {
      * @return
      */
     Date convertStringToDate(final String date, final String fromPattern);
+
 }

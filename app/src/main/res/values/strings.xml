@@ -121,5 +121,6 @@
     <string name="empty_country_list_message">No country list available.</string>
     <string name="activity_contry_selection_title">Select Country</string>
     <string name="no_article_added">There is no article added yet.\nAdd any article to create your own magazine</string>
+    <string name="yesterday">"Yesterday "</string>
 
 </resources>
