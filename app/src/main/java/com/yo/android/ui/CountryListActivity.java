@@ -110,6 +110,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
                 adapter.performSearch(newText);
+                showEmptyText();
                 return true;
             }
         });
