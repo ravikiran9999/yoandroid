@@ -5,7 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 
 import com.yo.android.R;
@@ -15,9 +17,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Ramesh on 1/7/16.
@@ -128,5 +133,27 @@ public class Util {
         }
         return 0;
     }
-
+    public static String getChatListTimeFormat(@NonNull final Context context, long time){
+        Calendar smsTime = Calendar.getInstance();
+        smsTime.setTimeInMillis(time);
+        Calendar now = Calendar.getInstance();
+        if(now.get(Calendar.DATE) == smsTime.get(Calendar.DATE) ){
+            return getTimeFormat(context,time);
+        }else if(now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1 ){
+            return "Yesterday ";
+        }else {
+            Format format = android.text.format.DateFormat.getDateFormat(context);
+            return format.format(new Date(time));
+        }
+    }
+    public static String getTimeFormat(@NonNull final Context context, long time){
+        SimpleDateFormat sFormat;
+        if (DateFormat.is24HourFormat(context)) {
+            sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        } else {
+            sFormat = new SimpleDateFormat("KK:mm aa", Locale.getDefault());
+        }
+        String currentTime = sFormat.format(new Date(time));
+        return currentTime;
+    }
 }

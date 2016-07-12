@@ -1,12 +1,16 @@
 package com.orion.android.common.util;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.format.DateFormat;
 
 import com.orion.android.common.logger.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Ramesh on 26/2/16.
@@ -40,4 +44,6 @@ public class DateFormatterImpl implements Formatter {
         }
         return null;
     }
+
+
 }
