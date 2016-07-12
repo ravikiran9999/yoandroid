@@ -2,6 +2,9 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -18,11 +21,12 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MyCollections extends BaseActivity {
+public class MyCollections extends BaseActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
 
     @Inject
     YoApi.YoService yoService;
@@ -30,6 +34,9 @@ public class MyCollections extends BaseActivity {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    MyCollectionsAdapter myCollectionsAdapter;
+    private boolean contextualMenu;
+    private GridView gridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,28 +50,23 @@ public class MyCollections extends BaseActivity {
 
         getSupportActionBar().setTitle(title);
 
-        final GridView gridView = (GridView) findViewById(R.id.create_magazines_gridview);
-        final List<Collections> collectionsList = new ArrayList<Collections>();
+        gridView = (GridView) findViewById(R.id.create_magazines_gridview);
 
+        myCollectionsAdapter = new MyCollectionsAdapter(MyCollections.this);
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
-
+                final List<Collections> collectionsList = new ArrayList<Collections>();
                 Collections collections = new Collections();
                 collections.setName("Follow more topics");
                 collections.setImage("");
                 collectionsList.add(0, collections);
-
-
                 if (response == null || response.body() == null) {
                     return;
                 }
-                for (int i = 0; i < response.body().size(); i++) {
-                    collectionsList.add(response.body().get(i));
-                }
-
-                MyCollectionsAdapter myCollectionsAdapter = new MyCollectionsAdapter(MyCollections.this, collectionsList);
+                collectionsList.addAll(response.body());
+                myCollectionsAdapter.addItems(collectionsList);
                 gridView.setAdapter(myCollectionsAdapter);
 
             }
@@ -74,21 +76,134 @@ public class MyCollections extends BaseActivity {
 
             }
         });
+        gridView.setOnItemLongClickListener(this);
+        gridView.setOnItemClickListener(this);
+    }
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position ==0) {
-                    Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
-                    startActivity(intent);
-                }
-                else {
-                    Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
-                    intent.putExtra("TopicId", collectionsList.get(position).getId());
-                    intent.putExtra("TopicName", collectionsList.get(position).getName());
-                    startActivity(intent);
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        if(position != 0) {
+            contextualMenu = true;
+            invalidateOptionsMenu();
+            myCollectionsAdapter.setContextualMenuEnable(contextualMenu);
+            myCollectionsAdapter.getItem(position).setSelect(true);
+            myCollectionsAdapter.notifyDataSetChanged();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (dismissContextualMenu()) return;
+        super.onBackPressed();
+
+    }
+
+    private boolean dismissContextualMenu() {
+        if (contextualMenu) {
+            contextualMenu = false;
+            myCollectionsAdapter.setContextualMenuEnable(false);
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Collections collections = (Collections) parent.getAdapter().getItem(position);
+        if (contextualMenu) {
+            if(position !=0 ) {
+                collections.toggleSelection();
+                myCollectionsAdapter.notifyDataSetChanged();
+                //
+                if (myCollectionsAdapter.getSelectedItems().size() == 0) {
+                    dismissContextualMenu();
+                    invalidateOptionsMenu();
                 }
             }
-        });
+
+        } else {
+            if (position == 0) {
+                Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
+                intent.putExtra("TopicId", collections.getId());
+                intent.putExtra("TopicName", collections.getName());
+                startActivity(intent);
+            }
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_my_collections, menu);
+
+        if (contextualMenu)
+        {
+            for (int i = 0; i < menu.size(); i++)
+                menu.getItem(i).setVisible(true);
+        }
+        else {
+            for (int i = 0; i < menu.size(); i++)
+                menu.getItem(i).setVisible(false);
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        switch(item.getItemId()) {
+            case R.id.menu_delete:
+
+                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                List<Collections> collections = myCollectionsAdapter.getSelectedItems();
+                List<String> topicIds = new ArrayList<String>();
+                for(int i=0 ;i<collections.size(); i++) {
+                    topicIds.add(collections.get(i).getId());
+                }
+                yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
+                            @Override
+                            public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                                dismissContextualMenu();
+                                invalidateOptionsMenu();
+                                final List<Collections> collectionsList = new ArrayList<Collections>();
+                                Collections collections = new Collections();
+                                collections.setName("Follow more topics");
+                                collections.setImage("");
+                                collectionsList.add(0, collections);
+                                if (response == null || response.body() == null) {
+                                    return;
+                                }
+                                collectionsList.addAll(response.body());
+                                myCollectionsAdapter.addItems(collectionsList);
+                                gridView.setAdapter(myCollectionsAdapter);
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<Collections>> call, Throwable t) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+        }
+        return true;
     }
 }

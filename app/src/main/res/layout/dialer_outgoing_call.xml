@@ -41,7 +41,9 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="40dp"
-                android:src="@drawable/speaker_on" />
+                android:alpha="0.5"
+                android:padding="3dp"
+                android:src="@drawable/ic_speakeron_dailing" />
 
 
             <ImageView
@@ -60,7 +62,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="40dp"
-                android:src="@drawable/out_going_mute_on" />
+                android:padding="3dp"
+                android:src="@drawable/ic_mute_dailing" />
 
 
         </RelativeLayout>
