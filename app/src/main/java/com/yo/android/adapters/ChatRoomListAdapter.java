@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.View;
 
@@ -22,6 +23,7 @@ import com.yo.android.util.Constants;
 public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomViewHolder> {
     private DatabaseReference roomReference;
     private String yourPhoneNumber;
+
     public ChatRoomListAdapter(Context context, String yourPhoneNumber) {
         super(context);
         roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
@@ -41,7 +43,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
     @Override
     public void bindView(int position, ChatRoomViewHolder holder, final ChatRoom item) {
 
-        if(item.getOpponentPhoneNumber().equals(yourPhoneNumber)) {
+        if (item.getOpponentPhoneNumber().equals(yourPhoneNumber)) {
             holder.getOpponentName().setText(item.getYourPhoneNumber());
         } else {
             holder.getOpponentName().setText(item.getOpponentPhoneNumber());
@@ -55,9 +57,14 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
                     try {
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                         item.setMessage(chatMessage.getMessage());
+                        if (TextUtils.isEmpty(chatMessage.getImagePath())) {
+                            item.setIsImage(false);
+                        } else {
+                            item.setIsImage(true);
+                        }
                         item.setTimeStamp(DateUtils.getRelativeTimeSpanString(chatMessage.getTime()).toString());
                         notifyDataSetChanged();
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -83,7 +90,14 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
                 }
             });
         }
-        holder.getChat().setText(item.getMessage());
+
+        if (item.isImage()) {
+            holder.getChat().setText(mContext.getResources().getString(R.string.image));
+            holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
+        } else if (!TextUtils.isEmpty(item.getMessage())) {
+            holder.getChat().setText(item.getMessage());
+            holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
+        }
         holder.getTimeStamp().setText(item.getTimeStamp());
     }
 }

@@ -91,7 +91,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     @Override
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
-            String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
+            String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.WEEK_IN_MILLIS).toString();
             LinearLayout layout = new LinearLayout(context);
             holder.getChatTimeStamp().setText(timeStamp);
 

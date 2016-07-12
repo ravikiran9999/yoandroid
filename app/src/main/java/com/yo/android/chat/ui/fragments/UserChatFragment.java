@@ -102,17 +102,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if (child != null) {
             roomIdReference = roomReference.child(child);
         }
-        long now = System.currentTimeMillis();
-
-        mLog.e(TAG,"roomIdReference"+(now-time));
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
 
         getMessageFromDatabase();
-        now = System.currentTimeMillis();
-
-        mLog.e(TAG, "storageReference"+(now - time));
 
         chatForward = bundle.getString(Constants.CHAT_FORWARD);
         if(chatForward != null) {
