@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yo.android.R;
@@ -83,7 +84,8 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.btnEndCall).setOnClickListener(this);
         callerName = (TextView) findViewById(R.id.tv_caller_name);
         callerNumber = (TextView) findViewById(R.id.tv_caller_number);
-        callDuration = (TextView) findViewById(R.id.tv_call_duration);
+//        callDuration = (TextView) findViewById(R.id.tv_call_duration);
+        callDuration = (TextView) findViewById(R.id.tv_dialing);
     }
 
     @Override
@@ -107,8 +109,10 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 isMute = !isMute;
                 if (isMute) {
                     callModel.setEvent(MUTE_ON);
+                    ((ImageView) v).setImageResource(R.drawable.ic_mute_active_dailing);
                 } else {
                     callModel.setEvent(MUTE_OFF);
+                    ((ImageView) v).setImageResource(R.drawable.ic_mute_dailing);
                 }
                 bus.post(callModel);
                 mToastFactory.showToast("Mute " + (isMute ? "ON" : "OFF"));
@@ -117,8 +121,10 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 isSpeakerOn = !isSpeakerOn;
                 if (isSpeakerOn) {
                     callModel.setEvent(SPEAKER_ON);
+                    v.setAlpha(1f);
                 } else {
                     callModel.setEvent(SPEAKER_OFF);
+                    v.setAlpha(0.5f);
                 }
                 bus.post(callModel);
                 mToastFactory.showToast("Speaker " + (isSpeakerOn ? "ON" : "OFF"));

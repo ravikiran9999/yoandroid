@@ -16,6 +16,7 @@ import com.yo.android.helpers.ChatRoomViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -68,7 +69,8 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
                     try {
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                         item.setMessage(chatMessage.getMessage());
-                        item.setTimeStamp(DateUtils.getRelativeTimeSpanString(chatMessage.getTime()).toString());
+                        //item.setTimeStamp(DateUtils.getRelativeTimeSpanString(chatMessage.getTime()).toString());
+                        item.setTimeStamp(Util.getChatListTimeFormat(mContext,chatMessage.getTime()));
                         notifyDataSetChanged();
                     } catch (Exception e) {
                         e.printStackTrace();

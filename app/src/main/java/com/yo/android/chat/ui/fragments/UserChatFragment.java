@@ -92,7 +92,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Bundle bundle = this.getArguments();
         String child = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
-
         DatabaseReference roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
         if (child != null) {
             roomIdReference = roomReference.child(child);
@@ -132,6 +131,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         send.setOnClickListener(this);
         chatText.setOnLongClickListener(this);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+        listView.setStackFromBottom(true);
     }
 
     @Override

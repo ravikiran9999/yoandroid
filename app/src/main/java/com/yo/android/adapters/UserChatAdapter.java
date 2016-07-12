@@ -22,6 +22,7 @@ import com.yo.android.R;
 import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 
 /**
@@ -93,7 +94,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.WEEK_IN_MILLIS).toString();
 
             LinearLayout layout = new LinearLayout(context);
-            holder.getChatTimeStamp().setText(timeStamp);
+            holder.getChatTimeStamp().setText(Util.getTimeFormat(mContext,item.getTime()));
 
             if (userId.equals(item.getSenderID())) {
 

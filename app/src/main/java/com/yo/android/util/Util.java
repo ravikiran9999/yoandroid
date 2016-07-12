@@ -1,23 +1,35 @@
 package com.yo.android.util;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.widget.SearchView;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.yo.android.R;
+import com.yo.android.adapters.AbstractBaseAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Ramesh on 1/7/16.
@@ -128,5 +140,65 @@ public class Util {
         }
         return 0;
     }
+    public static String getChatListTimeFormat(@NonNull final Context context, long time){
+        Calendar smsTime = Calendar.getInstance();
+        smsTime.setTimeInMillis(time);
+        Calendar now = Calendar.getInstance();
+        if(now.get(Calendar.DATE) == smsTime.get(Calendar.DATE) ){
+            return getTimeFormat(context,time);
+        }else if(now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1 ){
+            return context.getString(R.string.yesterday);
+        }else {
+            Format format = android.text.format.DateFormat.getDateFormat(context);
+            return format.format(new Date(time));
+        }
+    }
+    public static String getTimeFormat(@NonNull final Context context, long time){
+        SimpleDateFormat sFormat;
+        if (DateFormat.is24HourFormat(context)) {
+            sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        } else {
+            sFormat = new SimpleDateFormat("KK:mm aa", Locale.getDefault());
+        }
+        String currentTime = sFormat.format(new Date(time));
+        return currentTime;
+    }
+    public static void prepareSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
+        final SearchManager searchManager =
+                (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem;
+        SearchView searchView;
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(activity.getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            public static final String TAG = "PrepareSearch in Util" ;
 
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "onQueryTextChange: " + query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG, "onQueryTextChange: " + newText);
+                if(adapter!=null) {
+                    adapter.performSearch(newText);
+                }
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                if(adapter !=null) {
+                    adapter.performSearch("");
+                }
+                return true;
+            }
+        });
+    }
 }

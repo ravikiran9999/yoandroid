@@ -3,6 +3,8 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.SipService;
@@ -142,6 +145,15 @@ public class DialerActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater  inflater  = getMenuInflater();
+        inflater.inflate(R.menu.menu_dialer, menu);
+        Util.prepareSearch(this,menu,null);
+        return super.onCreateOptionsMenu(menu);
+    }
+
 
     private void showDialPad() {
         show = true;
