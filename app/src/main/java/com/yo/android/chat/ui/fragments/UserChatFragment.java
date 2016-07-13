@@ -81,6 +81,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private boolean isContextualMenuEnable = false;
     private Uri mImageCaptureUri = null;
     private StorageReference storageReference;
+    private DatabaseReference roomReference;
 
     private ActionMode activeMode = null;
     String child;
@@ -97,10 +98,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         String child = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
+        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
 
-        DatabaseReference roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
+        DatabaseReference ChatRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
         if (child != null) {
-            roomIdReference = roomReference.child(child);
+            roomIdReference = ChatRoomReference.child(child);
             roomIdReference.keepSynced(true);
         }
 
