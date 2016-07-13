@@ -180,12 +180,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                         roomReference.keepSynced(true);
                         DatabaseReference reference = roomReference.child(chatRoom.getChatRoomId());
-                        arrayOfUsers.add(chatRoom);
+                        //arrayOfUsers.add(chatRoom);
                         reference.limitToLast(1).addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                 ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-
+                                arrayOfUsers.add(chatRoom);
                                 if (dataSnapshot.hasChildren()) {
                                     chatRoom.setMessage(chatMessage.getMessage());
                                     if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
