@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/delete"
+        android:title="@string/delete"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/copy"
+        android:visible="false"
+
+        android:title="@string/copy"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/forward"
+        android:title="@string/forward"
+        android:visible="false"
+
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/call"
         android:icon="@drawable/ic_whitereceiver"
@@ -12,6 +31,7 @@
         android:icon="@drawable/ic_attachpin"
         android:title="@string/attach"
         app:showAsAction="always">
+
 
         <menu>
             <item
@@ -31,6 +51,7 @@
         </menu>
     </item>
     <item
+        android:id="@+id/view_contact"
         android:title="@string/view_contact"
         app:showAsAction="never" />
 

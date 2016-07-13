@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -58,8 +57,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
 
-    public void toggleSelection(int position) {
+    public boolean toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
+        return !mSelectedItemsIds.get(position);
     }
 
     // Remove selection after unchecked

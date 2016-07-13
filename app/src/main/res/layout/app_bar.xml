@@ -19,7 +19,7 @@
         android:layout_marginTop="?actionBarSize"
         android:orientation="vertical">
 
-        <android.support.v4.view.ViewPager
+        <com.yo.android.widgets.CustomViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -35,13 +35,13 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="65dp"
-            app:tabGravity="fill"
             android:background="#F9F9F9"
+            app:tabGravity="fill"
             app:tabIndicatorColor="@android:color/transparent"
             app:tabIndicatorHeight="0dp"
-            app:tabPaddingStart="-1dp"
+            app:tabMode="fixed"
             app:tabPaddingEnd="-1dp"
-            app:tabMode="fixed" />
+            app:tabPaddingStart="-1dp" />
 
     </LinearLayout>
 

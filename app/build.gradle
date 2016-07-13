@@ -76,6 +76,7 @@ dependencies {
     compile 'com.github.Cutta:TagView:c15dd8288a'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
+    compile 'com.github.chrisbanes:PhotoView:1.2.6'
 }
 apply plugin: 'com.google.gms.google-services'
 

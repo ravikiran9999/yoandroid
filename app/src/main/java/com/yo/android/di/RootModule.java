@@ -26,12 +26,14 @@ import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.ui.LoadMagazineActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
 import com.yo.android.ui.SettingsActivity;
+import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.fragments.DialerFragment;
@@ -80,6 +82,8 @@ import dagger.Provides;
                 MyCollections.class,
                 MyCollectionDetails.class,
                 UserCreatedMagazineActivity.class,
+                LoadMagazineActivity.class,
+                ShowPhotoActivity.class,
 
                 //Fragments
                 ContactsFragment.class,

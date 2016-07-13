@@ -1,25 +1,30 @@
 package com.yo.android.ui.fragments;
 
-import android.app.SearchManager;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.adapters.AbstractViewHolder;
@@ -27,10 +32,12 @@ import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResponse;
 import com.yo.android.model.dialer.CallLogsResult;
-import com.yo.android.ui.DialerActivity;
+import com.yo.android.ui.CountryListActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.voip.DialPadView;
 import com.yo.android.voip.OutGoingCallActivity;
+import com.yo.android.vox.BalanceHelper;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
 
@@ -40,6 +47,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -69,11 +77,33 @@ public class DialerFragment extends BaseFragment {
     TextView txtEmptyCallLogs;
     @Bind(R.id.txtAppCalls)
     TextView txtAppCalls;
+    @Bind(R.id.floatingDialer)
+    View floatingDialer;
+
     private MenuItem searchMenuItem;
     private SearchView searchView;
     private static final String TAG = "DialerFragment";
     private EventBus bus = EventBus.getDefault();
     private CallLogsAdapter adapter;
+    private DialPadView dialPadView;
+    private ImageButton deleteButton;
+    private static final int[] mButtonIds = new int[]{R.id.zero, R.id.one, R.id.two, R.id.three,
+            R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.star,
+            R.id.pound};
+    private ImageView btnCallGreen;
+    private ImageView btnDialer;
+    private TextView txtBalance;
+    private TextView txtCallRate;
+    private View bottom_layout;
+    private boolean show;
+    @Inject
+    ConnectivityHelper mConnectivityHelper;
+    @Inject
+    BalanceHelper mBalanceHelper;
+    @Inject
+    @Named("voip_support")
+    boolean isVoipSupported;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,6 +117,7 @@ public class DialerFragment extends BaseFragment {
         bus.register(this);
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -96,14 +127,111 @@ public class DialerFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_dialer, menu);
-        Util.prepareSearch(getActivity(),menu,adapter);
+        Util.prepareSearch(getActivity(), menu, adapter);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        hideDialPad(true);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        //
+
+        dialPadView = (DialPadView) view.findViewById(R.id.dialPadView);
+        bottom_layout = view.findViewById(R.id.bottom_layout);
+        txtBalance = (TextView) view.findViewById(R.id.txt_balance);
+        txtCallRate = (TextView) view.findViewById(R.id.txt_call_rate);
+        btnCallGreen = (ImageView) view.findViewById(R.id.btnCall);
+        btnDialer = (ImageView) view.findViewById(R.id.btnDialer);
+        view.findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mToastFactory.showToast("Message: Need to implement");
+            }
+        });
+        view.findViewById(R.id.btnContacts).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mToastFactory.showToast("Contacts: Need to implement");
+            }
+        });
+        deleteButton = (ImageButton) view.findViewById(R.id.deleteButton);
+        for (int id : mButtonIds) {
+            dialPadView.findViewById(id).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TextView numberView = (TextView) v.findViewById(R.id.dialpad_key_number);
+                    String prev = dialPadView.getDigits().getText().toString();
+                    String current = prev + numberView.getText().toString();
+                    dialPadView.getDigits().setText(current);
+                    dialPadView.getDigits().setSelection(current.length());
+                }
+            });
+        }
+        btnDialer.setVisibility(View.GONE);
+        btnDialer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialPad();
+            }
+        });
+        btnCallGreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String number = dialPadView.getDigits().getText().toString().trim();
+                if (!isVoipSupported) {
+                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_SHORT);
+                } else if (!mConnectivityHelper.isConnected()) {
+                    mToastFactory.showToast(getString(R.string.connectivity_network_settings));
+                } else if (!isVoipSupported) {
+                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
+                } else if (number.length() == 0) {
+                    mToastFactory.showToast("Please enter number.");
+                } else {
+                    Intent intent = new Intent(getActivity(), OutGoingCallActivity.class);
+                    intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
+                    startActivity(intent);
+                }
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String prev = dialPadView.getDigits().getText().toString();
+                String finalString = prev;
+                int startPos = dialPadView.getDigits().getSelectionStart();
+                int endPos = dialPadView.getDigits().getSelectionEnd();
+                try {
+                    String str = new StringBuilder(prev).replace(startPos - 1, endPos, "").toString();
+                    mLog.i("Dialer", "final:" + str);
+                    dialPadView.getDigits().setText(str);
+                    dialPadView.getDigits().setSelection(startPos - 1);
+                } catch (Exception e) {
+                    mLog.w("DialerActivity", e);
+                }
+
+            }
+        });
+
+        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
+        txtBalance.setText("Balance $" + balance);
+        //
+        setCallRateText();
+        txtCallRate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(getActivity(), CountryListActivity.class), 100);
+            }
+        });
+        hideDialPad(false);
+
     }
 
     @Override
@@ -112,9 +240,9 @@ public class DialerFragment extends BaseFragment {
         loadCallLogs();
     }
 
-    @OnClick(R.id.btnDialer)
+    @OnClick(R.id.floatingDialer)
     public void onDialerClick() {
-        startActivity(new Intent(getActivity(), DialerActivity.class));
+        showDialPad();
     }
 
     private void loadCallLogs() {
@@ -155,7 +283,7 @@ public class DialerFragment extends BaseFragment {
     }
 
     private void showEmptyText() {
-        boolean nonEmpty = listView.getAdapter().getCount() > 0;
+        boolean nonEmpty = show || listView.getAdapter().getCount() > 0;
         txtEmptyCallLogs.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
         txtAppCalls.setVisibility(nonEmpty ? View.VISIBLE : View.GONE);
     }
@@ -262,9 +390,109 @@ public class DialerFragment extends BaseFragment {
     public void onEventMainThread(String action) {
         if (action.equals(REFRESH_CALL_LOGS)) {
             loadCallLogs();
+            mBalanceHelper.checkBalance();
         }
     }
 
+    private void showDialPad() {
+        showOrHideTabs(false);
+        show = true;
+        dialPadView.setVisibility(View.VISIBLE);
+        Animation bottomUp = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.bottom_up);
+        bottomUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                dialPadView.setVisibility(View.VISIBLE);
+                btnCallGreen.setVisibility(View.VISIBLE);
+                bottom_layout.setVisibility(View.VISIBLE);
+                btnDialer.setVisibility(View.GONE);
+                floatingDialer.setVisibility(View.GONE);
+                showEmptyText();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        dialPadView.startAnimation(bottomUp);
+    }
+
+    private void hideDialPad(boolean animate) {
+        show = false;
+        floatingDialer.setVisibility(View.VISIBLE);
+        if (!animate) {
+            dialPadView.setVisibility(View.GONE);
+            btnCallGreen.setVisibility(View.GONE);
+            bottom_layout.setVisibility(View.GONE);
+            return;
+        }
+        Animation bottomUp = AnimationUtils.loadAnimation(getActivity(), R.anim.bottom_down);
+        dialPadView.startAnimation(bottomUp);
+        bottomUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                dialPadView.setVisibility(View.GONE);
+                btnCallGreen.setVisibility(View.GONE);
+                bottom_layout.setVisibility(View.GONE);
+                showOrHideTabs(true);
+                showEmptyText();
+//                btnDialer.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        bottomUp.start();
+    }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            setCallRateText();
+        }
+    }
+
+    private void setCallRateText() {
+        String cName = preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME, null);
+        String cRate = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_RATE, null);
+        String cPulse = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_PULSE, null);
+        String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
+
+        if (!TextUtils.isEmpty(cName)) {
+            String pulse;
+            if (cPulse.equals("60")) {
+                pulse = "min";
+            } else {
+                pulse = "sec";
+            }
+
+            txtCallRate.setText(cName + "\n$" + cRate + "/" + pulse);
+            if (!TextUtils.isEmpty(cPrefix)) {
+                dialPadView.getDigits().setText(cPrefix);
+                dialPadView.getDigits().setSelection(cPrefix.length());
+            }
+        }
+    }
+
+    @Override
+    public boolean onBackPressHandle() {
+        if (show) {
+            hideDialPad(true);
+            return true;
+        }
+        return super.onBackPressHandle();
+    }
 }
