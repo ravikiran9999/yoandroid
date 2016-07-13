@@ -140,20 +140,22 @@ public class Util {
         }
         return 0;
     }
-    public static String getChatListTimeFormat(@NonNull final Context context, long time){
+
+    public static String getChatListTimeFormat(@NonNull final Context context, long time) {
         Calendar smsTime = Calendar.getInstance();
         smsTime.setTimeInMillis(time);
         Calendar now = Calendar.getInstance();
-        if(now.get(Calendar.DATE) == smsTime.get(Calendar.DATE) ){
-            return getTimeFormat(context,time);
-        }else if(now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1 ){
+        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
+            return getTimeFormat(context, time);
+        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
             return context.getString(R.string.yesterday);
-        }else {
+        } else {
             Format format = android.text.format.DateFormat.getDateFormat(context);
             return format.format(new Date(time));
         }
     }
-    public static String getTimeFormat(@NonNull final Context context, long time){
+
+    public static String getTimeFormat(@NonNull final Context context, long time) {
         SimpleDateFormat sFormat;
         if (DateFormat.is24HourFormat(context)) {
             sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -163,6 +165,7 @@ public class Util {
         String currentTime = sFormat.format(new Date(time));
         return currentTime;
     }
+
     public static void prepareSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
@@ -174,7 +177,7 @@ public class Util {
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            public static final String TAG = "PrepareSearch in Util" ;
+            public static final String TAG = "PrepareSearch in Util";
 
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -185,7 +188,7 @@ public class Util {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
-                if(adapter!=null) {
+                if (adapter != null) {
                     adapter.performSearch(newText);
                 }
                 return true;
@@ -194,11 +197,25 @@ public class Util {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                if(adapter !=null) {
+                if (adapter != null) {
                     adapter.performSearch("");
                 }
                 return true;
             }
         });
+    }
+
+    public static String getChatListTimeFormat(long time) {
+        Calendar smsTime = Calendar.getInstance();
+        smsTime.setTimeInMillis(time);
+        Calendar now = Calendar.getInstance();
+        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
+            return "Today";
+        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
+            return "Yesterday";
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
+            return format.format(new Date(time));
+        }
     }
 }

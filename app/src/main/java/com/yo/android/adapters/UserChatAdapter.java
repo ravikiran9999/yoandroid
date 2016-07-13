@@ -10,7 +10,9 @@ import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,13 +27,16 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
+
 
 /**
  * Created by rdoddapaneni on 6/30/2016.
  */
 
-public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatViewHolder> {
+public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatViewHolder> implements StickyListHeadersAdapter {
 
+    private LayoutInflater inflater;
     private String userId;
     private Context context;
     private SparseBooleanArray mSelectedItemsIds;
@@ -45,6 +50,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     public UserChatAdapter(Activity context, String userId) {
         super(context);
+        inflater = LayoutInflater.from(context);
         this.context = context.getBaseContext();
         this.userId = userId;
         this.mSelectedItemsIds = new SparseBooleanArray();
@@ -95,7 +101,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         try {
             String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.WEEK_IN_MILLIS).toString();
             LinearLayout layout = new LinearLayout(context);
-            holder.getChatTimeStamp().setText(Util.getTimeFormat(mContext,item.getTime()));
+            holder.getChatTimeStamp().setText(Util.getTimeFormat(mContext, item.getTime()));
 
             if (userId.equals(item.getSenderID())) {
 
@@ -193,5 +199,33 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public View getHeaderView(int position, View convertView, ViewGroup parent) {
+        HeaderViewHolder holder;
+        if (convertView == null) {
+            holder = new HeaderViewHolder();
+            convertView = inflater.inflate(R.layout.stickey_timestamp_header, parent, false);
+            holder.text = (TextView) convertView.findViewById(R.id.time_stamp_text);
+            convertView.setTag(holder);
+        } else {
+            holder = (HeaderViewHolder) convertView.getTag();
+        }
+        //set header text as first char in name
+        String headerTimeStamp = getItem(position).getStickeyHeader();
+        String headerText = "" + headerTimeStamp;
+        holder.text.setText(headerText);
+        return convertView;
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        String timeStamp = getItem(position).getStickeyHeader();
+        return timeStamp.subSequence(0, timeStamp.length()).hashCode();
+    }
+
+    class HeaderViewHolder {
+        TextView text;
     }
 }
