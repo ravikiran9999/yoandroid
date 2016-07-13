@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,6 +32,9 @@ public class ShowPhotoActivity extends BaseActivity {
     protected ProgressBar mProgress;
 
     private PhotoViewAttacher mAttacher;
+
+    @Bind(R.id.loadingFailed)
+    protected TextView loadingFailed;
 
 
     @Override
@@ -73,6 +77,13 @@ public class ShowPhotoActivity extends BaseActivity {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
+                    if(mProgress != null) {
+                        mProgress.setVisibility(View.GONE);
+                    }
+                    if(loadingFailed != null){
+                        loadingFailed.setVisibility(View.VISIBLE);
+                    }
+
                     exception.printStackTrace();
                 }
             });
