@@ -74,10 +74,10 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
                     try {
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                         item.setMessage(chatMessage.getMessage());
-                        if (TextUtils.isEmpty(chatMessage.getImagePath())) {
-                            item.setIsImage(false);
-                        } else {
+                        if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
                             item.setIsImage(true);
+                        } else {
+                            item.setIsImage(false);
                         }
                         item.setTimeStamp(Util.getChatListTimeFormat(mContext,chatMessage.getTime()));
                         notifyDataSetChanged();
