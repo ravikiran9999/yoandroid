@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,7 +37,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -51,6 +49,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.OutGoingCallActivity;
 
@@ -58,12 +57,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
-import butterknife.OnItemLongClick;
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener,AdapterView.OnItemClickListener {
+
 
     private static final String TAG = "UserChatFragment";
 
@@ -80,7 +78,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private boolean isContextualMenuEnable = false;
     private Uri mImageCaptureUri = null;
     StorageReference storageReference;
-    private ActionMode activeMode=null;
+    private ActionMode activeMode = null;
     String child;
     public UserChatFragment() {
         // Required empty public constructor
@@ -92,7 +90,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         long time = System.currentTimeMillis();
 
-        mLog.e(TAG,"onCreate");
+        mLog.e(TAG, "onCreate");
 
         Bundle bundle = this.getArguments();
         child = bundle.getString(Constants.CHAT_ROOM_ID);
@@ -146,8 +144,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView = (ListView) view.findViewById(R.id.listView);
         listView.setOnItemLongClickListener(this);
         listView.setMultiChoiceModeListener(this);
-
-
+        listView.setOnItemClickListener(this);
         View send = view.findViewById(R.id.send);
         chatText = (EditText) view.findViewById(R.id.chat_text);
         chatMessageArray = new ArrayList<>();
@@ -483,7 +480,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
 
-
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
         final ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
@@ -493,25 +489,27 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Calls  toggleSelection method from ListViewAdapter Class
        boolean isToggle = userChatAdapter.toggleSelection(position);
        View view = listView.getChildAt(position);
-        if(isToggle){
-            view.setAlpha(1);
-        }else{
-            view.setAlpha(0.5f);
+        if(view !=null) {
+            if (isToggle) {
+                view.setAlpha(1);
+            } else {
+                view.setAlpha(0.5f);
+            }
         }
         chatMessage.setSelected(true);
     }
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        MenuInflater inflater=getActivity().getMenuInflater();
+        MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.menu_change, menu);
-        activeMode=mode;
+        activeMode = mode;
         return true;
     }
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-         return false;
+        return false;
     }
 
     private void updateSubtitle(ActionMode mode) {
@@ -538,6 +536,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 if(chatMessage !=null) {
                     new Clipboard(getActivity()).copy(chatMessage.getMessage());
                 }
+
                 return true;
             case R.id.forward:
                 chatMessage = (ChatMessage) listView.getItemAtPosition( listView.getSelectedItemPosition());
@@ -550,6 +549,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 return false;
         }
     }
+
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         activeMode=mode;
@@ -561,11 +561,23 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         if (activeMode != null) {
-            activeMode=null;
+            activeMode = null;
             listView.setChoiceMode(ListView.CHOICE_MODE_NONE);
             listView.setAdapter(listView.getAdapter());
         }
     }
 
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        userChatAdapter = (UserChatAdapter) listView.getAdapter();
+        if (userChatAdapter.getItem(position).getType().equals(Constants.IMAGE)) {
+            Intent photoIntent = new Intent(getActivity(), ShowPhotoActivity.class);
+            photoIntent.putExtra(Constants.IMAGE, userChatAdapter.getItem(position).getImagePath());
+            getActivity().startActivity(photoIntent);
+
+        }
+
+    }
 }
 
