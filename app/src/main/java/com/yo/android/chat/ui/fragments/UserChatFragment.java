@@ -293,7 +293,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 //listView.getChildAt(position).setBackgroundColor(Color.BLUE);
-                final int checkedCount = listView.getCheckedItemCount();
+                int checkedCount = listView.getCheckedItemCount();
                 mode.setTitle(Integer.toString(checkedCount));
                 // Calls  toggleSelection method from ListViewAdapter Class
                 userChatAdapter.toggleSelection(position);
@@ -632,7 +632,5 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         }
     }
-
-
 }
 
