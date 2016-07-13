@@ -177,16 +177,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 StorageReference storageRef = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
                 StorageReference imageRef = storageRef.child(item.getImagePath());
                 final long oneMegaByte = 1024 * 1024;
+                linearLayout.addView(imageView);
                 imageRef.getBytes(oneMegaByte).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
-
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         imageView.setImageBitmap(bitmap);
 //                        if (linearLayout.getTag() == null) {
                         if (imageView.getTag().equals(holder)) {
 //                            linearLayout.setTag(holder);
-                            linearLayout.addView(imageView);
                         }
 //                        }
 
