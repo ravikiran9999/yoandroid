@@ -45,6 +45,8 @@ public class ContactsFragment extends BaseFragment {
     private ListView listView;
     private static ArrayList<Contacts> nc = new ArrayList<>();
     private Registration registeredUsers;
+    private DatabaseReference reference;
+
     @Inject
     DatabaseHelper databaseHelper;
 
@@ -56,6 +58,8 @@ public class ContactsFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
+        reference.keepSynced(true);
     }
 
     @Override
@@ -87,7 +91,6 @@ public class ContactsFragment extends BaseFragment {
     private void getRegisteredAppUsers() {
         showProgressDialog();
 
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -98,7 +101,6 @@ public class ContactsFragment extends BaseFragment {
                         arrayOfUsers.add(registeredUsers);
                     }
                 }
-
 
             }
 

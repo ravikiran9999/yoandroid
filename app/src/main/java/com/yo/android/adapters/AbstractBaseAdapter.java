@@ -36,10 +36,10 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         notifyDataSetChanged();
     }
 
-    public boolean toggleSelection(int position) {
+    /*public boolean toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
         return false;
-    }
+    }*/
 
     // Remove selection after unchecked
     public void removeSelection() {

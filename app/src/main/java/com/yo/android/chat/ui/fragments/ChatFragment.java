@@ -180,12 +180,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                         roomReference.keepSynced(true);
                         DatabaseReference reference = roomReference.child(chatRoom.getChatRoomId());
-                        arrayOfUsers.add(chatRoom);
+
                         reference.limitToLast(1).addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                 ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-
+                                arrayOfUsers.add(chatRoom);
                                 if (dataSnapshot.hasChildren()) {
                                     chatRoom.setMessage(chatMessage.getMessage());
                                     if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
@@ -220,31 +220,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                             }
                         });
-//                        roomReference.addValueEventListener(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(DataSnapshot dataSnapshot) {
-//                                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-//
-//                                if (dataSnapshot.hasChildren()) {
-//                                    chatRoom.setMessage(chatMessage.getMessage());
-//                                    if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
-//                                        chatRoom.setIsImage(true);
-//                                    } else {
-//                                        chatRoom.setIsImage(false);
-//                                    }
-//                                    chatRoom.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
-//                                    arrayOfUsers.add(chatRoom);
-//                                }
-//                                chatRoomListAdapter.addItems(arrayOfUsers);
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(DatabaseError databaseError) {
-//
-//                            }
-//                        });
-
-
                     }
                 }
 
@@ -257,6 +232,5 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
     }
-
 
 }
