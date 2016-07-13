@@ -74,24 +74,27 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 }
                 topicsList.addAll(response.body());
                 for (int i = 0; i < topicsList.size(); i++) {
-                    //if (topicsList.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
-                    Tag tag = new Tag(topicsList.get(i).getName());
+                    TagSelected tag = new TagSelected(topicsList.get(i).getName());
                     tag.radius = 1f;
+                    tag.setTagId(topicsList.get(i).getId());
                     tag.layoutBorderColor = getResources().getColor(R.color.tab_grey);
                     tag.layoutBorderSize = 1f;
                     tag.layoutColor = getResources().getColor(android.R.color.white);
                     tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+
                     // if (i % 2 == 0) // you can set deletable or not
                     //     tag.isDeletable = true;
-
                     if(topicsList.get(i).getSelected().equals("true")) {
+                        tag.setSelected(true);
                         tag.layoutColor = getResources().getColor(R.color.colorPrimary);
                         tag.tagTextColor = getResources().getColor(android.R.color.white);
+                        tag.setSelected(true);
                         addedTopics.add(tag.text);
                     }
                     else {
                         tag.layoutColor = getResources().getColor(android.R.color.white);
                         tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+                        tag.setSelected(false);
                     }
                     tags.add(tag);
                     //}
@@ -109,9 +112,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         //set click listener
         tagGroup.setOnTagClickListener(new OnTagClickListener() {
             @Override
-            public void onTagClick(Tag tag, int position) {
+            public void onTagClick(Tag mTag, int position) {
                 try {
-                    if (tag.tagTextColor == getResources().getColor(R.color.white)) {
+                    TagSelected tag = (TagSelected)mTag;
+                    tag.toggleSelection();
+                    if (!tag.getSelected()) {
                         addedTopics.remove(tag);
                         tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.tab_grey);
                         tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.white);
@@ -144,11 +149,14 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = 0; i < addedTopics.size(); i++) {
-                    for (int j = 0; j < topicsList.size(); j++) {
-                        if (addedTopics.get(i).equals(topicsList.get(j).getName()))
-                            followedTopicsIdsList.add(topicsList.get(j).getId());
+                for(int k=0 ; k < tagGroup.getTags().size(); k++) {
+                    TagSelected t = (TagSelected)tagGroup.getTags().get(k);
+                    if(t.getSelected()) {
+
+                        followedTopicsIdsList.add(String.valueOf(t.getTagId()));
+
                     }
+
                 }
 
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -180,5 +188,34 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             public void onTagDeleted(final TagView view, final Tag tag, final int position) {
             }
         });
+    }
+
+    private class TagSelected extends Tag {
+
+        private boolean selected;
+        private String tagId;
+
+        public TagSelected(String text) {
+            super(text);
+        }
+
+        public boolean getSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
+        }
+        public void toggleSelection() {
+          this.selected = !selected;
+        }
+
+        public String getTagId() {
+            return tagId;
+        }
+
+        public void setTagId(String tagId) {
+            this.tagId = tagId;
+        }
     }
 }

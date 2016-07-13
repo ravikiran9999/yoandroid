@@ -84,6 +84,10 @@ public class YoApi {
         @POST("api/tags/remove_tags.json")
         Call<ResponseBody> removeTopicsAPI(@Field("access_token") String access_token, @Field("tag_ids[]") List<String> tag_ids);
 
+        @FormUrlEncoded
+        @POST("/api/articles.json")
+        Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id);
+
     }
 
     public interface YoRefreshTokenService {

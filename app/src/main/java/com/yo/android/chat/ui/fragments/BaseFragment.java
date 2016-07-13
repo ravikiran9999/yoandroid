@@ -15,6 +15,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.ProgressDialogFactory;
 
 import javax.inject.Inject;
@@ -79,4 +80,15 @@ public class BaseFragment extends Fragment {
 
         }
     }
+
+    public boolean onBackPressHandle() {
+        return false;
+    }
+
+    public void showOrHideTabs(boolean show) {
+        if (getActivity() instanceof BottomTabsActivity) {
+            ((BottomTabsActivity) getActivity()).showOrHideTabs(show);
+        }
+    }
+
 }
