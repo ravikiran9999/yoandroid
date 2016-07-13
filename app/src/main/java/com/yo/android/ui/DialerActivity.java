@@ -99,7 +99,9 @@ public class DialerActivity extends BaseActivity {
             public void onClick(View v) {
 
                 String number = dialPadView.getDigits().getText().toString().trim();
-                if (!mConnectivityHelper.isConnected()) {
+                if (!isVoipSupported) {
+                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_SHORT);
+                } else if (!mConnectivityHelper.isConnected()) {
                     mToastFactory.showToast(getString(R.string.connectivity_network_settings));
                 } else if (!isVoipSupported) {
                     mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
@@ -130,10 +132,6 @@ public class DialerActivity extends BaseActivity {
 
             }
         });
-        if (!isVoipSupported) {
-            btnDialer.setEnabled(false);
-            mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
-        }
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
         txtBalance.setText("Balance $" + balance);
         //
@@ -148,9 +146,9 @@ public class DialerActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater  inflater  = getMenuInflater();
+        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_dialer, menu);
-        Util.prepareSearch(this,menu,null);
+        Util.prepareSearch(this, menu, null);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -233,7 +231,7 @@ public class DialerActivity extends BaseActivity {
             }
 
             txtCallRate.setText(cName + "\n$" + cRate + "/" + pulse);
-            if(!TextUtils.isEmpty(cPrefix)) {
+            if (!TextUtils.isEmpty(cPrefix)) {
                 dialPadView.getDigits().setText(cPrefix);
                 dialPadView.getDigits().setSelection(cPrefix.length());
             }

@@ -67,6 +67,10 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.ShowPhotoActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.NavigationDrawerActivity"
             android:screenOrientation="portrait"

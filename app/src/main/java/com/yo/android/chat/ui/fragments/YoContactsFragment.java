@@ -92,16 +92,16 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 boolean value1 = dataSnapshot.hasChild(roomCombination1);
                 boolean value2 = dataSnapshot.hasChild(roomCombination2);
                 if (value1) {
-                    navigateToChatScreen(roomCombination1, opponentPhoneNumber);
+                    navigateToChatScreen(roomCombination1, opponentPhoneNumber, yourPhoneNumber);
                 } else if (value2) {
-                    navigateToChatScreen(roomCombination2, opponentPhoneNumber);
+                    navigateToChatScreen(roomCombination2, opponentPhoneNumber, yourPhoneNumber);
                 } else {
                     String chatRoomId = yourPhoneNumber + ":" + opponentPhoneNumber;
                     ChatRoom chatRoom = new ChatRoom(yourPhoneNumber, opponentPhoneNumber, chatRoomId);
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
                     DatabaseReference databaseRoomReference = databaseReference.child(chatRoomId);
                     databaseRoomReference.setValue(chatRoom);
-                    navigateToChatScreen(chatRoomId, opponentPhoneNumber);
+                    navigateToChatScreen(chatRoomId, opponentPhoneNumber,yourPhoneNumber);
                 }
             }
 
@@ -112,12 +112,15 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         });
     }
 
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber) {
+    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, String yourPhoneNumber) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
+        intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
         startActivity(intent);
     }
+
+
 
     private void getRegisteredAppUsers() {
         showProgressDialog();
