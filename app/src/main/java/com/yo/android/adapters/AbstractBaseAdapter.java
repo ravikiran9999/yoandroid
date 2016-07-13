@@ -16,7 +16,7 @@ import java.util.List;
  */
 public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> extends BaseAdapter {
 
-    private List<T> mList;
+    protected List<T> mList;
     protected final Context mContext;
     private List<T> mOriginalList = new ArrayList<>();
     private SparseBooleanArray mSelectedItemsIds;
@@ -99,7 +99,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         return false;
     }
 
-    public void removeItem(Object object) {
+    public void removeItem(T object) {
         this.mList.remove(object);
         notifyDataSetChanged();
     }
