@@ -178,10 +178,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     final ChatRoom chatRoom = child.getValue(ChatRoom.class);
                     if (chatRoom.getYourPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)) || chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
 
-                        roomReference.child(chatRoom.getChatRoomId());
                         roomReference.keepSynced(true);
+                        DatabaseReference reference = roomReference.child(chatRoom.getChatRoomId());
                         arrayOfUsers.add(chatRoom);
-                        roomReference.addChildEventListener(new ChildEventListener() {
+                        reference.limitToLast(1).addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                 ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);

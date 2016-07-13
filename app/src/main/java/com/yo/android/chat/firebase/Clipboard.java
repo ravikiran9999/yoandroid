@@ -19,7 +19,7 @@ public class Clipboard {
     private static ClipboardManager myClipboard;
 
     public Clipboard(Context context) {
-        myClipboard = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+        myClipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
     }
 
     @SuppressLint("NewApi")
@@ -32,8 +32,11 @@ public class Clipboard {
     public String paste(View view) {
         ClipData cp = myClipboard.getPrimaryClip();
         ClipData.Item item = cp.getItemAt(0);
-        String text = item.getText().toString();
-        if(text != null) {
+        String text = null;
+        if (item.getText() != null) {
+            text = item.getText().toString();
+        }
+        if (text != null) {
             return text;
         }
         return "";
