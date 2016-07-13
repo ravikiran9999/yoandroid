@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class NewMagazineActivity extends BaseActivity {
+public class NewMagazineActivity extends BaseActivity implements View.OnClickListener {
 
     private String magazinePrivacy;
     @Inject
@@ -57,13 +58,7 @@ public class NewMagazineActivity extends BaseActivity {
 
         magazinePrivacy = "";
 
-        tvAddStory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-            }
-        });
+        tvAddStory.setOnClickListener(this);
 
     }
 
@@ -91,7 +86,7 @@ public class NewMagazineActivity extends BaseActivity {
                     magazinePrivacy = "Private";
                 }
 
-                if(!TextUtils.isEmpty(magazineTitle)) {
+                if(!TextUtils.isEmpty(magazineTitle.trim())) {
 
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
@@ -117,5 +112,38 @@ public class NewMagazineActivity extends BaseActivity {
 
         }
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+       /* final String magazineTitle = etTitle.getText().toString();
+        final String magazineDesc = etDesc.getText().toString();
+
+        if (togglePrivacy.isChecked()) {
+            magazinePrivacy = "Public";
+        } else {
+            magazinePrivacy = "Private";
+        }
+
+        if(!TextUtils.isEmpty(magazineTitle.trim())) {
+
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
+                @Override
+                public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
+                    Intent intent = new Intent(NewMagazineActivity.this, LoadMagazineActivity.class);
+                    intent.putExtra("MagazineId", response.body().getId());
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(Call<OwnMagazine> call, Throwable t) {
+
+                }
+            });
+        }
+        else {
+            mToastFactory.showToast("Please enter the Magazine Title");
+        }*/
     }
 }
