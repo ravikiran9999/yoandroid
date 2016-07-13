@@ -10,11 +10,12 @@ import android.os.Parcelable;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 /**
  * Class name will be tablename
  */
-public class ChatMessage implements Parcelable{
+public class ChatMessage implements Parcelable {
 
     @DatabaseField(id = true)
     private String msgID;
@@ -30,6 +31,8 @@ public class ChatMessage implements Parcelable{
     private long time;
     @DatabaseField
     private boolean readUnreadStatus;
+
+    private String stickeyHeader;
 
     private String type;
     private String roomId;
@@ -84,6 +87,7 @@ public class ChatMessage implements Parcelable{
 
     public void setTime(long time) {
         this.time = time;
+        this.stickeyHeader = Util.getChatListTimeFormat(time);
     }
 
     public boolean isReadUnreadStatus() {
@@ -118,6 +122,12 @@ public class ChatMessage implements Parcelable{
         this.selected = selected;
     }
 
+
+    public String getStickeyHeader() {
+        return stickeyHeader;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -133,6 +143,7 @@ public class ChatMessage implements Parcelable{
         dest.writeLong(time);
         dest.writeString(type);
         dest.writeString(roomId);
+        dest.writeString(stickeyHeader);
 
     }
 
@@ -145,6 +156,7 @@ public class ChatMessage implements Parcelable{
         this.time = in.readLong();
         this.type = in.readString();
         this.roomId = in.readString();
+        this.stickeyHeader = in.readString();
     }
 
     public static final Parcelable.Creator<ChatMessage> CREATOR = new Parcelable.Creator<ChatMessage>() {

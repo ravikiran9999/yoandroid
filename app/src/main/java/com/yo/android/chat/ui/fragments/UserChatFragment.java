@@ -57,12 +57,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
-
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener,AdapterView.OnItemClickListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener, AdapterView.OnItemClickListener {
 
 
     private static final String TAG = "UserChatFragment";
@@ -71,7 +69,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ArrayList<ChatMessage> chatMessageArray;
     private DatabaseReference roomIdReference;
     private EditText chatText;
-    private ListView listView;
+    private se.emilsjolander.stickylistheaders.StickyListHeadersListView listView;
     private String opponentNumber;
     private String yourNumber;
     private File mFileTemp;
@@ -80,12 +78,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private static final int ADD_SELECT_PICTURE = 2;
     private boolean isContextualMenuEnable = false;
     private Uri mImageCaptureUri = null;
+    String child;
     private StorageReference storageReference;
     private DatabaseReference roomReference;
 
     private ActionMode activeMode = null;
-    String child;
     private ChatMessage chatMessage;
+
     public UserChatFragment() {
         // Required empty public constructor
     }
@@ -121,8 +120,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             chatForward.setSelected(false);
         }
 
-    setHasOptionsMenu(true);
-}
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -130,9 +129,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
 
-        listView = (ListView) view.findViewById(R.id.listView);
+        listView = (se.emilsjolander.stickylistheaders.StickyListHeadersListView) view.findViewById(R.id.listView);
         listView.setOnItemLongClickListener(this);
         listView.setMultiChoiceModeListener(this);
+        listView.getWrappedList().setDivider(null);
         listView.setOnItemClickListener(this);
         View send = view.findViewById(R.id.send);
         chatText = (EditText) view.findViewById(R.id.chat_text);
@@ -547,9 +547,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Set the  CAB title according to total checked items
         mode.setTitle(checkedCount + "");
         // Calls  toggleSelection method from ListViewAdapter Class
-       boolean isToggle = userChatAdapter.toggleSelection(position);
-       View view = listView.getChildAt(position);
-        if(view !=null) {
+        boolean isToggle = userChatAdapter.toggleSelection(position);
+        View view = listView.getChildAt(position);
+        if (view != null) {
             if (isToggle) {
                 view.setAlpha(1);
             } else {
@@ -575,6 +575,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void updateSubtitle(ActionMode mode) {
         mode.setSubtitle("(" + listView.getCheckedItemCount() + ")");
     }
+
     public boolean performActions(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete:
@@ -587,18 +588,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         userChatAdapter.removeItem(selectedItem);
                     }
                 }
-                // Close CAB
-                mode.finish();
-                selected.clear();
+                listView.getWrappedList().clearChoices();
                 return true;
             case R.id.copy:
-                if(chatMessage !=null) {
+                if (chatMessage != null) {
                     new Clipboard(getActivity()).copy(chatMessage.getMessage());
                 }
-
                 return true;
             case R.id.forward:
-                if (chatMessage!=null && chatMessage.isSelected()) {
+                if (chatMessage != null && chatMessage.isSelected()) {
                     forwardMessage(chatMessage);
                 }
                 return true;
@@ -610,10 +608,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        activeMode=mode;
-        boolean result=performActions(mode,item);
+        activeMode = mode;
+        boolean result = performActions(mode, item);
         updateSubtitle(mode);
-        return(result);
+        return (result);
     }
 
     @Override
