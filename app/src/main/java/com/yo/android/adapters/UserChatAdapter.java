@@ -157,19 +157,21 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
     private void addView(final LinearLayout linearLayout, ChatMessage item, final UserChatViewHolder holder) {
-
+        linearLayout.removeAllViews();
+        linearLayout.setTag(holder);
         if (item.getType().equals(Constants.TEXT)) {
             TextView textView = new TextView(context);
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
-            if (linearLayout.getTag() == null) {
-                linearLayout.setTag(holder);
-                linearLayout.addView(textView);
-            }
+//            if (linearLayout.getTag() == null) {
+            linearLayout.setTag(holder);
+            linearLayout.addView(textView);
+//            }
 
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {
                 final ImageView imageView = new ImageView(context);
+                imageView.setTag(holder);
                 // Create a storage reference from our app
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
@@ -181,10 +183,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         imageView.setImageBitmap(bitmap);
-                        if (linearLayout.getTag() == null) {
-                            linearLayout.setTag(holder);
+//                        if (linearLayout.getTag() == null) {
+                        if (imageView.getTag().equals(holder)) {
+//                            linearLayout.setTag(holder);
                             linearLayout.addView(imageView);
                         }
+//                        }
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
