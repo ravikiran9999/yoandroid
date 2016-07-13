@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.ui.fragments.DialerFragment;
@@ -22,6 +24,7 @@ import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
+import com.yo.android.widgets.CustomViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,8 @@ public class BottomTabsActivity extends BaseActivity {
     private List<TabsData> dataList;
     @Inject
     BalanceHelper balanceHelper;
+    TabsPagerAdapter mAdapter;
+    CustomViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +51,8 @@ public class BottomTabsActivity extends BaseActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        TabsPagerAdapter mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        viewPager = (CustomViewPager) findViewById(R.id.pager);
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);
         mAdapter.addFragment(new DialerFragment(), null);
         mAdapter.addFragment(new ChatFragment(), null);
@@ -58,8 +63,8 @@ public class BottomTabsActivity extends BaseActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         dataList = createTabsList();
-        int index =0;
-        for (TabsData data:dataList) {
+        int index = 0;
+        for (TabsData data : dataList) {
             final TabLayout.Tab tab = tabLayout.getTabAt(index);
             tab.setCustomView(setTabs(data.getTitle(), data.getDrawable()));
             index++;
@@ -93,10 +98,30 @@ public class BottomTabsActivity extends BaseActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        int position = tabLayout.getSelectedTabPosition();
+        Fragment fragment = mAdapter.getItem(position);
+        boolean handle = fragment instanceof BaseFragment && ((BaseFragment) fragment).onBackPressHandle();
+        if (handle) {
+            mLog.i("BottomTabsActivity", "Back button handled");
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     public void setToolBarTitle(String title) {
         final TextView titleView = (TextView) toolbar.findViewById(R.id.title);
         titleView.setText(title);
+    }
+
+    public void showOrHideTabs(boolean show) {
+        viewPager.setPagingEnabled(show);
+        if (show) {
+            tabLayout.setVisibility(View.VISIBLE);
+        } else {
+            tabLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override

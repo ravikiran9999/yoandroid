@@ -3,16 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:orientation="vertical"
-    android:paddingBottom="10dp">
+    android:orientation="vertical">
 
 
     <com.yo.android.voip.DialPadView
         android:id="@+id/dialPadView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="bottom"
         android:background="#FAFAFA"
+        android:paddingBottom="10dp"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -94,18 +94,20 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_message"
             android:text="Dial" />
-       <LinearLayout
-           android:layout_width="0dp"
-           android:layout_weight="1"
-           android:gravity="center_horizontal"
-           android:layout_height="wrap_content">
-        <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/btnCall"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_call"
-            android:text="Dial" />
-       </LinearLayout>
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
+
+            <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/btnCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_call"
+                android:text="Dial" />
+        </LinearLayout>
 
         <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/btnContacts"
