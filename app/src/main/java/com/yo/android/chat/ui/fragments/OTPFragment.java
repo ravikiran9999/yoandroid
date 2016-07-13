@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.OTPResponse;
@@ -42,6 +43,8 @@ public class OTPFragment extends BaseFragment {
 
     @Inject
     YoApi.YoService yoService;
+    @Inject
+    ConnectivityHelper mHelper;
 
 
     public OTPFragment() {
@@ -81,8 +84,11 @@ public class OTPFragment extends BaseFragment {
     }
 
     private void signUp(@NonNull final String phoneNumber, @NonNull final String password) {
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getActivity().getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
         count = 0;
-
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         DatabaseReference childReference = databaseReference.child(phoneNumber);
         Registration registration = new Registration(password, phoneNumber);
@@ -115,7 +121,7 @@ public class OTPFragment extends BaseFragment {
             @Override
             public void onFailure(Call<OTPResponse> call, Throwable t) {
                 dismissProgressDialog();
-                mToastFactory.showToast("Error while validating OTP.");
+                mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
             }
         });
     }

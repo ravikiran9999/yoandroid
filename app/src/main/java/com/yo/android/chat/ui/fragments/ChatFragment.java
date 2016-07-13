@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +30,7 @@ import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 
@@ -178,9 +180,51 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                         //getChatRoomList(chatRoom);
                         arrayOfUsers.add(chatRoom);
+                        roomReference.keepSynced(true);
+                        DatabaseReference reference = roomReference.child(chatRoom.getChatRoomId());
+                        arrayOfUsers.add(chatRoom);
+                        reference.limitToLast(1).addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+
+                                if (dataSnapshot.hasChildren()) {
+                                    chatRoom.setMessage(chatMessage.getMessage());
+                                    if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
+                                        chatRoom.setIsImage(true);
+                                    } else {
+                                        chatRoom.setIsImage(false);
+                                    }
+                                    chatRoom.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+
+                                }
+                                chatRoomListAdapter.addItems(arrayOfUsers);
+
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 }
-                chatRoomListAdapter.addItems(arrayOfUsers);
+
                 dismissProgressDialog();
             }
 

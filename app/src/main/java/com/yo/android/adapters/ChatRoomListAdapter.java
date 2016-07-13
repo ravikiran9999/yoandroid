@@ -57,7 +57,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
         } else {
             holder.getOpponentName().setText(item.getOpponentPhoneNumber());
         }
-
         if (item.isImage()) {
             holder.getChat().setText(mContext.getResources().getString(R.string.image));
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));

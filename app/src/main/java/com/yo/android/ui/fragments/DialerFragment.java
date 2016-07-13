@@ -117,6 +117,7 @@ public class DialerFragment extends BaseFragment {
         bus.register(this);
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -128,6 +129,12 @@ public class DialerFragment extends BaseFragment {
         inflater.inflate(R.menu.menu_dialer, menu);
         Util.prepareSearch(getActivity(), menu, adapter);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        hideDialPad(true);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -179,7 +186,9 @@ public class DialerFragment extends BaseFragment {
             public void onClick(View v) {
 
                 String number = dialPadView.getDigits().getText().toString().trim();
-                if (!mConnectivityHelper.isConnected()) {
+                if (!isVoipSupported) {
+                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_SHORT);
+                } else if (!mConnectivityHelper.isConnected()) {
                     mToastFactory.showToast(getString(R.string.connectivity_network_settings));
                 } else if (!isVoipSupported) {
                     mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
@@ -210,10 +219,7 @@ public class DialerFragment extends BaseFragment {
 
             }
         });
-        if (!isVoipSupported) {
-            btnDialer.setEnabled(false);
-            mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
-        }
+
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
         txtBalance.setText("Balance $" + balance);
         //
