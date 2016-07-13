@@ -149,8 +149,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-        // listView.setStackFromBottom(true);
     }
 
     @Override
@@ -284,7 +282,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
         final ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setItemChecked(position, true);
         isContextualMenuEnable = true;
         getActivity().invalidateOptionsMenu();
