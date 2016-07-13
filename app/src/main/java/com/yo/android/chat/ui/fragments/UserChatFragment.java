@@ -63,7 +63,7 @@ import butterknife.OnItemLongClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener,AdapterView.OnItemClickListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener {
 
     private static final String TAG = "UserChatFragment";
 
@@ -82,7 +82,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     StorageReference storageReference;
     private ActionMode activeMode=null;
     String child;
-
     public UserChatFragment() {
         // Required empty public constructor
     }
@@ -157,15 +156,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setOnItemLongClickListener(this);
         send.setOnClickListener(this);
         chatText.setOnLongClickListener(this);
-        listView.setOnItemClickListener(this);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-        //listView.setStackFromBottom(true);
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+        listView.setStackFromBottom(true);
     }
 
     @Override
@@ -305,6 +303,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         getActivity().invalidateOptionsMenu();
         return true;
     }
+
 
     @Override
     public boolean onLongClick(View v) {
@@ -492,7 +491,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Set the  CAB title according to total checked items
         mode.setTitle(checkedCount + "");
         // Calls  toggleSelection method from ListViewAdapter Class
-        userChatAdapter.toggleSelection(position);
+       boolean isToggle = userChatAdapter.toggleSelection(position);
+       View view = listView.getChildAt(position);
+        if(isToggle){
+            view.setAlpha(1);
+        }else{
+            view.setAlpha(0.5f);
+        }
         chatMessage.setSelected(true);
     }
 
@@ -512,7 +517,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void updateSubtitle(ActionMode mode) {
         mode.setSubtitle("(" + listView.getCheckedItemCount() + ")");
     }
-    public boolean performActions(MenuItem item) {
+    public boolean performActions(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete:
                 SparseBooleanArray selected = userChatAdapter.getSelectedIds();
@@ -524,15 +529,21 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         userChatAdapter.removeItem(selectedItem);
                     }
                 }
-             listView.clearChoices();
+                // Close CAB
+                mode.finish();
+                selected.clear();
                 return true;
             case R.id.copy:
-              //  new Clipboard(getActivity()).copy(chatMessage.getMessage());
+                ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition( listView.getSelectedItemPosition());
+                if(chatMessage !=null) {
+                    new Clipboard(getActivity()).copy(chatMessage.getMessage());
+                }
                 return true;
             case R.id.forward:
-               /* if (chatMessage.isSelected()) {
+                chatMessage = (ChatMessage) listView.getItemAtPosition( listView.getSelectedItemPosition());
+                if (chatMessage!=null && chatMessage.isSelected()) {
                     forwardMessage(chatMessage);
-                }*/
+                }
                 return true;
 
             default:
@@ -541,8 +552,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        boolean result=performActions(item);
-        updateSubtitle(activeMode);
+        activeMode=mode;
+        boolean result=performActions(mode,item);
+        updateSubtitle(mode);
         return(result);
     }
 
@@ -555,10 +567,5 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        listView.setItemChecked(position, true);
-
-    }
 }
 
