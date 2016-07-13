@@ -87,6 +87,8 @@ public class DialerFragment extends BaseFragment {
         bus.register(this);
     }
 
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -98,6 +100,11 @@ public class DialerFragment extends BaseFragment {
         inflater.inflate(R.menu.menu_dialer, menu);
         Util.prepareSearch(getActivity(),menu,adapter);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

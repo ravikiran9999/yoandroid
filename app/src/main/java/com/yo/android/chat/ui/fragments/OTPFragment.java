@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -37,6 +39,8 @@ public class OTPFragment extends BaseFragment {
     private static final String tempPassword = "123456";
     private String phoneNumber;
     private EditText otp;
+    private int count = 0;
+
     @Inject
     YoApi.YoService yoService;
     @Inject
@@ -84,10 +88,23 @@ public class OTPFragment extends BaseFragment {
             mToastFactory.showToast(getActivity().getResources().getString(R.string.connectivity_network_settings));
             return;
         }
+        count = 0;
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         DatabaseReference childReference = databaseReference.child(phoneNumber);
         Registration registration = new Registration(password, phoneNumber);
-        childReference.setValue(registration);
+        childReference.setValue(registration, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError == null) {
+                    // successfully inserted to database
+                    count++;
+                    if (count == 2) {
+                        startActivity(new Intent(getActivity(), BottomTabsActivity.class));
+                        getActivity().finish();
+                    }
+                }
+            }
+        });
 
         //
         showProgressDialog();
@@ -97,13 +114,8 @@ public class OTPFragment extends BaseFragment {
             @Override
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
 
-                preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, response.body().getAccessToken());
-                preferenceEndPoint.saveStringPreference(YoApi.REFRESH_TOKEN, response.body().getRefreshToken());
-                preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
-                preferenceEndPoint.saveStringPreference("password", password);
-                dismissProgressDialog();
-                startActivity(new Intent(getActivity(), BottomTabsActivity.class));
-                getActivity().finish();
+                count++;
+                navigateToNext(response, phoneNumber, password);
             }
 
             @Override
@@ -112,7 +124,17 @@ public class OTPFragment extends BaseFragment {
                 mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
             }
         });
-
     }
 
+    private void navigateToNext(Response<OTPResponse> response, @NonNull String phoneNumber, @NonNull String password) {
+        preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, response.body().getAccessToken());
+        preferenceEndPoint.saveStringPreference(YoApi.REFRESH_TOKEN, response.body().getRefreshToken());
+        preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
+        preferenceEndPoint.saveStringPreference("password", password);
+        dismissProgressDialog();
+        if (count == 2) {
+            startActivity(new Intent(getActivity(), BottomTabsActivity.class));
+            getActivity().finish();
+        }
+    }
 }

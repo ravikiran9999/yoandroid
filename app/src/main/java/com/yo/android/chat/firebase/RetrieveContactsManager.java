@@ -18,18 +18,18 @@ import java.util.ArrayList;
 
 public class RetrieveContactsManager extends BaseActivity {
 
-    private ArrayList<Registration> arrayOfUsers;
-    private AppContactsListAdapter appContactsListAdapter;
+    //private AppContactsListAdapter appContactsListAdapter;
 
-    public RetrieveContactsManager(ArrayList<Registration> arrayOfUsers, AppContactsListAdapter appContactsListAdapter) {
+    /*public RetrieveContactsManager(ArrayList<Registration> arrayOfUsers, AppContactsListAdapter appContactsListAdapter) {
         this.arrayOfUsers = arrayOfUsers;
-        this.appContactsListAdapter = appContactsListAdapter;
+        //this.appContactsListAdapter = appContactsListAdapter;
+    }*/
+
+    public RetrieveContactsManager() {
     }
 
-    public void getRegisteredAppUsers() {
-
-        //showProgressDialog();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+    public ArrayList<Registration> getRegisteredAppUsers() {
+        final ArrayList<Registration> arrayOfUsers = new ArrayList<>();
         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -41,8 +41,7 @@ public class RetrieveContactsManager extends BaseActivity {
                         arrayOfUsers.add(registeredUsers);
                     }
                 }
-                appContactsListAdapter.addItems(arrayOfUsers);
-                //dismissProgressDialog();
+                //appContactsListAdapter.addItems(arrayOfUsers);
             }
 
             @Override
@@ -50,5 +49,6 @@ public class RetrieveContactsManager extends BaseActivity {
                 dismissProgressDialog();
             }
         });
+        return arrayOfUsers;
     }
 }

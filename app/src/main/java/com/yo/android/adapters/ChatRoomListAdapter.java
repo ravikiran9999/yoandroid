@@ -2,22 +2,16 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.View;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
-import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.util.Constants;
-import com.yo.android.util.Util;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -62,50 +56,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
             holder.getOpponentName().setText(item.getYourPhoneNumber());
         } else {
             holder.getOpponentName().setText(item.getOpponentPhoneNumber());
-        }
-
-        if (item.getChatRoomId() != null) {
-            //String vv = preferenceEndPoint.getStringPreference(item.getChatRoomId());
-            //item.setMessage(preferenceEndPoint.getStringPreference(item.getChatRoomId()));
-            DatabaseReference roomIdReference = roomReference.child(item.getChatRoomId());
-            roomIdReference.limitToLast(1).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    try {
-                        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                        item.setMessage(chatMessage.getMessage());
-                        if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
-                            item.setIsImage(true);
-                        } else {
-                            item.setIsImage(false);
-                        }
-                        item.setTimeStamp(Util.getChatListTimeFormat(mContext,chatMessage.getTime()));
-                        notifyDataSetChanged();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
         }
 
         if (item.isImage()) {
