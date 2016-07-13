@@ -43,6 +43,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private ArrayList<ChatRoom> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
     private ChatMessage forwardChatMessage;
+    DatabaseReference reference;
+    DatabaseReference roomReference;
 
     @Inject
     DatabaseHelper databaseHelper;
@@ -94,6 +96,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         listView = (ListView) view.findViewById(R.id.lv_chat_room);
         listView.setOnItemClickListener(this);
+
+        reference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
+        reference.keepSynced(true);
+        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
+
         return view;
     }
 
@@ -104,19 +111,20 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         arrayOfUsers = new ArrayList<>();
         chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(chatRoomListAdapter);
-        String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
-        forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ChatRoom chatRoom = (ChatRoom) chatRoomListAdapter.getItem(position);
-        if(forwardChatMessage != null) {
+        ChatRoom chatRoom = chatRoomListAdapter.getItem(position);
+
+        String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
+        forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
+
+        if (forwardChatMessage != null) {
             navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), forwardChatMessage);
-            preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
         } else {
 
-            if(!chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+            if (!chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                 navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber());
             } else {
                 navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getYourPhoneNumber());
@@ -133,6 +141,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void navigateToChatScreen(String roomId, String opponentPhoneNumber, ChatMessage forward) {
+        if (preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD) != null) {
+            preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
+        }
+
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
@@ -155,17 +167,34 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getChatRoomList() {
-
         showProgressDialog();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 arrayOfUsers.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    ChatRoom chatRoom = child.getValue(ChatRoom.class);
+                    final ChatRoom chatRoom = child.getValue(ChatRoom.class);
                     if (chatRoom.getYourPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)) || chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
-                        arrayOfUsers.add(chatRoom);
+
+                        roomReference.child(chatRoom.getChatRoomId());
+                        roomReference.keepSynced(true);
+                        roomReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+
+                                if (dataSnapshot.hasChildren()) {
+                                    arrayOfUsers.add(chatRoom);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+
                     }
                 }
                 chatRoomListAdapter.addItems(arrayOfUsers);
@@ -178,5 +207,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
     }
+
 
 }
