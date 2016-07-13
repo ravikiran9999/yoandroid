@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,12 +19,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +67,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
     @Inject
     YoApi.YoService yoService;
     private String topicName;
+    private TextView noArticals;
+    private FrameLayout flipContainer;
+    private ProgressBar mProgress;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -90,10 +93,15 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.magazine_flip_fragment, container, false);
+        noArticals = (TextView) view.findViewById(R.id.txtEmptyArticals);
+        flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
+        mProgress = (ProgressBar) view.findViewById(R.id.progress);
         flipView = new FlipViewController(getActivity());
         myBaseAdapter = new MyBaseAdapter(getActivity(), flipView);
         flipView.setAdapter(myBaseAdapter);
-        return flipView;
+        flipContainer.addView(flipView);
+        return view;
     }
 
     @Override
@@ -102,13 +110,21 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         //loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
 
         articlesList.clear();
+        if (mProgress != null) {
+            mProgress.setVisibility(View.VISIBLE);
+        }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getAllArticlesAPI(accessToken).enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
                 if (response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
+                        if (noArticals != null) {
+                            noArticals.setVisibility(View.GONE);
+                        }
                         //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
                         //articlesList = new ArrayList<Travels.Data>();
                         articlesList.add(response.body().get(i));
@@ -116,14 +132,21 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
-//                    mToastFactory.showToast("No Articles");
+                    if (noArticals != null) {
+                        noArticals.setVisibility(View.VISIBLE);
+                    }
                 }
 
             }
 
             @Override
             public void onFailure(Call<List<Articles>> call, Throwable t) {
-//                Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                if (noArticals != null) {
+                    noArticals.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -301,6 +324,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                notifyDataSetChanged();
                                 //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                                 //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
@@ -314,6 +341,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
+                                data.setLiked("false");
+
                                 notifyDataSetChanged();
                             }
                         });
@@ -322,6 +351,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+
+                                notifyDataSetChanged();
                                 //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
                                 //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
@@ -335,6 +368,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
+                                data.setLiked("true");
                                 notifyDataSetChanged();
                             }
                         });
@@ -396,7 +430,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
             }
             //}
 
-            Button followMoreTopics = (Button)layout.findViewById(R.id.btn_magazine_follow_topics);
+            Button followMoreTopics = (Button) layout.findViewById(R.id.btn_magazine_follow_topics);
             followMoreTopics.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

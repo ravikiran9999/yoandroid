@@ -1,5 +1,6 @@
 package com.yo.android.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,15 +38,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private SparseBooleanArray mSelectedItemsIds;
     private LinearLayout.LayoutParams layoutParams;
 
-    public UserChatAdapter(Context context) {
+    public UserChatAdapter(Activity context) {
         super(context);
-        this.context = context;
+        this.context = context.getBaseContext();
 
     }
 
-    public UserChatAdapter(Context context, String userId) {
+    public UserChatAdapter(Activity context, String userId) {
         super(context);
-        this.context = context;
+        this.context = context.getBaseContext();
         this.userId = userId;
         this.mSelectedItemsIds = new SparseBooleanArray();
     }

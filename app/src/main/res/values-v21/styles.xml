@@ -1,2 +1,6 @@
 <resources>>
+    <style name="activated" parent="android:Theme.Material">
+        <item name="android:activatedBackgroundIndicator">@drawable/list_activated_background</item>
+        <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
+    </style>
 </resources>
