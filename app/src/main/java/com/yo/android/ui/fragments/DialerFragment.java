@@ -118,7 +118,6 @@ public class DialerFragment extends BaseFragment {
     }
 
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -134,6 +133,7 @@ public class DialerFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        hideDialPad(true);
         return super.onOptionsItemSelected(item);
     }
 
