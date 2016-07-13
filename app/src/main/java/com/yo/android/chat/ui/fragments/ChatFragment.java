@@ -213,6 +213,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                     chatRoom.setIsImage(false);
                                     chatRoom.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
                                 }
+                                if (chatRoomListAdapter != null) {
+                                    chatRoomListAdapter.notifyDataSetChanged();
+                                }
                             }
 
                             @Override
