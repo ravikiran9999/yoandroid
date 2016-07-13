@@ -32,6 +32,7 @@ import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
 import com.yo.android.ui.SettingsActivity;
+import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.fragments.DialerFragment;
@@ -80,6 +81,7 @@ import dagger.Provides;
                 MyCollections.class,
                 MyCollectionDetails.class,
                 UserCreatedMagazineActivity.class,
+                ShowPhotoActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
