@@ -78,7 +78,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private static final int ADD_SELECT_PICTURE = 2;
     private boolean isContextualMenuEnable = false;
     private Uri mImageCaptureUri = null;
-    String child;
     private StorageReference storageReference;
     private DatabaseReference roomReference;
 
@@ -148,8 +147,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-        listView.setStackFromBottom(true);
+
     }
 
     @Override
