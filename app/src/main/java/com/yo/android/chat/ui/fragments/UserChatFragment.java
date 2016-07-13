@@ -133,6 +133,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setOnItemLongClickListener(this);
         listView.setMultiChoiceModeListener(this);
         listView.getWrappedList().setDivider(null);
+        listView.setDivider(null);
+        listView.setDividerHeight(0);
         listView.setOnItemClickListener(this);
         View send = view.findViewById(R.id.send);
         chatText = (EditText) view.findViewById(R.id.chat_text);
@@ -149,7 +151,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-        listView.setStackFromBottom(true);
+        // listView.setStackFromBottom(true);
     }
 
     @Override
@@ -192,7 +194,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void sendChatMessage(String chatMessage, String type) {
 
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        if (!TextUtils.isEmpty(chatMessage)) {
+        if (chatMessage != null && !TextUtils.isEmpty(chatMessage.trim())) {
 
             sendChatMessage(chatMessage, userId, type);
 
