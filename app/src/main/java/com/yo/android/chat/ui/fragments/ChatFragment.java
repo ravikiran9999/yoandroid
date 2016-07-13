@@ -51,7 +51,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Inject
     DatabaseHelper databaseHelper;
 
-    EventBus bus = EventBus.getDefault();
 
     public ChatFragment() {
         // Required empty public constructor
