@@ -52,6 +52,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.ChatRoom;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -82,9 +83,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private Uri mImageCaptureUri = null;
     private StorageReference storageReference;
     private DatabaseReference roomReference;
-
+    private DatabaseReference chatRoomReference;
     private ChatMessage chatMessage;
     private TextView listStickeyHeader;
+    private int roomExist = 0;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -95,21 +97,24 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         super.onCreate(savedInstanceState);
 
         Bundle bundle = this.getArguments();
-        String child = bundle.getString(Constants.CHAT_ROOM_ID);
+        String childRoomId = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
-        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
 
-        DatabaseReference chatRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
-        if (child != null) {
-            roomIdReference = chatRoomReference.child(child);
-            roomIdReference.keepSynced(true);
-        }
+        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
 
-        getMessageFromDatabase();
+        chatRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
+        if (!childRoomId.equals("")) {
+            roomExist = 1;
+            roomIdReference = chatRoomReference.child(childRoomId);
+            roomIdReference.keepSynced(true);
+
+            getMessageFromDatabase(roomIdReference);
+        }
+
         ChatMessage chatForward = bundle.getParcelable(Constants.CHAT_FORWARD);
 
         if (chatForward != null) {
@@ -312,6 +317,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             chatMessage.setImagePath(message);
         }
 
+        if(roomExist == 0) {
+            String chatRoomId = yourNumber+":"+opponentNumber;
+            ChatRoom chatRoom = new ChatRoom(yourNumber, opponentNumber, chatRoomId);
+            DatabaseReference databaseRoomReference = roomReference.child(chatRoomId);
+            databaseRoomReference.setValue(chatRoom);
+
+            roomIdReference = chatRoomReference.child(yourNumber+":"+opponentNumber);
+            roomIdReference.child(timeStp).setValue(chatMessage, this);
+            getMessageFromDatabase(roomIdReference);
+            roomExist = 1;
+        }
+
         roomIdReference.child(timeStp).setValue(chatMessage, this);
     }
 
@@ -334,10 +351,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     }
 
-    private void getMessageFromDatabase() {
+    private void getMessageFromDatabase(DatabaseReference mRoomIdReference) {
 
         // Retrieve new posts as they are added to the database
-        roomIdReference.addChildEventListener(new ChildEventListener() {
+        mRoomIdReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 try {
