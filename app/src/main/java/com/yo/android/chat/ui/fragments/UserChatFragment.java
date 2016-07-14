@@ -60,7 +60,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemLongClickListener, AbsListView.MultiChoiceModeListener, AdapterView.OnItemClickListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AbsListView.MultiChoiceModeListener, AdapterView.OnItemClickListener {
 
 
     private static final String TAG = "UserChatFragment";
@@ -129,9 +129,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
 
         listView = (ListView) view.findViewById(R.id.listView);
-        listView.setOnItemLongClickListener(this);
         listView.setMultiChoiceModeListener(this);
-//        listView.getWrappedList().setDivider(null);
         listView.setDivider(null);
         listView.setDividerHeight(0);
         listView.setOnItemClickListener(this);
@@ -154,17 +152,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-
-        // parent.getChildAt(position).setBackgroundColor(Color.BLUE);
 
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                //listView.getChildAt(position).setBackgroundColor(Color.BLUE);
-                final ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
-//                final ChatMessage chatMessage = (ChatMessage) userChatAdapter.getItem(position);
+                chatMessage = (ChatMessage) listView.getItemAtPosition(position);
                 final int checkedCount = listView.getCheckedItemCount();
                 mode.setTitle(Integer.toString(checkedCount));
                 // Calls  toggleSelection method from ListViewAdapter Class
@@ -231,7 +224,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             }
         });
-
     }
 
     @Override
@@ -361,91 +353,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         });
     }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-        final ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
-        listView.setItemChecked(position, true);
-        isContextualMenuEnable = true;
-        getActivity().invalidateOptionsMenu();
-
-        // parent.getChildAt(position).setBackgroundColor(Color.BLUE);
-
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                //listView.getChildAt(position).setBackgroundColor(Color.BLUE);
-                int checkedCount = listView.getCheckedItemCount();
-                mode.setTitle(Integer.toString(checkedCount));
-                // Calls  toggleSelection method from ListViewAdapter Class
-                userChatAdapter.toggleSelection(position);
-
-                chatMessage.setSelected(true);
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                mode.getMenuInflater().inflate(R.menu.menu_change, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
-                switch (item.getItemId()) {
-
-                    case R.id.delete:
-
-                        SparseBooleanArray selected = userChatAdapter.getSelectedIds();
-                        for (int i = (selected.size() - 1); i >= 0; i--) {
-                            if (selected.valueAt(i)) {
-
-                                //parent.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-                                //view.setBackgroundColor(Color.GREEN);
-
-                                ChatMessage selectedItem = userChatAdapter.getItem(selected.keyAt(i));
-                                String timesmp = Long.toString(selectedItem.getTime());
-                                roomIdReference.child(timesmp).removeValue();
-
-                                // Remove  selected items following the ids
-                                userChatAdapter.removeItem(selectedItem);
-                            }
-                        }
-
-                        // Close CAB
-                        mode.finish();
-                        selected.clear();
-                        break;
-                    case R.id.copy:
-                        new Clipboard(getActivity()).copy(chatMessage.getMessage());
-                        break;
-                    case R.id.forward:
-                        if (chatMessage.isSelected()) {
-                            forwardMessage(chatMessage);
-                        }
-                        break;
-
-                    default:
-                        return false;
-                }
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-
-            }
-        });
-        return true;
-    }
-
 
     @Override
     public boolean onLongClick(View v) {
