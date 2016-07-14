@@ -101,7 +101,8 @@ public class ContactsFragment extends BaseFragment {
                         arrayOfUsers.add(registeredUsers);
                     }
                 }
-
+                contactsListAdapter.addItems(arrayOfUsers);
+                dismissProgressDialog();
             }
 
             @Override
