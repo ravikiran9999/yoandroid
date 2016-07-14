@@ -24,7 +24,9 @@ import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.Contacts;
 import com.yo.android.model.PhNumberBean;
 import com.yo.android.model.Registration;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 
@@ -72,6 +74,7 @@ public class ContactsFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         getRegisteredAppUsers();
         arrayOfUsers = new ArrayList<>();
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
@@ -82,6 +85,11 @@ public class ContactsFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_contacts, menu);
         this.menu = menu;
+        if(getActivity() instanceof BottomTabsActivity) {
+            ((BottomTabsActivity)getActivity()).setToolBarColor(getResources().getColor(R.color.colorPrimary));
+            Util.changeMenuItemsVisibility(menu, -1, true);
+        }
+        Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

@@ -101,7 +101,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         try {
             String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.WEEK_IN_MILLIS).toString();
             LinearLayout layout = new LinearLayout(context);
-            holder.getChatTimeStamp().setText(Util.getTimeFormat(mContext, item.getTime()));
+            holder.getChatTimeStamp().setText(Util.getChatListTimeFormat(item.getTime()) + " " + Util.getTimeFormat(mContext, item.getTime()));
 
             if (userId.equals(item.getSenderID())) {
 

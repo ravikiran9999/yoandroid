@@ -17,6 +17,8 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
@@ -27,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -226,6 +229,7 @@ public class Util {
             }
         }
     }
+
     public static void registerSearchLister(final Activity activity, final Menu menu) {
         MenuItem view = menu.findItem(R.id.menu_search);
         MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
@@ -245,6 +249,7 @@ public class Util {
             }
         });
     }
+
     public static String getChatListTimeFormat(long time) {
         Calendar smsTime = Calendar.getInstance();
         smsTime.setTimeInMillis(time);
@@ -256,6 +261,19 @@ public class Util {
         } else {
             SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
             return format.format(new Date(time));
+        }
+    }
+
+    public static void changeSearchProperties(Menu menu) {
+        SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+
+        AutoCompleteTextView searchTextView = (AutoCompleteTextView) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        try {
+            searchTextView.setTextColor(Color.BLACK);
+            Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
+            mCursorDrawableRes.setAccessible(true);
+            mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+        } catch (Exception e) {
         }
     }
 }

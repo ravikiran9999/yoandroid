@@ -63,7 +63,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemClickListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemClickListener {
 
 
     private static final String TAG = "UserChatFragment";
@@ -142,7 +142,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setAdapter(userChatAdapter);
         listView.setOnItemClickListener(this);
         send.setOnClickListener(this);
-        chatText.setOnLongClickListener(this);
         return view;
     }
 
@@ -150,19 +149,22 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-//            @Override
-//            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-//
-//                if (userChatAdapter.getCount() > 0) {
-//                    String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-//                    if (listStickeyHeader != null) {
-//                        listStickeyHeader.setText("" + headerText);
-//                    }
-//                }
-//
-//            }
-//        });
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+        listView.setStackFromBottom(false);
+
+        listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                if (userChatAdapter!=null && userChatAdapter.getCount() > 0) {
+                    String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
+                    if (listStickeyHeader != null) {
+                        listStickeyHeader.setText("" + headerText);
+                    }
+                }
+
+            }
+        });
     }
 
     @Override
@@ -236,9 +238,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                /*if (activeMode != null) {
-                    activeMode = null;
-                }*/
+
             }
         });
 
@@ -370,12 +370,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             }
         });
-    }
-
-    @Override
-    public boolean onLongClick(View v) {
-        chatText.setText(new Clipboard(getActivity()).paste(v));
-        return true;
     }
 
     private void takePicture() {
