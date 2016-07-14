@@ -218,9 +218,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                /*if (activeMode != null) {
-                    activeMode = null;
-                }*/
+
             }
         });
 

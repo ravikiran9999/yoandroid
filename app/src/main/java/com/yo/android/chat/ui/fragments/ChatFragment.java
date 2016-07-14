@@ -44,9 +44,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private ListView listView;
     private ArrayList<ChatRoom> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
-    private ChatMessage forwardChatMessage;
-    DatabaseReference reference;
-    DatabaseReference roomReference;
+    private DatabaseReference reference;
+    private DatabaseReference roomReference;
 
     @Inject
     DatabaseHelper databaseHelper;
@@ -120,7 +119,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         ChatRoom chatRoom = chatRoomListAdapter.getItem(position);
 
         String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
-        forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
+        ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
 
         if (forwardChatMessage != null) {
             navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), forwardChatMessage);
