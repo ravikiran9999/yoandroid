@@ -96,12 +96,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 } else if (value2) {
                     navigateToChatScreen(roomCombination2, opponentPhoneNumber, yourPhoneNumber);
                 } else {
-                    /*String chatRoomId = yourPhoneNumber + ":" + opponentPhoneNumber;
-                    ChatRoom chatRoom = new ChatRoom(yourPhoneNumber, opponentPhoneNumber, chatRoomId);
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-                    DatabaseReference databaseRoomReference = databaseReference.child(chatRoomId);
-                    databaseRoomReference.setValue(chatRoom);*/
-                    navigateToChatScreen("", opponentPhoneNumber,yourPhoneNumber);
+
+                    navigateToChatScreen("", opponentPhoneNumber, yourPhoneNumber);
                 }
             }
 

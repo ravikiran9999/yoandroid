@@ -78,7 +78,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
 
     }
 
-    //TODO: Move this code some util class
+
     public static void showUserChatScreen(final Context context, @NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {
         final String roomCombination1 = yourPhoneNumber + ":" + opponentPhoneNumber;
         final String roomCombination2 = opponentPhoneNumber + ":" + yourPhoneNumber;
@@ -89,16 +89,12 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
                 boolean value1 = dataSnapshot.hasChild(roomCombination1);
                 boolean value2 = dataSnapshot.hasChild(roomCombination2);
                 if (value1) {
-                    navigateToChatScreen(context, roomCombination1, opponentPhoneNumber);
+                    navigateToChatScreen(context, roomCombination1, opponentPhoneNumber, yourPhoneNumber);
                 } else if (value2) {
-                    navigateToChatScreen(context, roomCombination2, opponentPhoneNumber);
+                    navigateToChatScreen(context, roomCombination2, opponentPhoneNumber, yourPhoneNumber);
                 } else {
-                    String chatRoomId = yourPhoneNumber + ":" + opponentPhoneNumber;
-                    ChatRoom chatRoom = new ChatRoom(yourPhoneNumber, opponentPhoneNumber, chatRoomId);
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-                    DatabaseReference databaseRoomReference = databaseReference.child(chatRoomId);
-                    databaseRoomReference.setValue(chatRoom);
-                    navigateToChatScreen(context, chatRoomId, opponentPhoneNumber);
+
+                    navigateToChatScreen(context, "", opponentPhoneNumber, yourPhoneNumber);
                 }
             }
 
@@ -110,11 +106,13 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
 
     }
 
-    private static void navigateToChatScreen(Context context, String roomId, String opponentPhoneNumber) {
+    private static void navigateToChatScreen(Context context, String roomId, String opponentPhoneNumber, String yourPhoneNumber) {
         Intent intent = new Intent(context, ChatActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
+        intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
         context.startActivity(intent);
+        
     }
 }
