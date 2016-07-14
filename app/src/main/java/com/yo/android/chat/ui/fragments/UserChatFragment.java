@@ -152,19 +152,19 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-
-                if (userChatAdapter.getCount() > 0) {
-                    String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-                    if (listStickeyHeader != null) {
-                        listStickeyHeader.setText("" + headerText);
-                    }
-                }
-
-            }
-        });
+//        listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+//            @Override
+//            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+//
+//                if (userChatAdapter.getCount() > 0) {
+//                    String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
+//                    if (listStickeyHeader != null) {
+//                        listStickeyHeader.setText("" + headerText);
+//                    }
+//                }
+//
+//            }
+//        });
     }
 
     @Override
