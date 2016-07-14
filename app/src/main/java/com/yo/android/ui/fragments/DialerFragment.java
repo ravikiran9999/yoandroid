@@ -103,6 +103,7 @@ public class DialerFragment extends BaseFragment {
     @Inject
     @Named("voip_support")
     boolean isVoipSupported;
+    private Menu menu;
 
 
     @Override
@@ -126,6 +127,7 @@ public class DialerFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_dialer, menu);
+        this.menu = menu;
         Util.prepareSearch(getActivity(), menu, adapter);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -289,6 +291,10 @@ public class DialerFragment extends BaseFragment {
     @Override
     public void dismissProgressDialog() {
         progress.setVisibility(View.GONE);
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 
     public class CallLogsViewHolder extends AbstractViewHolder {

@@ -7,8 +7,10 @@ import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.ui.BottomTabsActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -140,20 +143,22 @@ public class Util {
         }
         return 0;
     }
-    public static String getChatListTimeFormat(@NonNull final Context context, long time){
+
+    public static String getChatListTimeFormat(@NonNull final Context context, long time) {
         Calendar smsTime = Calendar.getInstance();
         smsTime.setTimeInMillis(time);
         Calendar now = Calendar.getInstance();
-        if(now.get(Calendar.DATE) == smsTime.get(Calendar.DATE) ){
-            return getTimeFormat(context,time);
-        }else if(now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1 ){
+        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
+            return getTimeFormat(context, time);
+        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
             return context.getString(R.string.yesterday);
-        }else {
+        } else {
             Format format = android.text.format.DateFormat.getDateFormat(context);
             return format.format(new Date(time));
         }
     }
-    public static String getTimeFormat(@NonNull final Context context, long time){
+
+    public static String getTimeFormat(@NonNull final Context context, long time) {
         SimpleDateFormat sFormat;
         if (DateFormat.is24HourFormat(context)) {
             sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -163,6 +168,7 @@ public class Util {
         String currentTime = sFormat.format(new Date(time));
         return currentTime;
     }
+
     public static void prepareSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
@@ -174,7 +180,7 @@ public class Util {
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            public static final String TAG = "PrepareSearch in Util" ;
+            public static final String TAG = "PrepareSearch in Util";
 
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -185,7 +191,7 @@ public class Util {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
-                if(adapter!=null) {
+                if (adapter != null) {
                     adapter.performSearch(newText);
                 }
                 return true;
@@ -194,9 +200,38 @@ public class Util {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                if(adapter !=null) {
+                if (adapter != null) {
                     adapter.performSearch("");
                 }
+                return true;
+            }
+        });
+    }
+
+    public static void changeMenuItemsVisibility(Menu menu, int menuId, boolean visibility) {
+        int size = menu.size();
+        for (int i = 0; i < size; i++) {
+            MenuItem item = menu.getItem(i);
+            if (item.getItemId() != menuId) {
+                item.setVisible(visibility);
+            }
+        }
+    }
+    public static void registerSearchLister(final Activity activity, final Menu menu) {
+        MenuItem view = menu.findItem(R.id.menu_search);
+        MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                if (activity instanceof BottomTabsActivity) {
+                    ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
+                }
+                Util.changeMenuItemsVisibility(menu, -1, true);
                 return true;
             }
         });

@@ -20,7 +20,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
-import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.Contacts;
 import com.yo.android.model.PhNumberBean;
@@ -30,8 +29,6 @@ import com.yo.android.util.Constants;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +44,7 @@ public class ContactsFragment extends BaseFragment {
     private Registration registeredUsers;
     @Inject
     DatabaseHelper databaseHelper;
+    private Menu menu;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -74,12 +72,12 @@ public class ContactsFragment extends BaseFragment {
         arrayOfUsers = new ArrayList<>();
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
-
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_contacts, menu);
+        this.menu = menu;
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -159,5 +157,9 @@ public class ContactsFragment extends BaseFragment {
             e.printStackTrace();
         }
         return nc;
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 }
