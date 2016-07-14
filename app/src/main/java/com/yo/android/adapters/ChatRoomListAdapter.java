@@ -49,7 +49,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
     @Override
     public void bindView(int position, ChatRoomViewHolder holder, final ChatRoom item) {
 
-
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getOpponentPhoneNumber().equals(yourPhoneNumber)) {
@@ -63,6 +62,9 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
         } else if (!TextUtils.isEmpty(item.getMessage())) {
             holder.getChat().setText(item.getMessage());
+            holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
+        } else {
+            holder.getChat().setText("");
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
         }
         holder.getTimeStamp().setText(item.getTimeStamp());

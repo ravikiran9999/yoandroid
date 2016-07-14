@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -153,20 +152,30 @@ public class Util {
         } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
             return context.getString(R.string.yesterday);
         } else {
-            Format format = android.text.format.DateFormat.getDateFormat(context);
+            SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
             return format.format(new Date(time));
+//            Format format = android.text.format.DateFormat.getDateFormat(context);
+//            return format.format(new Date(time));
         }
     }
 
     public static String getTimeFormat(@NonNull final Context context, long time) {
         SimpleDateFormat sFormat;
-        if (DateFormat.is24HourFormat(context)) {
-            sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        } else {
-            sFormat = new SimpleDateFormat("KK:mm aa", Locale.getDefault());
+        String currentTime;
+        try {
+            if (DateFormat.is24HourFormat(context.getApplicationContext())) {
+                sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            } else {
+                sFormat = new SimpleDateFormat("KK:mm aa", Locale.getDefault());
+            }
+            currentTime = sFormat.format(new Date(time));
+            return currentTime;
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        String currentTime = sFormat.format(new Date(time));
-        return currentTime;
+
+        return new SimpleDateFormat("hh:mm a").format(new Date(time));
     }
 
     public static void prepareSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
@@ -235,5 +244,18 @@ public class Util {
                 return true;
             }
         });
+    }
+    public static String getChatListTimeFormat(long time) {
+        Calendar smsTime = Calendar.getInstance();
+        smsTime.setTimeInMillis(time);
+        Calendar now = Calendar.getInstance();
+        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
+            return "Today";
+        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
+            return "Yesterday";
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
+            return format.format(new Date(time));
+        }
     }
 }

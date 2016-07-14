@@ -118,6 +118,7 @@ public class DialerFragment extends BaseFragment {
         bus.register(this);
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -130,6 +131,12 @@ public class DialerFragment extends BaseFragment {
         this.menu = menu;
         Util.prepareSearch(getActivity(), menu, adapter);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        hideDialPad(true);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
