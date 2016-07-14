@@ -229,6 +229,7 @@ public class Util {
             }
         }
     }
+
     public static void registerSearchLister(final Activity activity, final Menu menu) {
         MenuItem view = menu.findItem(R.id.menu_search);
         MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
@@ -248,6 +249,7 @@ public class Util {
             }
         });
     }
+
     public static String getChatListTimeFormat(long time) {
         Calendar smsTime = Calendar.getInstance();
         smsTime.setTimeInMillis(time);
@@ -270,7 +272,7 @@ public class Util {
             searchTextView.setTextColor(Color.BLACK);
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
             mCursorDrawableRes.setAccessible(true);
-            mCursorDrawableRes.set(searchTextView,R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+            mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
         } catch (Exception e) {
         }
     }

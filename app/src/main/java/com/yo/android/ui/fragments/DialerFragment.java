@@ -407,6 +407,7 @@ public class DialerFragment extends BaseFragment {
         showOrHideTabs(false);
         show = true;
         dialPadView.setVisibility(View.VISIBLE);
+        floatingDialer.setVisibility(View.GONE);
         Animation bottomUp = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.bottom_up);
         bottomUp.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -419,7 +420,7 @@ public class DialerFragment extends BaseFragment {
                 btnCallGreen.setVisibility(View.VISIBLE);
                 bottom_layout.setVisibility(View.VISIBLE);
                 btnDialer.setVisibility(View.GONE);
-                floatingDialer.setVisibility(View.GONE);
+
                 showEmptyText();
             }
 
@@ -433,11 +434,12 @@ public class DialerFragment extends BaseFragment {
 
     private void hideDialPad(boolean animate) {
         show = false;
-        floatingDialer.setVisibility(View.VISIBLE);
+
         if (!animate) {
             dialPadView.setVisibility(View.GONE);
             btnCallGreen.setVisibility(View.GONE);
             bottom_layout.setVisibility(View.GONE);
+            floatingDialer.setVisibility(View.VISIBLE);
             return;
         }
         Animation bottomUp = AnimationUtils.loadAnimation(getActivity(), R.anim.bottom_down);
@@ -453,6 +455,7 @@ public class DialerFragment extends BaseFragment {
                 btnCallGreen.setVisibility(View.GONE);
                 bottom_layout.setVisibility(View.GONE);
                 showOrHideTabs(true);
+                floatingDialer.setVisibility(View.VISIBLE);
                 showEmptyText();
 //                btnDialer.setVisibility(View.VISIBLE);
             }

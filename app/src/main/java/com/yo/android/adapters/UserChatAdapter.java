@@ -101,11 +101,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         try {
             String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.WEEK_IN_MILLIS).toString();
             LinearLayout layout = new LinearLayout(context);
-            holder.getChatTimeStamp().setText(Util.getTimeFormat(mContext, item.getTime()));
+            holder.getChatTimeStamp().setText(Util.getChatListTimeFormat(item.getTime()) + " " + Util.getTimeFormat(mContext, item.getTime()));
 
             if (userId.equals(item.getSenderID())) {
 
-                holder.getLinearLayout().setGravity(Gravity.RIGHT);
+                holder.getLinearLayout().setGravity(Gravity.END);
                 if (item.getType().equals(Constants.TEXT)) {
                     layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -127,7 +127,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 addView(holder.getLinearLayoutText(), item, holder);
 
             } else {
-                holder.getLinearLayout().setGravity(Gravity.LEFT);
+                holder.getLinearLayout().setGravity(Gravity.START);
 
                 if (item.getType().equals(Constants.TEXT)) {
                     layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
