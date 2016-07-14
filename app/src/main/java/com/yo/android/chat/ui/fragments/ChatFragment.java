@@ -2,9 +2,11 @@ package com.yo.android.chat.ui.fragments;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,7 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +36,7 @@ import com.yo.android.model.ChatRoom;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -46,6 +51,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private ChatRoomListAdapter chatRoomListAdapter;
     private DatabaseReference reference;
     private DatabaseReference roomReference;
+
+    private Menu menu;
+    public Menu getMenu() {
+        return menu;
+    }
 
     @Inject
     DatabaseHelper databaseHelper;
@@ -69,6 +79,17 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_chat, menu);
+        this.menu = menu;
+        SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+
+        AutoCompleteTextView searchTextView = (AutoCompleteTextView) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        try {
+            searchTextView.setTextColor(Color.BLACK);
+            Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
+            mCursorDrawableRes.setAccessible(true);
+            mCursorDrawableRes.set(searchTextView,R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+        } catch (Exception e) {
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -82,6 +103,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             case R.id.create_group:
                 startActivity(new Intent(getActivity(), CreateGroupActivity.class));
                 break;
+
             default:
                 break;
 
@@ -90,6 +112,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,7 +120,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         listView = (ListView) view.findViewById(R.id.lv_chat_room);
         listView.setOnItemClickListener(this);
-
         reference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
         reference.keepSynced(true);
         roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
