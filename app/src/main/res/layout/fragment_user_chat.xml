@@ -14,12 +14,30 @@
          android:layout_weight="100"
          android:divider="@null"/>
  -->
-    <ListView
-        android:id="@+id/listView"
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="100"
-        android:divider="@null" />
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/time_stamp_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/tab_grey"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:listSelector="@null" />
+    </FrameLayout>
     <!--android:transcriptMode="alwaysScroll"-->
     <LinearLayout
         android:layout_width="match_parent"

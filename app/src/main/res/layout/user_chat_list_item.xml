@@ -16,7 +16,10 @@
         android:background="@drawable/bg_sms_grey"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp">
 
 
     </LinearLayout>
@@ -27,7 +30,7 @@
         android:layout_height="wrap_content"
         android:gravity="right"
         android:textColor="@color/colorPrimary"
-        android:textSize="10sp"
+        android:textSize="9sp"
         tools:text="3:53" />
 
 </LinearLayout>
