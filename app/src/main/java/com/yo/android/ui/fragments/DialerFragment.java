@@ -32,6 +32,7 @@ import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResponse;
 import com.yo.android.model.dialer.CallLogsResult;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -129,7 +130,12 @@ public class DialerFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_dialer, menu);
         this.menu = menu;
+        if(getActivity() instanceof BottomTabsActivity) {
+            ((BottomTabsActivity)getActivity()).setToolBarColor(getResources().getColor(R.color.colorPrimary));
+            Util.changeMenuItemsVisibility(menu, -1, true);
+        }
         Util.prepareSearch(getActivity(), menu, adapter);
+        Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -142,6 +148,7 @@ public class DialerFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         ButterKnife.bind(this, view);
         //
 

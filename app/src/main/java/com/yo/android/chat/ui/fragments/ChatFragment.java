@@ -2,11 +2,9 @@ package com.yo.android.chat.ui.fragments;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,9 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -33,10 +29,10 @@ import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -80,16 +76,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_chat, menu);
         this.menu = menu;
-        SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-
-        AutoCompleteTextView searchTextView = (AutoCompleteTextView) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        try {
-            searchTextView.setTextColor(Color.BLACK);
-            Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
-            mCursorDrawableRes.setAccessible(true);
-            mCursorDrawableRes.set(searchTextView,R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
-        } catch (Exception e) {
+        if(getActivity() instanceof BottomTabsActivity) {
+            ((BottomTabsActivity)getActivity()).setToolBarColor(getResources().getColor(R.color.colorPrimary));
+            Util.changeMenuItemsVisibility(menu, -1, true);
         }
+        Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -198,15 +189,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     final ChatRoom chatRoom = child.getValue(ChatRoom.class);
                     if (chatRoom.getYourPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)) || chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                        arrayOfUsers.add(chatRoom);
 
                         roomReference.keepSynced(true);
                         DatabaseReference reference = roomReference.child(chatRoom.getChatRoomId());
-                        //arrayOfUsers.add(chatRoom);
                         reference.limitToLast(1).addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                 ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                                arrayOfUsers.add(chatRoom);
+
                                 if (dataSnapshot.hasChildren()) {
                                     chatRoom.setMessage(chatMessage.getMessage());
                                     if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
