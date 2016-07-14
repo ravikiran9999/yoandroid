@@ -14,6 +14,18 @@
          android:layout_weight="100"
          android:divider="@null"/>
  -->
+    <TextView
+        android:id="@+id/time_stamp_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="timestamp"
+        android:textColor="@color/tab_grey"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

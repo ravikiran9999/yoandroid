@@ -1,6 +1,7 @@
 package com.yo.android.chat.ui.fragments;
 
 
+import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +29,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -83,6 +85,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private ActionMode activeMode = null;
     private ChatMessage chatMessage;
+    private TextView listStickeyHeader;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -129,6 +132,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
 
         listView = (ListView) view.findViewById(R.id.listView);
+        listStickeyHeader = (TextView) view.findViewById(R.id.time_stamp_header);
         listView.setOnItemLongClickListener(this);
         listView.setMultiChoiceModeListener(this);
 //        listView.getWrappedList().setDivider(null);
@@ -146,9 +150,23 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         return view;
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                if (userChatAdapter.getCount() > 0) {
+                    String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
+                    if (listStickeyHeader != null) {
+                        listStickeyHeader.setText("" + headerText);
+                    }
+                }
+
+            }
+        });
     }
 
     @Override
