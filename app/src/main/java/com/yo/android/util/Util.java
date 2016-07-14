@@ -7,8 +7,10 @@ import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.ui.BottomTabsActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -214,6 +217,34 @@ public class Util {
         });
     }
 
+    public static void changeMenuItemsVisibility(Menu menu, int menuId, boolean visibility) {
+        int size = menu.size();
+        for (int i = 0; i < size; i++) {
+            MenuItem item = menu.getItem(i);
+            if (item.getItemId() != menuId) {
+                item.setVisible(visibility);
+            }
+        }
+    }
+    public static void registerSearchLister(final Activity activity, final Menu menu) {
+        MenuItem view = menu.findItem(R.id.menu_search);
+        MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                if (activity instanceof BottomTabsActivity) {
+                    ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
+                }
+                Util.changeMenuItemsVisibility(menu, -1, true);
+                return true;
+            }
+        });
+    }
     public static String getChatListTimeFormat(long time) {
         Calendar smsTime = Calendar.getInstance();
         smsTime.setTimeInMillis(time);
