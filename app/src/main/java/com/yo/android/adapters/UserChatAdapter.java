@@ -105,7 +105,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
             if (userId.equals(item.getSenderID())) {
 
-                holder.getLinearLayout().setGravity(Gravity.RIGHT);
+                holder.getLinearLayout().setGravity(Gravity.END);
                 if (item.getType().equals(Constants.TEXT)) {
                     layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -127,7 +127,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 addView(holder.getLinearLayoutText(), item, holder);
 
             } else {
-                holder.getLinearLayout().setGravity(Gravity.LEFT);
+                holder.getLinearLayout().setGravity(Gravity.START);
 
                 if (item.getType().equals(Constants.TEXT)) {
                     layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
