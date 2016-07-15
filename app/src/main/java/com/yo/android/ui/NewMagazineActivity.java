@@ -116,7 +116,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-       /* final String magazineTitle = etTitle.getText().toString();
+        final String magazineTitle = etTitle.getText().toString();
         final String magazineDesc = etDesc.getText().toString();
 
         if (togglePrivacy.isChecked()) {
@@ -133,6 +133,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                 public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
                     Intent intent = new Intent(NewMagazineActivity.this, LoadMagazineActivity.class);
                     intent.putExtra("MagazineId", response.body().getId());
+                    intent.putExtra("MagazineTitle", magazineTitle);
                     startActivity(intent);
                 }
 
@@ -144,6 +145,6 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
         }
         else {
             mToastFactory.showToast("Please enter the Magazine Title");
-        }*/
+        }
     }
 }

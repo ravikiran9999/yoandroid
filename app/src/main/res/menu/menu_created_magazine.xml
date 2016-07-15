@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/menu_edit"
+        android:icon="@drawable/ic_magazine_edit"
+        app:showAsAction="always|collapseActionView" />
+</menu>
