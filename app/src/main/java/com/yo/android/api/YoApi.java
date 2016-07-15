@@ -2,10 +2,13 @@ package com.yo.android.api;
 
 import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
+
 import com.yo.android.model.Magazine;
 import com.yo.android.model.MagazineArticles;
+
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
+import com.yo.android.model.Response;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 
@@ -102,6 +105,13 @@ public class YoApi {
         @DELETE("api/magzines/{magzine_id}.json")
         Call<ResponseBody> deleteMagazineAPI(@Path("magzine_id") String magzine_id, @Query("access_token") String access_token);
 
+        @FormUrlEncoded
+        @PUT("/api/magzines/{magzine_id}.json")
+        Call<Response> addArticleMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id,@Field("article_ids[]") List<String> articles);
+
+        @FormUrlEncoded
+        @PUT("/api/magzines/{magzine_id}.json")
+        Call<Response> addArticleToMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id,@Field("article_ids[]") List<String> articles);
     }
 
     public interface YoRefreshTokenService {

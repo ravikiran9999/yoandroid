@@ -1,6 +1,7 @@
 package com.yo.android.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,6 +25,7 @@ import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
@@ -43,6 +47,7 @@ public class BottomTabsActivity extends BaseActivity {
     BalanceHelper balanceHelper;
     TabsPagerAdapter mAdapter;
     CustomViewPager viewPager;
+    private int toolBarColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +78,17 @@ public class BottomTabsActivity extends BaseActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
+                setToolBarColor(getResources().getColor(R.color.colorPrimary));
                 try {
                     setToolBarTitle((dataList.get(position)).getTitle());
                 } catch (Exception e) {
                     mLog.w("onPageSelected", e);
                 }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
             }
 
             @Override
@@ -100,14 +106,18 @@ public class BottomTabsActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        int position = tabLayout.getSelectedTabPosition();
-        Fragment fragment = mAdapter.getItem(position);
+        Fragment fragment = getFragment();
         boolean handle = fragment instanceof BaseFragment && ((BaseFragment) fragment).onBackPressHandle();
         if (handle) {
             mLog.i("BottomTabsActivity", "Back button handled");
         } else {
             super.onBackPressed();
         }
+    }
+
+    private Fragment getFragment() {
+        int position = tabLayout.getSelectedTabPosition();
+        return mAdapter.getItem(position);
     }
 
     public void setToolBarTitle(String title) {
@@ -158,6 +168,29 @@ public class BottomTabsActivity extends BaseActivity {
         return states;
     }
 
+    public void setToolBarColor(int toolBarColor) {
+        this.toolbar.setBackgroundColor(toolBarColor);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (R.id.menu_search == item.getItemId()) {
+            setToolBarColor(Color.WHITE);
+            Menu menu = null;
+            if (getFragment() instanceof ChatFragment) {
+                menu = ((ChatFragment) getFragment()).getMenu();
+            }else if (getFragment() instanceof ContactsFragment) {
+                menu = ((ContactsFragment) getFragment()).getMenu();
+            }else if (getFragment() instanceof DialerFragment) {
+                menu = ((DialerFragment) getFragment()).getMenu();
+            }
+            if (menu != null) {
+                Util.changeMenuItemsVisibility(menu, R.id.menu_search, false);
+                Util.registerSearchLister(this, menu);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public class TabsData {
 
@@ -177,5 +210,6 @@ public class BottomTabsActivity extends BaseActivity {
             return drawable;
         }
     }
+
 
 }

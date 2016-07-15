@@ -6,7 +6,7 @@ package com.yo.android.model;
 public class Response {
     private String response;
 
-    private String data;
+    private Object data;
 
     private String code;
 
@@ -20,12 +20,12 @@ public class Response {
         this.response = response;
     }
 
-    public String getData ()
+    public Object getData ()
     {
         return data;
     }
 
-    public void setData (String data)
+    public void setData (Object data)
     {
         this.data = data;
     }

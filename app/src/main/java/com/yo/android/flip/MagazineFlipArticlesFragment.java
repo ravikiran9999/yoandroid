@@ -1,6 +1,7 @@
 package com.yo.android.flip;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +34,7 @@ import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.IO;
 import com.aphidmobile.utils.UI;
+import com.orion.android.common.util.ToastFactoryImpl;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -40,6 +42,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.util.Constants;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -102,6 +105,17 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         flipView.setAdapter(myBaseAdapter);
         flipContainer.addView(flipView);
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constants.ADD_ARTICLES_TO_MAGAZINE && getActivity() != null) {
+                new ToastFactoryImpl(getActivity()).showToast(getResources().getString(R.string.article_added_success));
+            }
+        }
     }
 
     @Override
@@ -447,7 +461,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 public void onClick(View v) {
 
                     Intent intent = new Intent(getActivity(), CreateMagazineActivity.class);
-                    startActivity(intent);
+                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
+                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
                 }
             });
 

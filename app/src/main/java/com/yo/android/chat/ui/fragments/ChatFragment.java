@@ -29,6 +29,7 @@ import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -44,9 +45,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private ListView listView;
     private ArrayList<ChatRoom> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
-    private ChatMessage forwardChatMessage;
-    DatabaseReference reference;
-    DatabaseReference roomReference;
+    private DatabaseReference reference;
+    private DatabaseReference roomReference;
+
+    private Menu menu;
+    public Menu getMenu() {
+        return menu;
+    }
 
     @Inject
     DatabaseHelper databaseHelper;
@@ -70,6 +75,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_chat, menu);
+        this.menu = menu;
+        Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -83,6 +90,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             case R.id.create_group:
                 startActivity(new Intent(getActivity(), CreateGroupActivity.class));
                 break;
+
             default:
                 break;
 
@@ -91,6 +99,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -98,7 +107,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         listView = (ListView) view.findViewById(R.id.lv_chat_room);
         listView.setOnItemClickListener(this);
-
         reference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
         reference.keepSynced(true);
         roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
@@ -120,7 +128,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         ChatRoom chatRoom = chatRoomListAdapter.getItem(position);
 
         String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
-        forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
+        ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
 
         if (forwardChatMessage != null) {
             navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), forwardChatMessage);
@@ -177,15 +185,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     final ChatRoom chatRoom = child.getValue(ChatRoom.class);
                     if (chatRoom.getYourPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)) || chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                        arrayOfUsers.add(chatRoom);
 
                         roomReference.keepSynced(true);
                         DatabaseReference reference = roomReference.child(chatRoom.getChatRoomId());
-                        //arrayOfUsers.add(chatRoom);
                         reference.limitToLast(1).addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                 ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                                arrayOfUsers.add(chatRoom);
+
                                 if (dataSnapshot.hasChildren()) {
                                     chatRoom.setMessage(chatMessage.getMessage());
                                     if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {

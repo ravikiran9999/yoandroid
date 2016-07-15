@@ -81,6 +81,7 @@
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".chat.ui.ChatActivity"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".chat.ui.LoginActivity"
