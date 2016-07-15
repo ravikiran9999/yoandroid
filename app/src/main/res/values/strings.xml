@@ -124,5 +124,7 @@
     <string name="no_article_added">There is no article added yet.\nAdd any article to create your own magazine</string>
     <string name="yesterday">"Yesterday "</string>
     <string name="otp_failure">Sorry, Unable to validate your OTP.</string>
+    <string name="some_thing_wrong">Something went wrong. Please try again later</string>
+    <string name="article_added_success">Article added successfully</string>
 
 </resources>

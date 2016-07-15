@@ -32,4 +32,7 @@ public class Constants {
     public static final String ROOM = "Room";
     public static final String ROOM_ID = "RoomID";
 
+    public static final String MAGAZINE_ADD_ARTICLE_ID = "magazine_add_article_id";
+    public static final int ADD_ARTICLES_TO_MAGAZINE = 201;
+    public static int SUCCESS_CODE = 200;
 }

@@ -59,7 +59,6 @@ public class MagazinesFragment extends Fragment {
 
         switch(item.getItemId()) {
             case R.id.menu_create_magazines:
-
                 Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
                 startActivity(createMagazinesIntent);
 
