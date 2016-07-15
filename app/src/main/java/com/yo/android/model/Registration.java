@@ -1,5 +1,8 @@
 package com.yo.android.model;
 
+import android.database.Cursor;
+import android.provider.ContactsContract;
+
 import java.util.ArrayList;
 
 /**
@@ -39,4 +42,5 @@ public class Registration {
     public void setmPhoneContacts(ArrayList<Contacts> mPhoneContacts) {
         this.mPhoneContacts = mPhoneContacts;
     }
+
 }

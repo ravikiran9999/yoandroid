@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BottomTabsActivity;
@@ -43,6 +44,8 @@ public class OTPFragment extends BaseFragment {
 
     @Inject
     YoApi.YoService yoService;
+    @Inject
+    ContactsSyncManager contactsSyncManager;
     @Inject
     ConnectivityHelper mHelper;
 
@@ -116,6 +119,7 @@ public class OTPFragment extends BaseFragment {
 
                 count++;
                 navigateToNext(response, phoneNumber, password);
+                contactsSyncManager.syncContacts();
             }
 
             @Override
