@@ -25,31 +25,18 @@
         android:hint="Type Group Name"
         android:textSize="18sp" />
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/add_contact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
+        android:layout_marginRight="20dp"
+        android:drawableLeft="@drawable/ic_new_chat_group_add_contact"
+        android:text="@string/add_contact"
+        android:textSize="18sp"
+        android:drawablePadding="10dp"
+        />
 
-        <EditText
-            android:id="@+id/et_new_chat_group_add_contact"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/add_contact"
-            android:layout_toEndOf="@+id/add_contact"
-            android:hint="Add Contact"
-            android:textSize="18sp" />
-
-        <ImageView
-            android:id="@+id/add_contact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="5dp"
-            android:src="@drawable/ic_new_chat_group_add_contact" />
-
-    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

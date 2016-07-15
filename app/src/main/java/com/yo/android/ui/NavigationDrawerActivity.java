@@ -87,7 +87,6 @@ public class NavigationDrawerActivity extends BaseActivity {
         Intent in = new Intent(getApplicationContext(), SipService.class);
         startService(in);
 
-
     }
 
     public void prepareNavigationDrawerOptions() {
