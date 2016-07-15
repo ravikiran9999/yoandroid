@@ -2,9 +2,9 @@ package com.yo.android.api;
 
 import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
-import com.yo.android.model.Magazine;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
+import com.yo.android.model.Response;
 import com.yo.android.model.Topics;
 
 import java.util.List;
@@ -15,6 +15,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -88,6 +89,13 @@ public class YoApi {
         @POST("/api/articles.json")
         Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id);
 
+        @FormUrlEncoded
+        @PUT("/api/magzines/{magzine_id}.json")
+        Call<Response> addArticleMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id,@Field("article_ids[]") List<String> articles);
+
+        @FormUrlEncoded
+        @PUT("/api/magzines/{magzine_id}.json")
+        Call<Response> addArticleToMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id,@Field("article_ids[]") List<String> articles);
     }
 
     public interface YoRefreshTokenService {
