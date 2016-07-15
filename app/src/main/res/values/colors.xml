@@ -27,4 +27,5 @@
     <color name="semi_tranparent">#b3b3b3</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="magazine_search_box">#F9F9F9</color>
 </resources>

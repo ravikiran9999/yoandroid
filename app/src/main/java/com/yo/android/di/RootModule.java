@@ -24,7 +24,9 @@ import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.CreateMagazineActivity;
+import com.yo.android.ui.CreatedMagazineDetailActivity;
 import com.yo.android.ui.DialerActivity;
+import com.yo.android.ui.EditMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.LoadMagazineActivity;
 import com.yo.android.ui.MainActivity;
@@ -84,6 +86,8 @@ import dagger.Provides;
                 UserCreatedMagazineActivity.class,
                 LoadMagazineActivity.class,
                 ShowPhotoActivity.class,
+                CreatedMagazineDetailActivity.class,
+                EditMagazineActivity.class,
 
                 //Fragments
                 ContactsFragment.class,

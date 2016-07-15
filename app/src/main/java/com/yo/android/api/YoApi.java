@@ -3,18 +3,22 @@ package com.yo.android.api;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Magazine;
+import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.model.Topics;
+import com.yo.android.model.UpdateMagazine;
 
 import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -87,6 +91,16 @@ public class YoApi {
         @FormUrlEncoded
         @POST("/api/articles.json")
         Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id);
+
+        @GET("api/magzines/{magzine_id}.json")
+        Call<MagazineArticles> getArticlesOfMagazineAPI(@Path("magzine_id") String magzine_id, @Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @PUT("api/magzines/{magzine_id}.json")
+        Call<UpdateMagazine> updateMagazinesAPI(@Path("magzine_id") String magzine_id,@Field("access_token") String access_token, @Field("name") String name, @Field("description") String description, @Field("privacy") String privacy);
+
+        @DELETE("api/magzines/{magzine_id}.json")
+        Call<ResponseBody> deleteMagazineAPI(@Path("magzine_id") String magzine_id, @Query("access_token") String access_token);
 
     }
 

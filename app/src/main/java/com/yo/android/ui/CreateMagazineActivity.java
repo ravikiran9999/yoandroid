@@ -85,8 +85,12 @@ public class CreateMagazineActivity extends BaseActivity {
                     startActivityForResult(intent, 2);// Activity is started with requestCode 2
                 }
                 else {
-                    Intent intent = new Intent(CreateMagazineActivity.this, UserCreatedMagazineActivity.class);
-                    intent.putExtra("OwnMagazineTitle", ownMagazineList.get(position).getName());
+                   // Intent intent = new Intent(CreateMagazineActivity.this, UserCreatedMagazineActivity.class);
+                    Intent intent = new Intent(CreateMagazineActivity.this, CreatedMagazineDetailActivity.class);
+                    intent.putExtra("MagazineTitle", ownMagazineList.get(position).getName());
+                    intent.putExtra("MagazineId", ownMagazineList.get(position).getId());
+                    intent.putExtra("MagazineDesc", ownMagazineList.get(position).getDescription());
+                    intent.putExtra("MagazinePrivacy", ownMagazineList.get(position).getPrivacy());
                     startActivity(intent);
                 }
             }
