@@ -1,16 +1,20 @@
 package com.yo.android.api;
 
+import com.google.gson.JsonObject;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
-import com.yo.android.model.Magazine;
+import com.yo.android.model.Contact;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.model.Topics;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -88,6 +92,9 @@ public class YoApi {
         @POST("/api/articles.json")
         Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id);
 
+        @FormUrlEncoded
+        @POST("api/user/contacts_sync.json")
+        Call<Contact> syncContactsAPI(@Field("user[contacts][]") List<String> user);
     }
 
     public interface YoRefreshTokenService {

@@ -42,7 +42,7 @@ public class ContactsFragment extends BaseFragment {
     private ArrayList<Registration> arrayOfUsers;
     private ContactsListAdapter contactsListAdapter;
     private ListView listView;
-    private static ArrayList<Contacts> nc = new ArrayList<>();
+
     private Registration registeredUsers;
     private DatabaseReference reference;
 
@@ -67,7 +67,6 @@ public class ContactsFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         listView = (ListView) view.findViewById(R.id.lv_contacts);
-        //ArrayList<Contacts> contact = readContacts();
         return view;
     }
 
@@ -131,43 +130,6 @@ public class ContactsFragment extends BaseFragment {
         if (getView() != null) {
             getView().findViewById(R.id.progress).setVisibility(View.GONE);
         }
-    }
-
-    private ArrayList<Contacts> readContacts() {
-        try {
-            Cursor contactsCursor = getActivity().getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-
-            while (contactsCursor.moveToNext()) {
-
-                Contacts contactBean = new Contacts();
-                contactBean.setId(contactsCursor.getLong(contactsCursor.getColumnIndex(ContactsContract.Contacts._ID)));
-
-                String contactId = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts._ID));
-
-                contactBean.setmFirstName(contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
-
-                if (Integer.parseInt(contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    ArrayList<PhNumberBean> nc1 = new ArrayList<>();
-                    Cursor phoneNumberCursor = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contactId}, null);
-
-                    PhNumberBean phNumberBean = new PhNumberBean();
-                    while (phoneNumberCursor.moveToNext()) {
-                        String phoneNumber = phoneNumberCursor.getString(phoneNumberCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        phNumberBean.setmPhNum(phoneNumber);
-
-
-                    }
-                    nc1.add(phNumberBean);
-                    contactBean.setmCotactNumber(nc1);
-                    phoneNumberCursor.close();
-                }
-                nc.add(contactBean);
-            }
-            contactsCursor.close();
-        }catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        return nc;
     }
 
     public Menu getMenu() {

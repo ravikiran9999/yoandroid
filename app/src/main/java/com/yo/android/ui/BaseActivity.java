@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.google.firebase.database.FirebaseDatabase;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ResourcesHelper;
@@ -59,7 +58,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Injector.obtain(getApplication()).inject(this);
         mAwsLogsCallBack.onCalled(getBaseContext(), getIntent());
-
 
     }
 
