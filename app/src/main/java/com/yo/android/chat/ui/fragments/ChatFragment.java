@@ -76,10 +76,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_chat, menu);
         this.menu = menu;
-        if(getActivity() instanceof BottomTabsActivity) {
-            ((BottomTabsActivity)getActivity()).setToolBarColor(getResources().getColor(R.color.colorPrimary));
-            Util.changeMenuItemsVisibility(menu, -1, true);
-        }
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
