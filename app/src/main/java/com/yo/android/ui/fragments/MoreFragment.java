@@ -11,14 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
-import com.yo.android.adapters.MenuListAdapter;
+import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
-import com.yo.android.model.MenuData;
+import com.yo.android.model.MoreData;
+import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +35,11 @@ import javax.inject.Named;
 public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
 
-    private MenuListAdapter menuAdapter;
+    private MoreListAdapter menuAdapter;
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
+    FrameLayout changePhoto;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -46,7 +50,20 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.activity_settings, container, false);
+        return inflater.inflate(R.layout.more_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
+        changePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "You have selected change photo.", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     @Override
@@ -59,10 +76,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
      * Prepares the Settings list
      */
     public void prepareSettingsList() {
-        menuAdapter = new MenuListAdapter(getActivity()) {
+        menuAdapter = new MoreListAdapter(getActivity()) {
             @Override
             public int getLayoutId() {
-                return R.layout.settings_row;
+                return R.layout.item_with_options;
             }
         };
         ListView menuListView = (ListView) getView().findViewById(R.id.lv_settings);
@@ -79,23 +96,29 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
      *
      * @return
      */
-    public List<MenuData> getMenuList() {
-        List<MenuData> menuDataList = new ArrayList<>();
-        menuDataList.add(new MenuData("Credit/Wallet", R.drawable.ic_wallet));
-        menuDataList.add(new MenuData("Invite Friends", R.drawable.ic_invitefriends));
-        menuDataList.add(new MenuData("Notifications", R.drawable.ic_notifications));
-        menuDataList.add(new MenuData("Profile", R.drawable.ic_profile));
-        menuDataList.add(new MenuData("Settings", R.drawable.ic_settings));
-        menuDataList.add(new MenuData("Sign out", R.drawable.ic_logout));
+    public List<MoreData> getMenuList() {
+        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
+
+        List<MoreData> menuDataList = new ArrayList<>();
+        menuDataList.add(new MoreData("John Doe", false));
+        menuDataList.add(new MoreData("9987654321", false));
+        menuDataList.add(new MoreData("Yo Credit " + "($" + balance + ")", true));
+        menuDataList.add(new MoreData("Invite Friends", true));
+        menuDataList.add(new MoreData("Notifications", true));
+        menuDataList.add(new MoreData("Settings", true));
+        menuDataList.add(new MoreData("Sign out", false));
         return menuDataList;
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String name = ((MenuData) parent.getAdapter().getItem(position)).getName();
+        String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
+
         if (name.equalsIgnoreCase("sign out")) {
             showLogoutDialog();
+        } else {
+            Toast.makeText(getActivity(), "You have clicked on " + name, Toast.LENGTH_LONG).show();
         }
     }
 
