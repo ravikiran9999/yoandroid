@@ -21,6 +21,7 @@ public class Constants {
     public static final String PHONE_NUMBER = "phone";
     public static final String CURRENT_BALANCE = "current_balance";
     public static final String SUBSCRIBER_ID = "subscriber_id";
+    public static final String DIALER_FILTER = "dialer_filter";
 
     public static final String COUNTRY_NAME = "country_name";
     public static final String COUNTRY_CALL_RATE = "country_call_rate";

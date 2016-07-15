@@ -1,7 +1,7 @@
 package com.yo.android.model.dialer;
 
 public class CallLogsResult {
-//    {
+    //    {
 //        "stime": "2014­11­28  14:04:33",
 //            "billsec": "0",
 //            "salerate": "0.210000",
@@ -23,6 +23,8 @@ public class CallLogsResult {
     private String billsec;
 
     private String destination_name;
+    private boolean header;
+    private String headerTitle;
 
     public String getSalerate() {
         return salerate;
@@ -83,5 +85,21 @@ public class CallLogsResult {
     @Override
     public String toString() {
         return "ClassPojo [salerate = " + salerate + ", salecost = " + salecost + ", dialnumber = " + dialnumber + ", dialedstatus = " + dialedstatus + ", stime = " + stime + ", billsec = " + billsec + ", destination_name = " + destination_name + "]";
+    }
+
+    public boolean isHeader() {
+        return header;
+    }
+
+    public void setHeader(boolean header) {
+        this.header = header;
+    }
+
+    public String getHeaderTitle() {
+        return headerTitle;
+    }
+
+    public void setHeaderTitle(String headerTitle) {
+        this.headerTitle = headerTitle;
     }
 }

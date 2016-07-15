@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Ramesh on 1/7/16.
@@ -128,7 +129,7 @@ public class Util {
     public static String parseDate(String s) {
         try {
             Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
-            String timeStamp = DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
+            String timeStamp = DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
             return timeStamp;
         } catch (ParseException e) {
             e.printStackTrace();
@@ -138,7 +139,9 @@ public class Util {
 
     public static long getTime(String str) {
         try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(str);
+            SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sourceFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = sourceFormat.parse(str);
             return date.getTime();
         } catch (ParseException e) {
             e.printStackTrace();

@@ -32,7 +32,6 @@ import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResponse;
 import com.yo.android.model.dialer.CallLogsResult;
-import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -43,6 +42,7 @@ import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
 
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -76,8 +76,6 @@ public class DialerFragment extends BaseFragment {
     ProgressBar progress;
     @Bind(R.id.txtEmptyCallLogs)
     TextView txtEmptyCallLogs;
-    @Bind(R.id.txtAppCalls)
-    TextView txtAppCalls;
     @Bind(R.id.floatingDialer)
     View floatingDialer;
 
@@ -105,6 +103,8 @@ public class DialerFragment extends BaseFragment {
     @Named("voip_support")
     boolean isVoipSupported;
     private Menu menu;
+    private List<CallLogsResult> appCalls = new ArrayList<CallLogsResult>();
+    private List<CallLogsResult> paidCalls = new ArrayList<CallLogsResult>();
 
 
     @Override
@@ -138,6 +138,20 @@ public class DialerFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         hideDialPad(true);
+        String str = null;
+        if (item.getItemId() == R.id.menu_all_calls) {
+            str = "all calls";
+        } else if (item.getItemId() == R.id.menu_paid_calls) {
+            str = "paid calls";
+        } else if (item.getItemId() == R.id.menu_app_calls) {
+            str = "app calls";
+        } else if (item.getItemId() == R.id.menu_clear_history) {
+            mToastFactory.showToast("Clear history is not available.");
+        }
+        if (str != null) {
+            preferenceEndPoint.saveStringPreference(Constants.DIALER_FILTER, str);
+            showDataOnFilter();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -242,6 +256,8 @@ public class DialerFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        adapter = new CallLogsAdapter(getActivity());
+        listView.setAdapter(adapter);
         loadCallLogs();
     }
 
@@ -251,10 +267,9 @@ public class DialerFragment extends BaseFragment {
     }
 
     private void loadCallLogs() {
-        adapter = new CallLogsAdapter(getActivity());
-        listView.setAdapter(adapter);
         showProgressDialog();
-
+        appCalls.clear();
+        paidCalls.clear();
         final String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         service.executeAction(voxFactory.getCallLogsBody(phone)).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -264,17 +279,33 @@ public class DialerFragment extends BaseFragment {
                     CallLogsResponse callLogsResponse = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), CallLogsResponse.class);
                     List<CallLogsResult> list = callLogsResponse.getDATA().getRESULT();
                     if (list != null) {
-                        Collections.sort(list, new Comparator<CallLogsResult>() {
+                        for (CallLogsResult callLogsResult : list) {
+                            if ("SIP2SIP Call".equalsIgnoreCase(callLogsResult.getDestination_name())) {
+                                appCalls.add(callLogsResult);
+                            } else {
+                                paidCalls.add(callLogsResult);
+                            }
+                        }
+                        Collections.sort(appCalls, new Comparator<CallLogsResult>() {
                             @Override
                             public int compare(CallLogsResult lhs, CallLogsResult rhs) {
                                 return (int) (Util.getTime(rhs.getStime()) - Util.getTime(lhs.getStime()));
                             }
                         });
-                        adapter.addItems(list);
+                        Collections.sort(paidCalls, new Comparator<CallLogsResult>() {
+                            @Override
+                            public int compare(CallLogsResult lhs, CallLogsResult rhs) {
+                                return (int) (Util.getTime(rhs.getStime()) - Util.getTime(lhs.getStime()));
+                            }
+                        });
+                        showDataOnFilter();
+
                     }
                 } catch (JsonSyntaxException e) {
                     mLog.w("DialerFragment", "loadCallLogs", e);
                 }
+                List<CallLogsResult> temp = new ArrayList<CallLogsResult>();
+
                 showEmptyText();
             }
 
@@ -287,10 +318,41 @@ public class DialerFragment extends BaseFragment {
 
     }
 
+    private void showDataOnFilter() {
+        final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
+        List<CallLogsResult> results = new ArrayList<>();
+        if (filter.equalsIgnoreCase("all calls")) {
+            prepare("All Calls", results, appCalls);
+            prepare("Paid Calls", results, paidCalls);
+        } else if (filter.equalsIgnoreCase("App Calls")) {
+            prepare("App Calls", results, appCalls);
+        } else {
+            prepare("Paid Calls", results, paidCalls);
+        }
+        adapter.addItems(results);
+        showEmptyText();
+
+    }
+
+    private void prepare(String type, List<CallLogsResult> results, List<CallLogsResult> checkList) {
+        if (!checkList.isEmpty()) {
+            CallLogsResult result = new CallLogsResult();
+            result.setHeader(true);
+            result.setHeaderTitle(type);
+            results.add(result);
+            results.addAll(checkList);
+        }
+    }
+
     private void showEmptyText() {
+        final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
+        if (filter.equalsIgnoreCase("all calls")) {
+            txtEmptyCallLogs.setText("No call logs history available.");
+        } else {
+            txtEmptyCallLogs.setText("No " + filter + " history available.");
+        }
         boolean nonEmpty = show || listView.getAdapter().getCount() > 0;
         txtEmptyCallLogs.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
-        txtAppCalls.setVisibility(nonEmpty ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -310,15 +372,29 @@ public class DialerFragment extends BaseFragment {
     public class CallLogsViewHolder extends AbstractViewHolder {
 
         private TextView opponentName;
+
+        public TextView getHeader() {
+            return header;
+        }
+
+        private TextView header;
         private TextView timeStamp;
 
         private ImageView messageIcon;
 
         private ImageView callIcon;
 
+        public View getRowContainer() {
+            return rowContainer;
+        }
+
+        private View rowContainer;
+
         public CallLogsViewHolder(View view) {
             super(view);
             opponentName = (TextView) view.findViewById(R.id.tv_phone_number);
+            header = (TextView) view.findViewById(R.id.header);
+            rowContainer = view.findViewById(R.id.row_container);
             timeStamp = (TextView) view.findViewById(R.id.tv_time_stamp);
             messageIcon = (ImageView) view.findViewById(R.id.iv_message_type);
             callIcon = (ImageView) view.findViewById(R.id.iv_contact_type);
@@ -359,7 +435,7 @@ public class DialerFragment extends BaseFragment {
 
         @Override
         protected boolean hasData(CallLogsResult event, String key) {
-            if (event.getDialnumber().contains(key)) {
+            if (event.getDialnumber() != null && event.getDialnumber().contains(key)) {
                 return true;
             }
             return super.hasData(event, key);
@@ -369,7 +445,17 @@ public class DialerFragment extends BaseFragment {
         public void bindView(int position, CallLogsViewHolder holder, final CallLogsResult item) {
             holder.getOpponentName().setText(item.getDialnumber());
             item.getDialedstatus();//NOT  ANSWER,ANSWER
-            if (item.getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
+            if (item.isHeader()) {
+                holder.getHeader().setVisibility(View.VISIBLE);
+                holder.getRowContainer().setVisibility(View.GONE);
+                holder.getHeader().setText(item.getHeaderTitle());
+            } else {
+                holder.getHeader().setVisibility(View.GONE);
+                holder.getRowContainer().setVisibility(View.VISIBLE);
+            }
+            if (item.isHeader()) {
+                mLog.i("CallLogsAdapter", "Header displayed");
+            } else if (item.getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
                 holder.getTimeStamp().setText(Util.parseDate(item.getStime()));
                 holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
             } else {
@@ -391,6 +477,7 @@ public class DialerFragment extends BaseFragment {
                     ContactsListAdapter.showUserChatScreen(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), item.getDialnumber());
                 }
             });
+
         }
 
 
