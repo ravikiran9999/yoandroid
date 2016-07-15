@@ -3,10 +3,7 @@ package com.yo.android.api;
 import com.google.gson.JsonObject;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
-<<<<<<< HEAD
 import com.yo.android.model.Contact;
-=======
->>>>>>> 16f4ee7439a31db72617f2aab0f89b003e7f936d
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.model.Response;
