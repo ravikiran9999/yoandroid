@@ -78,16 +78,17 @@ public class BottomTabsActivity extends BaseActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
+                setToolBarColor(getResources().getColor(R.color.colorPrimary));
                 try {
                     setToolBarTitle((dataList.get(position)).getTitle());
                 } catch (Exception e) {
                     mLog.w("onPageSelected", e);
                 }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
             }
 
             @Override
