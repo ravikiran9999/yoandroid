@@ -102,13 +102,13 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.i(TAG, "onQueryTextChange: " + query);
+                mLog.i(TAG, "onQueryTextChange: " + query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.i(TAG, "onQueryTextChange: " + newText);
+                mLog.i(TAG, "onQueryTextChange: " + newText);
                 adapter.performSearch(newText);
                 showEmptyText();
                 return true;
@@ -131,7 +131,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_PULSE, callRateDetail.getPulse());
-            preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_PREFIX, callRateDetail.getPrefix());
+            preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_PREFIX, "+" + callRateDetail.getPrefix());
             setResult(RESULT_OK);
             finish();
         }

@@ -11,7 +11,7 @@ public class MagazineArticles {
     private String name;
     private String description;
     private String privacy;
-    private List<Articles> articlesList;
+    private List<Articles> articles;
 
     public String getId() {
         return id;
@@ -30,11 +30,11 @@ public class MagazineArticles {
     }
 
     public List<Articles> getArticlesList() {
-        return articlesList;
+        return articles;
     }
 
     public void setArticlesList(List<Articles> articlesList) {
-        this.articlesList = articlesList;
+        this.articles = articlesList;
     }
 
     public String getDescription() {
