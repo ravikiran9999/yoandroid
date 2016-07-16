@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yo.android.R;
+import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.ui.CreateMagazineActivity;
@@ -21,7 +22,7 @@ import com.yo.android.ui.NewMagazineActivity;
 /**
  * Created by creatives on 6/27/2016.
  */
-public class MagazinesFragment extends Fragment {
+public class MagazinesFragment extends BaseFragment {
 
     public MagazinesFragment() {
         // Required empty public constructor
