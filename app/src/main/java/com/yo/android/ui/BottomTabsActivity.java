@@ -183,6 +183,8 @@ public class BottomTabsActivity extends BaseActivity {
                 menu = ((ContactsFragment) getFragment()).getMenu();
             }else if (getFragment() instanceof DialerFragment) {
                 menu = ((DialerFragment) getFragment()).getMenu();
+            } else if (getFragment() instanceof MagazinesFragment) {
+                menu = ((MagazinesFragment) getFragment()).getMenu();
             }
             if (menu != null) {
                 Util.changeMenuItemsVisibility(menu, R.id.menu_search, false);
