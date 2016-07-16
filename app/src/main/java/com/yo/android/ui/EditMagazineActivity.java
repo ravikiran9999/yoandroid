@@ -110,7 +110,7 @@ public class EditMagazineActivity extends BaseActivity {
                     yoService.updateMagazinesAPI(magazineId, accessToken, title, description, magazinePrivacy).enqueue(new Callback<UpdateMagazine>() {
                         @Override
                         public void onResponse(Call<UpdateMagazine> call, Response<UpdateMagazine> response) {
-
+                            finish();
                         }
 
                         @Override
