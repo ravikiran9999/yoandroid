@@ -36,6 +36,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/imv_contact_pic"
+        android:layout_toLeftOf="@+id/iv_message_type"
         android:ellipsize="end"
         android:maxLines="2"
         android:textColor="@android:color/black"

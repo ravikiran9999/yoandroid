@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -13,8 +14,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
-import com.yo.android.model.ChatRoom;
-import com.yo.android.model.Registration;
+import com.yo.android.model.Contact;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.OutGoingCallActivity;
 
@@ -22,15 +22,10 @@ import com.yo.android.voip.OutGoingCallActivity;
  * Created by rdoddapaneni on 6/29/2016.
  */
 
-public class ContactsListAdapter extends AbstractBaseAdapter<Registration, RegisteredContactsViewHolder> {
+public class ContactsListAdapter extends AbstractBaseAdapter<Contact, RegisteredContactsViewHolder> {
 
     private Context context;
     private String userId;
-
-    public ContactsListAdapter(Context context) {
-        super(context);
-        this.context = context;
-    }
 
     public ContactsListAdapter(Context context, String userId) {
         super(context);
@@ -49,24 +44,32 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
     }
 
     @Override
-    public void bindView(final int position, RegisteredContactsViewHolder holder, Registration item) {
+    public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
 
-        holder.getContactNumber().setText(item.getPhoneNumber());
+        if (item.getName() == null) {
+            holder.getContactNumber().setText(item.getPhoneNo());
+        } else {
+            holder.getContactNumber().setText(item.getName());
+        }
         //holder.getContactMail().setText(item.getEmailId());
         holder.getMessageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Registration registration = getAllItems().get(position);
-                String yourPhoneNumber = userId;
-                String opponentPhoneNumber = registration.getPhoneNumber();
-                showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
+                Contact registration = item;
+                if (registration.getYoAppUser()) {
+                    String yourPhoneNumber = userId;
+                    String opponentPhoneNumber = registration.getPhoneNo();
+                    showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
+                } else {
+                    Toast.makeText(mContext, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         holder.getCallView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Registration registration = getAllItems().get(position);
-                String opponentPhoneNumber = registration.getPhoneNumber();
+                Contact registration = item;
+                String opponentPhoneNumber = registration.getPhoneNo();
                 if (opponentPhoneNumber != null) {
                     Intent intent = new Intent(context, OutGoingCallActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -75,6 +78,11 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
                 }
             }
         });
+        if (item.getYoAppUser()) {
+            holder.getMessageView().setImageResource(R.drawable.ic_message);
+        } else {
+            holder.getMessageView().setImageResource(R.drawable.ic_invite_friends);
+        }
 
     }
 
@@ -113,6 +121,6 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
         intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
         context.startActivity(intent);
-        
+
     }
 }
