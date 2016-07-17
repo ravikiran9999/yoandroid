@@ -26,6 +26,9 @@ import com.yo.android.model.Registration;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -38,6 +41,7 @@ import retrofit2.Response;
 public class OTPFragment extends BaseFragment {
 
     private static final String tempPassword = "123456";
+
     private String phoneNumber;
     private EditText otp;
     private int count = 0;
@@ -119,7 +123,6 @@ public class OTPFragment extends BaseFragment {
 
                 count++;
                 navigateToNext(response, phoneNumber, password);
-                contactsSyncManager.syncContacts();
             }
 
             @Override

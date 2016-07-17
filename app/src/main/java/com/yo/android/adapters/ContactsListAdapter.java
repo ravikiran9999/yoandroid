@@ -14,15 +14,19 @@ import com.yo.android.R;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.model.ChatRoom;
+import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.OutGoingCallActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rdoddapaneni on 6/29/2016.
  */
 
-public class ContactsListAdapter extends AbstractBaseAdapter<Registration, RegisteredContactsViewHolder> {
+public class ContactsListAdapter extends AbstractBaseAdapter<Contact, RegisteredContactsViewHolder> {
 
     private Context context;
     private String userId;
@@ -49,24 +53,29 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Registration, Regis
     }
 
     @Override
-    public void bindView(final int position, RegisteredContactsViewHolder holder, Registration item) {
-
-        holder.getContactNumber().setText(item.getPhoneNumber());
+    public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
+        if(!item.getYoAppUser()) {
+            holder.getContactNumber().setText(item.getPhoneNo());
+        } else {
+            holder.getContactNumber().setText(item.getPhoneNo());
+        }
         //holder.getContactMail().setText(item.getEmailId());
         holder.getMessageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Registration registration = getAllItems().get(position);
+                //Registration registration = getAllItems().get(position);
                 String yourPhoneNumber = userId;
-                String opponentPhoneNumber = registration.getPhoneNumber();
+                String opponentPhoneNumber = item.getPhoneNo();
                 showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
             }
         });
+
         holder.getCallView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Registration registration = getAllItems().get(position);
-                String opponentPhoneNumber = registration.getPhoneNumber();
+                //Registration registration = getAllItems().get(position);
+                //String opponentPhoneNumber = registration.getPhoneNumber();
+                String opponentPhoneNumber = item.getPhoneNo();
                 if (opponentPhoneNumber != null) {
                     Intent intent = new Intent(context, OutGoingCallActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

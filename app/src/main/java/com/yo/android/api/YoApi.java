@@ -8,9 +8,11 @@ import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.model.Response;
 import com.yo.android.model.Topics;
+import com.yo.android.model.YoAppContacts;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -96,7 +98,10 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/user/contacts_sync.json")
-        Call<Contact> syncContactsAPI(@Field("user[contacts][]") List<String> user);
+        Call<ResponseBody> syncContactsAPI(@Field("user[contacts][]") List<String> user);
+
+        @GET("api/user.json")
+        Call<ResponseBody> getYoAppContactsAPI(@Query("page") int page, @Query("limit") int limit);
 
         @PUT("/api/magzines/{magzine_id}.json")
         Call<Response> addArticleMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id,@Field("article_ids[]") List<String> articles);

@@ -4,15 +4,25 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 
+import com.google.gson.JsonObject;
+import com.orion.android.common.logger.Log;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Contact;
+import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -24,8 +34,8 @@ import retrofit2.Response;
 @Singleton
 public class ContactsSyncManager {
 
-    YoApi.YoService yoService;
-    Context context;
+    private YoApi.YoService yoService;
+    private Context context;
 
     @Inject
     public ContactsSyncManager(YoApi.YoService yoService, Context context) {
@@ -33,22 +43,7 @@ public class ContactsSyncManager {
         this.context = context;
     }
 
-    public void syncContacts() {
-        List<String> contactsList = readContacts();
-        yoService.syncContactsAPI(contactsList).enqueue(new Callback<Contact>() {
-            @Override
-            public void onResponse(Call<Contact> call, Response<Contact> response) {
-                response.toString();
-            }
-
-            @Override
-            public void onFailure(Call<Contact> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
-
-    private ArrayList<String> readContacts() {
+    public ArrayList<String> readContacts() {
         ArrayList<String> nc = new ArrayList<>();
         try {
             Cursor contactsCursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);

@@ -19,15 +19,31 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.yo.android.R;
 import com.yo.android.adapters.AppContactsListAdapter;
-import com.yo.android.adapters.ContactsListAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.ChatActivity;
-import com.yo.android.model.ChatRoom;
+import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
+import com.yo.android.model.YoAppContacts;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,6 +53,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     private ArrayList<Registration> arrayOfUsers;
     private AppContactsListAdapter appContactsListAdapter;
     private ListView listView;
+
+    @Inject
+    YoApi.YoService yoService;
 
     public YoContactsFragment() {
         // Required empty public constructor
@@ -62,7 +81,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getRegisteredAppUsers();
+        getYoAppUsers();
         arrayOfUsers = new ArrayList<>();
         appContactsListAdapter = new AppContactsListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(appContactsListAdapter);
@@ -118,28 +137,39 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
 
-    private void getRegisteredAppUsers() {
+    private void getYoAppUsers() {
         showProgressDialog();
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        yoService.getYoAppContactsAPI(1,20).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayOfUsers.clear();
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Registration registeredUsers = child.getValue(Registration.class);
-                    if (!(registeredUsers.getPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)))) {
-                        arrayOfUsers.add(registeredUsers);
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                try {
+                    String str = Util.toString(response.body().byteStream());
+                    JSONArray jsonArray = new JSONArray(str);
+                    ArrayList<YoAppContacts> yoAppContactsArrayList = new ArrayList<>();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        YoAppContacts yoAppContacts = new YoAppContacts(jsonObject.getString("id"),
+                                jsonObject.getString("first_name"), jsonObject.getString("last_name"),
+                                jsonObject.getString("description"), jsonObject.getString("avatar"));
+                        yoAppContactsArrayList.add(yoAppContacts);
                     }
+                    appContactsListAdapter.addItems(yoAppContactsArrayList);
+                    dismissProgressDialog();
+                } catch (IOException e) {
+                }catch (JSONException e) {
+
                 }
-                appContactsListAdapter.addItems(arrayOfUsers);
-                dismissProgressDialog();
+
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                dismissProgressDialog();
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
             }
         });
+
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.yo.android.chat.ui.fragments;
 
-import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,17 +18,28 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
+import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.DatabaseHelper;
-import com.yo.android.model.Contacts;
-import com.yo.android.model.PhNumberBean;
+import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
-import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +48,6 @@ import javax.inject.Inject;
 public class ContactsFragment extends BaseFragment {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1001;
-    private ArrayList<Registration> arrayOfUsers;
     private ContactsListAdapter contactsListAdapter;
     private ListView listView;
 
@@ -47,11 +55,17 @@ public class ContactsFragment extends BaseFragment {
     private DatabaseReference reference;
 
     @Inject
+    YoApi.YoService yoService;
+    @Inject
+    ContactsSyncManager contactsSyncManager;
+
+    @Inject
     DatabaseHelper databaseHelper;
     private Menu menu;
 
     public ContactsFragment() {
         // Required empty public constructor
+
     }
 
     @Override
@@ -60,6 +74,7 @@ public class ContactsFragment extends BaseFragment {
         setHasOptionsMenu(true);
         reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         reference.keepSynced(true);
+
     }
 
     @Override
@@ -74,10 +89,10 @@ public class ContactsFragment extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getRegisteredAppUsers();
-        arrayOfUsers = new ArrayList<>();
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
+        syncContacts();
         listView.setAdapter(contactsListAdapter);
+
     }
 
     @Override
@@ -86,32 +101,6 @@ public class ContactsFragment extends BaseFragment {
         this.menu = menu;
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-
-    private void getRegisteredAppUsers() {
-        showProgressDialog();
-
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayOfUsers.clear();
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    registeredUsers = child.getValue(Registration.class);
-                    if(!(registeredUsers.getPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)))) {
-                        arrayOfUsers.add(registeredUsers);
-                    }
-                }
-                contactsListAdapter.addItems(arrayOfUsers);
-                dismissProgressDialog();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                dismissProgressDialog();
-                Toast.makeText(getActivity(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -130,5 +119,41 @@ public class ContactsFragment extends BaseFragment {
 
     public Menu getMenu() {
         return menu;
+    }
+
+    private void syncContacts() {
+        showProgressDialog();
+        List<String> contactsList = contactsSyncManager.readContacts();
+        yoService.syncContactsAPI(contactsList).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                try {
+                    String str = Util.toString(response.body().byteStream());
+                    JSONArray jsonArray = new JSONArray(str);
+                    ArrayList<Contact> phoneNo = new ArrayList();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        Contact contact = new Contact();
+                        contact.setPhoneNo(jsonObject.getString("phoneNo"));
+                        contact.setYoAppUser(jsonObject.getBoolean("yoAppUser"));
+                        phoneNo.add(contact);
+
+                    }
+                    contactsListAdapter.addItems(phoneNo);
+
+                } catch (IOException e) {
+                } catch (JSONException e) {
+
+                }
+                dismissProgressDialog();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
+
     }
 }
