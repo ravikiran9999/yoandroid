@@ -12,28 +12,17 @@ import android.widget.ListView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
-import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
-import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.Contact;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,23 +32,10 @@ import retrofit2.Response;
  */
 
 public class ContactsFragment extends BaseFragment {
-
-    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1001;
     private ContactsListAdapter contactsListAdapter;
     private ListView listView;
 
     private DatabaseReference reference;
-    List<Contact> list;
-    PreferenceEndPoint loginPrefs;
-
-    @Inject
-    YoApi.YoService yoService;
-    @Inject
-    ContactsSyncManager contactsSyncManager;
-
-    @Inject
-    DatabaseHelper databaseHelper;
-
     private Menu menu;
     @Inject
     ContactsSyncManager mSyncManager;
@@ -68,7 +44,6 @@ public class ContactsFragment extends BaseFragment {
         // Required empty public constructor
 
     }
-
 
 
     @Override

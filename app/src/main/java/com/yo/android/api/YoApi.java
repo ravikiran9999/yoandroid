@@ -11,6 +11,7 @@ import com.yo.android.model.Response;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.model.YoAppContacts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +115,7 @@ public class YoApi {
         Call<List<Contact>> syncContactsAPI( @Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
 
         @GET("api/user.json")
-        Call<ResponseBody> getYoAppContactsAPI(@Query("page") int page, @Query("limit") int limit);
+        Call<List<YoAppContacts>> getYoAppContactsAPI(@Query("page") int page, @Query("limit") int limit);
 
         @GET("/api/user/contacts.json")
         Call<List<Contact>> getContacts(@Query("access_token") String access_token);
@@ -134,7 +135,7 @@ public class YoApi {
 
         @Multipart
         @PUT("/api/user/{user_id}.json")
-        Call<ResponseBody> updateProfile(@Path("user_id") String userId,
+        Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
                                          @Part MultipartBody.Part file
         );
     }

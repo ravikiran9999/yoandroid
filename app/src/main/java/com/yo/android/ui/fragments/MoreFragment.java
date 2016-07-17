@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
+import com.yo.android.model.UserProfileInfo;
 import com.yo.android.util.Constants;
 
 import java.io.File;
@@ -37,7 +39,6 @@ import javax.inject.Named;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -82,9 +83,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
-        /*Picasso.with(getActivity())
-                .load(avatar)
-                .into(profilePic);*/
+        if (!TextUtils.isEmpty(avatar)) {
+            Picasso.with(getActivity())
+                    .load(avatar)
+                    .into(profilePic);
+        }
 
     }
 
@@ -102,14 +105,14 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
-        yoService.updateProfile(userId, body).enqueue(new Callback<ResponseBody>() {
+        yoService.updateProfile(userId, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
                 dismissProgressDialog();
             }
         });

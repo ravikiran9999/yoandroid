@@ -3,6 +3,7 @@ package com.yo.android.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
@@ -11,15 +12,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.model.Contact;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.OutGoingCallActivity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by rdoddapaneni on 6/29/2016.
@@ -48,21 +47,37 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
     @Override
     public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
-        if(!item.getYoAppUser()) {
+        if (!item.getYoAppUser()) {
             holder.getContactNumber().setText(item.getPhoneNo());
         } else {
             holder.getContactNumber().setText(item.getPhoneNo());
         }
+
+        if (!TextUtils.isEmpty(item.getImage())) {
+            Picasso.with(mContext)
+                    .load(item.getImage())
+                    .placeholder(R.drawable.ic_contacts)
+                    .error(R.drawable.ic_contacts)
+                    .into(holder.getContactPic());
+        } else {
+            Picasso.with(mContext)
+                    .load(R.drawable.ic_contacts)
+                    .placeholder(R.drawable.ic_contacts)
+                    .error(R.drawable.ic_contacts)
+                    .into(holder.getContactPic());
+        }
+
         //holder.getContactMail().setText(item.getEmailId());
         holder.getMessageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Registration registration = getAllItems().get(position);
-                String yourPhoneNumber = userId;
-                String opponentPhoneNumber = item.getPhoneNo();
-                showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
-
-
+                if (item.getYoAppUser()) {
+                    String yourPhoneNumber = userId;
+                    String opponentPhoneNumber = item.getPhoneNo();
+                    showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
+                } else {
+                    Toast.makeText(mContext, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

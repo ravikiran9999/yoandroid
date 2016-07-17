@@ -5,6 +5,7 @@ public class Contact {
 
 
     private String name;
+    private String image;
     private String phoneNo;
     private boolean yoAppUser;
 
@@ -33,8 +34,17 @@ public class Contact {
         this.yoAppUser = yoAppUser;
     }
 
+
     @Override
     public String toString() {
         return "ClassPojo [phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + "]";
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
