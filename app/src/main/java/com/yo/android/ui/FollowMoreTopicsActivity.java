@@ -1,8 +1,16 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,8 +23,6 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Topics;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +44,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
     private String from;
+    private TagView tagGroup;
+    private List<Topics> topicsList;
+    private List<String> addedTopics;
+    private ArrayList<Tag> initialTags;
+    private ArrayList<Tag> searchTags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +67,12 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             from = intent.getStringExtra("From");
         }
 
-        final TagView tagGroup = (TagView) findViewById(R.id.tag_group);
+        tagGroup = (TagView) findViewById(R.id.tag_group);
         Button done = (Button) findViewById(R.id.btn_done);
 
-        final ArrayList<Tag> tags = new ArrayList<>();
-        final List<Topics> topicsList = new ArrayList<Topics>();
-        final List<String> addedTopics = new ArrayList<String>();
+        initialTags = new ArrayList<>();
+        topicsList = new ArrayList<Topics>();
+        addedTopics = new ArrayList<String>();
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
@@ -96,10 +107,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         tag.tagTextColor = getResources().getColor(R.color.tab_grey);
                         tag.setSelected(false);
                     }
-                    tags.add(tag);
-                    //}
+                    initialTags.add(tag);
                 }
-                tagGroup.addTags(tags);
+                tagGroup.addTags(initialTags);
 
             }
 
@@ -149,6 +159,19 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(searchTags != null) {
+                    for(int i=0; i<initialTags.size(); i++) {
+                        for(int j=0; j<searchTags.size(); j++) {
+                            TagSelected initialSel = (TagSelected)initialTags.get(i);
+                            TagSelected searchSel = (TagSelected)searchTags.get(j);
+                            if(initialSel.getTagId().equals(searchSel.getTagId())) {
+                                initialTags.remove(initialSel);
+                                initialTags.add(searchSel);
+                            }
+                        }
+                    }
+                }
+                tagGroup.addTags(initialTags);
                 for(int k=0 ; k < tagGroup.getTags().size(); k++) {
                     TagSelected t = (TagSelected)tagGroup.getTags().get(k);
                     if(t.getSelected()) {
@@ -218,4 +241,90 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             this.tagId = tagId;
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+        prepareTagSearch(this, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void prepareTagSearch(Activity activity, Menu menu) {
+        final SearchManager searchManager =
+                (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem;
+        SearchView searchView;
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(activity.getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            public static final String TAG = "PrepareSearch in Topics";
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "onQueryTextChange: " + query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG, "onQueryTextChange: " + newText);
+                setTags(newText);
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                setTags("");
+                return true;
+            }
+        });
+    }
+
+    private void setTags(CharSequence cs) {
+        /**
+         * for empty edittext
+         */
+        if (cs.toString().equals("")) {
+            tagGroup.addTags(initialTags);
+        }
+
+        String text = cs.toString();
+        searchTags = new ArrayList<>();
+        TagSelected tag;
+
+        for (int i = 0; i < topicsList.size(); i++) {
+            if (topicsList.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
+                tag = new TagSelected(topicsList.get(i).getName());
+                tag.radius = 1f;
+                tag.setTagId(topicsList.get(i).getId());
+                tag.layoutBorderColor = getResources().getColor(R.color.tab_grey);
+                tag.layoutBorderSize = 1f;
+                tag.layoutColor = getResources().getColor(android.R.color.white);
+                tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+                /*if (i % 2 == 0) // you can set deletable or not
+                    tag.isDeletable = true;*/
+                if(topicsList.get(i).getSelected().equals("true")) {
+                    tag.setSelected(true);
+                    tag.layoutColor = getResources().getColor(R.color.colorPrimary);
+                    tag.tagTextColor = getResources().getColor(android.R.color.white);
+                    tag.setSelected(true);
+                    addedTopics.add(tag.text);
+                }
+                else {
+                    tag.layoutColor = getResources().getColor(android.R.color.white);
+                    tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+                    tag.setSelected(false);
+                }
+                searchTags.add(tag);
+            }
+        }
+        tagGroup.addTags(searchTags);
+
+    }
+
 }

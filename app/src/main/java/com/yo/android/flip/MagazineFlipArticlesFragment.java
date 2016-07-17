@@ -123,46 +123,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         //loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
 
-        articlesList.clear();
-        if (mProgress != null) {
-            mProgress.setVisibility(View.VISIBLE);
-        }
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getAllArticlesAPI(accessToken).enqueue(new Callback<List<Articles>>() {
-            @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
-                if (response.body().size() > 0) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
-                        }
-                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                        //articlesList = new ArrayList<Travels.Data>();
-                        articlesList.add(response.body().get(i));
-                        // }
-                    }
-                    myBaseAdapter.addItems(articlesList);
-                } else {
-                    if (noArticals != null) {
-                        noArticals.setVisibility(View.VISIBLE);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
-                if (noArticals != null) {
-                    noArticals.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+         loadAllArticles();
 
     }
 
@@ -579,6 +540,49 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
             String topicId = intent.getStringExtra("TopicId");
             loadArticles(selectedTopic, topicId);
         }
+    }
+
+    public void loadAllArticles() {
+        articlesList.clear();
+        if (mProgress != null) {
+            mProgress.setVisibility(View.VISIBLE);
+        }
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getAllArticlesAPI(accessToken).enqueue(new Callback<List<Articles>>() {
+            @Override
+            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                if (response.body().size() > 0) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        if (noArticals != null) {
+                            noArticals.setVisibility(View.GONE);
+                        }
+                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                        //articlesList = new ArrayList<Travels.Data>();
+                        articlesList.add(response.body().get(i));
+                        // }
+                    }
+                    myBaseAdapter.addItems(articlesList);
+                } else {
+                    if (noArticals != null) {
+                        noArticals.setVisibility(View.VISIBLE);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Articles>> call, Throwable t) {
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                if (noArticals != null) {
+                    noArticals.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 
