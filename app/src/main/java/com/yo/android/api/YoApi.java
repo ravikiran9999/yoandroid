@@ -3,6 +3,7 @@ package com.yo.android.api;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
+import com.yo.android.model.FindPeople;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
@@ -113,6 +114,12 @@ public class YoApi {
         @FormUrlEncoded
         @PUT("/api/magzines/{magzine_id}.json")
         Call<Response> addArticleMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id, @Field("article_ids[]") List<String> articles);
+
+        @GET("api/user.json")
+        Call<List<FindPeople>> getFindPeopleAPI(@Query("access_token") String access_token, @Query("page") int page, @Query("limit") int limit);
+
+        @GET("api/user/followers.json")
+        Call<List<FindPeople>> getFollowersAPI(@Query("access_token") String access_token);
 
     }
 

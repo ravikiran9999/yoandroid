@@ -74,6 +74,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
 }
 apply plugin: 'com.google.gms.google-services'
 
