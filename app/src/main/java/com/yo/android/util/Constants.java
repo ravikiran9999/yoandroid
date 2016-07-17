@@ -18,6 +18,10 @@ public class Constants {
     public static final String SELECTED_TEXT = "selected_text";
 
     //Preference
+    public static final String USER_ID = "user_id";
+    public static final String USER_AVATAR = "user_avatar";
+    public static final String USER_NAME = "first_name";
+    public static final String USER_STATUS = "user_status";
     public static final String PHONE_NUMBER = "phone";
     public static final String CURRENT_BALANCE = "current_balance";
     public static final String SUBSCRIBER_ID = "subscriber_id";

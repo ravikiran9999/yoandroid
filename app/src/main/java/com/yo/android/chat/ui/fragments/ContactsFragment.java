@@ -9,20 +9,16 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.Contact;
-import com.yo.android.model.Registration;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -35,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -51,8 +48,9 @@ public class ContactsFragment extends BaseFragment {
     private ContactsListAdapter contactsListAdapter;
     private ListView listView;
 
-    private Registration registeredUsers;
     private DatabaseReference reference;
+    List<Contact> list;
+    PreferenceEndPoint loginPrefs;
 
     @Inject
     YoApi.YoService yoService;
@@ -61,12 +59,17 @@ public class ContactsFragment extends BaseFragment {
 
     @Inject
     DatabaseHelper databaseHelper;
+
     private Menu menu;
+    @Inject
+    ContactsSyncManager mSyncManager;
 
     public ContactsFragment() {
         // Required empty public constructor
 
     }
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,11 +91,26 @@ public class ContactsFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
-        syncContacts();
         listView.setAdapter(contactsListAdapter);
 
+        if (mSyncManager.getContacts().isEmpty()) {
+            showProgressDialog();
+            mSyncManager.loadContacts(new Callback<List<Contact>>() {
+                @Override
+                public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                    contactsListAdapter.addItems(mSyncManager.getContacts());
+                    dismissProgressDialog();
+                }
+
+                @Override
+                public void onFailure(Call<List<Contact>> call, Throwable t) {
+                    dismissProgressDialog();
+                }
+            });
+        } else {
+            contactsListAdapter.addItems(mSyncManager.getContacts());
+        }
     }
 
     @Override
@@ -102,6 +120,7 @@ public class ContactsFragment extends BaseFragment {
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
 
     @Override
     public void showProgressDialog() {
@@ -121,39 +140,4 @@ public class ContactsFragment extends BaseFragment {
         return menu;
     }
 
-    private void syncContacts() {
-        showProgressDialog();
-        List<String> contactsList = contactsSyncManager.readContacts();
-        yoService.syncContactsAPI(contactsList).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                try {
-                    String str = Util.toString(response.body().byteStream());
-                    JSONArray jsonArray = new JSONArray(str);
-                    ArrayList<Contact> phoneNo = new ArrayList();
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        Contact contact = new Contact();
-                        contact.setPhoneNo(jsonObject.getString("phoneNo"));
-                        contact.setYoAppUser(jsonObject.getBoolean("yoAppUser"));
-                        phoneNo.add(contact);
-
-                    }
-                    contactsListAdapter.addItems(phoneNo);
-
-                } catch (IOException e) {
-                } catch (JSONException e) {
-
-                }
-                dismissProgressDialog();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                dismissProgressDialog();
-            }
-        });
-
-    }
 }

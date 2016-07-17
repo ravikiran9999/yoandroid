@@ -19,12 +19,15 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
+import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
@@ -34,6 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -101,6 +108,7 @@ public class BottomTabsActivity extends BaseActivity {
         Intent in = new Intent(getApplicationContext(), SipService.class);
         startService(in);
         balanceHelper.checkBalance();
+        loadUserProfileInfo();
 
     }
 
@@ -179,10 +187,12 @@ public class BottomTabsActivity extends BaseActivity {
             Menu menu = null;
             if (getFragment() instanceof ChatFragment) {
                 menu = ((ChatFragment) getFragment()).getMenu();
-            }else if (getFragment() instanceof ContactsFragment) {
+            } else if (getFragment() instanceof ContactsFragment) {
                 menu = ((ContactsFragment) getFragment()).getMenu();
-            }else if (getFragment() instanceof DialerFragment) {
+            } else if (getFragment() instanceof DialerFragment) {
                 menu = ((DialerFragment) getFragment()).getMenu();
+            } else if (getFragment() instanceof MagazinesFragment) {
+                menu = ((MagazinesFragment) getFragment()).getMenu();
             }
             if (menu != null) {
                 Util.changeMenuItemsVisibility(menu, R.id.menu_search, false);
@@ -211,5 +221,23 @@ public class BottomTabsActivity extends BaseActivity {
         }
     }
 
+    private void loadUserProfileInfo() {
+        String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.getUserInfo(access).enqueue(new Callback<UserProfileInfo>() {
+            @Override
+            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                if (response.body() != null) {
+                    preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
+                    preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
+                    preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+                }
+            }
 
+            @Override
+            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+
+            }
+        });
+    }
 }

@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
+import android.telephony.TelephonyManager;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -26,9 +30,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
-import com.yo.android.adapters.AbstractBaseAdapter;
-import com.yo.android.adapters.AbstractViewHolder;
-import com.yo.android.adapters.ContactsListAdapter;
+import com.yo.android.adapters.CallLogsAdapter;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResponse;
 import com.yo.android.model.dialer.CallLogsResult;
@@ -67,8 +69,8 @@ public class DialerFragment extends BaseFragment {
     public static final String REFRESH_CALL_LOGS = "com.yo.android.ACTION_REFRESH_CALL_LOGS";
     @Inject
     VoxApi.VoxService service;
-    @Inject
 
+    @Inject
     VoxFactory voxFactory;
     @Bind(R.id.listView)
     ListView listView;
@@ -85,6 +87,7 @@ public class DialerFragment extends BaseFragment {
     private EventBus bus = EventBus.getDefault();
     private CallLogsAdapter adapter;
     private DialPadView dialPadView;
+    private EditText mDigits;
     private ImageButton deleteButton;
     private static final int[] mButtonIds = new int[]{R.id.zero, R.id.one, R.id.two, R.id.three,
             R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.star,
@@ -103,8 +106,9 @@ public class DialerFragment extends BaseFragment {
     @Named("voip_support")
     boolean isVoipSupported;
     private Menu menu;
-    private List<CallLogsResult> appCalls = new ArrayList<CallLogsResult>();
-    private List<CallLogsResult> paidCalls = new ArrayList<CallLogsResult>();
+    private List<CallLogsResult> appCalls = new ArrayList<>();
+    private List<CallLogsResult> paidCalls = new ArrayList<>();
+    private String sUserSimCountryCode;
 
 
     @Override
@@ -160,9 +164,8 @@ public class DialerFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         ButterKnife.bind(this, view);
-        //
-
         dialPadView = (DialPadView) view.findViewById(R.id.dialPadView);
+        mDigits = dialPadView.getDigits();
         bottom_layout = view.findViewById(R.id.bottom_layout);
         txtBalance = (TextView) view.findViewById(R.id.txt_balance);
         txtCallRate = (TextView) view.findViewById(R.id.txt_call_rate);
@@ -182,17 +185,20 @@ public class DialerFragment extends BaseFragment {
         });
         deleteButton = (ImageButton) view.findViewById(R.id.deleteButton);
         for (int id : mButtonIds) {
-            dialPadView.findViewById(id).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView numberView = (TextView) v.findViewById(R.id.dialpad_key_number);
-                    String prev = dialPadView.getDigits().getText().toString();
-                    String current = prev + numberView.getText().toString();
-                    dialPadView.getDigits().setText(current);
-                    dialPadView.getDigits().setSelection(current.length());
-                }
-            });
+            dialPadView.findViewById(id).setOnClickListener(keyPadButtonsClickListener());
         }
+        dialPadView.findViewById(R.id.zero).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (dialPadView.getDigits().getText().toString().trim().length() == 0) {
+                    dialPadView.getDigits().setText("+");
+                    dialPadView.getDigits().setSelection(1);
+                    return true;
+                }
+                return false;
+            }
+        });
+
         btnDialer.setVisibility(View.GONE);
         btnDialer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,27 +206,43 @@ public class DialerFragment extends BaseFragment {
                 showDialPad();
             }
         });
-        btnCallGreen.setOnClickListener(new View.OnClickListener() {
+        btnCallGreen.setOnClickListener(btnCallGreenClickListener());
+        deleteButton.setOnClickListener(btnDeleteClickListener());
+        deleteButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-
-                String number = dialPadView.getDigits().getText().toString().trim();
-                if (!isVoipSupported) {
-                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_SHORT);
-                } else if (!mConnectivityHelper.isConnected()) {
-                    mToastFactory.showToast(getString(R.string.connectivity_network_settings));
-                } else if (!isVoipSupported) {
-                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
-                } else if (number.length() == 0) {
-                    mToastFactory.showToast("Please enter number.");
-                } else {
-                    Intent intent = new Intent(getActivity(), OutGoingCallActivity.class);
-                    intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
-                    startActivity(intent);
-                }
+            public boolean onLongClick(View v) {
+                dialPadView.getDigits().setText("");
+                return true;
             }
         });
-        deleteButton.setOnClickListener(new View.OnClickListener() {
+        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
+        txtBalance.setText("Balance $" + balance);
+        //
+        setCallRateText();
+        txtCallRate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(getActivity(), CountryListActivity.class), 100);
+            }
+        });
+        hideDialPad(false);
+    }
+
+    @NonNull
+    private View.OnClickListener keyPadButtonsClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView numberView = (TextView) v.findViewById(R.id.dialpad_key_number);
+                String keyPadText = numberView.getText().toString();
+                updateDialString(keyPadText.charAt(0));
+            }
+        };
+    }
+
+    @NonNull
+    private View.OnClickListener btnDeleteClickListener() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String prev = dialPadView.getDigits().getText().toString();
@@ -237,26 +259,49 @@ public class DialerFragment extends BaseFragment {
                 }
 
             }
-        });
+        };
+    }
 
-        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        txtBalance.setText("Balance $" + balance);
-        //
-        setCallRateText();
-        txtCallRate.setOnClickListener(new View.OnClickListener() {
+    @NonNull
+    private View.OnClickListener btnCallGreenClickListener() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(getActivity(), CountryListActivity.class), 100);
+                //TODO: Need to improve logic for PSTN calls
+                //Begin Normalizing PSTN number
+                String temp = dialPadView.getDigits().getText().toString().trim();
+                String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
+                if (cPrefix != null) {
+                    cPrefix = cPrefix.replace("+", "");
+                }
+                String number = temp.replace(" ", "").replace("+", "");
+                if (cPrefix != null && !number.startsWith(cPrefix)) {
+                    number = cPrefix + number;
+                }
+                mLog.i(TAG, "Dialing number after normalized: " + number);
+                //End Normalizing PSTN number
+                if (!isVoipSupported) {
+                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_SHORT);
+                } else if (!mConnectivityHelper.isConnected()) {
+                    mToastFactory.showToast(getString(R.string.connectivity_network_settings));
+                } else if (!isVoipSupported) {
+                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
+                } else if (number.length() == 0) {
+                    mToastFactory.showToast("Please enter number.");
+                } else {
+                    Intent intent = new Intent(getActivity(), OutGoingCallActivity.class);
+                    intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
+                    startActivity(intent);
+                }
             }
-        });
-        hideDialPad(false);
-
+        };
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        adapter = new CallLogsAdapter(getActivity());
+        loadDefaultSimCountry();
+        adapter = new CallLogsAdapter(getActivity(), preferenceEndPoint);
         listView.setAdapter(adapter);
         loadCallLogs();
     }
@@ -304,8 +349,6 @@ public class DialerFragment extends BaseFragment {
                 } catch (JsonSyntaxException e) {
                     mLog.w("DialerFragment", "loadCallLogs", e);
                 }
-                List<CallLogsResult> temp = new ArrayList<CallLogsResult>();
-
                 showEmptyText();
             }
 
@@ -349,9 +392,9 @@ public class DialerFragment extends BaseFragment {
         if (filter.equalsIgnoreCase("all calls")) {
             txtEmptyCallLogs.setText("No call logs history available.");
         } else {
-            txtEmptyCallLogs.setText("No " + filter + " history available.");
+            txtEmptyCallLogs.setText(String.format("No %s history available.", filter));
         }
-        boolean nonEmpty = show || listView.getAdapter().getCount() > 0;
+        boolean nonEmpty = show || (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
         txtEmptyCallLogs.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
     }
 
@@ -369,120 +412,10 @@ public class DialerFragment extends BaseFragment {
         return menu;
     }
 
-    public class CallLogsViewHolder extends AbstractViewHolder {
 
-        private TextView opponentName;
-
-        public TextView getHeader() {
-            return header;
-        }
-
-        private TextView header;
-        private TextView timeStamp;
-
-        private ImageView messageIcon;
-
-        private ImageView callIcon;
-
-        public View getRowContainer() {
-            return rowContainer;
-        }
-
-        private View rowContainer;
-
-        public CallLogsViewHolder(View view) {
-            super(view);
-            opponentName = (TextView) view.findViewById(R.id.tv_phone_number);
-            header = (TextView) view.findViewById(R.id.header);
-            rowContainer = view.findViewById(R.id.row_container);
-            timeStamp = (TextView) view.findViewById(R.id.tv_time_stamp);
-            messageIcon = (ImageView) view.findViewById(R.id.iv_message_type);
-            callIcon = (ImageView) view.findViewById(R.id.iv_contact_type);
-        }
-
-        public ImageView getMessageIcon() {
-            return messageIcon;
-        }
-
-        public TextView getOpponentName() {
-            return opponentName;
-        }
-
-        public TextView getTimeStamp() {
-            return timeStamp;
-        }
-
-        public ImageView getCallIcon() {
-            return callIcon;
-        }
-    }
-
-    public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLogsViewHolder> {
-
-        public CallLogsAdapter(Context context) {
-            super(context);
-        }
-
-        @Override
-        public int getLayoutId() {
-            return R.layout.dialer_calllogs_list_item;
-        }
-
-        @Override
-        public CallLogsViewHolder getViewHolder(View convertView) {
-            return new CallLogsViewHolder(convertView);
-        }
-
-        @Override
-        protected boolean hasData(CallLogsResult event, String key) {
-            if (event.getDialnumber() != null && event.getDialnumber().contains(key)) {
-                return true;
-            }
-            return super.hasData(event, key);
-        }
-
-        @Override
-        public void bindView(int position, CallLogsViewHolder holder, final CallLogsResult item) {
-            holder.getOpponentName().setText(item.getDialnumber());
-            item.getDialedstatus();//NOT  ANSWER,ANSWER
-            if (item.isHeader()) {
-                holder.getHeader().setVisibility(View.VISIBLE);
-                holder.getRowContainer().setVisibility(View.GONE);
-                holder.getHeader().setText(item.getHeaderTitle());
-            } else {
-                holder.getHeader().setVisibility(View.GONE);
-                holder.getRowContainer().setVisibility(View.VISIBLE);
-            }
-            if (item.isHeader()) {
-                mLog.i("CallLogsAdapter", "Header displayed");
-            } else if (item.getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
-                holder.getTimeStamp().setText(Util.parseDate(item.getStime()));
-                holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
-            } else {
-                holder.getTimeStamp().setText(Util.parseDate(item.getStime()));
-                holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_greenarrowup, 0, 0, 0);
-            }
-            holder.getCallIcon().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), OutGoingCallActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(OutGoingCallActivity.CALLER_NO, item.getDialnumber());
-                    getActivity().startActivity(intent);
-                }
-            });
-            holder.getMessageIcon().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ContactsListAdapter.showUserChatScreen(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), item.getDialnumber());
-                }
-            });
-
-        }
-
-
-    }
-
+    /**
+     * @param action
+     */
     public void onEventMainThread(String action) {
         if (action.equals(REFRESH_CALL_LOGS)) {
             loadCallLogs();
@@ -526,7 +459,9 @@ public class DialerFragment extends BaseFragment {
             dialPadView.setVisibility(View.GONE);
             btnCallGreen.setVisibility(View.GONE);
             bottom_layout.setVisibility(View.GONE);
+            showOrHideTabs(true);
             floatingDialer.setVisibility(View.VISIBLE);
+            showEmptyText();
             return;
         }
         Animation bottomUp = AnimationUtils.loadAnimation(getActivity(), R.anim.bottom_down);
@@ -544,7 +479,6 @@ public class DialerFragment extends BaseFragment {
                 showOrHideTabs(true);
                 floatingDialer.setVisibility(View.VISIBLE);
                 showEmptyText();
-//                btnDialer.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -580,7 +514,10 @@ public class DialerFragment extends BaseFragment {
 
             txtCallRate.setText(cName + "\n$" + cRate + "/" + pulse);
             if (!TextUtils.isEmpty(cPrefix)) {
-                dialPadView.getDigits().setText(cPrefix);
+                //TODO: Need to improve the logic
+                String str = dialPadView.getDigits().getText().toString();
+                str = str.substring(str.indexOf(" ") + 1);
+                dialPadView.getDigits().setText(cPrefix + " " + str);
                 dialPadView.getDigits().setSelection(cPrefix.length());
             }
         }
@@ -593,5 +530,59 @@ public class DialerFragment extends BaseFragment {
             return true;
         }
         return super.onBackPressHandle();
+    }
+    //
+
+    /**
+     * Updates the dial string (mDigits) after inserting a Pause character (,)
+     * or Wait character (;).
+     */
+    private void updateDialString(char newDigit) {
+
+        int selectionStart;
+        int selectionEnd;
+
+        // SpannableStringBuilder editable_text = new SpannableStringBuilder(mDigits.getText());
+        int anchor = mDigits.getSelectionStart();
+        int point = mDigits.getSelectionEnd();
+
+        selectionStart = Math.min(anchor, point);
+        selectionEnd = Math.max(anchor, point);
+
+        if (selectionStart == -1) {
+            selectionStart = selectionEnd = mDigits.length();
+        }
+
+        Editable digits = mDigits.getText();
+
+        if (canAddDigit(digits, selectionStart, selectionEnd)) {
+            digits.replace(selectionStart, selectionEnd, Character.toString(newDigit));
+
+            if (selectionStart != selectionEnd) {
+                // Unselect: back to a regular cursor, just pass the character inserted.
+                mDigits.setSelection(selectionStart + 1);
+            }
+        }
+    }
+
+    private boolean canAddDigit(CharSequence digits, int start, int end) {
+        // False if no selection, or selection is reversed (end < start)
+        if (start == -1 || end < start) {
+            return false;
+        }
+        // unsupported selection-out-of-bounds state
+        if (start > digits.length() || end > digits.length()) return false;
+
+        // Special digit cannot be the first digit
+        if (start == 0) return true;
+        return true;
+    }
+
+    private void loadDefaultSimCountry() {
+        final TelephonyManager manager = (TelephonyManager) getActivity().getSystemService(
+                Context.TELEPHONY_SERVICE);
+        if (manager != null) {
+            sUserSimCountryCode = manager.getSimCountryIso();
+        }
     }
 }

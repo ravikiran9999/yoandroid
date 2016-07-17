@@ -8,6 +8,7 @@
         android:id="@+id/profile_pic"
         android:layout_width="match_parent"
         android:layout_height="180dp"
+        android:scaleType="centerCrop"
         android:backgroundTint="@color/colorPrimary"
         android:src="@drawable/magazine_dummy_image" />
 

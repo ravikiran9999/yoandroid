@@ -1,24 +1,19 @@
 package com.yo.android.flip;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
-import com.aphidmobile.utils.AphidLog;
-import com.aphidmobile.utils.UI;
 import com.yo.android.R;
 import com.yo.android.ui.BaseActivity;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 public class MagazineArticleDetailsActivity extends BaseActivity {
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +45,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
             return;
         }*/
 
-        WebView webview=(WebView)findViewById(R.id.webview);
+        WebView webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
 
         webview.setWebViewClient(new WebViewClient() {
@@ -60,6 +55,19 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         });
 
         webview.loadUrl(image);
+        progressBar = (ProgressBar) findViewById(R.id.webview_progressbar);
+        webview.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                if (newProgress >= 100) {
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    progressBar.setProgress(newProgress);
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override

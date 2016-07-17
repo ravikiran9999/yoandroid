@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +25,6 @@ import com.yo.android.R;
 import com.yo.android.adapters.AppContactsListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.ChatActivity;
-import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
 import com.yo.android.model.YoAppContacts;
 import com.yo.android.util.Constants;
@@ -95,10 +95,12 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Registration registration = (Registration) listView.getItemAtPosition(position);
+        /*Registration registration = (Registration) listView.getItemAtPosition(position);
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         String opponentPhoneNumber = registration.getPhoneNumber();
-        showUserChatScreen(yourPhoneNumber, opponentPhoneNumber);
+        showUserChatScreen(yourPhoneNumber, opponentPhoneNumber);*/
+
+        Toast.makeText(getActivity(), "Need to show App contacts", Toast.LENGTH_SHORT).show();
     }
 
     private void showUserChatScreen(@NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {

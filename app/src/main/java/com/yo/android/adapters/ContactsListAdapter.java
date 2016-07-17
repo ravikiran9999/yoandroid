@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -13,9 +14,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
-import com.yo.android.model.ChatRoom;
 import com.yo.android.model.Contact;
-import com.yo.android.model.Registration;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.OutGoingCallActivity;
 
@@ -30,11 +29,6 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
     private Context context;
     private String userId;
-
-    public ContactsListAdapter(Context context) {
-        super(context);
-        this.context = context;
-    }
 
     public ContactsListAdapter(Context context, String userId) {
         super(context);
@@ -67,6 +61,8 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 String yourPhoneNumber = userId;
                 String opponentPhoneNumber = item.getPhoneNo();
                 showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
+
+
             }
         });
 
@@ -76,6 +72,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 //Registration registration = getAllItems().get(position);
                 //String opponentPhoneNumber = registration.getPhoneNumber();
                 String opponentPhoneNumber = item.getPhoneNo();
+
                 if (opponentPhoneNumber != null) {
                     Intent intent = new Intent(context, OutGoingCallActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -84,6 +81,11 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 }
             }
         });
+        if (item.getYoAppUser()) {
+            holder.getMessageView().setImageResource(R.drawable.ic_message);
+        } else {
+            holder.getMessageView().setImageResource(R.drawable.ic_invite_friends);
+        }
 
     }
 
@@ -122,6 +124,6 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
         intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
         context.startActivity(intent);
-        
+
     }
 }

@@ -59,6 +59,14 @@ public class VoxFactory {
         return prepareRequest("BALANCE", "CDR", data);
     }
 
+    public String verifyOTP(String pin) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("PIN", "+919573535345");
+        data.put("TYPE", "1");
+        data.put("PACKAGEID", "1");
+        return prepareRequest("OTP", "OTPREQUEST", data);
+    }
+
     public String getCallRatesBody(String packageId) {
         Map<String, Object> data = new HashMap<>();
         data.put("PACKAGEID", packageId);

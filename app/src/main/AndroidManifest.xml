@@ -125,7 +125,8 @@
             android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".ui.LoadMagazineActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".chat.ui.CreateGroupActivity" />
         <activity
             android:name=".ui.CountryListActivity"
@@ -142,7 +143,14 @@
         <activity
             android:name=".ui.UserCreatedMagazineActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".ui.CreatedMagazineDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.EditMagazineActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.FindPeopleActivity" />
+        <activity android:name=".ui.FollowersActivity"></activity>
     </application>
 
 </manifest>

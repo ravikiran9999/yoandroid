@@ -9,6 +9,7 @@ import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ResourcesHelper;
 import com.orion.android.common.util.ToastFactory;
+import com.yo.android.api.YoApi;
 import com.yo.android.di.AwsLogsCallBack;
 import com.yo.android.di.Injector;
 import com.yo.android.util.ProgressDialogFactory;
@@ -43,9 +44,11 @@ public class BaseActivity extends AppCompatActivity {
     protected PreferenceEndPoint preferenceEndPoint;
 
     @Inject
-    VoxFactory voxFactory;
+    protected VoxFactory voxFactory;
     @Inject
-    VoxApi.VoxService voxService;
+    protected VoxApi.VoxService voxService;
+    @Inject
+    protected YoApi.YoService yoService;
 
 
     protected Dialog mProgressDialog;
