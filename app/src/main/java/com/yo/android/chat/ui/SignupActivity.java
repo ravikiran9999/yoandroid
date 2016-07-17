@@ -78,6 +78,4 @@ public class SignupActivity extends BaseActivity {
             }
         });
     }
-
-
 }

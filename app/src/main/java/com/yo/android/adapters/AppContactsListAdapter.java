@@ -6,12 +6,13 @@ import android.view.View;
 import com.yo.android.R;
 import com.yo.android.helpers.AppRegisteredContactsViewHolder;
 import com.yo.android.model.Registration;
+import com.yo.android.model.YoAppContacts;
 
 /**
  * Created by rdoddapaneni on 7/5/2016.
  */
 
-public class AppContactsListAdapter extends AbstractBaseAdapter<Registration, AppRegisteredContactsViewHolder> {
+public class AppContactsListAdapter extends AbstractBaseAdapter<YoAppContacts, AppRegisteredContactsViewHolder> {
 
     public AppContactsListAdapter(Context context) {
         super(context);
@@ -29,8 +30,8 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Registration, Ap
     }
 
     @Override
-    public void bindView(int position, AppRegisteredContactsViewHolder holder, Registration item) {
-        holder.getContactNumber().setText(item.getPhoneNumber());
+    public void bindView(int position, AppRegisteredContactsViewHolder holder, YoAppContacts item) {
+        holder.getContactNumber().setText(item.getId());
         //holder.getContactMail().setText(item.getEmailId());
     }
 }

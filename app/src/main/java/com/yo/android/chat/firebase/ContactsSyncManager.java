@@ -4,11 +4,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
-
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Contact;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,8 +27,8 @@ import retrofit2.Response;
 @Singleton
 public class ContactsSyncManager {
 
-    YoApi.YoService yoService;
-    Context context;
+    private YoApi.YoService yoService;
+    private Context context;
     List<Contact> list;
     PreferenceEndPoint loginPrefs;
 
@@ -40,6 +38,7 @@ public class ContactsSyncManager {
         this.context = context;
         this.loginPrefs = loginPrefs;
     }
+
 
     public void syncContacts() {
         new AsyncTask<Void, Void, List<String>>() {
@@ -70,7 +69,7 @@ public class ContactsSyncManager {
 
     }
 
-    private List<String> readContacts() {
+    public List<String> readContacts() {
         List<String> nc = new ArrayList<>();
         Cursor contactsCursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         if (contactsCursor != null) {
@@ -127,6 +126,4 @@ public class ContactsSyncManager {
             }
         });
     }
-
 }
-

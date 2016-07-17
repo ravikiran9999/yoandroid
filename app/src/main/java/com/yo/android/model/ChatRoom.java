@@ -66,4 +66,8 @@ public class ChatRoom {
     public void setIsImage(boolean isImage) {
         this.isImage = isImage;
     }
+
+    public void setImage(boolean image) {
+        isImage = image;
+    }
 }

@@ -12,6 +12,7 @@ import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -110,7 +111,10 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/user/contacts_sync.json")
-        Call<List<Contact>> syncContactsAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
+        Call<List<Contact>> syncContactsAPI( @Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
+
+        @GET("api/user.json")
+        Call<ResponseBody> getYoAppContactsAPI(@Query("page") int page, @Query("limit") int limit);
 
         @GET("/api/user/contacts.json")
         Call<List<Contact>> getContacts(@Query("access_token") String access_token);

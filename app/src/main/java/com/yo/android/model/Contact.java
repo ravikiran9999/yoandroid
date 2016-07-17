@@ -33,4 +33,8 @@ public class Contact {
         this.yoAppUser = yoAppUser;
     }
 
+    @Override
+    public String toString() {
+        return "ClassPojo [phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + "]";
+    }
 }

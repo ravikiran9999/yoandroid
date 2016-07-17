@@ -12,17 +12,28 @@ import android.widget.ListView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.Contact;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,13 +49,27 @@ public class ContactsFragment extends BaseFragment {
     private ListView listView;
 
     private DatabaseReference reference;
+    List<Contact> list;
+    PreferenceEndPoint loginPrefs;
+
+    @Inject
+    YoApi.YoService yoService;
+    @Inject
+    ContactsSyncManager contactsSyncManager;
+
+    @Inject
+    DatabaseHelper databaseHelper;
+
     private Menu menu;
     @Inject
     ContactsSyncManager mSyncManager;
 
     public ContactsFragment() {
         // Required empty public constructor
+
     }
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +77,7 @@ public class ContactsFragment extends BaseFragment {
         setHasOptionsMenu(true);
         reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         reference.keepSynced(true);
+
     }
 
     @Override
@@ -67,6 +93,7 @@ public class ContactsFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
+
         if (mSyncManager.getContacts().isEmpty()) {
             showProgressDialog();
             mSyncManager.loadContacts(new Callback<List<Contact>>() {
@@ -112,4 +139,5 @@ public class ContactsFragment extends BaseFragment {
     public Menu getMenu() {
         return menu;
     }
+
 }

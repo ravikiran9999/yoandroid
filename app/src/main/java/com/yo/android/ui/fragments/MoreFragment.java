@@ -82,9 +82,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
-        Picasso.with(getActivity())
+        /*Picasso.with(getActivity())
                 .load(avatar)
-                .into(profilePic);
+                .into(profilePic);*/
 
     }
 
