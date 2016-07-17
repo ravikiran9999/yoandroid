@@ -28,6 +28,8 @@ import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.model.Topics;
 import com.yo.android.ui.CreateMagazineActivity;
+import com.yo.android.ui.FindPeopleActivity;
+import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NewMagazineActivity;
 
@@ -56,11 +58,6 @@ public class MagazinesFragment extends BaseFragment {
 
     private List<Topics> topicsList;
 
-    /*private static final String[] SUGGESTIONS = {
-            "Bauru", "Sao Paulo", "Rio de Janeiro",
-            "Bahia", "Mato Grosso", "Minas Gerais",
-            "Tocantins", "Rio Grande do Sul"
-    };*/
     private ArrayAdapter mAdapter;
     private Menu menu;
 
@@ -140,10 +137,14 @@ public class MagazinesFragment extends BaseFragment {
                 startActivity(myCollectionsIntent);
                 break;
 
-            case R.id.menu_search:
+            case R.id.menu_find_people:
+                Intent findPeopleIntent = new Intent(getActivity(), FindPeopleActivity.class);
+                startActivity(findPeopleIntent);
                 break;
-
-
+            case R.id.menu_followers:
+                Intent followersIntent = new Intent(getActivity(), FollowersActivity.class);
+                startActivity(followersIntent);
+                break;
         }
         return true;
     }

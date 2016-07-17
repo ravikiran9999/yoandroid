@@ -143,10 +143,14 @@
         <activity
             android:name=".ui.UserCreatedMagazineActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.CreatedMagazineDetailActivity"
+        <activity
+            android:name=".ui.CreatedMagazineDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.EditMagazineActivity"
-            android:screenOrientation="portrait" ></activity>
+        <activity
+            android:name=".ui.EditMagazineActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.FindPeopleActivity" />
+        <activity android:name=".ui.FollowersActivity"></activity>
     </application>
 
 </manifest>

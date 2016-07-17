@@ -28,7 +28,9 @@ import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.CreatedMagazineDetailActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.EditMagazineActivity;
+import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.LoadMagazineActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.MyCollectionDetails;
@@ -90,6 +92,8 @@ import dagger.Provides;
                 ShowPhotoActivity.class,
                 CreatedMagazineDetailActivity.class,
                 EditMagazineActivity.class,
+                FindPeopleActivity.class,
+                FollowersActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
