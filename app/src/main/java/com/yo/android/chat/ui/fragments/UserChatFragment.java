@@ -173,7 +173,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -322,12 +321,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             databaseRoomReference.setValue(chatRoom);
 
             roomIdReference = chatRoomReference.child(yourNumber + ":" + opponentNumber);
-            roomIdReference.child(timeStp).setValue(chatMessage, this);
             registerChildEventLister();
+            roomIdReference.child(timeStp).setValue(chatMessage, this);
             roomExist = 1;
+        } else {
+            roomIdReference.child(timeStp).setValue(chatMessage, this);
         }
 
-        roomIdReference.child(timeStp).setValue(chatMessage, this);
     }
 
 
@@ -559,5 +559,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onCancelled(DatabaseError databaseError) {
 
     }
+
+
 }
 

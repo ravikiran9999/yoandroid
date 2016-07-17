@@ -45,21 +45,15 @@ public class SplashScreenActivity extends BaseActivity {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageResource(R.drawable.ic_splash);
         mHandler.postDelayed(runnable, DURATION);
-       /* if (!preferenceEndPoint.getStringPreference("phone").isEmpty()) {
-            startActivity(new Intent(this, BottomTabsActivity.class));
-        } else {
-            startActivity(new Intent(this, LoginActivity.class));
-        }
-        finish();*/
         try {
             TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             String mPhoneNumber = tMgr.getLine1Number();
             String zipCode = getCountryZipCode();
-            mLog.e("Splash", "zipcode:" + zipCode);
-
-        } catch (Exception e){
-            mLog.w("Splash",e);
+            mLog.e("Splash", "Phone number %s zipcode: %s ", mPhoneNumber, zipCode);
+        } catch (Exception e) {
+            mLog.w("Splash", e);
         }
+//        testVox();
     }
 
     private Runnable runnable = new Runnable() {
@@ -76,7 +70,7 @@ public class SplashScreenActivity extends BaseActivity {
 
     public void testVox() {
         //Debug purpose
-        voxService.getData(voxFactory.newGetRates("8341569102")).enqueue(new Callback<ResponseBody>() {
+        voxService.executeAction(voxFactory.verifyOTP("8341569102")).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
