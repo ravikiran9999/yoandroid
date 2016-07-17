@@ -21,9 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.AppContactsListAdapter;
-import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.ui.ChatActivity;
-import com.yo.android.model.ChatRoom;
 import com.yo.android.model.Registration;
 import com.yo.android.util.Constants;
 
