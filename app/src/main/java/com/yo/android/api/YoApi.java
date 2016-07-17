@@ -10,17 +10,21 @@ import com.yo.android.model.OwnMagazine;
 import com.yo.android.model.Response;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
+import com.yo.android.model.UserProfileInfo;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -121,6 +125,14 @@ public class YoApi {
         @GET("api/user/followers.json")
         Call<List<FindPeople>> getFollowersAPI(@Query("access_token") String access_token);
 
+        @GET("api/user/info.json")
+        Call<UserProfileInfo> getUserInfo(@Query("access_token") String access_token);
+
+        @Multipart
+        @PUT("/api/user/{user_id}.json")
+        Call<ResponseBody> updateProfile(@Path("user_id") String userId,
+                                         @Part MultipartBody.Part file
+        );
     }
 
     public interface YoRefreshTokenService {
