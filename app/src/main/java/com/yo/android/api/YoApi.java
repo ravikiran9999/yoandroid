@@ -135,6 +135,8 @@ public class YoApi {
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
                                          @Part MultipartBody.Part file
         );
+        @GET("api/articles.json")
+        Call<List<Articles>> getWishListAPI(@Query("access_token") String access_token, @Query("liked") String liked);
     }
 
     public interface YoRefreshTokenService {

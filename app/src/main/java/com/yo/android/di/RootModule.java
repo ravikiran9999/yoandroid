@@ -41,6 +41,7 @@ import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
+import com.yo.android.ui.WishListActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
@@ -95,6 +96,7 @@ import dagger.Provides;
                 EditMagazineActivity.class,
                 FindPeopleActivity.class,
                 FollowersActivity.class,
+                WishListActivity.class,
 
                 //Fragments
                 ContactsFragment.class,

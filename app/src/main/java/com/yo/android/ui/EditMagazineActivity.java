@@ -15,12 +15,14 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.UpdateMagazine;
+import com.yo.android.util.Constants;
 
 import org.w3c.dom.Text;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,7 +71,8 @@ public class EditMagazineActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         mToastFactory.showToast("Magazine " + magazineTitle + "  deleted successfully");
-
+                        EventBus.getDefault().post(Constants.DELETE_MAGAZINE_ACTION);
+                        finish();
                     }
 
                     @Override
@@ -98,8 +101,8 @@ public class EditMagazineActivity extends BaseActivity {
         switch(item.getItemId()) {
             case R.id.menu_save:
 
-                String title = etTitle.getText().toString();
-                String description = etDesc.getText().toString();
+                final String title = etTitle.getText().toString();
+                final String description = etDesc.getText().toString();
 
                 if(TextUtils.isEmpty(title.trim()) && TextUtils.isEmpty(description.trim())) {
                     mToastFactory.showToast("Please enter the Magazine Title/Description");
@@ -110,6 +113,10 @@ public class EditMagazineActivity extends BaseActivity {
                     yoService.updateMagazinesAPI(magazineId, accessToken, title, description, magazinePrivacy).enqueue(new Callback<UpdateMagazine>() {
                         @Override
                         public void onResponse(Call<UpdateMagazine> call, Response<UpdateMagazine> response) {
+                            Intent intent = new Intent();
+                            intent.putExtra("EditedTitle", title);
+                            intent.putExtra("EditedDesc", description);
+                            setResult(RESULT_OK, intent);
                             finish();
                         }
 

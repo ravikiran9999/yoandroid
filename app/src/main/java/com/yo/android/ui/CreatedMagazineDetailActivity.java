@@ -33,6 +33,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.model.MagazineArticles;
+import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,8 +75,12 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         flipView.setAdapter(myBaseAdapter);
         flipContainer.addView(flipView);
 
+        flipContainer.setVisibility(View.GONE);
+
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        EventBus.getDefault().register(this);
 
         Intent intent = getIntent();
         /*final String articleId = intent.getStringExtra("ArticleId");
@@ -107,6 +113,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                     for (int i = 0; i < response.body().getArticlesList().size(); i++) {
                         //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
                         //articlesList = new ArrayList<Travels.Data>();
+                        flipContainer.setVisibility(View.VISIBLE);
                         if (noArticals != null) {
                             noArticals.setVisibility(View.GONE);
                         }
@@ -115,6 +122,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
+                    flipContainer.setVisibility(View.GONE);
                     if (noArticals != null) {
                         noArticals.setVisibility(View.VISIBLE);
                     }
@@ -124,6 +132,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<MagazineArticles> call, Throwable t) {
+                flipContainer.setVisibility(View.GONE);
                 if (noArticals != null) {
                     noArticals.setVisibility(View.VISIBLE);
                 }
@@ -445,9 +454,36 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 intent.putExtra("MagazineId", magazineId);
                 intent.putExtra("MagazineDesc", magazineDesc);
                 intent.putExtra("MagazinePrivacy", magazinePrivacy);
-                startActivity(intent);
+                startActivityForResult(intent, 3);
                 break;
         }
         return true;
+    }
+
+    public void onEventMainThread(String action) {
+        if (Constants.DELETE_MAGAZINE_ACTION.equals(action)) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if (requestCode == 3 && resultCode == RESULT_OK) {
+            if(data!= null) {
+                String editedTitle = data.getStringExtra("EditedTitle");
+                String editedDesc = data.getStringExtra("EditedDesc");
+
+                getSupportActionBar().setTitle(editedTitle);
+            }
+
+        }
     }
 }

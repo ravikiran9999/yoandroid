@@ -1,22 +1,12 @@
-package com.yo.android.flip;
+package com.yo.android.ui;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,22 +22,17 @@ import android.widget.Toast;
 
 import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
-import com.aphidmobile.utils.IO;
 import com.aphidmobile.utils.UI;
-import com.orion.android.common.util.ToastFactoryImpl;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.flip.MagazineArticleDetailsActivity;
+import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.model.Articles;
-import com.yo.android.ui.CreateMagazineActivity;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.util.Constants;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -56,16 +41,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by creatives on 6/30/2016.
- */
-public class MagazineFlipArticlesFragment extends BaseFragment {
+public class WishListActivity extends BaseActivity {
 
     private FlipViewController flipView;
-    private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
-    //private static List<Travels.Data> articlesList = new ArrayList<Travels.Data>();
     private List<Articles> articlesList = new ArrayList<Articles>();
-    private MyReceiver myReceiver;
     private MyBaseAdapter myBaseAdapter;
     @Inject
     YoApi.YoService yoService;
@@ -74,79 +53,46 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
     private FrameLayout flipContainer;
     private ProgressBar mProgress;
 
-    @SuppressLint("ValidFragment")
-    public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
-        // Required empty public constructor
-        magazineTopicsSelectionFragment = fragment;
-    }
-
-    public MagazineFlipArticlesFragment() {
-
-    }
-
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* IntentFilter filter = new IntentFilter("com.yo.magazine.SendBroadcast");
-        myReceiver = new MyReceiver();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myReceiver, filter);*/
+        setContentView(R.layout.magazine_flip_fragment);
 
-    }
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.magazine_flip_fragment, container, false);
-        noArticals = (TextView) view.findViewById(R.id.txtEmptyArticals);
-        flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
-        mProgress = (ProgressBar) view.findViewById(R.id.progress);
-        flipView = new FlipViewController(getActivity());
-        myBaseAdapter = new MyBaseAdapter(getActivity(), flipView);
+        String title = "Wish List";
+
+        getSupportActionBar().setTitle(title);
+
+        noArticals = (TextView) findViewById(R.id.txtEmptyArticals);
+        flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
+        mProgress = (ProgressBar) findViewById(R.id.progress);
+        flipView = new FlipViewController(this);
+        myBaseAdapter = new MyBaseAdapter(this, flipView);
         flipView.setAdapter(myBaseAdapter);
         flipContainer.addView(flipView);
-        return view;
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Constants.ADD_ARTICLES_TO_MAGAZINE && getActivity() != null) {
-                new ToastFactoryImpl(getActivity()).showToast(getResources().getString(R.string.article_added_success));
-            }
-        }
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
-
-         loadAllArticles();
-
-    }
-
-    public void loadArticles(String selectedTopic, String topicId) {
-        topicName = selectedTopic;
-       /* articlesList.clear();
-        for (int i = 0; i < Travels.getImgDescriptions().size(); i++) {
-            //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(Travels.getImgDescriptions().get(i).getTopicName())) {
-            if (selectedTopic.equalsIgnoreCase(Travels.getImgDescriptions().get(i).getTopicName())) {
-                //articlesList = new ArrayList<Travels.Data>();
-                articlesList.add(Travels.getImgDescriptions().get(i));
-            }
-        }
-        myBaseAdapter.addItems(articlesList);*/
+        flipContainer.setVisibility(View.GONE);
 
         articlesList.clear();
+        myBaseAdapter.addItems(articlesList);
+        if (mProgress != null) {
+            mProgress.setVisibility(View.VISIBLE);
+        }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getArticlesAPI(accessToken, topicId).enqueue(new Callback<List<Articles>>() {
+        yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
                 if (response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
+                        flipContainer.setVisibility(View.VISIBLE);
+                        if (noArticals != null) {
+                            noArticals.setVisibility(View.GONE);
+                        }
                         //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
                         //articlesList = new ArrayList<Travels.Data>();
                         articlesList.add(response.body().get(i));
@@ -154,27 +100,25 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
-                    mToastFactory.showToast("No Articles");
+                    flipContainer.setVisibility(View.GONE);
+                    if (noArticals != null) {
+                        noArticals.setVisibility(View.VISIBLE);
+                    }
                 }
 
             }
 
             @Override
             public void onFailure(Call<List<Articles>> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                flipContainer.setVisibility(View.GONE);
+                if (noArticals != null) {
+                    noArticals.setVisibility(View.VISIBLE);
+                }
             }
         });
-    }
-
-    public void onDestroyView() {
-        super.onDestroyView();
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myReceiver);
     }
 
     @Override
@@ -399,21 +343,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 }*/
 
                 //photoView.loadUrl(data.getImage_filename());
-                Picasso.with(getActivity())
+                Picasso.with(WishListActivity.this)
                         .load(data.getImage_filename())
                         .into(photoView);
             }
             //}
 
             Button followMoreTopics = (Button) layout.findViewById(R.id.btn_magazine_follow_topics);
-            followMoreTopics.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
-                    intent.putExtra("From", "Magazines");
-                    startActivity(intent);
-                }
-            });
+            followMoreTopics.setVisibility(View.GONE);
 
 
             ImageView add = holder.magazineAdd;
@@ -421,7 +358,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getActivity(), CreateMagazineActivity.class);
+                    Intent intent = new Intent(WishListActivity.this, CreateMagazineActivity.class);
                     intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
                     startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
                 }
@@ -451,140 +388,5 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
         private ImageView magazineAdd;
     }
-
-    /**
-     * Borrowed from the official BitmapFun tutorial: http://developer.android.com/training/displaying-bitmaps/index.html
-     */
-    private static final class AsyncDrawable extends BitmapDrawable {
-
-        private final WeakReference<AsyncImageTask> taskRef;
-
-        public AsyncDrawable(Resources res, Bitmap bitmap, AsyncImageTask task) {
-            super(res, bitmap);
-            this.taskRef = new WeakReference<AsyncImageTask>(task);
-        }
-
-        public static AsyncImageTask getTask(ImageView imageView) {
-            Drawable drawable = imageView.getDrawable();
-            if (drawable instanceof AsyncDrawable) {
-                return ((AsyncDrawable) drawable).taskRef.get();
-            }
-
-            return null;
-        }
-    }
-
-    private static final class AsyncImageTask extends AsyncTask<Void, Void, Bitmap> {
-
-        private static final Random RANDOM = new Random();
-
-        private final AssetManager assetManager;
-
-        private final WeakReference<ImageView> imageViewRef;
-        private final WeakReference<FlipViewController> controllerRef;
-        private final int pageIndex;
-        private final String imageName;
-
-        public AsyncImageTask(AssetManager assetManager, ImageView imageView,
-                              FlipViewController controller, int pageIndex, String imageName) {
-            this.assetManager = assetManager;
-            imageViewRef = new WeakReference<>(imageView);
-            controllerRef = new WeakReference<>(controller);
-            this.pageIndex = pageIndex;
-            this.imageName = imageName;
-        }
-
-        public int getPageIndex() {
-            return pageIndex;
-        }
-
-        public String getImageName() {
-            return imageName;
-        }
-
-        @Override
-        protected Bitmap doInBackground(Void... params) {
-            try {
-                //wait for a random time
-                Thread.sleep(500 + RANDOM.nextInt(2000));
-            } catch (InterruptedException e) {
-                Log.e("TAG", "doInBackground", e);
-            }
-
-            return IO.readBitmap(assetManager, imageName);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (isCancelled()) {
-                return;
-            }
-
-            ImageView imageView = imageViewRef.get();
-            //the imageView can be reused for another page, so it's necessary to check its consistence
-            if (imageView != null && AsyncDrawable.getTask(imageView) == this) {
-                imageView.setImageBitmap(bitmap);
-                FlipViewController controller = controllerRef.get();
-                if (controller != null) {
-                    controller.refreshPage(pageIndex);
-                }
-            }
-        }
-    }
-
-    public class MyReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String selectedTopic = intent.getStringExtra("SelectedTopic");
-            String topicId = intent.getStringExtra("TopicId");
-            loadArticles(selectedTopic, topicId);
-        }
-    }
-
-    public void loadAllArticles() {
-        articlesList.clear();
-        myBaseAdapter.addItems(articlesList);
-        if (mProgress != null) {
-            mProgress.setVisibility(View.VISIBLE);
-        }
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getAllArticlesAPI(accessToken).enqueue(new Callback<List<Articles>>() {
-            @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
-                if (response.body().size() > 0) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
-                        }
-                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                        //articlesList = new ArrayList<Travels.Data>();
-                        articlesList.add(response.body().get(i));
-                        // }
-                    }
-                    myBaseAdapter.addItems(articlesList);
-                } else {
-                    if (noArticals != null) {
-                        noArticals.setVisibility(View.VISIBLE);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
-                if (noArticals != null) {
-                    noArticals.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-    }
-
 
 }

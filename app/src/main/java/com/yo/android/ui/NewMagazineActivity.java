@@ -18,10 +18,12 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.OwnMagazine;
+import com.yo.android.util.Constants;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +52,8 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
         String title = "New Magazine";
 
         getSupportActionBar().setTitle(title);
+
+        EventBus.getDefault().register(this);
 
         etTitle = (EditText) findViewById(R.id.magazine_title);
         etDesc = (EditText) findViewById(R.id.magazine_desc);
@@ -146,5 +150,17 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
         else {
             mToastFactory.showToast("Please enter the Magazine Title");
         }
+    }
+
+    public void onEventMainThread(String action) {
+        if (Constants.DELETE_MAGAZINE_ACTION.equals(action)) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

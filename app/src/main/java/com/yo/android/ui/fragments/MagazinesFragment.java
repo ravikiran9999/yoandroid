@@ -26,6 +26,7 @@ import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.MyCollections;
+import com.yo.android.ui.WishListActivity;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class MagazinesFragment extends BaseFragment {
 
     private ArrayAdapter mAdapter;
     private Menu menu;
+    private MagazineFlipArticlesFragment mMagazineFlipArticlesFragment;
 
     public MagazinesFragment() {
         // Required empty public constructor
@@ -85,12 +87,16 @@ public class MagazinesFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         //MagazineTopicsSelectionFragment fragment = new MagazineTopicsSelectionFragment();
         //getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
-        getChildFragmentManager().beginTransaction().add(R.id.bottom, new MagazineFlipArticlesFragment()).commit();
+        mMagazineFlipArticlesFragment = new MagazineFlipArticlesFragment();
+        mAdapter = new ArrayAdapter<String>
+                (getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+
+        getChildFragmentManager().beginTransaction().add(R.id.bottom, mMagazineFlipArticlesFragment).commit();
 
         topicsList = new ArrayList<Topics>();
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        showProgressDialog();
+        //showProgressDialog();
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
@@ -104,9 +110,8 @@ public class MagazinesFragment extends BaseFragment {
                 for (int i = 0; i < topicsList.size(); i++) {
                     topicNamesList.add(topicsList.get(i).getName());
                 }
-
-                mAdapter = new ArrayAdapter<String>
-                        (getActivity(), android.R.layout.simple_spinner_dropdown_item, topicNamesList);
+                mAdapter.addAll(topicNamesList);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -124,7 +129,6 @@ public class MagazinesFragment extends BaseFragment {
             case R.id.menu_create_magazines:
                 Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
                 startActivity(createMagazinesIntent);
-
                 break;
             case R.id.menu_my_collections:
                 Intent myCollectionsIntent = new Intent(getActivity(), MyCollections.class);
@@ -139,6 +143,10 @@ public class MagazinesFragment extends BaseFragment {
                 Intent followersIntent = new Intent(getActivity(), FollowersActivity.class);
                 startActivity(followersIntent);
                 break;
+            case R.id.menu_wish_list:
+                Intent wishListIntent = new Intent(getActivity(), WishListActivity.class);
+                startActivity(wishListIntent);
+                break;
         }
         return true;
     }
@@ -149,7 +157,7 @@ public class MagazinesFragment extends BaseFragment {
         final SearchView.SearchAutoComplete searchTextView = (SearchView.SearchAutoComplete) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
             searchTextView.setTextColor(Color.BLACK);
-            searchTextView.setThreshold(0);
+            searchTextView.setThreshold(1);
             searchTextView.setAdapter(mAdapter);
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
             mCursorDrawableRes.setAccessible(true);
@@ -174,6 +182,16 @@ public class MagazinesFragment extends BaseFragment {
                     return;
                 }
             });
+            search.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    if (mMagazineFlipArticlesFragment != null) {
+                        mMagazineFlipArticlesFragment.loadAllArticles();
+                    }
+                    return true;
+                }
+            });
+
         } catch (Exception e) {
         }
     }
