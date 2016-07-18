@@ -1,8 +1,11 @@
 package com.yo.android.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.yo.android.R;
@@ -59,6 +62,14 @@ public class FindPeopleActivity extends BaseActivity {
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                 dismissProgressDialog();
+            }
+        });
+
+        lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent findPeopleIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
+                startActivity(findPeopleIntent);
             }
         });
     }
