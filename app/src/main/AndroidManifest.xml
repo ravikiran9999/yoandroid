@@ -71,7 +71,6 @@
             android:name=".ui.OthersProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ui.ShowPhotoActivity"
             android:screenOrientation="portrait" />
@@ -155,7 +154,8 @@
             android:name=".ui.EditMagazineActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.FindPeopleActivity" />
-        <activity android:name=".ui.FollowersActivity"></activity>
+        <activity android:name=".ui.FollowersActivity" />
+        <activity android:name=".ui.fragments.InviteActivity"></activity>
     </application>
 
 </manifest>

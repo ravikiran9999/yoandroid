@@ -43,6 +43,8 @@ import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.fragments.DialerFragment;
+import com.yo.android.ui.fragments.InviteActivity;
+import com.yo.android.ui.fragments.InviteFriendsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.voip.InComingCallActivity;
@@ -96,6 +98,7 @@ import dagger.Provides;
                 EditMagazineActivity.class,
                 FindPeopleActivity.class,
                 FollowersActivity.class,
+                InviteActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -110,6 +113,7 @@ import dagger.Provides;
                 MoreFragment.class,
                 MagazinesFragment.class,
                 GroupContactsFragment.class,
+                InviteFriendsFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,
