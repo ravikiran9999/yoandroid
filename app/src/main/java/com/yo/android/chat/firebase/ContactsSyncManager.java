@@ -70,7 +70,7 @@ public class ContactsSyncManager {
 
     }
 
-    public List<String> readContacts() {
+    private List<String> readContacts() {
         List<String> nc = new ArrayList<>();
         Cursor contactsCursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         if (contactsCursor != null) {

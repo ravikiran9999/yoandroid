@@ -2,10 +2,14 @@ package com.yo.android.ui.fragments;
 
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -58,6 +62,15 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     FrameLayout changePhoto;
     ImageView profilePic;
 
+    private File mFileTemp;
+    private static String TEMP_PHOTO_FILE_NAME;
+    private static final int ADD_IMAGE_CAPTURE = 1;
+    private static final int ADD_SELECT_PICTURE = 2;
+    private Uri mImageCaptureUri = null;
+    private String imagePath;
+    AlertDialog dialog;
+    private static final String[] items = {"Camera", "Gallery"};
+
     public MoreFragment() {
         // Required empty public constructor
     }
@@ -75,10 +88,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onViewCreated(view, savedInstanceState);
         changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
         profilePic = (ImageView) view.findViewById(R.id.profile_pic);
+
         changePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadFile();
+                showDialog();
                 Toast.makeText(getActivity(), "You have selected change photo.", Toast.LENGTH_LONG).show();
             }
         });
@@ -93,11 +107,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     //Tested and image update is working
     //Make a prompt for pick a image from gallery/camera
-    private void uploadFile() {
+    private void uploadFile(File file) {
         showProgressDialog();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         //TODO: Dynamic
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ram_charan.jpg");
+        //File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ram_charan.jpg");
         // create RequestBody instance from file
         RequestBody requestFile =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -170,6 +184,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         if (name.equalsIgnoreCase("sign out")) {
             showLogoutDialog();
+        } else if (name.equalsIgnoreCase("Invite Friends")) {
+
+            startActivity(new Intent(getActivity(), InviteActivity.class));
+
         } else {
             Toast.makeText(getActivity(), "You have clicked on " + name, Toast.LENGTH_LONG).show();
         }
@@ -192,4 +210,94 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         builder.create().show();
     }
 
+    public void takePicture() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        dialog.dismiss();
+        try {
+
+            String state = Environment.getExternalStorageState();
+            TEMP_PHOTO_FILE_NAME = "" + System.currentTimeMillis() + ".jpg";
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
+
+                mFileTemp = new File(Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                        + "/Camera", TEMP_PHOTO_FILE_NAME);
+            } else {
+                mFileTemp = new File(getActivity().getFilesDir(), TEMP_PHOTO_FILE_NAME);
+            }
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
+                mImageCaptureUri = Uri.fromFile(mFileTemp);
+            } else {
+
+                //mImageCaptureUri = InternalStorageContentProvider.CONTENT_URI;
+            }
+            intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+            intent.putExtra("return-data", true);
+            startActivityForResult(intent, ADD_IMAGE_CAPTURE);
+        } catch (ActivityNotFoundException e) {
+        }
+    }
+
+    // open gallery
+    public void getImageFromGallery() {
+        dialog.dismiss();
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, ADD_SELECT_PICTURE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+
+            case ADD_IMAGE_CAPTURE:
+                try {
+                    imagePath = mFileTemp.getPath();
+                    uploadFile(new File(imagePath));
+
+                } catch (Exception e) {
+                }
+                break;
+
+            case ADD_SELECT_PICTURE: {
+                if (data != null) {
+                    Uri targetUri = data.getData();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    try {
+                        Cursor cursor = getActivity().getContentResolver().query(targetUri,
+                                filePathColumn, null, null, null);
+                        cursor.moveToFirst();
+                        int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
+                        imagePath = cursor.getString(columnIndex);
+
+                        uploadFile(new File(imagePath));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            default:
+                break;
+        }
+    }
+
+    private void showDialog() {
+
+        dialog = new AlertDialog.Builder(getActivity())
+                .setSingleChoiceItems(items, 2, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (items[which].toString().equalsIgnoreCase("Camera")) {
+                            takePicture();
+                            dialog.dismiss();
+                        } else if (items[which].toString().equalsIgnoreCase("Gallery")) {
+                            getImageFromGallery();
+                        }
+
+                    }
+                })
+                .show();
+    }
 }
