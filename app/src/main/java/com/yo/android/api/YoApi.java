@@ -114,9 +114,6 @@ public class YoApi {
         @POST("api/user/contacts_sync.json")
         Call<List<Contact>> syncContactsAPI( @Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
 
-        @GET("api/user.json")
-        Call<List<YoAppContacts>> getYoAppContactsAPI(@Query("page") int page, @Query("limit") int limit);
-
         @GET("/api/user/contacts.json")
         Call<List<Contact>> getContacts(@Query("access_token") String access_token);
 

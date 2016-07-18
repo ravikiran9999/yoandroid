@@ -23,9 +23,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
 import com.yo.android.adapters.AppContactsListAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
-import com.yo.android.model.YoAppContacts;
 import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
@@ -48,6 +49,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     @Inject
     YoApi.YoService yoService;
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
 
     public YoContactsFragment() {
         // Required empty public constructor
@@ -134,9 +137,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     private void getYoAppUsers() {
         showProgressDialog();
 
-        yoService.getYoAppContactsAPI(1, 20).enqueue(new Callback<List<YoAppContacts>>() {
+        mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
-            public void onResponse(Call<List<YoAppContacts>> call, Response<List<YoAppContacts>> response) {
+            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                 if (response.body() != null) {
                     appContactsListAdapter.addItems(response.body());
                 }
@@ -144,7 +147,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             }
 
             @Override
-            public void onFailure(Call<List<YoAppContacts>> call, Throwable t) {
+            public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
             }
         });
