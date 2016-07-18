@@ -65,7 +65,8 @@ public class OthersProfileMagazines extends BaseFragment {
                     TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(0).getCustomView().findViewById(R.id.count);
                     count.setText("" + response.body().size());
                     List<OwnMagazine> magazineList = response.body();
-                    adapter = new CreateMagazinesAdapter(getActivity(), magazineList);
+                    adapter = new CreateMagazinesAdapter(getActivity());
+                    adapter.addItems(magazineList);
                     gridView.setAdapter(adapter);
                 } else {
                     gridView.setVisibility(View.GONE);
