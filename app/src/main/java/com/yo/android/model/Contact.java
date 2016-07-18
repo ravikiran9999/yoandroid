@@ -3,7 +3,6 @@ package com.yo.android.model;
 
 public class Contact {
 
-
     private String name;
     private String image;
     private String phoneNo;
@@ -34,17 +33,16 @@ public class Contact {
         this.yoAppUser = yoAppUser;
     }
 
-
-    @Override
-    public String toString() {
-        return "ClassPojo [phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + "]";
-    }
-
     public String getImage() {
         return image;
     }
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "ClassPojo [phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + "]";
     }
 }

@@ -15,6 +15,7 @@ import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
+import com.yo.android.chat.ui.fragments.GroupContactsFragment;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.chat.ui.fragments.YoContactsFragment;
@@ -114,6 +115,7 @@ import dagger.Provides;
                 MagazineFlipArticlesFragment.class,
                 MoreFragment.class,
                 MagazinesFragment.class,
+                GroupContactsFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,
