@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -156,6 +157,18 @@ public class MagazinesFragment extends BaseFragment {
 
         final SearchView.SearchAutoComplete searchTextView = (SearchView.SearchAutoComplete) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
+            MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
+                @Override
+                public boolean onMenuItemActionExpand(MenuItem item) {
+                    return false;
+                }
+
+                @Override
+                public boolean onMenuItemActionCollapse(MenuItem item) {
+                    return false;
+                }
+            });
+
             searchTextView.setTextColor(Color.BLACK);
             searchTextView.setThreshold(1);
             searchTextView.setAdapter(mAdapter);
@@ -181,6 +194,7 @@ public class MagazinesFragment extends BaseFragment {
 
                     return;
                 }
+
             });
             search.setOnCloseListener(new SearchView.OnCloseListener() {
                 @Override

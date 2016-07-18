@@ -12,39 +12,57 @@
     tools:context="com.yo.android.chat.ui.fragments.OTPFragment">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginTop="20dp"
         android:src="@drawable/app_logo" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/enter_mobile_number_started"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="40dp"
+        android:text="An SMS with OTP would be sent to this number for verification"
+        android:textColor="@android:color/white" />
+
+    <org.angmarch.views.NiceSpinner xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:textTint="@color/black"
+        android:id="@+id/spCountrySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <EditText
-        android:id="@+id/sign_in_phone"
+        android:id="@+id/et_enter_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="20dp"
         android:background="@android:color/white"
         android:ems="10"
-        android:hint="@string/prompt_phone_number"
+        android:hint="Enter mobile number"
         android:inputType="number"
-        android:padding="15dp"
+        android:padding="13dp"
+        android:singleLine="true" />
+
+    <EditText
+        android:id="@+id/et_re_enter_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/white"
+        android:ems="10"
+        android:hint="Re-enter mobile mumber"
+        android:inputType="number"
+        android:padding="13dp"
         android:singleLine="true" />
 
     <Button
         android:id="@+id/email_sign_in_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#22000000"
+        android:background="#dd000000"
         android:text="@string/next"
         android:textAllCaps="false"
-        android:textSize="16sp"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
 
 </LinearLayout>

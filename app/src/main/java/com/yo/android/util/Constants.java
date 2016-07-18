@@ -31,6 +31,7 @@ public class Constants {
     public static final String COUNTRY_CALL_RATE = "country_call_rate";
     public static final String COUNTRY_CALL_PULSE = "country_call_pulse";
     public static final String COUNTRY_CODE_PREFIX = "country_code_prefix";
+    public static final String COUNTRY_CODE_FROM_SIM = "country_code_from_sim";
 
     // Firebase tables
     public static final String APP_USERS = "AppUsers";
@@ -40,6 +41,7 @@ public class Constants {
     public static final String MAGAZINE_ADD_ARTICLE_ID = "magazine_add_article_id";
     public static final int ADD_ARTICLES_TO_MAGAZINE = 201;
     public static int SUCCESS_CODE = 200;
+
 
     public static String DELETE_MAGAZINE_ACTION = "com.edit.magazine.DELETE";
 }

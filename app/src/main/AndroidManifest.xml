@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <uses-feature
         android:name="android.hardware.sip.voip"
@@ -164,6 +165,14 @@
             android:screenOrientation="portrait"></activity>
 
         <activity android:name=".ui.fragments.InviteActivity"></activity>
+
+        <!-- SMS Receiver -->
+        <receiver android:name=".voip.IncomingSmsReceiver">
+            <intent-filter android:priority="99999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
