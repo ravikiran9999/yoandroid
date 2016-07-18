@@ -1,9 +1,7 @@
 package com.yo.android.chat.ui.fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,19 +13,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.yo.android.R;
-import com.yo.android.adapters.AppContactsListAdapter;
+import com.yo.android.adapters.GroupContactsListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
-import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
-import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +32,10 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class YoContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class GroupContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private ArrayList<Registration> arrayOfUsers;
-    private AppContactsListAdapter appContactsListAdapter;
+    private GroupContactsListAdapter groupContactsListAdapter;
     private ListView listView;
 
     @Inject
@@ -52,7 +43,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
-    public YoContactsFragment() {
+    public GroupContactsFragment() {
         // Required empty public constructor
     }
 
@@ -78,8 +69,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         super.onActivityCreated(savedInstanceState);
         getYoAppUsers();
         arrayOfUsers = new ArrayList<>();
-        appContactsListAdapter = new AppContactsListAdapter(getActivity().getApplicationContext());
-        listView.setAdapter(appContactsListAdapter);
+        groupContactsListAdapter = new GroupContactsListAdapter(getActivity().getApplicationContext());
+        listView.setAdapter(groupContactsListAdapter);
     }
 
     @Override
@@ -90,47 +81,14 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Contact contact = (Contact)listView.getItemAtPosition(position);
+        /*Registration registration = (Registration) listView.getItemAtPosition(position);
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        String opponentPhoneNumber = contact.getPhoneNo();
-        showUserChatScreen(yourPhoneNumber, opponentPhoneNumber);
+        String opponentPhoneNumber = registration.getPhoneNumber();
+        showUserChatScreen(yourPhoneNumber, opponentPhoneNumber);*/
 
+        Toast.makeText(getActivity(), "Need to show App contacts", Toast.LENGTH_SHORT).show();
     }
 
-    private void showUserChatScreen(@NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {
-        final String roomCombination1 = yourPhoneNumber + ":" + opponentPhoneNumber;
-        final String roomCombination2 = opponentPhoneNumber + ":" + yourPhoneNumber;
-        DatabaseReference databaseRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-        databaseRoomReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean value1 = dataSnapshot.hasChild(roomCombination1);
-                boolean value2 = dataSnapshot.hasChild(roomCombination2);
-                if (value1) {
-                    navigateToChatScreen(roomCombination1, opponentPhoneNumber, yourPhoneNumber);
-                } else if (value2) {
-                    navigateToChatScreen(roomCombination2, opponentPhoneNumber, yourPhoneNumber);
-                } else {
-
-                    navigateToChatScreen("", opponentPhoneNumber, yourPhoneNumber);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, String yourPhoneNumber) {
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
-        intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
-        startActivity(intent);
-        getActivity().finish();
-    }
 
 
     private void getYoAppUsers() {
@@ -140,7 +98,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                 if (response.body() != null) {
-                    appContactsListAdapter.addItems(response.body());
+                    groupContactsListAdapter.addItems(response.body());
                 }
                 dismissProgressDialog();
             }

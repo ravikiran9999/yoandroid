@@ -48,6 +48,7 @@ import com.google.firebase.storage.UploadTask;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.chat.firebase.Clipboard;
+import com.yo.android.chat.firebase.MyChatAdapter;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
@@ -143,6 +144,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessageArray = new ArrayList<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(userChatAdapter);
+
         listView.setOnItemClickListener(this);
         send.setOnClickListener(this);
         return view;
@@ -559,7 +561,5 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onCancelled(DatabaseError databaseError) {
 
     }
-
-
 }
 
