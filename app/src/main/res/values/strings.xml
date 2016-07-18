@@ -127,5 +127,6 @@
     <string name="otp_failure">Sorry, Unable to validate your OTP.</string>
     <string name="some_thing_wrong">Something went wrong. Please try again later</string>
     <string name="article_added_success">Article added successfully</string>
+    <string name="no_text">No Data Available.</string>
 
 </resources>
