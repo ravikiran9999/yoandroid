@@ -5,29 +5,43 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
+import com.yo.android.model.UserProfileInfo;
 import com.yo.android.util.Constants;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +53,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
+    @Inject
+    YoApi.YoService yoService;
     FrameLayout changePhoto;
+    ImageView profilePic;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -57,13 +74,48 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
+        profilePic = (ImageView) view.findViewById(R.id.profile_pic);
         changePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                uploadFile();
                 Toast.makeText(getActivity(), "You have selected change photo.", Toast.LENGTH_LONG).show();
             }
         });
+        String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
+        if (!TextUtils.isEmpty(avatar)) {
+            Picasso.with(getActivity())
+                    .load(avatar)
+                    .into(profilePic);
+        }
 
+    }
+
+    //Tested and image update is working
+    //Make a prompt for pick a image from gallery/camera
+    private void uploadFile() {
+        showProgressDialog();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //TODO: Dynamic
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ram_charan.jpg");
+        // create RequestBody instance from file
+        RequestBody requestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
+        yoService.updateProfile(userId, body).enqueue(new Callback<UserProfileInfo>() {
+            @Override
+            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                dismissProgressDialog();
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
     }
 
     @Override
@@ -101,7 +153,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         List<MoreData> menuDataList = new ArrayList<>();
         menuDataList.add(new MoreData("John Doe", false));
-        menuDataList.add(new MoreData("9987654321", false));
+        String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+        menuDataList.add(new MoreData(phone, false));
         menuDataList.add(new MoreData("Yo Credit " + "($" + balance + ")", true));
         menuDataList.add(new MoreData("Invite Friends", true));
         menuDataList.add(new MoreData("Notifications", true));

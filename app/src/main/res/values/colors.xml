@@ -3,6 +3,7 @@
     <color name="colorPrimary">#E12828</color>
     <color name="colorPrimaryDark">#C82121</color>
     <color name="colorAccent">#23a8d1</color>
+    <color name="light_color">#9bcfdf</color>
     <color name="grey_divider">#EEEEEE</color>
     <color name="dial_green">#09D261</color>
     <color name="dial_out_going">#E9DC53</color>
@@ -27,4 +28,5 @@
     <color name="semi_tranparent">#b3b3b3</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="magazine_search_box">#F9F9F9</color>
 </resources>

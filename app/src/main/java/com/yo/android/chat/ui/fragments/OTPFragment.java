@@ -20,10 +20,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -37,12 +41,15 @@ import retrofit2.Response;
 public class OTPFragment extends BaseFragment {
 
     private static final String tempPassword = "123456";
+
     private String phoneNumber;
     private EditText otp;
     private int count = 0;
 
     @Inject
     YoApi.YoService yoService;
+    @Inject
+    ContactsSyncManager contactsSyncManager;
     @Inject
     ConnectivityHelper mHelper;
 

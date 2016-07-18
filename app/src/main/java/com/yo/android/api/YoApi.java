@@ -2,20 +2,31 @@ package com.yo.android.api;
 
 import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
+import com.yo.android.model.Contact;
+import com.yo.android.model.FindPeople;
+import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.model.Response;
 import com.yo.android.model.Topics;
+import com.yo.android.model.UpdateMagazine;
+import com.yo.android.model.UserProfileInfo;
+import com.yo.android.model.YoAppContacts;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -89,13 +100,44 @@ public class YoApi {
         @POST("/api/articles.json")
         Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id);
 
+        @GET("api/magzines/{magzine_id}.json")
+        Call<MagazineArticles> getArticlesOfMagazineAPI(@Path("magzine_id") String magzine_id, @Query("access_token") String access_token);
+
         @FormUrlEncoded
-        @PUT("/api/magzines/{magzine_id}.json")
-        Call<Response> addArticleMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id,@Field("article_ids[]") List<String> articles);
+        @PUT("api/magzines/{magzine_id}.json")
+        Call<UpdateMagazine> updateMagazinesAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token, @Field("magzine[name]") String name, @Field("magzine[description]") String description, @Field("magzine[privacy]") String privacy);
+
+        @DELETE("api/magzines/{magzine_id}.json")
+        Call<ResponseBody> deleteMagazineAPI(@Path("magzine_id") String magzine_id, @Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/user/contacts_sync.json")
+        Call<List<Contact>> syncContactsAPI( @Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
+
+        @GET("api/user.json")
+        Call<List<YoAppContacts>> getYoAppContactsAPI(@Query("page") int page, @Query("limit") int limit);
+
+        @GET("/api/user/contacts.json")
+        Call<List<Contact>> getContacts(@Query("access_token") String access_token);
 
         @FormUrlEncoded
         @PUT("/api/magzines/{magzine_id}.json")
-        Call<Response> addArticleToMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id,@Field("article_ids[]") List<String> articles);
+        Call<Response> addArticleMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id, @Field("article_ids[]") List<String> articles);
+
+        @GET("api/user.json")
+        Call<List<FindPeople>> getFindPeopleAPI(@Query("access_token") String access_token, @Query("page") int page, @Query("limit") int limit);
+
+        @GET("api/user/followers.json")
+        Call<List<FindPeople>> getFollowersAPI(@Query("access_token") String access_token);
+
+        @GET("api/user/info.json")
+        Call<UserProfileInfo> getUserInfo(@Query("access_token") String access_token);
+
+        @Multipart
+        @PUT("/api/user/{user_id}.json")
+        Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
+                                         @Part MultipartBody.Part file
+        );
     }
 
     public interface YoRefreshTokenService {

@@ -29,7 +29,6 @@ import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
-import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -47,14 +46,14 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private ChatRoomListAdapter chatRoomListAdapter;
     private DatabaseReference reference;
     private DatabaseReference roomReference;
-
     private Menu menu;
-    public Menu getMenu() {
-        return menu;
-    }
 
     @Inject
     DatabaseHelper databaseHelper;
+
+    public Menu getMenu() {
+        return menu;
+    }
 
 
     public ChatFragment() {
@@ -65,9 +64,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
         if (getArguments() != null) {
-
             preferenceEndPoint.saveStringPreference(Constants.CHAT_FORWARD, new Gson().toJson(getArguments().getParcelable(Constants.CHAT_FORWARD)));
         }
     }

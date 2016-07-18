@@ -17,6 +17,7 @@ public class RegisteredContactsViewHolder extends AbstractViewHolder {
     private TextView contactMail;
     private ImageView messageView;
     private ImageView callView;
+    private ImageView contactPic;
 
     public RegisteredContactsViewHolder(View view) {
         super(view);
@@ -24,6 +25,7 @@ public class RegisteredContactsViewHolder extends AbstractViewHolder {
         contactNumber = (TextView) view.findViewById(R.id.tv_phone_number);
         messageView = (ImageView) view.findViewById(R.id.iv_message_type);
         callView = (ImageView) view.findViewById(R.id.iv_contact_type);
+        contactPic = (ImageView) view.findViewById(R.id.imv_contact_pic);
     }
 
     public TextView getContactNumber() {
@@ -40,5 +42,9 @@ public class RegisteredContactsViewHolder extends AbstractViewHolder {
 
     public ImageView getCallView() {
         return callView;
+    }
+
+    public ImageView getContactPic() {
+        return contactPic;
     }
 }

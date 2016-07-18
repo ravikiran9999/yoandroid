@@ -6,7 +6,7 @@
     android:layout_marginTop="15dp"
     android:orientation="vertical">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imv_contact_pic"
         android:layout_width="40dp"
         android:layout_height="30dp"
