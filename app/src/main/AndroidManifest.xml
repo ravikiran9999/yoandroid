@@ -67,6 +67,10 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.OthersProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ui.ShowPhotoActivity"
@@ -78,12 +82,12 @@
         <activity
             android:name=".ui.BottomTabsActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".chat.ui.ChatActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".chat.ui.LoginActivity"
             android:screenOrientation="portrait"
@@ -123,7 +127,7 @@
         <activity
             android:name=".ui.NewMagazineActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible"/>
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".ui.LoadMagazineActivity"
             android:screenOrientation="portrait" />
@@ -137,9 +141,11 @@
         <activity
             android:name=".ui.MyCollections"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.MyCollectionDetails"
+        <activity
+            android:name=".ui.MyCollectionDetails"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.UserCreatedMagazineActivity"
+        <activity
+            android:name=".ui.UserCreatedMagazineActivity"
             android:screenOrientation="portrait"></activity>
     </application>
 

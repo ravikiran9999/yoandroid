@@ -13,10 +13,9 @@ import android.view.ViewGroup;
 
 import com.yo.android.R;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
-import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.MyCollections;
-import com.yo.android.ui.NewMagazineActivity;
+import com.yo.android.ui.OthersProfileActivity;
 
 /**
  * Created by creatives on 6/27/2016.
@@ -53,11 +52,12 @@ public class MagazinesFragment extends Fragment {
         //getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
         getChildFragmentManager().beginTransaction().add(R.id.bottom, new MagazineFlipArticlesFragment()).commit();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.menu_create_magazines:
                 Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
                 startActivity(createMagazinesIntent);
@@ -66,6 +66,10 @@ public class MagazinesFragment extends Fragment {
             case R.id.menu_my_collections:
                 Intent myCollectionsIntent = new Intent(getActivity(), MyCollections.class);
                 startActivity(myCollectionsIntent);
+                break;
+            case R.id.menu_find_people:
+                Intent findPplIntent = new Intent(getActivity(), OthersProfileActivity.class);
+                startActivity(findPplIntent);
                 break;
 
 
