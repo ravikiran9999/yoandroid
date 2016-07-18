@@ -162,6 +162,8 @@
         <activity
             android:name=".ui.WishListActivity"
             android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".ui.fragments.InviteActivity"></activity>
     </application>
 
 </manifest>

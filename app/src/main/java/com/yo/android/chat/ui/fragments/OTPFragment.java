@@ -120,7 +120,7 @@ public class OTPFragment extends BaseFragment {
                 "password", phoneNumber, "123456").enqueue(new Callback<OTPResponse>() {
             @Override
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
-
+                contactsSyncManager.syncContacts();
                 count++;
                 navigateToNext(response, phoneNumber, password);
             }

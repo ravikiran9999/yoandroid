@@ -68,19 +68,20 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         }
 
         //holder.getContactMail().setText(item.getEmailId());
-        holder.getMessageView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (item.getYoAppUser()) {
-                    String yourPhoneNumber = userId;
-                    String opponentPhoneNumber = item.getPhoneNo();
-                    showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
-                } else {
-                    Toast.makeText(mContext, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
+
+            holder.getMessageView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (item.getYoAppUser()) {
+                        String yourPhoneNumber = userId;
+                        String opponentPhoneNumber = item.getPhoneNo();
+                        showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
+                    } else {
+                        Toast.makeText(mContext, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         holder.getCallView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -47,6 +47,8 @@ import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.WishListActivity;
 import com.yo.android.ui.fragments.DialerFragment;
+import com.yo.android.ui.fragments.InviteActivity;
+import com.yo.android.ui.fragments.InviteFriendsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.voip.InComingCallActivity;
@@ -102,6 +104,7 @@ import dagger.Provides;
                 FollowersActivity.class,
                 WishListActivity.class,
 
+                InviteActivity.class,
                 OthersProfileMagazines.class,
                 OtherProfilesFollowers.class,
                 OtherProfilesLinedArticles.class,
@@ -119,6 +122,7 @@ import dagger.Provides;
                 MoreFragment.class,
                 MagazinesFragment.class,
                 GroupContactsFragment.class,
+                InviteFriendsFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,
