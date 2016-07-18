@@ -12,6 +12,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.FindPeople;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.List;
@@ -68,8 +69,9 @@ public class FindPeopleActivity extends BaseActivity {
         lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent findPeopleIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
-                startActivity(findPeopleIntent);
+                Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
+                otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
+                startActivity(otherProfileIntent);
             }
         });
     }

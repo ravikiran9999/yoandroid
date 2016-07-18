@@ -36,7 +36,10 @@ import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
+import com.yo.android.ui.OtherProfilesFollowers;
+import com.yo.android.ui.OtherProfilesLinedArticles;
 import com.yo.android.ui.OthersProfileActivity;
+import com.yo.android.ui.OthersProfileMagazines;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
@@ -95,6 +98,9 @@ import dagger.Provides;
                 EditMagazineActivity.class,
                 FindPeopleActivity.class,
                 FollowersActivity.class,
+                OthersProfileMagazines.class,
+                OtherProfilesFollowers.class,
+                OtherProfilesLinedArticles.class,
 
                 //Fragments
                 ContactsFragment.class,
