@@ -34,6 +34,7 @@ public class OtherProfilesFollowers extends BaseFragment {
     YoApi.YoService yoService;
     private int pageCount = 1;
     private String userID;
+    private TextView noData;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class OtherProfilesFollowers extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         findPeopleAdapter = new FindPeopleAdapter(getActivity());
         lvFindPeople = (ListView) view.findViewById(R.id.lv_find_people);
+        noData = (TextView) view.findViewById(R.id.no_data);
         lvFindPeople.setAdapter(findPeopleAdapter);
         lvFindPeople.setOnScrollListener(onScrollListener());
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
@@ -58,6 +60,8 @@ public class OtherProfilesFollowers extends BaseFragment {
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                 dismissProgressDialog();
                 if (response.body().size() > 0) {
+                    noData.setVisibility(View.GONE);
+                    lvFindPeople.setVisibility(View.VISIBLE);
                     TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count);
                     count.setText("" + response.body().size());
                     List<FindPeople> findPeopleList = response.body();

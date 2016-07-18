@@ -40,7 +40,7 @@
         android:ellipsize="end"
         android:maxLines="5"
         android:text="Chris Jung Desc"
-        android:textSize="16sp" />
+        android:textSize="12sp" />
 
     <Button
         android:id="@+id/imv_find_people_follow"

@@ -37,6 +37,7 @@ public class OthersProfileMagazines extends BaseFragment {
     @Inject
     YoApi.YoService yoService;
     private String userID;
+    private TextView noData;
 
     @Nullable
     @Override
@@ -50,6 +51,7 @@ public class OthersProfileMagazines extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         gridView = (GridView) view.findViewById(R.id.magazines_gridview);
+        noData = (TextView) view.findViewById(R.id.no_data);
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
         userID = "577a21902a8b0f000346d328";
 
@@ -65,6 +67,9 @@ public class OthersProfileMagazines extends BaseFragment {
                     List<OwnMagazine> magazineList = response.body();
                     adapter = new CreateMagazinesAdapter(getActivity(), magazineList);
                     gridView.setAdapter(adapter);
+                } else {
+                    gridView.setVisibility(View.GONE);
+                    noData.setVisibility(View.VISIBLE);
                 }
             }
 
