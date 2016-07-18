@@ -52,7 +52,7 @@ public class OtherProfilesFollowers extends BaseFragment {
         lvFindPeople.setAdapter(findPeopleAdapter);
         lvFindPeople.setOnScrollListener(onScrollListener());
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
-        userID = "577a21902a8b0f000346d328";
+        //userID = "577a21902a8b0f000346d328"
         showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getOtherProfilesFollowersAPI(accessToken, userID).enqueue(new Callback<List<FindPeople>>() {

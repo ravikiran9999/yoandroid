@@ -53,7 +53,7 @@ public class OthersProfileMagazines extends BaseFragment {
         gridView = (GridView) view.findViewById(R.id.magazines_gridview);
         noData = (TextView) view.findViewById(R.id.no_data);
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
-        userID = "577a21902a8b0f000346d328";
+        //userID = "577a21902a8b0f000346d328"
 
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");

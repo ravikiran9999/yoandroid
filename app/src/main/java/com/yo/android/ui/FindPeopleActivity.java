@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.FindPeopleAdapter;
@@ -45,6 +46,7 @@ public class FindPeopleActivity extends BaseActivity {
 
         findPeopleAdapter = new FindPeopleAdapter(this);
         lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
+        final TextView noData = (TextView) findViewById(R.id.no_data);
         lvFindPeople.setAdapter(findPeopleAdapter);
         lvFindPeople.setOnScrollListener(onScrollListener());
 
@@ -57,6 +59,9 @@ public class FindPeopleActivity extends BaseActivity {
                 if (response.body().size() > 0) {
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItemsAll(findPeopleList);
+                    lvFindPeople.setVisibility(View.VISIBLE);
+                    noData.setVisibility(View.GONE);
+
                 }
             }
 
