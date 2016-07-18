@@ -4,10 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -25,18 +21,15 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
-import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.model.Topics;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.MyCollections;
-import com.yo.android.ui.NewMagazineActivity;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -108,7 +101,7 @@ public class MagazinesFragment extends BaseFragment {
                 topicsList.addAll(response.body());
 
                 List<String> topicNamesList = new ArrayList<String>();
-                for (int i=0; i<topicsList.size(); i++) {
+                for (int i = 0; i < topicsList.size(); i++) {
                     topicNamesList.add(topicsList.get(i).getName());
                 }
 
@@ -122,11 +115,12 @@ public class MagazinesFragment extends BaseFragment {
             }
         });
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.menu_create_magazines:
                 Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
                 startActivity(createMagazinesIntent);
@@ -165,16 +159,16 @@ public class MagazinesFragment extends BaseFragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Log.d("Search", "The selected item is " + parent.getItemAtPosition(position));
-                    String topicName = (String)parent.getItemAtPosition(position);
+                    String topicName = (String) parent.getItemAtPosition(position);
                     searchTextView.setText(topicName);
                     String topicId = "";
-                    for(int i=0; i<topicsList.size(); i++) {
-                        if(topicsList.get(i).getName().equals(topicName)) {
+                    for (int i = 0; i < topicsList.size(); i++) {
+                        if (topicsList.get(i).getName().equals(topicName)) {
                             topicId = topicsList.get(i).getId();
                         }
                     }
                     MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
-                    fragment.loadArticles(topicName,topicId);
+                    fragment.loadArticles(topicName, topicId);
 
 
                     return;

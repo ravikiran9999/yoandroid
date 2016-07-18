@@ -7,11 +7,11 @@ import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
-import com.yo.android.chat.ui.CreateGroupActivity;
-import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.SignupActivity;
+import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
@@ -21,7 +21,6 @@ import com.yo.android.chat.ui.fragments.YoContactsFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
-import com.yo.android.model.Magazine;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.CreateMagazineActivity;
@@ -37,6 +36,7 @@ import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
+import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
@@ -90,6 +90,7 @@ import dagger.Provides;
                 UserCreatedMagazineActivity.class,
                 LoadMagazineActivity.class,
                 ShowPhotoActivity.class,
+                OthersProfileActivity.class,
                 CreatedMagazineDetailActivity.class,
                 EditMagazineActivity.class,
                 FindPeopleActivity.class,

@@ -68,6 +68,11 @@
             android:name=".ui.SettingsActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.OthersProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".ui.ShowPhotoActivity"
             android:screenOrientation="portrait" />
         <activity
