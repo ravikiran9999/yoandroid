@@ -2,7 +2,9 @@ package com.yo.android.ui;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.FindPeopleAdapter;
@@ -24,6 +26,7 @@ public class FollowersActivity extends BaseActivity {
     YoApi.YoService yoService;
     private ListView lvFindPeople;
     private FindPeopleAdapter findPeopleAdapter;
+    private TextView noData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class FollowersActivity extends BaseActivity {
 
         findPeopleAdapter = new FindPeopleAdapter(this);
         lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
+        noData = (TextView) findViewById(R.id.no_data);
         lvFindPeople.setAdapter(findPeopleAdapter);
 
         showProgressDialog();
@@ -48,6 +52,8 @@ public class FollowersActivity extends BaseActivity {
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                 dismissProgressDialog();
                 if (response.body().size() > 0) {
+                    noData.setVisibility(View.GONE);
+                    lvFindPeople.setVisibility(View.VISIBLE);
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItems(findPeopleList);
                 }

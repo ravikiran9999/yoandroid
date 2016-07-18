@@ -15,6 +15,7 @@ import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
+import com.yo.android.chat.ui.fragments.GroupContactsFragment;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.chat.ui.fragments.YoContactsFragment;
@@ -36,7 +37,10 @@ import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
+import com.yo.android.ui.OtherProfilesFollowers;
+import com.yo.android.ui.OtherProfilesLinedArticles;
 import com.yo.android.ui.OthersProfileActivity;
+import com.yo.android.ui.OthersProfileMagazines;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
@@ -98,6 +102,10 @@ import dagger.Provides;
                 FollowersActivity.class,
                 WishListActivity.class,
 
+                OthersProfileMagazines.class,
+                OtherProfilesFollowers.class,
+                OtherProfilesLinedArticles.class,
+
                 //Fragments
                 ContactsFragment.class,
                 BaseFragment.class,
@@ -110,6 +118,7 @@ import dagger.Provides;
                 MagazineFlipArticlesFragment.class,
                 MoreFragment.class,
                 MagazinesFragment.class,
+                GroupContactsFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,

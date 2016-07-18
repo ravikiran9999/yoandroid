@@ -41,6 +41,7 @@ public class ContactsSyncManager {
 
 
     public void syncContacts() {
+
         new AsyncTask<Void, Void, List<String>>() {
             @Override
             protected List<String> doInBackground(Void... params) {

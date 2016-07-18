@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -84,6 +83,7 @@ public class CreateMagazinesAdapter extends BaseAdapter {
             textView.setLayoutParams(params);
         }
         else {
+
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER;
@@ -94,4 +94,5 @@ public class CreateMagazinesAdapter extends BaseAdapter {
 
         return convertView;
     }
+
 }

@@ -11,9 +11,7 @@ import com.yo.android.model.Response;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
-import com.yo.android.model.YoAppContacts;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -112,7 +110,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/user/contacts_sync.json")
-        Call<List<Contact>> syncContactsAPI( @Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
+        Call<List<Contact>> syncContactsAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
 
         @GET("/api/user/contacts.json")
         Call<List<Contact>> getContacts(@Query("access_token") String access_token);
@@ -127,13 +125,19 @@ public class YoApi {
         @GET("api/user/followers.json")
         Call<List<FindPeople>> getFollowersAPI(@Query("access_token") String access_token);
 
+        @GET("api/magzines.json")
+        Call<List<OwnMagazine>> getOtherProfilesMagazinesAPI(@Query("access_token") String access_token, @Query("user_id") String userId);
+
+        @GET("api/user/followers.json")
+        Call<List<FindPeople>> getOtherProfilesFollowersAPI(@Query("access_token") String access_token, @Query("user_id") String userId);
+
         @GET("api/user/info.json")
         Call<UserProfileInfo> getUserInfo(@Query("access_token") String access_token);
 
         @Multipart
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
-                                         @Part MultipartBody.Part file
+                                            @Part MultipartBody.Part file
         );
         @GET("api/articles.json")
         Call<List<Articles>> getWishListAPI(@Query("access_token") String access_token, @Query("liked") String liked);
