@@ -26,6 +26,7 @@ import com.yo.android.model.Topics;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
+import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.WishListActivity;
 
@@ -147,6 +148,10 @@ public class MagazinesFragment extends BaseFragment {
             case R.id.menu_wish_list:
                 Intent wishListIntent = new Intent(getActivity(), WishListActivity.class);
                 startActivity(wishListIntent);
+                break;
+            case R.id.menu_followings:
+                Intent followingstIntent = new Intent(getActivity(), FollowingsActivity.class);
+                startActivity(followingstIntent);
                 break;
         }
         return true;

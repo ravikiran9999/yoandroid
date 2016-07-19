@@ -10,6 +10,7 @@ public class FindPeople {
     private String last_name;
     private String description;
     private String avatar;
+    private String isFollowing;
 
     public String getId() {
         return id;
@@ -49,5 +50,13 @@ public class FindPeople {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getIsFollowing() {
+        return isFollowing;
+    }
+
+    public void setIsFollowing(String isFollowing) {
+        this.isFollowing = isFollowing;
     }
 }

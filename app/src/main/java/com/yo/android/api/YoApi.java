@@ -113,6 +113,10 @@ public class YoApi {
         @POST("api/user/contacts_sync.json")
         Call<List<Contact>> syncContactsAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
 
+        @FormUrlEncoded
+        @POST("api/user/firebase_token.json")
+        Call<ResponseBody> firebaseAuthToken(@Field("access_token") String access_token);
+
         @GET("/api/user/contacts.json")
         Call<List<Contact>> getContacts(@Query("access_token") String access_token);
 
@@ -139,11 +143,18 @@ public class YoApi {
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
                                             @Part("user[first_name]") RequestBody body,
-                                            @Part MultipartBody.Part file
-        );
+                                            @Part MultipartBody.Part file);
+
 
         @GET("api/articles.json")
         Call<List<Articles>> getWishListAPI(@Query("access_token") String access_token, @Query("liked") String liked);
+
+        @FormUrlEncoded
+        @POST("api/user/follow.json")
+        Call<ResponseBody> followUsersAPI(@Field("access_token") String access_token, @Field("followed_id") String followed_id);
+
+        @GET("api/user/followings.json")
+        Call<List<FindPeople>> getFollowingsAPI(@Query("access_token") String access_token);
     }
 
     public interface YoRefreshTokenService {

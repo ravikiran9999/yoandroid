@@ -166,9 +166,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.WishListActivity"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".ui.fragments.InviteActivity"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.fragments.InviteActivity" />
 
         <!-- SMS Receiver -->
         <receiver android:name=".voip.IncomingSmsReceiver">
@@ -177,6 +176,11 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ui.FollowingsActivity"
+            android:screenOrientation="portrait"></activity>
+        <service
+            android:name=".chat.firebase.FirebaseService"
+            ></service>
     </application>
 
 </manifest>

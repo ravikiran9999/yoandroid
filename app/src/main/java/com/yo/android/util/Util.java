@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
@@ -277,6 +279,19 @@ public class Util {
             mCursorDrawableRes.setAccessible(true);
             mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
         } catch (Exception e) {
+        }
+    }
+
+    public static void shareArticle(View view, String url) {
+        try {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, "Sharing Article");
+            i.putExtra(Intent.EXTRA_TEXT, url);
+            view.getContext().startActivity(Intent.createChooser(i, "Sharing Article"));
+        }
+        catch (ActivityNotFoundException e) {
+
         }
     }
 }

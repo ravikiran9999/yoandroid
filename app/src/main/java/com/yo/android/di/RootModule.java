@@ -2,8 +2,12 @@ package com.yo.android.di;
 
 import android.content.Context;
 
+import com.firebase.client.Firebase;
 import com.yo.android.adapters.ChatRoomListAdapter;
+import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.app.BaseApp;
+import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
@@ -31,6 +35,7 @@ import com.yo.android.ui.EditMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.FollowersActivity;
+import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.LoadMagazineActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.MyCollectionDetails;
@@ -105,6 +110,7 @@ import dagger.Provides;
                 FindPeopleActivity.class,
                 FollowersActivity.class,
                 WishListActivity.class,
+                FollowingsActivity.class,
 
                 InviteActivity.class,
                 OthersProfileMagazines.class,
@@ -130,7 +136,10 @@ import dagger.Provides;
                 RetrieveContactsManager.class,
 
                 //Adapters
-                ChatRoomListAdapter.class
+                ChatRoomListAdapter.class,
+                FindPeopleAdapter.class,
+
+                FirebaseService.class
         },
         includes = {
                 AppModule.class,
