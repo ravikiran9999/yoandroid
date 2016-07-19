@@ -137,10 +137,17 @@ public class YoApi {
         @Multipart
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
-                                            @Part MultipartBody.Part file
-        );
+                                            @Part MultipartBody.Part file);
+
         @GET("api/articles.json")
         Call<List<Articles>> getWishListAPI(@Query("access_token") String access_token, @Query("liked") String liked);
+
+        @FormUrlEncoded
+        @POST("api/user/follow.json")
+        Call<ResponseBody> followUsersAPI(@Field("access_token") String access_token, @Field("followed_id") String followed_id);
+
+        @GET("api/user/followings.json")
+        Call<List<FindPeople>> getFollowingsAPI(@Query("access_token") String access_token);
     }
 
     public interface YoRefreshTokenService {

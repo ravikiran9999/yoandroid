@@ -407,7 +407,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 public void onClick(View v) {
 
                     Intent intent = new Intent(CreatedMagazineDetailActivity.this, CreateMagazineActivity.class);
-                    startActivity(intent);
+                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
+                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
                 }
             });
 
