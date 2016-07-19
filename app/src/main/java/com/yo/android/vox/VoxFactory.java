@@ -2,6 +2,7 @@ package com.yo.android.vox;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +46,27 @@ public class VoxFactory {
         addSubscriberBody.addSubscriberBody(username, mobile);
         return addSubscriberBody;
     }
+
+    public String addSubscriber(String username, String mobile, String countryCode) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("PACKAGEID", "1");
+        data.put("USERNAME", username);
+        data.put("PASSWORD", "123456");
+        data.put("FULLNAME", "John Dev");
+        data.put("ADDRESS", "22-2-11,xyz");
+        data.put("EXPIRYDATE", "2019-08-27");
+        data.put("EMAILID", "test@gmail.com");
+        data.put("PHONENUMBER", mobile);
+        data.put("STATUS", "1");
+        data.put("COUNTRYCODE", countryCode);
+        data.put("MAXCALL", "1");
+        data.put("CREDIT", "2");
+        ArrayList CALLERIDARRAY = new ArrayList<String>();
+        CALLERIDARRAY.add(mobile);
+        data.put("CALLERIDARRAY", mobile);
+        return prepareRequest("SUBSCRIBER", "ADD", data);
+    }
+
 
     public String getBalanceBody(String subscriberId) {
         Map<String, Object> data = new HashMap<>();

@@ -41,7 +41,11 @@ public class Constants {
 
     public static final String MAGAZINE_ADD_ARTICLE_ID = "magazine_add_article_id";
     public static final int ADD_ARTICLES_TO_MAGAZINE = 201;
+    public static final String LOGED_IN = "loged_in";
     public static int SUCCESS_CODE = 200;
+
+    public static final int ADD_IMAGE_CAPTURE = 1;
+    public static final int ADD_SELECT_PICTURE = 2;
 
 
     public static String DELETE_MAGAZINE_ACTION = "com.edit.magazine.DELETE";

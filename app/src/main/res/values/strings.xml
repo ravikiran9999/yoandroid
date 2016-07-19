@@ -128,5 +128,13 @@
     <string name="some_thing_wrong">Something went wrong. Please try again later</string>
     <string name="article_added_success">Article added successfully</string>
     <string name="no_text">No Data Available.</string>
+    <string name="user_name">Username</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="profile">Profile</string>
+    <string name="okay">okay</string>
+    <string name="gallery">Gallery</string>
+    <string name="unable_to_fetch">Unable to fetch user data at this moment.Please try agan later.</string>
+    <string name="resend_otp_text">Re-send OTP</string>
+    <string name="otp_button_submit">Submit</string>
 
 </resources>

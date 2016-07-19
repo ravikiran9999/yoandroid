@@ -4,18 +4,27 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by root on 15/7/16.
@@ -49,6 +58,9 @@ public class OthersProfileActivity extends BaseActivity {
         mAdapter.addFragment(new OtherProfilesFollowers(), null);
         mAdapter.addFragment(new OtherProfilesLinedArticles(), null);
         viewPager.setAdapter(mAdapter);
+        CircleImageView picture = (CircleImageView) findViewById(R.id.picture);
+        TextView tvName = (TextView) findViewById(R.id.follower_name);
+        final Button btnFolow = (Button) findViewById(R.id.follow_btn);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -75,6 +87,54 @@ public class OthersProfileActivity extends BaseActivity {
         viewPager.setCurrentItem(0);
 
         userId = getIntent().getStringExtra(Constants.USER_ID);
+        String name = getIntent().getStringExtra("PersonName");
+        String pic = getIntent().getStringExtra("PersonPic");
+        String isFollowing = getIntent().getStringExtra("PersonIsFollowing");
+
+        if(!TextUtils.isEmpty(pic)) {
+            Picasso.with(this)
+                    .load(pic)
+                    .into(picture);
+        }
+        else {
+            Picasso.with(this)
+                    .load(R.drawable.ic_contacts)
+                    .into(picture);
+        }
+
+        tvName.setText(name);
+
+        if(isFollowing.equals("true")) {
+            btnFolow.setText("Following");
+            btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+        }
+        else {
+            btnFolow.setText("Follow");
+            btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
+
+        btnFolow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProgressDialog();
+                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                yoService.followUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dismissProgressDialog();
+                        btnFolow.setText("Following");
+                        btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        dismissProgressDialog();
+                        btnFolow.setText("Follow");
+                        btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    }
+                });
+            }
+        });
 
     }
 

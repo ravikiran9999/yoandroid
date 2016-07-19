@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
@@ -45,7 +46,7 @@ public class YoApi {
         //http://yoapp-dev.herokuapp.com/api/otp.json?phone_no=123456789
         @FormUrlEncoded
         @POST("api/otp.json")
-        Call<ResponseBody> loginUserAPI(@Field("phone_no") String phone_no, @Field("type") String type);
+        Call<Response> loginUserAPI(@Field("phone_no") String phone_no, @Field("type") String type);
 
         //http://yoapp-dev.herokuapp.com/oauth/token.json?client_id=83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60
         // &client_secret=1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49
@@ -143,13 +144,19 @@ public class YoApi {
         @Multipart
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
-                                            @Part MultipartBody.Part file
-        );
+                                            @Part("user[first_name]") RequestBody body,
+                                            @Part MultipartBody.Part file);
+
 
         @GET("api/articles.json")
         Call<List<Articles>> getWishListAPI(@Query("access_token") String access_token, @Query("liked") String liked);
 
+        @FormUrlEncoded
+        @POST("api/user/follow.json")
+        Call<ResponseBody> followUsersAPI(@Field("access_token") String access_token, @Field("followed_id") String followed_id);
 
+        @GET("api/user/followings.json")
+        Call<List<FindPeople>> getFollowingsAPI(@Query("access_token") String access_token);
     }
 
     public interface YoRefreshTokenService {

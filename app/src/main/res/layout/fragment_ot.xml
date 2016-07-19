@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:text="We have sent a SMS with OTP to your mobile number, Please enter the OTP here."
+        android:text="In case the OTP is not received in 30 seconds, please click Resend OTP button."
         android:textColor="@android:color/white" />
 
     <TextView
@@ -61,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#dd000000"
-        android:text="Submit"
+        android:text="@string/otp_button_submit"
         android:layout_marginTop="15dp"
         android:textAllCaps="false"
         android:textColor="@android:color/white"

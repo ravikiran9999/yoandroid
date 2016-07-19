@@ -25,7 +25,9 @@
         android:text="Chris Jung"
         android:textColor="@android:color/black"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:ellipsize="end"/>
 
     <TextView
         android:id="@+id/tv_find_people_desc"
@@ -44,8 +46,8 @@
 
     <Button
         android:id="@+id/imv_find_people_follow"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="16dp"
@@ -54,8 +56,9 @@
         android:gravity="center"
         android:text="Follow"
         android:textAllCaps="false"
+        android:padding="5dp"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+    />
 
     <View
         android:layout_width="match_parent"

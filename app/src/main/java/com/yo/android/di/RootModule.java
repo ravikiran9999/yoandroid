@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.firebase.client.Firebase;
 import com.yo.android.adapters.ChatRoomListAdapter;
+import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.MyServiceConnection;
@@ -34,6 +35,7 @@ import com.yo.android.ui.EditMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.FollowersActivity;
+import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.LoadMagazineActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.MyCollectionDetails;
@@ -44,6 +46,7 @@ import com.yo.android.ui.OtherProfilesFollowers;
 import com.yo.android.ui.OtherProfilesLinedArticles;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
+import com.yo.android.ui.ProfileActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
@@ -101,11 +104,13 @@ import dagger.Provides;
                 LoadMagazineActivity.class,
                 ShowPhotoActivity.class,
                 OthersProfileActivity.class,
+                ProfileActivity.class,
                 CreatedMagazineDetailActivity.class,
                 EditMagazineActivity.class,
                 FindPeopleActivity.class,
                 FollowersActivity.class,
                 WishListActivity.class,
+                FollowingsActivity.class,
 
                 InviteActivity.class,
                 OthersProfileMagazines.class,
@@ -132,6 +137,7 @@ import dagger.Provides;
 
                 //Adapters
                 ChatRoomListAdapter.class,
+                FindPeopleAdapter.class,
 
                 FirebaseService.class
         },

@@ -14,9 +14,16 @@ android {
     productFlavors {
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
         }
         stage {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+        }
+        //This will flavor will enable BeepSend SMS gateway for verification
+        stagePaidSms {
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         }
     }
     buildTypes {
@@ -69,12 +76,16 @@ dependencies {
     stageCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     stageCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
     stageCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
+
+    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
+    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
+    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
+
     compile 'com.github.Cutta:TagView:c15dd8288a'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-
 }
 apply plugin: 'com.google.gms.google-services'
 

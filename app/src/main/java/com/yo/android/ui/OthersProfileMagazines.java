@@ -1,16 +1,19 @@
 package com.yo.android.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.CreateMagazinesAdapter;
+import com.yo.android.adapters.OthersMagazinesAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.OwnMagazine;
@@ -30,7 +33,7 @@ import retrofit2.Response;
  */
 public class OthersProfileMagazines extends BaseFragment {
     private GridView gridView;
-    private CreateMagazinesAdapter adapter;
+    private OthersMagazinesAdapter adapter;
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
@@ -65,7 +68,7 @@ public class OthersProfileMagazines extends BaseFragment {
                     TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(0).getCustomView().findViewById(R.id.count);
                     count.setText("" + response.body().size());
                     List<OwnMagazine> magazineList = response.body();
-                    adapter = new CreateMagazinesAdapter(getActivity());
+                    adapter = new OthersMagazinesAdapter(getActivity());
                     adapter.addItems(magazineList);
                     gridView.setAdapter(adapter);
                 } else {
@@ -79,5 +82,19 @@ public class OthersProfileMagazines extends BaseFragment {
                 dismissProgressDialog();
             }
         });
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent intent = new Intent(getActivity(), CreatedMagazineDetailActivity.class);
+                intent.putExtra("MagazineTitle", adapter.getItem(position).getName());
+                intent.putExtra("MagazineId", adapter.getItem(position).getId());
+                intent.putExtra("MagazineDesc", adapter.getItem(position).getDescription());
+                intent.putExtra("MagazinePrivacy", adapter.getItem(position).getPrivacy());
+                startActivity(intent);
+            }
+
+            });
     }
 }
