@@ -43,7 +43,7 @@ public class YoApi {
         //http://yoapp-dev.herokuapp.com/api/otp.json?phone_no=123456789
         @FormUrlEncoded
         @POST("api/otp.json")
-        Call<ResponseBody> loginUserAPI(@Field("phone_no") String phone_no,@Field("type") String type);
+        Call<ResponseBody> loginUserAPI(@Field("phone_no") String phone_no, @Field("type") String type);
 
         //http://yoapp-dev.herokuapp.com/oauth/token.json?client_id=83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60
         // &client_secret=1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49
@@ -112,6 +112,10 @@ public class YoApi {
         @POST("api/user/contacts_sync.json")
         Call<List<Contact>> syncContactsAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
 
+        @FormUrlEncoded
+        @POST("api/user/firebase_token.json")
+        Call<ResponseBody> firebaseAuthToken(@Field("access_token") String access_token);
+
         @GET("/api/user/contacts.json")
         Call<List<Contact>> getContacts(@Query("access_token") String access_token);
 
@@ -137,6 +141,7 @@ public class YoApi {
         @Multipart
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
+
                                             @Part MultipartBody.Part file);
 
         @GET("api/articles.json")
