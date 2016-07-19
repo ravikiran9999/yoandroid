@@ -146,6 +146,7 @@ public class OTPFragment extends BaseFragment {
                         Intent intent = new Intent(getActivity(), ProfileActivity.class);
                         intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
                         dismissProgressDialog();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         getActivity().finish();
                     }

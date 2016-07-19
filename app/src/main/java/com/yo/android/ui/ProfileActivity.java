@@ -161,13 +161,16 @@ public class ProfileActivity extends BaseActivity {
     private void uploadFile(File file) {
         showProgressDialog();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        // create RequestBody instance from file
-        RequestBody requestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body;
+        if (file == null) {
+            body = null;
+        } else { // create RequestBody instance from file
+            RequestBody requestFile =
+                    RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
-        // MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
+            // MultipartBody.Part is used to send also the actual file name
+            body = MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
+        }
 
         String descriptionString = username.getText().toString();
         RequestBody description =
@@ -176,9 +179,12 @@ public class ProfileActivity extends BaseActivity {
         yoService.updateProfile(userId, description, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
-                dismissProgressDialog();
                 preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
-                startActivity(new Intent(ProfileActivity.this, BottomTabsActivity.class));
+                Intent intent = new Intent(ProfileActivity.this, BottomTabsActivity.class);
+                dismissProgressDialog();
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                ProfileActivity.this.finish();
             }
 
             @Override
