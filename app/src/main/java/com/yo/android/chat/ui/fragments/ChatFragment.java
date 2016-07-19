@@ -1,8 +1,12 @@
 package com.yo.android.chat.ui.fragments;
 
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -24,6 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
+import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.DatabaseHelper;
@@ -49,7 +55,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private Menu menu;
 
     @Inject
+    FirebaseService firebaseService;
+
+    @Inject
     DatabaseHelper databaseHelper;
+    @Inject
+    MyServiceConnection myServiceConnection;
 
     public Menu getMenu() {
         return menu;
@@ -114,6 +125,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        if(myServiceConnection.isServiceConnection()) {
+            firebaseService.getFirebaseAuth();
+        }
+
         getChatRoomList();
         arrayOfUsers = new ArrayList<>();
         chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
@@ -245,5 +261,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
     }
+
+
 
 }

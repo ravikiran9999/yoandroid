@@ -46,6 +46,7 @@ public class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Injector.obtain(getActivity().getApplication()).inject(this);
 
+
     }
 
     @Override
@@ -90,5 +91,4 @@ public class BaseFragment extends Fragment {
             ((BottomTabsActivity) getActivity()).showOrHideTabs(show);
         }
     }
-
 }

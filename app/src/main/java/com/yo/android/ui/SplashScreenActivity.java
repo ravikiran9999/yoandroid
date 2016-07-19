@@ -1,15 +1,21 @@
 package com.yo.android.ui;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.widget.ImageView;
 
+import com.j256.ormlite.stmt.query.In;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
@@ -37,6 +43,8 @@ public class SplashScreenActivity extends BaseActivity {
     private Handler mHandler = new Handler();
     private static final long DURATION = 1000L;
 
+    @Inject
+    MyServiceConnection myServiceConnection;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +62,15 @@ public class SplashScreenActivity extends BaseActivity {
             mLog.w("Splash", e);
         }
 //        testVox();
+
+        // firebase service
+
+        if(!myServiceConnection.isServiceConnection()) {
+            Intent intent = new Intent(this, FirebaseService.class);
+            startService(intent);
+
+            bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     private Runnable runnable = new Runnable() {
