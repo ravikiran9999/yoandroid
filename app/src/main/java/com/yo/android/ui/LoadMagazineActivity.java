@@ -118,6 +118,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                         intent.putExtra("ArticleImage", response.body().getImage_filename());*/
                         intent.putExtra("MagazineTitle", magazineTitle);
                         intent.putExtra("MagazineId", magazineId);
+                        intent.putExtra("MagazineDesc", response.body().getSummary());
                         startActivity(intent);
                         finish();
                     }

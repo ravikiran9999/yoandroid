@@ -76,6 +76,9 @@ public class FindPeopleActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
                 otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
+                otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
+                otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
+                otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
                 startActivity(otherProfileIntent);
             }
         });

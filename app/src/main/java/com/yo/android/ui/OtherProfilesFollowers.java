@@ -50,7 +50,6 @@ public class OtherProfilesFollowers extends BaseFragment {
         lvFindPeople = (ListView) view.findViewById(R.id.lv_find_people);
         noData = (TextView) view.findViewById(R.id.no_data);
         lvFindPeople.setAdapter(findPeopleAdapter);
-        lvFindPeople.setOnScrollListener(onScrollListener());
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
         //userID = "577a21902a8b0f000346d328"
         showProgressDialog();
@@ -76,39 +75,4 @@ public class OtherProfilesFollowers extends BaseFragment {
         });
     }
 
-    private AbsListView.OnScrollListener onScrollListener() {
-        return new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                int threshold = 1;
-                int count = lvFindPeople.getCount();
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    if (lvFindPeople.getLastVisiblePosition() >= count - threshold) {
-                        pageCount++;
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.getFindPeopleAPI(accessToken, pageCount, 30).enqueue(new Callback<List<FindPeople>>() {
-                            @Override
-                            public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                                dismissProgressDialog();
-                                if (response.body().size() > 0) {
-                                    List<FindPeople> findPeopleList = response.body();
-                                    findPeopleAdapter.addItemsAll(findPeopleList);
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<List<FindPeople>> call, Throwable t) {
-                                dismissProgressDialog();
-                            }
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-                                 int totalItemCount) {
-            }
-        };
-    }
 }

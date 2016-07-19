@@ -22,13 +22,13 @@
             android:src="@drawable/back" />
 
 
-        <TextView
+        <Button
             android:id="@+id/follow_btn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_alignParentRight="true"
             android:layout_gravity="right"
-
+            android:textAllCaps="false"
             android:background="@drawable/ic_magazine_follow"
             android:gravity="center"
             android:padding="5dp"
@@ -38,15 +38,13 @@
 
     </FrameLayout>
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/picture"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
-        android:adjustViewBounds="true"
         android:padding="5dp"
-        android:scaleType="fitCenter"
         tools:src="@drawable/ic_contacts" />
 
     <TextView
