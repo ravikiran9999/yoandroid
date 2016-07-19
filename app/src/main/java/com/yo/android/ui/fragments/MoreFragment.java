@@ -2,13 +2,11 @@ package com.yo.android.ui.fragments;
 
 
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,6 +29,7 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 
 import java.io.File;
@@ -61,15 +60,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     YoApi.YoService yoService;
     FrameLayout changePhoto;
     ImageView profilePic;
-
-    private File mFileTemp;
-    private static String TEMP_PHOTO_FILE_NAME;
-    private static final int ADD_IMAGE_CAPTURE = 1;
-    private static final int ADD_SELECT_PICTURE = 2;
-    private Uri mImageCaptureUri = null;
-    private String imagePath;
-    AlertDialog dialog;
-    private static final String[] items = {"Camera", "Gallery"};
+    @Inject
+    ImagePickHelper cameraIntent;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -88,12 +80,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onViewCreated(view, savedInstanceState);
         changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
         profilePic = (ImageView) view.findViewById(R.id.profile_pic);
+        cameraIntent.setActivity(getActivity());
 
         changePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog();
-                Toast.makeText(getActivity(), "You have selected change photo.", Toast.LENGTH_LONG).show();
+                cameraIntent.showDialog();
             }
         });
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
@@ -119,7 +111,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
-        yoService.updateProfile(userId, body).enqueue(new Callback<UserProfileInfo>() {
+        String descriptionString = "";
+        RequestBody description =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), descriptionString);
+        yoService.updateProfile(userId, description, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
@@ -166,7 +162,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
 
         List<MoreData> menuDataList = new ArrayList<>();
-        menuDataList.add(new MoreData("John Doe", false));
+        menuDataList.add(new MoreData(preferenceEndPoint.getStringPreference(Constants.USER_NAME), false));
         String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         menuDataList.add(new MoreData(phone, false));
         menuDataList.add(new MoreData("Yo Credit " + "($" + balance + ")", true));
@@ -210,41 +206,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         builder.create().show();
     }
 
-    public void takePicture() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        dialog.dismiss();
-        try {
-
-            String state = Environment.getExternalStorageState();
-            TEMP_PHOTO_FILE_NAME = "" + System.currentTimeMillis() + ".jpg";
-            if (Environment.MEDIA_MOUNTED.equals(state)) {
-
-                mFileTemp = new File(Environment
-                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                        + "/Camera", TEMP_PHOTO_FILE_NAME);
-            } else {
-                mFileTemp = new File(getActivity().getFilesDir(), TEMP_PHOTO_FILE_NAME);
-            }
-            if (Environment.MEDIA_MOUNTED.equals(state)) {
-                mImageCaptureUri = Uri.fromFile(mFileTemp);
-            } else {
-
-                //mImageCaptureUri = InternalStorageContentProvider.CONTENT_URI;
-            }
-            intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-            intent.putExtra("return-data", true);
-            startActivityForResult(intent, ADD_IMAGE_CAPTURE);
-        } catch (ActivityNotFoundException e) {
-        }
-    }
-
-    // open gallery
-    public void getImageFromGallery() {
-        dialog.dismiss();
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, ADD_SELECT_PICTURE);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -252,16 +213,16 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         switch (requestCode) {
 
-            case ADD_IMAGE_CAPTURE:
+            case Constants.ADD_IMAGE_CAPTURE:
                 try {
-                    imagePath = mFileTemp.getPath();
+                    String imagePath = cameraIntent.mFileTemp.getPath();
                     uploadFile(new File(imagePath));
 
                 } catch (Exception e) {
                 }
                 break;
 
-            case ADD_SELECT_PICTURE: {
+            case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
                     Uri targetUri = data.getData();
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -270,7 +231,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                 filePathColumn, null, null, null);
                         cursor.moveToFirst();
                         int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
-                        imagePath = cursor.getString(columnIndex);
+                        String imagePath = cursor.getString(columnIndex);
 
                         uploadFile(new File(imagePath));
                     } catch (Exception e) {
@@ -283,21 +244,4 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
-    private void showDialog() {
-
-        dialog = new AlertDialog.Builder(getActivity())
-                .setSingleChoiceItems(items, 2, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (items[which].toString().equalsIgnoreCase("Camera")) {
-                            takePicture();
-                            dialog.dismiss();
-                        } else if (items[which].toString().equalsIgnoreCase("Gallery")) {
-                            getImageFromGallery();
-                        }
-
-                    }
-                })
-                .show();
-    }
 }

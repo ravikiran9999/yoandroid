@@ -15,6 +15,7 @@ import com.yo.android.model.UserProfileInfo;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
@@ -141,8 +142,9 @@ public class YoApi {
         @Multipart
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
-
+                                            @Part("user[first_name]") RequestBody body,
                                             @Part MultipartBody.Part file);
+
 
         @GET("api/articles.json")
         Call<List<Articles>> getWishListAPI(@Query("access_token") String access_token, @Query("liked") String liked);
