@@ -2,6 +2,7 @@ package com.yo.android.flip;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +44,7 @@ import com.yo.android.model.Articles;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -237,9 +239,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
                 holder = new ViewHolder();
 
-                /*holder.categoryName = UI
-                        .<TextView>findViewById(layout, R.id.tv_category_name);*/
-
                 holder.articleTitle = UI.
                         <TextView>findViewById(layout, R.id.tv_article_title);
 
@@ -252,23 +251,19 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
                 holder.magazineAdd = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add);
 
+                holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
             }
 
-            //final Travels.Data data = Travels.getImgDescriptions().get(position);
+
             final Articles data = getItem(position);
             if (data == null) {
                 return layout;
             }
             holder.magazineLike.setTag(position);
-            //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
-            //articlesList = new ArrayList<Travels.Data>();
-            //articlesList.add(data);
-
-            /*holder.categoryName
-                    .setText(AphidLog.format("%s", topicName));*/
 
             holder.articleTitle
                     .setText(AphidLog.format("%s", data.getTitle()));
@@ -280,10 +275,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
             //TODO:
             holder.magazineLike.setOnCheckedChangeListener(null);
             if (data.getLiked().equals("true")) {
-                // holder.magazineLike.setChecked(true);
                 data.setIsChecked(true);
             } else {
-                //holder.magazineLike.setChecked(false);
                 data.setIsChecked(false);
             }
 
@@ -303,13 +296,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
-                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    /*}
-                                    else {
-                                        Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    }*/
+
                             }
 
                             @Override
@@ -330,13 +318,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                                 data.setLiked("false");
 
                                 notifyDataSetChanged();
-                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
+
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
-                                //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    /*}
-                                    else {
-                                        Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    }*/
+
                             }
 
                             @Override
@@ -374,36 +358,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
             ImageView photoView = holder.articlePhoto;
 
             if (data.getImage_filename() != null) {
-                //Use an async task to load the bitmap
-                /*boolean needReload = true;
-                AsyncImageTask previousTask = AsyncDrawable.getTask(photoView);
-                if (previousTask != null) {
-                    //check if the convertView happens to be previously used
-                    if (previousTask.getPageIndex() == position && previousTask.getImageName()
-                            .equals(data.getImage_filename())) {
-                        needReload = false;
-                    } else {
-                        previousTask.cancel(true);
-                    }
-                }
 
-                if (needReload) {
-                    AsyncImageTask
-                            task =
-                            new AsyncImageTask(layout.getContext().getAssets(), photoView, controller, position,
-                                    data.getImage_filename());
-                    photoView
-                            .setImageDrawable(new AsyncDrawable(context.getResources(), placeholderBitmap, task));
 
-                    task.execute();
-                }*/
-
-                //photoView.loadUrl(data.getImage_filename());
                 Picasso.with(getActivity())
                         .load(data.getImage_filename())
                         .into(photoView);
             }
-            //}
 
             Button followMoreTopics = (Button) layout.findViewById(R.id.btn_magazine_follow_topics);
             followMoreTopics.setOnClickListener(new View.OnClickListener() {
@@ -424,6 +384,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                     Intent intent = new Intent(getActivity(), CreateMagazineActivity.class);
                     intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
                     startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                }
+            });
+
+            ImageView share = holder.magazineShare;
+            share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Util.shareArticle(v, data.getUrl());
                 }
             });
 
@@ -450,6 +418,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         private CheckBox magazineLike;
 
         private ImageView magazineAdd;
+
+        private ImageView magazineShare;
     }
 
     /**

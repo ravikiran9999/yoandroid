@@ -28,6 +28,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
+import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -332,7 +333,8 @@ public class MyCollectionDetails extends BaseActivity {
                 public void onClick(View v) {
 
                     Intent intent = new Intent(MyCollectionDetails.this, CreateMagazineActivity.class);
-                    startActivity(intent);
+                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
+                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
                 }
             });
 

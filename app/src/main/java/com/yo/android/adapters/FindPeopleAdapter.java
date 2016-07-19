@@ -4,11 +4,22 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
+import com.yo.android.api.YoApi;
+import com.yo.android.di.Injector;
 import com.yo.android.helpers.FindPeopleViewHolder;
 import com.yo.android.model.FindPeople;
-import com.yo.android.model.dialer.CallRateDetail;
+import com.yo.android.ui.BaseActivity;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by MYPC on 7/17/2016.
@@ -16,10 +27,17 @@ import com.yo.android.model.dialer.CallRateDetail;
 public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopleViewHolder> {
 
     private Context context;
+    @Inject
+    YoApi.YoService yoService;
+
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
 
     public FindPeopleAdapter(Context context) {
         super(context);
         this.context = context;
+        Injector.obtain(context.getApplicationContext()).inject(this);
     }
 
     @Override
@@ -33,7 +51,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
     }
 
     @Override
-    public void bindView(final int position, FindPeopleViewHolder holder, FindPeople item) {
+    public void bindView(final int position, final FindPeopleViewHolder holder, final FindPeople item) {
 
         if (item.getAvatar() == null || TextUtils.isEmpty(item.getAvatar())) {
             Picasso.with(context)
@@ -46,9 +64,34 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         }
         holder.getTvFindPeopleName().setText(item.getFirst_name() + " " + item.getLast_name());
         holder.getTvFindPeopleDesc().setText(item.getDescription());
+        if(item.getIsFollowing().equals("true")) {
+            holder.getBtnFindPeopleFollow().setText("Following");
+            holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+        }
+        else {
+            holder.getBtnFindPeopleFollow().setText("Follow");
+            holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
         holder.getBtnFindPeopleFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((BaseActivity)context).showProgressDialog();
+                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        ((BaseActivity)context).dismissProgressDialog();
+                        holder.getBtnFindPeopleFollow().setText("Following");
+                        holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        ((BaseActivity)context).dismissProgressDialog();
+                        holder.getBtnFindPeopleFollow().setText("Follow");
+                        holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    }
+                });
             }
         });
 

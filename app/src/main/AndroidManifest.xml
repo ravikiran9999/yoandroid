@@ -172,6 +172,8 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ui.FollowingsActivity"
+            android:screenOrientation="portrait"></activity>
         <service
             android:name=".chat.firebase.FirebaseService"
             ></service>
