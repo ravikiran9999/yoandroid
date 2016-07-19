@@ -63,6 +63,7 @@
             android:drawablePadding="16dp"
             android:hint="@string/user_name"
             android:padding="10dp"
+            android:singleLine="true"
             android:textColor="@color/black"
             android:textSize="14sp" />
 

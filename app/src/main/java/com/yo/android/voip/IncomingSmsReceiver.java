@@ -18,7 +18,7 @@ public class IncomingSmsReceiver extends BroadcastReceiver {
         String intentAction = intent.getAction();
         Log.d("Action is ", intentAction);
         final Bundle bundle = intent.getExtras();
-        extractOTP(bundle);
+        //extractOTP(bundle);
         EventBus.getDefault().post(bundle);
     }
 

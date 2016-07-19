@@ -1,6 +1,8 @@
 package com.yo.android.chat.ui.fragments;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,21 +16,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.orion.android.common.util.ConnectivityHelper;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.ProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.IncomingSmsReceiver;
+import com.yo.android.voip.VoipConstants;
 
 import java.util.Random;
 
@@ -59,9 +63,9 @@ public class OTPFragment extends BaseFragment {
     ConnectivityHelper mHelper;
     private TextView txtTimer;
     private Handler mHandler = new Handler();
-    private final static int MAX_DURATION = 20;
+    private final static int MAX_DURATION = 30;
     private int duration = MAX_DURATION;
-
+    private Handler dummyOTPHandler = new Handler();
 
     public OTPFragment() {
         // Required empty public constructor
@@ -95,12 +99,20 @@ public class OTPFragment extends BaseFragment {
         verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String password = etOtp.getText().toString().trim();
-                if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getActivity(), "OTP shouldn't empty", Toast.LENGTH_LONG).show();
+                if (verifyButton.getText()
+                        .equals(getString(R.string.resend_otp_text))) {
+                    if (getActivity() instanceof LoginActivity) {
+                        ((LoginActivity) getActivity()).callLoginService(phoneNumber);
+                        mHandler.post(runnable);
+                        generateDummyOTP();
+                    }
                 } else {
-                    signUp(phoneNumber, password);
-
+                    String password = etOtp.getText().toString().trim();
+                    if (TextUtils.isEmpty(password)) {
+                        mToastFactory.showToast("OTP shouldn't empty");
+                    } else {
+                        signUp(phoneNumber, password);
+                    }
                 }
             }
         });
@@ -111,20 +123,29 @@ public class OTPFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        generateDummyOTP();
+    }
+
+    private Runnable dummyOTPRunnable = new Runnable() {
+        @Override
+        public void run() {
+            dummyOTPHandler.removeCallbacks(this);
+            showOTPConfirmationDialog("123456");
+            stopTimer();
+        }
+    };
+
+    private void generateDummyOTP() {
         //Debug purpose
         Random random = new Random();
-        int duration = Math.max(0, random.nextInt(20));
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                etOtp.setText("123456");
-                //TODO: Show dialog
-                mToastFactory.showToast("OTP is detected!");
-                stopTimer();
-            }
-        }, duration * 1000L);
-
+        int duration = Math.max(0, random.nextInt(35));
+        if (!BuildConfig.ORIGINAL_SMS_VERIFICATION) {
+            dummyOTPHandler.removeCallbacks(dummyOTPRunnable);
+            mToastFactory.showToast("Your otp will be sent in " + duration + " seconds.");
+            dummyOTPHandler.postDelayed(dummyOTPRunnable, duration * 1000L);
+        }
     }
+
 
     private void signUp(@NonNull final String phoneNumber, @NonNull final String password) {
         if (!mHelper.isConnected()) {
@@ -143,12 +164,7 @@ public class OTPFragment extends BaseFragment {
                     // successfully inserted to database
                     count++;
                     if (count == 2) {
-                        Intent intent = new Intent(getActivity(), ProfileActivity.class);
-                        intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
-                        dismissProgressDialog();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        getActivity().finish();
+                        finishAndNavigateToHome();
                     }
                 }
             }
@@ -182,19 +198,63 @@ public class OTPFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference("password", password);
         dismissProgressDialog();
         if (count == 2) {
-            contactsSyncManager.syncContacts();
-            startActivity(new Intent(getActivity(), BottomTabsActivity.class));
-            getActivity().finish();
+            finishAndNavigateToHome();
         }
     }
 
+    private void finishAndNavigateToHome() {
+        contactsSyncManager.syncContacts();
+        //
+        final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
+        if (isNewUser) {
+            Intent intent = new Intent(getActivity(), ProfileActivity.class);
+            intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
+            dismissProgressDialog();
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        } else {
+            startActivity(new Intent(getActivity(), BottomTabsActivity.class));
+        }
+        //
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(VoipConstants.NEW_ACCOUNT_REGISTRATION);
+        getActivity().sendBroadcast(broadcastIntent);
+        getActivity().finish();
+
+    }
+
     public void onEventMainThread(Bundle bundle) {
+        if (!isAdded()) {
+            return;
+        }
+        stopTimer();
         String otp = IncomingSmsReceiver.extractOTP(bundle);
         this.etOtp.setText(otp);
-        //TODO: Show dialog
-        mToastFactory.showToast("OTP is detected!");
-        stopTimer();
+        if (otp != null) {
+            showOTPConfirmationDialog(otp);
+        }
     }
+
+    public void showOTPConfirmationDialog(final String otp) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("YoApp");
+        builder.setMessage("We are detected your OTP : " + otp);
+        builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                etOtp.setText(otp);
+                verifyButton.setText(getActivity().getString(R.string.otp_button_submit));
+                //Auto click
+                verifyButton.performClick();
+            }
+        });
+        builder.setCancelable(false);
+        builder.setNegativeButton("Skip", null);
+        AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+    }
+
 
     private Runnable runnable = new Runnable() {
         @Override
@@ -210,13 +270,15 @@ public class OTPFragment extends BaseFragment {
                 txtTimer.setVisibility(View.GONE);
                 //Reset
                 duration = MAX_DURATION;
-                verifyButton.setText("Re-Send OTP");
+                verifyButton.setText(R.string.resend_otp_text);
                 verifyButton.setEnabled(true);
+                stopTimer();
             }
         }
     };
 
     private void stopTimer() {
+        dummyOTPHandler.removeCallbacks(dummyOTPRunnable);
         mHandler.removeCallbacks(runnable);
         txtTimer.setVisibility(View.GONE);
         //Reset

@@ -1,17 +1,13 @@
 package com.yo.android.ui;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.widget.ImageView;
 
-import com.j256.ormlite.stmt.query.In;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.chat.firebase.FirebaseService;
@@ -33,7 +29,7 @@ import retrofit2.Response;
  * Created by Ramesh on 30/6/16.
  */
 public class SplashScreenActivity extends BaseActivity {
-
+    private final static String TAG = "SplashScreenActivity";
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
@@ -58,19 +54,29 @@ public class SplashScreenActivity extends BaseActivity {
             TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             String mPhoneNumber = tMgr.getLine1Number();
             String zipCode = getCountryZipCode();
-            mLog.e("Splash", "Phone number %s zipcode: %s ", mPhoneNumber, zipCode);
+            mLog.e(TAG, "Phone number %s zipcode: %s ", mPhoneNumber, zipCode);
         } catch (Exception e) {
-            mLog.w("Splash", e);
+            mLog.w(TAG, e);
         }
 //        testVox();
 
         // firebase service
 
-        if(!myServiceConnection.isServiceConnection()) {
+        if (!myServiceConnection.isServiceConnection()) {
             Intent intent = new Intent(this, FirebaseService.class);
             startService(intent);
 
             bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            unbindService(myServiceConnection);
+        } catch (IllegalStateException e) {
+            mLog.w(TAG, e);
         }
     }
 

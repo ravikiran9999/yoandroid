@@ -10,13 +10,16 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.model.CountryCode;
+import com.yo.android.model.Response;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.CountryCodeHelper;
+import com.yo.android.vox.UserDetails;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
 
@@ -32,7 +35,6 @@ import butterknife.OnClick;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 
 
 /**
@@ -123,6 +125,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         } else if (!phoneNumber.equals(reEnterPhone)) {
             mToastFactory.showToast("Phone numbers should match");
             focusView = mPhoneNumberView;
+            cancel = true;
         }
         if (cancel) {
             focusView.requestFocus();
@@ -131,9 +134,13 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
             String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
             //TODO: Revathi will do that
             String yoUser = phoneNumber;
-            voxService.getData(voxFactory.newAddSubscriber(yoUser, yoUser)).enqueue(new Callback<ResponseBody>() {
+            UserDetails userDetails = voxFactory.newAddSubscriber(yoUser, yoUser);
+            //Debug
+            String action = voxFactory.addSubscriber(yoUser, phoneNumber, countryCode);
+            mLog.e(TAG, "Request for adding vox api: %s", action);
+            voxService.getData(userDetails).enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
 
                 }
 
@@ -143,19 +150,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
                 }
             });
 
-            String type = "dummy";
-//            String type = "original";
-            yoService.loginUserAPI(countryCode + phoneNumber, type).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                }
-            });
+            callLoginService(phoneNumber);
             OTPFragment otpFragment = new OTPFragment();
             Bundle bundle = new Bundle();
             bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
@@ -166,6 +161,25 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
             transaction.commit();
 
         }
+    }
+
+    public void callLoginService(String phoneNumber) {
+        String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+        String type = BuildConfig.ORIGINAL_SMS_VERIFICATION ? "original" : "dummy";
+        yoService.loginUserAPI(countryCode + phoneNumber, type).enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                Response response1 = response.body();
+                if (response1 != null) {
+                    preferenceEndPoint.saveBooleanPreference("isNewUser", true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override

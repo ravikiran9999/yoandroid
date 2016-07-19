@@ -3,6 +3,7 @@ package com.yo.android.voip;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.sip.SipErrorCode;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
@@ -66,7 +67,11 @@ public class RegisterSip {
                 PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA);
                 manager.open(profile, pi, null);
                 //Bug fix: http://stackoverflow.com/a/19540346/874752
-                manager.register(profile, 20, listener);
+                try {
+                    manager.register(profile, 20, listener);
+                } catch (Exception e) {
+                    mLog.w(TAG, e);
+                }
                 manager.setRegistrationListener(profile.getUriString(), listener);
             } catch (ParseException e) {
                 mLog.w(TAG, e);
@@ -105,7 +110,7 @@ public class RegisterSip {
         public void onRegistrationFailed(String localProfileUri, int errorCode, String errorMessage) {
             currentState = UNREGISTERED;
             mLog.d(TAG, "SIP ACCOUNT - %s", "REGISTRATION FAILED");
-            mLog.d(TAG, "SIP ACCOUNT - ERROR CODE  %d", errorCode);
+            mLog.d(TAG, "SIP ACCOUNT - ERROR CODE  %s", SipErrorCode.toString(errorCode));
             mLog.d(TAG, "SIP ACCOUNT - ERROR MSG %s", errorMessage);
         }
 
