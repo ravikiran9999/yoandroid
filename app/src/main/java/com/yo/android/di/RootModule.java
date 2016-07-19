@@ -41,6 +41,7 @@ import com.yo.android.ui.OtherProfilesFollowers;
 import com.yo.android.ui.OtherProfilesLinedArticles;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
+import com.yo.android.ui.ProfileActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
@@ -98,6 +99,7 @@ import dagger.Provides;
                 LoadMagazineActivity.class,
                 ShowPhotoActivity.class,
                 OthersProfileActivity.class,
+                ProfileActivity.class,
                 CreatedMagazineDetailActivity.class,
                 EditMagazineActivity.class,
                 FindPeopleActivity.class,

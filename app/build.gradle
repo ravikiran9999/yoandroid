@@ -74,6 +74,7 @@ dependencies {
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
 //    compile fileTree(include: ['*.jar'], dir: 'libs')
 //    //Support libs
 //    compile "com.android.support:appcompat-v7:${supportAppcompatVersion}"

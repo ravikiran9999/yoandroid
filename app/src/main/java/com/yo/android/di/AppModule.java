@@ -9,6 +9,7 @@ import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ResourcesHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.orion.android.common.util.ToastFactoryImpl;
+import com.yo.android.ui.uploadphoto.ImagePickHelper;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -38,6 +39,11 @@ public class AppModule {
     @Provides
     ToastFactory provideToastFactory(Context context) {
         return new ToastFactoryImpl(context);
+    }
+
+    @Provides
+    ImagePickHelper provideCameraIntent(Context context) {
+        return new ImagePickHelper();
     }
 
 

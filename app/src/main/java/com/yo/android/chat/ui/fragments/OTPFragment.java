@@ -26,6 +26,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.ui.ProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.IncomingSmsReceiver;
 
@@ -130,6 +131,7 @@ public class OTPFragment extends BaseFragment {
             mToastFactory.showToast(getActivity().getResources().getString(R.string.connectivity_network_settings));
             return;
         }
+        showProgressDialog();
         count = 0;
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
         DatabaseReference childReference = databaseReference.child(phoneNumber);
@@ -141,7 +143,10 @@ public class OTPFragment extends BaseFragment {
                     // successfully inserted to database
                     count++;
                     if (count == 2) {
-                        startActivity(new Intent(getActivity(), BottomTabsActivity.class));
+                        Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                        intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
+                        dismissProgressDialog();
+                        startActivity(intent);
                         getActivity().finish();
                     }
                 }

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.util.Constants;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
 
@@ -59,7 +60,7 @@ public class SplashScreenActivity extends BaseActivity {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (!preferenceEndPoint.getStringPreference("phone").isEmpty()) {
+            if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN)) {
                 startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
             } else {
                 startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
