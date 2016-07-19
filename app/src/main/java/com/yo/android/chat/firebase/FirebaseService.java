@@ -1,14 +1,24 @@
 package com.yo.android.chat.firebase;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 
+import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.di.InjectedService;
+import com.yo.android.util.Constants;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,7 +41,6 @@ public class FirebaseService extends InjectedService {
 
     public FirebaseService() {
     }
-
 
 
     @Override
@@ -60,13 +69,22 @@ public class FirebaseService extends InjectedService {
         yoService.firebaseAuthToken(access).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-              response.body();
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(response.body().string());
+                    String name = jsonObject.getString("firebase_token");
+                    loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, name);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
             }
         });
     }
