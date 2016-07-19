@@ -68,6 +68,10 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.ProfileActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.OthersProfileActivity"
             android:screenOrientation="portrait"
