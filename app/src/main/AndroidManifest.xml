@@ -158,7 +158,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.EditMagazineActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".ui.FindPeopleActivity"
             android:screenOrientation="portrait" />

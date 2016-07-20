@@ -1,6 +1,7 @@
 package com.yo.android.ui;
 
 import android.content.Intent;
+import android.inputmethodservice.Keyboard;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -52,7 +53,7 @@ public class EditMagazineActivity extends BaseActivity {
         etTitle = (EditText) findViewById(R.id.et_title);
         etDesc = (EditText) findViewById(R.id.et_desc);
         TextView tvDelete = (TextView) findViewById(R.id.tv_delete);
-
+        etTitle.requestFocus();
         Intent intent = getIntent();
         final String magazineTitle = intent.getStringExtra("MagazineTitle");
         magazineId = intent.getStringExtra("MagazineId");

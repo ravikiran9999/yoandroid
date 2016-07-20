@@ -43,6 +43,7 @@ public class Constants {
     public static final int ADD_ARTICLES_TO_MAGAZINE = 201;
     public static final String LOGED_IN = "loged_in";
     public static final String LOGED_IN_AND_VERIFIED = "loged_in_not_verified";
+    public static final int ADD_STORY_ACTION = 101;
     public static int SUCCESS_CODE = 200;
 
     public static final int ADD_IMAGE_CAPTURE = 1;
