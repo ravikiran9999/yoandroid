@@ -12,6 +12,8 @@ import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import okhttp3.MultipartBody;
