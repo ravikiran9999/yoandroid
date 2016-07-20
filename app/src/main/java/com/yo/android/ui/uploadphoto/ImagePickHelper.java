@@ -15,7 +15,7 @@ import java.io.File;
 
 public class ImagePickHelper {
 
-    private static Activity cameraActivity = null;
+    private Activity cameraActivity = null;
     AlertDialog dialog;
     public File mFileTemp;
     private static String TEMP_PHOTO_FILE_NAME;
@@ -27,7 +27,7 @@ public class ImagePickHelper {
 
     }
 
-    public static ImagePickHelper setActivity(Activity activity) {
+    public ImagePickHelper setActivity(Activity activity) {
         if (activity == null) {
             throw new NullPointerException("Activity context should not be null");
         } else {
