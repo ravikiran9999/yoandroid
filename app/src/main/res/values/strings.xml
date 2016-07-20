@@ -26,6 +26,7 @@
     <string name="next">Next</string>
     <string name="verify">Verify</string>
     <string name="enter_otp">Enter OTP</string>
+    <string name="enter_username">Enter Username</string>
 
     <!--chat-->
     <string name="send">Send</string>

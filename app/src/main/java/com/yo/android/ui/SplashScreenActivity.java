@@ -83,8 +83,10 @@ public class SplashScreenActivity extends BaseActivity {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN)) {
+            if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN) && preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN_AND_VERIFIED)) {
                 startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
+            } else if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN)) {
+                startActivity(new Intent(SplashScreenActivity.this, ProfileActivity.class));
             } else {
                 startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
             }

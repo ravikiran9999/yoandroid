@@ -55,17 +55,21 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follow_more_topics);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         String title = "Follow more topics";
 
         getSupportActionBar().setTitle(title);
 
         final Intent intent = getIntent();
-        if(intent.hasExtra("From") && !TextUtils.isEmpty("from")) {
+        if (intent.hasExtra("From") && !TextUtils.isEmpty("from")) {
             from = intent.getStringExtra("From");
         }
+
+        boolean backBtn = true;
+        if (from.equals("ProfileActivity")) {
+            backBtn = false;
+        }
+        getSupportActionBar().setHomeButtonEnabled(backBtn);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(backBtn);
 
         tagGroup = (TagView) findViewById(R.id.tag_group);
         Button done = (Button) findViewById(R.id.btn_done);
@@ -95,14 +99,13 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
                     // if (i % 2 == 0) // you can set deletable or not
                     //     tag.isDeletable = true;
-                    if(topicsList.get(i).getSelected().equals("true")) {
+                    if (topicsList.get(i).getSelected().equals("true")) {
                         tag.setSelected(true);
                         tag.layoutColor = getResources().getColor(R.color.colorPrimary);
                         tag.tagTextColor = getResources().getColor(android.R.color.white);
                         tag.setSelected(true);
                         addedTopics.add(tag.text);
-                    }
-                    else {
+                    } else {
                         tag.layoutColor = getResources().getColor(android.R.color.white);
                         tag.tagTextColor = getResources().getColor(R.color.tab_grey);
                         tag.setSelected(false);
@@ -124,7 +127,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             @Override
             public void onTagClick(Tag mTag, int position) {
                 try {
-                    TagSelected tag = (TagSelected)mTag;
+                    TagSelected tag = (TagSelected) mTag;
                     tag.toggleSelection();
                     if (!tag.getSelected()) {
                         addedTopics.remove(tag);
@@ -159,12 +162,12 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(searchTags != null) {
-                    for(int i=0; i<initialTags.size(); i++) {
-                        for(int j=0; j<searchTags.size(); j++) {
-                            TagSelected initialSel = (TagSelected)initialTags.get(i);
-                            TagSelected searchSel = (TagSelected)searchTags.get(j);
-                            if(initialSel.getTagId().equals(searchSel.getTagId())) {
+                if (searchTags != null) {
+                    for (int i = 0; i < initialTags.size(); i++) {
+                        for (int j = 0; j < searchTags.size(); j++) {
+                            TagSelected initialSel = (TagSelected) initialTags.get(i);
+                            TagSelected searchSel = (TagSelected) searchTags.get(j);
+                            if (initialSel.getTagId().equals(searchSel.getTagId())) {
                                 initialTags.remove(initialSel);
                                 initialTags.add(searchSel);
                             }
@@ -172,9 +175,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     }
                 }
                 tagGroup.addTags(initialTags);
-                for(int k=0 ; k < tagGroup.getTags().size(); k++) {
-                    TagSelected t = (TagSelected)tagGroup.getTags().get(k);
-                    if(t.getSelected()) {
+                for (int k = 0; k < tagGroup.getTags().size(); k++) {
+                    TagSelected t = (TagSelected) tagGroup.getTags().get(k);
+                    if (t.getSelected()) {
 
                         followedTopicsIdsList.add(String.valueOf(t.getTagId()));
 
@@ -188,6 +191,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (from.equals("Magazines")) {
                             Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
+                            startActivity(myCollectionsIntent);
+                            finish();
+                        } else if (from.equals("ProfileActivity")) {
+                            Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
+                            myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(myCollectionsIntent);
                             finish();
                         } else {
@@ -229,8 +237,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         public void setSelected(boolean selected) {
             this.selected = selected;
         }
+
         public void toggleSelection() {
-          this.selected = !selected;
+            this.selected = !selected;
         }
 
         public String getTagId() {
@@ -308,14 +317,13 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 tag.tagTextColor = getResources().getColor(R.color.tab_grey);
                 /*if (i % 2 == 0) // you can set deletable or not
                     tag.isDeletable = true;*/
-                if(topicsList.get(i).getSelected().equals("true")) {
+                if (topicsList.get(i).getSelected().equals("true")) {
                     tag.setSelected(true);
                     tag.layoutColor = getResources().getColor(R.color.colorPrimary);
                     tag.tagTextColor = getResources().getColor(android.R.color.white);
                     tag.setSelected(true);
                     addedTopics.add(tag.text);
-                }
-                else {
+                } else {
                     tag.layoutColor = getResources().getColor(android.R.color.white);
                     tag.tagTextColor = getResources().getColor(R.color.tab_grey);
                     tag.setSelected(false);

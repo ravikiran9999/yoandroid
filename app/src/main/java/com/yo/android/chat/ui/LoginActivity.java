@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.internal.LinkedTreeMap;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -64,6 +65,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
     YoApi.YoService yoService;
     @Inject
     CountryCodeHelper mCountryCodeHelper;
+    private List<CountryCode> mList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +84,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
                 }
             }
         };
-        List<CountryCode> mList = mCountryCodeHelper.readCodesFromAssets();
+        mList = mCountryCodeHelper.readCodesFromAssets();
         String str = mCountryCodeHelper.getCountryZipCode(this);
         int pos = 0;
         for (CountryCode countryCode : mList) {
@@ -151,35 +153,42 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
             });
 
             callLoginService(phoneNumber);
-            OTPFragment otpFragment = new OTPFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
-            otpFragment.setArguments(bundle);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
-            transaction.disallowAddToBackStack();
-            transaction.commit();
 
         }
     }
 
-    public void callLoginService(String phoneNumber) {
+    public void callLoginService(final String phoneNumber) {
+        showProgressDialog();
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         String type = BuildConfig.ORIGINAL_SMS_VERIFICATION ? "original" : "dummy";
         yoService.loginUserAPI(countryCode + phoneNumber, type).enqueue(new Callback<Response>() {
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                Response response1 = response.body();
-                if (response1 != null) {
-                    preferenceEndPoint.saveBooleanPreference("isNewUser", true);
+                dismissProgressDialog();
+                if (response.isSuccessful()) {
+                    Response response1 = response.body();
+                    boolean isNewUser = (boolean) ((LinkedTreeMap) response1.getData()).get("isNewUser");
+                    if (response1 != null) {
+                        preferenceEndPoint.saveBooleanPreference("isNewUser", isNewUser);
+                    }
+                    OTPFragment otpFragment = new OTPFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
+                    otpFragment.setArguments(bundle);
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
+                    transaction.disallowAddToBackStack();
+                    transaction.commit();
                 }
+
             }
 
             @Override
             public void onFailure(Call<Response> call, Throwable t) {
-
+                dismissProgressDialog();
             }
         });
+
     }
 
     @Override
@@ -198,7 +207,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, ((CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode());
+        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, mList.get(position).getCountryCode()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
     }
 
     @Override

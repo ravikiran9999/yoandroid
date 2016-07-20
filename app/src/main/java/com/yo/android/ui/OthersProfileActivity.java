@@ -83,6 +83,7 @@ public class OthersProfileActivity extends BaseActivity {
                 finish();
             }
         });
+        viewPager.setCurrentItem(2);
         viewPager.setCurrentItem(1);
         viewPager.setCurrentItem(0);
 
@@ -94,11 +95,13 @@ public class OthersProfileActivity extends BaseActivity {
         if(!TextUtils.isEmpty(pic)) {
             Picasso.with(this)
                     .load(pic)
+                    .fit()
                     .into(picture);
         }
         else {
             Picasso.with(this)
                     .load(R.drawable.ic_contacts)
+                    .fit()
                     .into(picture);
         }
 

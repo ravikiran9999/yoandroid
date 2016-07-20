@@ -111,6 +111,7 @@ public class OTPFragment extends BaseFragment {
                     if (TextUtils.isEmpty(password)) {
                         mToastFactory.showToast("OTP shouldn't empty");
                     } else {
+                        stopTimer();
                         signUp(phoneNumber, password);
                     }
                 }
@@ -207,6 +208,7 @@ public class OTPFragment extends BaseFragment {
         //
         final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         if (isNewUser) {
+            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
             Intent intent = new Intent(getActivity(), ProfileActivity.class);
             intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
             dismissProgressDialog();
@@ -265,7 +267,7 @@ public class OTPFragment extends BaseFragment {
             duration--;
             if (duration > 0) {
                 mHandler.postDelayed(this, 1000);
-                verifyButton.setEnabled(false);
+//                verifyButton.setEnabled(false);
             } else {
                 txtTimer.setVisibility(View.GONE);
                 //Reset
