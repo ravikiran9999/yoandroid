@@ -121,8 +121,14 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                List<Contact> contactList = new ArrayList<>();
                 if (response.body() != null) {
-                    groupContactsListAdapter.addItems(response.body());
+                    for(int i=0; i<response.body().size();i++){
+                        if(response.body().get(i).getYoAppUser()) {
+                            contactList.add(response.body().get(i));
+                        }
+                    }
+                    groupContactsListAdapter.addItems(contactList);
                 }
                 dismissProgressDialog();
             }
@@ -155,22 +161,22 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
 
         List<String> selectedUsers = new ArrayList<>();
         for (int i = 0; i < contactArrayList.size(); i++) {
-            String num = contactArrayList.get(i).getPhoneNo();
-            selectedUsers.add(num);
+            String userId = contactArrayList.get(i).getId();
+            selectedUsers.add(userId);
         }
 
         String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-        yoService.createGroupAPI(access, selectedUsers, groupName).enqueue(new Callback<ResponseBody>() {
+        yoService.createGroupAPI(access, selectedUsers, groupName).enqueue(new Callback<GroupName>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<GroupName> call, Response<GroupName> response) {
                 response.body();
-
+                Toast.makeText(getActivity(), "Created Room: "+ groupName, Toast.LENGTH_SHORT).show();
                 dismissProgressDialog();
                 getActivity().finish();
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<GroupName> call, Throwable t) {
                 dismissProgressDialog();
             }
         });

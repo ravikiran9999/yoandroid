@@ -161,7 +161,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/rooms.json")
-        Call<ResponseBody> createGroupAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user, @Field("room[group_name]") String groupName);
+        Call<GroupName> createGroupAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user, @Field("room[group_name]") String groupName);
     }
 
     public interface YoRefreshTokenService {

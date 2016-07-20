@@ -55,5 +55,6 @@ public class GroupContactsListAdapter extends AbstractBaseAdapter<Contact, Group
                 mSelectedItems.add(contact);
             }
         });
+
     }
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.GroupContactsFragment;
@@ -39,6 +40,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                     .add(android.R.id.content, groupContactsFragment)
                     .commit();
             enableBack();
+        } else {
+            Toast.makeText(this, "Please enter group name", Toast.LENGTH_SHORT).show();
         }
     }
 }
