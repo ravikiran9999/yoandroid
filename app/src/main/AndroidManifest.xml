@@ -137,7 +137,9 @@
             android:name=".ui.LoadMagazineActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".chat.ui.CreateGroupActivity" />
+        <activity android:name=".chat.ui.CreateGroupActivity"
+            android:label="@string/new_group"
+            />
         <activity
             android:name=".ui.CountryListActivity"
             android:screenOrientation="portrait" />

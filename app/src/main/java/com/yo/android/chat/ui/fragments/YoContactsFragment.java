@@ -139,8 +139,14 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                List<Contact> contactList = new ArrayList<>();
                 if (response.body() != null) {
-                    appContactsListAdapter.addItems(response.body());
+                    for(int i=0; i<response.body().size();i++){
+                        if(response.body().get(i).getYoAppUser()) {
+                            contactList.add(response.body().get(i));
+                        }
+                    }
+                    appContactsListAdapter.addItems(contactList);
                 }
                 dismissProgressDialog();
             }

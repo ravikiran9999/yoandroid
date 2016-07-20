@@ -7,24 +7,35 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.GroupContactsListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.Contact;
+import com.yo.android.model.GroupName;
 import com.yo.android.model.Registration;
+import com.yo.android.util.Constants;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,11 +48,16 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
     private ArrayList<Registration> arrayOfUsers;
     private GroupContactsListAdapter groupContactsListAdapter;
     private ListView listView;
+    private String groupName;
 
     @Inject
     YoApi.YoService yoService;
     @Inject
     ContactsSyncManager mContactsSyncManager;
+
+    @Inject
+    @Named("login")
+    PreferenceEndPoint loginPrefs;
 
     public GroupContactsFragment() {
         // Required empty public constructor
@@ -51,6 +67,7 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        groupName = getArguments().getString(Constants.GROUP_NAME);
     }
 
     @Override
@@ -80,6 +97,14 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.done) {
+            createGroup();
+        }
+        return true;
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         /*Registration registration = (Registration) listView.getItemAtPosition(position);
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
@@ -90,15 +115,20 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
     }
 
 
-
     private void getYoAppUsers() {
         showProgressDialog();
 
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                List<Contact> contactList = new ArrayList<>();
                 if (response.body() != null) {
-                    groupContactsListAdapter.addItems(response.body());
+                    for(int i=0; i<response.body().size();i++){
+                        if(response.body().get(i).getYoAppUser()) {
+                            contactList.add(response.body().get(i));
+                        }
+                    }
+                    groupContactsListAdapter.addItems(contactList);
                 }
                 dismissProgressDialog();
             }
@@ -123,5 +153,32 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
         if (getView() != null) {
             getView().findViewById(R.id.progress).setVisibility(View.GONE);
         }
+    }
+
+    private void createGroup() {
+        showProgressDialog();
+        ArrayList<Contact> contactArrayList = groupContactsListAdapter.getmSelectedItems();
+
+        List<String> selectedUsers = new ArrayList<>();
+        for (int i = 0; i < contactArrayList.size(); i++) {
+            String userId = contactArrayList.get(i).getId();
+            selectedUsers.add(userId);
+        }
+
+        String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.createGroupAPI(access, selectedUsers, groupName).enqueue(new Callback<GroupName>() {
+            @Override
+            public void onResponse(Call<GroupName> call, Response<GroupName> response) {
+                response.body();
+                Toast.makeText(getActivity(), "Created Room: "+ groupName, Toast.LENGTH_SHORT).show();
+                dismissProgressDialog();
+                getActivity().finish();
+            }
+
+            @Override
+            public void onFailure(Call<GroupName> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
     }
 }

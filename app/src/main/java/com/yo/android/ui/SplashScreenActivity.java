@@ -74,8 +74,8 @@ public class SplashScreenActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         try {
-            unbindService(myServiceConnection);
-        } catch (IllegalArgumentException e) {
+            //unbindService(myServiceConnection);
+        } catch (IllegalStateException e) {
             mLog.w(TAG, e);
         }
     }

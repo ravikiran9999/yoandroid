@@ -42,7 +42,6 @@ public class FirebaseService extends InjectedService {
     public FirebaseService() {
     }
 
-
     @Override
     public void onCreate() {
         super.onCreate();
