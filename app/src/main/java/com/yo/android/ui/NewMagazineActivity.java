@@ -103,6 +103,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                         }
                     });
                 } else {
+                    etTitle.requestFocus();
                     mToastFactory.showToast("Please enter the Magazine Title");
                 }
 
