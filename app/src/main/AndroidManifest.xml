@@ -71,6 +71,7 @@
 
         <activity
             android:name=".ui.ProfileActivity"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.OthersProfileActivity"
