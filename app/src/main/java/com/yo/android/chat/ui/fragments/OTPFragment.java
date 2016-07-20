@@ -208,6 +208,7 @@ public class OTPFragment extends BaseFragment {
         //
         final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         if (isNewUser) {
+            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
             Intent intent = new Intent(getActivity(), ProfileActivity.class);
             intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
             dismissProgressDialog();

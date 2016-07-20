@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardview_shadow_end_color">
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/profile_pic"
@@ -12,36 +12,22 @@
         android:layout_marginRight="10dp"
         android:backgroundTint="@color/colorPrimary"
         android:padding="10dp"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_username" />
 
-    <RelativeLayout
-        android:id="@+id/change_layout"
+
+    <TextView
+        android:id="@+id/add_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
-        android:elevation="10dp"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/change_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@android:drawable/ic_menu_camera"
-            android:elevation="0dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_toRightOf="@id/change_icon"
-            android:elevation="7dp"
-            android:gravity="center"
-            android:padding="7dp"
-            android:text="@string/add_photo"
-            android:textColor="@color/black" />
-    </RelativeLayout>
+        android:layout_below="@id/profile_pic"
+        android:layout_gravity="center"
+        android:elevation="7dp"
+        android:gravity="center"
+        android:padding="7dp"
+        android:text="@string/add_photo"
+        android:textColor="@color/tab_grey"
+        android:textSize="16sp" />
 
     <LinearLayout
         android:id="@+id/user_fields_layout"

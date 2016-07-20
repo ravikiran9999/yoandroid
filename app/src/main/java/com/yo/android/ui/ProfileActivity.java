@@ -5,11 +5,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.orion.android.common.util.ToastFactory;
@@ -37,7 +37,7 @@ import retrofit2.Response;
 public class ProfileActivity extends BaseActivity {
     private EditText username;
     private TextView mobileNum;
-    private RelativeLayout addPhoto;
+    private TextView addPhoto;
     private ImageView profileImage;
     private Button nextBtn;
     @Inject
@@ -57,11 +57,7 @@ public class ProfileActivity extends BaseActivity {
         initializeViews();
         cameraIntent.setActivity(this);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            mobileNumberTxt = intent.getStringExtra(Constants.PHONE_NUMBER);
-        }
-
+        mobileNumberTxt = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         mobileNum.setText(mobileNumberTxt);
 
         addPhoto.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +69,12 @@ public class ProfileActivity extends BaseActivity {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadUserProfileInfo();
+                if (!TextUtils.isEmpty(username.getText().toString().trim())) {
+                    loadUserProfileInfo();
+                } else {
+                    toastFactory.showToast(getResources().getString(R.string.enter_username));
+                }
+
             }
         });
     }
@@ -82,14 +83,14 @@ public class ProfileActivity extends BaseActivity {
     private void initializeViews() {
         username = (EditText) findViewById(R.id.user_name);
         mobileNum = (TextView) findViewById(R.id.mobile_number);
-        addPhoto = (RelativeLayout) findViewById(R.id.change_layout);
+        addPhoto = (TextView) findViewById(R.id.add_photo);
         profileImage = (ImageView) findViewById(R.id.profile_pic);
         nextBtn = (Button) findViewById(R.id.next_btn);
     }
 
     private void setupToolbar() {
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         String title = getResources().getString(R.string.profile);
 
@@ -180,9 +181,11 @@ public class ProfileActivity extends BaseActivity {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
-                Intent intent = new Intent(ProfileActivity.this, BottomTabsActivity.class);
+                preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
+                Intent intent = new Intent(ProfileActivity.this, FollowMoreTopicsActivity.class);
                 dismissProgressDialog();
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("From", "ProfileActivity");
                 startActivity(intent);
                 ProfileActivity.this.finish();
             }
@@ -190,6 +193,7 @@ public class ProfileActivity extends BaseActivity {
             @Override
             public void onFailure(Call<UserProfileInfo> call, Throwable t) {
                 dismissProgressDialog();
+                toastFactory.showToast(getResources().getString(R.string.unable_to_fetch));
             }
         });
 

@@ -2,7 +2,6 @@ package com.yo.android.flip;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -125,7 +124,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         //loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
 
-         loadAllArticles();
+        loadAllArticles();
 
     }
 

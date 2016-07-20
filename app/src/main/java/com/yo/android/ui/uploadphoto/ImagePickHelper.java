@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.widget.ArrayAdapter;
 
+import com.yo.android.R;
 import com.yo.android.util.Constants;
 
 import java.io.File;
@@ -37,9 +39,11 @@ public class ImagePickHelper {
     }
 
     public void showDialog() {
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
+                cameraActivity, R.layout.image_pick_dialog, items);
 
         dialog = new AlertDialog.Builder(cameraActivity)
-                .setSingleChoiceItems(items, 2, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (items[which].toString().equalsIgnoreCase("Camera")) {

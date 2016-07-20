@@ -71,6 +71,7 @@
 
         <activity
             android:name=".ui.ProfileActivity"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.OthersProfileActivity"
@@ -176,11 +177,10 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.FollowingsActivity"
+        <activity
+            android:name=".ui.FollowingsActivity"
             android:screenOrientation="portrait"></activity>
-        <service
-            android:name=".chat.firebase.FirebaseService"
-            ></service>
+        <service android:name=".chat.firebase.FirebaseService"></service>
     </application>
 
 </manifest>
