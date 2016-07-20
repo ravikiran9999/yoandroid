@@ -1,11 +1,13 @@
 package com.yo.android.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -71,6 +73,18 @@ public class OtherProfilesFollowers extends BaseFragment {
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                 dismissProgressDialog();
+            }
+        });
+
+        lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent otherProfileIntent = new Intent(getActivity(), OthersProfileActivity.class);
+                otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
+                otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
+                otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
+                otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
+                startActivity(otherProfileIntent);
             }
         });
     }

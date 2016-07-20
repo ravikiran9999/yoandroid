@@ -155,6 +155,9 @@ public class YoApi {
 
         @GET("api/user/followings.json")
         Call<List<FindPeople>> getFollowingsAPI(@Query("access_token") String access_token);
+
+        @GET("api/articles.json")
+        Call<List<Articles>> getOtherProfilesLikedArticlesAPI(@Query("access_token") String access_token, @Query("user_id") String user_id);
     }
 
     public interface YoRefreshTokenService {
