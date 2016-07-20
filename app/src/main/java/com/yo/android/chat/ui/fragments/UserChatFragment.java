@@ -48,7 +48,6 @@ import com.google.firebase.storage.UploadTask;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.chat.firebase.Clipboard;
-import com.yo.android.chat.firebase.MyChatAdapter;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
@@ -59,6 +58,7 @@ import com.yo.android.voip.OutGoingCallActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -171,7 +171,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
                 }
             });
-        }catch (NoClassDefFoundError e){};
+        } catch (NoClassDefFoundError e) {
+        }
+        ;
     }
 
     @Override
@@ -226,7 +228,23 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         selected.clear();
                         break;
                     case R.id.copy:
-                        new Clipboard(getActivity()).copy(chatMessage.getMessage());
+                        StringBuilder builder = new StringBuilder();
+                        selected = userChatAdapter.getSelectedIds();
+                        List<ChatMessage> messagesList = new ArrayList<ChatMessage>();
+                        for (int i = 0; i < selected.size(); i++) {
+                            if (selected.valueAt(i)) {
+                                final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
+                                if (!selectedItem.getType().equals(getResources().getString(R.string.image))) {
+                                    builder.append(selectedItem.getMessage());
+                                    if (i < selected.size() - 1) {
+                                        builder.append("\n");
+                                    }
+                                }
+                                // Remove  selected items following the ids
+                            }
+                        }
+                        new Clipboard(getActivity()).copy(builder.toString());
+
                         Toast.makeText(getActivity(), getString(R.string.copy_message), Toast.LENGTH_SHORT).show();
                         mode.finish();
                         break;
