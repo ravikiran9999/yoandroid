@@ -1,8 +1,10 @@
 package com.yo.android.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -10,6 +12,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.FindPeople;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.List;
@@ -66,6 +69,18 @@ public class FollowingsActivity extends BaseActivity {
 
                 dismissProgressDialog();
 
+            }
+        });
+
+        lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent otherProfileIntent = new Intent(FollowingsActivity.this, OthersProfileActivity.class);
+                otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
+                otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
+                otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
+                otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
+                startActivity(otherProfileIntent);
             }
         });
     }
