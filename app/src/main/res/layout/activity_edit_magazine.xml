@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:hint="Title"
+        android:focusable="true"
         android:textColor="@color/black"
         android:layout_marginLeft="16dp"/>
 
