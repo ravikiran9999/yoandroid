@@ -10,6 +10,8 @@ public class YoAppContacts {
     private String last_ame;
     private String description;
     private String avatar;
+    private boolean selected;
+
 
     public YoAppContacts(String id, String first_name, String last_ame, String description, String avatar) {
         this.id = id;
@@ -37,5 +39,13 @@ public class YoAppContacts {
 
     public String getAvatar() {
         return avatar;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

@@ -7,6 +7,7 @@ public class Contact {
     private String image;
     private String phoneNo;
     private boolean yoAppUser;
+    private boolean selected;
 
 
     public String getName() {
@@ -39,6 +40,14 @@ public class Contact {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     @Override

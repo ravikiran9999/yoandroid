@@ -10,6 +10,12 @@
         app:showAsAction="always|collapseActionView" />
 
 
-    <item android:title=""></item>
+    <item
+        android:id="@+id/done"
+        android:icon="@drawable/ic_tick"
+        android:title="done"
+        app:showAsAction="always">
+
+    </item>
 
 </menu>

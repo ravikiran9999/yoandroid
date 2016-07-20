@@ -4,6 +4,7 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
+import com.yo.android.model.GroupName;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
@@ -157,6 +158,10 @@ public class YoApi {
 
         @GET("api/user/followings.json")
         Call<List<FindPeople>> getFollowingsAPI(@Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/rooms.json")
+        Call<ResponseBody> createGroupAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user, @Field("room[group_name]") String groupName);
     }
 
     public interface YoRefreshTokenService {
