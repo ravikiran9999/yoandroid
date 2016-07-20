@@ -25,7 +25,9 @@
         android:lines="2"
         android:maxLines="2"
         android:padding="10dp"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:drawableLeft="@drawable/ic_red_strip"
+        android:drawablePadding="8dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

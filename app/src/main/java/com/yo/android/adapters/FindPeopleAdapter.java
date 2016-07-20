@@ -56,13 +56,20 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         if (item.getAvatar() == null || TextUtils.isEmpty(item.getAvatar())) {
             Picasso.with(context)
                     .load(R.drawable.ic_contacts)
+                    .fit()
                     .into(holder.getImvFindPeoplePic());
         } else {
             Picasso.with(context)
                     .load(item.getAvatar())
+                    .fit()
                     .into(holder.getImvFindPeoplePic());
         }
-        holder.getTvFindPeopleName().setText(item.getFirst_name() + " " + item.getLast_name());
+        if(!TextUtils.isEmpty(item.getFirst_name())) {
+            holder.getTvFindPeopleName().setText(item.getFirst_name() + " " + item.getLast_name());
+        }
+        else {
+            holder.getTvFindPeopleName().setText("Unknown");
+        }
         holder.getTvFindPeopleDesc().setText(item.getDescription());
         if(item.getIsFollowing().equals("true")) {
             holder.getBtnFindPeopleFollow().setText("Following");

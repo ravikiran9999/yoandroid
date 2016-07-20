@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -83,11 +84,17 @@ public class SplashScreenActivity extends BaseActivity {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN) && preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN_AND_VERIFIED)) {
+//            if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN) && preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN_AND_VERIFIED)) {
+//                startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
+//            } else if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN)) {
+//                startActivity(new Intent(SplashScreenActivity.this, ProfileActivity.class));
+//            } else {
+//                startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
+//            }
+            //TODO:Need to fix
+            if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))){
                 startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
-            } else if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN)) {
-                startActivity(new Intent(SplashScreenActivity.this, ProfileActivity.class));
-            } else {
+            }else{
                 startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
             }
             finish();

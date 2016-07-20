@@ -50,7 +50,7 @@
                     android:layout_height="150dp"
                     android:id="@+id/photo"
                     android:layout_gravity="center_horizontal"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitCenter"
                     android:layout_weight="1"></ImageView>
 
                     <Button

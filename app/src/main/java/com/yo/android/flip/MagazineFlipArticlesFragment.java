@@ -361,6 +361,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
                 Picasso.with(getActivity())
                         .load(data.getImage_filename())
+                        .fit()
                         .into(photoView);
             }
 
