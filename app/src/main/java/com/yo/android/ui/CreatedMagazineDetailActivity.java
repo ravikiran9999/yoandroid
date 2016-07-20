@@ -34,6 +34,7 @@ import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -272,6 +273,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                 holder.magazineAdd = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add);
 
+                holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -412,6 +415,14 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 }
             });
 
+            ImageView share = holder.magazineShare;
+            share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Util.shareArticle(v, data.getUrl());
+                }
+            });
+
 
             return layout;
         }
@@ -435,6 +446,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         private CheckBox magazineLike;
 
         private ImageView magazineAdd;
+
+        private ImageView magazineShare;
     }
 
     @Override
