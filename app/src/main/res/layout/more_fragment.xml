@@ -9,23 +9,21 @@
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:scaleType="centerCrop"
-        android:backgroundTint="@color/colorPrimary"
-        android:src="@drawable/magazine_dummy_image" />
+        android:backgroundTint="@color/colorPrimary" />
 
     <FrameLayout
         android:id="@+id/change_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="30dp"
         android:layout_marginTop="120dp"
+        android:background="#55000000"
         android:elevation="10dp">
 
         <ImageView
             android:id="@+id/change_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/ic_menu_camera"
             android:elevation="0dp" />
 
         <TextView
@@ -34,7 +32,11 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="30dp"
             android:elevation="7dp"
+            android:gravity="center"
+            android:drawablePadding="5dp"
+            android:drawableLeft="@android:drawable/ic_menu_camera"
             android:text="Change Photo"
+
             android:textColor="@color/white" />
     </FrameLayout>
 

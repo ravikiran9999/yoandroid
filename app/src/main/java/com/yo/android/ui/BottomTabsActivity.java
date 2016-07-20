@@ -145,8 +145,8 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (getSupportFragmentManager().findFragmentById(R.id.content) != null) {
-            getSupportFragmentManager().findFragmentById(R.id.content).onActivityResult(requestCode, resultCode, data);
+        if (getFragment() != null) {
+            getFragment().onActivityResult(requestCode, resultCode, data);
         }
     }
 

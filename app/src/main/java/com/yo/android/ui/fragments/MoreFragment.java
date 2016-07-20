@@ -88,6 +88,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 cameraIntent.showDialog();
             }
         });
+
+    }
+
+    private void loadImage(){
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (!TextUtils.isEmpty(avatar)) {
             Picasso.with(getActivity())
@@ -119,6 +123,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
+                if (response.body() != null) {
+                    preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                }
+                loadImage();
             }
 
             @Override
