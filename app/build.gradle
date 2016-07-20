@@ -86,43 +86,6 @@ dependencies {
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-    compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
-//    compile fileTree(include: ['*.jar'], dir: 'libs')
-//    //Support libs
-//    compile "com.android.support:appcompat-v7:${supportAppcompatVersion}"
-//    compile "com.android.support:design:${supportDesignVersion}"
-//    compile "com.android.support:cardview-v7:${supportCardViewVersion}"
-//    compile "com.android.support:recyclerview-v7:${supportRecyclerViewVersion}"
-//    // ormlite
-//    // firebase
-//    compile project(':flip')
-//    //    compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
-//    //Butter knife - view injector
-//    compile 'com.j256.ormlite:ormlite-core:4.48'
-//    compile 'com.j256.ormlite:ormlite-android:4.48'
-//    compile 'com.google.firebase:firebase-messaging:9.2.1'
-//    compile 'com.google.firebase:firebase-auth:9.2.1'
-//    compile 'com.google.firebase:firebase-database:9.2.1'
-//    compile 'com.google.firebase:firebase-storage:9.2.1'
-//    compile 'com.firebase:firebase-client-android:2.5.2'
-//    compile 'com.squareup.dagger:dagger:1.2.2'
-//    compile 'com.android.support:support-v4:23.4.0'
-//    compile 'de.greenrobot:eventbus:2.4.0'
-//    compile 'com.google.code.gson:gson:2.6.2'
-//    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-//    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-//    compile 'com.squareup.okhttp3:logging-interceptor:3.3.0'
-//    compile 'com.jakewharton:butterknife:7.0.1'
-//    compile 'com.github.Cutta:TagView:c15dd8288a'
-//    compile 'com.squareup.picasso:picasso:2.3.2'
-//    compile 'se.emilsjolander:stickylistheaders:2.7.0'
-//    compile 'com.github.chrisbanes:PhotoView:1.2.6'
-//    compile 'de.hdodenhof:circleimageview:2.0.0'
-//    testCompile 'junit:junit:4.12'
-//    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-//    stageCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
-//    stageCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
-//    stageCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
 }
 apply plugin: 'com.google.gms.google-services'
 
