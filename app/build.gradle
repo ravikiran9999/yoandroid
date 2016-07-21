@@ -9,7 +9,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.4.0"
+        versionName "16.3.5.0"
     }
     productFlavors {
         dev {
@@ -73,13 +73,16 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     testCompile 'junit:junit:4.12'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-    stageCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.18'
+    compile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
+    /*stageCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     stageCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
-    stageCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
+    stageCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'*/
 
-    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
+    /*stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
-    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
+    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'*/
 
     compile 'com.github.Cutta:TagView:c15dd8288a'
     compile 'com.squareup.picasso:picasso:2.3.2'

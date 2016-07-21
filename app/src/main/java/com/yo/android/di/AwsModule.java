@@ -1,6 +1,7 @@
 package com.yo.android.di;
 
 import android.content.Context;
+import android.content.Intent;
 
 import javax.inject.Singleton;
 
