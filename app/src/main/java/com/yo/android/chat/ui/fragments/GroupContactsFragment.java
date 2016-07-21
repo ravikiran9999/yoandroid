@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,21 +20,16 @@ import com.yo.android.adapters.GroupContactsListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.Contact;
-import com.yo.android.model.GroupName;
+import com.yo.android.model.Room;
 import com.yo.android.model.Registration;
 import com.yo.android.util.Constants;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -92,7 +86,7 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_app_contacts, menu);
+        inflater.inflate(R.menu.menu_multiple_contacts, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -166,9 +160,9 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
         }
 
         String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-        yoService.createGroupAPI(access, selectedUsers, groupName).enqueue(new Callback<GroupName>() {
+        yoService.createGroupAPI(access, selectedUsers, groupName).enqueue(new Callback<Room>() {
             @Override
-            public void onResponse(Call<GroupName> call, Response<GroupName> response) {
+            public void onResponse(Call<Room> call, Response<Room> response) {
                 response.body();
                 Toast.makeText(getActivity(), "Created Room: "+ groupName, Toast.LENGTH_SHORT).show();
                 dismissProgressDialog();
@@ -176,7 +170,7 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
             }
 
             @Override
-            public void onFailure(Call<GroupName> call, Throwable t) {
+            public void onFailure(Call<Room> call, Throwable t) {
                 dismissProgressDialog();
             }
         });

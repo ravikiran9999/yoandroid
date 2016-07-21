@@ -4,7 +4,7 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
-import com.yo.android.model.GroupName;
+import com.yo.android.model.Room;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
@@ -12,8 +12,6 @@ import com.yo.android.model.Response;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
-
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -161,10 +159,17 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/rooms.json")
-        Call<GroupName> createGroupAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user, @Field("room[group_name]") String groupName);
+        Call<Room> createGroupAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user, @Field("room[group_name]") String groupName);
 
         @GET("api/articles.json")
         Call<List<Articles>> getOtherProfilesLikedArticlesAPI(@Query("access_token") String access_token, @Query("user_id") String user_id);
+
+        @FormUrlEncoded
+        @POST("api/rooms/get_room.json")
+        Call<Room> getRoomAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user);
+
+        @GET("api/rooms.json")
+        Call<List<Room>> getAllRoomsAPI(@Query("access_token") String access_token);
     }
 
     public interface YoRefreshTokenService {

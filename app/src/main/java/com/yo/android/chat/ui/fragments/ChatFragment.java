@@ -1,15 +1,10 @@
 package com.yo.android.chat.ui.fragments;
 
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,15 +14,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
@@ -35,12 +28,19 @@ import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
+import com.yo.android.model.Room;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,19 +48,23 @@ import javax.inject.Inject;
 public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private ListView listView;
-    private ArrayList<ChatRoom> arrayOfUsers;
+    private ArrayList<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
     private DatabaseReference reference;
     private DatabaseReference roomReference;
     private Menu menu;
 
-    @Inject
-    FirebaseService firebaseService;
 
     @Inject
     DatabaseHelper databaseHelper;
+
     @Inject
-    MyServiceConnection myServiceConnection;
+    YoApi.YoService yoService;
+
+    @Inject
+    @Named("login")
+    PreferenceEndPoint loginPrefs;
+
 
     public Menu getMenu() {
         return menu;
@@ -126,10 +130,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(myServiceConnection.isServiceConnection()) {
-            firebaseService.getFirebaseAuth();
-        }
-
         getChatRoomList();
         arrayOfUsers = new ArrayList<>();
         chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
@@ -138,21 +138,18 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ChatRoom chatRoom = chatRoomListAdapter.getItem(position);
+        Room room = chatRoomListAdapter.getItem(position);
 
         String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
         ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
 
         if (forwardChatMessage != null) {
-            navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber(), forwardChatMessage);
-        } else {
-
-            if (!chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
-                navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getOpponentPhoneNumber());
-            } else {
-                navigateToChatScreen(chatRoom.getChatRoomId(), chatRoom.getYourPhoneNumber());
-            }
-
+            //navigateToChatScreen(room.getFirebaseRoomId(), room.getOpponentPhoneNumber(), forwardChatMessage);
+            //navigateToChatScreen(room.getFirebaseRoomId(), forwardChatMessage);
+        } else if(room.getGroupName() == null){
+            navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber());
+        } else if(room.getGroupName() != null) {
+            navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName());
         }
     }
 
@@ -189,7 +186,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
-    private void getChatRoomList() {
+    /*private void getChatRoomList() {
         showProgressDialog();
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -260,8 +257,28 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 dismissProgressDialog();
             }
         });
-    }
+    }*/
 
+public void getChatRoomList() {
+    showProgressDialog();
+    String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+    String userId = loginPrefs.getStringPreference(Constants.USER_ID);
+    ArrayList<String> stringArrayList = new ArrayList<>();
+    stringArrayList.add(userId);
+    yoService.getAllRoomsAPI(access).enqueue(new Callback<List<Room>>() {
+        @Override
+        public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
+            response.body();
 
+            chatRoomListAdapter.addItems(response.body());
+            dismissProgressDialog();
+        }
+
+        @Override
+        public void onFailure(Call<List<Room>> call, Throwable t) {
+            dismissProgressDialog();
+        }
+    });
+}
 
 }

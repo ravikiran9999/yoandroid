@@ -39,7 +39,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -48,17 +47,22 @@ import com.google.firebase.storage.UploadTask;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.chat.firebase.Clipboard;
+import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.FireBaseHelper;
 import com.yo.android.voip.OutGoingCallActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,7 +78,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private EditText chatText;
     private ListView listView;
     private String opponentNumber;
-    private String yourNumber;
+    //private String yourNumber;
     private File mFileTemp;
     private static String TEMP_PHOTO_FILE_NAME;
     private static final int ADD_IMAGE_CAPTURE = 1;
@@ -87,6 +91,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private TextView listStickeyHeader;
     private int roomExist = 0;
     private Boolean isChildEventListenerAdd = Boolean.FALSE;
+    private String childRoomId;
+    @Inject
+    FireBaseHelper fireBaseHelper;
+
+    @Inject
+    FirebaseService firebaseService;
+
+    @Inject
+    MyServiceConnection myServiceConnection;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -99,18 +112,24 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Bundle bundle = this.getArguments();
         String childRoomId = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
-        yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
+        //yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
 
-        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
+        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOMS);
 
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
+        /*FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");*/
 
-        chatRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
+        //chatRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
+
+        if(myServiceConnection.isServiceConnection()) {
+            firebaseService.getFirebaseAuth();
+        }
+
         if (!childRoomId.equals("")) {
             roomExist = 1;
-            roomIdReference = chatRoomReference.child(childRoomId);
-            roomIdReference.keepSynced(true);
+            roomIdReference = roomReference.child(childRoomId);
+            chatRoomReference = roomIdReference.child(Constants.CHATS);
+            chatRoomReference.keepSynced(true);
             registerChildEventLister();
         }
 
@@ -173,7 +192,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             });
         } catch (NoClassDefFoundError e) {
         }
-        ;
+
     }
 
     @Override
@@ -335,8 +354,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         } else if (type.equals(Constants.IMAGE)) {
             chatMessage.setImagePath(message);
         }
+        String dd = preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN);
+        fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), childRoomId, chatMessage);
+        //chatRoomReference.child(timeStp).setValue(chatMessage, this);
 
-        if (roomExist == 0) {
+        /*if (roomExist == 0) {
             String chatRoomId = yourNumber + ":" + opponentNumber;
             ChatRoom chatRoom = new ChatRoom(yourNumber, opponentNumber, chatRoomId);
             DatabaseReference databaseRoomReference = roomReference.child(chatRoomId);
@@ -348,7 +370,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             roomExist = 1;
         } else {
             roomIdReference.child(timeStp).setValue(chatMessage, this);
-        }
+        }*/
 
     }
 
