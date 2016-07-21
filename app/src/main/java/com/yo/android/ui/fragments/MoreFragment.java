@@ -88,10 +88,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 cameraIntent.showDialog();
             }
         });
+        loadImage();
 
     }
 
-    private void loadImage(){
+    private void loadImage() {
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (!TextUtils.isEmpty(avatar)) {
             Picasso.with(getActivity())
@@ -104,6 +105,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     //Tested and image update is working
     //Make a prompt for pick a image from gallery/camera
     private void uploadFile(File file) {
+
+        Picasso.with(getActivity())
+                .load(file)
+                .into(profilePic);
+
+
         showProgressDialog();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         //TODO: Dynamic

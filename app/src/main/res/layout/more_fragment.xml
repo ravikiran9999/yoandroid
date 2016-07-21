@@ -15,9 +15,9 @@
         android:id="@+id/change_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:padding="5dp"
         android:layout_marginTop="120dp"
-        android:background="#55000000"
+        android:background="#44000000"
         android:elevation="10dp">
 
         <ImageView
@@ -34,7 +34,7 @@
             android:elevation="7dp"
             android:gravity="center"
             android:drawablePadding="5dp"
-            android:drawableLeft="@android:drawable/ic_menu_camera"
+            android:drawableLeft="@drawable/ic_more_camera"
             android:text="Change Photo"
 
             android:textColor="@color/white" />
