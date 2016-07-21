@@ -56,7 +56,7 @@
                     <Button
                         android:id="@+id/imv_magazine_follow"
                         android:layout_width="wrap_content"
-                        android:layout_height="30dp"
+                        android:layout_height="35dp"
                         android:layout_alignParentLeft="true"
                         android:layout_marginLeft="10dp"
                         android:layout_marginBottom="10dp"
@@ -65,7 +65,7 @@
                         android:textAllCaps="false"
                         android:textColor="@android:color/white"
                         android:gravity="center"
-                        android:textSize="16sp"
+                        android:padding="5dp"
                         android:layout_alignParentBottom="true"/>
 
                 </RelativeLayout>

@@ -194,7 +194,9 @@ public class MagazinesFragment extends BaseFragment {
                         }
                     }
                     MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
-                    fragment.loadArticles(topicName, topicId);
+                    List<String> tagIds = new ArrayList<String>();
+                    tagIds.add(topicId);
+                    fragment.loadArticles(tagIds);
 
 
                     return;
