@@ -67,7 +67,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/tags/get_articles.json")
-        Call<List<Articles>> getArticlesAPI(@Field("access_token") String access_token, @Field("tag_ids[]") String tag_ids);
+        Call<List<Articles>> getArticlesAPI(@Field("access_token") String access_token, @Field("tag_ids[]") List<String> tag_ids);
 
         @FormUrlEncoded
         @POST("/api/articles/{article_id}/like.json")
@@ -165,6 +165,10 @@ public class YoApi {
 
         @GET("api/articles.json")
         Call<List<Articles>> getOtherProfilesLikedArticlesAPI(@Query("access_token") String access_token, @Query("user_id") String user_id);
+
+        @FormUrlEncoded
+        @POST("api/articles/{article_id}/follow.json")
+        Call<ResponseBody> followArticleAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
     }
 
     public interface YoRefreshTokenService {

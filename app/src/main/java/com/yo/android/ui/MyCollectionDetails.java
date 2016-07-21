@@ -78,7 +78,9 @@ public class MyCollectionDetails extends BaseActivity {
         articlesList.clear();
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getArticlesAPI(accessToken, topicId).enqueue(new Callback<List<Articles>>() {
+        List<String> tagIds = new ArrayList<String>();
+        tagIds.add(topicId);
+        yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
                 if (response.body().size() > 0) {
@@ -177,6 +179,8 @@ public class MyCollectionDetails extends BaseActivity {
                 holder.magazineAdd = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add);
 
                 holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
+
+                holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
 
                 layout.setTag(holder);
             } else {
@@ -349,6 +353,40 @@ public class MyCollectionDetails extends BaseActivity {
                 }
             });
 
+            if(data.getIsFollowing().equals("true")) {
+                holder.articleFollow.setText("Following");
+                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+            }
+            else {
+                holder.articleFollow.setText("Follow");
+                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
+
+            final ViewHolder finalHolder = holder;
+            holder.articleFollow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((BaseActivity)context).showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Following");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Follow");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+                        }
+                    });
+                }
+            });
+
 
             return layout;
         }
@@ -374,5 +412,7 @@ public class MyCollectionDetails extends BaseActivity {
         private ImageView magazineAdd;
 
         private ImageView magazineShare;
+
+        private Button articleFollow;
     }
 }

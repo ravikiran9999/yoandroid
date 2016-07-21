@@ -199,6 +199,8 @@ public class WishListActivity extends BaseActivity {
 
                 holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
 
+                holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -375,7 +377,39 @@ public class WishListActivity extends BaseActivity {
                 }
             });
 
+            if(data.getIsFollowing().equals("true")) {
+                holder.articleFollow.setText("Following");
+                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+            }
+            else {
+                holder.articleFollow.setText("Follow");
+                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
 
+            final ViewHolder finalHolder = holder;
+            holder.articleFollow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((BaseActivity)context).showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Following");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Follow");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+                        }
+                    });
+                }
+            });
 
             return layout;
         }
@@ -401,6 +435,8 @@ public class WishListActivity extends BaseActivity {
         private ImageView magazineAdd;
 
         private ImageView magazineShare;
+
+        private Button articleFollow;
     }
 
 }
