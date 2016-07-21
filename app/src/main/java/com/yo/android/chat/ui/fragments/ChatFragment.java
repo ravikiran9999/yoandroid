@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,8 +27,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
@@ -35,12 +38,18 @@ import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
+import com.yo.android.model.GroupName;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,12 +64,18 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private Menu menu;
 
     @Inject
+    YoApi.YoService yoService;
+    @Inject
     FirebaseService firebaseService;
 
     @Inject
     DatabaseHelper databaseHelper;
     @Inject
     MyServiceConnection myServiceConnection;
+
+    @Inject
+    @Named("login")
+    PreferenceEndPoint loginPrefs;
 
     public Menu getMenu() {
         return menu;
@@ -189,7 +204,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
-    private void getChatRoomList() {
+    /*private void getChatRoomList() {
         showProgressDialog();
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -260,8 +275,25 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 dismissProgressDialog();
             }
         });
+    }*/
+
+    private void getChatRoomList() {
+
+        /*String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.createGroupAPI(access, selectedUsers).enqueue(new Callback<GroupName>() {
+            @Override
+            public void onResponse(Call<GroupName> call, Response<GroupName> response) {
+                response.body();
+                Toast.makeText(getActivity(), "Created Room: "+ groupName, Toast.LENGTH_SHORT).show();
+                dismissProgressDialog();
+                getActivity().finish();
+            }
+
+            @Override
+            public void onFailure(Call<GroupName> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });*/
     }
-
-
 
 }
