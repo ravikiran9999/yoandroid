@@ -12,6 +12,8 @@ public class Articles {
     private String summary;
     private boolean isChecked;
     private String liked;
+    private boolean isFollow;
+    private String isFollowing;
 
     public String getId() {
         return id;
@@ -67,5 +69,21 @@ public class Articles {
 
     public void setLiked(String liked) {
         this.liked = liked;
+    }
+
+    public boolean isFollow() {
+        return isFollow;
+    }
+
+    public void setIsFollow(boolean isFollow) {
+        this.isFollow = isFollow;
+    }
+
+    public String getIsFollowing() {
+        return isFollowing;
+    }
+
+    public void setIsFollowing(String isFollowing) {
+        this.isFollowing = isFollowing;
     }
 }

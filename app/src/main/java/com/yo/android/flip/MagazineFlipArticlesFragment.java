@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,13 +43,18 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
+import com.yo.android.model.Topics;
+import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import org.w3c.dom.Text;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -60,7 +68,7 @@ import retrofit2.Response;
 /**
  * Created by creatives on 6/30/2016.
  */
-public class MagazineFlipArticlesFragment extends BaseFragment {
+public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private FlipViewController flipView;
     private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
@@ -71,9 +79,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
     @Inject
     YoApi.YoService yoService;
     private String topicName;
-    private TextView noArticals;
+    //private TextView noArticals;
+    private LinearLayout llNoArticles;
     private FrameLayout flipContainer;
     private ProgressBar mProgress;
+    private Button followMoreTopics;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -91,20 +101,21 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
        /* IntentFilter filter = new IntentFilter("com.yo.magazine.SendBroadcast");
         myReceiver = new MyReceiver();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myReceiver, filter);*/
-
+        preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.magazine_flip_fragment, container, false);
-        noArticals = (TextView) view.findViewById(R.id.txtEmptyArticals);
+        llNoArticles = (LinearLayout) view.findViewById(R.id.ll_no_articles);
         flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
         flipView = new FlipViewController(getActivity());
         myBaseAdapter = new MyBaseAdapter(getActivity(), flipView);
         flipView.setAdapter(myBaseAdapter);
         flipContainer.addView(flipView);
+        followMoreTopics = (Button) view.findViewById(R.id.btn_magazine_follow_topics);
         return view;
     }
 
@@ -124,12 +135,59 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         //loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
 
-        loadAllArticles();
+        Intent intent = getActivity().getIntent();
+        if(intent.hasExtra("tagIds")) {
+            List<String> tagIds = intent.getStringArrayListExtra("tagIds");
+            loadArticles(tagIds);
+        }
+        else {
+            if (mProgress != null) {
+                mProgress.setVisibility(View.GONE);
+            }
+            final List<Topics> topicsList = new ArrayList<Topics>();
+
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            showProgressDialog();
+            yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
+                @Override
+                public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
+                    dismissProgressDialog();
+                    if (response == null || response.body() == null) {
+                        return;
+                    }
+                    topicsList.addAll(response.body());
+
+                    List<String> topicIdsList = new ArrayList<String>();
+                    for (int i = 0; i < topicsList.size(); i++) {
+                        if(topicsList.get(i).getSelected().equals("true")) {
+                            topicIdsList.add(topicsList.get(i).getId());
+                        }
+                    }
+                    loadArticles(topicIdsList);
+                }
+
+                @Override
+                public void onFailure(Call<List<Topics>> call, Throwable t) {
+                    dismissProgressDialog();
+                }
+            });
+        }
+
+        followMoreTopics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                intent.putExtra("From", "Magazines");
+                startActivity(intent);
+            }
+        });
+
+        //loadAllArticles();
 
     }
 
-    public void loadArticles(String selectedTopic, String topicId) {
-        topicName = selectedTopic;
+    public void loadArticles(List<String> tagIds) {
+       // topicName = selectedTopic;
        /* articlesList.clear();
         for (int i = 0; i < Travels.getImgDescriptions().size(); i++) {
             //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(Travels.getImgDescriptions().get(i).getTopicName())) {
@@ -141,28 +199,50 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         myBaseAdapter.addItems(articlesList);*/
 
         articlesList.clear();
+        myBaseAdapter.addItems(new ArrayList<Articles>());
+        if (mProgress != null) {
+            mProgress.setVisibility(View.VISIBLE);
+        }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getArticlesAPI(accessToken, topicId).enqueue(new Callback<List<Articles>>() {
+        yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
 
-                if (response.body().size() > 0) {
+                if (response.body() != null && response.body().size() > 0) {
+                    if (llNoArticles != null) {
+                        llNoArticles.setVisibility(View.GONE);
+                        flipContainer.setVisibility(View.VISIBLE);
+                    }
                     for (int i = 0; i < response.body().size(); i++) {
                         //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
                         //articlesList = new ArrayList<Travels.Data>();
                         articlesList.add(response.body().get(i));
                         // }
                     }
-                    myBaseAdapter.addItems(articlesList);
+                    myBaseAdapter.addItems(response.body());
                 } else {
-                    mToastFactory.showToast("No Articles");
+                    //mToastFactory.showToast("No Articles");
+                    if (llNoArticles != null) {
+                        flipContainer.setVisibility(View.GONE);
+                        llNoArticles.setVisibility(View.VISIBLE);
+                    }
                 }
 
             }
 
             @Override
             public void onFailure(Call<List<Articles>> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                if (llNoArticles != null) {
+                    llNoArticles.setVisibility(View.VISIBLE);
+                    flipContainer.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -176,6 +256,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myReceiver);
+        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -187,6 +268,30 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         flipView.onPause();
+    }
+
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals("magazine_tags")){
+            if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+                String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
+                if(prefTags != null) {
+                    List<String> tagIds = Arrays.asList(prefTags);
+                    loadArticles(tagIds);
+                }
+            }
+            else {
+                //mToastFactory.showToast("No articles. Select topic");
+                articlesList.clear();
+                myBaseAdapter.addItems(new ArrayList<Articles>());
+                if (llNoArticles != null) {
+                    llNoArticles.setVisibility(View.VISIBLE);
+                    flipContainer.setVisibility(View.GONE);
+                }
+            }
+        }
+
     }
 
     private class MyBaseAdapter extends BaseAdapter {
@@ -218,7 +323,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
 
         @Override
         public Articles getItem(int position) {
-            if (getCount() > position) {
+            if (position>=0 && getCount() > position) {
                 return items.get(position);
             }
             return null;
@@ -251,6 +356,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 holder.magazineAdd = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add);
 
                 holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
+
+                holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
 
                 layout.setTag(holder);
             } else {
@@ -395,6 +502,40 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 }
             });
 
+            if(data.getIsFollowing().equals("true")) {
+                holder.articleFollow.setText("Following");
+                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+            }
+            else {
+                holder.articleFollow.setText("Follow");
+                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
+
+            final ViewHolder finalHolder = holder;
+            holder.articleFollow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((BaseActivity)context).showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            ((BaseActivity)context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Following");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            ((BaseActivity)context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Follow");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+                        }
+                    });
+                }
+            });
+
 
             return layout;
         }
@@ -420,6 +561,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         private ImageView magazineAdd;
 
         private ImageView magazineShare;
+
+        private Button articleFollow;
     }
 
     /**
@@ -508,7 +651,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
         public void onReceive(Context context, Intent intent) {
             String selectedTopic = intent.getStringExtra("SelectedTopic");
             String topicId = intent.getStringExtra("TopicId");
-            loadArticles(selectedTopic, topicId);
+            //loadArticles(selectedTopic, topicId);
         }
     }
 
@@ -527,8 +670,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 }
                 if (response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
+                        if (llNoArticles != null) {
+                            llNoArticles.setVisibility(View.GONE);
                         }
                         //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
                         //articlesList = new ArrayList<Travels.Data>();
@@ -537,8 +680,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
-                    if (noArticals != null) {
-                        noArticals.setVisibility(View.VISIBLE);
+                    if (llNoArticles != null) {
+                        llNoArticles.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -549,8 +692,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment {
                 if (mProgress != null) {
                     mProgress.setVisibility(View.GONE);
                 }
-                if (noArticals != null) {
-                    noArticals.setVisibility(View.VISIBLE);
+                if (llNoArticles != null) {
+                    llNoArticles.setVisibility(View.VISIBLE);
                 }
             }
         });
