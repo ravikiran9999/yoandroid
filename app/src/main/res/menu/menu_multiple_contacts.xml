@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search_white_36dp"
@@ -10,4 +9,11 @@
         app:showAsAction="always|collapseActionView" />
 
 
+    <item
+        android:id="@+id/done"
+        android:icon="@drawable/ic_tick"
+        android:title="done"
+        app:showAsAction="always">
+
+    </item>
 </menu>

@@ -1,7 +1,6 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.google.firebase.database.DatabaseReference;
@@ -10,7 +9,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
-import com.yo.android.model.ChatRoom;
+import com.yo.android.model.Room;
 import com.yo.android.util.Constants;
 
 import javax.inject.Inject;
@@ -20,7 +19,7 @@ import javax.inject.Named;
  * Created by rdoddapaneni on 7/5/2016.
  */
 
-public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomViewHolder> {
+public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewHolder> {
 
     @Inject
     @Named("login")
@@ -47,17 +46,28 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
     }
 
     @Override
-    public void bindView(int position, ChatRoomViewHolder holder, final ChatRoom item) {
+    public void bindView(int position, ChatRoomViewHolder holder, final Room item) {
 
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
-        if (item.getOpponentPhoneNumber().equals(yourPhoneNumber)) {
+        if(item.getGroupName() == null) {
+            holder.getOpponentName().setText(item.getMembers().get(0).getMobileNumber());
+
+        } else if(item.getGroupName() != null) {
+            holder.getOpponentName().setText(item.getGroupName());
+        } else {
+            holder.getOpponentName().setText("");
+        }
+
+        //String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+
+        /*if (item.getOpponentPhoneNumber().equals(yourPhoneNumber)) {
             holder.getOpponentName().setText(item.getYourPhoneNumber());
         } else {
             holder.getOpponentName().setText(item.getOpponentPhoneNumber());
-        }
+        }*/
 
-        if (item.isImage()) {
+        /*if (item.isImage()) {
             holder.getChat().setText(mContext.getResources().getString(R.string.image));
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
         } else if (!TextUtils.isEmpty(item.getMessage())) {
@@ -67,6 +77,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<ChatRoom, ChatRoomV
             holder.getChat().setText("");
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
         }
-        holder.getTimeStamp().setText(item.getTimeStamp());
+        holder.getTimeStamp().setText(item.getTimeStamp());*/
     }
 }

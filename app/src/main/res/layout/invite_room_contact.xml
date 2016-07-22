@@ -52,10 +52,9 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerInParent="true"
-        android:shadowColor="@color/black"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="16dp"
-        android:visibility="visible" />
+         />
 
     <View
         android:layout_width="match_parent"
