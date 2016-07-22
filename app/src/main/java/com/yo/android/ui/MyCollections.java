@@ -132,6 +132,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
                 intent.putExtra("TopicId", collections.getId());
                 intent.putExtra("TopicName", collections.getName());
+                intent.putExtra("Type", collections.getType());
                 startActivity(intent);
             }
         }

@@ -64,7 +64,7 @@ public class OthersProfileMagazines extends BaseFragment {
             @Override
             public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
                 dismissProgressDialog();
-                if (response.body().size() > 0) {
+                if (response.body() != null && response.body().size() > 0) {
                     TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(0).getCustomView().findViewById(R.id.count);
                     count.setText("" + response.body().size());
                     List<OwnMagazine> magazineList = response.body();
@@ -87,11 +87,12 @@ public class OthersProfileMagazines extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent intent = new Intent(getActivity(), CreatedMagazineDetailActivity.class);
+                Intent intent = new Intent(getActivity(), OthersMagazinesDetailActivity.class);
                 intent.putExtra("MagazineTitle", adapter.getItem(position).getName());
                 intent.putExtra("MagazineId", adapter.getItem(position).getId());
                 intent.putExtra("MagazineDesc", adapter.getItem(position).getDescription());
                 intent.putExtra("MagazinePrivacy", adapter.getItem(position).getPrivacy());
+                intent.putExtra("MagazineIsFollowing", adapter.getItem(position).getIsFollowing());
                 startActivity(intent);
             }
 

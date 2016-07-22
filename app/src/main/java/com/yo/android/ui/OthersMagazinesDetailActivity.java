@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -17,20 +19,20 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
+import com.yo.android.adapters.OthersMagazinesAdapter;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
-import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.model.Articles;
+import com.yo.android.model.MagazineArticles;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -38,79 +40,87 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by root on 15/7/16.
- */
-public class OtherProfilesLinedArticles extends BaseFragment {
+public class OthersMagazinesDetailActivity extends BaseActivity {
 
+    @Inject
+    YoApi.YoService yoService;
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
     private FlipViewController flipView;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
-    @Inject
-    YoApi.YoService yoService;
-    private String topicName;
     private TextView noArticals;
     private FrameLayout flipContainer;
-    private ProgressBar mProgress;
+    private String magazineTitle;
+    private String magazineId;
+    private String magazineDesc;
+    private String magazinePrivacy;
+    private String magazineIsFollowing;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.magazine_flip_fragment, container, false);
-        //return inflater.inflate(R.layout.profile_magazines, container, false);
-
-        noArticals = (TextView) view.findViewById(R.id.txtEmptyArticals);
-        flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
-        mProgress = (ProgressBar) view.findViewById(R.id.progress);
-        flipView = new FlipViewController(getActivity());
-        myBaseAdapter = new MyBaseAdapter(getActivity(), flipView);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.created_magazines);
+        noArticals = (TextView) findViewById(R.id.txtEmptyArticals);
+        flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
+        flipView = new FlipViewController(this);
+        myBaseAdapter = new MyBaseAdapter(this, flipView);
         flipView.setAdapter(myBaseAdapter);
         flipContainer.addView(flipView);
 
         flipContainer.setVisibility(View.GONE);
 
-        return view;
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-    }
+        EventBus.getDefault().register(this);
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        Intent intent = getIntent();
+        /*final String articleId = intent.getStringExtra("ArticleId");
+        final String articleTitle = intent.getStringExtra("ArticleTitle");
+        final String articleUrl = intent.getStringExtra("ArticleUrl");
+        String articleSummary = intent.getStringExtra("ArticleSummary");
+        String articleImage = intent.getStringExtra("ArticleImage");*/
+        magazineTitle = intent.getStringExtra("MagazineTitle");
+        magazineId = intent.getStringExtra("MagazineId");
+        magazineDesc = intent.getStringExtra("MagazineDesc");
+        magazinePrivacy = intent.getStringExtra("MagazinePrivacy");
+        magazineIsFollowing = intent.getStringExtra("MagazineIsFollowing");
 
-        String userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
-        loadLikedArticles(userID);
-    }
+        getSupportActionBar().setTitle(magazineTitle);
 
-    private void loadLikedArticles(String userID) {
+       /* TextView tvTitle = (TextView) findViewById(R.id.tv_article_title);
+        TextView tvSummary = (TextView) findViewById(R.id.tv_article_short_desc);
+        ImageView tvImage = (ImageView) findViewById(R.id.photo);
+        TextView tvFullStory = (TextView) findViewById(R.id.tv_category_full_story);
+        CheckBox magazineLike = (CheckBox) findViewById(R.id.cb_magazine_like);*/
+
+
+
         articlesList.clear();
-        myBaseAdapter.addItems(articlesList);
-        if (mProgress != null) {
-            mProgress.setVisibility(View.VISIBLE);
-        }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getOtherProfilesLikedArticlesAPI(accessToken, userID).enqueue(new Callback<List<Articles>>() {
+        yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
-                if (response.body().size() > 0) {
-                    for (int i = 0; i < response.body().size(); i++) {
+            public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
+                final String id = response.body().getId();
+                if (response.body().getArticlesList()!= null && response.body().getArticlesList().size() > 0) {
+                    for (int i = 0; i < response.body().getArticlesList().size(); i++) {
+                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                        //articlesList = new ArrayList<Travels.Data>();
                         flipContainer.setVisibility(View.VISIBLE);
                         if (noArticals != null) {
                             noArticals.setVisibility(View.GONE);
                         }
-                        TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(2).getCustomView().findViewById(R.id.count);
-                        count.setText("" + response.body().size());
-                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                        //articlesList = new ArrayList<Travels.Data>();
-                        articlesList.add(response.body().get(i));
+                        articlesList.add(response.body().getArticlesList().get(i));
                         // }
                     }
                     myBaseAdapter.addItems(articlesList);
@@ -118,15 +128,25 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                     flipContainer.setVisibility(View.GONE);
                     if (noArticals != null) {
                         noArticals.setVisibility(View.VISIBLE);
+
+                        noArticals.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(OthersMagazinesDetailActivity.this, LoadMagazineActivity.class);
+                                intent.putExtra("MagazineId", id);
+                                intent.putExtra("MagazineTitle", magazineTitle);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
                     }
+
                 }
+
             }
 
             @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
+            public void onFailure(Call<MagazineArticles> call, Throwable t) {
                 flipContainer.setVisibility(View.GONE);
                 if (noArticals != null) {
                     noArticals.setVisibility(View.VISIBLE);
@@ -134,18 +154,74 @@ public class OtherProfilesLinedArticles extends BaseFragment {
             }
         });
 
+
+        /*tvTitle.setText(articleTitle);
+        tvSummary.setText(articleSummary);
+        if (articleImage != null) {
+            Picasso.with(this)
+                .load(articleImage)
+                .into(tvImage);
+        }
+        tvFullStory.setText(articleTitle);
+        tvFullStory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CreatedMagazineDetailActivity.this, MagazineArticleDetailsActivity.class);
+                intent.putExtra("Title", articleTitle);
+                intent.putExtra("Image", articleUrl);
+                startActivity(intent);
+            }
+        });
+
+        magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.likeArticlesAPI(articleId, accessToken).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                            mToastFactory.showToast("You have liked the article " + articleTitle);
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            mToastFactory.showToast("Error while liking article " + articleTitle);
+                        }
+                    });
+                } else {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.unlikeArticlesAPI(articleId, accessToken).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                            mToastFactory.showToast("You have unliked the article " + articleTitle);
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            mToastFactory.showToast("Error while unliking article " + articleTitle);
+                        }
+                    });
+                }
+            }
+        });*/
+
     }
 
-            @Override
-            public void onResume() {
-                super.onResume();
-                flipView.onResume();
-            }
+    @Override
+    public void onResume() {
+        super.onResume();
+        flipView.onResume();
+    }
 
-            public void onPause() {
-                super.onPause();
-                flipView.onPause();
-            }
+    public void onPause() {
+        super.onPause();
+        flipView.onPause();
+    }
 
     private class MyBaseAdapter extends BaseAdapter {
 
@@ -192,9 +268,12 @@ public class OtherProfilesLinedArticles extends BaseFragment {
             ViewHolder holder = null;
             View layout = convertView;
             if (layout == null) {
-                layout = inflater.inflate(R.layout.others_liked_magazine, null);
+                layout = inflater.inflate(R.layout.activity_others_magazines_detail, null);
 
                 holder = new ViewHolder();
+
+                /*holder.categoryName = UI
+                        .<TextView>findViewById(layout, R.id.tv_category_name);*/
 
                 holder.articleTitle = UI.
                         <TextView>findViewById(layout, R.id.tv_article_title);
@@ -217,12 +296,18 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                 holder = (ViewHolder) layout.getTag();
             }
 
-
+            //final Travels.Data data = Travels.getImgDescriptions().get(position);
             final Articles data = getItem(position);
             if (data == null) {
                 return layout;
             }
             holder.magazineLike.setTag(position);
+            //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
+            //articlesList = new ArrayList<Travels.Data>();
+            //articlesList.add(data);
+
+            /*holder.categoryName
+                    .setText(AphidLog.format("%s", topicName));*/
 
             holder.articleTitle
                     .setText(AphidLog.format("%s", data.getTitle()));
@@ -234,8 +319,10 @@ public class OtherProfilesLinedArticles extends BaseFragment {
             //TODO:
             holder.magazineLike.setOnCheckedChangeListener(null);
             if (data.getLiked().equals("true")) {
+                // holder.magazineLike.setChecked(true);
                 data.setIsChecked(true);
             } else {
+                //holder.magazineLike.setChecked(false);
                 data.setIsChecked(false);
             }
 
@@ -255,8 +342,13 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
+                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-
+                                //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                    /*}
+                                    else {
+                                        Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                    }*/
                             }
 
                             @Override
@@ -277,9 +369,13 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                 data.setLiked("false");
 
                                 notifyDataSetChanged();
-
+                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
-
+                                //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                    /*}
+                                    else {
+                                        Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                    }*/
                             }
 
                             @Override
@@ -318,14 +414,10 @@ public class OtherProfilesLinedArticles extends BaseFragment {
 
             if (data.getImage_filename() != null) {
 
-
-                Picasso.with(getActivity())
+                Picasso.with(OthersMagazinesDetailActivity.this)
                         .load(data.getImage_filename())
                         .into(photoView);
             }
-
-            Button followMoreTopics = (Button) layout.findViewById(R.id.btn_magazine_follow_topics);
-            followMoreTopics.setVisibility(View.GONE);
 
 
             ImageView add = holder.magazineAdd;
@@ -333,7 +425,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getActivity(), CreateMagazineActivity.class);
+                    Intent intent = new Intent(OthersMagazinesDetailActivity.this, CreateMagazineActivity.class);
                     intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
                     startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
                 }
@@ -408,5 +500,77 @@ public class OtherProfilesLinedArticles extends BaseFragment {
         private ImageView magazineShare;
 
         private Button articleFollow;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_my_collections_detail, menu);
+
+        if(magazineIsFollowing.equals("true")) {
+            menu.getItem(0).setTitle("Following");
+            //menu.getItem(0).setIcon(R.drawable.ic_magazine_following);
+        }
+        else {
+            menu.getItem(0).setTitle("Follow");
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        final MenuItem menuItem = item;
+        switch (item.getItemId()) {
+            case R.id.menu_follow_magazine:
+                showProgressDialog();
+                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                yoService.followMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dismissProgressDialog();
+                        menuItem.setTitle("Following");
+                        //menuItem.setIcon(R.drawable.ic_magazine_following);
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        dismissProgressDialog();
+                        menuItem.setTitle("Follow");
+                    }
+                });
+
+                break;
+        }
+        return true;
+    }
+
+    public void onEventMainThread(String action) {
+        if (Constants.DELETE_MAGAZINE_ACTION.equals(action)) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if (requestCode == 3 && resultCode == RESULT_OK) {
+            if(data!= null) {
+                String editedTitle = data.getStringExtra("EditedTitle");
+                String editedDesc = data.getStringExtra("EditedDesc");
+
+                getSupportActionBar().setTitle(editedTitle);
+            }
+
+        }
     }
 }

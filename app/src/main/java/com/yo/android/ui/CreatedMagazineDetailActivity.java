@@ -250,7 +250,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
         @Override
         public Articles getItem(int position) {
-            if (getCount() > position) {
+            if (position>=0 && getCount() > position) {
                 return items.get(position);
             }
             return null;

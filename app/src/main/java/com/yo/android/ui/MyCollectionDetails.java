@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -28,6 +31,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
+import com.yo.android.model.MagazineArticles;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -70,6 +74,7 @@ public class MyCollectionDetails extends BaseActivity {
         Intent intent = getIntent();
         String topicId = intent.getStringExtra("TopicId");
         String topicName = intent.getStringExtra("TopicName");
+        String type = intent.getStringExtra("Type");
 
         String title = topicName;
 
@@ -77,30 +82,57 @@ public class MyCollectionDetails extends BaseActivity {
 
         articlesList.clear();
 
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        List<String> tagIds = new ArrayList<String>();
-        tagIds.add(topicId);
-        yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
-            @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                if (response.body().size() > 0) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                        //articlesList = new ArrayList<Travels.Data>();
-                        articlesList.add(response.body().get(i));
-                        // }
+        if(type.equals("Tag")) {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            List<String> tagIds = new ArrayList<String>();
+            tagIds.add(topicId);
+            yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
+                @Override
+                public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                    if (response.body().size() > 0) {
+                        for (int i = 0; i < response.body().size(); i++) {
+                            //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                            //articlesList = new ArrayList<Travels.Data>();
+                            articlesList.add(response.body().get(i));
+                            // }
+                        }
+                        myBaseAdapter.addItems(articlesList);
+                    } else {
+                        mToastFactory.showToast("No Articles");
                     }
-                    myBaseAdapter.addItems(articlesList);
-                } else {
-                    mToastFactory.showToast("No Articles");
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                Toast.makeText(MyCollectionDetails.this, "Error retrieving Articles", Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<Articles>> call, Throwable t) {
+                    Toast.makeText(MyCollectionDetails.this, "Error retrieving Articles", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        else {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.getArticlesOfMagazineAPI(topicId, accessToken).enqueue(new Callback<MagazineArticles>() {
+                @Override
+                public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
+                    final String id = response.body().getId();
+                    if (response.body().getArticlesList()!= null && response.body().getArticlesList().size() > 0) {
+                        for (int i = 0; i < response.body().getArticlesList().size(); i++) {
+                            //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                            //articlesList = new ArrayList<Travels.Data>();
+
+                            articlesList.add(response.body().getArticlesList().get(i));
+                            // }
+                        }
+                        myBaseAdapter.addItems(articlesList);
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<MagazineArticles> call, Throwable t) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -143,7 +175,7 @@ public class MyCollectionDetails extends BaseActivity {
 
         @Override
         public Articles getItem(int position) {
-            if (getCount() > position) {
+            if (position>=0 && getCount() > position) {
                 return items.get(position);
             }
             return null;
@@ -353,7 +385,10 @@ public class MyCollectionDetails extends BaseActivity {
                 }
             });
 
-            if(data.getIsFollowing().equals("true")) {
+            holder.articleFollow.setEnabled(false);
+            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));
+
+            /*if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             }
@@ -385,7 +420,7 @@ public class MyCollectionDetails extends BaseActivity {
                         }
                     });
                 }
-            });
+            });*/
 
 
             return layout;
@@ -414,5 +449,25 @@ public class MyCollectionDetails extends BaseActivity {
         private ImageView magazineShare;
 
         private Button articleFollow;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_my_collections_detail, menu);
+        menu.getItem(0).setTitle("Following");
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        final MenuItem menuItem = item;
+        switch (item.getItemId()) {
+            case R.id.menu_follow_magazine:
+
+        }
+        return true;
     }
 }

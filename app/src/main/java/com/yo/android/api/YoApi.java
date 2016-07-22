@@ -141,11 +141,12 @@ public class YoApi {
 
         @GET("api/user/info.json")
         Call<UserProfileInfo> getUserInfo(@Query("access_token") String access_token);
-
+//        http://yoapp-dev.herokuapp.com/api/user/578090e7b45d200ebc3b8b99.json?
+// access_token=2538a604f78a24170b6b37db15e4e782c1d1c2c0b65e89a67ce4315c2ad61c4e&user[first_name]=bhumi&user[last_name]=parimi&user[email]=email@example.com&user[phone_no]=123456789&user[avatar]=image-file
         @Multipart
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
-                                            @Part("user[first_name]") RequestBody body,
+                                            @Part("user[description]") RequestBody descBody,
                                             @Part MultipartBody.Part file);
 
 
@@ -169,6 +170,10 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/articles/{article_id}/follow.json")
         Call<ResponseBody> followArticleAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/magzines/{magzine_id}/follow.json")
+        Call<ResponseBody> followMagazineAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token);
     }
 
     public interface YoRefreshTokenService {

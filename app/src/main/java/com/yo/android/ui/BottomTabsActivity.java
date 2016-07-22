@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
+import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
@@ -202,6 +204,12 @@ public class BottomTabsActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void refresh() {
+        if(getFragment() instanceof MagazinesFragment){
+            ((MagazinesFragment)getFragment()).getmMagazineFlipArticlesFragment().refresh();
+        }
+    }
+
     public class TabsData {
 
         private String title;
@@ -230,7 +238,9 @@ public class BottomTabsActivity extends BaseActivity {
                     preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
-                    preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+                    if(TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.USER_NAME))){
+                        preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+                    }
                 }
             }
 

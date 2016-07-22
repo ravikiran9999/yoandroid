@@ -109,7 +109,7 @@ public class OTPFragment extends BaseFragment {
                 } else {
                     String password = etOtp.getText().toString().trim();
                     if (TextUtils.isEmpty(password)) {
-                        mToastFactory.showToast("OTP shouldn't empty");
+                        mToastFactory.showToast(getString(R.string.otp_empty));
                     } else {
                         stopTimer();
                         signUp(phoneNumber, password);
@@ -179,9 +179,15 @@ public class OTPFragment extends BaseFragment {
                 "password", countryCode + phoneNumber, etOtp.getText().toString().trim()).enqueue(new Callback<OTPResponse>() {
             @Override
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
-                contactsSyncManager.syncContacts();
-                count++;
-                navigateToNext(response, phoneNumber, password);
+                dismissProgressDialog();
+                if(response.isSuccessful()) {
+                    contactsSyncManager.syncContacts();
+                    count++;
+                    navigateToNext(response, phoneNumber, password);
+                }
+                else {
+                    mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+                }
             }
 
             @Override

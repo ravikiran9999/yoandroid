@@ -68,7 +68,6 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.ProfileActivity"
             android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
@@ -137,9 +136,9 @@
             android:name=".ui.LoadMagazineActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".chat.ui.CreateGroupActivity"
-            android:label="@string/new_group"
-            />
+        <activity
+            android:name=".chat.ui.CreateGroupActivity"
+            android:label="@string/new_group" />
         <activity
             android:name=".ui.CountryListActivity"
             android:screenOrientation="portrait" />
@@ -182,8 +181,12 @@
 
         <activity
             android:name=".ui.FollowingsActivity"
+            android:screenOrientation="portrait" />
+
+        <service android:name=".chat.firebase.FirebaseService" />
+
+        <activity android:name=".ui.OthersMagazinesDetailActivity"
             android:screenOrientation="portrait"></activity>
-        <service android:name=".chat.firebase.FirebaseService"></service>
     </application>
 
 </manifest>
