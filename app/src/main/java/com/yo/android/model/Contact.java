@@ -9,6 +9,7 @@ public class Contact {
     private String phoneNo;
     private boolean yoAppUser;
     private boolean selected;
+    private String firebaseRoomId;
 
     public String getId() {
         return id;
@@ -58,8 +59,16 @@ public class Contact {
         this.selected = selected;
     }
 
+    public String getFirebaseRoomId() {
+        return firebaseRoomId;
+    }
+
+    public void setFirebaseRoomId(String firebaseRoomId) {
+        this.firebaseRoomId = firebaseRoomId;
+    }
+
     @Override
     public String toString() {
-        return "ClassPojo [phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + "]";
+        return "ClassPojo [id = " + id +", phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + ", firebaseRoomId = " +firebaseRoomId + "]";
     }
 }

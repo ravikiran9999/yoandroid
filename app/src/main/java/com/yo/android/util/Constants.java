@@ -7,6 +7,7 @@ public class Constants {
     public static final String MESSAGE_ID = "message_id";
     public static final String YOUR_PHONE_NUMBER = "yourPhoneNumber";
     public static final String OPPONENT_PHONE_NUMBER = "opponentPhoneNumber";
+    public static final String OPPONENT_ID = "opponentId";
     public static final String CHAT_ROOM_ID = "chatRoomId";
     public static final String CHAT_FORWARD = "forward";
 
