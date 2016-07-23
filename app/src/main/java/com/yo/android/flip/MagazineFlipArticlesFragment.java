@@ -745,6 +745,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     }
                 }
 
+
             }
 
             @Override
@@ -760,6 +761,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
     public void refresh(){
         //mToastFactory.showToast("Testing search close");
+        if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+            String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
+            if(prefTags != null) {
+                List<String> tagIds = Arrays.asList(prefTags);
+                loadArticles(tagIds);
+            }
+        }
     }
 
 
