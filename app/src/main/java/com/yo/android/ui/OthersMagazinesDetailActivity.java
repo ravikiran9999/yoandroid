@@ -1,10 +1,10 @@
 package com.yo.android.ui;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -19,6 +19,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +29,6 @@ import com.aphidmobile.utils.UI;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
-import com.yo.android.adapters.OthersMagazinesAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
@@ -65,6 +65,8 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
     private String magazineDesc;
     private String magazinePrivacy;
     private String magazineIsFollowing;
+    private boolean isFollowing;
+    private boolean isFollowingMagazine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -442,34 +444,87 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                isFollowing = true;
             }
             else {
                 holder.articleFollow.setText("Follow");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                isFollowing = false;
             }
 
             final ViewHolder finalHolder = holder;
             holder.articleFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((BaseActivity)context).showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            finalHolder.articleFollow.setText("Following");
-                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                        }
+                    if (!isFollowing) {
+                        ((BaseActivity) context).showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                finalHolder.articleFollow.setText("Following");
+                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                isFollowing = true;
+                            }
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            finalHolder.articleFollow.setText("Follow");
-                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                finalHolder.articleFollow.setText("Follow");
+                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                isFollowing = false;
 
-                        }
-                    });
+                            }
+                        });
+                    } else {
+
+                        final Dialog dialog = new Dialog(OthersMagazinesDetailActivity.this);
+                        dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                        Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                        btnCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                ((BaseActivity) context).showProgressDialog();
+                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                                yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        ((BaseActivity) context).dismissProgressDialog();
+                                        finalHolder.articleFollow.setText("Follow");
+                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                        isFollowing = false;
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        ((BaseActivity) context).dismissProgressDialog();
+                                        finalHolder.articleFollow.setText("Following");
+                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                        isFollowing = true;
+
+                                    }
+                                });
+                            }
+                        });
+
+                        dialog.show();
+                    }
                 }
             });
 
@@ -510,9 +565,11 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         if(magazineIsFollowing.equals("true")) {
             menu.getItem(0).setTitle("Following");
             //menu.getItem(0).setIcon(R.drawable.ic_magazine_following);
+            isFollowingMagazine = true;
         }
         else {
             menu.getItem(0).setTitle("Follow");
+            isFollowingMagazine = false;
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -524,6 +581,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         final MenuItem menuItem = item;
         switch (item.getItemId()) {
             case R.id.menu_follow_magazine:
+                if (!isFollowingMagazine) {
                 showProgressDialog();
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 yoService.followMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
@@ -532,6 +590,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         dismissProgressDialog();
                         menuItem.setTitle("Following");
                         //menuItem.setIcon(R.drawable.ic_magazine_following);
+                        isFollowingMagazine = true;
 
                     }
 
@@ -539,8 +598,55 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         dismissProgressDialog();
                         menuItem.setTitle("Follow");
+                        isFollowingMagazine = false;
                     }
                 });
+                } else {
+
+                    final Dialog dialog = new Dialog(OthersMagazinesDetailActivity.this);
+                    dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            showProgressDialog();
+                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            yoService.unfollowMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    dismissProgressDialog();
+                                    menuItem.setTitle("Follow");
+                                    isFollowingMagazine = false;
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    dismissProgressDialog();
+                                    menuItem.setTitle("Following");
+                                    //menuItem.setIcon(R.drawable.ic_magazine_following);
+                                    isFollowingMagazine = true;
+
+                                }
+                            });
+                        }
+                    });
+
+                    dialog.show();
+                }
 
                 break;
         }

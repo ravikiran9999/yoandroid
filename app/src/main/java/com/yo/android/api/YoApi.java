@@ -174,6 +174,18 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/magzines/{magzine_id}/follow.json")
         Call<ResponseBody> followMagazineAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/articles/{article_id}/unfollow.json")
+        Call<ResponseBody> unfollowArticleAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/magzines/{magzine_id}/unfollow.json")
+        Call<ResponseBody> unfollowMagazineAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/user/unfollow.json")
+        Call<ResponseBody> unfollowUsersAPI(@Field("access_token") String access_token, @Field("followed_id") String followed_id);
     }
 
     public interface YoRefreshTokenService {

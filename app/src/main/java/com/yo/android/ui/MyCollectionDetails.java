@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +59,8 @@ public class MyCollectionDetails extends BaseActivity {
     private FlipViewController flipView;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
+    private String type;
+    private String topicId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +76,9 @@ public class MyCollectionDetails extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        String topicId = intent.getStringExtra("TopicId");
+        topicId = intent.getStringExtra("TopicId");
         String topicName = intent.getStringExtra("TopicName");
-        String type = intent.getStringExtra("Type");
+        type = intent.getStringExtra("Type");
 
         String title = topicName;
 
@@ -466,6 +470,95 @@ public class MyCollectionDetails extends BaseActivity {
         final MenuItem menuItem = item;
         switch (item.getItemId()) {
             case R.id.menu_follow_magazine:
+                if (type.equals("Tag")) {
+                    final Dialog dialog = new Dialog(MyCollectionDetails.this);
+                    dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            List<String> topicIds = new ArrayList<String>();
+                            topicIds.add(topicId);
+                            yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    menuItem.setTitle("Follow");
+                                    Intent intent = new Intent();
+                                    setResult(6, intent);
+                                    finish();
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    menuItem.setTitle("Following");
+                                }
+                            });
+                        }
+                    });
+
+                    dialog.show();
+                } else {
+                    final Dialog dialog = new Dialog(MyCollectionDetails.this);
+                    dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            showProgressDialog();
+                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            yoService.unfollowMagazineAPI(topicId, accessToken).enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    dismissProgressDialog();
+                                    menuItem.setTitle("Follow");
+                                    Intent intent = new Intent();
+                                    setResult(6, intent);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    dismissProgressDialog();
+                                    menuItem.setTitle("Following");
+                                    //menuItem.setIcon(R.drawable.ic_magazine_following);
+
+                                }
+                            });
+                        }
+                    });
+
+                    dialog.show();
+                }
 
         }
         return true;
