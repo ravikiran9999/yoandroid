@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +60,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
     private TextView noArticals;
     private FrameLayout flipContainer;
     private ProgressBar mProgress;
+    private boolean isFollowing;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -350,16 +353,19 @@ public class OtherProfilesLinedArticles extends BaseFragment {
             if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                isFollowing = true;
             }
             else {
                 holder.articleFollow.setText("Follow");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                isFollowing = false;
             }
 
             final ViewHolder finalHolder = holder;
             holder.articleFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!isFollowing) {
                     ((BaseActivity)context).showProgressDialog();
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -368,6 +374,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                             ((BaseActivity) context).dismissProgressDialog();
                             finalHolder.articleFollow.setText("Following");
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            isFollowing = true;
                         }
 
                         @Override
@@ -375,9 +382,58 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                             ((BaseActivity) context).dismissProgressDialog();
                             finalHolder.articleFollow.setText("Follow");
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            isFollowing = false;
 
                         }
                     });
+                    } else {
+
+                        final Dialog dialog = new Dialog(getActivity());
+                        dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                        Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                        btnCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                ((BaseActivity) context).showProgressDialog();
+                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                                yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        ((BaseActivity) context).dismissProgressDialog();
+                                        finalHolder.articleFollow.setText("Follow");
+                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                        isFollowing = false;
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        ((BaseActivity) context).dismissProgressDialog();
+                                        finalHolder.articleFollow.setText("Following");
+                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                        isFollowing = true;
+
+                                    }
+                                });
+                            }
+                        });
+
+                        dialog.show();
+                    }
                 }
             });
 
