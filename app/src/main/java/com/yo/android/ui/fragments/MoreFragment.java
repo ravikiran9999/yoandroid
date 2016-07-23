@@ -122,10 +122,14 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
-        String descriptionString = "";
+        String descriptionString = "Hey there! I am using YoApp";
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), descriptionString);
+
+        RequestBody username =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         yoService.updateProfile(userId, description, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {

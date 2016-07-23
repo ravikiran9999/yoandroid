@@ -44,6 +44,7 @@ import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
 import com.yo.android.ui.OtherProfilesFollowers;
 import com.yo.android.ui.OtherProfilesLinedArticles;
+import com.yo.android.ui.OthersMagazinesDetailActivity;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
 import com.yo.android.ui.ProfileActivity;
@@ -116,6 +117,7 @@ import dagger.Provides;
                 OthersProfileMagazines.class,
                 OtherProfilesFollowers.class,
                 OtherProfilesLinedArticles.class,
+                OthersMagazinesDetailActivity.class,
 
                 //Fragments
                 ContactsFragment.class,

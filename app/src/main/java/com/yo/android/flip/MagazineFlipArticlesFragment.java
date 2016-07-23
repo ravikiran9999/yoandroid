@@ -37,6 +37,7 @@ import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.IO;
 import com.aphidmobile.utils.UI;
+import com.orion.android.common.util.ToastFactory;
 import com.orion.android.common.util.ToastFactoryImpl;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
@@ -505,10 +506,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                holder.articleFollow.setEnabled(false);
+                holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));
             }
             else {
                 holder.articleFollow.setText("Follow");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                holder.articleFollow.setEnabled(true);
+                holder.articleFollow.setBackgroundResource(R.drawable.ic_magazine_follow);
             }
 
             final ViewHolder finalHolder = holder;
@@ -698,6 +703,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
         });
     }
+    public void refresh(){
+        //mToastFactory.showToast("Testing search close");
+    }
+
 
 
 }
