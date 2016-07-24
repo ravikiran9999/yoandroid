@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
@@ -30,6 +35,7 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatRoom;
 import com.yo.android.model.Room;
 import com.yo.android.util.Constants;
+import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -65,6 +71,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Named("login")
     PreferenceEndPoint loginPrefs;
 
+    @Inject
+    FireBaseHelper fireBaseHelper;
 
     public Menu getMenu() {
         return menu;
@@ -144,11 +152,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
 
         if (forwardChatMessage != null) {
-            //navigateToChatScreen(room.getFirebaseRoomId(), room.getOpponentPhoneNumber(), forwardChatMessage);
-            //navigateToChatScreen(room.getFirebaseRoomId(), forwardChatMessage);
-        } else if(room.getGroupName() == null){
+            if (room.getGroupName() == null) {
+                navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber(), forwardChatMessage);
+            } else if (room.getGroupName() != null) {
+                navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName(), forwardChatMessage);
+            }
+
+        } else if (room.getGroupName() == null) {
             navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber());
-        } else if(room.getGroupName() != null) {
+        } else if (room.getGroupName() != null) {
             navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName());
         }
     }
@@ -259,26 +271,70 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         });
     }*/
 
-public void getChatRoomList() {
-    showProgressDialog();
-    String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-    String userId = loginPrefs.getStringPreference(Constants.USER_ID);
-    ArrayList<String> stringArrayList = new ArrayList<>();
-    stringArrayList.add(userId);
-    yoService.getAllRoomsAPI(access).enqueue(new Callback<List<Room>>() {
-        @Override
-        public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
-            response.body();
+    private void getChatRoomList() {
+        showProgressDialog();
+        String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+        String userId = loginPrefs.getStringPreference(Constants.USER_ID);
+        ArrayList<String> stringArrayList = new ArrayList<>();
+        stringArrayList.add(userId);
+        yoService.getAllRoomsAPI(access).enqueue(new Callback<List<Room>>() {
+            @Override
+            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
+                response.body();
 
-            chatRoomListAdapter.addItems(response.body());
-            dismissProgressDialog();
-        }
+                chatRoomListAdapter.addItems(response.body());
 
-        @Override
-        public void onFailure(Call<List<Room>> call, Throwable t) {
-            dismissProgressDialog();
-        }
-    });
-}
+                Firebase firebaseRoomReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+                for(int i =0; i < response.body().size(); i++) {
 
+                    firebaseRoomReference.child(response.body().get(i).getFirebaseRoomId()).child(Constants.CHATS);
+                    firebaseRoomReference.limitToLast(1).addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+
+                            /*if (dataSnapshot.hasChildren()) {
+                                room.setMessage(chatMessage.getMessage());
+                                if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
+                                    room.setIsImage(true);
+                                } else {
+                                    room.setIsImage(false);
+                                }
+                                room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+
+                            }*/
+                            chatRoomListAdapter.addItems(arrayOfUsers);
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
+                }
+
+                dismissProgressDialog();
+            }
+
+            @Override
+            public void onFailure(Call<List<Room>> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
+    }
 }

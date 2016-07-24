@@ -42,7 +42,6 @@ public class ContactsFragment extends BaseFragment {
 
     public ContactsFragment() {
         // Required empty public constructor
-
     }
 
 

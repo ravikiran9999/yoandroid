@@ -13,6 +13,7 @@ public class Room {
     private String groupName;
     private String image;
     private List<Members> members;
+    private String lastChat;
 
     public String getId() {
         return id;
@@ -52,5 +53,13 @@ public class Room {
 
     public void setMembers(List<Members> members) {
         this.members = members;
+    }
+
+    public String getLastChat() {
+        return lastChat;
+    }
+
+    public void setLastChat(String lastChat) {
+        this.lastChat = lastChat;
     }
 }

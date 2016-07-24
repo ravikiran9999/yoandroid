@@ -1,6 +1,5 @@
 package com.yo.android.chat.ui.fragments;
 
-
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -36,15 +35,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-//import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -58,7 +52,6 @@ import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.ChatRoom;
 import com.yo.android.model.Room;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.util.Constants;
@@ -80,7 +73,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemClickListener, ValueEventListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemClickListener, com.firebase.client.ChildEventListener {
 
 
     private static final String TAG = "UserChatFragment";
@@ -99,8 +92,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private static final int ADD_SELECT_PICTURE = 2;
     private Uri mImageCaptureUri = null;
     private StorageReference storageReference;
-    //private DatabaseReference roomReference;
-    //private DatabaseReference chatRoomReference;
     private Firebase authReference;
     private Firebase roomReference;
     private ChatMessage chatMessage;
@@ -108,6 +99,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private int roomExist = 0;
     private Boolean isChildEventListenerAdd = Boolean.FALSE;
     private String childRoomId;
+
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -134,10 +126,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
 
-
         /*FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");*/
-
 
         if (myServiceConnection.isServiceConnection()) {
             firebaseService.getFirebaseAuth();
@@ -145,16 +135,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
-
         if (!childRoomId.equals("")) {
             roomExist = 1;
-            /*roomIdReference = roomReference.child(childRoomId);
-            chatRoomReference = roomIdReference.child(Constants.CHATS);
-            chatRoomReference.keepSynced(true);
-            registerChildEventLister();*/
 
             roomReference = authReference.child(childRoomId).child(Constants.CHATS);
-            roomReference.addValueEventListener(this);
+            registerChildEventListener(roomReference);
         }
 
         ChatMessage chatForward = bundle.getParcelable(Constants.CHAT_FORWARD);
@@ -259,10 +244,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
                                 String timesmp = Long.toString(selectedItem.getTime());
-                                roomIdReference.child(timesmp).removeValue();
+                                roomReference.child(timesmp).removeValue();
 
                                 // Remove  selected items following the ids
                                 userChatAdapter.removeItem(selectedItem);
+                                chatMessageArray.remove(selectedItem);
                             }
                         }
 
@@ -273,7 +259,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     case R.id.copy:
                         StringBuilder builder = new StringBuilder();
                         selected = userChatAdapter.getSelectedIds();
-                        List<ChatMessage> messagesList = new ArrayList<ChatMessage>();
+                        List<ChatMessage> messagesList = new ArrayList<>();
                         for (int i = 0; i < selected.size(); i++) {
                             if (selected.valueAt(i)) {
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
@@ -340,7 +326,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onClick(View v) {
 
@@ -380,7 +365,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
 
 
-
         if (roomExist == 0) {
 
             String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
@@ -392,7 +376,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 public void onResponse(Call<Room> call, Response<Room> response) {
                     response.body();
                     roomReference = authReference.child(response.body().getFirebaseRoomId()).child(Constants.CHATS);
-                    registerValueEventListener(roomReference);
+                    registerChildEventListener(roomReference);
                     sendChatMessage(chatMessage);
                     roomExist = 1;
 
@@ -404,15 +388,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 }
             });
 
-            //registerChildEventLister();
-
         } else {
             sendChatMessage(chatMessage);
         }
 
     }
 
-    private void sendChatMessage(ChatMessage chatMessage) {
+    private void sendChatMessage(final ChatMessage chatMessage) {
         try {
             String timeStp = Long.toString(chatMessage.getTime());
             Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
@@ -422,45 +404,30 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if (firebaseError == null) {
-                        // successfully inserted to database
+                        // successfully sent
+                        //chatMessage.setSent(1);
                     } else {
                         Log.e(TAG, firebaseError.getMessage());
                     }
                 }
             });
 
-
-                        /*.addListenerForSingleValueEvent(new com.firebase.client.ValueEventListener() {
-                            @Override
-                            public void onDataChange(com.firebase.client.DataSnapshot dataSnapshot) {
-
-                            }
-
-                            @Override
-                            public void onCancelled(FirebaseError firebaseError) {
-
-                            }
-                        });*/
         } catch (FirebaseException e) {
             e.printStackTrace();
         }
     }
 
-    /*public void registerChildEventLister() {
+    private void registerChildEventListener(Firebase roomReference) {
         if (!isChildEventListenerAdd) {
-            roomIdReference.addChildEventListener(this);
+            roomReference.addChildEventListener(this);
         }
-    }*/
-
-    private void registerValueEventListener(Firebase roomReference) {
-        roomReference.addValueEventListener(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (isChildEventListenerAdd) {
-            //roomIdReference.removeEventListener(this);
+            roomReference.removeEventListener(this);
         }
     }
 
@@ -604,8 +571,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
 
-        roomIdReference.child(timeStp).setValue(chatMessage, this);
-
+        sendChatMessage(chatMessage);
     }
 
     @Override
@@ -640,8 +606,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    /*@Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+    @Override
+    public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
         try {
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
@@ -659,40 +625,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+    public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
 
     }
 
     @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
+    public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
 
     }
 
     @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+    public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
 
-    }
-
-    @Override
-    public void onCancelled(DatabaseError databaseError) {
-
-    }*/
-
-
-    @Override
-    public void onDataChange(com.firebase.client.DataSnapshot dataSnapshot) {
-        try {
-            for (com.firebase.client.DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                ChatMessage chatMessage = userSnapshot.getValue(ChatMessage.class);
-
-                chatMessageArray.add(chatMessage);
-            }
-            userChatAdapter.addItems(chatMessageArray);
-            listView.smoothScrollToPosition(userChatAdapter.getCount());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
