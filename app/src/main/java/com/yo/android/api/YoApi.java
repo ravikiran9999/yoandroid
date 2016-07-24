@@ -45,9 +45,12 @@ public class YoApi {
 
     public interface YoService {
         //http://yoapp-dev.herokuapp.com/api/otp.json?phone_no=123456789
+        //country_code=91
         @FormUrlEncoded
         @POST("api/otp.json")
-        Call<Response> loginUserAPI(@Field("phone_no") String phone_no, @Field("type") String type);
+        Call<Response> loginUserAPI(@Field("phone_no") String phone_no,
+                                    @Field("type") String type,
+                                    @Field("country_code") String country_code);
 
         //http://yoapp-dev.herokuapp.com/oauth/token.json?client_id=83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60
         // &client_secret=1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49

@@ -104,6 +104,39 @@ public class BalanceHelper {
         });
     }
 
+    public void addBalance(final String credit, final Callback<ResponseBody> callback) {
+        voxService.executeAction(voxFactory.addBalanceBody(prefs.getStringPreference(Constants.SUBSCRIBER_ID), credit)).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String str = Util.toString(response.body().byteStream());
+                        JSONObject jsonObject = new JSONObject(str);
+                        String balance = jsonObject.getJSONObject("DATA").getString("CURRENTCREDIT");
+                        prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                        mLog.i(TAG, "loadBalance: balance -  %s", balance);
+                    } catch (IOException e) {
+                        mLog.w(TAG, "loadBalance", e);
+                    } catch (JSONException e) {
+                        mLog.w(TAG, "loadBalance", e);
+                    }
+                }
+                if (callback != null) {
+                    callback.onResponse(call, response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                if (callback != null) {
+                    callback.onFailure(call, t);
+                }
+
+            }
+        });
+    }
+
+
     /**
      * Checkes whether a country code is valid.
      */
