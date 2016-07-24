@@ -94,8 +94,12 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     @Override
     public void onBackPressed() {
-        if (dismissContextualMenu()) return;
-        super.onBackPressed();
+        if (dismissContextualMenu()) {
+            invalidateOptionsMenu();
+        }
+        else {
+            super.onBackPressed();
+        }
 
     }
 
@@ -205,6 +209,15 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                     }
                 });
+                break;
+            case android.R.id.home:
+                if (dismissContextualMenu()) {
+                    invalidateOptionsMenu();
+                }
+                else {
+                    finish();
+                }
+                break;
         }
         return true;
     }

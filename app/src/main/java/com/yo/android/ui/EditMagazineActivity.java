@@ -64,6 +64,9 @@ public class EditMagazineActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(title);
 
+        etTitle.setText(magazineTitle);
+        etDesc.setText(magazineDesc);
+
         tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,8 +108,8 @@ public class EditMagazineActivity extends BaseActivity {
                 final String title = etTitle.getText().toString();
                 final String description = etDesc.getText().toString();
 
-                if(TextUtils.isEmpty(title.trim()) && TextUtils.isEmpty(description.trim())) {
-                    mToastFactory.showToast("Please enter the Magazine Title/Description");
+                if(TextUtils.isEmpty(title.trim())) {
+                    mToastFactory.showToast("Please enter the Magazine Title");
 
                 }
                 else {
