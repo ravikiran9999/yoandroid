@@ -1,8 +1,11 @@
 package com.yo.android.adapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.squareup.picasso.Picasso;
@@ -33,6 +36,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    private boolean isFollowingUser;
 
     public FindPeopleAdapter(Context context) {
         super(context);
@@ -74,14 +78,17 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         if(item.getIsFollowing().equals("true")) {
             holder.getBtnFindPeopleFollow().setText("Following");
             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+            isFollowingUser = true;
         }
         else {
             holder.getBtnFindPeopleFollow().setText("Follow");
             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            isFollowingUser = false;
         }
         holder.getBtnFindPeopleFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isFollowingUser) {
                 ((BaseActivity)context).showProgressDialog();
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
@@ -90,6 +97,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                         ((BaseActivity)context).dismissProgressDialog();
                         holder.getBtnFindPeopleFollow().setText("Following");
                         holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                        isFollowingUser = true;
                     }
 
                     @Override
@@ -97,8 +105,55 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                         ((BaseActivity)context).dismissProgressDialog();
                         holder.getBtnFindPeopleFollow().setText("Follow");
                         holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        isFollowingUser = false;
                     }
                 });
+                } else {
+
+                    final Dialog dialog = new Dialog(context);
+                    dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            ((BaseActivity) context).showProgressDialog();
+                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            yoService.unfollowUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    ((BaseActivity)context).dismissProgressDialog();
+                                    holder.getBtnFindPeopleFollow().setText("Follow");
+                                    holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                    isFollowingUser = false;
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    ((BaseActivity)context).dismissProgressDialog();
+                                    holder.getBtnFindPeopleFollow().setText("Following");
+                                    holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                    isFollowingUser = true;
+                                }
+                            });
+                        }
+                    });
+
+                    dialog.show();
+                }
             }
         });
 

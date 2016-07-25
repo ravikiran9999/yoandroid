@@ -9,6 +9,7 @@ public class OwnMagazine {
     private String description;
     private String privacy;
     private String image;
+    private String isFollowing;
 
     public String getId() {
         return id;
@@ -48,5 +49,13 @@ public class OwnMagazine {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getIsFollowing() {
+        return isFollowing;
+    }
+
+    public void setIsFollowing(String isFollowing) {
+        this.isFollowing = isFollowing;
     }
 }

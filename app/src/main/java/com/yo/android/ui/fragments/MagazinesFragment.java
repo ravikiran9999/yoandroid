@@ -56,6 +56,15 @@ public class MagazinesFragment extends BaseFragment {
 
     private ArrayAdapter mAdapter;
     private Menu menu;
+
+    public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
+        return mMagazineFlipArticlesFragment;
+    }
+
+    public void setmMagazineFlipArticlesFragment(MagazineFlipArticlesFragment mMagazineFlipArticlesFragment) {
+        this.mMagazineFlipArticlesFragment = mMagazineFlipArticlesFragment;
+    }
+
     private MagazineFlipArticlesFragment mMagazineFlipArticlesFragment;
 
     public MagazinesFragment() {
@@ -170,6 +179,7 @@ public class MagazinesFragment extends BaseFragment {
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
+
                     return false;
                 }
             });

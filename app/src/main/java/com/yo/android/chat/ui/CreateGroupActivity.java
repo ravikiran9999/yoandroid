@@ -2,6 +2,8 @@ package com.yo.android.chat.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,6 +26,12 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         TextView addContactIcon = (TextView) findViewById(R.id.add_contact);
 
         addContactIcon.setOnClickListener(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_create_group, menu);
+        return true;
     }
 
     @Override

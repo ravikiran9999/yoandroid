@@ -26,6 +26,7 @@ import com.yo.android.chat.ui.fragments.YoContactsFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
+import com.yo.android.inapp.UnManageInAppPurchaseActivity;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.CreateMagazineActivity;
@@ -44,14 +45,17 @@ import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
 import com.yo.android.ui.OtherProfilesFollowers;
 import com.yo.android.ui.OtherProfilesLinedArticles;
+import com.yo.android.ui.OthersMagazinesDetailActivity;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
 import com.yo.android.ui.ProfileActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
+import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.WishListActivity;
+import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
 import com.yo.android.ui.fragments.InviteFriendsFragment;
@@ -111,11 +115,14 @@ import dagger.Provides;
                 FollowersActivity.class,
                 WishListActivity.class,
                 FollowingsActivity.class,
+                TabsHeaderActivity.class,
 
                 InviteActivity.class,
                 OthersProfileMagazines.class,
                 OtherProfilesFollowers.class,
                 OtherProfilesLinedArticles.class,
+                OthersMagazinesDetailActivity.class,
+                UnManageInAppPurchaseActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -131,6 +138,7 @@ import dagger.Provides;
                 MagazinesFragment.class,
                 GroupContactsFragment.class,
                 InviteFriendsFragment.class,
+                CreditAccountFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,

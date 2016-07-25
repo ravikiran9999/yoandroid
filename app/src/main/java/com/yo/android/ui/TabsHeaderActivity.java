@@ -1,0 +1,100 @@
+package com.yo.android.ui;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
+
+import com.yo.android.R;
+import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.ui.fragments.CreditAccountFragment;
+import com.yo.android.ui.fragments.DummyFragment;
+
+public class TabsHeaderActivity extends BaseActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.actvity_yo_credit);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Yo Credit");
+        enableBack();
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
+        setupViewPager(viewPager);
+
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.htab_collapse_toolbar);
+        collapsingToolbarLayout.setTitleEnabled(false);
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+                R.drawable.patan);
+
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @SuppressWarnings("ResourceType")
+            @Override
+            public void onGenerated(Palette palette) {
+                int vibrantColor = palette.getVibrantColor(R.color.primary_500);
+                int vibrantDarkColor = palette.getDarkVibrantColor(R.color.primary_700);
+                collapsingToolbarLayout.setContentScrimColor(vibrantColor);
+                collapsingToolbarLayout.setStatusBarScrimColor(vibrantDarkColor);
+            }
+        });
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+                viewPager.setCurrentItem(tab.getPosition());
+
+                switch (tab.getPosition()) {
+                    case 0:
+                        showToast("One");
+                        break;
+                    case 1:
+                        showToast("Two");
+
+                        break;
+                    case 2:
+                        showToast("Three");
+
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+
+    void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        TabsPagerAdapter adapter = new TabsPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new CreditAccountFragment(), "Credit Account");
+        adapter.addFragment(new DummyFragment(), "Recharge Details");
+        adapter.addFragment(new DummyFragment(), "Spend Details");
+        viewPager.setAdapter(adapter);
+    }
+
+
+}

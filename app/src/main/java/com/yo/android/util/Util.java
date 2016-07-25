@@ -248,6 +248,7 @@ public class Util {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 if (activity instanceof BottomTabsActivity) {
                     ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
+                    ((BottomTabsActivity) activity).refresh();
                 }
                 Util.changeMenuItemsVisibility(menu, -1, true);
                 return true;

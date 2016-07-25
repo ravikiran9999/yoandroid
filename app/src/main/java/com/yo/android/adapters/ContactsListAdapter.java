@@ -56,12 +56,14 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         if (!TextUtils.isEmpty(item.getImage())) {
             Picasso.with(mContext)
                     .load(item.getImage())
+                    .fit()
                     .placeholder(R.drawable.ic_contacts)
                     .error(R.drawable.ic_contacts)
                     .into(holder.getContactPic());
         } else {
             Picasso.with(mContext)
                     .load(R.drawable.ic_contacts)
+                    .fit()
                     .placeholder(R.drawable.ic_contacts)
                     .error(R.drawable.ic_contacts)
                     .into(holder.getContactPic());

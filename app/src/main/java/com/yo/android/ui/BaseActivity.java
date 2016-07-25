@@ -1,7 +1,6 @@
 package com.yo.android.ui;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -11,7 +10,6 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ResourcesHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.di.AwsLogsCallBack;
 import com.yo.android.di.Injector;
 import com.yo.android.util.ProgressDialogFactory;
@@ -20,11 +18,6 @@ import com.yo.android.vox.VoxFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by ramesh on 12/3/16.

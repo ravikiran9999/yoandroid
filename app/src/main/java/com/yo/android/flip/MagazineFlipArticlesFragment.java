@@ -2,6 +2,7 @@ package com.yo.android.flip;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.IO;
 import com.aphidmobile.utils.UI;
+import com.orion.android.common.util.ToastFactory;
 import com.orion.android.common.util.ToastFactoryImpl;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
@@ -84,6 +86,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private FrameLayout flipContainer;
     private ProgressBar mProgress;
     private Button followMoreTopics;
+    private boolean isFollowing;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -505,16 +508,23 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                holder.articleFollow.setEnabled(false);
+                holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));
+                isFollowing = true;
             }
             else {
                 holder.articleFollow.setText("Follow");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                holder.articleFollow.setEnabled(true);
+                holder.articleFollow.setBackgroundResource(R.drawable.ic_magazine_follow);
+                isFollowing = false;
             }
 
             final ViewHolder finalHolder = holder;
             holder.articleFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!isFollowing) {
                     ((BaseActivity)context).showProgressDialog();
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -523,6 +533,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             ((BaseActivity)context).dismissProgressDialog();
                             finalHolder.articleFollow.setText("Following");
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            isFollowing = true;
                         }
 
                         @Override
@@ -530,9 +541,58 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             ((BaseActivity)context).dismissProgressDialog();
                             finalHolder.articleFollow.setText("Follow");
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            isFollowing = false;
 
                         }
                     });
+                    } else {
+
+                        final Dialog dialog = new Dialog(getActivity());
+                        dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                        Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                        Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                        btnCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                ((BaseActivity) context).showProgressDialog();
+                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                                yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        ((BaseActivity) context).dismissProgressDialog();
+                                        finalHolder.articleFollow.setText("Follow");
+                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                        isFollowing = false;
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        ((BaseActivity) context).dismissProgressDialog();
+                                        finalHolder.articleFollow.setText("Following");
+                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                        isFollowing = true;
+
+                                    }
+                                });
+                            }
+                        });
+
+                        dialog.show();
+                    }
                 }
             });
 
@@ -685,6 +745,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     }
                 }
 
+
             }
 
             @Override
@@ -698,6 +759,17 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
         });
     }
+    public void refresh(){
+        //mToastFactory.showToast("Testing search close");
+        if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+            String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
+            if(prefTags != null) {
+                List<String> tagIds = Arrays.asList(prefTags);
+                loadArticles(tagIds);
+            }
+        }
+    }
+
 
 
 }
