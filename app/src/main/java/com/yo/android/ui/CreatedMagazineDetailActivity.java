@@ -133,6 +133,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                 Intent intent = new Intent(CreatedMagazineDetailActivity.this, LoadMagazineActivity.class);
                                 intent.putExtra("MagazineId", id);
                                 intent.putExtra("MagazineTitle", magazineTitle);
+                                intent.putExtra("MagazineDesc", magazineDesc);
                                 startActivity(intent);
                                 finish();
                             }

@@ -365,7 +365,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
             holder.articleFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!isFollowing) {
+                    if (!data.getIsFollowing().equals("true")) {
                     ((BaseActivity)context).showProgressDialog();
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -374,6 +374,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                             ((BaseActivity) context).dismissProgressDialog();
                             finalHolder.articleFollow.setText("Following");
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            data.setIsFollowing("true");
                             isFollowing = true;
                         }
 
@@ -382,6 +383,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                             ((BaseActivity) context).dismissProgressDialog();
                             finalHolder.articleFollow.setText("Follow");
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            data.setIsFollowing("false");
                             isFollowing = false;
 
                         }
@@ -416,6 +418,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                         ((BaseActivity) context).dismissProgressDialog();
                                         finalHolder.articleFollow.setText("Follow");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                        data.setIsFollowing("false");
                                         isFollowing = false;
 
                                     }
@@ -425,6 +428,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                         ((BaseActivity) context).dismissProgressDialog();
                                         finalHolder.articleFollow.setText("Following");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                        data.setIsFollowing("true");
                                         isFollowing = true;
 
                                     }

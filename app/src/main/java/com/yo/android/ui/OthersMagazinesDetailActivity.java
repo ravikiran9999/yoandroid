@@ -137,6 +137,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 Intent intent = new Intent(OthersMagazinesDetailActivity.this, LoadMagazineActivity.class);
                                 intent.putExtra("MagazineId", id);
                                 intent.putExtra("MagazineTitle", magazineTitle);
+                                intent.putExtra("MagazineDesc", magazineDesc);
                                 startActivity(intent);
                                 finish();
                             }
@@ -456,7 +457,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             holder.articleFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!isFollowing) {
+                    if (!data.getIsFollowing().equals("true")) {
                         ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -465,6 +466,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 ((BaseActivity) context).dismissProgressDialog();
                                 finalHolder.articleFollow.setText("Following");
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                data.setIsFollowing("true");
                                 isFollowing = true;
                             }
 
@@ -473,6 +475,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 ((BaseActivity) context).dismissProgressDialog();
                                 finalHolder.articleFollow.setText("Follow");
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                data.setIsFollowing("false");
                                 isFollowing = false;
 
                             }
@@ -507,6 +510,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                         ((BaseActivity) context).dismissProgressDialog();
                                         finalHolder.articleFollow.setText("Follow");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                        data.setIsFollowing("false");
                                         isFollowing = false;
 
                                     }
@@ -516,6 +520,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                         ((BaseActivity) context).dismissProgressDialog();
                                         finalHolder.articleFollow.setText("Following");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                        data.setIsFollowing("true");
                                         isFollowing = true;
 
                                     }
