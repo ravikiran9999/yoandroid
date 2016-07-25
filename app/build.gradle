@@ -9,7 +9,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.5.0"
+        versionName "16.3.6.0"
     }
     productFlavors {
         dev {
@@ -89,6 +89,7 @@ dependencies {
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile "com.android.support:palette-v7:${supportAppcompatVersion}"
 }
 apply plugin: 'com.google.gms.google-services'
 

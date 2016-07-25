@@ -56,6 +56,15 @@ public class MagazinesFragment extends BaseFragment {
 
     private ArrayAdapter mAdapter;
     private Menu menu;
+
+    public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
+        return mMagazineFlipArticlesFragment;
+    }
+
+    public void setmMagazineFlipArticlesFragment(MagazineFlipArticlesFragment mMagazineFlipArticlesFragment) {
+        this.mMagazineFlipArticlesFragment = mMagazineFlipArticlesFragment;
+    }
+
     private MagazineFlipArticlesFragment mMagazineFlipArticlesFragment;
 
     public MagazinesFragment() {
@@ -170,6 +179,7 @@ public class MagazinesFragment extends BaseFragment {
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
+
                     return false;
                 }
             });
@@ -194,7 +204,9 @@ public class MagazinesFragment extends BaseFragment {
                         }
                     }
                     MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
-                    fragment.loadArticles(topicName, topicId);
+                    List<String> tagIds = new ArrayList<String>();
+                    tagIds.add(topicId);
+                    fragment.loadArticles(tagIds);
 
 
                     return;

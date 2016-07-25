@@ -196,6 +196,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         } else if (from.equals("ProfileActivity")) {
                             Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
                             myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
+                            myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
                             startActivity(myCollectionsIntent);
                             finish();
                         } else {
@@ -203,6 +205,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                             setResult(2, intent);
                             finish();
                         }
+
+                        preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
                     }
 
                     @Override

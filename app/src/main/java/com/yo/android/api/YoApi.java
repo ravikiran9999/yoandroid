@@ -43,9 +43,12 @@ public class YoApi {
 
     public interface YoService {
         //http://yoapp-dev.herokuapp.com/api/otp.json?phone_no=123456789
+        //country_code=91
         @FormUrlEncoded
         @POST("api/otp.json")
-        Call<Response> loginUserAPI(@Field("phone_no") String phone_no, @Field("type") String type);
+        Call<Response> loginUserAPI(@Field("phone_no") String phone_no,
+                                    @Field("type") String type,
+                                    @Field("country_code") String country_code);
 
         //http://yoapp-dev.herokuapp.com/oauth/token.json?client_id=83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60
         // &client_secret=1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49
@@ -65,7 +68,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/tags/get_articles.json")
-        Call<List<Articles>> getArticlesAPI(@Field("access_token") String access_token, @Field("tag_ids[]") String tag_ids);
+        Call<List<Articles>> getArticlesAPI(@Field("access_token") String access_token, @Field("tag_ids[]") List<String> tag_ids);
 
         @FormUrlEncoded
         @POST("/api/articles/{article_id}/like.json")
@@ -139,11 +142,12 @@ public class YoApi {
 
         @GET("api/user/info.json")
         Call<UserProfileInfo> getUserInfo(@Query("access_token") String access_token);
-
+//        http://yoapp-dev.herokuapp.com/api/user/578090e7b45d200ebc3b8b99.json?
+// access_token=2538a604f78a24170b6b37db15e4e782c1d1c2c0b65e89a67ce4315c2ad61c4e&user[first_name]=bhumi&user[last_name]=parimi&user[email]=email@example.com&user[phone_no]=123456789&user[avatar]=image-file
         @Multipart
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
-                                            @Part("user[first_name]") RequestBody body,
+                                            @Part("user[description]") RequestBody descBody,
                                             @Part MultipartBody.Part file);
 
 
@@ -170,6 +174,29 @@ public class YoApi {
 
         @GET("api/rooms.json")
         Call<List<Room>> getAllRoomsAPI(@Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/rooms.json")
+        Call<GroupName> getRoomAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user);
+
+        @POST("api/articles/{article_id}/follow.json")
+        Call<ResponseBody> followArticleAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/magzines/{magzine_id}/follow.json")
+        Call<ResponseBody> followMagazineAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/articles/{article_id}/unfollow.json")
+        Call<ResponseBody> unfollowArticleAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/magzines/{magzine_id}/unfollow.json")
+        Call<ResponseBody> unfollowMagazineAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/user/unfollow.json")
+        Call<ResponseBody> unfollowUsersAPI(@Field("access_token") String access_token, @Field("followed_id") String followed_id);
     }
 
     public interface YoRefreshTokenService {

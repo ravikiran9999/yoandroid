@@ -74,6 +74,13 @@ public class VoxFactory {
         return prepareRequest("SUBSCRIBER", "GETBALANCE", data);
     }
 
+    public String addBalanceBody(String subscriberId, String credit) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("SUBSCRIBERID", subscriberId);
+        data.put("CREDIT", credit);
+        return prepareRequest("SUBSCRIBER", "ADDBALANCE", data);
+    }
+
 
     public String getCallLogsBody(String mobile) {
         Map<String, Object> data = new HashMap<>();

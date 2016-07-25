@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -68,11 +69,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     YoApi.YoService yoService;
 
     @Inject
-    @Named("login")
-    PreferenceEndPoint loginPrefs;
+    FireBaseHelper fireBaseHelper;
 
     @Inject
-    FireBaseHelper fireBaseHelper;
+    @Named("login")
+    PreferenceEndPoint loginPrefs;
 
     public Menu getMenu() {
         return menu;

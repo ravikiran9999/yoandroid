@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yo.android">
 
+    <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -68,7 +69,6 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.ProfileActivity"
             android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
@@ -137,9 +137,9 @@
             android:name=".ui.LoadMagazineActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".chat.ui.CreateGroupActivity"
-            android:label="@string/new_group"
-            />
+        <activity
+            android:name=".chat.ui.CreateGroupActivity"
+            android:label="@string/new_group" />
         <activity
             android:name=".ui.CountryListActivity"
             android:screenOrientation="portrait" />
@@ -182,8 +182,21 @@
 
         <activity
             android:name=".ui.FollowingsActivity"
-            android:screenOrientation="portrait"></activity>
-        <service android:name=".chat.firebase.FirebaseService"></service>
+            android:screenOrientation="portrait" />
+
+        <service android:name=".chat.firebase.FirebaseService" />
+
+        <activity
+            android:name=".ui.OthersMagazinesDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TabsHeaderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".inapp.UnManageInAppPurchaseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent" />
     </application>
 
 </manifest>

@@ -132,7 +132,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
                 intent.putExtra("TopicId", collections.getId());
                 intent.putExtra("TopicName", collections.getName());
-                startActivity(intent);
+                intent.putExtra("Type", collections.getType());
+                startActivityForResult(intent, 6);
             }
         }
 
@@ -238,6 +239,31 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 }
             });
 
+        }
+        else if(requestCode == 6) {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
+                @Override
+                public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                    final List<Collections> collectionsList = new ArrayList<Collections>();
+                    Collections collections = new Collections();
+                    collections.setName("Follow more topics");
+                    collections.setImage("");
+                    collectionsList.add(0, collections);
+                    if (response == null || response.body() == null) {
+                        return;
+                    }
+                    collectionsList.addAll(response.body());
+                    myCollectionsAdapter.addItems(collectionsList);
+                    gridView.setAdapter(myCollectionsAdapter);
+
+                }
+
+                @Override
+                public void onFailure(Call<List<Collections>> call, Throwable t) {
+
+                }
+            });
         }
     }
 }
