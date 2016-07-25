@@ -13,6 +13,7 @@ import com.orion.android.common.logger.Log;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.ui.MainActivity;
+import com.yo.android.ui.NotificationsActivity;
 
 import java.util.Map;
 
@@ -28,10 +29,9 @@ public class PushNotificationService extends FirebaseMessagingService {
     @Inject
     protected Log mLog;
 
-    /**
-     * Constructor
-     */
-    public PushNotificationService() {
+    @Override
+    public void onCreate() {
+        super.onCreate();
         Injector.obtain(getApplication()).inject(this);
     }
 
@@ -39,29 +39,29 @@ public class PushNotificationService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String body = remoteMessage.getNotification().getBody();
-        String title = remoteMessage.getNotification().getTitle();
+//        String body = remoteMessage.getNotification().getBody();
+//        String title = remoteMessage.getNotification().getTitle();
         Map data = remoteMessage.getData();
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
-        mLog.i(TAG, "onMessageReceived: title- %s and data- %s", title, data.toString());
-        createNotification(body);
+        mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
+        createNotification(data.get("title").toString(), data.get("message").toString());
     }
 
-    private void createNotification(String body) {
+    private void createNotification(String title, String message) {
 
-        Intent destinationIntent = new Intent(this, MainActivity.class);
+        Intent destinationIntent = new Intent(this, NotificationsActivity.class);
 
-        int notificationId = body.hashCode();
+        int notificationId = title.hashCode();
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
-        notificationStyle.bigText(body);
+        notificationStyle.bigText(title);
 
         Notification notification = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle("FCM ChatMessage")
-                .setContentText(body)
+                .setContentTitle(title)
+                .setContentText(message)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setStyle(notificationStyle)

@@ -197,6 +197,10 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/user/unfollow.json")
         Call<ResponseBody> unfollowUsersAPI(@Field("access_token") String access_token, @Field("followed_id") String followed_id);
+
+        @FormUrlEncoded
+        @POST("api/user/update_device_token.json")
+        Call<ResponseBody> updateDeviceTokenAPI(@Field("access_token") String access_token, @Field("device_token") String device_token);
     }
 
     public interface YoRefreshTokenService {
