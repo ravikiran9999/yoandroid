@@ -111,6 +111,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         final MenuItem menuItem = item;
         if (menuItem.getItemId() == R.id.menu_save_settings) {
             //do nothing..
+            dismissProgressDialog();
             if (isValid()) {
                 updateSettings();
             } else {
