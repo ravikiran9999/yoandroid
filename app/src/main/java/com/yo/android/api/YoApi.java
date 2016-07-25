@@ -46,13 +46,16 @@ public class YoApi {
         //country_code=91
         @FormUrlEncoded
         @POST("api/otp.json")
-        Call<Response> loginUserAPI(@Field("phone_no") String phone_no,
+        Call<Response> loginUserAPI(@Field("phone_no") String phone_no, @Field("type") String type);
+
+        /*Call<Response> loginUserAPI(@Field("phone_no") String phone_no,
                                     @Field("type") String type,
-                                    @Field("country_code") String country_code);
+                                    @Field("country_code") String country_code);*/
 
         //http://yoapp-dev.herokuapp.com/oauth/token.json?client_id=83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60
         // &client_secret=1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49
         // &grant_type=password&phone_no=123456789&otp=1234
+
         @FormUrlEncoded
         @POST("oauth/token.json")
         Call<OTPResponse> verifyOTP(
@@ -174,10 +177,6 @@ public class YoApi {
 
         @GET("api/rooms.json")
         Call<List<Room>> getAllRoomsAPI(@Query("access_token") String access_token);
-
-        @FormUrlEncoded
-        @POST("api/rooms.json")
-        Call<GroupName> getRoomAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user);
 
         @POST("api/articles/{article_id}/follow.json")
         Call<ResponseBody> followArticleAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);

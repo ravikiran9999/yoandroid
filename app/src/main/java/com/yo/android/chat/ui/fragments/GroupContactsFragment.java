@@ -164,7 +164,6 @@ public class GroupContactsFragment extends BaseFragment implements AdapterView.O
             @Override
             public void onResponse(Call<Room> call, Response<Room> response) {
                 response.body();
-                Toast.makeText(getActivity(), "Created Room: "+ groupName, Toast.LENGTH_SHORT).show();
                 dismissProgressDialog();
                 getActivity().finish();
             }
