@@ -2,12 +2,10 @@ package com.yo.android.di;
 
 import android.content.Context;
 
-import com.firebase.client.Firebase;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.FirebaseService;
-import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
@@ -49,12 +47,13 @@ import com.yo.android.ui.OtherProfilesLinedArticles;
 import com.yo.android.ui.OthersMagazinesDetailActivity;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
-import com.yo.android.ui.ProfileActivity;
+import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
+import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.WishListActivity;
 import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.DialerFragment;
@@ -109,7 +108,7 @@ import dagger.Provides;
                 LoadMagazineActivity.class,
                 ShowPhotoActivity.class,
                 OthersProfileActivity.class,
-                ProfileActivity.class,
+                UpdateProfileActivity.class,
                 CreatedMagazineDetailActivity.class,
                 EditMagazineActivity.class,
                 FindPeopleActivity.class,
@@ -118,6 +117,7 @@ import dagger.Provides;
                 FollowingsActivity.class,
                 TabsHeaderActivity.class,
                 MoreSettingsActivity.class,
+                UserProfileActivity.class,
 
                 InviteActivity.class,
                 OthersProfileMagazines.class,

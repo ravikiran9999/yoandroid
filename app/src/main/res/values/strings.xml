@@ -146,5 +146,6 @@
     <string name="status_char_length">136 characters</string>
     <string name="account_privacy_title">Account Privacy</string>
     <string name="settings_label">Settings</string>
+    <string name="user_profile">Profile</string>
 
 </resources>

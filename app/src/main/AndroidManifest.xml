@@ -70,7 +70,7 @@
             android:name=".ui.SettingsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ProfileActivity"
+            android:name=".ui.UpdateProfileActivity"
             android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
@@ -119,6 +119,9 @@
             android:taskAffinity=".outgoing"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".ui.UserProfileActivity"
+            android:label="@string/user_profile" />
         <activity
             android:name=".ui.MoreSettingsActivity"
             android:label="@string/settings_label"
