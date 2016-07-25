@@ -39,6 +39,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -73,7 +74,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemClickListener, com.firebase.client.ChildEventListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, com.firebase.client.ChildEventListener {
 
 
     private static final String TAG = "UserChatFragment";
@@ -126,8 +127,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
 
-        /*FirebaseStorage storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");*/
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
 
         if (myServiceConnection.isServiceConnection()) {
             firebaseService.getFirebaseAuth();
@@ -269,7 +270,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                         builder.append("\n");
                                     }
                                 }
-                                // Remove  selected items following the ids
                             }
                         }
                         new Clipboard(getActivity()).copy(builder.toString());
@@ -530,8 +530,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 .setContentType("image/jpeg")
                 .build();
 
-        StorageReference riversRef = storageReference.child("images/" + file.getLastPathSegment());
-        UploadTask uploadTask = riversRef.putFile(file, metadata);
+        StorageReference imagesRef = storageReference.child("images/" + file.getLastPathSegment());
+        UploadTask uploadTask = imagesRef.putFile(file, metadata);
 
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -574,14 +574,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         sendChatMessage(chatMessage);
     }
 
-    @Override
-    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-        if (databaseError == null) {
-            // successfully inserted to database
-        } else {
-            Log.e(TAG, databaseError.getMessage());
-        }
-    }
 
     private void forwardMessage(ChatMessage message) {
         ChatFragment chatFragment = new ChatFragment();
