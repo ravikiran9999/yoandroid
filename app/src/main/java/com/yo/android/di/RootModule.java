@@ -39,6 +39,7 @@ import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.LoadMagazineActivity;
 import com.yo.android.ui.MainActivity;
+import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
@@ -116,6 +117,7 @@ import dagger.Provides;
                 WishListActivity.class,
                 FollowingsActivity.class,
                 TabsHeaderActivity.class,
+                MoreSettingsActivity.class,
 
                 InviteActivity.class,
                 OthersProfileMagazines.class,

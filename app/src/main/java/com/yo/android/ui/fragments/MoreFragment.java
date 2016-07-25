@@ -30,6 +30,7 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
@@ -218,7 +219,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         } else if (name.contains("Yo Credit")) {
             startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
-
+        } else if ("Settings".equals(name)) {
+            startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
         } else {
             Toast.makeText(getActivity(), "You have clicked on " + name, Toast.LENGTH_LONG).show();
         }
