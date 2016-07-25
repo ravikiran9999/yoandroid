@@ -2,12 +2,10 @@ package com.yo.android.di;
 
 import android.content.Context;
 
-import com.firebase.client.Firebase;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.FirebaseService;
-import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
@@ -19,7 +17,7 @@ import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
-import com.yo.android.chat.ui.fragments.GroupContactsFragment;
+import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.chat.ui.fragments.YoContactsFragment;
@@ -136,7 +134,7 @@ import dagger.Provides;
                 MagazineFlipArticlesFragment.class,
                 MoreFragment.class,
                 MagazinesFragment.class,
-                GroupContactsFragment.class,
+                GroupContactsActivity.class,
                 InviteFriendsFragment.class,
                 CreditAccountFragment.class,
 

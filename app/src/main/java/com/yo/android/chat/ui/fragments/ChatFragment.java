@@ -51,7 +51,7 @@ import retrofit2.Response;
 public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private ListView listView;
-    private ArrayList<Room> arrayOfUsers;
+    private List<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
     private DatabaseReference reference;
     private Menu menu;
@@ -203,28 +203,26 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
                 response.body();
-
-                chatRoomListAdapter.addItems(response.body());
-
-                Firebase firebaseRoomReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
-                for (int i = 0; i < response.body().size(); i++) {
-
-                    firebaseRoomReference.child(response.body().get(i).getFirebaseRoomId()).child(Constants.CHATS);
+                arrayOfUsers = response.body();
+                chatRoomListAdapter.addItems(arrayOfUsers);
+                Firebase firebaseReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+                for (int i = 0; i < arrayOfUsers.size(); i++) {
+                    final Room room = arrayOfUsers.get(i);
+                    Firebase firebaseRoomReference = firebaseReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
                     firebaseRoomReference.limitToLast(1).addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
 
-                            /*if (dataSnapshot.hasChildren()) {
-                                room.setMessage(chatMessage.getMessage());
+                            if (dataSnapshot.hasChildren()) {
+                                room.setLastChat(chatMessage.getMessage());
                                 if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
-                                    room.setIsImage(true);
+                                    room.setImage(true);
                                 } else {
-                                    room.setIsImage(false);
+                                    room.setImage(false);
                                 }
                                 room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
-
-                            }*/
+                            }
                             chatRoomListAdapter.addItems(arrayOfUsers);
                         }
 
@@ -235,15 +233,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                         @Override
                         public void onChildRemoved(DataSnapshot dataSnapshot) {
-                            /*ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                            ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                             if (dataSnapshot.hasChildren()) {
-                                chatRoom.setMessage("");
-                                chatRoom.setIsImage(false);
-                                chatRoom.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+                                room.setLastChat("");
+                                room.setImage(false);
+                                room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
                             }
                             if (chatRoomListAdapter != null) {
                                 chatRoomListAdapter.notifyDataSetChanged();
-                            }*/
+                            }
                         }
 
                         @Override
