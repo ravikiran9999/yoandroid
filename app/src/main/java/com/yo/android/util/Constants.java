@@ -17,6 +17,7 @@ public class Constants {
     public static final String IMAGE = "image";
     public static final String SELECTED_TEXT = "selected_text";
     public static final String GROUP_NAME = "groupName";
+    public static final String SELECTED_CONTACTS = "selected_contacts";
 
     //Preference
     public static final String USER_ID = "user_id";

@@ -14,6 +14,8 @@ public class Room {
     private String image;
     private List<Members> members;
     private String lastChat;
+    private boolean isImage;
+    private String timeStamp;
 
     public String getId() {
         return id;
@@ -61,5 +63,21 @@ public class Room {
 
     public void setLastChat(String lastChat) {
         this.lastChat = lastChat;
+    }
+
+    public boolean isImage() {
+        return isImage;
+    }
+
+    public void setImage(boolean image) {
+        isImage = image;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

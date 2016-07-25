@@ -149,6 +149,9 @@
             android:name=".chat.ui.CreateGroupActivity"
             android:label="@string/new_group" />
         <activity
+            android:name=".chat.ui.GroupContactsActivity"
+            android:label="@string/new_group" />
+        <activity
             android:name=".ui.CountryListActivity"
             android:screenOrientation="portrait" />
         <activity
