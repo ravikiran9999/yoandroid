@@ -135,6 +135,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                         Intent intent = new Intent(NewMagazineActivity.this, LoadMagazineActivity.class);
                         intent.putExtra("MagazineId", response.body().getId());
                         intent.putExtra("MagazineTitle", magazineTitle);
+                        intent.putExtra("MagazineDesc", magazineDesc);
                         startActivityForResult(intent, Constants.ADD_STORY_ACTION);
                     }
                     else {
