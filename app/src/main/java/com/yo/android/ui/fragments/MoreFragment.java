@@ -32,6 +32,7 @@ import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
+import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 
@@ -221,6 +222,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
         } else if ("Settings".equals(name)) {
             startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
+        } else if ("Notifications".equals(name)) {
+            //do nothing
         } else {
             Toast.makeText(getActivity(), "You have clicked on " + name, Toast.LENGTH_LONG).show();
         }

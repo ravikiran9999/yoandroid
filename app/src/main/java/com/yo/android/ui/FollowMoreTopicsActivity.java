@@ -65,7 +65,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         }
 
         boolean backBtn = true;
-        if (from.equals("ProfileActivity")) {
+        if (from.equals("UpdateProfileActivity")) {
             backBtn = false;
         }
         getSupportActionBar().setHomeButtonEnabled(backBtn);
@@ -193,7 +193,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                             Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
                             startActivity(myCollectionsIntent);
                             finish();
-                        } else if (from.equals("ProfileActivity")) {
+                        } else if (from.equals("UpdateProfileActivity")) {
                             Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
                             myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);

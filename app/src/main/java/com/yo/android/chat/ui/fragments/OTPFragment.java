@@ -29,7 +29,7 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Registration;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.ProfileActivity;
+import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
@@ -215,7 +215,7 @@ public class OTPFragment extends BaseFragment {
         final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         if (isNewUser) {
             preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
-            Intent intent = new Intent(getActivity(), ProfileActivity.class);
+            Intent intent = new Intent(getActivity(), UpdateProfileActivity.class);
             intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
             dismissProgressDialog();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
