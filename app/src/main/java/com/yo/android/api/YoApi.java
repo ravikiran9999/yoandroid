@@ -178,6 +178,7 @@ public class YoApi {
         @GET("api/rooms.json")
         Call<List<Room>> getAllRoomsAPI(@Query("access_token") String access_token);
 
+        @FormUrlEncoded
         @POST("api/articles/{article_id}/follow.json")
         Call<ResponseBody> followArticleAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
 
