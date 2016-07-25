@@ -36,6 +36,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     private String magazineId;
     private String url;
     private String magazineTitle;
+    private String magazineDesc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         Intent intent = getIntent();
         magazineId = intent.getStringExtra("MagazineId");
         magazineTitle = intent.getStringExtra("MagazineTitle");
+        magazineDesc = intent.getStringExtra("MagazineDesc");
 
         final EditText etUrl = (EditText) findViewById(R.id.et_enter_url);
         final WebView webview = (WebView) findViewById(R.id.webview);
@@ -116,9 +118,10 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                         intent.putExtra("ArticleImage", response.body().getImage_filename());*/
                 intent.putExtra("MagazineTitle", magazineTitle);
                 intent.putExtra("MagazineId", magazineId);
-                if(response.body() != null) {
+               /* if(response.body() != null) {
                     intent.putExtra("MagazineDesc", response.body().getSummary());
-                }
+                }*/
+                intent.putExtra("MagazineDesc", magazineDesc);
                 startActivity(intent);
             }
 
