@@ -69,7 +69,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
         holder.getMessageIcon().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContactsListAdapter.showUserChatScreen(mContext, mPrefs.getStringPreference(Constants.PHONE_NUMBER), item.getDialnumber());
+                //ContactsListAdapter.showUserChatScreen(mContext, mPrefs.getStringPreference(Constants.PHONE_NUMBER), item.getDialnumber());
             }
         });
 

@@ -93,40 +93,18 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         Contact contact = (Contact)listView.getItemAtPosition(position);
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         String opponentPhoneNumber = contact.getPhoneNo();
-        showUserChatScreen(yourPhoneNumber, opponentPhoneNumber);
-
+        if(contact.getFirebaseRoomId() != null) {
+            navigateToChatScreen(contact.getFirebaseRoomId(), opponentPhoneNumber, yourPhoneNumber, null);
+        } else {
+            navigateToChatScreen("", opponentPhoneNumber, yourPhoneNumber, contact.getId());
+        }
     }
 
-    private void showUserChatScreen(@NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {
-        final String roomCombination1 = yourPhoneNumber + ":" + opponentPhoneNumber;
-        final String roomCombination2 = opponentPhoneNumber + ":" + yourPhoneNumber;
-        DatabaseReference databaseRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-        databaseRoomReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean value1 = dataSnapshot.hasChild(roomCombination1);
-                boolean value2 = dataSnapshot.hasChild(roomCombination2);
-                if (value1) {
-                    navigateToChatScreen(roomCombination1, opponentPhoneNumber, yourPhoneNumber);
-                } else if (value2) {
-                    navigateToChatScreen(roomCombination2, opponentPhoneNumber, yourPhoneNumber);
-                } else {
-
-                    navigateToChatScreen("", opponentPhoneNumber, yourPhoneNumber);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, String yourPhoneNumber) {
+    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, String yourPhoneNumber, String opponentId) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
+        intent.putExtra(Constants.OPPONENT_ID, opponentId);
         intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
         startActivity(intent);
         getActivity().finish();

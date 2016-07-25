@@ -18,7 +18,9 @@ public class ChatActivity extends BaseActivity {
         Bundle args = new Bundle();
         args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
         args.putString(Constants.OPPONENT_PHONE_NUMBER, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
-        args.putString(Constants.YOUR_PHONE_NUMBER, getIntent().getStringExtra(Constants.YOUR_PHONE_NUMBER));
+        args.putString(Constants.OPPONENT_ID, getIntent().getStringExtra(Constants.OPPONENT_ID));
+
+        //args.putString(Constants.YOUR_PHONE_NUMBER, getIntent().getStringExtra(Constants.YOUR_PHONE_NUMBER));
         if(getIntent().getParcelableExtra(Constants.CHAT_FORWARD) != null) {
             args.putParcelable(Constants.CHAT_FORWARD, getIntent().getParcelableExtra(Constants.CHAT_FORWARD));
         }

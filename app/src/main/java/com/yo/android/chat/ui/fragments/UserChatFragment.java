@@ -1,6 +1,5 @@
 package com.yo.android.chat.ui.fragments;
 
-
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -32,13 +31,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.FirebaseException;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
@@ -47,23 +47,34 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.Clipboard;
+import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.ChatRoom;
+import com.yo.android.model.Room;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.FireBaseHelper;
 import com.yo.android.voip.OutGoingCallActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, DatabaseReference.CompletionListener, AdapterView.OnItemClickListener, ChildEventListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, com.firebase.client.ChildEventListener {
 
 
     private static final String TAG = "UserChatFragment";
@@ -74,6 +85,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private EditText chatText;
     private ListView listView;
     private String opponentNumber;
+    private String opponentId;
     private String yourNumber;
     private File mFileTemp;
     private static String TEMP_PHOTO_FILE_NAME;
@@ -81,12 +93,25 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private static final int ADD_SELECT_PICTURE = 2;
     private Uri mImageCaptureUri = null;
     private StorageReference storageReference;
-    private DatabaseReference roomReference;
-    private DatabaseReference chatRoomReference;
+    private Firebase authReference;
+    private Firebase roomReference;
     private ChatMessage chatMessage;
     private TextView listStickeyHeader;
     private int roomExist = 0;
     private Boolean isChildEventListenerAdd = Boolean.FALSE;
+    private String childRoomId;
+
+    @Inject
+    FireBaseHelper fireBaseHelper;
+
+    @Inject
+    FirebaseService firebaseService;
+
+    @Inject
+    MyServiceConnection myServiceConnection;
+
+    @Inject
+    YoApi.YoService yoService;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -97,21 +122,25 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         super.onCreate(savedInstanceState);
 
         Bundle bundle = this.getArguments();
-        String childRoomId = bundle.getString(Constants.CHAT_ROOM_ID);
+        childRoomId = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
+        opponentId = bundle.getString(Constants.OPPONENT_ID);
         yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
 
-        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
+        storageReference = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
 
-        chatRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
+        if (myServiceConnection.isServiceConnection()) {
+            firebaseService.getFirebaseAuth();
+        }
+
+        authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+
         if (!childRoomId.equals("")) {
             roomExist = 1;
-            roomIdReference = chatRoomReference.child(childRoomId);
-            roomIdReference.keepSynced(true);
-            registerChildEventLister();
+
+            roomReference = authReference.child(childRoomId).child(Constants.CHATS);
+            registerChildEventListener(roomReference);
         }
 
         ChatMessage chatForward = bundle.getParcelable(Constants.CHAT_FORWARD);
@@ -173,7 +202,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             });
         } catch (NoClassDefFoundError e) {
         }
-        ;
+
     }
 
     @Override
@@ -216,10 +245,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
                                 String timesmp = Long.toString(selectedItem.getTime());
-                                roomIdReference.child(timesmp).removeValue();
+                                roomReference.child(timesmp).removeValue();
 
                                 // Remove  selected items following the ids
                                 userChatAdapter.removeItem(selectedItem);
+                                chatMessageArray.remove(selectedItem);
                             }
                         }
 
@@ -230,7 +260,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     case R.id.copy:
                         StringBuilder builder = new StringBuilder();
                         selected = userChatAdapter.getSelectedIds();
-                        List<ChatMessage> messagesList = new ArrayList<ChatMessage>();
+                        List<ChatMessage> messagesList = new ArrayList<>();
                         for (int i = 0; i < selected.size(); i++) {
                             if (selected.valueAt(i)) {
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
@@ -240,7 +270,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                         builder.append("\n");
                                     }
                                 }
-                                // Remove  selected items following the ids
                             }
                         }
                         new Clipboard(getActivity()).copy(builder.toString());
@@ -297,7 +326,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onClick(View v) {
 
@@ -323,7 +351,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         long timestamp = System.currentTimeMillis();
         String timeStp = Long.toString(timestamp);
-        ChatMessage chatMessage = new ChatMessage();
+        final ChatMessage chatMessage = new ChatMessage();
         chatMessage.setType(type);
         chatMessage.setTime(timestamp);
         chatMessage.setSenderID(userId);
@@ -336,26 +364,62 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             chatMessage.setImagePath(message);
         }
 
-        if (roomExist == 0) {
-            String chatRoomId = yourNumber + ":" + opponentNumber;
-            ChatRoom chatRoom = new ChatRoom(yourNumber, opponentNumber, chatRoomId);
-            DatabaseReference databaseRoomReference = roomReference.child(chatRoomId);
-            databaseRoomReference.setValue(chatRoom);
 
-            roomIdReference = chatRoomReference.child(yourNumber + ":" + opponentNumber);
-            registerChildEventLister();
-            roomIdReference.child(timeStp).setValue(chatMessage, this);
-            roomExist = 1;
+        if (roomExist == 0) {
+
+            String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+            List<String> selectedUsers = new ArrayList<>();
+            selectedUsers.add(opponentId);
+
+            yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
+                @Override
+                public void onResponse(Call<Room> call, Response<Room> response) {
+                    response.body();
+                    roomReference = authReference.child(response.body().getFirebaseRoomId()).child(Constants.CHATS);
+                    registerChildEventListener(roomReference);
+                    sendChatMessage(chatMessage);
+                    roomExist = 1;
+
+                }
+
+                @Override
+                public void onFailure(Call<Room> call, Throwable t) {
+                    dismissProgressDialog();
+                }
+            });
+
         } else {
-            roomIdReference.child(timeStp).setValue(chatMessage, this);
+            sendChatMessage(chatMessage);
         }
 
     }
 
+    private void sendChatMessage(final ChatMessage chatMessage) {
+        try {
+            String timeStp = Long.toString(chatMessage.getTime());
+            Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
 
-    public void registerChildEventLister() {
+            Firebase roomChildReference = roomReference.child(timeStp);
+            roomChildReference.updateChildren(hashtaghMap, new Firebase.CompletionListener() {
+                @Override
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    if (firebaseError == null) {
+                        // successfully sent
+                        //chatMessage.setSent(1);
+                    } else {
+                        Log.e(TAG, firebaseError.getMessage());
+                    }
+                }
+            });
+
+        } catch (FirebaseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void registerChildEventListener(Firebase roomReference) {
         if (!isChildEventListenerAdd) {
-            roomIdReference.addChildEventListener(this);
+            roomReference.addChildEventListener(this);
         }
     }
 
@@ -363,7 +427,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onDestroy() {
         super.onDestroy();
         if (isChildEventListenerAdd) {
-            roomIdReference.removeEventListener(this);
+            roomReference.removeEventListener(this);
         }
     }
 
@@ -466,8 +530,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 .setContentType("image/jpeg")
                 .build();
 
-        StorageReference riversRef = storageReference.child("images/" + file.getLastPathSegment());
-        UploadTask uploadTask = riversRef.putFile(file, metadata);
+        StorageReference imagesRef = storageReference.child("images/" + file.getLastPathSegment());
+        UploadTask uploadTask = imagesRef.putFile(file, metadata);
 
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -507,18 +571,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
 
-        roomIdReference.child(timeStp).setValue(chatMessage, this);
-
+        sendChatMessage(chatMessage);
     }
 
-    @Override
-    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-        if (databaseError == null) {
-            // successfully inserted to database
-        } else {
-            Log.e(TAG, databaseError.getMessage());
-        }
-    }
 
     private void forwardMessage(ChatMessage message) {
         ChatFragment chatFragment = new ChatFragment();
@@ -543,9 +598,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-
     @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+    public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
         try {
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
@@ -563,22 +617,22 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+    public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
 
     }
 
     @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
+    public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
 
     }
 
     @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+    public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
 
     }
 
     @Override
-    public void onCancelled(DatabaseError databaseError) {
+    public void onCancelled(FirebaseError firebaseError) {
 
     }
 }

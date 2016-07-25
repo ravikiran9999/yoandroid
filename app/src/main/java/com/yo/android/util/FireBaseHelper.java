@@ -1,5 +1,8 @@
 package com.yo.android.util;
 
+
+import android.util.Log;
+
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -18,14 +21,15 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class FireBaseHelper {
+
+    private static final String TAG = "FireBaseHelper";
+
     private DatabaseReference roomReference;
     private Map<String, ChatMessage> map = new HashMap<>();
-    //This token will be generated at ROR server
-    private String AUTH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2IjowLCJpYXQiOjE0Njg1OTE1NzksImQiOnsicHJvdmlkZXIiOiJhbm9ueW1vdXMiLCJ1aWQiOiItS01fQWNuQUE1ZzBVSURndjFBRSJ9fQ.Kp9EYyfaaj-lnBy57pqBbqTfGjKgveLmOIH8_zFIMcU";
 
     @Inject
     public FireBaseHelper() {
-        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
+
     }
 
     public ChatMessage getLastMessage(String roomId) {
@@ -36,34 +40,26 @@ public class FireBaseHelper {
         return map.get(roomId);
     }
 
-    //
-    public void authWithCustomToken() {
+    public Firebase authWithCustomToken(final String authToken) {
         //Url from Firebase dashboard
-        final Firebase ref = new Firebase("https://yoandroid-a0b48.firebaseio.com/");
-        ref.authWithCustomToken(AUTH_TOKEN, new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticationError(FirebaseError error) {
-                System.err.println("Login Failed! " + error.getMessage());
-            }
-
+        final Firebase ref = new Firebase("https://yoandroid-a0b48.firebaseio.com/Rooms/");
+        ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
-                System.out.println("Login Succeeded!");
-                //Once user is authenticated!
-                ref.child("Rooms").child("-KM_AcnAA5g0UIDgv1AE")
-                        .addListenerForSingleValueEvent(new com.firebase.client.ValueEventListener() {
-                            @Override
-                            public void onDataChange(com.firebase.client.DataSnapshot dataSnapshot) {
+                if (authData != null) {
+                    Log.i(TAG, "Login Succeeded!");
 
-                            }
+                } else {
+                    Log.i(TAG, "Login un Succeeded!");
+                }
+            }
 
-                            @Override
-                            public void onCancelled(FirebaseError firebaseError) {
-
-                            }
-                        });
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                Log.e(TAG, "Login Failed! Auth token expired" + firebaseError.getMessage());
             }
         });
-
+        return ref;
     }
+
 }

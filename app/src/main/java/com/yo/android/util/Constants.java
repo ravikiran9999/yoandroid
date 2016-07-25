@@ -7,6 +7,7 @@ public class Constants {
     public static final String MESSAGE_ID = "message_id";
     public static final String YOUR_PHONE_NUMBER = "yourPhoneNumber";
     public static final String OPPONENT_PHONE_NUMBER = "opponentPhoneNumber";
+    public static final String OPPONENT_ID = "opponentId";
     public static final String CHAT_ROOM_ID = "chatRoomId";
     public static final String CHAT_FORWARD = "forward";
 
@@ -35,7 +36,9 @@ public class Constants {
 
     // Firebase tables
     public static final String APP_USERS = "AppUsers";
+    public static final String ROOMS = "Rooms";
     public static final String ROOM = "Room";
+    public static final String CHATS = "chats";
     public static final String ROOM_ID = "RoomID";
     public static final String FIREBASE_TOKEN = "firebase_token";
 
