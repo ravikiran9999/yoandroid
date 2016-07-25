@@ -119,6 +119,11 @@
             android:taskAffinity=".outgoing"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".ui.MoreSettingsActivity"
+            android:label="@string/settings_label"
+            android:theme="@style/AppTheme.Switch" />
+
         <service android:name=".voip.SipService" />
 
         <activity android:name=".chat.ui.SignupActivity" />
