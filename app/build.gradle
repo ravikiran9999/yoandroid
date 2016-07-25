@@ -17,7 +17,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.6.0"
+        versionName "16.3.7.0"
     }
     productFlavors {
         dev {
@@ -27,7 +27,7 @@ android {
         stage {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
-            signingConfig signingConfigs.config
+            //signingConfig signingConfigs.config
         }
         //This will flavor will enable BeepSend SMS gateway for verification
         stagePaidSms {
