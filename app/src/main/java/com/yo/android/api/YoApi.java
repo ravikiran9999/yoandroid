@@ -151,6 +151,7 @@ public class YoApi {
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
                                             @Part("user[description]") RequestBody descBody,
+                                            @Part("user[first_name]") RequestBody firstName,
                                             @Part MultipartBody.Part file);
 
 

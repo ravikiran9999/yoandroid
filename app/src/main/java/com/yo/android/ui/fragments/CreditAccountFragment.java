@@ -52,8 +52,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        txt_balance.setText(String.format("$%s", balance));
+        String balance = mBalanceHelper.getCurrentBalance();
+        String currencySymbol = mBalanceHelper.getCurrencySymbol();
+        txt_balance.setText(String.format("%s%s", currencySymbol, balance));
     }
 
     @OnClick(R.id.btn1)
@@ -89,8 +90,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
-            String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-            txt_balance.setText(String.format("$%s", balance));
+            String balance = mBalanceHelper.getCurrentBalance();
+            String currencySymbol = mBalanceHelper.getCurrencySymbol();
+            txt_balance.setText(String.format("%s%s", currencySymbol, balance));
         }
     }
 }

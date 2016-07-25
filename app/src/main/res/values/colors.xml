@@ -31,8 +31,8 @@
     <color name="magazine_search_box">#F9F9F9</color>
     <color name="light_gray">#fff5f5f5</color>
     <!--Indigo 500-->
-    <color name="primary_500">#3F51B5</color>
+    <color name="primary_500">#E12828</color>
     <!--Indigo 700-->
-    <color name="primary_700">#303F9F</color>
+    <color name="primary_700">#C82121</color>
 
 </resources>

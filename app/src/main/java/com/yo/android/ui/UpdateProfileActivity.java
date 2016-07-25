@@ -34,7 +34,7 @@ import retrofit2.Response;
 /**
  * Created by root on 19/7/16.
  */
-public class ProfileActivity extends BaseActivity {
+public class UpdateProfileActivity extends BaseActivity {
     private EditText username;
     private TextView mobileNum;
     private TextView addPhoto;
@@ -177,17 +177,23 @@ public class ProfileActivity extends BaseActivity {
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("user[first_name]"), descriptionString);
-        yoService.updateProfile(userId, description, body).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, null,description, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
-                preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
-                preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
-                Intent intent = new Intent(ProfileActivity.this, FollowMoreTopicsActivity.class);
-                dismissProgressDialog();
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("From", "ProfileActivity");
-                startActivity(intent);
-                ProfileActivity.this.finish();
+                if(response.isSuccessful()) {
+                    preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
+                    preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
+                    Intent intent = new Intent(UpdateProfileActivity.this, FollowMoreTopicsActivity.class);
+                    dismissProgressDialog();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("From", "UpdateProfileActivity");
+                    startActivity(intent);
+                    UpdateProfileActivity.this.finish();
+                }
+                else {
+                    toastFactory.showToast("Unable to update the profile");
+                }
+
             }
 
             @Override

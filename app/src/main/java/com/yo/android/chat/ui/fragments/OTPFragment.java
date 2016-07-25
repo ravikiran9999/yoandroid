@@ -17,9 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -27,9 +24,8 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
-import com.yo.android.model.Registration;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.ProfileActivity;
+import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
@@ -63,7 +59,7 @@ public class OTPFragment extends BaseFragment {
     ConnectivityHelper mHelper;
     private TextView txtTimer;
     private Handler mHandler = new Handler();
-    private final static int MAX_DURATION = 30;
+    private final static int MAX_DURATION = 60;
     private int duration = MAX_DURATION;
     private Handler dummyOTPHandler = new Handler();
 
@@ -155,23 +151,6 @@ public class OTPFragment extends BaseFragment {
         }
         showProgressDialog();
         count = 0;
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
-        DatabaseReference childReference = databaseReference.child(phoneNumber);
-        Registration registration = new Registration(password, phoneNumber);
-        childReference.setValue(registration, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    // successfully inserted to database
-                    count++;
-                    if (count == 2) {
-                        finishAndNavigateToHome();
-                    }
-                }
-            }
-        });
-
-        //
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         showProgressDialog();
         yoService.verifyOTP(YoApi.CLIENT_ID,
@@ -180,12 +159,11 @@ public class OTPFragment extends BaseFragment {
             @Override
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
                 dismissProgressDialog();
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     contactsSyncManager.syncContacts();
                     count++;
                     navigateToNext(response, phoneNumber, password);
-                }
-                else {
+                } else {
                     mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
                 }
             }
@@ -204,9 +182,7 @@ public class OTPFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
         preferenceEndPoint.saveStringPreference("password", password);
         dismissProgressDialog();
-        if (count == 2) {
-            finishAndNavigateToHome();
-        }
+        finishAndNavigateToHome();
     }
 
     private void finishAndNavigateToHome() {
@@ -215,7 +191,7 @@ public class OTPFragment extends BaseFragment {
         final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         if (isNewUser) {
             preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
-            Intent intent = new Intent(getActivity(), ProfileActivity.class);
+            Intent intent = new Intent(getActivity(), UpdateProfileActivity.class);
             intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
             dismissProgressDialog();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

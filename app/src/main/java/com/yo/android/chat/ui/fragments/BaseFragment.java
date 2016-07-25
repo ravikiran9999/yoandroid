@@ -17,6 +17,7 @@ import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.ProgressDialogFactory;
+import com.yo.android.vox.BalanceHelper;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +36,9 @@ public class BaseFragment extends Fragment {
     protected ToastFactory mToastFactory;
     @Inject
     protected Log mLog;
+    @Inject
+    protected BalanceHelper mBalanceHelper;
+
     protected Dialog mProgressDialog;
 
     public BaseFragment() {

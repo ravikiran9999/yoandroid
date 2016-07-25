@@ -87,7 +87,7 @@ public class SplashScreenActivity extends BaseActivity {
 //            if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN) && preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN_AND_VERIFIED)) {
 //                startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
 //            } else if (preferenceEndPoint.getBooleanPreference(Constants.LOGED_IN)) {
-//                startActivity(new Intent(SplashScreenActivity.this, ProfileActivity.class));
+//                startActivity(new Intent(SplashScreenActivity.this, UpdateProfileActivity.class));
 //            } else {
 //                startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
 //            }

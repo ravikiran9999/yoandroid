@@ -29,7 +29,7 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
         String refreshToken = preferenceEndPoint.getStringPreference("refresh_token");
-        if (response.code() == 401 && !TextUtils.isEmpty(refreshToken)) {
+        if (!response.request().url().toString().contains("oauth/token.json") && response.code() == 401 && !TextUtils.isEmpty(refreshToken)) {
             try {
                 OTPResponse responseBody
                         = tokenService.refreshToken(YoApi.CLIENT_ID, YoApi.CLIENT_SECRET, "refresh_token", refreshToken)

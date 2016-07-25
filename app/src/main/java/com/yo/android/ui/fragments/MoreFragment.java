@@ -31,7 +31,9 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.NotificationsActivity;
+import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
+import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 
@@ -144,7 +146,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         RequestBody username =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.USER_NAME));
-        yoService.updateProfile(userId, description, body).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, description, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
@@ -192,13 +194,14 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
      * @return
      */
     public List<MoreData> getMenuList() {
-        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
 
         List<MoreData> menuDataList = new ArrayList<>();
         menuDataList.add(new MoreData(preferenceEndPoint.getStringPreference(Constants.USER_NAME), false));
         String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         menuDataList.add(new MoreData(phone, false));
-        menuDataList.add(new MoreData(String.format("Yo Credit ($%s)", balance), true));
+        String balance = mBalanceHelper.getCurrentBalance();
+        String currencySymbol = mBalanceHelper.getCurrencySymbol();
+        menuDataList.add(new MoreData(String.format("Yo Credit (%s%s)", currencySymbol, balance), true));
         menuDataList.add(new MoreData("Invite Friends", true));
         menuDataList.add(new MoreData("Notifications", true));
         menuDataList.add(new MoreData("Settings", true));
@@ -223,6 +226,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         } else if (name.contains("Notifications")) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
 
+        } else if ("Settings".equals(name)) {
+            startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
         } else {
             Toast.makeText(getActivity(), "You have clicked on " + name, Toast.LENGTH_LONG).show();
         }
@@ -287,8 +292,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
-            String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-            menuAdapter.getItem(1).setName(String.format("Yo Credit ($%s)", balance));
+            String balance = mBalanceHelper.getCurrentBalance();
+            String currencySymbol = mBalanceHelper.getCurrencySymbol();
+            menuAdapter.getItem(1).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
+        }else if (key.equals(Constants.USER_NAME)) {
+           String name= preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+            menuAdapter.getItem(0).setName(name);
         }
     }
 }

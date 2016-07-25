@@ -24,7 +24,6 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
-import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
@@ -111,6 +110,8 @@ public class BottomTabsActivity extends BaseActivity {
         Intent in = new Intent(getApplicationContext(), SipService.class);
         startService(in);
         balanceHelper.checkBalance();
+        //
+        balanceHelper.loadPaymentHistory();
         loadUserProfileInfo();
         updateDeviceToken();
 
@@ -207,8 +208,8 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     public void refresh() {
-        if(getFragment() instanceof MagazinesFragment){
-            ((MagazinesFragment)getFragment()).getmMagazineFlipArticlesFragment().refresh();
+        if (getFragment() instanceof MagazinesFragment) {
+            ((MagazinesFragment) getFragment()).getmMagazineFlipArticlesFragment().refresh();
         }
     }
 
@@ -240,7 +241,7 @@ public class BottomTabsActivity extends BaseActivity {
                     preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
-                    if(TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.USER_NAME))){
+                    if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.USER_NAME))) {
                         preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     }
                 }
