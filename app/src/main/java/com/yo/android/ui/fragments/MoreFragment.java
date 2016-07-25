@@ -145,7 +145,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         RequestBody username =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.USER_NAME));
-        yoService.updateProfile(userId, description, body).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, description, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();

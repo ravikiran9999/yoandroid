@@ -147,5 +147,6 @@
     <string name="account_privacy_title">Account Privacy</string>
     <string name="settings_label">Settings</string>
     <string name="user_profile">Profile</string>
+    <string name="username_empty">Please provide user name before updating the profile details.</string>
 
 </resources>
