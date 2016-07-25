@@ -64,6 +64,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.create) {
             createGroup();
+        } else if(item.getItemId() == android.R.id.home) {
+            finish();
         }
         return true;
     }
