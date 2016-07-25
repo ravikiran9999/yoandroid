@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -392,6 +393,14 @@ public class BalanceHelper {
 
     public String getCurrentBalance() {
         String balance = prefs.getStringPreference(Constants.CURRENT_BALANCE, "0");
+        try {
+            DecimalFormat df = new DecimalFormat("0.000");
+            String format = df.format(Double.valueOf(balance));
+            return format;
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
         return balance;
     }
 

@@ -71,6 +71,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
         String mStatus = preferenceEndPoint.getStringPreference(Constants.USER_STATUS);
         userNameText.setText(userName);
+        userNameText.setSelection(userName.length());
         mobileNumberText.setText(phone);
         statusEdt.setText(mStatus + "");
     }

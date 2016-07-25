@@ -50,6 +50,7 @@ public class SpendDetailsFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         final SpentDetailsAdapter adapter = new SpentDetailsAdapter(getActivity());
         listView.setAdapter(adapter);
+        txtEmpty.setText("Feature is not implemented.");
     }
 
     public static class SpentDetailsAdapter extends AbstractBaseAdapter<SpendData, SpendDetailsViewHolder> {
