@@ -177,7 +177,7 @@ public class UpdateProfileActivity extends BaseActivity {
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("user[first_name]"), descriptionString);
-        yoService.updateProfile(userId, description, body).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, description,null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
