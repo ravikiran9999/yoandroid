@@ -29,6 +29,7 @@ public class Constants {
     public static final String CURRENCY_SYMBOL = "currency_symbol";
     public static final String SUBSCRIBER_ID = "subscriber_id";
     public static final String DIALER_FILTER = "dialer_filter";
+    public static final String FCM_REFRESH_TOKEN = "fcm_refresh_token";
 
     public static final String COUNTRY_NAME = "country_name";
     public static final String COUNTRY_CALL_RATE = "country_call_rate";

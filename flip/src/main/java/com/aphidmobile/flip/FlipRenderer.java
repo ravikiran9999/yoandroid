@@ -7,6 +7,8 @@ import android.view.View;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.TextureUtils;
 
+import junit.framework.AssertionFailedError;
+
 import java.util.LinkedList;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -114,7 +116,7 @@ public class FlipRenderer implements GLSurfaceView.Renderer {
     }
   }
 
-  @Override
+  /*@Override
   public void onDrawFrame(GL10 gl) {
     if (cards.isVisible() && cards.isFirstDrawFinished())
       gl.glClearColor(1f, 1f, 1f, 1f);
@@ -130,6 +132,27 @@ public class FlipRenderer implements GLSurfaceView.Renderer {
     }
 
     cards.draw(this, gl);
+  }*/
+
+  @Override
+  public void onDrawFrame(GL10 gl) {
+    if (cards.isVisible() && cards.isFirstDrawFinished())
+      gl.glClearColor(1f, 1f, 1f, 1f);
+    else
+      gl.glClearColor(0f, 0f, 0f, 0f);
+    gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    synchronized (postDestroyTextures) {
+      for (Texture texture : postDestroyTextures) {
+        texture.destroy(gl);
+      }
+      postDestroyTextures.clear();
+    }
+    try {
+      cards.draw(this, gl);
+    } catch (AssertionFailedError error) {
+      error.printStackTrace();
+    }
   }
 
   public void postDestroyTexture(Texture texture) {

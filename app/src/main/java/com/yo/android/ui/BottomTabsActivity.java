@@ -39,6 +39,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -112,6 +113,7 @@ public class BottomTabsActivity extends BaseActivity {
         //
         balanceHelper.loadPaymentHistory();
         loadUserProfileInfo();
+        updateDeviceToken();
 
     }
 
@@ -250,5 +252,23 @@ public class BottomTabsActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void updateDeviceToken() {
+        String refreshedToken = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))){
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+        }
     }
 }
