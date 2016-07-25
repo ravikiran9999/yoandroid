@@ -204,9 +204,9 @@ public class OTPFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
         preferenceEndPoint.saveStringPreference("password", password);
         dismissProgressDialog();
-        if (count == 2) {
+        //if (count == 2) {
             finishAndNavigateToHome();
-        }
+        //}
     }
 
     private void finishAndNavigateToHome() {
