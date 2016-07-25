@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.ui.fragments.CreditAccountFragment;
-import com.yo.android.ui.fragments.DummyFragment;
+import com.yo.android.ui.fragments.SpendDetailsFragment;
 
 public class TabsHeaderActivity extends BaseActivity {
 
@@ -53,22 +53,7 @@ public class TabsHeaderActivity extends BaseActivity {
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
                 viewPager.setCurrentItem(tab.getPosition());
-
-                switch (tab.getPosition()) {
-                    case 0:
-                        showToast("One");
-                        break;
-                    case 1:
-                        showToast("Two");
-
-                        break;
-                    case 2:
-                        showToast("Three");
-
-                        break;
-                }
             }
 
             @Override
@@ -91,8 +76,8 @@ public class TabsHeaderActivity extends BaseActivity {
     private void setupViewPager(ViewPager viewPager) {
         TabsPagerAdapter adapter = new TabsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new CreditAccountFragment(), "Credit Account");
-        adapter.addFragment(new DummyFragment(), "Recharge Details");
-        adapter.addFragment(new DummyFragment(), "Spend Details");
+        adapter.addFragment(new SpendDetailsFragment(), "Recharge Details");
+        adapter.addFragment(new SpendDetailsFragment(), "Spend Details");
         viewPager.setAdapter(adapter);
     }
 

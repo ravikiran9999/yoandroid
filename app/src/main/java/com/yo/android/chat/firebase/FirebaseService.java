@@ -70,10 +70,11 @@ public class FirebaseService extends InjectedService {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 JSONObject jsonObject = null;
                 try {
-                    jsonObject = new JSONObject(response.body().string());
-                    String name = jsonObject.getString("firebase_token");
-                    loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, name);
-
+                    if (response.body() != null) {
+                        jsonObject = new JSONObject(response.body().string());
+                        String name = jsonObject.getString("firebase_token");
+                        loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, name);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
