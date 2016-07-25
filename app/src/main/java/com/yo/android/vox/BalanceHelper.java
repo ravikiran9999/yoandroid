@@ -367,4 +367,36 @@ public class BalanceHelper {
         return result;
     }
 
+    public void loadPaymentHistory() {
+        mLog.w(TAG, "loadPaymentHistory:called");
+        voxService.executeAction(voxFactory.getPaymentHistory(prefs.getStringPreference(Constants.SUBSCRIBER_ID))).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String str = Util.toString(response.body().byteStream());
+                        mLog.i(TAG, "loadPaymentHistory: balance -  %s", str);
+                    } catch (IOException e) {
+                        mLog.w(TAG, "loadPaymentHistory", e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+    public String getCurrentBalance() {
+        String balance = prefs.getStringPreference(Constants.CURRENT_BALANCE, "0");
+        return balance;
+    }
+
+    public String getCurrencySymbol() {
+        String symbol = prefs.getStringPreference(Constants.CURRENCY_SYMBOL, "$");
+        return symbol;
+    }
 }

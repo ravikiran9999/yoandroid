@@ -61,6 +61,7 @@ import com.yo.android.ui.fragments.InviteActivity;
 import com.yo.android.ui.fragments.InviteFriendsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.Receiver;
@@ -141,6 +142,7 @@ import dagger.Provides;
                 GroupContactsFragment.class,
                 InviteFriendsFragment.class,
                 CreditAccountFragment.class,
+                SpendDetailsFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,

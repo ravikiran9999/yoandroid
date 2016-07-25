@@ -193,13 +193,14 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
      * @return
      */
     public List<MoreData> getMenuList() {
-        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
 
         List<MoreData> menuDataList = new ArrayList<>();
         menuDataList.add(new MoreData(preferenceEndPoint.getStringPreference(Constants.USER_NAME), false));
         String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         menuDataList.add(new MoreData(phone, false));
-        menuDataList.add(new MoreData(String.format("Yo Credit ($%s)", balance), true));
+        String balance = mBalanceHelper.getCurrentBalance();
+        String currencySymbol = mBalanceHelper.getCurrencySymbol();
+        menuDataList.add(new MoreData(String.format("Yo Credit (%s%s)", currencySymbol, balance), true));
         menuDataList.add(new MoreData("Invite Friends", true));
         menuDataList.add(new MoreData("Notifications", true));
         menuDataList.add(new MoreData("Settings", true));
@@ -288,8 +289,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
-            String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-            menuAdapter.getItem(1).setName(String.format("Yo Credit ($%s)", balance));
+            String balance = mBalanceHelper.getCurrentBalance();
+            String currencySymbol = mBalanceHelper.getCurrencySymbol();
+            menuAdapter.getItem(1).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
         }
     }
 }

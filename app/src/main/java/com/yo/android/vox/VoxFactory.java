@@ -74,6 +74,12 @@ public class VoxFactory {
         return prepareRequest("SUBSCRIBER", "GETBALANCE", data);
     }
 
+    public String getPaymentHistory(String subscriberId) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("SUBSCRIBERID", subscriberId);
+        return prepareRequest("SUBSCRIBER", "PAYMENTHISTORY", data);
+    }
+
     public String addBalanceBody(String subscriberId, String credit) {
         Map<String, Object> data = new HashMap<>();
         data.put("SUBSCRIBERID", subscriberId);
