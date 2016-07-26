@@ -35,4 +35,8 @@
     <!--Indigo 700-->
     <color name="primary_700">#C82121</color>
 
+    <!--resend backgrnd-->
+    <color name="resend_bcgrnd">#BE1E1E</color>
+
+
 </resources>

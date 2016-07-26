@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -168,7 +169,7 @@ public class MagazinesFragment extends BaseFragment {
 
     private void prepareTopicsSearch(Menu menu) {
         SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-
+        search.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
         final SearchView.SearchAutoComplete searchTextView = (SearchView.SearchAutoComplete) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
             MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
@@ -184,7 +185,7 @@ public class MagazinesFragment extends BaseFragment {
                 }
             });
 
-            searchTextView.setTextColor(Color.BLACK);
+            searchTextView.setTextColor(Color.WHITE);
             searchTextView.setThreshold(1);
             searchTextView.setAdapter(mAdapter);
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
