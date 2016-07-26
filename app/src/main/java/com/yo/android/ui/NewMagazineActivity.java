@@ -16,6 +16,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -103,6 +104,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                         }
                     });
                 } else {
+                    Util.hideKeyboard(this, etTitle);
                     etTitle.requestFocus();
                     mToastFactory.showToast("Please enter the Magazine Title");
                 }
@@ -149,6 +151,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                 }
             });*/
         } else {
+            Util.hideKeyboard(this, v);
             mToastFactory.showToast("Please enter the Magazine Title");
         }
     }
