@@ -62,6 +62,7 @@ public class OTPFragment extends BaseFragment {
     private final static int MAX_DURATION = 60;
     private int duration = MAX_DURATION;
     private Handler dummyOTPHandler = new Handler();
+    private TextView reSendTextBtn;
 
     public OTPFragment() {
         // Required empty public constructor
@@ -91,6 +92,7 @@ public class OTPFragment extends BaseFragment {
         verifyButton = (Button) view.findViewById(R.id.verify);
         etOtp = (EditText) view.findViewById(R.id.otp);
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
+        reSendTextBtn = (TextView) view.findViewById(R.id.resend);
 
         verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +111,18 @@ public class OTPFragment extends BaseFragment {
                     } else {
                         stopTimer();
                         signUp(phoneNumber, password);
+                    }
+                }
+            }
+        });
+        reSendTextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ("Resend".equalsIgnoreCase(reSendTextBtn.getText().toString())) {
+                    if (getActivity() instanceof LoginActivity) {
+                        ((LoginActivity) getActivity()).callLoginService(phoneNumber);
+                        mHandler.post(runnable);
+                        generateDummyOTP();
                     }
                 }
             }
@@ -163,7 +177,7 @@ public class OTPFragment extends BaseFragment {
                 if (response.isSuccessful()) {
                     contactsSyncManager.syncContacts();
                     count++;
-                    navigateToNext(response,  phoneNumber, password);
+                    navigateToNext(response, phoneNumber, password);
                 } else {
                     mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
                 }
@@ -234,7 +248,12 @@ public class OTPFragment extends BaseFragment {
             }
         });
         builder.setCancelable(false);
-        builder.setNegativeButton("Skip", null);
+        builder.setNegativeButton("Skip", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                reSendTextBtn.setText("Resend");
+            }
+        });
         AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
@@ -246,21 +265,31 @@ public class OTPFragment extends BaseFragment {
         public void run() {
             String timer = String.format("%d seconds left...", duration);
             txtTimer.setText(timer);
-            txtTimer.setVisibility(View.VISIBLE);
+            formateDuration(duration);
+            txtTimer.setVisibility(View.GONE);
             duration--;
             if (duration > 0) {
                 mHandler.postDelayed(this, 1000);
 //                verifyButton.setEnabled(false);
             } else {
                 txtTimer.setVisibility(View.GONE);
+                reSendTextBtn.setText("Resend");
                 //Reset
                 duration = MAX_DURATION;
-                verifyButton.setText(R.string.resend_otp_text);
+               // verifyButton.setText(R.string.resend_otp_text);
                 verifyButton.setEnabled(true);
                 stopTimer();
             }
         }
     };
+
+    private void formateDuration(int duration) {
+        String str = duration + "";
+        if (duration < 10) {
+            str = "0" + duration;
+        }
+        reSendTextBtn.setText("Resend (00:" + str + ")");
+    }
 
     private void stopTimer() {
         dummyOTPHandler.removeCallbacks(dummyOTPRunnable);
