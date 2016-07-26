@@ -62,6 +62,9 @@ public class CreateMagazinesAdapter extends BaseAdapter {
         TextView textView = (TextView) convertView.findViewById(R.id.tv_title);
         textView.setText(ownMagazineList.get(position).getName());
 
+        TextView textViewDesc = (TextView) convertView.findViewById(R.id.tv_desc);
+        textViewDesc.setText(ownMagazineList.get(position).getDescription());
+
         if(position != 0) {
             if(!TextUtils.isEmpty(ownMagazineList.get(position).getImage())) {
                 Picasso.with(mContext)
@@ -75,6 +78,7 @@ public class CreateMagazinesAdapter extends BaseAdapter {
                         .into(imageView);
             }
             textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
+            textViewDesc.setTextColor(mContext.getResources().getColor(android.R.color.white));
             squareItemLinearLayout.setBackgroundColor(mContext.getResources().getColor(android.R.color.black));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -88,6 +92,7 @@ public class CreateMagazinesAdapter extends BaseAdapter {
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER;
             textView.setLayoutParams(params);
+            textViewDesc.setTextColor(mContext.getResources().getColor(android.R.color.black));
             imageView.setImageDrawable(new ColorDrawable(mContext.getResources().getColor(R.color.grey_divider)));
             squareItemLinearLayout.setBackgroundColor(mContext.getResources().getColor(R.color.grey_divider));
         }

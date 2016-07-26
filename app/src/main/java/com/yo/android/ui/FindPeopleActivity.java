@@ -31,6 +31,7 @@ public class FindPeopleActivity extends BaseActivity {
     @Inject
     YoApi.YoService yoService;
     private int pageCount = 1;
+    private TextView noData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class FindPeopleActivity extends BaseActivity {
 
         findPeopleAdapter = new FindPeopleAdapter(this);
         lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
-        final TextView noData = (TextView) findViewById(R.id.no_data);
+        noData = (TextView) findViewById(R.id.no_data);
         lvFindPeople.setAdapter(findPeopleAdapter);
         lvFindPeople.setOnScrollListener(onScrollListener());
 
@@ -79,7 +80,7 @@ public class FindPeopleActivity extends BaseActivity {
                 otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
                 otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
                 otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
-                startActivity(otherProfileIntent);
+                startActivityForResult(otherProfileIntent, 8);
             }
         });
     }
@@ -125,5 +126,37 @@ public class FindPeopleActivity extends BaseActivity {
                                  int totalItemCount) {
             }
         };
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if (requestCode == 8 && resultCode == RESULT_OK) {
+            if(data!= null) {
+                showProgressDialog();
+                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
+                    @Override
+                    public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
+                        dismissProgressDialog();
+                        if (response.body().size() > 0) {
+                            List<FindPeople> findPeopleList = response.body();
+                            findPeopleAdapter.clearAll();
+                            findPeopleAdapter.addItemsAll(findPeopleList);
+                            lvFindPeople.setVisibility(View.VISIBLE);
+                            noData.setVisibility(View.GONE);
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<FindPeople>> call, Throwable t) {
+                        dismissProgressDialog();
+                    }
+                });
+            }
+
+        }
     }
 }
