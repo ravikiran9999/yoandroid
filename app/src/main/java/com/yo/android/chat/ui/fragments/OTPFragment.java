@@ -153,6 +153,7 @@ public class OTPFragment extends BaseFragment {
         count = 0;
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         showProgressDialog();
+
         yoService.verifyOTP(YoApi.CLIENT_ID,
                 YoApi.CLIENT_SECRET,
                 "password", countryCode + phoneNumber, etOtp.getText().toString().trim()).enqueue(new Callback<OTPResponse>() {
@@ -162,7 +163,7 @@ public class OTPFragment extends BaseFragment {
                 if (response.isSuccessful()) {
                     contactsSyncManager.syncContacts();
                     count++;
-                    navigateToNext(response, phoneNumber, password);
+                    navigateToNext(response,  phoneNumber, password);
                 } else {
                     mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
                 }

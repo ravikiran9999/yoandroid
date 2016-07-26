@@ -26,8 +26,8 @@ public class ChatActivity extends BaseActivity {
         args.putString(Constants.OPPONENT_ID, getIntent().getStringExtra(Constants.OPPONENT_ID));
 
         //args.putString(Constants.YOUR_PHONE_NUMBER, getIntent().getStringExtra(Constants.YOUR_PHONE_NUMBER));
-        if (getIntent().getParcelableExtra(Constants.CHAT_FORWARD) != null) {
-            args.putParcelable(Constants.CHAT_FORWARD, getIntent().getParcelableExtra(Constants.CHAT_FORWARD));
+        if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
+            args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
         }
         userChatFragment.setArguments(args);
 
@@ -52,6 +52,7 @@ public class ChatActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
+
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     startActivity(intent);
                 }

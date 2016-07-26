@@ -145,15 +145,17 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             registerChildEventListener(roomReference);
         }
 
-        ChatMessage chatForward = bundle.getParcelable(Constants.CHAT_FORWARD);
+        ArrayList<ChatMessage> chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
 
-        if (chatForward != null) {
-            if (chatForward.getType().equals(Constants.IMAGE)) {
-                sendChatMessage(chatForward.getImagePath(), chatForward.getType());
-            } else if (chatForward.getType().equals(Constants.TEXT)) {
-                sendChatMessage(chatForward.getMessage(), chatForward.getType());
+        if (chatForwards != null) {
+            for(int i =0; i < chatForwards.size(); i++) {
+                if (chatForwards.get(i).getType().equals(Constants.IMAGE)) {
+                    sendChatMessage(chatForwards.get(i).getImagePath(), chatForwards.get(i).getType());
+                } else if (chatForwards.get(i).getType().equals(Constants.TEXT)) {
+                    sendChatMessage(chatForwards.get(i).getMessage(), chatForwards.get(i).getType());
+                }
+                chatForwards.get(i).setSelected(false);
             }
-            chatForward.setSelected(false);
         }
 
         setHasOptionsMenu(true);
@@ -268,6 +270,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         StringBuilder builder = new StringBuilder();
                         selected = userChatAdapter.getSelectedIds();
                         List<ChatMessage> messagesList = new ArrayList<>();
+                        if (selected.size() > 1) {
+                            Toast.makeText(getActivity(), selected.size() + " " + getString(R.string.copy_messages), Toast.LENGTH_SHORT).show();
+                        } else if (selected.size() == 0) {
+                            Toast.makeText(getActivity(), getString(R.string.copy_message), Toast.LENGTH_SHORT).show();
+                        }
+
                         for (int i = 0; i < selected.size(); i++) {
                             if (selected.valueAt(i)) {
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
@@ -280,15 +288,30 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             }
                         }
                         new Clipboard(getActivity()).copy(builder.toString());
-
-                        Toast.makeText(getActivity(), getString(R.string.copy_message), Toast.LENGTH_SHORT).show();
                         mode.finish();
                         break;
                     case R.id.forward:
-                        if (chatMessage.isSelected()) {
+                        ArrayList<ChatMessage> chatMessageArrayList = new ArrayList<>();
+                        selected = userChatAdapter.getSelectedIds();
+                        for (int i = 0; i < selected.size(); i++) {
+                            if (selected.valueAt(i)) {
+                                final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
+                             /*   if (!selectedItem.getType().equals(getResources().getString(R.string.image))) {
+                                    builder.append(selectedItem.getMessage());
+                                    if (i < selected.size() - 1) {
+                                        builder.append("\n");
+                                    }
+                                }*/
+                                chatMessageArrayList.add(selectedItem);
+                            }
+                        }
+                        forwardMessage(chatMessageArrayList);
+                        mode.finish();
+                        /*if (chatMessage.isSelected()) {
+
                             forwardMessage(chatMessage);
                             mode.finish();
-                        }
+                        }*/
                         break;
 
                     default:
@@ -384,7 +407,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onResponse(Call<Room> call, Response<Room> response) {
                     Room room = response.body();
-                    if(room.getFirebaseRoomId() != null) {
+                    if (room.getFirebaseRoomId() != null) {
                         roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
                         registerChildEventListener(roomReference);
                         sendChatMessage(chatMessage);
@@ -585,7 +608,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
 
-    private void forwardMessage(ChatMessage message) {
+    private void forwardMessage(ArrayList<ChatMessage> message) {
 
         /*YoContactsFragment yoContactsFragment = new YoContactsFragment();
         Bundle args = new Bundle();
@@ -597,7 +620,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 .commit();*/
 
         Intent intent = new Intent(getActivity(), AppContactsActivity.class);
-        intent.putExtra(Constants.CHAT_FORWARD, message);
+        intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, message);
         startActivity(intent);
         getActivity().finish();
     }

@@ -140,8 +140,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Room room = chatRoomListAdapter.getItem(position);
+        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
-        // Enable it to forward message (or) Image to group
+        // Enable it to forward, message (or) Image to group
         /* String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
            ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
 
@@ -155,7 +156,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         } else*/
 
         if (room.getGroupName() == null) {
-            navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber());
+            if(!room.getMembers().get(0).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
+                navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber());
+            } else if(!room.getMembers().get(1).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
+                navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(1).getMobileNumber());
+            }
         } else if (room.getGroupName() != null) {
             navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName());
         }

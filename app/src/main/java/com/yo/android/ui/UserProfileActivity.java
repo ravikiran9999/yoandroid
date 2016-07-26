@@ -4,10 +4,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
+import com.yo.android.adapters.AppContactsListAdapter;
+import com.yo.android.adapters.ProfileMembersAdapter;
 import com.yo.android.util.Constants;
 
 import butterknife.Bind;
@@ -31,6 +34,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     TextView profileNumber;
 
 
+    private ProfileMembersAdapter profileMembersAdapter;
+    private ListView membersList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +47,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         String phone = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
         setDataFromPreferences(phone);
-
+        membersList = (ListView)findViewById(R.id.members);
+        profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
+        membersList.setAdapter(profileMembersAdapter);
     }
 
     @Override
@@ -92,4 +100,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     public void messageUser() {
         finish();
     }
+
+
 }

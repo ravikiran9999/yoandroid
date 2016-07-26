@@ -46,6 +46,7 @@ import retrofit2.Response;
 public class YoContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private ArrayList<Registration> arrayOfUsers;
+    private ArrayList<ChatMessage> forwardChatMessages;
     private AppContactsListAdapter appContactsListAdapter;
     private ListView listView;
 
@@ -62,9 +63,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        if (getArguments() != null) {
-            preferenceEndPoint.saveStringPreference(Constants.CHAT_FORWARD, new Gson().toJson(getArguments().getParcelable(Constants.CHAT_FORWARD)));
-        }
+
     }
 
     @Override
@@ -82,6 +81,11 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getYoAppUsers();
+
+        if (getArguments() != null) {
+            forwardChatMessages = getArguments().getParcelableArrayList(Constants.CHAT_FORWARD);
+        }
+
         arrayOfUsers = new ArrayList<>();
         appContactsListAdapter = new AppContactsListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(appContactsListAdapter);
@@ -99,11 +103,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         String opponentPhoneNumber = contact.getPhoneNo();
 
-        String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
-        ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
-
-        if (forwardChatMessage != null) {
-            navigateToChatScreen(contact.getFirebaseRoomId(), opponentPhoneNumber, forwardChatMessage, contact.getId());
+        if (forwardChatMessages != null) {
+            navigateToChatScreen(contact.getFirebaseRoomId(), opponentPhoneNumber, forwardChatMessages, contact.getId());
 
         } else if (contact.getFirebaseRoomId() != null) {
             navigateToChatScreen(contact.getFirebaseRoomId(), opponentPhoneNumber, yourPhoneNumber, null);
@@ -122,16 +123,16 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         getActivity().finish();
     }
 
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, ChatMessage forward, String opponentId) {
-        if (preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD) != null) {
+    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, ArrayList<ChatMessage> forward, String opponentId) {
+        /*if (preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD) != null) {
             preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
-        }
+        }*/
 
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
         intent.putExtra(Constants.OPPONENT_ID, opponentId);
-        intent.putExtra(Constants.CHAT_FORWARD, forward);
+        intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, forward);
         startActivity(intent);
         getActivity().finish();
     }
