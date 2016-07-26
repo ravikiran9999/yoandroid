@@ -64,7 +64,6 @@ public class BottomTabsActivity extends BaseActivity {
         setContentView(R.layout.activity_bottom_tabs);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         viewPager = (CustomViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);
@@ -187,7 +186,7 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (R.id.menu_search == item.getItemId()) {
-            setToolBarColor(Color.WHITE);
+            setToolBarColor(getResources().getColor(R.color.colorPrimary));
             Menu menu = null;
             if (getFragment() instanceof ChatFragment) {
                 menu = ((ChatFragment) getFragment()).getMenu();
@@ -255,7 +254,7 @@ public class BottomTabsActivity extends BaseActivity {
 
     private void updateDeviceToken() {
         String refreshedToken = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
-        if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))){
+        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
                 @Override
