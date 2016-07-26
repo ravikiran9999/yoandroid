@@ -116,6 +116,17 @@ public class VoxFactory {
         return prepareRequest("SUBSCRIBER", "GETSUBSCRIBERID", data);
     }
 
+    //2014­10­01
+    public String getSpentDetailsHistoryBody(String subscriberId, String fromDate, String toDate, String limit) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("SUBSCRIBERID", subscriberId);
+        data.put("FROMDATE", fromDate);
+        data.put("TODATE", toDate);
+        data.put("LIMIT", limit);
+        data.put("COUNT", "0");
+        return prepareRequest("SUBSCRIBER", "CDRDATERANGE", data);
+    }
+
     private String prepareRequest(String section, String action, Map<String, Object> data) {
         Map<String, Object> jsonData = new HashMap<>();
         jsonData.put("LOGINUSER", LOGINUSER);

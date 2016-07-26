@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.firebase.client.utilities.Utilities;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.orion.android.common.util.ToastFactoryImpl;
 import com.yo.android.R;
@@ -55,6 +57,9 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
+
+    @Inject
+    ConnectivityHelper mHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +117,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         final MenuItem menuItem = item;
         if (menuItem.getItemId() == R.id.menu_save_settings) {
             //do nothing..
+            dismissProgressDialog();
             if (isValid()) {
                 updateSettings();
             } else {
@@ -131,6 +137,11 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
 
     private void updateSettings() {
 
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
+
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
 
         String descriptionString = statusEdt.getText().toString();
@@ -142,7 +153,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         RequestBody firstName =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), userName);
-
+        showProgressDialog();
         yoService.updateProfile(userId, description, firstName, null).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
@@ -151,6 +162,8 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    setResult(RESULT_OK, new Intent());
+                    finish();
                 }
             }
 

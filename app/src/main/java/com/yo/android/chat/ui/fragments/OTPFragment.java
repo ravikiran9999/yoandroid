@@ -59,7 +59,7 @@ public class OTPFragment extends BaseFragment {
     ConnectivityHelper mHelper;
     private TextView txtTimer;
     private Handler mHandler = new Handler();
-    private final static int MAX_DURATION = 30;
+    private final static int MAX_DURATION = 60;
     private int duration = MAX_DURATION;
     private Handler dummyOTPHandler = new Handler();
 

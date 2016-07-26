@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="10dp"
+    android:layout_marginTop="10dp">
+
+    <ImageView
+        android:id="@+id/imv_notification_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp"
+        android:background="@drawable/ic_follow_notification" />
+
+    <TextView
+        android:id="@+id/tv_notification_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/imv_notification_type"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="Gabrielle Becker is now following you"
+        android:textColor="@color/black" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imv_people"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/tv_notification_desc"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/imv_notification_type"
+        android:background="@drawable/ic_contacts"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_notification_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imv_people"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/imv_notification_type"
+        android:drawableLeft="@drawable/ic_time_notification"
+        android:drawablePadding="5dp"
+        android:text="20 minutes ago" />
+
+
+</RelativeLayout>

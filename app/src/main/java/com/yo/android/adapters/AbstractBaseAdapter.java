@@ -76,9 +76,10 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     /**
      * Use this method for search to clear data when calling addItems() multiple times.
      */
-    public void clearData() {
+    public void clearAll() {
         mOriginalList.clear();
         mList.clear();
+        notifyDataSetChanged();
     }
 
     public void performSearch(@NonNull String key) {

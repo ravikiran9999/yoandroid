@@ -96,6 +96,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     public void onBackPressed() {
         if (dismissContextualMenu()) {
             invalidateOptionsMenu();
+            List<Collections> collections = myCollectionsAdapter.getSelectedItems();
+            collections.clear();
+            myCollectionsAdapter.notifyDataSetChanged();
         }
         else {
             super.onBackPressed();
@@ -163,11 +166,11 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
+
 
         switch(item.getItemId()) {
             case R.id.menu_delete:
-
+                super.onOptionsItemSelected(item);
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 List<Collections> collections = myCollectionsAdapter.getSelectedItems();
                 List<String> topicIds = new ArrayList<String>();
@@ -211,12 +214,13 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 });
                 break;
             case android.R.id.home:
-                if (dismissContextualMenu()) {
+                /*if (dismissContextualMenu()) {
                     invalidateOptionsMenu();
                 }
                 else {
                     finish();
-                }
+                }*/
+                onBackPressed();
                 break;
         }
         return true;

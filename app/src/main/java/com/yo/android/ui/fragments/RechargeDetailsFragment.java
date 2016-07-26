@@ -10,14 +10,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.SpendDetailsViewHolder;
-import com.yo.android.model.dialer.SpentDetailResponse;
-import com.yo.android.model.dialer.SubscribersList;
-import com.yo.android.util.Util;
+import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.vox.BalanceHelper;
 
 import java.util.List;
@@ -26,7 +23,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,7 +30,7 @@ import retrofit2.Response;
 /**
  * Created by Ramesh on 25/7/16.
  */
-public class SpendDetailsFragment extends BaseFragment implements Callback<ResponseBody> {
+public class RechargeDetailsFragment extends BaseFragment implements Callback<List<PaymentHistoryItem>> {
 
     @Bind(R.id.txtEmpty)
     TextView txtEmpty;
@@ -44,16 +40,14 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
     @Bind(R.id.listView)
     ListView listView;
-
     @Inject
     BalanceHelper mBalanceHelper;
-
-    private SpentDetailsAdapter adapter;
+    private RechargeDetailsAdapter adapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new SpentDetailsAdapter(getActivity());
+        adapter = new RechargeDetailsAdapter(getActivity());
     }
 
     @Override
@@ -72,28 +66,20 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         super.onActivityCreated(savedInstanceState);
         listView.setAdapter(adapter);
         showProgressDialog();
-        mBalanceHelper.loadSpentDetailsHistory(this);
-
+        mBalanceHelper.loadPaymentHistory(this);
     }
 
     @Override
-    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+    public void onResponse(Call<List<PaymentHistoryItem>> call, Response<List<PaymentHistoryItem>> response) {
         if (isAdded() && response.body() != null) {
             dismissProgressDialog();
-            try {
-                String str = Util.toString(response.body().byteStream());
-                SpentDetailResponse detailResponse = new Gson().fromJson(str, SpentDetailResponse.class);
-                List<SubscribersList> lists = detailResponse.getData().getSubscriberslist();
-                adapter.addItems(lists);
-            } catch (Exception e) {
-                mLog.w("SpendDetails", "onResponse", e);
-            }
+            adapter.addItems(response.body());
             showEmptyText();
         }
     }
 
     @Override
-    public void onFailure(Call<ResponseBody> call, Throwable t) {
+    public void onFailure(Call<List<PaymentHistoryItem>> call, Throwable t) {
         if (isAdded()) {
             dismissProgressDialog();
             adapter.clearAll();
@@ -116,10 +102,9 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         progress.setVisibility(View.GONE);
     }
 
+    private static class RechargeDetailsAdapter extends AbstractBaseAdapter<PaymentHistoryItem, SpendDetailsViewHolder> {
 
-    public static class SpentDetailsAdapter extends AbstractBaseAdapter<SubscribersList, SpendDetailsViewHolder> {
-
-        public SpentDetailsAdapter(Context context) {
+        public RechargeDetailsAdapter(Context context) {
             super(context);
         }
 
@@ -134,12 +119,13 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         }
 
         @Override
-        public void bindView(int position, SpendDetailsViewHolder holder, final SubscribersList item) {
-            holder.getDate().setText(item.getTime());
-            holder.getDuration().setText(item.getDuration());
-            holder.getTxtPhone().setText(item.getUsername());
-//            holder.getTxtPulse().setText(item.getPulse());
-            holder.getTxtPrice().setText(item.getCallcost());
+        public void bindView(int position, SpendDetailsViewHolder holder, final PaymentHistoryItem item) {
+            holder.getDate().setVisibility(View.GONE);
+            holder.getDuration().setVisibility(View.GONE);
+            holder.getTxtPhone().setText(item.getUpdatedAt());
+            holder.getTxtPulse().setText(item.getStatus());
+            holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.dial_green));
+            holder.getTxtPrice().setText(String.format("$%s", item.getAddedCredit()));
             holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

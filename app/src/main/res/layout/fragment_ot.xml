@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:text="In case the OTP is not received in 30 seconds, please click Resend OTP button."
+        android:text="In case the OTP is not received in 60 seconds, please click Resend OTP button."
         android:textColor="@android:color/white" />
 
     <TextView
