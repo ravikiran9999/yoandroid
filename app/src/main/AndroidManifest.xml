@@ -205,8 +205,9 @@
         <activity
             android:name=".inapp.UnManageInAppPurchaseActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Translucent" />
-        <activity android:name=".ui.NotificationsActivity"
+            android:theme="@style/AppTheme.NoActionBar.Translucent" />
+        <activity
+            android:name=".ui.NotificationsActivity"
             android:screenOrientation="portrait"></activity>
     </application>
 
