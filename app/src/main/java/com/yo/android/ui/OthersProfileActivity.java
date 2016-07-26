@@ -1,6 +1,7 @@
 package com.yo.android.ui;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -83,6 +84,8 @@ public class OthersProfileActivity extends BaseActivity {
         backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
                 finish();
             }
         });
@@ -235,5 +238,13 @@ public class OthersProfileActivity extends BaseActivity {
         public int getCount() {
             return count;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
+        super.onBackPressed();
     }
 }

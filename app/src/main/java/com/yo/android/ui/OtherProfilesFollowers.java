@@ -84,9 +84,42 @@ public class OtherProfilesFollowers extends BaseFragment {
                 otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
                 otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
                 otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
-                startActivity(otherProfileIntent);
+                startActivityForResult(otherProfileIntent,11);
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if (requestCode == 11 && resultCode == getActivity().RESULT_OK) {
+            if(data!= null) {
+                showProgressDialog();
+                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                yoService.getOtherProfilesFollowersAPI(accessToken, userID).enqueue(new Callback<List<FindPeople>>() {
+                    @Override
+                    public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
+                        dismissProgressDialog();
+                        if (response.body().size() > 0) {
+                            noData.setVisibility(View.GONE);
+                            lvFindPeople.setVisibility(View.VISIBLE);
+                            TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count);
+                            count.setText("" + response.body().size());
+                            List<FindPeople> findPeopleList = response.body();
+                            findPeopleAdapter.clearAll();
+                            findPeopleAdapter.addItemsAll(findPeopleList);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<FindPeople>> call, Throwable t) {
+                        dismissProgressDialog();
+                    }
+                });
+            }
+
+        }
     }
 
 }
