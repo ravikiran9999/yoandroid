@@ -148,5 +148,6 @@
     <string name="settings_label">Settings</string>
     <string name="user_profile">Profile</string>
     <string name="username_empty">Please provide user name before updating the profile details.</string>
+    <string name="change_photo">Change Photo</string>
 
 </resources>
