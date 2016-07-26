@@ -215,10 +215,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
 
                 if (response.body() != null && response.body().size() > 0) {
-                    if (llNoArticles != null) {
-                        llNoArticles.setVisibility(View.GONE);
-                        flipContainer.setVisibility(View.VISIBLE);
-                    }
+
                     for (int i = 0; i < response.body().size(); i++) {
                         //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
                         //articlesList = new ArrayList<Travels.Data>();
@@ -226,6 +223,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         // }
                     }
                     myBaseAdapter.addItems(response.body());
+                    if (llNoArticles != null) {
+                        llNoArticles.setVisibility(View.GONE);
+                        flipContainer.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     //mToastFactory.showToast("No Articles");
                     if (llNoArticles != null) {

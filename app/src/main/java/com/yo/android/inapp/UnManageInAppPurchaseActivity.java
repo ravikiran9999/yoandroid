@@ -30,7 +30,7 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     boolean mDebugLog = true;
     String mDebugTag = "YoApp";
 
-    public String BASE_64_KEY_FOR_IN_APP_PURCHASE = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgLnkldaAzY3MceHToADNqqCQ1BHJj2wjqtWfq6YAOof7w2MtNUvznvW+/q+iQ387JUxbinZZ7ELXsO0xBD4e5eckGGrwZC8FIMOHqAS0zzaxm27AWvWdX2atKhaAsyyf/IpI8KNmgEBfKdhGZ5mIVe/40JNGmHhKq2lrN2Wv8pL7viGfy8/cbPLWYTEOK+K4wUtmtCrKJz3J+p3zn+cyLvyHMBjF8v77XSctnSNDOK3Lnrb7wKn9NWR/GnnTOIZs4ts/UCp22F/xNFsVEP9iRDe2QkfcGbsH8rj0iZbgHt8vGCsk0NZr1Nxu7uQrWjAAfNfeHJIX65EYtlyHOWsrwwIDAQAB";
+    public String BASE_64_KEY_FOR_IN_APP_PURCHASE = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvN0nwJTxnfciBYiwTrZ2pzevIKGAB09Kulx0akR8Lzrd8bju2kCpe/PGeLQQ9BQWpvz3p81vl3N9sT7k0pfcJp10MMrtzyfYAR1t9U5R7manRzzRM2j1BNHnPneOaJ9WrQDUWpXqvDaeDgiS0rrSfWCHtTqDaoQV8RCbMLtanTJlBQgvYmObvhzLwtSSsD558UPUb7bEZtoFKgzSCqIS4pGFhFqVESxdRt95LpKbagVZSGEo4Nd2UoqDJ6gkG5cRLwHcl3ob2Nr+GRK3ybvNotCuGz3/cdVnqZjoWH73PP2qkG4iOopxhLW7ifZVtYVAW0hJFlM1Mf1TwPZ1AfICxQIDAQAB";
     private IabHelper mHelper;
     private static String ITEM_SKU = "com.yo.test.hundred";
     private static float ITEM_PRICE;
@@ -48,6 +48,7 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
         ITEM_SKU = getIntent().getStringExtra("sku");
         ITEM_PRICE = getIntent().getFloatExtra("price", 0f);
         ITEM_SKU = "android.test.purchased";
+        ITEM_SKU = ITEM_SKU.toLowerCase();
         //developer payload
         emailAddress = getIntent().getStringExtra(Constants.USER_ID);
         mHelper = new IabHelper(this, BASE_64_KEY_FOR_IN_APP_PURCHASE);

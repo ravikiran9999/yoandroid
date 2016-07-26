@@ -32,10 +32,9 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:drawableLeft="@drawable/ic_new_chat_group_add_contact"
-        android:text="@string/add_contact"
-        android:textSize="18sp"
         android:drawablePadding="10dp"
-        />
+        android:text="@string/add_contact"
+        android:textSize="18sp" />
 
 
     <RelativeLayout
@@ -57,5 +56,14 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp" />
     </RelativeLayout>
+
+    <ListView
+        android:id="@+id/selected_contacts_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:divider="@null"
+        />
 
 </LinearLayout>

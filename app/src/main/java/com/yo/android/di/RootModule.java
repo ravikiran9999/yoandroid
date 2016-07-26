@@ -17,7 +17,7 @@ import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
-import com.yo.android.chat.ui.fragments.GroupContactsFragment;
+import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.chat.ui.fragments.YoContactsFragment;
@@ -42,6 +42,7 @@ import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.OtherProfilesFollowers;
 import com.yo.android.ui.OtherProfilesLinedArticles;
 import com.yo.android.ui.OthersMagazinesDetailActivity;
@@ -61,6 +62,7 @@ import com.yo.android.ui.fragments.InviteActivity;
 import com.yo.android.ui.fragments.InviteFriendsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -126,6 +128,7 @@ import dagger.Provides;
                 OtherProfilesLinedArticles.class,
                 OthersMagazinesDetailActivity.class,
                 UnManageInAppPurchaseActivity.class,
+                NotificationsActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -139,10 +142,11 @@ import dagger.Provides;
                 MagazineFlipArticlesFragment.class,
                 MoreFragment.class,
                 MagazinesFragment.class,
-                GroupContactsFragment.class,
+                GroupContactsActivity.class,
                 InviteFriendsFragment.class,
                 CreditAccountFragment.class,
                 SpendDetailsFragment.class,
+                RechargeDetailsFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,

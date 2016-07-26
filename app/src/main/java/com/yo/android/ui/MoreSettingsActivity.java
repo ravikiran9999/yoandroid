@@ -71,6 +71,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
         String mStatus = preferenceEndPoint.getStringPreference(Constants.USER_STATUS);
         userNameText.setText(userName);
+        userNameText.setSelection(userName.length());
         mobileNumberText.setText(phone);
         statusEdt.setText(mStatus + "");
     }
@@ -142,7 +143,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         RequestBody firstName =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), userName);
-
+showProgressDialog();
         yoService.updateProfile(userId, description, firstName, null).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
@@ -151,6 +152,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    finish();
                 }
             }
 

@@ -30,6 +30,7 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.UserProfileActivity;
@@ -221,10 +222,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         } else if (name.contains("Yo Credit")) {
             startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
+
+        } else if (name.contains("Notifications")) {
+            startActivity(new Intent(getActivity(), NotificationsActivity.class));
+
         } else if ("Settings".equals(name)) {
             startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
-        } else if ("Notifications".equals(name)) {
-            //do nothing
         } else {
             Toast.makeText(getActivity(), "You have clicked on " + name, Toast.LENGTH_LONG).show();
         }
@@ -292,6 +295,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             String balance = mBalanceHelper.getCurrentBalance();
             String currencySymbol = mBalanceHelper.getCurrencySymbol();
             menuAdapter.getItem(1).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
+        }else if (key.equals(Constants.USER_NAME)) {
+           String name= preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+            menuAdapter.getItem(0).setName(name);
         }
     }
 }

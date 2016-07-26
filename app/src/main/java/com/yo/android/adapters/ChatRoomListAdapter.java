@@ -1,10 +1,9 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
@@ -25,14 +24,11 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
 
-    private DatabaseReference roomReference;
-
 
     public ChatRoomListAdapter(Context context) {
         super(context);
         Injector.obtain(context.getApplicationContext()).inject(this);
 
-        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
     }
 
     @Override
@@ -50,33 +46,25 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
 
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
-        if(item.getGroupName() == null) {
+        if (item.getGroupName() == null) {
             holder.getOpponentName().setText(item.getMembers().get(0).getMobileNumber());
 
-        } else if(item.getGroupName() != null) {
+        } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
         } else {
             holder.getOpponentName().setText("");
         }
 
-        //String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-
-        /*if (item.getOpponentPhoneNumber().equals(yourPhoneNumber)) {
-            holder.getOpponentName().setText(item.getYourPhoneNumber());
-        } else {
-            holder.getOpponentName().setText(item.getOpponentPhoneNumber());
-        }*/
-
-        /*if (item.isImage()) {
+        if (item.isImage()) {
             holder.getChat().setText(mContext.getResources().getString(R.string.image));
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
-        } else if (!TextUtils.isEmpty(item.getMessage())) {
-            holder.getChat().setText(item.getMessage());
+        } else if (!TextUtils.isEmpty(item.getLastChat())) {
+            holder.getChat().setText(item.getLastChat());
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
         } else {
             holder.getChat().setText("");
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
         }
-        holder.getTimeStamp().setText(item.getTimeStamp());*/
+        holder.getTimeStamp().setText(item.getTimeStamp());
     }
 }

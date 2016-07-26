@@ -215,10 +215,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 chatMessage = (ChatMessage) listView.getItemAtPosition(position);
                 final int checkedCount = listView.getCheckedItemCount();
                 mode.setTitle(Integer.toString(checkedCount));
-
                 userChatAdapter.toggleSelection(position);
                 chatMessage.setSelected(true);
 
+                if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
+                    getActivity().invalidateOptionsMenu();
+                }
             }
 
             @Override
@@ -229,7 +231,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
+
+                menu.findItem(R.id.copy).setVisible(false);
+
+                return true;
             }
 
             @Override
