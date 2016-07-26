@@ -100,7 +100,7 @@ public class MagazinesFragment extends BaseFragment {
         //getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
         mMagazineFlipArticlesFragment = new MagazineFlipArticlesFragment();
         mAdapter = new ArrayAdapter<String>
-                (getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+                (getActivity(), R.layout.textviewitem, new ArrayList<String>());
 
         getChildFragmentManager().beginTransaction().add(R.id.bottom, mMagazineFlipArticlesFragment).commit();
 

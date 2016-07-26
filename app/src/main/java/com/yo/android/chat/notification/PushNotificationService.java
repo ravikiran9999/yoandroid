@@ -59,7 +59,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         notificationStyle.bigText(title);
 
         Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(getNotificationIcon())
                 .setContentTitle(title)
                 .setContentText(message)
                 .setAutoCancel(true)
@@ -71,5 +71,10 @@ public class PushNotificationService extends FirebaseMessagingService {
         notificationManager.notify(notificationId, notification);
 
 
+    }
+
+    private int getNotificationIcon() {
+        boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
+        return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
     }
 }
