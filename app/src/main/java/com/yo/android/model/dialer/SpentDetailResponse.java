@@ -1,12 +1,14 @@
 package com.yo.android.model.dialer;
+import com.google.gson.annotations.SerializedName;
 
 public class SpentDetailResponse {
+    @SerializedName("MESSAGE")
     private String message;
-
+    @SerializedName("TOTALRECORDS")
     private String totalrecords;
-
+    @SerializedName("STATUS")
     private String status;
-
+    @SerializedName("DATA")
     private SpendDetailsData data;
 
     public String getMessage() {

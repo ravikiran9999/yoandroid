@@ -19,9 +19,11 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
@@ -44,6 +46,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -67,6 +71,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     ImageView profilePic;
     @Inject
     ImagePickHelper cameraIntent;
+    @Inject
+    ConnectivityHelper mHelper;
+    @Bind(R.id.add_change_photo_text)
+    TextView addOrChangePhotoText;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -94,6 +102,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
         profilePic = (ImageView) view.findViewById(R.id.profile_pic);
         cameraIntent.setActivity(getActivity());
@@ -111,9 +120,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     private void loadImage() {
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (!TextUtils.isEmpty(avatar)) {
+            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
             Picasso.with(getActivity())
                     .load(avatar)
                     .into(profilePic);
+        }else{
+            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
         }
 
     }
@@ -121,6 +133,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     //Tested and image update is working
     //Make a prompt for pick a image from gallery/camera
     private void uploadFile(File file) {
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
 
         Picasso.with(getActivity())
                 .load(file)
@@ -227,11 +243,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
 
         } else if ("Settings".equals(name)) {
-            startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
-        } else {
-            Toast.makeText(getActivity(), "You have clicked on " + name, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
+            startActivityForResult(intent, Constants.GO_TO_SETTINGS);
+            //startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
         }
     }
+
 
     public void showLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -283,6 +300,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             }
+            case Constants.GO_TO_SETTINGS:
+                if (menuAdapter != null) {
+                    menuAdapter.notifyDataSetChanged();
+                }
+                break;
             default:
                 break;
         }
@@ -295,9 +317,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             String balance = mBalanceHelper.getCurrentBalance();
             String currencySymbol = mBalanceHelper.getCurrencySymbol();
             menuAdapter.getItem(1).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
-        }else if (key.equals(Constants.USER_NAME)) {
-           String name= preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+            menuAdapter.notifyDataSetChanged();
+        } else if (key.equals(Constants.USER_NAME)) {
+            String name = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
             menuAdapter.getItem(0).setName(name);
+            menuAdapter.notifyDataSetChanged();
         }
     }
 }
