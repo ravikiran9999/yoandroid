@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.firebase.client.utilities.Utilities;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.orion.android.common.util.ToastFactoryImpl;
 import com.yo.android.R;
@@ -56,6 +57,9 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
+
+    @Inject
+    ConnectivityHelper mHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +136,11 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
     }
 
     private void updateSettings() {
+
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
 
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
 

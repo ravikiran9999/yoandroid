@@ -32,11 +32,11 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="30dp"
             android:elevation="7dp"
+            android:id="@+id/add_change_photo_text"
             android:gravity="center"
             android:drawablePadding="5dp"
             android:drawableLeft="@drawable/ic_more_camera"
             android:text="Change Photo"
-
             android:textColor="@color/white" />
     </FrameLayout>
 
