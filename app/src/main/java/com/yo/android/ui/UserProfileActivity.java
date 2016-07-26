@@ -30,6 +30,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     @Bind(R.id.profile_number)
     TextView profileNumber;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +39,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         ButterKnife.bind(this);
         enableBack();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        setDataFromPreferences();
+        String phone = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+        setDataFromPreferences(phone);
+
     }
 
     @Override
@@ -47,19 +51,18 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     }
 
-
-    private void setDataFromPreferences() {
-        String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+    private void setDataFromPreferences(String phone) {
+        //String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+        //String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (!TextUtils.isEmpty(avatar)) {
             Picasso.with(this)
                     .load(avatar)
                     .into(profileImage);
         }
-        profileName.setText(userName);
+        //profileName.setText(userName);
         profileNumber.setText(phone);
-        getSupportActionBar().setTitle(userName);
+        getSupportActionBar().setTitle(phone);
     }
 
     @Override
@@ -87,6 +90,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     @OnClick(R.id.profile_message)
     public void messageUser() {
-        //do nothing...
+        finish();
     }
 }

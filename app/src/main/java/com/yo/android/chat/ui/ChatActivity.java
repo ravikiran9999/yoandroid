@@ -1,9 +1,14 @@
 package com.yo.android.chat.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
+import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 
 /**
@@ -21,7 +26,7 @@ public class ChatActivity extends BaseActivity {
         args.putString(Constants.OPPONENT_ID, getIntent().getStringExtra(Constants.OPPONENT_ID));
 
         //args.putString(Constants.YOUR_PHONE_NUMBER, getIntent().getStringExtra(Constants.YOUR_PHONE_NUMBER));
-        if(getIntent().getParcelableExtra(Constants.CHAT_FORWARD) != null) {
+        if (getIntent().getParcelableExtra(Constants.CHAT_FORWARD) != null) {
             args.putParcelable(Constants.CHAT_FORWARD, getIntent().getParcelableExtra(Constants.CHAT_FORWARD));
         }
         userChatFragment.setArguments(args);
@@ -31,7 +36,28 @@ public class ChatActivity extends BaseActivity {
                 .add(android.R.id.content, userChatFragment)
                 .commit();
         enableBack();
-        String opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
-        getSupportActionBar().setTitle(opponent);
+        final String opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+
+        if (getSupportActionBar() != null) {
+            //getSupportActionBar().setTitle(opponent);
+
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayShowCustomEnabled(true);
+            View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
+
+            TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
+            customTitle.setText(opponent);
+
+            customTitle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
+                    intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
+                    startActivity(intent);
+                }
+            });
+            getSupportActionBar().setCustomView(customView);
+        }
+
     }
 }

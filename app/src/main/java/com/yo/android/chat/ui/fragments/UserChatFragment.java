@@ -54,7 +54,9 @@ import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
+import com.yo.android.model.YoAppContacts;
 import com.yo.android.ui.ShowPhotoActivity;
+import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -136,7 +138,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
-        if (!childRoomId.equals("")) {
+        if ((childRoomId != null) && (!childRoomId.equals(""))) {
             roomExist = 1;
 
             roomReference = authReference.child(childRoomId).child(Constants.CHATS);
@@ -232,9 +234,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 
-                menu.findItem(R.id.copy).setVisible(false);
-
-                return true;
+                //menu.findItem(R.id.copy).setVisible(false);
+                mode.getMenu().findItem(R.id.copy).setVisible(false);
+                return false;
             }
 
             @Override
@@ -285,6 +287,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     case R.id.forward:
                         if (chatMessage.isSelected()) {
                             forwardMessage(chatMessage);
+                            mode.finish();
                         }
                         break;
 
@@ -299,7 +302,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             }
         });
-
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     @Override
@@ -327,6 +330,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             case R.id.image:
                 getImageFromGallery();
                 break;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -379,12 +383,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
                 @Override
                 public void onResponse(Call<Room> call, Response<Room> response) {
-                    response.body();
-                    roomReference = authReference.child(response.body().getFirebaseRoomId()).child(Constants.CHATS);
-                    registerChildEventListener(roomReference);
-                    sendChatMessage(chatMessage);
-                    roomExist = 1;
-
+                    Room room = response.body();
+                    if(room.getFirebaseRoomId() != null) {
+                        roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
+                        registerChildEventListener(roomReference);
+                        sendChatMessage(chatMessage);
+                        roomExist = 1;
+                    }
                 }
 
                 @Override
@@ -581,14 +586,19 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
 
     private void forwardMessage(ChatMessage message) {
-        ChatFragment chatFragment = new ChatFragment();
+
+        /*YoContactsFragment yoContactsFragment = new YoContactsFragment();
         Bundle args = new Bundle();
         args.putParcelable(Constants.CHAT_FORWARD, message);
-        chatFragment.setArguments(args);
+        yoContactsFragment.setArguments(args);
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, chatFragment)
-                .commit();
+                .replace(android.R.id.content, yoContactsFragment)
+                .commit();*/
+
+        Intent intent = new Intent(getActivity(), AppContactsActivity.class);
+        intent.putExtra(Constants.CHAT_FORWARD, message);
+        startActivity(intent);
         getActivity().finish();
     }
 

@@ -83,9 +83,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        if (getArguments() != null) {
-            preferenceEndPoint.saveStringPreference(Constants.CHAT_FORWARD, new Gson().toJson(getArguments().getParcelable(Constants.CHAT_FORWARD)));
-        }
+
     }
 
     @Override
@@ -143,8 +141,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Room room = chatRoomListAdapter.getItem(position);
 
-        String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
-        ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
+        // Enable it to forward message (or) Image to group
+        /* String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
+           ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
 
         if (forwardChatMessage != null) {
             if (room.getGroupName() == null) {
@@ -153,7 +152,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName(), forwardChatMessage);
             }
 
-        } else if (room.getGroupName() == null) {
+        } else*/
+
+        if (room.getGroupName() == null) {
             navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber());
         } else if (room.getGroupName() != null) {
             navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName());
@@ -167,17 +168,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         startActivity(intent);
     }
 
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, ChatMessage forward) {
-        if (preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD) != null) {
-            preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
-        }
 
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
-        intent.putExtra(Constants.CHAT_FORWARD, forward);
-        startActivity(intent);
-    }
 
     @Override
     public void showProgressDialog() {
