@@ -111,7 +111,6 @@ public class BottomTabsActivity extends BaseActivity {
         startService(in);
         balanceHelper.checkBalance();
         //
-        balanceHelper.loadPaymentHistory();
         loadUserProfileInfo();
         updateDeviceToken();
 

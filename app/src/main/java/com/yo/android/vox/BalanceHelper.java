@@ -4,6 +4,9 @@ import android.text.TextUtils;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.api.YoApi;
+import com.yo.android.model.PaymentHistoryItem;
+import com.yo.android.model.dialer.SpentDetailResponse;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -12,7 +15,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -33,11 +39,12 @@ public class BalanceHelper {
     private Set<String> sCountryCodes;
     VoxFactory voxFactory;
     VoxApi.VoxService voxService;
+    YoApi.YoService yoService;
     PreferenceEndPoint prefs;
     Log mLog;
 
     @Inject
-    public BalanceHelper(Log log, VoxFactory voxFactory, VoxApi.VoxService voxService, @Named("login") PreferenceEndPoint preferenceEndPoint) {
+    public BalanceHelper(Log log, VoxFactory voxFactory, VoxApi.VoxService voxService, YoApi.YoService yoService, @Named("login") PreferenceEndPoint preferenceEndPoint) {
         this.mLog = log;
         this.voxFactory = voxFactory;
         this.voxService = voxService;
@@ -64,16 +71,14 @@ public class BalanceHelper {
                     String subscriberId = jsonObject.getJSONObject("DATA").getString("SUBSCRIBERID");
                     prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);
                     loadBalance();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } catch (IOException | JSONException e) {
+                    mLog.w(TAG, "loadSubscriberId", e);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                mLog.w(TAG, "loadSubscriberId:onFailure called");
             }
         });
     }
@@ -90,9 +95,7 @@ public class BalanceHelper {
                         String balance = jsonObject.getJSONObject("DATA").getString("CREDIT");
                         prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
                         mLog.i(TAG, "loadBalance: balance -  %s", balance);
-                    } catch (IOException e) {
-                        mLog.w(TAG, "loadBalance", e);
-                    } catch (JSONException e) {
+                    } catch (IOException | JSONException e) {
                         mLog.w(TAG, "loadBalance", e);
                     }
                 }
@@ -100,13 +103,14 @@ public class BalanceHelper {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                mLog.i(TAG, "loadBalance: onFailure");
             }
         });
     }
 
     public void addBalance(final String credit, final Callback<ResponseBody> callback) {
-        voxService.executeAction(voxFactory.addBalanceBody(prefs.getStringPreference(Constants.SUBSCRIBER_ID), credit)).enqueue(new Callback<ResponseBody>() {
+        String accessToken = prefs.getStringPreference("access_token");
+        yoService.addBalance(accessToken, prefs.getStringPreference(Constants.SUBSCRIBER_ID), credit).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
@@ -368,28 +372,53 @@ public class BalanceHelper {
         return result;
     }
 
-    public void loadPaymentHistory() {
+    public void loadPaymentHistory(final Callback<List<PaymentHistoryItem>> callback) {
         mLog.w(TAG, "loadPaymentHistory:called");
-        voxService.executeAction(voxFactory.getPaymentHistory(prefs.getStringPreference(Constants.SUBSCRIBER_ID))).enqueue(new Callback<ResponseBody>() {
+        yoService.getPaymentHistory(prefs.getStringPreference(Constants.SUBSCRIBER_ID)).enqueue(new Callback<List<PaymentHistoryItem>>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        String str = Util.toString(response.body().byteStream());
-                        mLog.i(TAG, "loadPaymentHistory: balance -  %s", str);
-                    } catch (IOException e) {
-                        mLog.w(TAG, "loadPaymentHistory", e);
-                    }
+            public void onResponse(Call<List<PaymentHistoryItem>> call, Response<List<PaymentHistoryItem>> response) {
+                mLog.i(TAG, "loadPaymentHistory: onResponse - %b", response.isSuccessful());
+                if (callback != null) {
+                    callback.onResponse(call, response);
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+            public void onFailure(Call<List<PaymentHistoryItem>> call, Throwable t) {
+                mLog.i(TAG, "loadPaymentHistory: onFailure");
+                if (callback != null) {
+                    callback.onFailure(call, t);
+                }
             }
         });
+
     }
 
+    public void loadSpentDetailsHistory(final Callback<ResponseBody> callback) {
+        mLog.w(TAG, "loadSpentDetailsHistory:called");
+        String subscriberId = prefs.getStringPreference(Constants.SUBSCRIBER_ID);
+        String fromDate = "2016­06­01";
+        String toDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String limit = "100";
+        voxService.executeAction(voxFactory.getSpentDetailsHistoryBody(subscriberId, fromDate, toDate, limit))
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (callback != null) {
+                            callback.onResponse(call, response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        mLog.i(TAG, "loadBalance: onFailure");
+                        if (callback != null) {
+                            callback.onFailure(call, t);
+                        }
+                    }
+                });
+
+    }
 
     public String getCurrentBalance() {
         String balance = prefs.getStringPreference(Constants.CURRENT_BALANCE, "0");
@@ -398,7 +427,7 @@ public class BalanceHelper {
             String format = df.format(Double.valueOf(balance));
             return format;
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            mLog.w(TAG, "getCurrentBalance", e);
         }
 
         return balance;

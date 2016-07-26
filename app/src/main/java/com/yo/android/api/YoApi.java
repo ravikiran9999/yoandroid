@@ -4,11 +4,12 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
-import com.yo.android.model.Room;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
+import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.model.Response;
+import com.yo.android.model.Room;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
@@ -145,7 +146,8 @@ public class YoApi {
 
         @GET("api/user/info.json")
         Call<UserProfileInfo> getUserInfo(@Query("access_token") String access_token);
-//        http://yoapp-dev.herokuapp.com/api/user/578090e7b45d200ebc3b8b99.json?
+
+        //        http://yoapp-dev.herokuapp.com/api/user/578090e7b45d200ebc3b8b99.json?
 // access_token=2538a604f78a24170b6b37db15e4e782c1d1c2c0b65e89a67ce4315c2ad61c4e&user[first_name]=bhumi&user[last_name]=parimi&user[email]=email@example.com&user[phone_no]=123456789&user[avatar]=image-file
         @Multipart
         @PUT("/api/user/{user_id}.json")
@@ -202,6 +204,16 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/user/update_device_token.json")
         Call<ResponseBody> updateDeviceTokenAPI(@Field("access_token") String access_token, @Field("device_token") String device_token);
+
+        @GET("api/user/payment_history.json")
+        Call<List<PaymentHistoryItem>> getPaymentHistory(@Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/user/add_balance.json")
+        Call<ResponseBody> addBalance(@Field("access_token") String access_token,
+                                      @Field("subscriber_id") String subscriber_id,
+                                      @Field("credit") String credit);
+
     }
 
     public interface YoRefreshTokenService {
