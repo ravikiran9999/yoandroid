@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -143,7 +144,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         RequestBody firstName =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), userName);
-showProgressDialog();
+        showProgressDialog();
         yoService.updateProfile(userId, description, firstName, null).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
@@ -152,6 +153,7 @@ showProgressDialog();
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    setResult(RESULT_OK, new Intent());
                     finish();
                 }
             }
