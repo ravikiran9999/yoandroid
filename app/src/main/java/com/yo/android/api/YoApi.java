@@ -4,7 +4,9 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
+import com.yo.android.model.Magazine;
 import com.yo.android.model.MagazineArticles;
+import com.yo.android.model.Notification;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.model.PaymentHistoryItem;
@@ -213,6 +215,13 @@ public class YoApi {
         Call<ResponseBody> addBalance(@Field("access_token") String access_token,
                                       @Field("subscriber_id") String subscriber_id,
                                       @Field("credit") String credit);
+
+        @GET("api/user/notifications.json")
+        Call<List<Notification>> getNotifications(@Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/articles.json")
+        Call<Articles> postStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("name") String name, @Field("description") String description, @Field("privacy") String privacy);
 
     }
 

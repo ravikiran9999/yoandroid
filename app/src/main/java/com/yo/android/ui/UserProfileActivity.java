@@ -4,10 +4,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
+import com.yo.android.adapters.AppContactsListAdapter;
+import com.yo.android.adapters.ProfileMembersAdapter;
 import com.yo.android.util.Constants;
 
 import butterknife.Bind;
@@ -30,6 +33,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     @Bind(R.id.profile_number)
     TextView profileNumber;
 
+
+    private ProfileMembersAdapter profileMembersAdapter;
+    private ListView membersList;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +45,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         ButterKnife.bind(this);
         enableBack();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        setDataFromPreferences();
+        String phone = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+        setDataFromPreferences(phone);
+        membersList = (ListView)findViewById(R.id.members);
+        profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
+        membersList.setAdapter(profileMembersAdapter);
     }
 
     @Override
@@ -47,19 +59,18 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     }
 
-
-    private void setDataFromPreferences() {
-        String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+    private void setDataFromPreferences(String phone) {
+        //String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+        //String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (!TextUtils.isEmpty(avatar)) {
             Picasso.with(this)
                     .load(avatar)
                     .into(profileImage);
         }
-        profileName.setText(userName);
+        //profileName.setText(userName);
         profileNumber.setText(phone);
-        getSupportActionBar().setTitle(userName);
+        getSupportActionBar().setTitle(phone);
     }
 
     @Override
@@ -87,6 +98,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     @OnClick(R.id.profile_message)
     public void messageUser() {
-        //do nothing...
+        finish();
     }
+
+
 }
