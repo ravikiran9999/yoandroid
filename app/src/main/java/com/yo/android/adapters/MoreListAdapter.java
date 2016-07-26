@@ -34,6 +34,8 @@ public class MoreListAdapter extends AbstractBaseAdapter<MoreData, MenuViewHolde
         holder.getTitleView().setText(item.getName());
         if (item.isHasOptions()) {
             holder.getImageView().setVisibility(View.VISIBLE);
+        } else {
+            holder.getImageView().setVisibility(View.GONE);
         }
 
         if (item.getName().trim().contains("Yo Credit")) {
