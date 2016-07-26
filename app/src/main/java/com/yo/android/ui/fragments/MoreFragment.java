@@ -227,11 +227,14 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
 
         } else if ("Settings".equals(name)) {
-            startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
+            Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
+            startActivityForResult(intent, Constants.GO_TO_SETTINGS);
+            //startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
         } else {
             Toast.makeText(getActivity(), "You have clicked on " + name, Toast.LENGTH_LONG).show();
         }
     }
+
 
     public void showLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -283,6 +286,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             }
+            case Constants.GO_TO_SETTINGS:
+                if (menuAdapter != null) {
+                    menuAdapter.notifyDataSetChanged();
+                }
+                break;
             default:
                 break;
         }
@@ -295,9 +303,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             String balance = mBalanceHelper.getCurrentBalance();
             String currencySymbol = mBalanceHelper.getCurrencySymbol();
             menuAdapter.getItem(1).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
-        }else if (key.equals(Constants.USER_NAME)) {
-           String name= preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+            menuAdapter.notifyDataSetChanged();
+        } else if (key.equals(Constants.USER_NAME)) {
+            String name = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
             menuAdapter.getItem(0).setName(name);
+            menuAdapter.notifyDataSetChanged();
         }
     }
 }

@@ -1,5 +1,4 @@
 package com.yo.android.model.dialer;
-
 import com.google.gson.annotations.SerializedName;
 
 public class SubscribersList {
