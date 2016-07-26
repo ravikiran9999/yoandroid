@@ -138,6 +138,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 intent.putExtra("MagazineId", id);
                                 intent.putExtra("MagazineTitle", magazineTitle);
                                 intent.putExtra("MagazineDesc", magazineDesc);
+                                intent.putExtra("MagazinePrivacy", magazinePrivacy);
                                 startActivity(intent);
                                 finish();
                             }
