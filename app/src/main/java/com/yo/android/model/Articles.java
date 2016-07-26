@@ -14,6 +14,7 @@ public class Articles {
     private String liked;
     private boolean isFollow;
     private String isFollowing;
+    private String magzine_id;
 
     public String getId() {
         return id;
@@ -85,5 +86,13 @@ public class Articles {
 
     public void setIsFollowing(String isFollowing) {
         this.isFollowing = isFollowing;
+    }
+
+    public String getMagzine_id() {
+        return magzine_id;
+    }
+
+    public void setMagzine_id(String magzine_id) {
+        this.magzine_id = magzine_id;
     }
 }
