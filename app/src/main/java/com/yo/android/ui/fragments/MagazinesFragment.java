@@ -30,6 +30,7 @@ import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.WishListActivity;
+import com.yo.android.util.Util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -198,12 +199,16 @@ public class MagazinesFragment extends BaseFragment {
                     Log.d("Search", "The selected item is " + parent.getItemAtPosition(position));
                     String topicName = (String) parent.getItemAtPosition(position);
                     searchTextView.setText(topicName);
+                    searchTextView.setSelection(topicName.trim().length());
                     String topicId = "";
                     for (int i = 0; i < topicsList.size(); i++) {
                         if (topicsList.get(i).getName().equals(topicName)) {
                             topicId = topicsList.get(i).getId();
+                            break;
                         }
                     }
+                    if (getActivity() != null)
+                        Util.hideKeyboard(getActivity(), searchTextView);
                     MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
                     List<String> tagIds = new ArrayList<String>();
                     tagIds.add(topicId);
