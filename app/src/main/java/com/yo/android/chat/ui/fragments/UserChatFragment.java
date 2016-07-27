@@ -146,7 +146,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         ArrayList<ChatMessage> chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
 
         if (chatForwards != null) {
-            for(int i =0; i < chatForwards.size(); i++) {
+            for (int i = 0; i < chatForwards.size(); i++) {
                 if (chatForwards.get(i).getType().equals(Constants.IMAGE)) {
                     sendChatMessage(chatForwards.get(i).getImagePath(), chatForwards.get(i).getType());
                 } else if (chatForwards.get(i).getType().equals(Constants.TEXT)) {
@@ -221,6 +221,21 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 mode.setTitle(Integer.toString(checkedCount));
                 userChatAdapter.toggleSelection(position);
                 chatMessage.setSelected(true);
+                //BUG FIX - 5576	Chat - User shouldn't be able to copy images
+                boolean imageSelected = false;
+                SparseBooleanArray selected = userChatAdapter.getSelectedIds();
+                for (int i = (selected.size() - 1); i >= 0; i--) {
+                    if (selected.valueAt(i)) {
+
+                        final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
+                        if (selectedItem.getType().equalsIgnoreCase(Constants.IMAGE)) {
+                            imageSelected = true;
+                        }
+                    }
+                }
+                Menu menu = mode.getMenu();
+                menu.findItem(R.id.copy).setVisible(!imageSelected);
+                //==
 
                 if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
                     getActivity().invalidateOptionsMenu();
