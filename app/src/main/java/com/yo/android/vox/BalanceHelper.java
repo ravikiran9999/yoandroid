@@ -6,7 +6,6 @@ import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.PaymentHistoryItem;
-import com.yo.android.model.dialer.SpentDetailResponse;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -48,6 +47,7 @@ public class BalanceHelper {
         this.mLog = log;
         this.voxFactory = voxFactory;
         this.voxService = voxService;
+        this.yoService = yoService;
         this.prefs = preferenceEndPoint;
     }
 

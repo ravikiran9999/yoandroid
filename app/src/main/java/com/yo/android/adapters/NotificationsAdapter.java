@@ -7,9 +7,9 @@ import android.view.View;
 import com.yo.android.R;
 import com.yo.android.helpers.NotificationsViewHolder;
 import com.yo.android.model.Notification;
+import com.yo.android.util.Util;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -40,7 +40,7 @@ public class NotificationsAdapter extends AbstractBaseAdapter<Notification, Noti
 
         holder.getTvNotificationsDesc().setText(item.getMessage());
         //if (item.getMessage().contains("is following you")) {
-            holder.getImvNotificationsType().setImageResource(R.drawable.ic_follow_notification);
+        holder.getImvNotificationsType().setImageResource(R.drawable.ic_follow_notification);
         //}
         /*else {
             holder.getImvNotificationsType().setImageResource(0);
@@ -48,15 +48,12 @@ public class NotificationsAdapter extends AbstractBaseAdapter<Notification, Noti
         }*/
 
         long time = 0;
-        try {
-            String modifiedTime = item.getUpdated_at().substring(0, item.getUpdated_at().lastIndexOf("."));
-            Date date=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
-            Calendar calendar=Calendar.getInstance();
-            calendar.setTime(date);
-            time = calendar.getTimeInMillis();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        String modifiedTime = item.getUpdated_at().substring(0, item.getUpdated_at().lastIndexOf("."));
+//            Date date=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
+        Date date = Util.convertUtcToGmt(modifiedTime);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        time = calendar.getTimeInMillis();
 
         String timeStamp = DateUtils.getRelativeTimeSpanString(time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
         holder.getTvNotificationTime().setText(timeStamp);

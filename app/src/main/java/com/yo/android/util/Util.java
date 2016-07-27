@@ -293,11 +293,11 @@ public class Util {
             i.putExtra(Intent.EXTRA_SUBJECT, "Sharing Article");
             i.putExtra(Intent.EXTRA_TEXT, url);
             view.getContext().startActivity(Intent.createChooser(i, "Sharing Article"));
-        }
-        catch (ActivityNotFoundException e) {
+        } catch (ActivityNotFoundException e) {
 
         }
     }
+
     public static void hideKeyboard(Context context, View view) {
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -314,5 +314,19 @@ public class Util {
                     Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
+    }
+
+    public static Date convertUtcToGmt(String time) {
+        try {
+            long ts = System.currentTimeMillis();
+            Date localTime = new Date(ts);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date gmtTime = sdf.parse(time);
+            return gmtTime;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

@@ -222,11 +222,13 @@ public class MagazinesFragment extends BaseFragment {
                     }
                     if (getActivity() != null)
                         Util.hideKeyboard(getActivity(), searchTextView);
-                    MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
+//                    MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
                     List<String> tagIds = new ArrayList<String>();
                     tagIds.add(topicId);
-                    fragment.loadArticles(tagIds);
-
+//                    fragment.loadArticles(tagIds);
+                    if (mMagazineFlipArticlesFragment != null) {
+                        mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                    }
 
                     return;
                 }
