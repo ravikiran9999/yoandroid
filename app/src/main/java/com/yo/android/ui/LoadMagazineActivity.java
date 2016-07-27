@@ -22,7 +22,6 @@ import com.yo.android.model.Articles;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -108,38 +107,44 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View v) {
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        /*yoService.addStoryMagazineAPI(accessToken, url, magazineId).enqueue(new Callback<Articles>() {
-            @Override
-            public void onResponse(Call<Articles> call, Response<Articles> response) {
-                setResult(RESULT_OK);
-                finish();
-                Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
-                intent.putExtra("MagazineTitle", magazineTitle);
-                intent.putExtra("MagazineId", magazineId);
-                intent.putExtra("MagazineDesc", magazineDesc);
-                startActivity(intent);
-            }
+        if (magazineId != null) {
+            addStoryToExistingMagazine(accessToken);
+        } else {
+            createMagazineWithStory(accessToken);
+        }
+    }
 
-            @Override
-            public void onFailure(Call<Articles> call, Throwable t) {
-
-            }
-        });*/
+    private void createMagazineWithStory(String accessToken) {
         yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy, magazineId).enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
-                if(response!= null) {
+                if (response != null) {
                     setResult(RESULT_OK);
                     finish();
                     Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
                     intent.putExtra("MagazineTitle", magazineTitle);
-                    if(response.body() != null) {
+                    if (response.body() != null) {
                         intent.putExtra("MagazineId", response.body().getMagzine_id());
                     }
                     intent.putExtra("MagazineDesc", magazineDesc);
                     intent.putExtra("MagazinePrivacy", magazinePrivacy);
                     startActivity(intent);
                 }
+            }
+
+            @Override
+            public void onFailure(Call<Articles> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void addStoryToExistingMagazine(String accessToken) {
+        yoService.addStoryMagazineAPI(accessToken, url, magazineId).enqueue(new Callback<Articles>() {
+            @Override
+            public void onResponse(Call<Articles> call, Response<Articles> response) {
+                setResult(RESULT_OK);
+                finish();
             }
 
             @Override

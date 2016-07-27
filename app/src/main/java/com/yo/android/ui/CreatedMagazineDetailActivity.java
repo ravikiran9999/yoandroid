@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -14,12 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,56 +102,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         CheckBox magazineLike = (CheckBox) findViewById(R.id.cb_magazine_like);*/
 
 
-
-        articlesList.clear();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
-            @Override
-            public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
-                 final String id = response.body().getId();
-                if (response.body().getArticlesList()!= null && response.body().getArticlesList().size() > 0) {
-                    for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                        //articlesList = new ArrayList<Travels.Data>();
-                        flipContainer.setVisibility(View.VISIBLE);
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
-                        }
-                        articlesList.add(response.body().getArticlesList().get(i));
-                        // }
-                    }
-                    myBaseAdapter.addItems(articlesList);
-                } else {
-                    flipContainer.setVisibility(View.GONE);
-                    if (noArticals != null) {
-                        noArticals.setVisibility(View.VISIBLE);
-
-                        noArticals.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(CreatedMagazineDetailActivity.this, LoadMagazineActivity.class);
-                                intent.putExtra("MagazineId", id);
-                                intent.putExtra("MagazineTitle", magazineTitle);
-                                intent.putExtra("MagazineDesc", magazineDesc);
-                                intent.putExtra("MagazinePrivacy", magazinePrivacy);
-                                startActivity(intent);
-                                finish();
-                            }
-                        });
-                    }
-
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<MagazineArticles> call, Throwable t) {
-                flipContainer.setVisibility(View.GONE);
-                if (noArticals != null) {
-                    noArticals.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        loadArticles();
 
 
         /*tvTitle.setText(articleTitle);
@@ -214,6 +162,58 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
     }
 
+    private void loadArticles() {
+        articlesList.clear();
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
+            @Override
+            public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
+                final String id = response.body().getId();
+                if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
+                    for (int i = 0; i < response.body().getArticlesList().size(); i++) {
+                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                        //articlesList = new ArrayList<Travels.Data>();
+                        flipContainer.setVisibility(View.VISIBLE);
+                        if (noArticals != null) {
+                            noArticals.setVisibility(View.GONE);
+                        }
+                        articlesList.add(response.body().getArticlesList().get(i));
+                        // }
+                    }
+                    myBaseAdapter.addItems(articlesList);
+                } else {
+                    flipContainer.setVisibility(View.GONE);
+                    if (noArticals != null) {
+                        noArticals.setVisibility(View.VISIBLE);
+
+                        noArticals.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(CreatedMagazineDetailActivity.this, LoadMagazineActivity.class);
+                                intent.putExtra("MagazineId", id);
+                                intent.putExtra("MagazineTitle", magazineTitle);
+                                intent.putExtra("MagazineDesc", magazineDesc);
+                                intent.putExtra("MagazinePrivacy", magazinePrivacy);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<MagazineArticles> call, Throwable t) {
+                flipContainer.setVisibility(View.GONE);
+                if (noArticals != null) {
+                    noArticals.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -254,7 +254,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
         @Override
         public Articles getItem(int position) {
-            if (position>=0 && getCount() > position) {
+            if (position >= 0 && getCount() > position) {
                 return items.get(position);
             }
             return null;
@@ -480,21 +480,28 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.menu_edit:
                 Intent intent = new Intent(CreatedMagazineDetailActivity.this, EditMagazineActivity.class);
-                if(editedTitle != null) {
+                if (editedTitle != null) {
                     intent.putExtra("MagazineTitle", editedTitle);
-                }
-                else {
+                } else {
                     intent.putExtra("MagazineTitle", magazineTitle);
                 }
                 intent.putExtra("MagazineId", magazineId);
-                if(editedDesc != null) {
+                if (editedDesc != null) {
                     intent.putExtra("MagazineDesc", editedDesc);
-                }
-                else {
+                } else {
                     intent.putExtra("MagazineDesc", magazineDesc);
                 }
                 intent.putExtra("MagazinePrivacy", magazinePrivacy);
                 startActivityForResult(intent, 3);
+                break;
+            case R.id.menu_add_story:
+                intent = new Intent(CreatedMagazineDetailActivity.this, LoadMagazineActivity.class);
+                intent.putExtra("MagazineId", magazineId);
+                intent.putExtra("MagazineTitle", magazineTitle);
+                intent.putExtra("MagazineDesc", magazineDesc);
+                intent.putExtra("MagazinePrivacy", magazinePrivacy);
+                startActivityForResult(intent, 2);
+
                 break;
         }
         return true;
@@ -516,8 +523,10 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed  here it is 2
-        if (requestCode == 3 && resultCode == RESULT_OK) {
-            if(data!= null) {
+        if (requestCode == 2 && resultCode == RESULT_OK) {
+            loadArticles();
+        } else if (requestCode == 3 && resultCode == RESULT_OK) {
+            if (data != null) {
                 editedTitle = data.getStringExtra("EditedTitle");
                 editedDesc = data.getStringExtra("EditedDesc");
 
