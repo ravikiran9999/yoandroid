@@ -29,6 +29,7 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
+import com.yo.android.model.Room;
 import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
@@ -103,13 +104,20 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         String opponentPhoneNumber = contact.getPhoneNo();
 
-        if (forwardChatMessages != null) {
+        /*if (forwardChatMessages != null) {
             navigateToChatScreen(contact.getFirebaseRoomId(), opponentPhoneNumber, forwardChatMessages, contact.getId());
 
         } else if (contact.getFirebaseRoomId() != null) {
             navigateToChatScreen(contact.getFirebaseRoomId(), opponentPhoneNumber, yourPhoneNumber, null);
         } else {
             navigateToChatScreen("", opponentPhoneNumber, yourPhoneNumber, contact.getId());
+        }*/
+
+        if (forwardChatMessages != null) {
+            navigateToChatScreen(contact, forwardChatMessages);
+
+        } else {
+            navigateToChatScreen(contact);
         }
     }
 
@@ -123,16 +131,34 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         getActivity().finish();
     }
 
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, ArrayList<ChatMessage> forward, String opponentId) {
-        /*if (preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD) != null) {
+    /*private void navigateToChatScreen(String roomId, String opponentPhoneNumber, ArrayList<ChatMessage> forward, String opponentId) {
+        *//*if (preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD) != null) {
             preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
-        }*/
+        }*//*
 
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
         intent.putExtra(Constants.OPPONENT_ID, opponentId);
         intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, forward);
+        startActivity(intent);
+        getActivity().finish();
+    }*/
+
+    private void navigateToChatScreen(Contact contact,  ArrayList<ChatMessage> forward) {
+
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra(Constants.CONTACT, contact);
+        intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, forward);
+        intent.putExtra(Constants.TYPE, Constants.CONTACT);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
+    private void navigateToChatScreen(Contact contact) {
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra(Constants.CONTACT, contact);
+        intent.putExtra(Constants.TYPE, Constants.CONTACT);
         startActivity(intent);
         getActivity().finish();
     }
