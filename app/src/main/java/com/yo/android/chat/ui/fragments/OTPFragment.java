@@ -251,7 +251,7 @@ public class OTPFragment extends BaseFragment {
         builder.setNegativeButton("Skip", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                reSendTextBtn.setText("Resend");
+                //reSendTextBtn.setText("Resend");
             }
         });
         AlertDialog dialog = builder.create();
@@ -298,6 +298,7 @@ public class OTPFragment extends BaseFragment {
         //Reset
         duration = MAX_DURATION;
         verifyButton.setEnabled(true);
+        reSendTextBtn.setText("Resend");
     }
 
 
