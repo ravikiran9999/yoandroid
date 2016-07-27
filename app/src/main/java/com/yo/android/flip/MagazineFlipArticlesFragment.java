@@ -212,7 +212,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
                 networkFailureText.setVisibility(View.VISIBLE);
             }
-            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            //mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
         } else {
             articlesRootLayout.setVisibility(View.VISIBLE);
