@@ -133,7 +133,9 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     finish();
                     Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
                     intent.putExtra("MagazineTitle", magazineTitle);
-                    intent.putExtra("MagazineId", response.body().getMagzine_id());
+                    if(response.body() != null) {
+                        intent.putExtra("MagazineId", response.body().getMagzine_id());
+                    }
                     intent.putExtra("MagazineDesc", magazineDesc);
                     intent.putExtra("MagazinePrivacy", magazinePrivacy);
                     startActivity(intent);

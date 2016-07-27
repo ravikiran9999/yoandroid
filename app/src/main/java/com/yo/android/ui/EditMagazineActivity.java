@@ -121,6 +121,7 @@ public class EditMagazineActivity extends BaseActivity {
                             intent.putExtra("EditedTitle", title);
                             intent.putExtra("EditedDesc", description);
                             setResult(RESULT_OK, intent);
+                            EventBus.getDefault().post(Constants.EDIT_MAGAZINE_ACTION);
                             finish();
                         }
 
