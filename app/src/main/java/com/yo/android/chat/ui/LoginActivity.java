@@ -86,6 +86,9 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         };
         mList = mCountryCodeHelper.readCodesFromAssets();
         String str = mCountryCodeHelper.getCountryZipCode(this);
+        if (TextUtils.isEmpty(str)) {
+            str = "sg";
+        }
         int pos = 0;
         for (CountryCode countryCode : mList) {
             if (countryCode.getCountryID().equalsIgnoreCase(str)) {
