@@ -356,6 +356,7 @@ public class MyCollectionDetails extends BaseActivity {
                 //photoView.loadUrl(data.getImage_filename());
                 Picasso.with(MyCollectionDetails.this)
                         .load(data.getImage_filename())
+                        .fit()
                         .into(photoView);
             }
             //}
