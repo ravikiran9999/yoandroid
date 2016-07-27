@@ -64,6 +64,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     private String magazineId;
     private String magazineDesc;
     private String magazinePrivacy;
+    private String editedTitle;
+    private String editedDesc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -478,9 +480,19 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.menu_edit:
                 Intent intent = new Intent(CreatedMagazineDetailActivity.this, EditMagazineActivity.class);
-                intent.putExtra("MagazineTitle", magazineTitle);
+                if(editedTitle != null) {
+                    intent.putExtra("MagazineTitle", editedTitle);
+                }
+                else {
+                    intent.putExtra("MagazineTitle", magazineTitle);
+                }
                 intent.putExtra("MagazineId", magazineId);
-                intent.putExtra("MagazineDesc", magazineDesc);
+                if(editedDesc != null) {
+                    intent.putExtra("MagazineDesc", editedDesc);
+                }
+                else {
+                    intent.putExtra("MagazineDesc", magazineDesc);
+                }
                 intent.putExtra("MagazinePrivacy", magazinePrivacy);
                 startActivityForResult(intent, 3);
                 break;
@@ -506,8 +518,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         // check if the request code is same as what is passed  here it is 2
         if (requestCode == 3 && resultCode == RESULT_OK) {
             if(data!= null) {
-                String editedTitle = data.getStringExtra("EditedTitle");
-                String editedDesc = data.getStringExtra("EditedDesc");
+                editedTitle = data.getStringExtra("EditedTitle");
+                editedDesc = data.getStringExtra("EditedDesc");
 
                 getSupportActionBar().setTitle(editedTitle);
             }
