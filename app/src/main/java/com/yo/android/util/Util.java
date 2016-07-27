@@ -318,8 +318,6 @@ public class Util {
 
     public static Date convertUtcToGmt(String time) {
         try {
-            long ts = System.currentTimeMillis();
-            Date localTime = new Date(ts);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date gmtTime = sdf.parse(time);
@@ -329,4 +327,18 @@ public class Util {
         }
         return null;
     }
+
+    public static String parseConvertUtcToGmt(String time) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date gmtTime = sdf.parse(time);
+            String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+            return timeStamp;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+
 }
