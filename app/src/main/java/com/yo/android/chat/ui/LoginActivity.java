@@ -183,6 +183,8 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
                     transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
                     transaction.disallowAddToBackStack();
                     transaction.commit();
+                } else {
+                    mToastFactory.showToast("Please check valid phone number.");
                 }
 
             }
