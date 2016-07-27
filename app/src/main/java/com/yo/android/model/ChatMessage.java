@@ -40,6 +40,8 @@ public class ChatMessage implements Parcelable {
     private String type;
     private String roomId;
     private boolean selected;
+    //For caching the image
+    private String imageUrl;
 
     public ChatMessage() {
     }
@@ -193,4 +195,11 @@ public class ChatMessage implements Parcelable {
         }
     };
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

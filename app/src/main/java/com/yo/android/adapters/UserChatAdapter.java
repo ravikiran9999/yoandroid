@@ -158,12 +158,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     }
 
-    private void addView(final LinearLayout linearLayout, ChatMessage item, final UserChatViewHolder holder) {
+    private void addView(final LinearLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
         linearLayout.removeAllViews();
         linearLayout.setTag(holder);
 
         if (item.getType().equals(Constants.TEXT)) {
-            if(roomType != null) {
+            if (roomType != null) {
                 TextView tvName = new TextView(context);
                 tvName.setTextColor(context.getResources().getColor(colorPrimaryDark));
                 tvName.setText(item.getSenderID());
@@ -181,7 +181,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {
-                if(roomType != null) {
+                if (roomType != null) {
                     TextView tvName = new TextView(context);
                     tvName.setTextColor(context.getResources().getColor(colorPrimaryDark));
                     tvName.setText(item.getSenderID());
@@ -195,18 +195,22 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 StorageReference storageRef = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
                 StorageReference imageRef = storageRef.child(item.getImagePath());
                 linearLayout.addView(imageView);
-
-                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.with(context).load(uri).into(imageView);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+                if (item.getImageUrl() != null) {
+                    Picasso.with(context).load(Uri.parse(item.getImageUrl())).into(imageView);
+                } else {
+                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.with(context).load(uri).into(imageView);
+                            item.setImageUrl(uri.toString());
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
 
             } catch (OutOfMemoryError outOfMemoryError) {
                 outOfMemoryError.printStackTrace();
