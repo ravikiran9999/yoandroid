@@ -35,6 +35,7 @@ import com.yo.android.util.Util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -101,11 +102,22 @@ public class MagazinesFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         //MagazineTopicsSelectionFragment fragment = new MagazineTopicsSelectionFragment();
         //getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
-        mMagazineFlipArticlesFragment = new MagazineFlipArticlesFragment();
+
         mAdapter = new ArrayAdapter<String>
                 (getActivity(), R.layout.textviewitem, new ArrayList<String>());
+        if ((mMagazineFlipArticlesFragment = (MagazineFlipArticlesFragment) getChildFragmentManager().findFragmentById(R.id.bottom)) != null) {
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.bottom, mMagazineFlipArticlesFragment)
+                    .commit();
 
-        getChildFragmentManager().beginTransaction().add(R.id.bottom, mMagazineFlipArticlesFragment).commit();
+        } else {
+            mMagazineFlipArticlesFragment = new MagazineFlipArticlesFragment();
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.bottom, mMagazineFlipArticlesFragment)
+                    .commit();
+        }
 
         topicsList = new ArrayList<Topics>();
 
@@ -209,7 +221,7 @@ public class MagazinesFragment extends BaseFragment {
             searchTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                      Log.d("Search", "The selected item is " + parent.getItemAtPosition(position));
+                    Log.d("Search", "The selected item is " + parent.getItemAtPosition(position));
                     String topicName = (String) parent.getItemAtPosition(position);
                     searchTextView.setText(topicName);
                     searchTextView.setSelection(topicName.trim().length());
@@ -238,7 +250,14 @@ public class MagazinesFragment extends BaseFragment {
                 @Override
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
-                        mMagazineFlipArticlesFragment.loadAllArticles();
+                        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+                            String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
+                            if (prefTags != null) {
+                                List<String> tagIds = Arrays.asList(prefTags);
+                                mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                            }
+                        }
+
                     }
                     return true;
                 }
