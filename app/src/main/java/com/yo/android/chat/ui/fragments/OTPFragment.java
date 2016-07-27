@@ -88,7 +88,6 @@ public class OTPFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ot, container, false);
 
-
         verifyButton = (Button) view.findViewById(R.id.verify);
         etOtp = (EditText) view.findViewById(R.id.otp);
         txtTimer = (TextView) view.findViewById(R.id.txt_timer);
@@ -251,7 +250,8 @@ public class OTPFragment extends BaseFragment {
         builder.setNegativeButton("Skip", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //reSendTextBtn.setText("Resend");
+                reSendTextBtn.setText("Resend");
+                dialog.dismiss();
             }
         });
         AlertDialog dialog = builder.create();
@@ -265,7 +265,7 @@ public class OTPFragment extends BaseFragment {
         public void run() {
             String timer = String.format("%d seconds left...", duration);
             txtTimer.setText(timer);
-            formateDuration(duration);
+            formatDuration(duration);
             txtTimer.setVisibility(View.GONE);
             duration--;
             if (duration > 0) {
@@ -283,7 +283,7 @@ public class OTPFragment extends BaseFragment {
         }
     };
 
-    private void formateDuration(int duration) {
+    private void formatDuration(int duration) {
         String str = duration + "";
         if (duration < 10) {
             str = "0" + duration;

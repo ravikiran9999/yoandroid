@@ -3,49 +3,67 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/ll_no_articles"
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:gravity="center"
+        android:id="@+id/network_failure"
+        android:padding="10dp"
+        android:text="@string/connectivity_network_settings"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/txtEmptyArticals"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="You have not selected any topics. Please select them by clicking on Follow More Topics button."
-            android:textColor="@color/tab_grey"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/btn_magazine_follow_topics"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/button_border"
-            android:gravity="center"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:text="Follow More Topics"
-            android:textAllCaps="false"
-            android:textColor="@color/tab_grey" />
-    </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="visible" />
 
     <FrameLayout
-        android:id="@+id/flipView_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:id="@+id/article_root_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
+        <LinearLayout
+            android:id="@+id/ll_no_articles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtEmptyArticals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You have not selected any topics. Please select them by clicking on Follow More Topics button."
+                android:textColor="@color/tab_grey"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_magazine_follow_topics"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_border"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Follow More Topics"
+                android:textAllCaps="false"
+                android:textColor="@color/tab_grey" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible" />
+
+        <FrameLayout
+            android:id="@+id/flipView_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
 </FrameLayout>

@@ -2,6 +2,7 @@ package com.yo.android.flip;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +39,7 @@ import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.IO;
 import com.aphidmobile.utils.UI;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -84,6 +86,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private Button followMoreTopics;
     private boolean isFollowing;
 
+    @Inject
+    ConnectivityHelper mHelper;
+    private FrameLayout articlesRootLayout;
+    private TextView networkFailureText;
+
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
         // Required empty public constructor
@@ -107,8 +114,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.magazine_flip_fragment, container, false);
+        articlesRootLayout = (FrameLayout) view.findViewById(R.id.article_root_layout);
         llNoArticles = (LinearLayout) view.findViewById(R.id.ll_no_articles);
         flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
+        networkFailureText = (TextView) view.findViewById(R.id.network_failure);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
         flipView = new FlipViewController(getActivity());
         myBaseAdapter = new MyBaseAdapter(getActivity(), flipView);
@@ -197,6 +206,18 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
     public void loadArticles(List<String> tagIds) {
+        if (!mHelper.isConnected()) {
+            if (articlesRootLayout.getChildCount() > 0) {
+                articlesRootLayout.setVisibility(View.GONE);
+                networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
+                networkFailureText.setVisibility(View.VISIBLE);
+            }
+            //mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        } else {
+            articlesRootLayout.setVisibility(View.VISIBLE);
+            networkFailureText.setVisibility(View.GONE);
+        }
         articlesList.clear();
         myBaseAdapter.addItems(new ArrayList<Articles>());
         if (mProgress != null) {
@@ -247,6 +268,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     @Override
                     public void run() {
                         if (llNoArticles != null) {
+                            networkFailureText.setVisibility(View.GONE);
                             llNoArticles.setVisibility(View.VISIBLE);
                             flipContainer.setVisibility(View.GONE);
 //                            flipView.refreshAllPages();
@@ -726,6 +748,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
     public void loadAllArticles() {
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
         articlesList.clear();
         myBaseAdapter.addItems(articlesList);
         if (mProgress != null) {

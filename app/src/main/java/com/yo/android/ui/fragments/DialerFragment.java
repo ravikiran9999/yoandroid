@@ -400,6 +400,11 @@ public class DialerFragment extends BaseFragment {
     }
 
     @Override
+    public void showOrHideTabs(boolean show) {
+        //super.showOrHideTabs(show);
+    }
+
+    @Override
     public void showProgressDialog() {
         progress.setVisibility(View.VISIBLE);
     }

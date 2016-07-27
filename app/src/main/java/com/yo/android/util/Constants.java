@@ -18,6 +18,7 @@ public class Constants {
     public static final String SELECTED_TEXT = "selected_text";
     public static final String GROUP_NAME = "groupName";
     public static final String SELECTED_CONTACTS = "selected_contacts";
+    public static final String CONTACT = "contact";
 
     //Preference
     public static final String USER_ID = "user_id";

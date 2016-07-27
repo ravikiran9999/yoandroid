@@ -37,7 +37,6 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
@@ -54,9 +53,7 @@ import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
-import com.yo.android.model.YoAppContacts;
 import com.yo.android.ui.ShowPhotoActivity;
-import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -102,6 +99,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private int roomExist = 0;
     private Boolean isChildEventListenerAdd = Boolean.FALSE;
     private String childRoomId;
+    private String roomType;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -167,6 +165,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
 
+        roomType = getArguments().getString(Constants.TYPE);
+
         listView = (ListView) view.findViewById(R.id.listView);
         listStickeyHeader = (TextView) view.findViewById(R.id.time_stamp_header);
         listView.setDivider(null);
@@ -175,7 +175,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         View send = view.findViewById(R.id.send);
         chatText = (EditText) view.findViewById(R.id.chat_text);
         chatMessageArray = new ArrayList<>();
-        userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
+        userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType);
         listView.setAdapter(userChatAdapter);
 
         listView.setOnItemClickListener(this);
@@ -296,22 +296,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         for (int i = 0; i < selected.size(); i++) {
                             if (selected.valueAt(i)) {
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
-                             /*   if (!selectedItem.getType().equals(getResources().getString(R.string.image))) {
-                                    builder.append(selectedItem.getMessage());
-                                    if (i < selected.size() - 1) {
-                                        builder.append("\n");
-                                    }
-                                }*/
                                 chatMessageArrayList.add(selectedItem);
                             }
                         }
                         forwardMessage(chatMessageArrayList);
                         mode.finish();
-                        /*if (chatMessage.isSelected()) {
-
-                            forwardMessage(chatMessage);
-                            mode.finish();
-                        }*/
                         break;
 
                     default:
@@ -577,7 +566,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                sendImage(downloadUrl.getLastPathSegment());
+                if (downloadUrl != null) {
+                    sendImage(downloadUrl.getLastPathSegment());
+                }
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -609,15 +600,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
 
     private void forwardMessage(ArrayList<ChatMessage> message) {
-
-        /*YoContactsFragment yoContactsFragment = new YoContactsFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(Constants.CHAT_FORWARD, message);
-        yoContactsFragment.setArguments(args);
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(android.R.id.content, yoContactsFragment)
-                .commit();*/
 
         Intent intent = new Intent(getActivity(), AppContactsActivity.class);
         intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, message);
