@@ -59,4 +59,5 @@ public class Constants {
 
 
     public static String DELETE_MAGAZINE_ACTION = "com.edit.magazine.DELETE";
+    public static String EDIT_MAGAZINE_ACTION = "com.edit.magazine.EDIT";
 }

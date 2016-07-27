@@ -168,7 +168,7 @@ public class CreateMagazineActivity extends BaseActivity {
     }
 
     public void onEventMainThread(String action) {
-        if (Constants.DELETE_MAGAZINE_ACTION.equals(action)) {
+        if (Constants.DELETE_MAGAZINE_ACTION.equals(action) || Constants.EDIT_MAGAZINE_ACTION.equals(action)) {
 
             final String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getMagazinesAPI(accessToken).enqueue(new Callback<List<OwnMagazine>>() {

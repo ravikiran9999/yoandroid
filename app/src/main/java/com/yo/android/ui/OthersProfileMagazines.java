@@ -65,8 +65,8 @@ public class OthersProfileMagazines extends BaseFragment {
             public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
-                    TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(0).getCustomView().findViewById(R.id.count);
-                    count.setText("" + response.body().size());
+                   /* TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(0).getCustomView().findViewById(R.id.count);
+                    count.setText("" + response.body().size());*/
                     List<OwnMagazine> magazineList = response.body();
                     adapter = new OthersMagazinesAdapter(getActivity());
                     adapter.addItems(magazineList);

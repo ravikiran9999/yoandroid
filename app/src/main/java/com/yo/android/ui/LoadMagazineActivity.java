@@ -125,7 +125,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
             }
         });*/
-        yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<Articles>() {
+        yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy, magazineId).enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 if(response!= null) {
@@ -133,7 +133,9 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     finish();
                     Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
                     intent.putExtra("MagazineTitle", magazineTitle);
-                    intent.putExtra("MagazineId", response.body().getMagzine_id());
+                    if(response.body() != null) {
+                        intent.putExtra("MagazineId", response.body().getMagzine_id());
+                    }
                     intent.putExtra("MagazineDesc", magazineDesc);
                     intent.putExtra("MagazinePrivacy", magazinePrivacy);
                     startActivity(intent);

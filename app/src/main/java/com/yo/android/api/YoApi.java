@@ -221,7 +221,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/articles.json")
-        Call<Articles> postStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("name") String name, @Field("description") String description, @Field("privacy") String privacy);
+        Call<Articles> postStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("name") String name, @Field("description") String description, @Field("privacy") String privacy, @Field("magzine_id") String magzine_id);
 
     }
 

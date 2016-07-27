@@ -109,8 +109,8 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                         if (noArticals != null) {
                             noArticals.setVisibility(View.GONE);
                         }
-                        TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(2).getCustomView().findViewById(R.id.count);
-                        count.setText("" + response.body().size());
+                        /*TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(2).getCustomView().findViewById(R.id.count);
+                        count.setText("" + response.body().size());*/
                         //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
                         //articlesList = new ArrayList<Travels.Data>();
                         articlesList.add(response.body().get(i));
