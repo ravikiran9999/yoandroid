@@ -2,12 +2,10 @@ package com.yo.android.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.text.format.DateUtils;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,6 +19,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
@@ -28,6 +27,8 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
+
+import static com.yo.android.R.color.colorPrimaryDark;
 
 
 /**
@@ -38,6 +39,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     private LayoutInflater inflater;
     private String userId;
+    private String roomType;
     private Context context;
     private SparseBooleanArray mSelectedItemsIds;
     private LinearLayout.LayoutParams layoutParams;
@@ -48,12 +50,13 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     }
 
-    public UserChatAdapter(Activity context, String userId) {
+    public UserChatAdapter(Activity context, String userId, String type) {
         super(context);
         inflater = LayoutInflater.from(context);
         this.context = context.getBaseContext();
         this.userId = userId;
         this.mSelectedItemsIds = new SparseBooleanArray();
+        this.roomType = type;
     }
 
 
@@ -99,7 +102,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     @Override
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
-            String timeStamp = DateUtils.getRelativeTimeSpanString(item.getTime(), System.currentTimeMillis(), DateUtils.WEEK_IN_MILLIS).toString();
             LinearLayout layout = new LinearLayout(context);
             holder.getChatTimeStamp().setText(Util.getChatListTimeFormat(item.getTime()) + " " + Util.getTimeFormat(mContext, item.getTime()));
 
@@ -159,47 +161,59 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private void addView(final LinearLayout linearLayout, ChatMessage item, final UserChatViewHolder holder) {
         linearLayout.removeAllViews();
         linearLayout.setTag(holder);
+
         if (item.getType().equals(Constants.TEXT)) {
+            if(roomType != null) {
+                TextView tvName = new TextView(context);
+                tvName.setTextColor(context.getResources().getColor(colorPrimaryDark));
+                tvName.setText(item.getSenderID());
+                linearLayout.addView(tvName);
+            }
+
             TextView textView = new TextView(context);
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
 //            if (linearLayout.getTag() == null) {
             linearLayout.setTag(holder);
+
             linearLayout.addView(textView);
 //            }
 
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {
+                if(roomType != null) {
+                    TextView tvName = new TextView(context);
+                    tvName.setTextColor(context.getResources().getColor(colorPrimaryDark));
+                    tvName.setText(item.getSenderID());
+                    linearLayout.addView(tvName);
+                }
+
                 final ImageView imageView = new ImageView(context);
                 imageView.setTag(holder);
                 // Create a storage reference from our app
                 FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
+                StorageReference storageRef = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
                 StorageReference imageRef = storageRef.child(item.getImagePath());
-                final long oneMegaByte = 1024 * 1024;
                 linearLayout.addView(imageView);
-                imageRef.getBytes(oneMegaByte).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        imageView.setImageBitmap(bitmap);
-//                        if (linearLayout.getTag() == null) {
-                        if (imageView.getTag().equals(holder)) {
-//                            linearLayout.setTag(holder);
-                        }
-//                        }
 
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.with(context).load(uri).into(imageView);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle any errors
-                        exception.printStackTrace();
+                    public void onFailure(@NonNull Exception e) {
+                        e.printStackTrace();
                     }
                 });
 
+            } catch (OutOfMemoryError outOfMemoryError) {
+                outOfMemoryError.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+
             }
         }
     }
@@ -228,7 +242,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         return timeStamp.subSequence(0, timeStamp.length()).hashCode();
     }
 
-    class HeaderViewHolder {
+    private class HeaderViewHolder {
         TextView text;
     }
 }
