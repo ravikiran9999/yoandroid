@@ -155,7 +155,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
         } else*/
 
-        if (room.getGroupName() == null) {
+        /*if (room.getGroupName() == null) {
             if(!room.getMembers().get(0).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
                 navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber());
             } else if(!room.getMembers().get(1).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
@@ -163,7 +163,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         } else if (room.getGroupName() != null) {
             navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName());
-        }
+        }*/
+
+        navigateToChatScreen(room);
     }
 
     private void navigateToChatScreen(String roomId, String opponentPhoneNumber) {
@@ -173,7 +175,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         startActivity(intent);
     }
 
-
+    private void navigateToChatScreen(Room room) {
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra(Constants.ROOM, room);
+        intent.putExtra(Constants.TYPE, Constants.ROOM);
+        startActivity(intent);
+    }
 
     @Override
     public void showProgressDialog() {
