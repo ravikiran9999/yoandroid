@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -124,6 +125,18 @@ public class MagazinesFragment extends BaseFragment {
                 }
                 mAdapter.addAll(topicNamesList);
                 mAdapter.notifyDataSetChanged();
+                if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+                    List<String> followedTopicsIdsList = new ArrayList<String>();
+                    for (int k = 0; k < topicsList.size(); k++) {
+                        if (topicsList.get(k).getSelected().equals("true")) {
+
+                            followedTopicsIdsList.add(String.valueOf(topicsList.get(k).getId()));
+
+                        }
+
+                    }
+                    preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                }
             }
 
             @Override
