@@ -209,7 +209,7 @@ public class MagazinesFragment extends BaseFragment {
             searchTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d("Search", "The selected item is " + parent.getItemAtPosition(position));
+                                      Log.d("Search", "The selected item is " + parent.getItemAtPosition(position));
                     String topicName = (String) parent.getItemAtPosition(position);
                     searchTextView.setText(topicName);
                     searchTextView.setSelection(topicName.trim().length());
@@ -243,6 +243,7 @@ public class MagazinesFragment extends BaseFragment {
             });
 
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
