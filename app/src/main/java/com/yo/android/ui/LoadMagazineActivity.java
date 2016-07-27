@@ -125,7 +125,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
             }
         });*/
-        yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<Articles>() {
+        yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy, magazineId).enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 if(response!= null) {
