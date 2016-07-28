@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
@@ -47,12 +48,15 @@ import com.google.firebase.storage.UploadTask;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.MyServiceConnection;
+import com.yo.android.chat.notification.PushNotificationService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
+import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
@@ -63,6 +67,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -73,7 +79,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, com.firebase.client.ChildEventListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, ChildEventListener{
 
 
     private static final String TAG = "UserChatFragment";
@@ -113,6 +119,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Inject
     YoApi.YoService yoService;
 
+    @Inject
+    BaseActivity baseActivity;
+
     public UserChatFragment() {
         // Required empty public constructor
     }
@@ -126,6 +135,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
+
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
@@ -212,6 +222,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        //loadMessages();
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -639,10 +650,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
             if (getActivity() instanceof ChatActivity) {
-//                Toast.makeText(getActivity(), "In UCF", Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(getActivity(), "In UCF", Toast.LENGTH_SHORT).show();
                 chatMessageArray.add(chatMessage);
-            } else if (!(getActivity() instanceof ChatActivity)) {
-//                Toast.makeText(getActivity(), "Not in UCF", Toast.LENGTH_SHORT).show();
+            } else if (getActivity() == null) {
+                baseActivity.createNotification(chatMessage.getSenderID(), chatMessage.getMessage());
+                //Toast.makeText(getActivity(), "Not in UCF", Toast.LENGTH_SHORT).show();
             }
             userChatAdapter.addItems(chatMessageArray);
             listView.smoothScrollToPosition(userChatAdapter.getCount());
@@ -670,5 +682,32 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onCancelled(FirebaseError firebaseError) {
 
     }
+
+
+
+    /*private void loadMessages() {
+        chatMessageArray = firebaseService.getChatMessageList();
+        if (chatMessageArray == null) {
+            showProgressDialog();
+            Timer t = new Timer();
+            t.schedule(new TimerTask() {
+
+                @Override
+                public void run() {
+
+                    chatMessageArray =firebaseService.getChatMessageList();
+                    if((chatMessageArray != null)&&(chatMessageArray.size() > 0)) {
+                        userChatAdapter.addItems(chatMessageArray);
+                        listView.smoothScrollToPosition(userChatAdapter.getCount());
+                    }
+                    this.cancel();
+                    dismissProgressDialog();
+                }
+            }, 30000L);
+        } else {
+            userChatAdapter.addItems(chatMessageArray);
+            listView.smoothScrollToPosition(userChatAdapter.getCount());
+        }
+    }*/
 }
 

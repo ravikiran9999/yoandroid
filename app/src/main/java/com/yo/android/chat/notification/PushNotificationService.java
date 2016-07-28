@@ -48,7 +48,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         createNotification(data.get("title").toString(), data.get("message").toString());
     }
 
-    private void createNotification(String title, String message) {
+    public void createNotification(String title, String message) {
 
         Intent destinationIntent = new Intent(this, NotificationsActivity.class);
 

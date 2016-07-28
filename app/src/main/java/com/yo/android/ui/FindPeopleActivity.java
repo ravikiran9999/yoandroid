@@ -57,7 +57,7 @@ public class FindPeopleActivity extends BaseActivity {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                 dismissProgressDialog();
-                if (response.body().size() > 0) {
+                if (response.body() != null && response.body().size() > 0) {
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItemsAll(findPeopleList);
                     lvFindPeople.setVisibility(View.VISIBLE);
