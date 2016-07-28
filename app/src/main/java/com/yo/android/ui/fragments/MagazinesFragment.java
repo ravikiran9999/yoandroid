@@ -141,8 +141,7 @@ public class MagazinesFragment extends BaseFragment {
                 if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
                     List<String> followedTopicsIdsList = new ArrayList<String>();
                     for (int k = 0; k < topicsList.size(); k++) {
-                        if (topicsList.get(k).getSelected().equals("true")) {
-
+                        if (topicsList.get(k).isSelected()) {
                             followedTopicsIdsList.add(String.valueOf(topicsList.get(k).getId()));
 
                         }

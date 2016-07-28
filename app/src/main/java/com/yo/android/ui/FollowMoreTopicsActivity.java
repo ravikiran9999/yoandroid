@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SearchView;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.cunoraz.tagview.OnTagClickListener;
@@ -85,16 +87,10 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
-                dismissProgressDialog();
                 if (response == null || response.body() == null) {
                     return;
                 }
-                topicsList.addAll(response.body());
-                for (int i = 0; i < topicsList.size(); i++) {
-                    TagSelected tag = prepareTag(i);
-                    initialTags.add(tag);
-                }
-                tagGroup.addTags(initialTags);
+                new TagLoader(response.body(), tagGroup).execute();
 
             }
 
@@ -207,11 +203,56 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
     }
 
+    private class TagLoader extends AsyncTask<Void, Void, ArrayList<Tag>> {
+
+        @NonNull
+        private final List<Topics> dummyTopicsList;
+        private TagView tagGroup;
+
+        public TagLoader(List<Topics> topics, TagView tagGroup) {
+            this.dummyTopicsList = topics;
+            this.tagGroup = tagGroup;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<Tag> doInBackground(Void... params) {
+            topicsList.addAll(dummyTopicsList);
+            for (Topics topic : topicsList) {
+                final TagSelected tag = prepareTag(topic);
+                initialTags.add(tag);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tagGroup.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                tagGroup.addTag(tag);
+                            }
+                        }, 1000);
+                    }
+                });
+            }
+            return initialTags;
+        }
+
+        @Override
+        protected void onPostExecute(final ArrayList<Tag> tagSelected) {
+            super.onPostExecute(tagSelected);
+            dismissProgressDialog();
+        }
+
+    }
+
     @NonNull
-    private TagSelected prepareTag(int i) {
-        TagSelected tag = new TagSelected(topicsList.get(i).getName());
+    private TagSelected prepareTag(Topics topics) {
+        TagSelected tag = new TagSelected(topics.getName());
         tag.radius = 1f;
-        tag.setTagId(topicsList.get(i).getId());
+        tag.setTagId(topics.getId());
         tag.layoutBorderColor = getResources().getColor(R.color.tab_grey);
         tag.layoutBorderSize = 1f;
         tag.layoutColor = getResources().getColor(android.R.color.white);
@@ -219,7 +260,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         // if (i % 2 == 0) // you can set deletable or not
         //     tag.isDeletable = true;
-        if (topicsList.get(i).getSelected().equals("true")) {
+        if (topics.isSelected()) {
             tag.setSelected(true);
             tag.layoutColor = getResources().getColor(R.color.colorPrimary);
             tag.tagTextColor = getResources().getColor(android.R.color.white);
@@ -287,7 +328,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.i(TAG, "onQueryTextChange: " + query);
+                Log.i(TAG, "onQueryTextSubmit: " + query);
                 return true;
             }
 
@@ -301,31 +342,23 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                setTags("");
+                new TagLoader(topicsList,tagGroup).execute();
                 return true;
             }
         });
     }
 
     private void setTags(CharSequence cs) {
-        /**
-         * for empty edittext
-         */
-        if (cs.toString().equals("")) {
-            tagGroup.addTags(initialTags);
+        if (TextUtils.isEmpty(cs.toString())) {
+            return;
         }
-
+        tagGroup.getTags().clear();
+        tagGroup.removeAllViews();
         String text = cs.toString();
-        searchTags = new ArrayList<>();
-        TagSelected tag;
-        List<Tag> tags = tagGroup.getTags();
-        for (int i = 0; i < tags.size(); i++) {
-            if (tags.get(i).text.toLowerCase().startsWith(text.toLowerCase())) {
-                searchTags.add(tags.get(i));
+        for (Tag tag : initialTags) {
+            if (tag.text.toLowerCase().contains(text.toLowerCase())) {
+                tagGroup.addTag(tag);
             }
         }
-        tagGroup.addTags(searchTags);
-
     }
-
 }
