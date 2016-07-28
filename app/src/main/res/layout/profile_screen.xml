@@ -4,78 +4,105 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <ImageView
-        android:id="@+id/profile_pic"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:background="@color/floating_action_button_touch_tint"
-        android:backgroundTint="@color/tab_grey"
-        android:padding="10dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/dialer_default_avatar" />
+        android:layout_height="match_parent">
 
-
-    <TextView
-        android:id="@+id/add_photo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/profile_pic"
-        android:layout_gravity="center"
-        android:elevation="7dp"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/add_photo"
-        android:textColor="@color/tab_grey"
-        android:textSize="16sp" />
-
-    <LinearLayout
-        android:id="@+id/user_fields_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/profile_pic"
-        android:padding="10dp"
-        android:layout_marginTop="40dp"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/user_name"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_username"
-            android:drawablePadding="16dp"
-            android:hint="@string/user_name"
-            android:padding="10dp"
-            android:singleLine="true"
-            android:textColor="@color/black"
-            android:textSize="14sp" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/mobile_number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_mobile"
-            android:drawablePadding="12dp"
-            android:padding="10dp"
-            android:text="99853393232"
-            android:textColor="@color/black"
-            android:textSize="14sp" />
-    </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@color/profile_bckgrnd"
+                android:orientation="vertical">
 
-    <Button
-        android:id="@+id/next_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/user_fields_layout"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="25dp"
-        android:background="#dd000000"
-        android:text="Submit"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        android:textSize="16sp" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:background="@color/floating_action_button_touch_tint"
+                    android:backgroundTint="@color/tab_grey"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/ic_profile"
+                    android:visibility="gone" />
 
+                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/profile_pic"
+                    android:layout_width="160dp"
+                    android:layout_height="170dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/ic_profile"
+                    app:civ_border_color="@color/tab_grey"
+                    app:civ_border_width="0px" />
+
+                <TextView
+                    android:id="@+id/add_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profile_pic"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:background="@color/profile_bckgrnd"
+                    android:gravity="center"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="5dp"
+                    android:text="@string/add_picture"
+                    android:textColor="@color/tab_grey"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/user_fields_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <EditText
+                    android:id="@+id/user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_username"
+                    android:drawablePadding="16dp"
+                    android:hint="@string/user_name"
+                    android:padding="15dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/mobile_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_mobile"
+                    android:drawablePadding="19dp"
+                    android:padding="15dp"
+                    android:singleLine="true"
+                    android:text="9985339323"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/next_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_fields_layout"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="30dp"
+                android:background="#dd000000"
+                android:text="Next"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

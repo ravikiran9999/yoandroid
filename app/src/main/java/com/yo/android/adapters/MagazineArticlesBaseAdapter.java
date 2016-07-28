@@ -8,6 +8,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -297,6 +298,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
 
     private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
         final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.unfollow_alert_dialog);
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);

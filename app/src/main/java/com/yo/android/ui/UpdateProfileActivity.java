@@ -108,6 +108,7 @@ public class UpdateProfileActivity extends BaseActivity {
                     String imagePath = cameraIntent.mFileTemp.getPath();
                     imgFile = new File(imagePath);
                     new ImageLoader(profileImage, imgFile, this).execute();
+                    addPhoto.setText(getResources().getString(R.string.change_picture));
 
                 } catch (Exception e) {
                 }
@@ -125,6 +126,7 @@ public class UpdateProfileActivity extends BaseActivity {
                         String imagePath = cursor.getString(columnIndex);
                         imgFile = new File(imagePath);
                         new ImageLoader(profileImage, imgFile, this).execute();
+                        addPhoto.setText(getResources().getString(R.string.change_picture));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -180,12 +182,12 @@ public class UpdateProfileActivity extends BaseActivity {
         yoService.updateProfile(userId, null, description, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                dismissProgressDialog();
                 if (response.isSuccessful()) {
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     Intent intent = new Intent(UpdateProfileActivity.this, FollowMoreTopicsActivity.class);
-                    dismissProgressDialog();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("From", "UpdateProfileActivity");
                     startActivity(intent);
@@ -193,7 +195,6 @@ public class UpdateProfileActivity extends BaseActivity {
                 } else {
                     toastFactory.showToast("Unable to update the profile");
                 }
-
             }
 
             @Override

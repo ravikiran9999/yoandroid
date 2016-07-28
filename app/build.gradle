@@ -17,7 +17,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.7.0"
+        versionName "16.3.8.0"
     }
     productFlavors {
         dev {
@@ -25,13 +25,13 @@ android {
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
         }
         stage {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             //signingConfig signingConfigs.config
         }
         //This will flavor will enable BeepSend SMS gateway for verification
         stagePaidSms {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         }
     }
@@ -118,6 +118,7 @@ sonarRunner {
         property 'sonar.sourceEncoding', 'windows-1252'
         property 'sonar.scm.disabled', 'true'
         property 'sonar.exclusions', '**/R.class, **/R$*.class,**/BuildConfig.*,**/Manifest*.*,**/*.xml'
+        compile 'de.hdodenhof:circleimageview:2.1.0'
     }
 
 }
