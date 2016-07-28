@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -473,6 +474,7 @@ public class MyCollectionDetails extends BaseActivity {
             case R.id.menu_follow_magazine:
                 if (type.equals("Tag")) {
                     final Dialog dialog = new Dialog(MyCollectionDetails.this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.unfollow_alert_dialog);
 
                     dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -516,6 +518,7 @@ public class MyCollectionDetails extends BaseActivity {
                     dialog.show();
                 } else {
                     final Dialog dialog = new Dialog(MyCollectionDetails.this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.unfollow_alert_dialog);
 
                     dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

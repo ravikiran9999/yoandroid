@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -484,6 +485,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     } else {
 
                         final Dialog dialog = new Dialog(OthersMagazinesDetailActivity.this);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog.setContentView(R.layout.unfollow_alert_dialog);
 
                         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -610,6 +612,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 } else {
 
                     final Dialog dialog = new Dialog(OthersMagazinesDetailActivity.this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.unfollow_alert_dialog);
 
                     dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

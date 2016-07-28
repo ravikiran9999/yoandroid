@@ -11,6 +11,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -91,7 +92,7 @@ public class WishListActivity extends BaseActivity {
                 if (mProgress != null) {
                     mProgress.setVisibility(View.GONE);
                 }
-                if (response.body().size() > 0) {
+                if (response.body() != null && response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
                         flipContainer.setVisibility(View.VISIBLE);
                         if (noArticals != null) {
@@ -421,6 +422,7 @@ public class WishListActivity extends BaseActivity {
                     } else {
 
                         final Dialog dialog = new Dialog(WishListActivity.this);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog.setContentView(R.layout.unfollow_alert_dialog);
 
                         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
