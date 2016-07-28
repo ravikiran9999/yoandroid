@@ -28,7 +28,8 @@ public class ChatActivity extends BaseActivity {
         UserChatFragment userChatFragment = new UserChatFragment();
         Bundle args = new Bundle();
 
-        if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.ROOM)) {
+        String type = getIntent().getStringExtra(Constants.TYPE);
+        if (Constants.ROOM.equalsIgnoreCase(type)) {
             room = getIntent().getParcelableExtra(Constants.ROOM);
 
         /*args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
@@ -48,7 +49,7 @@ public class ChatActivity extends BaseActivity {
 
             //args.putString(Constants.OPPONENT_ID, room.getId());
 
-        } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
+        } else if (Constants.CONTACT.equalsIgnoreCase(type)) {
             Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
             opponent = contact.getPhoneNo();
             args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
