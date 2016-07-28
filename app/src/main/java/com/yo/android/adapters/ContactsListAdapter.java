@@ -70,14 +70,17 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             @Override
             public void onClick(View v) {
                 if (item.getYoAppUser()) {
-                    String yourPhoneNumber = userId;
+
+                    navigateToChatScreen(item);
+
+                    /*String yourPhoneNumber = userId;
                     String opponentPhoneNumber = item.getPhoneNo();
 
                     if(item.getFirebaseRoomId() != null) {
                         navigateToChatScreen(mContext, item.getFirebaseRoomId(), opponentPhoneNumber, yourPhoneNumber, null);
                     } else {
                         navigateToChatScreen(mContext, "", opponentPhoneNumber, yourPhoneNumber, item.getId());
-                    }
+                    }*/
 
                 } else {
                     Toast.makeText(mContext, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
@@ -116,6 +119,15 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
         intent.putExtra(Constants.OPPONENT_ID, opponentId);
         intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
+        context.startActivity(intent);
+
+    }
+
+    private void navigateToChatScreen(Contact contact) {
+        Intent intent = new Intent(context, ChatActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constants.CONTACT, contact);
+        intent.putExtra(Constants.TYPE, Constants.CONTACT);
         context.startActivity(intent);
 
     }
