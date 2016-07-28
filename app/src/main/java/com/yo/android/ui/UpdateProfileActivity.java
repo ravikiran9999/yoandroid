@@ -108,7 +108,7 @@ public class UpdateProfileActivity extends BaseActivity {
                     String imagePath = cameraIntent.mFileTemp.getPath();
                     imgFile = new File(imagePath);
                     new ImageLoader(profileImage, imgFile, this).execute();
-                    addPhoto.setText(getResources().getString(R.string.change_photo));
+                    addPhoto.setText(getResources().getString(R.string.change_picture));
 
                 } catch (Exception e) {
                 }
@@ -126,7 +126,7 @@ public class UpdateProfileActivity extends BaseActivity {
                         String imagePath = cursor.getString(columnIndex);
                         imgFile = new File(imagePath);
                         new ImageLoader(profileImage, imgFile, this).execute();
-                        addPhoto.setText(getResources().getString(R.string.change_photo));
+                        addPhoto.setText(getResources().getString(R.string.change_picture));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

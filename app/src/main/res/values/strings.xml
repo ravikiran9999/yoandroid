@@ -151,5 +151,6 @@
     <string name="username_empty">Please provide user name before updating the profile details.</string>
     <string name="change_photo">Change Photo</string>
     <string name="add_picture">Add Picture</string>
+    <string name="change_picture">Change Picture</string>
 
 </resources>
