@@ -2,16 +2,10 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.chat.ui.ChatActivity;
@@ -56,12 +50,14 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         if (!TextUtils.isEmpty(item.getImage())) {
             Picasso.with(mContext)
                     .load(item.getImage())
+                    .fit()
                     .placeholder(R.drawable.ic_contacts)
                     .error(R.drawable.ic_contacts)
                     .into(holder.getContactPic());
         } else {
             Picasso.with(mContext)
                     .load(R.drawable.ic_contacts)
+                    .fit()
                     .placeholder(R.drawable.ic_contacts)
                     .error(R.drawable.ic_contacts)
                     .into(holder.getContactPic());
@@ -70,18 +66,25 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         //holder.getContactMail().setText(item.getEmailId());
 
 
-            holder.getMessageView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (item.getYoAppUser()) {
-                        String yourPhoneNumber = userId;
-                        String opponentPhoneNumber = item.getPhoneNo();
-                        showUserChatScreen(mContext, yourPhoneNumber, opponentPhoneNumber);
+        holder.getMessageView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (item.getYoAppUser()) {
+                    String yourPhoneNumber = userId;
+                    String opponentPhoneNumber = item.getPhoneNo();
+
+                    if(item.getFirebaseRoomId() != null) {
+                        navigateToChatScreen(mContext, item.getFirebaseRoomId(), opponentPhoneNumber, yourPhoneNumber, null);
                     } else {
-                        Toast.makeText(mContext, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
+                        navigateToChatScreen(mContext, "", opponentPhoneNumber, yourPhoneNumber, item.getId());
                     }
+
+                } else {
+                    Toast.makeText(mContext, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
                 }
-            });
+            }
+        });
+
         holder.getCallView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +100,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 }
             }
         });
+
         if (item.getYoAppUser()) {
             holder.getMessageView().setImageResource(R.drawable.ic_message);
         } else {
@@ -105,39 +109,12 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
     }
 
-
-    public static void showUserChatScreen(final Context context, @NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {
-        final String roomCombination1 = yourPhoneNumber + ":" + opponentPhoneNumber;
-        final String roomCombination2 = opponentPhoneNumber + ":" + yourPhoneNumber;
-        DatabaseReference databaseRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-        databaseRoomReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean value1 = dataSnapshot.hasChild(roomCombination1);
-                boolean value2 = dataSnapshot.hasChild(roomCombination2);
-                if (value1) {
-                    navigateToChatScreen(context, roomCombination1, opponentPhoneNumber, yourPhoneNumber);
-                } else if (value2) {
-                    navigateToChatScreen(context, roomCombination2, opponentPhoneNumber, yourPhoneNumber);
-                } else {
-
-                    navigateToChatScreen(context, "", opponentPhoneNumber, yourPhoneNumber);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    private static void navigateToChatScreen(Context context, String roomId, String opponentPhoneNumber, String yourPhoneNumber) {
+    private static void navigateToChatScreen(Context context, String roomId, String opponentPhoneNumber, String yourPhoneNumber, String opponentId) {
         Intent intent = new Intent(context, ChatActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
+        intent.putExtra(Constants.OPPONENT_ID, opponentId);
         intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
         context.startActivity(intent);
 

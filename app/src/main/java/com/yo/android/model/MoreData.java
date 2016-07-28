@@ -4,6 +4,10 @@ package com.yo.android.model;
  * Created by root on 15/7/16.
  */
 public class MoreData {
+    public void setName(String name) {
+        this.name = name;
+    }
+
     private String name;
     private boolean hasOptions;
 

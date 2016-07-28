@@ -22,7 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="An SMS with OTP would be sent to this number for verification"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="10dp"/>
 
     <org.angmarch.views.NiceSpinner xmlns:app="http://schemas.android.com/apk/res-auto"
         app:textTint="@color/black"
@@ -59,7 +60,7 @@
         android:id="@+id/email_sign_in_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#dd000000"
+        android:background="@color/resend_bcgrnd"
         android:text="@string/next"
         android:textAllCaps="false"
         android:textColor="@android:color/white"

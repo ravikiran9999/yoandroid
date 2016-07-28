@@ -13,12 +13,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
@@ -194,6 +196,7 @@ public class Util {
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -248,6 +251,7 @@ public class Util {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 if (activity instanceof BottomTabsActivity) {
                     ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
+                    ((BottomTabsActivity) activity).refresh();
                 }
                 Util.changeMenuItemsVisibility(menu, -1, true);
                 return true;
@@ -271,10 +275,10 @@ public class Util {
 
     public static void changeSearchProperties(Menu menu) {
         SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-
+        search.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
         AutoCompleteTextView searchTextView = (AutoCompleteTextView) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
-            searchTextView.setTextColor(Color.BLACK);
+            searchTextView.setTextColor(Color.WHITE);
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
             mCursorDrawableRes.setAccessible(true);
             mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
@@ -292,6 +296,23 @@ public class Util {
         }
         catch (ActivityNotFoundException e) {
 
+        }
+    }
+    public static void hideKeyboard(Context context, View view) {
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+
+    public static void showSoftKeyboard(View view) {
+        // requesting the view Focus
+        if (view != null && view.requestFocus()) {
+            // Gets the input method service ....
+            InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 }

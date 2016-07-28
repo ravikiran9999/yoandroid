@@ -1,7 +1,10 @@
 
 package com.yo.android.model;
 
-public class Contact {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Contact implements Parcelable {
 
     private String id;
     private String name;
@@ -9,6 +12,10 @@ public class Contact {
     private String phoneNo;
     private boolean yoAppUser;
     private boolean selected;
+    private String firebaseRoomId;
+
+    public Contact() {
+    }
 
     public String getId() {
         return id;
@@ -58,8 +65,50 @@ public class Contact {
         this.selected = selected;
     }
 
+    public String getFirebaseRoomId() {
+        return firebaseRoomId;
+    }
+
+    public void setFirebaseRoomId(String firebaseRoomId) {
+        this.firebaseRoomId = firebaseRoomId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(image);
+        dest.writeString(phoneNo);
+        dest.writeString(firebaseRoomId);
+    }
+
+    private Contact(Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+        this.image = in.readString();
+        this.phoneNo = in.readString();
+        this.firebaseRoomId = in.readString();
+    }
+
+    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
+        @Override
+        public Contact createFromParcel(Parcel source) {
+            return new Contact(source);
+        }
+
+        @Override
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
+
     @Override
     public String toString() {
-        return "ClassPojo [phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + "]";
+        return "ClassPojo [id = " + id + ", phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + ", firebaseRoomId = " + firebaseRoomId + "]";
     }
 }

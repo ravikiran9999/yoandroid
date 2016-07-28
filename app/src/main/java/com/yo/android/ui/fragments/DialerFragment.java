@@ -150,7 +150,7 @@ public class DialerFragment extends BaseFragment {
         } else if (item.getItemId() == R.id.menu_app_calls) {
             str = "app calls";
         } else if (item.getItemId() == R.id.menu_clear_history) {
-            mToastFactory.showToast("Clear history is not available.");
+            mToastFactory.showToast("Clear call history is not yet implemented.");
         }
         if (str != null) {
             preferenceEndPoint.saveStringPreference(Constants.DIALER_FILTER, str);
@@ -390,12 +390,18 @@ public class DialerFragment extends BaseFragment {
     private void showEmptyText() {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
         if (filter.equalsIgnoreCase("all calls")) {
+            txtEmptyCallLogs.setVisibility(View.VISIBLE);
             txtEmptyCallLogs.setText("No call logs history available.");
         } else {
             txtEmptyCallLogs.setText(String.format("No %s history available.", filter));
         }
         boolean nonEmpty = show || (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
         txtEmptyCallLogs.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public void showOrHideTabs(boolean show) {
+        //super.showOrHideTabs(show);
     }
 
     @Override
@@ -426,6 +432,7 @@ public class DialerFragment extends BaseFragment {
     private void showDialPad() {
         showOrHideTabs(false);
         show = true;
+        txtEmptyCallLogs.setVisibility(View.GONE);
         dialPadView.setVisibility(View.VISIBLE);
         floatingDialer.setVisibility(View.GONE);
         Animation bottomUp = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.bottom_up);

@@ -161,14 +161,15 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         showProgressDialog();
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         String type = BuildConfig.ORIGINAL_SMS_VERIFICATION ? "original" : "dummy";
+        //yoService.loginUserAPI(phoneNumber, type, countryCode).enqueue(new Callback<Response>() {
         yoService.loginUserAPI(countryCode + phoneNumber, type).enqueue(new Callback<Response>() {
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
                 dismissProgressDialog();
                 if (response.isSuccessful()) {
                     Response response1 = response.body();
-                    boolean isNewUser = (boolean) ((LinkedTreeMap) response1.getData()).get("isNewUser");
                     if (response1 != null) {
+                        boolean isNewUser = (boolean) ((LinkedTreeMap) response1.getData()).get("isNewUser");
                         preferenceEndPoint.saveBooleanPreference("isNewUser", isNewUser);
                     }
                     OTPFragment otpFragment = new OTPFragment();

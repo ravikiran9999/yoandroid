@@ -22,6 +22,7 @@ import com.yo.android.model.Articles;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,6 +37,8 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     private String magazineId;
     private String url;
     private String magazineTitle;
+    private String magazineDesc;
+    private String magazinePrivacy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         Intent intent = getIntent();
         magazineId = intent.getStringExtra("MagazineId");
         magazineTitle = intent.getStringExtra("MagazineTitle");
+        magazineDesc = intent.getStringExtra("MagazineDesc");
+        magazinePrivacy = intent.getStringExtra("MagazinePrivacy");
 
         final EditText etUrl = (EditText) findViewById(R.id.et_enter_url);
         final WebView webview = (WebView) findViewById(R.id.webview);
@@ -103,21 +108,36 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View v) {
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.addStoryMagazineAPI(accessToken, url, magazineId).enqueue(new Callback<Articles>() {
+        /*yoService.addStoryMagazineAPI(accessToken, url, magazineId).enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 setResult(RESULT_OK);
                 finish();
                 Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
-                       /* intent.putExtra("ArticleId", response.body().getId());
-                        intent.putExtra("ArticleTitle", response.body().getTitle());
-                        intent.putExtra("ArticleUrl", response.body().getUrl());
-                        intent.putExtra("ArticleSummary", response.body().getSummary());
-                        intent.putExtra("ArticleImage", response.body().getImage_filename());*/
                 intent.putExtra("MagazineTitle", magazineTitle);
                 intent.putExtra("MagazineId", magazineId);
-                intent.putExtra("MagazineDesc", response.body().getSummary());
+                intent.putExtra("MagazineDesc", magazineDesc);
                 startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Call<Articles> call, Throwable t) {
+
+            }
+        });*/
+        yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<Articles>() {
+            @Override
+            public void onResponse(Call<Articles> call, Response<Articles> response) {
+                if(response!= null) {
+                    setResult(RESULT_OK);
+                    finish();
+                    Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
+                    intent.putExtra("MagazineTitle", magazineTitle);
+                    intent.putExtra("MagazineId", response.body().getMagzine_id());
+                    intent.putExtra("MagazineDesc", magazineDesc);
+                    intent.putExtra("MagazinePrivacy", magazinePrivacy);
+                    startActivity(intent);
+                }
             }
 
             @Override

@@ -4,6 +4,7 @@ package com.yo.android.ui.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,9 +19,11 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
@@ -29,6 +32,10 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.ui.NotificationsActivity;
+import com.yo.android.ui.MoreSettingsActivity;
+import com.yo.android.ui.TabsHeaderActivity;
+import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 
@@ -39,6 +46,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -49,7 +58,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
 
     private MoreListAdapter menuAdapter;
@@ -62,11 +71,26 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     ImageView profilePic;
     @Inject
     ImagePickHelper cameraIntent;
+    @Inject
+    ConnectivityHelper mHelper;
+    @Bind(R.id.add_change_photo_text)
+    TextView addOrChangePhotoText;
 
     public MoreFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,6 +102,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
         profilePic = (ImageView) view.findViewById(R.id.profile_pic);
         cameraIntent.setActivity(getActivity());
@@ -95,9 +120,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     private void loadImage() {
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (!TextUtils.isEmpty(avatar)) {
+            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
             Picasso.with(getActivity())
                     .load(avatar)
                     .into(profilePic);
+        }else{
+            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
         }
 
     }
@@ -105,6 +133,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     //Tested and image update is working
     //Make a prompt for pick a image from gallery/camera
     private void uploadFile(File file) {
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
 
         Picasso.with(getActivity())
                 .load(file)
@@ -122,11 +154,15 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
-        String descriptionString = "";
+        String descriptionString = "Hey there! I am using YoApp";
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), descriptionString);
-        yoService.updateProfile(userId, description, body).enqueue(new Callback<UserProfileInfo>() {
+
+        RequestBody username =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.USER_NAME));
+        yoService.updateProfile(userId, description, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
@@ -174,13 +210,14 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
      * @return
      */
     public List<MoreData> getMenuList() {
-        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
 
         List<MoreData> menuDataList = new ArrayList<>();
         menuDataList.add(new MoreData(preferenceEndPoint.getStringPreference(Constants.USER_NAME), false));
         String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         menuDataList.add(new MoreData(phone, false));
-        menuDataList.add(new MoreData("Yo Credit " + "($" + balance + ")", true));
+        String balance = mBalanceHelper.getCurrentBalance();
+        String currencySymbol = mBalanceHelper.getCurrencySymbol();
+        menuDataList.add(new MoreData(String.format("Yo Credit (%s%s)", currencySymbol, balance), true));
         menuDataList.add(new MoreData("Invite Friends", true));
         menuDataList.add(new MoreData("Notifications", true));
         menuDataList.add(new MoreData("Settings", true));
@@ -199,10 +236,19 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
             startActivity(new Intent(getActivity(), InviteActivity.class));
 
-        } else {
-            Toast.makeText(getActivity(), "You have clicked on " + name, Toast.LENGTH_LONG).show();
+        } else if (name.contains("Yo Credit")) {
+            startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
+
+        } else if (name.contains("Notifications")) {
+            startActivity(new Intent(getActivity(), NotificationsActivity.class));
+
+        } else if ("Settings".equals(name)) {
+            Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
+            startActivityForResult(intent, Constants.GO_TO_SETTINGS);
+            //startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
         }
     }
+
 
     public void showLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -254,9 +300,28 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             }
+            case Constants.GO_TO_SETTINGS:
+                if (menuAdapter != null) {
+                    menuAdapter.notifyDataSetChanged();
+                }
+                break;
             default:
                 break;
         }
     }
 
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(Constants.CURRENT_BALANCE)) {
+            String balance = mBalanceHelper.getCurrentBalance();
+            String currencySymbol = mBalanceHelper.getCurrencySymbol();
+            menuAdapter.getItem(1).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
+            menuAdapter.notifyDataSetChanged();
+        } else if (key.equals(Constants.USER_NAME)) {
+            String name = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+            menuAdapter.getItem(0).setName(name);
+            menuAdapter.notifyDataSetChanged();
+        }
+    }
 }

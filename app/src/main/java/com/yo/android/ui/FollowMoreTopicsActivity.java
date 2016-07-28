@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -65,7 +66,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         }
 
         boolean backBtn = true;
-        if (from.equals("ProfileActivity")) {
+        if (from.equals("UpdateProfileActivity")) {
             backBtn = false;
         }
         getSupportActionBar().setHomeButtonEnabled(backBtn);
@@ -193,9 +194,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                             Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
                             startActivity(myCollectionsIntent);
                             finish();
-                        } else if (from.equals("ProfileActivity")) {
+                        } else if (from.equals("UpdateProfileActivity")) {
                             Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
                             myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
+                            myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
                             startActivity(myCollectionsIntent);
                             finish();
                         } else {
@@ -203,6 +206,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                             setResult(2, intent);
                             finish();
                         }
+
+                        preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
                     }
 
                     @Override
@@ -267,6 +272,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

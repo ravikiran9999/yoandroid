@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,6 +57,15 @@ public class MagazinesFragment extends BaseFragment {
 
     private ArrayAdapter mAdapter;
     private Menu menu;
+
+    public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
+        return mMagazineFlipArticlesFragment;
+    }
+
+    public void setmMagazineFlipArticlesFragment(MagazineFlipArticlesFragment mMagazineFlipArticlesFragment) {
+        this.mMagazineFlipArticlesFragment = mMagazineFlipArticlesFragment;
+    }
+
     private MagazineFlipArticlesFragment mMagazineFlipArticlesFragment;
 
     public MagazinesFragment() {
@@ -91,7 +101,7 @@ public class MagazinesFragment extends BaseFragment {
         //getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
         mMagazineFlipArticlesFragment = new MagazineFlipArticlesFragment();
         mAdapter = new ArrayAdapter<String>
-                (getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+                (getActivity(), R.layout.textviewitem, new ArrayList<String>());
 
         getChildFragmentManager().beginTransaction().add(R.id.bottom, mMagazineFlipArticlesFragment).commit();
 
@@ -159,7 +169,7 @@ public class MagazinesFragment extends BaseFragment {
 
     private void prepareTopicsSearch(Menu menu) {
         SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-
+        search.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
         final SearchView.SearchAutoComplete searchTextView = (SearchView.SearchAutoComplete) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
             MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
@@ -170,11 +180,12 @@ public class MagazinesFragment extends BaseFragment {
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
+
                     return false;
                 }
             });
 
-            searchTextView.setTextColor(Color.BLACK);
+            searchTextView.setTextColor(Color.WHITE);
             searchTextView.setThreshold(1);
             searchTextView.setAdapter(mAdapter);
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
@@ -194,7 +205,9 @@ public class MagazinesFragment extends BaseFragment {
                         }
                     }
                     MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
-                    fragment.loadArticles(topicName, topicId);
+                    List<String> tagIds = new ArrayList<String>();
+                    tagIds.add(topicId);
+                    fragment.loadArticles(tagIds);
 
 
                     return;

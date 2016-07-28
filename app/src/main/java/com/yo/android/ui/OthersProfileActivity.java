@@ -1,5 +1,7 @@
 package com.yo.android.ui;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -36,6 +39,7 @@ public class OthersProfileActivity extends BaseActivity {
     TabsPagerAdapter mAdapter;
     private List<ProfileTabsData> dataList;
     String userId;
+    private boolean isFollowingUser;
 
     private static Fragment currentFragment;
 
@@ -80,6 +84,8 @@ public class OthersProfileActivity extends BaseActivity {
         backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
                 finish();
             }
         });
@@ -110,15 +116,18 @@ public class OthersProfileActivity extends BaseActivity {
         if(isFollowing.equals("true")) {
             btnFolow.setText("Following");
             btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+            isFollowingUser = true;
         }
         else {
             btnFolow.setText("Follow");
             btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            isFollowingUser = false;
         }
 
         btnFolow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isFollowingUser) {
                 showProgressDialog();
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 yoService.followUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
@@ -127,6 +136,7 @@ public class OthersProfileActivity extends BaseActivity {
                         dismissProgressDialog();
                         btnFolow.setText("Following");
                         btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                        isFollowingUser = true;
                     }
 
                     @Override
@@ -134,8 +144,55 @@ public class OthersProfileActivity extends BaseActivity {
                         dismissProgressDialog();
                         btnFolow.setText("Follow");
                         btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        isFollowingUser = false;
                     }
                 });
+                } else {
+
+                    final Dialog dialog = new Dialog(OthersProfileActivity.this);
+                    dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            showProgressDialog();
+                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            yoService.unfollowUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    dismissProgressDialog();
+                                    btnFolow.setText("Follow");
+                                    btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                    isFollowingUser = false;
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    dismissProgressDialog();
+                                    btnFolow.setText("Following");
+                                    btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                    isFollowingUser = false;
+                                }
+                            });
+                        }
+                    });
+
+                    dialog.show();
+                }
             }
         });
 
@@ -181,5 +238,13 @@ public class OthersProfileActivity extends BaseActivity {
         public int getCount() {
             return count;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
+        super.onBackPressed();
     }
 }

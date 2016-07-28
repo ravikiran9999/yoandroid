@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +39,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,7 +64,6 @@ public class BottomTabsActivity extends BaseActivity {
         setContentView(R.layout.activity_bottom_tabs);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         viewPager = (CustomViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);
@@ -108,7 +109,9 @@ public class BottomTabsActivity extends BaseActivity {
         Intent in = new Intent(getApplicationContext(), SipService.class);
         startService(in);
         balanceHelper.checkBalance();
+        //
         loadUserProfileInfo();
+        updateDeviceToken();
 
     }
 
@@ -183,7 +186,7 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (R.id.menu_search == item.getItemId()) {
-            setToolBarColor(Color.WHITE);
+            setToolBarColor(getResources().getColor(R.color.colorPrimary));
             Menu menu = null;
             if (getFragment() instanceof ChatFragment) {
                 menu = ((ChatFragment) getFragment()).getMenu();
@@ -200,6 +203,12 @@ public class BottomTabsActivity extends BaseActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void refresh() {
+        if (getFragment() instanceof MagazinesFragment) {
+            ((MagazinesFragment) getFragment()).getmMagazineFlipArticlesFragment().refresh();
+        }
     }
 
     public class TabsData {
@@ -230,7 +239,9 @@ public class BottomTabsActivity extends BaseActivity {
                     preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
-                    preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+                    if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.USER_NAME))) {
+                        preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+                    }
                 }
             }
 
@@ -239,5 +250,23 @@ public class BottomTabsActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void updateDeviceToken() {
+        String refreshedToken = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+        }
     }
 }

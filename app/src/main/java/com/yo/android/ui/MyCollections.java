@@ -94,8 +94,15 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     @Override
     public void onBackPressed() {
-        if (dismissContextualMenu()) return;
-        super.onBackPressed();
+        if (dismissContextualMenu()) {
+            invalidateOptionsMenu();
+            List<Collections> collections = myCollectionsAdapter.getSelectedItems();
+            collections.clear();
+            myCollectionsAdapter.notifyDataSetChanged();
+        }
+        else {
+            super.onBackPressed();
+        }
 
     }
 
@@ -132,7 +139,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
                 intent.putExtra("TopicId", collections.getId());
                 intent.putExtra("TopicName", collections.getName());
-                startActivity(intent);
+                intent.putExtra("Type", collections.getType());
+                startActivityForResult(intent, 6);
             }
         }
 
@@ -158,11 +166,11 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
+
 
         switch(item.getItemId()) {
             case R.id.menu_delete:
-
+                super.onOptionsItemSelected(item);
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 List<Collections> collections = myCollectionsAdapter.getSelectedItems();
                 List<String> topicIds = new ArrayList<String>();
@@ -204,6 +212,16 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                     }
                 });
+                break;
+            case android.R.id.home:
+                /*if (dismissContextualMenu()) {
+                    invalidateOptionsMenu();
+                }
+                else {
+                    finish();
+                }*/
+                onBackPressed();
+                break;
         }
         return true;
     }
@@ -238,6 +256,31 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 }
             });
 
+        }
+        else if(requestCode == 6) {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
+                @Override
+                public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                    final List<Collections> collectionsList = new ArrayList<Collections>();
+                    Collections collections = new Collections();
+                    collections.setName("Follow more topics");
+                    collections.setImage("");
+                    collectionsList.add(0, collections);
+                    if (response == null || response.body() == null) {
+                        return;
+                    }
+                    collectionsList.addAll(response.body());
+                    myCollectionsAdapter.addItems(collectionsList);
+                    gridView.setAdapter(myCollectionsAdapter);
+
+                }
+
+                @Override
+                public void onFailure(Call<List<Collections>> call, Throwable t) {
+
+                }
+            });
         }
     }
 }

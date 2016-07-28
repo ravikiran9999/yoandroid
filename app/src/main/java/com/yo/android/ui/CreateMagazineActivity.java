@@ -45,7 +45,7 @@ public class CreateMagazineActivity extends BaseActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = "Create Magazine";
+        final String title = "Create Magazine";
 
         getSupportActionBar().setTitle(title);
 
@@ -88,7 +88,7 @@ public class CreateMagazineActivity extends BaseActivity {
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 if (position == 0) {
                     Intent intent = new Intent(CreateMagazineActivity.this, NewMagazineActivity.class);
                     startActivityForResult(intent, 2);// Activity is started with requestCode 2
@@ -102,6 +102,7 @@ public class CreateMagazineActivity extends BaseActivity {
                             if (response.code() == Constants.SUCCESS_CODE) {
                                 setResult(RESULT_OK, new Intent());
                                 addArticleMagazineId = null;
+                                mToastFactory.showToast("Article added into " + createMagazinesAdapter.getItem(position).getName());
                                 finish();
                             } else {
                                 new ToastFactoryImpl(CreateMagazineActivity.this).showToast(getResources().getString(R.string.some_thing_wrong));

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
@@ -21,15 +26,13 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.firebase.FirebaseService;
-import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.DatabaseHelper;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.ChatRoom;
 import com.yo.android.model.Room;
 import com.yo.android.util.Constants;
+import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -48,10 +51,9 @@ import retrofit2.Response;
 public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private ListView listView;
-    private ArrayList<Room> arrayOfUsers;
+    private List<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
     private DatabaseReference reference;
-    private DatabaseReference roomReference;
     private Menu menu;
 
 
@@ -62,9 +64,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     YoApi.YoService yoService;
 
     @Inject
+    FireBaseHelper fireBaseHelper;
+
+    @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
-
 
     public Menu getMenu() {
         return menu;
@@ -79,9 +83,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        if (getArguments() != null) {
-            preferenceEndPoint.saveStringPreference(Constants.CHAT_FORWARD, new Gson().toJson(getArguments().getParcelable(Constants.CHAT_FORWARD)));
-        }
+
     }
 
     @Override
@@ -121,7 +123,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         listView.setOnItemClickListener(this);
         reference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
         reference.keepSynced(true);
-        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
 
         return view;
     }
@@ -139,18 +140,32 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Room room = chatRoomListAdapter.getItem(position);
+        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
-        String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
-        ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
+        // Enable it to forward, message (or) Image to group
+        /* String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
+           ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
 
         if (forwardChatMessage != null) {
-            //navigateToChatScreen(room.getFirebaseRoomId(), room.getOpponentPhoneNumber(), forwardChatMessage);
-            //navigateToChatScreen(room.getFirebaseRoomId(), forwardChatMessage);
-        } else if(room.getGroupName() == null){
-            navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber());
-        } else if(room.getGroupName() != null) {
+            if (room.getGroupName() == null) {
+                navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber(), forwardChatMessage);
+            } else if (room.getGroupName() != null) {
+                navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName(), forwardChatMessage);
+            }
+
+        } else*/
+
+        /*if (room.getGroupName() == null) {
+            if(!room.getMembers().get(0).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
+                navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber());
+            } else if(!room.getMembers().get(1).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
+                navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(1).getMobileNumber());
+            }
+        } else if (room.getGroupName() != null) {
             navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName());
-        }
+        }*/
+
+        navigateToChatScreen(room);
     }
 
     private void navigateToChatScreen(String roomId, String opponentPhoneNumber) {
@@ -160,15 +175,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         startActivity(intent);
     }
 
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, ChatMessage forward) {
-        if (preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD) != null) {
-            preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
-        }
-
+    private void navigateToChatScreen(Room room) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
-        intent.putExtra(Constants.CHAT_FORWARD, forward);
+        intent.putExtra(Constants.ROOM, room);
+        intent.putExtra(Constants.TYPE, Constants.ROOM);
         startActivity(intent);
     }
 
@@ -186,99 +196,76 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
-    /*private void getChatRoomList() {
+    private void getChatRoomList() {
         showProgressDialog();
-        reference.addValueEventListener(new ValueEventListener() {
+        String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+        String userId = loginPrefs.getStringPreference(Constants.USER_ID);
+        ArrayList<String> stringArrayList = new ArrayList<>();
+        stringArrayList.add(userId);
+        yoService.getAllRoomsAPI(access).enqueue(new Callback<List<Room>>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayOfUsers.clear();
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    final ChatRoom chatRoom = child.getValue(ChatRoom.class);
-                    if (chatRoom.getYourPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)) || chatRoom.getOpponentPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
-                        arrayOfUsers.add(chatRoom);
+            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
+                response.body();
+                arrayOfUsers = response.body();
+                chatRoomListAdapter.addItems(arrayOfUsers);
+                Firebase firebaseReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+                for (int i = 0; i < arrayOfUsers.size(); i++) {
+                    final Room room = arrayOfUsers.get(i);
+                    Firebase firebaseRoomReference = firebaseReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
+                    firebaseRoomReference.limitToLast(1).addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
 
-                        roomReference.keepSynced(true);
-                        DatabaseReference reference = roomReference.child(chatRoom.getChatRoomId());
-                        reference.limitToLast(1).addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-
-                                if (dataSnapshot.hasChildren()) {
-                                    chatRoom.setMessage(chatMessage.getMessage());
-                                    if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
-                                        chatRoom.setIsImage(true);
-                                    } else {
-                                        chatRoom.setIsImage(false);
-                                    }
-                                    chatRoom.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
-
+                            if (dataSnapshot.hasChildren()) {
+                                room.setLastChat(chatMessage.getMessage());
+                                if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
+                                    room.setImage(true);
+                                } else {
+                                    room.setImage(false);
                                 }
-                                chatRoomListAdapter.addItems(arrayOfUsers);
-
+                                room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
                             }
+                            chatRoomListAdapter.addItems(arrayOfUsers);
+                        }
 
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                            if (dataSnapshot.hasChildren()) {
+                                room.setLastChat("");
+                                room.setImage(false);
+                                room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
                             }
-
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                                if (dataSnapshot.hasChildren()) {
-                                    chatRoom.setMessage("");
-                                    chatRoom.setIsImage(false);
-                                    chatRoom.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
-                                }
-                                if (chatRoomListAdapter != null) {
-                                    chatRoomListAdapter.notifyDataSetChanged();
-                                }
+                            if (chatRoomListAdapter != null) {
+                                chatRoomListAdapter.notifyDataSetChanged();
                             }
+                        }
 
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
 
-                            }
-                        });
-                    }
+                        }
+                    });
                 }
 
                 dismissProgressDialog();
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onFailure(Call<List<Room>> call, Throwable t) {
                 dismissProgressDialog();
             }
         });
-    }*/
-
-public void getChatRoomList() {
-    showProgressDialog();
-    String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-    String userId = loginPrefs.getStringPreference(Constants.USER_ID);
-    ArrayList<String> stringArrayList = new ArrayList<>();
-    stringArrayList.add(userId);
-    yoService.getAllRoomsAPI(access).enqueue(new Callback<List<Room>>() {
-        @Override
-        public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
-            response.body();
-
-            chatRoomListAdapter.addItems(response.body());
-            dismissProgressDialog();
-        }
-
-        @Override
-        public void onFailure(Call<List<Room>> call, Throwable t) {
-            dismissProgressDialog();
-        }
-    });
-}
-
+    }
 }

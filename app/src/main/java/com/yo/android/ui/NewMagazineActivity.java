@@ -16,6 +16,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -103,6 +104,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                         }
                     });
                 } else {
+                    Util.hideKeyboard(this, etTitle);
                     etTitle.requestFocus();
                     mToastFactory.showToast("Please enter the Magazine Title");
                 }
@@ -127,21 +129,29 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
 
         if (!TextUtils.isEmpty(magazineTitle.trim())) {
 
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            /*String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
                 @Override
                 public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
-                    Intent intent = new Intent(NewMagazineActivity.this, LoadMagazineActivity.class);
-                    intent.putExtra("MagazineId", response.body().getId());
-                    intent.putExtra("MagazineTitle", magazineTitle);
-                    startActivityForResult(intent, Constants.ADD_STORY_ACTION);
+                    if(response.body() != null) {*/
+            Intent intent = new Intent(NewMagazineActivity.this, LoadMagazineActivity.class);
+            //intent.putExtra("MagazineId", response.body().getId());
+            intent.putExtra("MagazineTitle", magazineTitle);
+            intent.putExtra("MagazineDesc", magazineDesc);
+            intent.putExtra("MagazinePrivacy", magazinePrivacy);
+            startActivityForResult(intent, Constants.ADD_STORY_ACTION);
+                    /*}
+                    else {
+                        mToastFactory.showToast("Magazine Title is already taken");
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<OwnMagazine> call, Throwable t) {
                 }
-            });
+            });*/
         } else {
+            Util.hideKeyboard(this, v);
             mToastFactory.showToast("Please enter the Magazine Title");
         }
     }

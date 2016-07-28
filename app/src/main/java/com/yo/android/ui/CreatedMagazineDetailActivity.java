@@ -108,8 +108,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
-            public void onResponse(Call<MagazineArticles> call, Response<MagazineArticles> response) {
-
+            public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
+                 final String id = response.body().getId();
                 if (response.body().getArticlesList()!= null && response.body().getArticlesList().size() > 0) {
                     for (int i = 0; i < response.body().getArticlesList().size(); i++) {
                         //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
@@ -126,7 +126,21 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                     flipContainer.setVisibility(View.GONE);
                     if (noArticals != null) {
                         noArticals.setVisibility(View.VISIBLE);
+
+                        noArticals.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(CreatedMagazineDetailActivity.this, LoadMagazineActivity.class);
+                                intent.putExtra("MagazineId", id);
+                                intent.putExtra("MagazineTitle", magazineTitle);
+                                intent.putExtra("MagazineDesc", magazineDesc);
+                                intent.putExtra("MagazinePrivacy", magazinePrivacy);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
                     }
+
                 }
 
             }
@@ -238,7 +252,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
         @Override
         public Articles getItem(int position) {
-            if (getCount() > position) {
+            if (position>=0 && getCount() > position) {
                 return items.get(position);
             }
             return null;

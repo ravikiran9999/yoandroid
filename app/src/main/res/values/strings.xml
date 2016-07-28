@@ -32,8 +32,11 @@
     <string name="send">Send</string>
     <string name="type_a_message">Type a message</string>
     <string name="copy_message">Message Copied</string>
+    <string name="copy_messages">Messages Copied</string>
     <string name="add_contact">Add Contact</string>
     <string name="new_group">New Group</string>
+
+    <string name="not_sender">You dont have permission to delete message </string>
 
     <string name="enter_mobile_number">Enter your mobile number to get started!</string>
 
@@ -125,7 +128,8 @@
     <string name="activity_contry_selection_title">Select Country</string>
     <string name="no_article_added">There is no article added yet.\nAdd any article to create your own magazine</string>
     <string name="yesterday">"Yesterday "</string>
-    <string name="otp_failure">Sorry, Unable to validate your OTP.</string>
+    <string name="otp_empty">Please enter valid OTP</string>
+    <string name="otp_failure">Please enter valid OTP</string>
     <string name="some_thing_wrong">Something went wrong. Please try again later</string>
     <string name="article_added_success">Article added successfully</string>
     <string name="no_text">No Data Available.</string>
@@ -137,5 +141,16 @@
     <string name="unable_to_fetch">Unable to fetch user data at this moment.Please try agan later.</string>
     <string name="resend_otp_text">Re-send OTP</string>
     <string name="otp_button_submit">Submit</string>
+    <string name="share_invite_title">Share and Invite</string>
+    <string name="notifications">Notifications</string>
+    <string name="sync_contacts">Sync Contacts</string>
+    <string name="mobile_number_title">Mobile Number</string>
+    <string name="status_title">Status</string>
+    <string name="status_char_length">136 characters</string>
+    <string name="account_privacy_title">Account Privacy</string>
+    <string name="settings_label">Settings</string>
+    <string name="user_profile">Profile</string>
+    <string name="username_empty">Please provide user name before updating the profile details.</string>
+    <string name="change_photo">Change Photo</string>
 
 </resources>
