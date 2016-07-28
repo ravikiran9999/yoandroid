@@ -401,7 +401,7 @@ public class DialerFragment extends BaseFragment {
 
     @Override
     public void showOrHideTabs(boolean show) {
-        //super.showOrHideTabs(show);
+        super.showOrHideTabs(show);
     }
 
     @Override

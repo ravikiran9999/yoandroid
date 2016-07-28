@@ -10,7 +10,7 @@ public class InviteActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getSupportActionBar().setTitle("Invite Friends");
         InviteFriendsFragment inviteFriendsFragment = new InviteFriendsFragment();
         getSupportFragmentManager().beginTransaction()
                 .add(android.R.id.content, inviteFriendsFragment)

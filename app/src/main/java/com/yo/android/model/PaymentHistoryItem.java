@@ -1,14 +1,17 @@
 package com.yo.android.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class PaymentHistoryItem {
+//    @SerializedName("CURRENT_CREDIT")
     private String current_credit;
-
+//    @SerializedName("PDATED_AT")
     private String updated_at;
-
+//    @SerializedName("ADDED_CREDIT")
     private String added_credit;
-
+//    @SerializedName("STATUS")
     private String status;
-
+//    @SerializedName("EXISTING_CREDIT")
     private String existing_credit;
 
     private boolean arrowDown;

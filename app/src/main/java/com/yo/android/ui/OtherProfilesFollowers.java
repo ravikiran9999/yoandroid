@@ -63,8 +63,8 @@ public class OtherProfilesFollowers extends BaseFragment {
                 if (response.body().size() > 0) {
                     noData.setVisibility(View.GONE);
                     lvFindPeople.setVisibility(View.VISIBLE);
-                    TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count);
-                    count.setText("" + response.body().size());
+                    /*TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count);
+                    count.setText("" + response.body().size());*/
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItemsAll(findPeopleList);
                 }
@@ -84,6 +84,9 @@ public class OtherProfilesFollowers extends BaseFragment {
                 otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
                 otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
                 otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
+                otherProfileIntent.putExtra("MagazinesCount", findPeopleAdapter.getItem(position).getMagzinesCount());
+                otherProfileIntent.putExtra("FollowersCount", findPeopleAdapter.getItem(position).getFollowersCount());
+                otherProfileIntent.putExtra("LikedArticlesCount", findPeopleAdapter.getItem(position).getLikedArticlesCount());
                 startActivityForResult(otherProfileIntent,11);
             }
         });

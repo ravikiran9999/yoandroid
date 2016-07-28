@@ -20,6 +20,7 @@ import com.yo.android.model.dialer.SubscribersList;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -137,9 +138,17 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         public void bindView(int position, SpendDetailsViewHolder holder, final SubscribersList item) {
             holder.getDate().setText(item.getTime());
             holder.getDuration().setText(item.getDuration());
-            holder.getTxtPhone().setText(item.getUsername());
+            holder.getTxtPhone().setText(item.getDestination());
 //            holder.getTxtPulse().setText(item.getPulse());
-            holder.getTxtPrice().setText(item.getCallcost());
+            holder.getTxtPrice().setText("$" + item.getCallcost());
+            try {
+                DecimalFormat df = new DecimalFormat("0.000");
+                String format = df.format(Double.valueOf(item.getCallcost()));
+                holder.getTxtPrice().setText("$" + format);
+            } catch (Exception e) {
+//                mLog.w(TAG, "getCurrentBalance", e);
+            }
+
             holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

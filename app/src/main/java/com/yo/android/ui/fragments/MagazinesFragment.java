@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,9 +31,11 @@ import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.WishListActivity;
+import com.yo.android.util.Util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -99,11 +102,22 @@ public class MagazinesFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         //MagazineTopicsSelectionFragment fragment = new MagazineTopicsSelectionFragment();
         //getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
-        mMagazineFlipArticlesFragment = new MagazineFlipArticlesFragment();
+
         mAdapter = new ArrayAdapter<String>
                 (getActivity(), R.layout.textviewitem, new ArrayList<String>());
+        if ((mMagazineFlipArticlesFragment = (MagazineFlipArticlesFragment) getChildFragmentManager().findFragmentById(R.id.bottom)) != null) {
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.bottom, mMagazineFlipArticlesFragment)
+                    .commit();
 
-        getChildFragmentManager().beginTransaction().add(R.id.bottom, mMagazineFlipArticlesFragment).commit();
+        } else {
+            mMagazineFlipArticlesFragment = new MagazineFlipArticlesFragment();
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.bottom, mMagazineFlipArticlesFragment)
+                    .commit();
+        }
 
         topicsList = new ArrayList<Topics>();
 
@@ -124,6 +138,18 @@ public class MagazinesFragment extends BaseFragment {
                 }
                 mAdapter.addAll(topicNamesList);
                 mAdapter.notifyDataSetChanged();
+                if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+                    List<String> followedTopicsIdsList = new ArrayList<String>();
+                    for (int k = 0; k < topicsList.size(); k++) {
+                        if (topicsList.get(k).getSelected().equals("true")) {
+
+                            followedTopicsIdsList.add(String.valueOf(topicsList.get(k).getId()));
+
+                        }
+
+                    }
+                    preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                }
             }
 
             @Override
@@ -198,17 +224,23 @@ public class MagazinesFragment extends BaseFragment {
                     Log.d("Search", "The selected item is " + parent.getItemAtPosition(position));
                     String topicName = (String) parent.getItemAtPosition(position);
                     searchTextView.setText(topicName);
+                    searchTextView.setSelection(topicName.trim().length());
                     String topicId = "";
                     for (int i = 0; i < topicsList.size(); i++) {
                         if (topicsList.get(i).getName().equals(topicName)) {
                             topicId = topicsList.get(i).getId();
+                            break;
                         }
                     }
-                    MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
+                    if (getActivity() != null)
+                        Util.hideKeyboard(getActivity(), searchTextView);
+//                    MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
                     List<String> tagIds = new ArrayList<String>();
                     tagIds.add(topicId);
-                    fragment.loadArticles(tagIds);
-
+//                    fragment.loadArticles(tagIds);
+                    if (mMagazineFlipArticlesFragment != null) {
+                        mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                    }
 
                     return;
                 }
@@ -218,13 +250,21 @@ public class MagazinesFragment extends BaseFragment {
                 @Override
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
-                        mMagazineFlipArticlesFragment.loadAllArticles();
+                        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+                            String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
+                            if (prefTags != null) {
+                                List<String> tagIds = Arrays.asList(prefTags);
+                                mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                            }
+                        }
+
                     }
                     return true;
                 }
             });
 
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

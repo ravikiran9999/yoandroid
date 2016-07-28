@@ -51,6 +51,7 @@ import butterknife.ButterKnife;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -257,6 +258,20 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        }
+                    });
+                }
                 preferenceEndPoint.clearAll();
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 getActivity().finish();
@@ -316,7 +331,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         if (key.equals(Constants.CURRENT_BALANCE)) {
             String balance = mBalanceHelper.getCurrentBalance();
             String currencySymbol = mBalanceHelper.getCurrencySymbol();
-            menuAdapter.getItem(1).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
+            menuAdapter.getItem(2).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
             menuAdapter.notifyDataSetChanged();
         } else if (key.equals(Constants.USER_NAME)) {
             String name = preferenceEndPoint.getStringPreference(Constants.USER_NAME);

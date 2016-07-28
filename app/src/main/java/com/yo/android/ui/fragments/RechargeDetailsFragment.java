@@ -1,6 +1,7 @@
 package com.yo.android.ui.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,8 +16,12 @@ import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.PaymentHistoryItem;
+import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,7 +35,7 @@ import retrofit2.Response;
 /**
  * Created by Ramesh on 25/7/16.
  */
-public class RechargeDetailsFragment extends BaseFragment implements Callback<List<PaymentHistoryItem>> {
+public class RechargeDetailsFragment extends BaseFragment implements Callback<List<PaymentHistoryItem>>, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Bind(R.id.txtEmpty)
     TextView txtEmpty;
@@ -45,9 +50,16 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
     private RechargeDetailsAdapter adapter;
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         adapter = new RechargeDetailsAdapter(getActivity());
+        preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -122,7 +134,12 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
         public void bindView(int position, SpendDetailsViewHolder holder, final PaymentHistoryItem item) {
             holder.getDate().setVisibility(View.GONE);
             holder.getDuration().setVisibility(View.GONE);
-            holder.getTxtPhone().setText(item.getUpdatedAt());
+            String modifiedTime = item.getUpdatedAt().substring(0, item.getUpdatedAt().lastIndexOf("."));
+            holder.getTxtPhone().setText(modifiedTime);
+            //                Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
+            Date date = Util.convertUtcToGmt(modifiedTime);
+            holder.getTxtPhone().setText(new SimpleDateFormat("dd/MM/yyyy hh:mm a").format(date));
+
             holder.getTxtPulse().setText(item.getStatus());
             holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.dial_green));
             holder.getTxtPrice().setText(String.format("$%s", item.getAddedCredit()));
@@ -140,6 +157,13 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
                 holder.getArrow().setImageResource(R.drawable.ic_uparrow);
                 holder.getDurationContainer().setVisibility(View.GONE);
             }
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(Constants.CURRENT_BALANCE)) {
+            mBalanceHelper.loadPaymentHistory(this);
         }
     }
 

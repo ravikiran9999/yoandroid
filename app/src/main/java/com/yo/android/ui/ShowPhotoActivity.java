@@ -1,7 +1,5 @@
 package com.yo.android.ui;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +12,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.util.Constants;
@@ -63,36 +62,45 @@ public class ShowPhotoActivity extends BaseActivity {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
             StorageReference imageRef = storageRef.child(imagePath);
-            final long oneMegaByte = 1024 * 1024;
-
-            imageRef.getBytes(oneMegaByte).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
-                public void onSuccess(byte[] bytes) {
+                public void onSuccess(Uri uri) {
+                    Picasso.with(ShowPhotoActivity.this)
+                            .load(uri)
+                            .into(imageOpen, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    imageOpen.setVisibility(View.VISIBLE);
+                                    mAttacher.update();
+                                }
 
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    imageOpen.setVisibility(View.VISIBLE);
-                    imageOpen.setImageBitmap(bitmap);
-                    mAttacher.update();
+                                @Override
+                                public void onError() {
+                                    // Handle any errors
+                                    if (mProgress != null) {
+                                        mProgress.setVisibility(View.GONE);
+                                    }
+                                    if (loadingFailed != null) {
+                                        loadingFailed.setVisibility(View.VISIBLE);
+                                    }
+
+                                }
+                            });
 
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                    if(mProgress != null) {
-                        mProgress.setVisibility(View.GONE);
-                    }
-                    if(loadingFailed != null){
-                        loadingFailed.setVisibility(View.VISIBLE);
-                    }
-
-                    exception.printStackTrace();
+                public void onFailure(@NonNull Exception e) {
+                    e.printStackTrace();
                 }
             });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
     @Override

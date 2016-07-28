@@ -51,10 +51,10 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
             holder.getRowContainer().setVisibility(View.GONE);
             holder.getHeader().setText(item.getHeaderTitle());
         } else if (item.getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
-            holder.getTimeStamp().setText(Util.parseDate(item.getStime()));
+            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
         } else {
-            holder.getTimeStamp().setText(Util.parseDate(item.getStime()));
+            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_greenarrowup, 0, 0, 0);
         }
         holder.getCallIcon().setOnClickListener(new View.OnClickListener() {

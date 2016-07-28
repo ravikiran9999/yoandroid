@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -90,27 +91,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 }
                 topicsList.addAll(response.body());
                 for (int i = 0; i < topicsList.size(); i++) {
-                    TagSelected tag = new TagSelected(topicsList.get(i).getName());
-                    tag.radius = 1f;
-                    tag.setTagId(topicsList.get(i).getId());
-                    tag.layoutBorderColor = getResources().getColor(R.color.tab_grey);
-                    tag.layoutBorderSize = 1f;
-                    tag.layoutColor = getResources().getColor(android.R.color.white);
-                    tag.tagTextColor = getResources().getColor(R.color.tab_grey);
-
-                    // if (i % 2 == 0) // you can set deletable or not
-                    //     tag.isDeletable = true;
-                    if (topicsList.get(i).getSelected().equals("true")) {
-                        tag.setSelected(true);
-                        tag.layoutColor = getResources().getColor(R.color.colorPrimary);
-                        tag.tagTextColor = getResources().getColor(android.R.color.white);
-                        tag.setSelected(true);
-                        addedTopics.add(tag.text);
-                    } else {
-                        tag.layoutColor = getResources().getColor(android.R.color.white);
-                        tag.tagTextColor = getResources().getColor(R.color.tab_grey);
-                        tag.setSelected(false);
-                    }
+                    TagSelected tag = prepareTag(i);
                     initialTags.add(tag);
                 }
                 tagGroup.addTags(initialTags);
@@ -226,6 +207,32 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
     }
 
+    @NonNull
+    private TagSelected prepareTag(int i) {
+        TagSelected tag = new TagSelected(topicsList.get(i).getName());
+        tag.radius = 1f;
+        tag.setTagId(topicsList.get(i).getId());
+        tag.layoutBorderColor = getResources().getColor(R.color.tab_grey);
+        tag.layoutBorderSize = 1f;
+        tag.layoutColor = getResources().getColor(android.R.color.white);
+        tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+
+        // if (i % 2 == 0) // you can set deletable or not
+        //     tag.isDeletable = true;
+        if (topicsList.get(i).getSelected().equals("true")) {
+            tag.setSelected(true);
+            tag.layoutColor = getResources().getColor(R.color.colorPrimary);
+            tag.tagTextColor = getResources().getColor(android.R.color.white);
+            tag.setSelected(true);
+            addedTopics.add(tag.text);
+        } else {
+            tag.layoutColor = getResources().getColor(android.R.color.white);
+            tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+            tag.setSelected(false);
+        }
+        return tag;
+    }
+
     private class TagSelected extends Tag {
 
         private boolean selected;
@@ -311,30 +318,10 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         String text = cs.toString();
         searchTags = new ArrayList<>();
         TagSelected tag;
-
-        for (int i = 0; i < topicsList.size(); i++) {
-            if (topicsList.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
-                tag = new TagSelected(topicsList.get(i).getName());
-                tag.radius = 1f;
-                tag.setTagId(topicsList.get(i).getId());
-                tag.layoutBorderColor = getResources().getColor(R.color.tab_grey);
-                tag.layoutBorderSize = 1f;
-                tag.layoutColor = getResources().getColor(android.R.color.white);
-                tag.tagTextColor = getResources().getColor(R.color.tab_grey);
-                /*if (i % 2 == 0) // you can set deletable or not
-                    tag.isDeletable = true;*/
-                if (topicsList.get(i).getSelected().equals("true")) {
-                    tag.setSelected(true);
-                    tag.layoutColor = getResources().getColor(R.color.colorPrimary);
-                    tag.tagTextColor = getResources().getColor(android.R.color.white);
-                    tag.setSelected(true);
-                    addedTopics.add(tag.text);
-                } else {
-                    tag.layoutColor = getResources().getColor(android.R.color.white);
-                    tag.tagTextColor = getResources().getColor(R.color.tab_grey);
-                    tag.setSelected(false);
-                }
-                searchTags.add(tag);
+        List<Tag> tags = tagGroup.getTags();
+        for (int i = 0; i < tags.size(); i++) {
+            if (tags.get(i).text.toLowerCase().startsWith(text.toLowerCase())) {
+                searchTags.add(tags.get(i));
             }
         }
         tagGroup.addTags(searchTags);

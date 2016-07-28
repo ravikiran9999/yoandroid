@@ -55,7 +55,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         int notificationId = title.hashCode();
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);
 
-        NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
+       /* NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
         notificationStyle.bigText(title);
 
         Notification notification = new NotificationCompat.Builder(getApplicationContext())
@@ -68,7 +68,18 @@ public class PushNotificationService extends FirebaseMessagingService {
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationId, notification);
+        notificationManager.notify(notificationId, notification);*/
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext())
+                .setSmallIcon(getNotificationIcon())
+                .setContentTitle(title)
+                .setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_SOUND)
+                .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(message)).setContentIntent(pendingIntent);
+        mNotificationManager.notify((int) System.currentTimeMillis(), notification.build());
 
 
     }

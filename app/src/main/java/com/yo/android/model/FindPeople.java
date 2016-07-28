@@ -11,6 +11,9 @@ public class FindPeople {
     private String description;
     private String avatar;
     private String isFollowing;
+    private int magzinesCount;
+    private int likedArticlesCount;
+    private int followersCount;
 
     public String getId() {
         return id;
@@ -58,5 +61,29 @@ public class FindPeople {
 
     public void setIsFollowing(String isFollowing) {
         this.isFollowing = isFollowing;
+    }
+
+    public int getMagzinesCount() {
+        return magzinesCount;
+    }
+
+    public void setMagzinesCount(int magzinesCount) {
+        this.magzinesCount = magzinesCount;
+    }
+
+    public int getLikedArticlesCount() {
+        return likedArticlesCount;
+    }
+
+    public void setLikedArticlesCount(int likedArticlesCount) {
+        this.likedArticlesCount = likedArticlesCount;
+    }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
     }
 }

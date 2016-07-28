@@ -40,6 +40,9 @@ public class OthersProfileActivity extends BaseActivity {
     private List<ProfileTabsData> dataList;
     String userId;
     private boolean isFollowingUser;
+    private int magazinesCount;
+    private int followersCount;
+    private int likedArticlesCount;
 
     private static Fragment currentFragment;
 
@@ -65,6 +68,10 @@ public class OthersProfileActivity extends BaseActivity {
         CircleImageView picture = (CircleImageView) findViewById(R.id.picture);
         TextView tvName = (TextView) findViewById(R.id.follower_name);
         final Button btnFolow = (Button) findViewById(R.id.follow_btn);
+
+        magazinesCount = getIntent().getIntExtra("MagazinesCount", 0);
+        followersCount = getIntent().getIntExtra("FollowersCount", 0);
+        likedArticlesCount = getIntent().getIntExtra("LikedArticlesCount", 0);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -213,9 +220,9 @@ public class OthersProfileActivity extends BaseActivity {
 
     protected List<ProfileTabsData> createTabsList() {
         List<ProfileTabsData> list = new ArrayList<>();
-        list.add(new ProfileTabsData("Magazines", 0));
-        list.add(new ProfileTabsData("Followers", 0));
-        list.add(new ProfileTabsData("Liked Articles", 0));
+        list.add(new ProfileTabsData("Magazines", magazinesCount));
+        list.add(new ProfileTabsData("Followers", followersCount));
+        list.add(new ProfileTabsData("Liked Articles", likedArticlesCount));
 
         return list;
     }

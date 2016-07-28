@@ -14,8 +14,8 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class VoxFactory {
-    private String LOGINUSER = "droid";
-    private String LOGINSECRET = "30aa498c5be84f703add8e0b1ff69fc9620e71a7";
+    private String LOGINUSER = "droid";//user4app
+    private String LOGINSECRET = "30aa498c5be84f703add8e0b1ff69fc9620e71a7";//f7c3bc1d808e04732adf679965ccc34ca7ae3441
 
     @Inject
     public VoxFactory() {

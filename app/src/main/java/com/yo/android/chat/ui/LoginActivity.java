@@ -86,6 +86,9 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         };
         mList = mCountryCodeHelper.readCodesFromAssets();
         String str = mCountryCodeHelper.getCountryZipCode(this);
+        if (TextUtils.isEmpty(str)) {
+            str = "sg";
+        }
         int pos = 0;
         for (CountryCode countryCode : mList) {
             if (countryCode.getCountryID().equalsIgnoreCase(str)) {
@@ -180,6 +183,8 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
                     transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
                     transaction.disallowAddToBackStack();
                     transaction.commit();
+                } else {
+                    mToastFactory.showToast("Please check valid phone number.");
                 }
 
             }
