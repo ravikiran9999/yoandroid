@@ -118,6 +118,7 @@ sonarRunner {
         property 'sonar.sourceEncoding', 'windows-1252'
         property 'sonar.scm.disabled', 'true'
         property 'sonar.exclusions', '**/R.class, **/R$*.class,**/BuildConfig.*,**/Manifest*.*,**/*.xml'
+        compile 'de.hdodenhof:circleimageview:2.1.0'
     }
 
 }
