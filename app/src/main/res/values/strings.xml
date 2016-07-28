@@ -36,6 +36,8 @@
     <string name="add_contact">Add Contact</string>
     <string name="new_group">New Group</string>
 
+    <string name="not_sender">You dont have permission to delete message </string>
+
     <string name="enter_mobile_number">Enter your mobile number to get started!</string>
 
     <string name="magazines_fragment">Hello magazine fragment</string>

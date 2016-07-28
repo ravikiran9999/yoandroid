@@ -2,6 +2,7 @@ package com.yo.android.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.util.Constants;
 
@@ -59,9 +61,10 @@ public class ShowPhotoActivity extends BaseActivity {
         try {
             // Create a storage reference from our app
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageRef = storage.getReferenceFromUrl("gs://samplefcm-ce2c6.appspot.com");
+            StorageReference storageRef = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
             StorageReference imageRef = storageRef.child(imagePath);
             final long oneMegaByte = 1024 * 1024;
+
             imageRef.getBytes(oneMegaByte).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
@@ -90,8 +93,6 @@ public class ShowPhotoActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
