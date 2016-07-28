@@ -22,6 +22,7 @@
         android:layout_below="@+id/hello_interests"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
         android:text="Pick some topics to follow."
         android:textColor="@android:color/black" />
 
@@ -40,52 +41,55 @@
                 android:id="@+id/tag_group"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_alignParentBottom="true"
-                android:orientation="vertical">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@color/grey_divider" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginTop="5dp"
-                        android:text="Follow more topics"
-                        android:textColor="@android:color/black" />
-
-                    <Button
-                        android:id="@+id/btn_done"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_alignParentRight="true"
-                        android:background="@android:color/holo_blue_dark"
-                        android:text="Done"
-                        android:textColor="@android:color/white" />
-
-                </RelativeLayout>
-            </LinearLayout>
+                android:layout_marginTop="20dp"
+                android:layout_weight="1" />
         </LinearLayout>
     </ScrollView>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="5dp"
+            android:background="@color/tab_grey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:gravity="center|start"
+                android:padding="10dp"
+                android:text="Follow more topics"
+                android:textColor="@android:color/black" />
+
+            <Button
+                android:id="@+id/btn_done"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:background="@android:color/holo_blue_dark"
+                android:text="Done"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
