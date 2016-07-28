@@ -55,7 +55,7 @@ public class FollowingsActivity extends BaseActivity {
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
 
                 dismissProgressDialog();
-                if (response.body().size() > 0) {
+                if (response.body() != null && response.body().size() > 0) {
                     noData.setVisibility(View.GONE);
                     lvFindPeople.setVisibility(View.VISIBLE);
                     List<FindPeople> findPeopleList = response.body();
