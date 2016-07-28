@@ -342,6 +342,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                new TagLoader(topicsList,tagGroup).execute();
                 return true;
             }
         });
