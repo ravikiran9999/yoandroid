@@ -174,6 +174,7 @@ public class OTPFragment extends BaseFragment {
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
                 dismissProgressDialog();
                 if (response.isSuccessful()) {
+                    preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, false);
                     contactsSyncManager.syncContacts();
                     count++;
                     navigateToNext(response, phoneNumber, password);
@@ -222,7 +223,8 @@ public class OTPFragment extends BaseFragment {
     }
 
     public void onEventMainThread(Bundle bundle) {
-        if (!isAdded()) {
+        if (!isAdded() || getActivity() == null) {
+            mLog.e("OTPFragment", "onEventMainThread: activity is already destroyed");
             return;
         }
         stopTimer();
@@ -234,6 +236,10 @@ public class OTPFragment extends BaseFragment {
     }
 
     public void showOTPConfirmationDialog(final String otp) {
+        if (getActivity() == null) {
+            mLog.e("OTPFragment", "showOTPConfirmationDialog: activity is already destroyed");
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("YoApp");
         builder.setMessage("We are detected your OTP : " + otp);
@@ -274,9 +280,10 @@ public class OTPFragment extends BaseFragment {
             } else {
                 txtTimer.setVisibility(View.GONE);
                 reSendTextBtn.setText("Resend");
+                reSendTextBtn.setEnabled(true);
                 //Reset
                 duration = MAX_DURATION;
-               // verifyButton.setText(R.string.resend_otp_text);
+                // verifyButton.setText(R.string.resend_otp_text);
                 verifyButton.setEnabled(true);
                 stopTimer();
             }
@@ -289,6 +296,7 @@ public class OTPFragment extends BaseFragment {
             str = "0" + duration;
         }
         reSendTextBtn.setText("Resend (00:" + str + ")");
+        reSendTextBtn.setEnabled(false);
     }
 
     private void stopTimer() {
@@ -299,6 +307,7 @@ public class OTPFragment extends BaseFragment {
         duration = MAX_DURATION;
         verifyButton.setEnabled(true);
         reSendTextBtn.setText("Resend");
+        reSendTextBtn.setEnabled(true);
     }
 
 
