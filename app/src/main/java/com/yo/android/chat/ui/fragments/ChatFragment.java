@@ -1,11 +1,18 @@
 package com.yo.android.chat.ui.fragments;
 
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -35,7 +43,9 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -53,12 +63,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private ListView listView;
     private List<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
-    private DatabaseReference reference;
     private Menu menu;
-
-
-    @Inject
-    DatabaseHelper databaseHelper;
 
     @Inject
     YoApi.YoService yoService;
@@ -90,6 +95,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_chat, menu);
         this.menu = menu;
+        Util.prepareContactsSearch(getActivity(), menu,chatRoomListAdapter);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -121,8 +127,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         listView = (ListView) view.findViewById(R.id.lv_chat_room);
         listView.setOnItemClickListener(this);
-        reference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-        reference.keepSynced(true);
 
         return view;
     }
@@ -140,39 +144,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Room room = chatRoomListAdapter.getItem(position);
-        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-
-        // Enable it to forward, message (or) Image to group
-        /* String chatForwardObjectString = preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD);
-           ChatMessage forwardChatMessage = new Gson().fromJson(chatForwardObjectString, ChatMessage.class);
-
-        if (forwardChatMessage != null) {
-            if (room.getGroupName() == null) {
-                navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber(), forwardChatMessage);
-            } else if (room.getGroupName() != null) {
-                navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName(), forwardChatMessage);
-            }
-
-        } else*/
-
-        /*if (room.getGroupName() == null) {
-            if(!room.getMembers().get(0).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
-                navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(0).getMobileNumber());
-            } else if(!room.getMembers().get(1).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
-                navigateToChatScreen(room.getFirebaseRoomId(), room.getMembers().get(1).getMobileNumber());
-            }
-        } else if (room.getGroupName() != null) {
-            navigateToChatScreen(room.getFirebaseRoomId(), room.getGroupName());
-        }*/
-
         navigateToChatScreen(room);
-    }
-
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber) {
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
-        startActivity(intent);
     }
 
     private void navigateToChatScreen(Room room) {
@@ -268,4 +240,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
     }
+
+
 }
