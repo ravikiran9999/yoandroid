@@ -25,7 +25,7 @@
     </string>
     <string name="next">Next</string>
     <string name="verify">Verify</string>
-    <string name="enter_otp">Enter OTP</string>
+    <string name="enter_otp">Enter PIN</string>
     <string name="enter_username">Enter Username</string>
 
     <!--chat-->
@@ -128,8 +128,8 @@
     <string name="activity_contry_selection_title">Select Country</string>
     <string name="no_article_added">There is no article added yet.\nAdd any article to create your own magazine</string>
     <string name="yesterday">"Yesterday "</string>
-    <string name="otp_empty">Please enter valid OTP</string>
-    <string name="otp_failure">Please enter valid OTP</string>
+    <string name="otp_empty">Please enter valid PIN</string>
+    <string name="otp_failure">Please enter valid PIN</string>
     <string name="some_thing_wrong">Something went wrong. Please try again later</string>
     <string name="article_added_success">Article added successfully</string>
     <string name="no_text">No Data Available.</string>
@@ -139,7 +139,7 @@
     <string name="okay">okay</string>
     <string name="gallery">Gallery</string>
     <string name="unable_to_fetch">Unable to fetch user data at this moment.Please try agan later.</string>
-    <string name="resend_otp_text">Re-send OTP</string>
+    <string name="resend_otp_text">Re-send PIN</string>
     <string name="otp_button_submit">Submit</string>
     <string name="share_invite_title">Share and Invite</string>
     <string name="notifications">Notifications</string>
@@ -154,5 +154,6 @@
     <string name="change_photo">Change Photo</string>
     <string name="add_picture">Add Picture</string>
     <string name="change_picture">Change Picture</string>
+    <string name="no_result_found">No search results found</string>
 
 </resources>

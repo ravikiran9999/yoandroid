@@ -246,7 +246,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 }
                 Menu menu = mode.getMenu();
                 menu.findItem(R.id.copy).setVisible(!imageSelected);
-                //==
 
                 if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
                     getActivity().invalidateOptionsMenu();
