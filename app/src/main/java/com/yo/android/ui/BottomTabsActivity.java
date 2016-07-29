@@ -1,7 +1,6 @@
 package com.yo.android.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
@@ -18,9 +17,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
@@ -57,6 +58,9 @@ public class BottomTabsActivity extends BaseActivity {
     TabsPagerAdapter mAdapter;
     CustomViewPager viewPager;
     private int toolBarColor;
+    @Inject
+    ContactsSyncManager contactsSyncManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +116,7 @@ public class BottomTabsActivity extends BaseActivity {
         //
         loadUserProfileInfo();
         updateDeviceToken();
+        contactsSyncManager.syncContacts();
 
     }
 
@@ -253,7 +258,12 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     private void updateDeviceToken() {
-        String refreshedToken = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        if (!TextUtils.isEmpty(refreshedToken)) {
+            preferenceEndPoint.saveStringPreference(Constants.FCM_REFRESH_TOKEN, refreshedToken);
+        } else {
+            refreshedToken = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        }
         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
