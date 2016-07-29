@@ -23,6 +23,7 @@
         android:drawableLeft="@drawable/ic_new_chat_group_name"
         android:drawablePadding="10dp"
         android:hint="Type Group Name"
+        android:maxLines="1"
         android:textSize="18sp" />
 
     <TextView

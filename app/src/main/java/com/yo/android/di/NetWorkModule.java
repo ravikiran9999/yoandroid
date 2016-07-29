@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.api.YoApi;
 import com.yo.android.vox.VoxApi;
 
@@ -49,14 +50,14 @@ public class NetWorkModule {
         long SIZE_OF_CACHE = 10 * 1024 * 1024; // 10 MB
         Cache cache = new Cache(new File(context.getCacheDir(), "http"), SIZE_OF_CACHE);
         builder.cache(cache);
-        return buildAdapter(YoApi.BASE_URL, YoApi.YoService.class, builder);
+        return buildAdapter(BuildConfig.BASE_URL, YoApi.YoService.class, builder);
     }
 
     @Singleton
     @Provides
     YoApi.YoRefreshTokenService provideYoRefreshTokenService() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        return buildAdapter(YoApi.BASE_URL, YoApi.YoRefreshTokenService.class, builder);
+        return buildAdapter(BuildConfig.BASE_URL, YoApi.YoRefreshTokenService.class, builder);
     }
 
     private <T> T buildAdapter(String baseUrl, Class<T> clazz, OkHttpClient.Builder builder) {

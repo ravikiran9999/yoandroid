@@ -45,14 +45,13 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
-import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.MyServiceConnection;
-import com.yo.android.chat.notification.PushNotificationService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
@@ -60,7 +59,6 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
-import com.yo.android.util.FirebaseConfig;
 import com.yo.android.voip.OutGoingCallActivity;
 
 import java.io.ByteArrayOutputStream;
@@ -68,8 +66,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -139,7 +135,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReferenceFromUrl(FirebaseConfig.STORAGE_BUCKET);
+        storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
         if (myServiceConnection.isServiceConnection()) {
             firebaseService.getFirebaseAuth();
