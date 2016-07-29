@@ -11,14 +11,14 @@ android {
         }
     }
     compileSdkVersion 23
-    buildToolsVersion '24'
+    buildToolsVersion "23.0.3"
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.yo.android"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.8.0"
+        versionName "16.3.9.0"
     }
     productFlavors {
         dev {
@@ -39,6 +39,9 @@ android {
             buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
             buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
+            applicationId "com.yo.android.stage"
+
+            //signingConfig signingConfigs.config
         }
         //This will flavor will enable BeepSend SMS gateway for verification
         stagePaidSms {

@@ -42,7 +42,7 @@ public class FireBaseHelper {
 
     public Firebase authWithCustomToken(final String authToken) {
         //Url from Firebase dashboard
-        final Firebase ref = new Firebase("https://yoandroid-a0b48.firebaseio.com/Rooms/");
+        final Firebase ref = new Firebase(FirebaseConfig.FIREBASE_URL);
         ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
