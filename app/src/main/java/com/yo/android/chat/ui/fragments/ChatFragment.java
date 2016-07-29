@@ -95,7 +95,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_chat, menu);
         this.menu = menu;
-        Util.prepareContactsSearch(getActivity(), menu,chatRoomListAdapter);
+        Util.prepareContactsSearch(getActivity(), menu,chatRoomListAdapter, Constants.CHAT_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }

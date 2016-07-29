@@ -91,6 +91,7 @@ public class ContactsFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_contacts, menu);
         this.menu = menu;
+        Util.prepareContactsSearch(getActivity(), menu,contactsListAdapter, Constants.CONT_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }

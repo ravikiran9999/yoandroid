@@ -20,8 +20,6 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@+id/imv_notification_type"
-        android:ellipsize="end"
-        android:maxLines="2"
         android:text="Gabrielle Becker is now following you"
         android:textColor="@color/black" />
 

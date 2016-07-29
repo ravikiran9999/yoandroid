@@ -102,7 +102,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_app_contacts, menu);
         this.menu = menu;
-        Util.prepareSearch(getActivity(), menu, appContactsListAdapter);
+        Util.prepareContactsSearch(getActivity(), menu,appContactsListAdapter, Constants.Yo_CONT_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }

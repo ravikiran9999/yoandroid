@@ -24,6 +24,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.ui.fragments.MagazinesFragment;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -285,6 +286,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     flipContainer.setVisibility(View.GONE);
                 }
             }
+            if (getParentFragment() instanceof MagazinesFragment) {
+                ((MagazinesFragment) getParentFragment()).refreshSearch();
+            }
         }
 
     }
@@ -298,6 +302,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 List<String> tagIds = Arrays.asList(prefTags);
                 loadArticles(tagIds);
             }
+//            if (getParentFragment() instanceof MagazinesFragment) {
+//                ((MagazinesFragment) getParentFragment()).refreshSearch();
+//            }
         }
     }
 

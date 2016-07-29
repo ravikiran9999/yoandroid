@@ -246,7 +246,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 }
                 Menu menu = mode.getMenu();
                 menu.findItem(R.id.copy).setVisible(!imageSelected);
-                //==
 
                 if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
                     getActivity().invalidateOptionsMenu();
@@ -298,7 +297,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         List<ChatMessage> messagesList = new ArrayList<>();
                         if (selected.size() > 1) {
                             Toast.makeText(getActivity(), selected.size() + " " + getString(R.string.copy_messages), Toast.LENGTH_SHORT).show();
-                        } else if (selected.size() == 0) {
+                        } else if (selected.size() == 1) {
                             Toast.makeText(getActivity(), getString(R.string.copy_message), Toast.LENGTH_SHORT).show();
                         }
 
@@ -314,6 +313,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             }
                         }
                         new Clipboard(getActivity()).copy(builder.toString());
+                        userChatAdapter.getSelectedIds().clear();
+                        userChatAdapter.notifyDataSetChanged();
                         mode.finish();
                         break;
                     case R.id.forward:

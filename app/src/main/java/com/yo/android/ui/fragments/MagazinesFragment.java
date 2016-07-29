@@ -1,6 +1,7 @@
 package com.yo.android.ui.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -48,7 +49,7 @@ import retrofit2.Response;
 /**
  * Created by creatives on 6/27/2016.
  */
-public class MagazinesFragment extends BaseFragment {
+public class MagazinesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Inject
     YoApi.YoService yoService;
@@ -79,6 +80,13 @@ public class MagazinesFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -121,34 +129,40 @@ public class MagazinesFragment extends BaseFragment {
 
         topicsList = new ArrayList<Topics>();
 
+        callApiSearchTopics();
+    }
+
+    private void callApiSearchTopics() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         //showProgressDialog();
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
                 dismissProgressDialog();
-                if (response == null || response.body() == null) {
+                if (getActivity() == null || response == null || response.body() == null) {
                     return;
                 }
+                topicsList.clear();
                 topicsList.addAll(response.body());
-
-                List<String> topicNamesList = new ArrayList<String>();
-                for (int i = 0; i < topicsList.size(); i++) {
-                    topicNamesList.add(topicsList.get(i).getName());
-                }
-                mAdapter.addAll(topicNamesList);
-                mAdapter.notifyDataSetChanged();
                 if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
                     List<String> followedTopicsIdsList = new ArrayList<String>();
                     for (int k = 0; k < topicsList.size(); k++) {
                         if (topicsList.get(k).isSelected()) {
                             followedTopicsIdsList.add(String.valueOf(topicsList.get(k).getId()));
-
                         }
 
                     }
                     preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
                 }
+                List<String> topicNamesList = new ArrayList<String>();
+                for (int i = 0; i < topicsList.size(); i++) {
+                    if (topicsList.get(i).isSelected()) {
+                        topicNamesList.add(topicsList.get(i).getName());
+                    }
+                }
+                mAdapter.clear();
+                mAdapter.addAll(topicNamesList);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -156,6 +170,10 @@ public class MagazinesFragment extends BaseFragment {
                 dismissProgressDialog();
             }
         });
+    }
+
+    public void refreshSearch() {
+        callApiSearchTopics();
     }
 
     @Override
@@ -271,4 +289,8 @@ public class MagazinesFragment extends BaseFragment {
         return menu;
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+    }
 }
