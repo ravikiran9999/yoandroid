@@ -294,14 +294,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         break;
                     case R.id.copy:
                         StringBuilder builder = new StringBuilder();
-                        selected = userChatAdapter.getSelectedIds();
-                        List<ChatMessage> messagesList = new ArrayList<>();
-                        if (selected.size() > 1) {
-                            Toast.makeText(getActivity(), selected.size() + " " + getString(R.string.copy_messages), Toast.LENGTH_SHORT).show();
-                        } else if (selected.size() == 0) {
+                        int selectedCount = userChatAdapter.getSelectedCount();
+
+                        if (selectedCount > 1) {
+                            Toast.makeText(getActivity(), selectedCount + " " + getString(R.string.copy_messages), Toast.LENGTH_SHORT).show();
+                        } else {
                             Toast.makeText(getActivity(), getString(R.string.copy_message), Toast.LENGTH_SHORT).show();
                         }
-
+                        selected = userChatAdapter.getSelectedIds();
                         for (int i = 0; i < selected.size(); i++) {
                             if (selected.valueAt(i)) {
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));

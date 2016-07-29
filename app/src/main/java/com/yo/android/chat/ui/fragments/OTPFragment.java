@@ -234,29 +234,35 @@ public class OTPFragment extends BaseFragment {
     }
 
     public void showOTPConfirmationDialog(final String otp) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("YoApp");
-        builder.setMessage("We are detected your OTP : " + otp);
-        builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                etOtp.setText(otp);
-                verifyButton.setText(getActivity().getString(R.string.otp_button_submit));
-                //Auto click
-                verifyButton.performClick();
-            }
-        });
-        builder.setCancelable(false);
-        builder.setNegativeButton("Skip", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                reSendTextBtn.setText("Resend");
-                dialog.dismiss();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("YoApp");
+            builder.setMessage("We are detected your OTP : " + otp);
+            builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    etOtp.setText(otp);
+                    verifyButton.setText(getActivity().getString(R.string.otp_button_submit));
+                    //Auto click
+                    verifyButton.performClick();
+                }
+            });
+            builder.setCancelable(false);
+            builder.setNegativeButton("Skip", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    reSendTextBtn.setText("Resend");
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }catch (NullPointerException e) {
+            e.printStackTrace();
+        } finally {
+
+        }
     }
 
 
