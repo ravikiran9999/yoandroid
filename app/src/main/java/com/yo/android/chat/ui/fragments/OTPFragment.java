@@ -155,7 +155,7 @@ public class OTPFragment extends BaseFragment {
         int duration = Math.max(0, random.nextInt(35));
         if (!BuildConfig.ORIGINAL_SMS_VERIFICATION) {
             dummyOTPHandler.removeCallbacks(dummyOTPRunnable);
-            mToastFactory.showToast("Your otp will be sent in " + duration + " seconds.");
+            mToastFactory.showToast("Your PIN will be sent in " + duration + " seconds.");
             dummyOTPHandler.postDelayed(dummyOTPRunnable, duration * 1000L);
         }
     }
@@ -244,20 +244,20 @@ public class OTPFragment extends BaseFragment {
 
     public void showOTPConfirmationDialog(final String otp) {
         try {
-            if (getActivity() == null) {
-                mLog.e("OTPFragment", "showOTPConfirmationDialog: activity is already destroyed");
-                return;
-            }
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("YoApp");
-            builder.setMessage("We are detected your OTP : " + otp);
-            builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    etOtp.setText(otp);
-                    verifyButton.setText(getActivity().getString(R.string.otp_button_submit));
-                    //Auto click
-                    verifyButton.performClick();
+        if (getActivity() == null) {
+            mLog.e("OTPFragment", "showOTPConfirmationDialog: activity is already destroyed");
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("YoApp");
+        builder.setMessage("We are detected your PIN : " + otp);
+        builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                etOtp.setText(otp);
+                verifyButton.setText(getActivity().getString(R.string.otp_button_submit));
+                //Auto click
+                verifyButton.performClick();
                 }
             });
             builder.setCancelable(false);
