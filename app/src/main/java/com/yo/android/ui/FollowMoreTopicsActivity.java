@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
@@ -16,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,8 +92,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
-                dismissProgressDialog();
+//                dismissProgressDialog();
                 if (response == null || response.body() == null) {
+                    dismissProgressDialog();
                     return;
                 }
                 new TagLoader(response.body(), tagGroup).execute();
@@ -214,7 +216,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
     }
 
-    private class TagLoader extends AsyncTask<Void, Void, ArrayList<Tag>> {
+    private class TagLoader extends AsyncTask<Void, TagSelected, ArrayList<Tag>> {
 
         @NonNull
         private final List<Topics> dummyTopicsList;
@@ -229,6 +231,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             showProgressDialog();
+            tagGroup.setVisibility(View.GONE);
         }
 
         @Override
@@ -237,25 +240,42 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             for (Topics topic : topicsList) {
                 final TagSelected tag = prepareTag(topic);
                 initialTags.add(tag);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tagGroup.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                tagGroup.addTag(tag);
-                            }
-                        }, 1000);
-                    }
-                });
+                publishProgress(tag);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        tagGroup.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                tagGroup.addTag(tag);
+//                            }
+//                        }, 1000);
+//                    }
+//                });
             }
             return initialTags;
+        }
+
+        @Override
+        protected void onProgressUpdate(TagSelected... values) {
+            super.onProgressUpdate(values);
+            if (tagGroup != null) {
+                tagGroup.addTag(values[0]);
+            }
         }
 
         @Override
         protected void onPostExecute(final ArrayList<Tag> tagSelected) {
             super.onPostExecute(tagSelected);
             dismissProgressDialog();
+            if (tagGroup != null) {
+                tagGroup.setVisibility(View.VISIBLE);
+            }
         }
 
     }
@@ -382,4 +402,55 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             isInvalidSearch = false;
         }
     }
+
+    //==
+    private void newOpenCamera() {
+        if (mThread == null) {
+            mThread = new CameraHandlerThread();
+        }
+
+        synchronized (mThread) {
+            mThread.openCamera();
+        }
+    }
+
+    private CameraHandlerThread mThread = null;
+
+    private static class CameraHandlerThread extends HandlerThread {
+        Handler mHandler = null;
+
+        CameraHandlerThread() {
+            super("CameraHandlerThread");
+            start();
+            mHandler = new Handler(getLooper());
+        }
+
+        synchronized void notifyCameraOpened() {
+            notify();
+        }
+
+        void openCamera() {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    oldOpenCamera();
+                    notifyCameraOpened();
+                }
+            });
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Log.w("", "wait was interrupted");
+            }
+        }
+
+        private void oldOpenCamera() {
+            try {
+//                mCamera = Camera.open(1);
+            } catch (RuntimeException e) {
+                Log.e("", "failed to open front camera");
+            }
+        }
+    }
+
 }
