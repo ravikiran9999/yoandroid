@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -109,6 +110,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             case R.id.create_group:
                 startActivity(new Intent(getActivity(), CreateGroupActivity.class));
+                break;
+            case R.id.clear_chat_history :
+                Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
                 break;
 
             default:

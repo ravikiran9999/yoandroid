@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
@@ -58,7 +59,7 @@ public class TokenAuthenticator implements Authenticator {
                 tokenExpireCount++;
                 mLog.e("TokenAuthenticator", "TokenExpireCount - %d", tokenExpireCount);
                 OTPResponse responseBody
-                        = tokenService.refreshToken(YoApi.CLIENT_ID, YoApi.CLIENT_SECRET, "refresh_token", refreshToken)
+                        = tokenService.refreshToken(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET, "refresh_token", refreshToken)
                         .execute()
                         .body();
                 preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, responseBody.getAccessToken());

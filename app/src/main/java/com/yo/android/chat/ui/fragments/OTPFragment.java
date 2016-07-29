@@ -171,8 +171,8 @@ public class OTPFragment extends BaseFragment {
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         showProgressDialog();
 
-        yoService.verifyOTP(YoApi.CLIENT_ID,
-                YoApi.CLIENT_SECRET,
+        yoService.verifyOTP(BuildConfig.CLIENT_ID,
+                BuildConfig.CLIENT_SECRET,
                 "password", countryCode + phoneNumber, etOtp.getText().toString().trim()).enqueue(new Callback<OTPResponse>() {
             @Override
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {

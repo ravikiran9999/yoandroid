@@ -4,7 +4,6 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
-import com.yo.android.model.Magazine;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.Notification;
 import com.yo.android.model.OTPResponse;
@@ -15,7 +14,6 @@ import com.yo.android.model.Room;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
-import com.yo.android.util.FirebaseConfig;
 
 import java.util.List;
 
@@ -38,15 +36,7 @@ import retrofit2.http.Query;
  * Created by Ramesh on 1/7/16.
  */
 public class YoApi {
-    /*public static final String BASE_URL = "http://yoapp-dev.herokuapp.com/";
-    public static final String CLIENT_ID = "83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60";
-    public static final String CLIENT_SECRET = "1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49";
-    public static final String ACCESS_TOKEN = "access_token";
-    public static final String REFRESH_TOKEN = "refresh_token";*/
 
-    public static final String BASE_URL = FirebaseConfig.BASE_URL;
-    public static final String CLIENT_ID = FirebaseConfig.CLIENT_ID;
-    public static final String CLIENT_SECRET = FirebaseConfig.CLIENT_SECRET;
     public static final String ACCESS_TOKEN = "access_token";
     public static final String REFRESH_TOKEN = "refresh_token";
 
