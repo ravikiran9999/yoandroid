@@ -14,6 +14,7 @@ public class FindPeople {
     private int magzinesCount;
     private int likedArticlesCount;
     private int followersCount;
+    private String self;
 
     public String getId() {
         return id;
@@ -85,5 +86,13 @@ public class FindPeople {
 
     public void setFollowersCount(int followersCount) {
         this.followersCount = followersCount;
+    }
+
+    public String getSelf() {
+        return self;
+    }
+
+    public void setSelf(String self) {
+        this.self = self;
     }
 }

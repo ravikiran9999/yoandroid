@@ -163,6 +163,13 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
             }
         });
 
+        if("true".equals(item.getSelf())) {
+            holder.getBtnFindPeopleFollow().setVisibility(View.GONE);
+        }
+        else {
+            holder.getBtnFindPeopleFollow().setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override
