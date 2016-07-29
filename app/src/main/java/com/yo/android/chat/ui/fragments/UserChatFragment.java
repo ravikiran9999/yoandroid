@@ -60,6 +60,7 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
+import com.yo.android.util.FirebaseConfig;
 import com.yo.android.voip.OutGoingCallActivity;
 
 import java.io.ByteArrayOutputStream;
@@ -79,7 +80,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, ChildEventListener{
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, ChildEventListener {
 
 
     private static final String TAG = "UserChatFragment";
@@ -138,7 +139,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
+        storageReference = storage.getReferenceFromUrl(FirebaseConfig.STORAGE_BUCKET);
 
         if (myServiceConnection.isServiceConnection()) {
             firebaseService.getFirebaseAuth();
@@ -204,14 +205,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-
-                    if (userChatAdapter != null && userChatAdapter.getCount() > 0) {
-                        String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-                        if (listStickeyHeader != null) {
-                            listStickeyHeader.setText("" + headerText);
+                    try {
+                        if (userChatAdapter != null && userChatAdapter.getCount() > 0) {
+                            String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
+                            if (listStickeyHeader != null) {
+                                listStickeyHeader.setText("" + headerText);
+                            }
                         }
+                    } catch (Exception e) {
                     }
-
                 }
             });
         } catch (NoClassDefFoundError e) {

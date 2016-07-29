@@ -16,6 +16,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.util.Constants;
+import com.yo.android.util.FirebaseConfig;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -60,7 +61,7 @@ public class ShowPhotoActivity extends BaseActivity {
         try {
             // Create a storage reference from our app
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageRef = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
+            StorageReference storageRef = storage.getReferenceFromUrl(FirebaseConfig.STORAGE_BUCKET);
             StorageReference imageRef = storageRef.child(imagePath);
             imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
