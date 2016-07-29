@@ -228,7 +228,7 @@ public class Util {
         });
     }
 
-    public static void prepareContactsSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
+    public static void prepareContactsSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter, final String roomType) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -252,7 +252,11 @@ public class Util {
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
                 if (adapter != null) {
-                    adapter.performContactsSearch(newText);
+                    if (roomType.equalsIgnoreCase(Constants.CHAT_FRAG)) {
+                        adapter.performContactsSearch(newText);
+                    } else {
+                        adapter.performYoContactsSearch(newText);
+                    }
                 }
                 return true;
             }

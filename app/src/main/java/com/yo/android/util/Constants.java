@@ -20,6 +20,10 @@ public class Constants {
     public static final String SELECTED_CONTACTS = "selected_contacts";
     public static final String CONTACT = "contact";
 
+    public static final String CHAT_FRAG = "ChatFrag";
+    public static final String CONT_FRAG = "ContFrag";
+    public static final String Yo_CONT_FRAG = "YoContFrag";
+
     //Preference
     public static final String USER_ID = "user_id";
     public static final String USER_AVATAR = "user_avatar";
