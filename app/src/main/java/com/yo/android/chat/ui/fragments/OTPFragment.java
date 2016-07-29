@@ -30,6 +30,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
 
+import java.util.EmptyStackException;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -140,7 +141,10 @@ public class OTPFragment extends BaseFragment {
         @Override
         public void run() {
             dummyOTPHandler.removeCallbacks(this);
-            showOTPConfirmationDialog("123456");
+            try {
+                showOTPConfirmationDialog("123456");
+            } catch (Exception e) {
+            }
             stopTimer();
         }
     };
@@ -231,38 +235,44 @@ public class OTPFragment extends BaseFragment {
         String otp = IncomingSmsReceiver.extractOTP(bundle);
         this.etOtp.setText(otp);
         if (otp != null) {
-            showOTPConfirmationDialog(otp);
+            try {
+                showOTPConfirmationDialog(otp);
+            } catch (Exception e) {
+            }
         }
     }
 
     public void showOTPConfirmationDialog(final String otp) {
-        if (getActivity() == null) {
-            mLog.e("OTPFragment", "showOTPConfirmationDialog: activity is already destroyed");
-            return;
+        try {
+            if (getActivity() == null) {
+                mLog.e("OTPFragment", "showOTPConfirmationDialog: activity is already destroyed");
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("YoApp");
+            builder.setMessage("We are detected your OTP : " + otp);
+            builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    etOtp.setText(otp);
+                    verifyButton.setText(getActivity().getString(R.string.otp_button_submit));
+                    //Auto click
+                    verifyButton.performClick();
+                }
+            });
+            builder.setCancelable(false);
+            builder.setNegativeButton("Skip", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    reSendTextBtn.setText("Resend");
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        } catch (Exception e) {
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("YoApp");
-        builder.setMessage("We are detected your OTP : " + otp);
-        builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                etOtp.setText(otp);
-                verifyButton.setText(getActivity().getString(R.string.otp_button_submit));
-                //Auto click
-                verifyButton.performClick();
-            }
-        });
-        builder.setCancelable(false);
-        builder.setNegativeButton("Skip", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                reSendTextBtn.setText("Resend");
-                dialog.dismiss();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
     }
 
 
