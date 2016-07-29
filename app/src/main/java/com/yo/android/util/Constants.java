@@ -56,6 +56,8 @@ public class Constants {
     public static final String LOGED_IN_AND_VERIFIED = "loged_in_not_verified";
     public static final int ADD_STORY_ACTION = 101;
     public static final int GO_TO_SETTINGS = 103;
+    public static final String ENABLE_PROFILE_SCREEN = "enable_profile_screen";
+    public static final String ENABLE_FOLLOW_TOPICS_SCREEN = "enable_follow_more_topics_screen";
     public static int SUCCESS_CODE = 200;
 
     public static final int ADD_IMAGE_CAPTURE = 1;
@@ -64,5 +66,5 @@ public class Constants {
 
     public static String DELETE_MAGAZINE_ACTION = "com.edit.magazine.DELETE";
     public static String EDIT_MAGAZINE_ACTION = "com.edit.magazine.EDIT";
-    public static String SESSION_EXPIRE="SESSION_EXPIRE";
+    public static String SESSION_EXPIRE = "SESSION_EXPIRE";
 }

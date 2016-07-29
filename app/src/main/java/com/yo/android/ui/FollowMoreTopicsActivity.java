@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
@@ -16,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Topics;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -67,13 +69,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(title);
 
-        final Intent intent = getIntent();
-        if (intent.hasExtra("From") && !TextUtils.isEmpty("from")) {
-            from = intent.getStringExtra("From");
-        }
+        Intent intent = getIntent();
+        from = intent.getStringExtra("From");
 
         boolean backBtn = true;
-        if (from.equals("UpdateProfileActivity")) {
+        if ("UpdateProfileActivity".equals(from)) {
             backBtn = false;
         }
         getSupportActionBar().setHomeButtonEnabled(backBtn);
@@ -92,8 +92,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
-                dismissProgressDialog();
+//                dismissProgressDialog();
                 if (response == null || response.body() == null) {
+                    dismissProgressDialog();
                     return;
                 }
                 new TagLoader(response.body(), tagGroup).execute();
@@ -146,58 +147,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchTags != null) {
-                    for (int i = 0; i < initialTags.size(); i++) {
-                        for (int j = 0; j < searchTags.size(); j++) {
-                            TagSelected initialSel = (TagSelected) initialTags.get(i);
-                            TagSelected searchSel = (TagSelected) searchTags.get(j);
-                            if (initialSel.getTagId().equals(searchSel.getTagId())) {
-                                initialTags.remove(initialSel);
-                                initialTags.add(searchSel);
-                            }
-                        }
-                    }
-                }
-                tagGroup.addTags(initialTags);
-                for (int k = 0; k < tagGroup.getTags().size(); k++) {
-                    TagSelected t = (TagSelected) tagGroup.getTags().get(k);
-                    if (t.getSelected()) {
-
-                        followedTopicsIdsList.add(String.valueOf(t.getTagId()));
-
-                    }
-
-                }
-
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (from.equals("Magazines")) {
-                            Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
-                            startActivity(myCollectionsIntent);
-                            finish();
-                        } else if (from.equals("UpdateProfileActivity")) {
-                            Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
-                            myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
-                            myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
-                            startActivity(myCollectionsIntent);
-                            finish();
-                        } else {
-                            Intent intent = new Intent();
-                            setResult(2, intent);
-                            finish();
-                        }
-
-                        preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(FollowMoreTopicsActivity.this, "Error while adding topics", Toast.LENGTH_LONG).show();
-                    }
-                });
+                performDoneAction(followedTopicsIdsList);
             }
         });
 
@@ -209,7 +159,64 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
     }
 
-    private class TagLoader extends AsyncTask<Void, Void, ArrayList<Tag>> {
+    private void performDoneAction(final List<String> followedTopicsIdsList) {
+        if (searchTags != null && !searchTags.isEmpty()) {
+            for (int i = 0; i < initialTags.size(); i++) {
+                for (int j = 0; j < searchTags.size(); j++) {
+                    TagSelected initialSel = (TagSelected) initialTags.get(i);
+                    TagSelected searchSel = (TagSelected) searchTags.get(j);
+                    if (initialSel.getTagId().equals(searchSel.getTagId())) {
+                        initialTags.remove(initialSel);
+                        initialTags.add(searchSel);
+                    }
+                }
+            }
+        }
+        tagGroup.addTags(initialTags);
+        for (int k = 0; k < tagGroup.getTags().size(); k++) {
+            TagSelected t = (TagSelected) tagGroup.getTags().get(k);
+            if (t.getSelected()) {
+
+                followedTopicsIdsList.add(String.valueOf(t.getTagId()));
+
+            }
+
+        }
+
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if ("Magazines".equals(from)) {
+                    Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
+                    startActivity(myCollectionsIntent);
+                    finish();
+                } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
+                    //TODO:Disalbe flag for Follow more
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
+                    Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
+                    myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
+                    myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
+                    startActivity(myCollectionsIntent);
+                    finish();
+                } else {
+                    Intent intent = new Intent();
+                    setResult(2, intent);
+                    finish();
+                }
+
+                preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(FollowMoreTopicsActivity.this, "Error while adding topics", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private class TagLoader extends AsyncTask<Void, TagSelected, ArrayList<Tag>> {
 
         @NonNull
         private final List<Topics> dummyTopicsList;
@@ -224,6 +231,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             showProgressDialog();
+            tagGroup.setVisibility(View.GONE);
         }
 
         @Override
@@ -232,25 +240,42 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             for (Topics topic : topicsList) {
                 final TagSelected tag = prepareTag(topic);
                 initialTags.add(tag);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tagGroup.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                tagGroup.addTag(tag);
-                            }
-                        }, 1000);
-                    }
-                });
+                publishProgress(tag);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        tagGroup.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                tagGroup.addTag(tag);
+//                            }
+//                        }, 1000);
+//                    }
+//                });
             }
             return initialTags;
+        }
+
+        @Override
+        protected void onProgressUpdate(TagSelected... values) {
+            super.onProgressUpdate(values);
+            if (tagGroup != null) {
+                tagGroup.addTag(values[0]);
+            }
         }
 
         @Override
         protected void onPostExecute(final ArrayList<Tag> tagSelected) {
             super.onPostExecute(tagSelected);
             dismissProgressDialog();
+            if (tagGroup != null) {
+                tagGroup.setVisibility(View.VISIBLE);
+            }
         }
 
     }
@@ -377,4 +402,55 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             isInvalidSearch = false;
         }
     }
+
+    //==
+    private void newOpenCamera() {
+        if (mThread == null) {
+            mThread = new CameraHandlerThread();
+        }
+
+        synchronized (mThread) {
+            mThread.openCamera();
+        }
+    }
+
+    private CameraHandlerThread mThread = null;
+
+    private static class CameraHandlerThread extends HandlerThread {
+        Handler mHandler = null;
+
+        CameraHandlerThread() {
+            super("CameraHandlerThread");
+            start();
+            mHandler = new Handler(getLooper());
+        }
+
+        synchronized void notifyCameraOpened() {
+            notify();
+        }
+
+        void openCamera() {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    oldOpenCamera();
+                    notifyCameraOpened();
+                }
+            });
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Log.w("", "wait was interrupted");
+            }
+        }
+
+        private void oldOpenCamera() {
+            try {
+//                mCamera = Camera.open(1);
+            } catch (RuntimeException e) {
+                Log.e("", "failed to open front camera");
+            }
+        }
+    }
+
 }
