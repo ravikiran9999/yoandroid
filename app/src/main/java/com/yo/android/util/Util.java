@@ -228,6 +228,46 @@ public class Util {
         });
     }
 
+    public static void prepareContactsSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
+        final SearchManager searchManager =
+                (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem;
+        SearchView searchView;
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(activity.getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            public static final String TAG = "PrepareSearch in Util";
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "onQueryTextChange: " + query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG, "onQueryTextChange: " + newText);
+                if (adapter != null) {
+                    adapter.performContactsSearch(newText);
+                }
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                if (adapter != null) {
+                    adapter.performSearch("");
+                }
+                return true;
+            }
+        });
+    }
+
     public static void changeMenuItemsVisibility(Menu menu, int menuId, boolean visibility) {
         int size = menu.size();
         for (int i = 0; i < size; i++) {

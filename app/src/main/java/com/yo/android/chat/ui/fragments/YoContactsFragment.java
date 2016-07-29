@@ -31,6 +31,7 @@ import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
 import com.yo.android.model.Room;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +51,16 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     private ArrayList<ChatMessage> forwardChatMessages;
     private AppContactsListAdapter appContactsListAdapter;
     private ListView listView;
+    private Menu menu;
 
     @Inject
     YoApi.YoService yoService;
     @Inject
     ContactsSyncManager mContactsSyncManager;
+
+    public Menu getMenu() {
+        return menu;
+    }
 
     public YoContactsFragment() {
         // Required empty public constructor
@@ -95,14 +101,15 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_app_contacts, menu);
+        this.menu = menu;
+        Util.prepareSearch(getActivity(), menu, appContactsListAdapter);
+        Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Contact contact = (Contact) listView.getItemAtPosition(position);
-        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        String opponentPhoneNumber = contact.getPhoneNo();
 
         /*if (forwardChatMessages != null) {
             navigateToChatScreen(contact.getFirebaseRoomId(), opponentPhoneNumber, forwardChatMessages, contact.getId());

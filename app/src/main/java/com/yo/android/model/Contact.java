@@ -107,8 +107,8 @@ public class Contact implements Parcelable {
         }
     };
 
-    @Override
+    /*@Override
     public String toString() {
         return "ClassPojo [id = " + id + ", phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + ", firebaseRoomId = " + firebaseRoomId + "]";
-    }
+    }*/
 }
