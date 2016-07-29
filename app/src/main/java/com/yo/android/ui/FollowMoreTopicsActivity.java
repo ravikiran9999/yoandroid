@@ -28,6 +28,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Topics;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -67,13 +68,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(title);
 
-        final Intent intent = getIntent();
-        if (intent.hasExtra("From") && !TextUtils.isEmpty("from")) {
-            from = intent.getStringExtra("From");
-        }
+        Intent intent = getIntent();
+        from = intent.getStringExtra("From");
 
         boolean backBtn = true;
-        if (from.equals("UpdateProfileActivity")) {
+        if ("UpdateProfileActivity".equals(from)) {
             backBtn = false;
         }
         getSupportActionBar().setHomeButtonEnabled(backBtn);
@@ -146,58 +145,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchTags != null) {
-                    for (int i = 0; i < initialTags.size(); i++) {
-                        for (int j = 0; j < searchTags.size(); j++) {
-                            TagSelected initialSel = (TagSelected) initialTags.get(i);
-                            TagSelected searchSel = (TagSelected) searchTags.get(j);
-                            if (initialSel.getTagId().equals(searchSel.getTagId())) {
-                                initialTags.remove(initialSel);
-                                initialTags.add(searchSel);
-                            }
-                        }
-                    }
-                }
-                tagGroup.addTags(initialTags);
-                for (int k = 0; k < tagGroup.getTags().size(); k++) {
-                    TagSelected t = (TagSelected) tagGroup.getTags().get(k);
-                    if (t.getSelected()) {
-
-                        followedTopicsIdsList.add(String.valueOf(t.getTagId()));
-
-                    }
-
-                }
-
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (from.equals("Magazines")) {
-                            Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
-                            startActivity(myCollectionsIntent);
-                            finish();
-                        } else if (from.equals("UpdateProfileActivity")) {
-                            Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
-                            myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
-                            myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
-                            startActivity(myCollectionsIntent);
-                            finish();
-                        } else {
-                            Intent intent = new Intent();
-                            setResult(2, intent);
-                            finish();
-                        }
-
-                        preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(FollowMoreTopicsActivity.this, "Error while adding topics", Toast.LENGTH_LONG).show();
-                    }
-                });
+                performDoneAction(followedTopicsIdsList);
             }
         });
 
@@ -205,6 +153,63 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tagGroup.setOnTagDeleteListener(new OnTagDeleteListener() {
             @Override
             public void onTagDeleted(final TagView view, final Tag tag, final int position) {
+            }
+        });
+    }
+
+    private void performDoneAction(final List<String> followedTopicsIdsList) {
+        if (searchTags != null && !searchTags.isEmpty()) {
+            for (int i = 0; i < initialTags.size(); i++) {
+                for (int j = 0; j < searchTags.size(); j++) {
+                    TagSelected initialSel = (TagSelected) initialTags.get(i);
+                    TagSelected searchSel = (TagSelected) searchTags.get(j);
+                    if (initialSel.getTagId().equals(searchSel.getTagId())) {
+                        initialTags.remove(initialSel);
+                        initialTags.add(searchSel);
+                    }
+                }
+            }
+        }
+        tagGroup.addTags(initialTags);
+        for (int k = 0; k < tagGroup.getTags().size(); k++) {
+            TagSelected t = (TagSelected) tagGroup.getTags().get(k);
+            if (t.getSelected()) {
+
+                followedTopicsIdsList.add(String.valueOf(t.getTagId()));
+
+            }
+
+        }
+
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if ("Magazines".equals(from)) {
+                    Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
+                    startActivity(myCollectionsIntent);
+                    finish();
+                } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
+                    //TODO:Disalbe flag for Follow more
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
+                    Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
+                    myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
+                    myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
+                    startActivity(myCollectionsIntent);
+                    finish();
+                } else {
+                    Intent intent = new Intent();
+                    setResult(2, intent);
+                    finish();
+                }
+
+                preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(FollowMoreTopicsActivity.this, "Error while adding topics", Toast.LENGTH_LONG).show();
             }
         });
     }

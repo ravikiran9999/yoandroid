@@ -92,9 +92,18 @@ public class SplashScreenActivity extends BaseActivity {
 //                startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
 //            }
             //TODO:Need to fix
-            if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))){
-                startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
-            }else{
+            if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                //1.Profile
+                //2.Follow
+                //3. Home
+                if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_PROFILE_SCREEN)) {
+                    startActivity(new Intent(SplashScreenActivity.this, UpdateProfileActivity.class));
+                } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
+                    startActivity(new Intent(SplashScreenActivity.this, FollowMoreTopicsActivity.class));
+                } else {
+                    startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
+                }
+            } else {
                 startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
             }
             finish();
