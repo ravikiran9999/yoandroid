@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.model.Contact;
 import com.yo.android.model.Members;
 import com.yo.android.model.Room;
 import com.yo.android.util.Constants;
@@ -28,6 +29,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     protected final Context mContext;
     private List<T> mOriginalList = new ArrayList<>();
     private SparseBooleanArray mSelectedItemsIds;
+    private String myNumber;
 
     @Inject
     @Named("login")
@@ -114,20 +116,41 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         } else {
 
             List<T> temp = new ArrayList<>();
-            String myNumber = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
+            try {
+                if (loginPrefs != null) {
+                    myNumber = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
+                }
+            } catch (Exception e) {
+            }
+
             for (T event : mOriginalList) {
                 List<Members> memberses = ((Room) event).getMembers();
 
                 for (int j = 0; j < memberses.size(); j++) {
                     if (!memberses.get(j).getMobileNumber().contentEquals(myNumber)) {
                         String mKey = memberses.get(j).getMobileNumber();
-                       if(mKey.contains(key)) {
-                           temp.add(event);
-                       } else if(mKey.contains(key)) {
-                           temp.clear();
-                           temp.add(event);
-                       }
+                        if (mKey.contains(key)) {
+                            temp.add(event);
+                        } else if (mKey.contains(key)) {
+                            temp.clear();
+                            temp.add(event);
+                        }
                     }
+                }
+            }
+            addItems(temp);
+        }
+    }
+
+    public void performYoContactsSearch(@NonNull String key) {
+        if (key.isEmpty()) {
+            addItems(mOriginalList);
+        } else {
+
+            List<T> temp = new ArrayList<>();
+            for (T event : mOriginalList) {
+                if (((Contact) event).getPhoneNo().contains(key)) {
+                    temp.add(event);
                 }
             }
             addItems(temp);
