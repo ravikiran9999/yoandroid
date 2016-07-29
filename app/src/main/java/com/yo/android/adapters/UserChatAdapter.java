@@ -24,6 +24,7 @@ import com.yo.android.R;
 import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.util.Constants;
+import com.yo.android.util.FirebaseConfig;
 import com.yo.android.util.Util;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
@@ -192,7 +193,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 imageView.setTag(holder);
                 // Create a storage reference from our app
                 FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReferenceFromUrl("gs://yoandroid-a0b48.appspot.com");
+                StorageReference storageRef = storage.getReferenceFromUrl(FirebaseConfig.STORAGE_BUCKET);
                 StorageReference imageRef = storageRef.child(item.getImagePath());
                 linearLayout.addView(imageView);
                 if (item.getImageUrl() != null) {
