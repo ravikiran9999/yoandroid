@@ -78,8 +78,8 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
             case R.id.menu_save:
 
 
-                final String magazineTitle = etTitle.getText().toString();
-                final String magazineDesc = etDesc.getText().toString();
+                final String magazineTitle = etTitle.getText().toString().trim();
+                final String magazineDesc = etDesc.getText().toString().trim();
 
                 if (togglePrivacy.isChecked()) {
                     magazinePrivacy = "Public";
@@ -118,8 +118,8 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        final String magazineTitle = etTitle.getText().toString();
-        final String magazineDesc = etDesc.getText().toString();
+        final String magazineTitle = etTitle.getText().toString().trim();
+        final String magazineDesc = etDesc.getText().toString().trim();
 
         if (togglePrivacy.isChecked()) {
             magazinePrivacy = "Public";

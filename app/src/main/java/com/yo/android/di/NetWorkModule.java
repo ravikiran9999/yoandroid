@@ -45,7 +45,7 @@ public class NetWorkModule {
     @Provides
     YoApi.YoService provideYoService(Context context, YoApi.YoRefreshTokenService tokenService, @Named("login") PreferenceEndPoint endPoint, Log log) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.authenticator(new TokenAuthenticator(tokenService, endPoint, log));
+        builder.authenticator(new TokenAuthenticator(context,tokenService, endPoint, log));
         long SIZE_OF_CACHE = 10 * 1024 * 1024; // 10 MB
         Cache cache = new Cache(new File(context.getCacheDir(), "http"), SIZE_OF_CACHE);
         builder.cache(cache);

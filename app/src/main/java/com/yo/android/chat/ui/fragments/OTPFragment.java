@@ -30,6 +30,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
 
+import java.util.EmptyStackException;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -140,7 +141,10 @@ public class OTPFragment extends BaseFragment {
         @Override
         public void run() {
             dummyOTPHandler.removeCallbacks(this);
-            showOTPConfirmationDialog("123456");
+            try {
+                showOTPConfirmationDialog("123456");
+            } catch (Exception e) {
+            }
             stopTimer();
         }
     };
@@ -174,6 +178,7 @@ public class OTPFragment extends BaseFragment {
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
                 dismissProgressDialog();
                 if (response.isSuccessful()) {
+                    preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, false);
                     contactsSyncManager.syncContacts();
                     count++;
                     navigateToNext(response, phoneNumber, password);
@@ -222,19 +227,27 @@ public class OTPFragment extends BaseFragment {
     }
 
     public void onEventMainThread(Bundle bundle) {
-        if (!isAdded()) {
+        if (!isAdded() || getActivity() == null) {
+            mLog.e("OTPFragment", "onEventMainThread: activity is already destroyed");
             return;
         }
         stopTimer();
         String otp = IncomingSmsReceiver.extractOTP(bundle);
         this.etOtp.setText(otp);
         if (otp != null) {
-            showOTPConfirmationDialog(otp);
+            try {
+                showOTPConfirmationDialog(otp);
+            } catch (Exception e) {
+            }
         }
     }
 
     public void showOTPConfirmationDialog(final String otp) {
         try {
+            if (getActivity() == null) {
+                mLog.e("OTPFragment", "showOTPConfirmationDialog: activity is already destroyed");
+                return;
+            }
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("YoApp");
             builder.setMessage("We are detected your OTP : " + otp);
@@ -258,10 +271,7 @@ public class OTPFragment extends BaseFragment {
             AlertDialog dialog = builder.create();
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
-        }catch (NullPointerException e) {
-            e.printStackTrace();
-        } finally {
-
+        } catch (Exception e) {
         }
     }
 
@@ -280,9 +290,10 @@ public class OTPFragment extends BaseFragment {
             } else {
                 txtTimer.setVisibility(View.GONE);
                 reSendTextBtn.setText("Resend");
+                reSendTextBtn.setEnabled(true);
                 //Reset
                 duration = MAX_DURATION;
-               // verifyButton.setText(R.string.resend_otp_text);
+                // verifyButton.setText(R.string.resend_otp_text);
                 verifyButton.setEnabled(true);
                 stopTimer();
             }
@@ -295,6 +306,7 @@ public class OTPFragment extends BaseFragment {
             str = "0" + duration;
         }
         reSendTextBtn.setText("Resend (00:" + str + ")");
+        reSendTextBtn.setEnabled(false);
     }
 
     private void stopTimer() {
@@ -305,6 +317,7 @@ public class OTPFragment extends BaseFragment {
         duration = MAX_DURATION;
         verifyButton.setEnabled(true);
         reSendTextBtn.setText("Resend");
+        reSendTextBtn.setEnabled(true);
     }
 
 
