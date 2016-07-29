@@ -30,7 +30,6 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Topics;
 import com.yo.android.util.Constants;
-import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,7 +222,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         private TagView tagGroup;
 
         public TagLoader(List<Topics> topics, TagView tagGroup) {
-            this.dummyTopicsList = topics;
+            this.dummyTopicsList = new ArrayList<>(topics);
             this.tagGroup = tagGroup;
         }
 
@@ -232,10 +231,12 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             super.onPreExecute();
             showProgressDialog();
             tagGroup.setVisibility(View.GONE);
+            initialTags.clear();
         }
 
         @Override
         protected ArrayList<Tag> doInBackground(Void... params) {
+            topicsList.clear();
             topicsList.addAll(dummyTopicsList);
             for (Topics topic : topicsList) {
                 final TagSelected tag = prepareTag(topic);
@@ -380,16 +381,16 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     }
 
     private void setTags(CharSequence cs) {
-        if (TextUtils.isEmpty(cs.toString().trim())) {
-            //new TagLoader(topicsList, tagGroup).execute();
-            return;
-        }
+//        if (TextUtils.isEmpty(cs.toString().trim())) {
+//            new TagLoader(topicsList, tagGroup).execute();
+//            return;
+//        }
         tagGroup.getTags().clear();
         tagGroup.removeAllViews();
         String text = cs.toString();
         searchTags = new ArrayList<Tag>();
         for (Tag tag : initialTags) {
-            if (tag.text.toLowerCase().contains(text.toLowerCase())) {
+            if (TextUtils.isEmpty(text) || tag.text.toLowerCase().contains(text.toLowerCase())) {
                 tagGroup.addTag(tag);
                 searchTags.add(tag);
             }
