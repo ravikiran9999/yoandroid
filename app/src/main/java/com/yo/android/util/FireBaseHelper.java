@@ -8,6 +8,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.yo.android.BuildConfig;
 import com.yo.android.model.ChatMessage;
 
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class FireBaseHelper {
 
     public Firebase authWithCustomToken(final String authToken) {
         //Url from Firebase dashboard
-        final Firebase ref = new Firebase(FirebaseConfig.FIREBASE_URL);
+        final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
         ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {

@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -110,6 +111,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             case R.id.create_group:
                 startActivity(new Intent(getActivity(), CreateGroupActivity.class));
                 break;
+            case R.id.clear_chat_history :
+                Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
+                break;
 
             default:
                 break;
@@ -135,7 +139,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getChatRoomList();
+        //getChatRoomList();
         arrayOfUsers = new ArrayList<>();
         chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(chatRoomListAdapter);
@@ -166,6 +170,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         if (getView() != null) {
             getView().findViewById(R.id.progress).setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getChatRoomList();
     }
 
     private void getChatRoomList() {
