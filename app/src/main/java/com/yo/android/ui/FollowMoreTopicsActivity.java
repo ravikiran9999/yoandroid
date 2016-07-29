@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cunoraz.tagview.OnTagClickListener;
@@ -27,6 +28,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Topics;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +55,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private List<String> addedTopics;
     private ArrayList<Tag> initialTags;
     private ArrayList<Tag> searchTags;
+    private boolean isInvalidSearch;
+    private TextView noSearchResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         tagGroup = (TagView) findViewById(R.id.tag_group);
         Button done = (Button) findViewById(R.id.btn_done);
+        noSearchResults = (TextView) findViewById(R.id.no_search_results);
 
         initialTags = new ArrayList<>();
         topicsList = new ArrayList<Topics>();
@@ -87,6 +92,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
+                dismissProgressDialog();
                 if (response == null || response.body() == null) {
                     return;
                 }
@@ -217,6 +223,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            showProgressDialog();
         }
 
         @Override
@@ -342,23 +349,32 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                new TagLoader(topicsList,tagGroup).execute();
                 return true;
             }
         });
     }
 
     private void setTags(CharSequence cs) {
-        if (TextUtils.isEmpty(cs.toString())) {
+        if (TextUtils.isEmpty(cs.toString().trim())) {
+            //new TagLoader(topicsList, tagGroup).execute();
             return;
         }
         tagGroup.getTags().clear();
         tagGroup.removeAllViews();
         String text = cs.toString();
+        searchTags = new ArrayList<Tag>();
         for (Tag tag : initialTags) {
             if (tag.text.toLowerCase().contains(text.toLowerCase())) {
                 tagGroup.addTag(tag);
+                searchTags.add(tag);
             }
+        }
+        if (tagGroup.getTags().size() == 0) {
+            noSearchResults.setVisibility(View.VISIBLE);
+            isInvalidSearch = true;
+        } else {
+            noSearchResults.setVisibility(View.GONE);
+            isInvalidSearch = false;
         }
     }
 }
