@@ -139,7 +139,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getChatRoomList();
+        //getChatRoomList();
         arrayOfUsers = new ArrayList<>();
         chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(chatRoomListAdapter);
@@ -170,6 +170,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         if (getView() != null) {
             getView().findViewById(R.id.progress).setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getChatRoomList();
     }
 
     private void getChatRoomList() {
