@@ -205,6 +205,8 @@ public class OTPFragment extends BaseFragment {
         //
         final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         if (isNewUser) {
+            //TODO:Enable flag for Profile
+            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN,true);
             preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
             Intent intent = new Intent(getActivity(), UpdateProfileActivity.class);
             intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
