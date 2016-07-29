@@ -55,8 +55,6 @@ public class ChatActivity extends BaseActivity {
             args.putString(Constants.OPPONENT_ID, contact.getId());
         }
 
-        //args.putString(Constants.OPPONENT_ID, getIntent().getStringExtra(Constants.OPPONENT_ID));
-        //args.putString(Constants.YOUR_PHONE_NUMBER, getIntent().getStringExtra(Constants.YOUR_PHONE_NUMBER));
 
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
             args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
@@ -68,9 +66,6 @@ public class ChatActivity extends BaseActivity {
                 .add(android.R.id.content, userChatFragment)
                 .commit();
         enableBack();
-
-        //final String opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
-        //final String opponent = getOppenent(room);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -109,6 +104,5 @@ public class ChatActivity extends BaseActivity {
 
         return opponent;
     }
-
 
 }

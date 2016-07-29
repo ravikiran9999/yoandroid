@@ -93,6 +93,7 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".chat.ui.LoginActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

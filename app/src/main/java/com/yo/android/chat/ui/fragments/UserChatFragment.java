@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
@@ -78,7 +79,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, ChildEventListener{
 
 
     private static final String TAG = "UserChatFragment";
@@ -149,7 +150,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             roomExist = 1;
 
             roomReference = authReference.child(childRoomId).child(Constants.CHATS);
-            //registerChildEventListener(roomReference);
+            registerChildEventListener(roomReference);
         }
 
         ArrayList<ChatMessage> chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
@@ -221,7 +222,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadMessages();
+        //loadMessages();
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -423,7 +424,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     Room room = response.body();
                     if (room.getFirebaseRoomId() != null) {
                         roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
-                        //registerChildEventListener(roomReference);
+                        registerChildEventListener(roomReference);
                         sendChatMessage(chatMessage);
                         roomExist = 1;
                     }
@@ -464,18 +465,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    /*private void registerChildEventListener(Firebase roomReference) {
+    private void registerChildEventListener(Firebase roomReference) {
         if (!isChildEventListenerAdd) {
             roomReference.addChildEventListener(this);
         }
-    }*/
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        /*if (isChildEventListenerAdd) {
+        if (isChildEventListenerAdd) {
             roomReference.removeEventListener(this);
-        }*/
+        }
     }
 
     private void takePicture() {
@@ -643,7 +644,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    /*@Override
+    @Override
     public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
         try {
 
@@ -680,9 +681,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onCancelled(FirebaseError firebaseError) {
 
-    }*/
+    }
 
-    private void loadMessages() {
+
+
+    /*private void loadMessages() {
         chatMessageArray = firebaseService.getChatMessageList();
         if (chatMessageArray == null) {
             showProgressDialog();
@@ -705,6 +708,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             userChatAdapter.addItems(chatMessageArray);
             listView.smoothScrollToPosition(userChatAdapter.getCount());
         }
-    }
+    }*/
 }
 
