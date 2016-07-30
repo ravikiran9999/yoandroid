@@ -3,10 +3,10 @@ package com.yo.android.di;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
@@ -39,7 +39,7 @@ public class TokenAuthenticator implements Authenticator {
         String refreshToken = preferenceEndPoint.getStringPreference("refresh_token");
         boolean isRequestForTokens = response.request().url().toString().contains("oauth/token.json");
         boolean sessionExpire = preferenceEndPoint.getBooleanPreference(Constants.SESSION_EXPIRE, false);
-        if ((!isRequestForTokens && tokenExpireCount > 5) || sessionExpire) {
+        /*if ((!isRequestForTokens && tokenExpireCount > 5) || sessionExpire) {
             //Session Expire
             if (!sessionExpire) {
                 preferenceEndPoint.clearAll();
@@ -48,17 +48,18 @@ public class TokenAuthenticator implements Authenticator {
                 tokenExpireCount = 0;
                 Intent intent = new Intent(mContext, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra(Constants.SESSION_EXPIRE, true);
                 mContext.startActivity(intent);
-                Toast.makeText(mContext, "YoApp session expired.", Toast.LENGTH_LONG).show();
+                // Toast.makeText(mContext, "YoApp session expired.", Toast.LENGTH_LONG).show();
             } else {
                 mLog.e("TokenAuthenticator", "TokenExpireCount - %d", tokenExpireCount);
             }
-        } else if (!isRequestForTokens && response.code() == 401 && !TextUtils.isEmpty(refreshToken)) {
+        } else*/ if (!isRequestForTokens && response.code() == 401 && !TextUtils.isEmpty(refreshToken)) {
             try {
                 tokenExpireCount++;
                 mLog.e("TokenAuthenticator", "TokenExpireCount - %d", tokenExpireCount);
                 OTPResponse responseBody
-                        = tokenService.refreshToken(YoApi.CLIENT_ID, YoApi.CLIENT_SECRET, "refresh_token", refreshToken)
+                        = tokenService.refreshToken(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET, "refresh_token", refreshToken)
                         .execute()
                         .body();
                 preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, responseBody.getAccessToken());

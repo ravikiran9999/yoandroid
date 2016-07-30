@@ -51,6 +51,14 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
     }
 
     @Override
+    public boolean isEnabled(int position) {
+        if ("true".equals(getItem(position).getSelf())) {
+            return false;
+        }
+        return super.isEnabled(position);
+    }
+
+    @Override
     public FindPeopleViewHolder getViewHolder(View convertView) {
         return new FindPeopleViewHolder(convertView);
     }
@@ -69,19 +77,17 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                     .fit()
                     .into(holder.getImvFindPeoplePic());
         }
-        if(!TextUtils.isEmpty(item.getFirst_name())) {
+        if (!TextUtils.isEmpty(item.getFirst_name())) {
             holder.getTvFindPeopleName().setText(item.getFirst_name() + " " + item.getLast_name());
-        }
-        else {
+        } else {
             holder.getTvFindPeopleName().setText("Unknown");
         }
         holder.getTvFindPeopleDesc().setText(item.getDescription());
-        if(item.getIsFollowing().equals("true")) {
+        if (item.getIsFollowing().equals("true")) {
             holder.getBtnFindPeopleFollow().setText("Following");
             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             isFollowingUser = true;
-        }
-        else {
+        } else {
             holder.getBtnFindPeopleFollow().setText("Follow");
             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             isFollowingUser = false;
@@ -90,27 +96,27 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
             @Override
             public void onClick(View v) {
                 if (!item.getIsFollowing().equals("true")) {
-                ((BaseActivity)context).showProgressDialog();
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        ((BaseActivity)context).dismissProgressDialog();
-                        holder.getBtnFindPeopleFollow().setText("Following");
-                        holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                        item.setIsFollowing("true");
-                        isFollowingUser = true;
-                    }
+                    ((BaseActivity) context).showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            holder.getBtnFindPeopleFollow().setText("Following");
+                            holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            item.setIsFollowing("true");
+                            isFollowingUser = true;
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        ((BaseActivity)context).dismissProgressDialog();
-                        holder.getBtnFindPeopleFollow().setText("Follow");
-                        holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                        item.setIsFollowing("false");
-                        isFollowingUser = false;
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            holder.getBtnFindPeopleFollow().setText("Follow");
+                            holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            item.setIsFollowing("false");
+                            isFollowingUser = false;
+                        }
+                    });
                 } else {
 
                     final Dialog dialog = new Dialog(context);
@@ -139,7 +145,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                             yoService.unfollowUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    ((BaseActivity)context).dismissProgressDialog();
+                                    ((BaseActivity) context).dismissProgressDialog();
                                     holder.getBtnFindPeopleFollow().setText("Follow");
                                     holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                     item.setIsFollowing("false");
@@ -148,7 +154,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    ((BaseActivity)context).dismissProgressDialog();
+                                    ((BaseActivity) context).dismissProgressDialog();
                                     holder.getBtnFindPeopleFollow().setText("Following");
                                     holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                     item.setIsFollowing("true");
@@ -163,11 +169,17 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
             }
         });
 
+        if ("true".equals(item.getSelf())) {
+            holder.getBtnFindPeopleFollow().setVisibility(View.GONE);
+        } else {
+            holder.getBtnFindPeopleFollow().setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override
     protected boolean hasData(FindPeople findPeople, String key) {
-        if(findPeople.getFirst_name()!= null && findPeople.getLast_name()!= null) {
+        if (findPeople.getFirst_name() != null && findPeople.getLast_name() != null) {
             if (containsValue(findPeople.getFirst_name().toLowerCase(), key)
                     || containsValue(findPeople.getLast_name().toLowerCase(), key)) {
                 return true;

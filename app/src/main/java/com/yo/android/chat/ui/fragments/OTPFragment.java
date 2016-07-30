@@ -30,7 +30,6 @@ import com.yo.android.util.Constants;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
 
-import java.util.EmptyStackException;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -64,6 +63,7 @@ public class OTPFragment extends BaseFragment {
     private int duration = MAX_DURATION;
     private Handler dummyOTPHandler = new Handler();
     private TextView reSendTextBtn;
+    private boolean otpReceived = false;
 
     public OTPFragment() {
         // Required empty public constructor
@@ -142,7 +142,7 @@ public class OTPFragment extends BaseFragment {
         public void run() {
             dummyOTPHandler.removeCallbacks(this);
             try {
-                showOTPConfirmationDialog("123456");
+                // showOTPConfirmationDialog("123456");
             } catch (Exception e) {
             }
             stopTimer();
@@ -155,7 +155,7 @@ public class OTPFragment extends BaseFragment {
         int duration = Math.max(0, random.nextInt(35));
         if (!BuildConfig.ORIGINAL_SMS_VERIFICATION) {
             dummyOTPHandler.removeCallbacks(dummyOTPRunnable);
-            mToastFactory.showToast("Your PIN will be sent in " + duration + " seconds.");
+            // mToastFactory.showToast("Your PIN will be sent in " + duration + " seconds.");
             dummyOTPHandler.postDelayed(dummyOTPRunnable, duration * 1000L);
         }
     }
@@ -171,8 +171,8 @@ public class OTPFragment extends BaseFragment {
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         showProgressDialog();
 
-        yoService.verifyOTP(YoApi.CLIENT_ID,
-                YoApi.CLIENT_SECRET,
+        yoService.verifyOTP(BuildConfig.CLIENT_ID,
+                BuildConfig.CLIENT_SECRET,
                 "password", countryCode + phoneNumber, etOtp.getText().toString().trim()).enqueue(new Callback<OTPResponse>() {
             @Override
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
@@ -210,7 +210,7 @@ public class OTPFragment extends BaseFragment {
         final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         if (isNewUser) {
             //TODO:Enable flag for Profile
-            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN,true);
+            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, true);
             preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
             Intent intent = new Intent(getActivity(), UpdateProfileActivity.class);
             intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
@@ -229,10 +229,15 @@ public class OTPFragment extends BaseFragment {
     }
 
     public void onEventMainThread(Bundle bundle) {
+        if (otpReceived) {
+            mLog.e("OTPFragment", "onEventMainThread: otp is already received!");
+            return;
+        }
         if (!isAdded() || getActivity() == null) {
             mLog.e("OTPFragment", "onEventMainThread: activity is already destroyed");
             return;
         }
+        otpReceived = true;
         stopTimer();
         String otp = IncomingSmsReceiver.extractOTP(bundle);
         this.etOtp.setText(otp);
@@ -246,20 +251,20 @@ public class OTPFragment extends BaseFragment {
 
     public void showOTPConfirmationDialog(final String otp) {
         try {
-        if (getActivity() == null) {
-            mLog.e("OTPFragment", "showOTPConfirmationDialog: activity is already destroyed");
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("YoApp");
-        builder.setMessage("We are detected your PIN : " + otp);
-        builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                etOtp.setText(otp);
-                verifyButton.setText(getActivity().getString(R.string.otp_button_submit));
-                //Auto click
-                verifyButton.performClick();
+            if (getActivity() == null) {
+                mLog.e("OTPFragment", "showOTPConfirmationDialog: activity is already destroyed");
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("YoApp");
+            builder.setMessage("We are detected your PIN : " + otp);
+            builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    etOtp.setText(otp);
+                    verifyButton.setText(getActivity().getString(R.string.otp_button_submit));
+                    //Auto click
+                    verifyButton.performClick();
                 }
             });
             builder.setCancelable(false);

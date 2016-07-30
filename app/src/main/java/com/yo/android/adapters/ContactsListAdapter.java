@@ -44,7 +44,8 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         if (!item.getYoAppUser()) {
             holder.getContactNumber().setText(item.getPhoneNo());
         } else {
-            holder.getContactNumber().setText(item.getPhoneNo());
+            holder.getContactNumber().setText(item.getName());
+            holder.getContactMail().setText(item.getPhoneNo());
         }
 
         if (!TextUtils.isEmpty(item.getImage())) {
