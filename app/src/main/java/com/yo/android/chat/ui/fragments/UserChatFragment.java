@@ -69,6 +69,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -393,7 +394,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    private void sendChatMessage(@NonNull String message, @NonNull String userId, @NonNull String type) {
+    private void sendChatMessage(@NonNull final String message, @NonNull String userId, @NonNull String type) {
 
         long timestamp = System.currentTimeMillis();
         String timeStp = Long.toString(timestamp);
@@ -420,12 +421,21 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
                 @Override
                 public void onResponse(Call<Room> call, Response<Room> response) {
-                    Room room = response.body();
-                    if (room.getFirebaseRoomId() != null) {
-                        roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
-                        registerChildEventListener(roomReference);
-                        sendChatMessage(chatMessage);
-                        roomExist = 1;
+                    if (response.isSuccessful()) {
+                        Room room = response.body();
+                        if (room.getFirebaseRoomId() != null) {
+                            roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
+                            registerChildEventListener(roomReference);
+                            sendChatMessage(chatMessage);
+                            roomExist = 1;
+                            EventBus.getDefault().post(Constants.CHAT_ROOM_REFRESH);
+                        }
+                    } else {
+                        if (chatText != null) {
+                            //Restore the message if room fails
+                            chatText.setText(message);
+                            mToastFactory.showToast("Chat initiation failed! Please try again.");
+                        }
                     }
                 }
 
