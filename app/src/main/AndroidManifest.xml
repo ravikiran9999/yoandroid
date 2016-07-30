@@ -124,7 +124,8 @@
         <activity
             android:name=".ui.MoreSettingsActivity"
             android:label="@string/settings_label"
-            android:theme="@style/AppTheme.Switch" />
+            android:theme="@style/AppTheme.Switch"
+            android:windowSoftInputMode="stateHidden"/>
 
         <service android:name=".voip.SipService" />
 
@@ -135,7 +136,8 @@
         <activity android:name=".chat.ui.fragments.AppContactsActivity" />
         <activity
             android:name=".ui.FollowMoreTopicsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".ui.NewMagazineActivity"
             android:screenOrientation="portrait"
