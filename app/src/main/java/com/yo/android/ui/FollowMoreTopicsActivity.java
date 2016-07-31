@@ -21,8 +21,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cunoraz.tagview.OnTagClickListener;
-import com.cunoraz.tagview.OnTagDeleteListener;
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -107,7 +105,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
 
         //set click listener
-        tagGroup.setOnTagClickListener(new OnTagClickListener() {
+        tagGroup.setOnTagClickListener(new TagView.OnTagClickListener() {
             @Override
             public void onTagClick(Tag mTag, int position) {
                 try {
@@ -154,7 +152,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
 
         //set delete listener
-        tagGroup.setOnTagDeleteListener(new OnTagDeleteListener() {
+        tagGroup.setOnTagDeleteListener(new TagView.OnTagDeleteListener() {
             @Override
             public void onTagDeleted(final TagView view, final Tag tag, final int position) {
             }
@@ -241,26 +239,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         protected ArrayList<Tag> doInBackground(Void... params) {
             topicsList.clear();
             topicsList.addAll(dummyTopicsList);
-            for (Topics topic : topicsList) {
-                final TagSelected tag = prepareTag(topic);
-                initialTags.add(tag);
-                publishProgress(tag);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            synchronized (initialTags) {
+                for (Topics topic : topicsList) {
+                    final TagSelected tag = prepareTag(topic);
+                    initialTags.add(tag);
                 }
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        tagGroup.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                tagGroup.addTag(tag);
-//                            }
-//                        }, 1000);
-//                    }
-//                });
             }
             return initialTags;
         }
@@ -276,6 +259,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         @Override
         protected void onPostExecute(final ArrayList<Tag> tagSelected) {
             super.onPostExecute(tagSelected);
+            tagGroup.addTags(tagSelected);
             dismissProgressDialog();
             if (tagGroup != null) {
                 tagGroup.setVisibility(View.VISIBLE);
