@@ -25,6 +25,7 @@ import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
+import com.yo.android.sync.YoContactsSyncAdapter;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.CreateMagazineActivity;
@@ -155,7 +156,8 @@ import dagger.Provides;
                 ChatRoomListAdapter.class,
                 FindPeopleAdapter.class,
 
-                FirebaseService.class
+                FirebaseService.class,
+                YoContactsSyncAdapter.class
         },
         includes = {
                 AppModule.class,
