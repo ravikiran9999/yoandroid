@@ -64,9 +64,11 @@
             android:background="@color/grey_divider"
             android:ems="10"
             android:hint="@string/type_a_message"
-            android:maxLines="1"
             android:padding="10dp"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:inputType="textCapSentences|textMultiLine"
+            android:scrollHorizontally="false"
+            />
 
         <ImageView
             android:id="@+id/send"
