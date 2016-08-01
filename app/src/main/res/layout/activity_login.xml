@@ -39,6 +39,7 @@
         android:layout_marginTop="20dp"
         android:background="@android:color/white"
         android:ems="10"
+        android:imeOptions="actionNext"
         android:hint="Enter mobile number"
         android:inputType="number"
         android:padding="13dp"
@@ -53,6 +54,7 @@
         android:ems="10"
         android:hint="Re-enter mobile mumber"
         android:inputType="number"
+        android:imeOptions="actionDone"
         android:padding="13dp"
         android:singleLine="true" />
 

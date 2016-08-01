@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -64,6 +66,17 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         enableBack();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         setDataFromPreferences();
+        statusEdt.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //do here
+                    saveSettings();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void setDataFromPreferences() {
@@ -112,14 +125,18 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         final MenuItem menuItem = item;
         if (menuItem.getItemId() == R.id.menu_save_settings) {
             //do nothing..
-            dismissProgressDialog();
-            if (isValid()) {
-                updateSettings();
-            } else {
-                mToastFactory.showToast(R.string.username_empty);
-            }
+            saveSettings();
         }
         return true;
+    }
+
+    private void saveSettings() {
+        dismissProgressDialog();
+        if (isValid()) {
+            updateSettings();
+        } else {
+            mToastFactory.showToast(R.string.username_empty);
+        }
     }
 
     private boolean isValid() {
