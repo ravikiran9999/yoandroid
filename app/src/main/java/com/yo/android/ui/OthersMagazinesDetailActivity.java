@@ -571,11 +571,14 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         inflater.inflate(R.menu.menu_my_collections_detail, menu);
 
         if(magazineIsFollowing.equals("true")) {
-            menu.getItem(0).setTitle("Following");
+            //menu.getItem(0).setTitle("Following");
             //menu.getItem(0).setIcon(R.drawable.ic_magazine_following);
+            menu.getItem(0).setTitle("");
+            menu.getItem(0).setIcon(R.drawable.ic_mycollections_tick);
             isFollowingMagazine = true;
         }
         else {
+            menu.getItem(0).setIcon(null);
             menu.getItem(0).setTitle("Follow");
             isFollowingMagazine = false;
         }
@@ -596,8 +599,10 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         dismissProgressDialog();
-                        menuItem.setTitle("Following");
+                        //menuItem.setTitle("Following");
                         //menuItem.setIcon(R.drawable.ic_magazine_following);
+                        menuItem.setTitle("");
+                        menuItem.setIcon(R.drawable.ic_mycollections_tick);
                         isFollowingMagazine = true;
 
                     }
@@ -605,6 +610,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         dismissProgressDialog();
+                        menuItem.setIcon(null);
                         menuItem.setTitle("Follow");
                         isFollowingMagazine = false;
                     }
@@ -638,6 +644,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     dismissProgressDialog();
+                                    menuItem.setIcon(null);
                                     menuItem.setTitle("Follow");
                                     isFollowingMagazine = false;
                                 }
@@ -645,8 +652,10 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     dismissProgressDialog();
-                                    menuItem.setTitle("Following");
+                                    //menuItem.setTitle("Following");
                                     //menuItem.setIcon(R.drawable.ic_magazine_following);
+                                    menuItem.setTitle("");
+                                    menuItem.setIcon(R.drawable.ic_mycollections_tick);
                                     isFollowingMagazine = true;
 
                                 }
