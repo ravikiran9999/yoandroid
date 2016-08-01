@@ -56,6 +56,7 @@ public class ImagePickHelper {
                     }
                 })
                 .show();
+        dialog.setCancelable(true);
     }
 
     public void takePicture() {
