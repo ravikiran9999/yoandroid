@@ -4,14 +4,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.internal.LinkedTreeMap;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -21,6 +26,7 @@ import com.yo.android.model.Response;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.CountryCodeHelper;
+import com.yo.android.util.Util;
 import com.yo.android.vox.UserDetails;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
@@ -67,7 +73,8 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
     @Inject
     CountryCodeHelper mCountryCodeHelper;
     private List<CountryCode> mList;
-
+    @Inject
+    ConnectivityHelper mHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +111,26 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         spCountrySpinner.attachDataSource(mList);
         spCountrySpinner.setSelectedIndex(pos);
         spCountrySpinner.setOnItemSelectedListener(this);
+
+        spCountrySpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Util.hideKeyboard(LoginActivity.this,v);
+                return false;
+            }
+        });
+
+        mReEnterPhoneNumberView.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //do here
+                    attemptLogin();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -139,6 +166,12 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         if (cancel) {
             focusView.requestFocus();
         } else {
+
+            if (!mHelper.isConnected()) {
+                mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+                return;
+            }
+
             //Add subscriber
             String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
             //TODO: Revathi will do that
