@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import com.yo.android.model.Response;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.CountryCodeHelper;
+import com.yo.android.util.Util;
 import com.yo.android.vox.UserDetails;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
@@ -104,6 +106,14 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         spCountrySpinner.attachDataSource(mList);
         spCountrySpinner.setSelectedIndex(pos);
         spCountrySpinner.setOnItemSelectedListener(this);
+
+        spCountrySpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Util.hideKeyboard(LoginActivity.this,v);
+                return false;
+            }
+        });
     }
 
     /**
