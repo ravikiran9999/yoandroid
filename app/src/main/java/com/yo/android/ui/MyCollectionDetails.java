@@ -389,8 +389,9 @@ public class MyCollectionDetails extends BaseActivity {
                 }
             });
 
-            holder.articleFollow.setEnabled(false);
-            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));
+            /*holder.articleFollow.setEnabled(false);
+            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));*/
+            holder.articleFollow.setVisibility(View.GONE);
 
             /*if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
@@ -459,7 +460,7 @@ public class MyCollectionDetails extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_collections_detail, menu);
-        menu.getItem(0).setTitle("Following");
+        //menu.getItem(0).setTitle("Following");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -498,7 +499,7 @@ public class MyCollectionDetails extends BaseActivity {
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    menuItem.setTitle("Follow");
+                                    //menuItem.setTitle("Follow");
                                     Intent intent = new Intent();
                                     setResult(6, intent);
                                     finish();
@@ -507,7 +508,8 @@ public class MyCollectionDetails extends BaseActivity {
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    menuItem.setTitle("Following");
+                                    //menuItem.setTitle("Following");
+                                    menuItem.setIcon(R.drawable.ic_mycollections_tick);
                                 }
                             });
                         }
@@ -542,7 +544,7 @@ public class MyCollectionDetails extends BaseActivity {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     dismissProgressDialog();
-                                    menuItem.setTitle("Follow");
+                                    //menuItem.setTitle("Follow");
                                     Intent intent = new Intent();
                                     setResult(6, intent);
                                     finish();
@@ -551,8 +553,9 @@ public class MyCollectionDetails extends BaseActivity {
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     dismissProgressDialog();
-                                    menuItem.setTitle("Following");
+                                    //menuItem.setTitle("Following");
                                     //menuItem.setIcon(R.drawable.ic_magazine_following);
+                                    menuItem.setIcon(R.drawable.ic_mycollections_tick);
 
                                 }
                             });
