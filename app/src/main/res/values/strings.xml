@@ -102,7 +102,7 @@
         <item>Entrepreneurship</item>
     </string-array>
     <string name="title_activity_magazine_article_details">MagazineArticleDetailsActivity</string>
-    <string name="connectivity_network_settings">Problem with network connection. Please Try again.</string>
+    <string name="connectivity_network_settings">Unable to connect, Please check you network connection.</string>
     <string name="enter_mobile_number_started">Enter your mobile number to get started!</string>
 
 
@@ -134,11 +134,11 @@
     <string name="article_added_success">Article added successfully</string>
     <string name="no_text">No Data Available.</string>
     <string name="user_name">Username</string>
-    <string name="add_photo">Add Photo</string>
+    <string name="add_photo">Add Picture</string>
     <string name="profile">Profile</string>
     <string name="okay">okay</string>
     <string name="gallery">Gallery</string>
-    <string name="unable_to_fetch">Unable to fetch user data at this moment.Please try agan later.</string>
+    <string name="unable_to_fetch">Unable to fetch user data at this moment.Please try again later.</string>
     <string name="resend_otp_text">Re-send PIN</string>
     <string name="otp_button_submit">Submit</string>
     <string name="share_invite_title">Share and Invite</string>
@@ -151,7 +151,7 @@
     <string name="settings_label">Settings</string>
     <string name="user_profile">Profile</string>
     <string name="username_empty">Please provide user name before updating the profile details.</string>
-    <string name="change_photo">Change Photo</string>
+    <string name="change_photo">Change Picture</string>
     <string name="add_picture">Add Picture</string>
     <string name="change_picture">Change Picture</string>
     <string name="no_result_found">No search results found</string>
