@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -63,11 +65,12 @@ public class UpdateProfileActivity extends BaseActivity {
         mobileNumberTxt = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         mobileNum.setText(mobileNumberTxt);
 
+
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(UpdateProfileActivity.this!=null){
-                    Util.hideKeyboard(UpdateProfileActivity.this,getCurrentFocus());
+                if (UpdateProfileActivity.this != null) {
+                    Util.hideKeyboard(UpdateProfileActivity.this, getCurrentFocus());
                 }
                 cameraIntent.showDialog();
             }
@@ -75,14 +78,30 @@ public class UpdateProfileActivity extends BaseActivity {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!TextUtils.isEmpty(username.getText().toString().trim())) {
-                    loadUserProfileInfo();
-                } else {
-                    toastFactory.showToast(getResources().getString(R.string.enter_username));
-                }
+                performActionNext();
 
             }
         });
+
+        username.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //do here
+                    performActionNext();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void performActionNext() {
+        if (!TextUtils.isEmpty(username.getText().toString().trim())) {
+            loadUserProfileInfo();
+        } else {
+            toastFactory.showToast(getResources().getString(R.string.enter_username));
+        }
     }
 
 
@@ -122,14 +141,8 @@ public class UpdateProfileActivity extends BaseActivity {
 
             case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
-                    Uri targetUri = data.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     try {
-                        Cursor cursor = this.getContentResolver().query(targetUri,
-                                filePathColumn, null, null, null);
-                        cursor.moveToFirst();
-                        int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
-                        String imagePath = cursor.getString(columnIndex);
+                        String imagePath = ImagePickHelper.getGalleryImagePath(this,data);
                         imgFile = new File(imagePath);
                         new ImageLoader(profileImage, imgFile, this).execute();
                         addPhoto.setText(getResources().getString(R.string.change_picture));

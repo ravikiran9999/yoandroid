@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -90,9 +91,23 @@ public class ImagePickHelper {
     // open gallery
     public void getImageFromGallery() {
         dialog.dismiss();
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         cameraActivity.startActivityForResult(intent, Constants.ADD_SELECT_PICTURE);
+    }
+
+    public static String getGalleryImagePath(Activity activity, Intent data) {
+        Uri imgUri = data.getData();
+        String filePath = "";
+        if (activity!=null && data.getType() == null) {
+            // For getting images from gallery.
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = activity.getContentResolver().query(imgUri, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            filePath = cursor.getString(columnIndex);
+            cursor.close();
+        }
+        return filePath;
     }
 
 
