@@ -391,8 +391,9 @@ public class MyCollectionDetails extends BaseActivity {
                 }
             });
 
-            holder.articleFollow.setEnabled(false);
-            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));
+            /*holder.articleFollow.setEnabled(false);
+            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));*/
+            holder.articleFollow.setVisibility(View.GONE);
 
             /*if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
