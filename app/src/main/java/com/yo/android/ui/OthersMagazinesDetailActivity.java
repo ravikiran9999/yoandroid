@@ -440,7 +440,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Util.shareArticle(v, data.getUrl());
+                    Util.shareIntent(v, data.getUrl(),"Sharing Article");
                 }
             });
 

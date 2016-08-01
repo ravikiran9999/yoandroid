@@ -127,7 +127,8 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                 List<Members> memberses = ((Room) event).getMembers();
 
                 for (int j = 0; j < memberses.size(); j++) {
-                    if (!memberses.get(j).getMobileNumber().contentEquals(myNumber)) {
+                    String number = memberses.get(j).getMobileNumber();
+                    if (number != null && !number.contentEquals(myNumber)) {
                         String mKey = memberses.get(j).getMobileNumber();
                         if (mKey.contains(key)) {
                             temp.add(event);
@@ -149,7 +150,10 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
-                if (((Contact) event).getPhoneNo().contains(key)) {
+                if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(key.toLowerCase())) {
+                    temp.add(event);
+                }
+                if (((Contact) event).getPhoneNo() != null && ((Contact) event).getPhoneNo().contains(key)) {
                     temp.add(event);
                 }
             }
