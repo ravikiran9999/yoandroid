@@ -108,7 +108,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         if (item.getYoAppUser()) {
             holder.getMessageView().setImageResource(R.drawable.ic_message);
         } else {
-            holder.getMessageView().setImageResource(R.drawable.ic_invite_friends);
+            holder.getMessageView().setImageResource(R.drawable.ic_invitefriends);
         }
 
     }

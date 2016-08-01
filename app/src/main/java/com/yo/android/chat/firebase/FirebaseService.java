@@ -52,10 +52,10 @@ public class FirebaseService extends InjectedService {
     public void onCreate() {
         super.onCreate();
         getFirebaseAuth();
-        chatMessageArray = new ArrayList<>();
 
-        authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-        authReference.keepSynced(true);
+        chatMessageArray = new ArrayList<>();
+        getChatMessageList();
+
     }
 
     @Override
@@ -101,6 +101,9 @@ public class FirebaseService extends InjectedService {
 
     public ArrayList<ChatMessage> getChatMessageList() {
         try {
+            authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+            authReference.keepSynced(true);
+
             authReference.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
