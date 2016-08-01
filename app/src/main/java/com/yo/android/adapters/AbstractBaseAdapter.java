@@ -150,6 +150,9 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
+                if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(key.toLowerCase())) {
+                    temp.add(event);
+                }
                 if (((Contact) event).getPhoneNo() != null && ((Contact) event).getPhoneNo().contains(key)) {
                     temp.add(event);
                 }
