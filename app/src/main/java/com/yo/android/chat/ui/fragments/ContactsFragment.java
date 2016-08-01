@@ -1,5 +1,6 @@
 package com.yo.android.chat.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.firebase.database.DatabaseReference;
@@ -16,6 +18,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.Contact;
+import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -31,11 +34,10 @@ import retrofit2.Response;
  * A simple {@link Fragment} subclass.
  */
 
-public class ContactsFragment extends BaseFragment {
+public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
     private ContactsListAdapter contactsListAdapter;
     private ListView listView;
 
-    private DatabaseReference reference;
     private Menu menu;
     @Inject
     ContactsSyncManager mSyncManager;
@@ -49,8 +51,6 @@ public class ContactsFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
-        reference.keepSynced(true);
 
     }
 
@@ -67,7 +67,7 @@ public class ContactsFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
-
+        listView.setOnItemClickListener(this);
         if (mSyncManager.getContacts().isEmpty()) {
             showProgressDialog();
             mSyncManager.loadContacts(new Callback<List<Contact>>() {
@@ -115,4 +115,14 @@ public class ContactsFragment extends BaseFragment {
         return menu;
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Contact contact = (Contact)listView.getItemAtPosition(position);
+        if(contact.getYoAppUser()) {
+            Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, contact.getPhoneNo());
+            startActivity(intent);
+        }
+
+    }
 }

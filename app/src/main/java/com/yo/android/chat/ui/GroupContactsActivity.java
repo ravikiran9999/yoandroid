@@ -5,15 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -21,8 +16,6 @@ import com.yo.android.adapters.GroupContactsListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.Contact;
-import com.yo.android.model.Room;
-import com.yo.android.model.Registration;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 
@@ -41,7 +34,6 @@ import retrofit2.Response;
  */
 public class GroupContactsActivity extends BaseActivity {
 
-    private ArrayList<Registration> arrayOfUsers;
     private GroupContactsListAdapter groupContactsListAdapter;
     private ListView listView;
     private String groupName;
@@ -68,7 +60,6 @@ public class GroupContactsActivity extends BaseActivity {
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         listView = (ListView) findViewById(R.id.lv_app_contacts);
 
-        arrayOfUsers = new ArrayList<>();
         groupContactsListAdapter = new GroupContactsListAdapter(this);
         listView.setAdapter(groupContactsListAdapter);
 
