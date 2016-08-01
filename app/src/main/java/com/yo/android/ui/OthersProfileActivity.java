@@ -34,7 +34,7 @@ import retrofit2.Response;
  * Created by root on 15/7/16.
  */
 public class OthersProfileActivity extends BaseActivity {
-    public static TabLayout tabLayout;
+    private TabLayout tabLayout;
     private ViewPager viewPager;
     private ImageView backbtn;
     TabsPagerAdapter mAdapter;
@@ -97,7 +97,7 @@ public class OthersProfileActivity extends BaseActivity {
                 finish();
             }
         });
-        viewPager.setCurrentItem(2);
+//        viewPager.setCurrentItem(2);
         viewPager.setCurrentItem(1);
         viewPager.setCurrentItem(0);
 
@@ -106,13 +106,12 @@ public class OthersProfileActivity extends BaseActivity {
         String pic = getIntent().getStringExtra("PersonPic");
         String isFollowing = getIntent().getStringExtra("PersonIsFollowing");
 
-        if(!TextUtils.isEmpty(pic)) {
+        if (!TextUtils.isEmpty(pic)) {
             Picasso.with(this)
                     .load(pic)
                     .fit()
                     .into(picture);
-        }
-        else {
+        } else {
             Picasso.with(this)
                     .load(R.drawable.ic_contacts)
                     .fit()
@@ -121,12 +120,11 @@ public class OthersProfileActivity extends BaseActivity {
 
         tvName.setText(name);
 
-        if(isFollowing.equals("true")) {
+        if (isFollowing.equals("true")) {
             btnFolow.setText("Following");
             btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             isFollowingUser = true;
-        }
-        else {
+        } else {
             btnFolow.setText("Follow");
             btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             isFollowingUser = false;
@@ -136,25 +134,25 @@ public class OthersProfileActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (!isFollowingUser) {
-                showProgressDialog();
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.followUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        dismissProgressDialog();
-                        btnFolow.setText("Following");
-                        btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                        isFollowingUser = true;
-                    }
+                    showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.followUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            dismissProgressDialog();
+                            btnFolow.setText("Following");
+                            btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            isFollowingUser = true;
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        dismissProgressDialog();
-                        btnFolow.setText("Follow");
-                        btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                        isFollowingUser = false;
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            dismissProgressDialog();
+                            btnFolow.setText("Follow");
+                            btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            isFollowingUser = false;
+                        }
+                    });
                 } else {
 
                     final Dialog dialog = new Dialog(OthersProfileActivity.this);

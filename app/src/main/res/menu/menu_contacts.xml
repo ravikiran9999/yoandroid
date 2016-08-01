@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/menu_search"
@@ -11,10 +10,9 @@
         app:showAsAction="always|collapseActionView" />
 
     <item
-        android:title="@string/invite"
         android:icon="@drawable/ic_add_new_contact"
-        app:showAsAction="always"
-         />
-    <item android:title=""></item>
+        android:title="@string/invite"
+        app:showAsAction="always" />
+
 
 </menu>

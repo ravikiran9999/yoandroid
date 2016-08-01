@@ -4,10 +4,12 @@ import android.content.Context;
 import android.view.View;
 
 import com.yo.android.R;
+import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.SelectedContactsViewHolder;
 import com.yo.android.model.Contact;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rdoddapaneni on 7/25/2016.
@@ -15,14 +17,13 @@ import java.util.ArrayList;
 
 public class SelectedContactsAdapter extends AbstractBaseAdapter<Contact, SelectedContactsViewHolder> {
 
-    private ArrayList<Contact> contactArrayList;
-
+    private List<Contact> contactArrayList;
 
     public SelectedContactsAdapter(Context context) {
         super(context);
     }
 
-    public SelectedContactsAdapter(Context context, ArrayList<Contact> contactArrayList) {
+    public SelectedContactsAdapter(Context context, List<Contact> contactArrayList) {
         super(context);
         this.contactArrayList = contactArrayList;
     }
@@ -45,6 +46,11 @@ public class SelectedContactsAdapter extends AbstractBaseAdapter<Contact, Select
             public void onClick(View v) {
                 contactArrayList.remove(item);
                 removeItem(item);
+                for (int i = 0; i < CreateGroupActivity.ContactsArrayList.size(); i++) {
+                    if (CreateGroupActivity.ContactsArrayList.get(i).getPhoneNo().equalsIgnoreCase(item.getPhoneNo())) {
+                        CreateGroupActivity.ContactsArrayList.get(i).setSelected(false);
+                    }
+                }
             }
         });
     }

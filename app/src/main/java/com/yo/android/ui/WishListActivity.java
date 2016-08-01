@@ -61,7 +61,7 @@ public class WishListActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.magazine_flip_fragment);
+        setContentView(R.layout.activity_wish_list);
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -70,7 +70,7 @@ public class WishListActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(title);
 
-        noArticals = (TextView) findViewById(R.id.txtEmptyArticals);
+        noArticals = (TextView) findViewById(R.id.no_data);
         flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
         mProgress = (ProgressBar) findViewById(R.id.progress);
         flipView = new FlipViewController(this);

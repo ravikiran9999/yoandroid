@@ -21,8 +21,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cunoraz.tagview.OnTagClickListener;
-import com.cunoraz.tagview.OnTagDeleteListener;
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -108,7 +106,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
 
         //set click listener
-        tagGroup.setOnTagClickListener(new OnTagClickListener() {
+        tagGroup.setOnTagClickListener(new TagView.OnTagClickListener() {
             @Override
             public void onTagClick(Tag mTag, int position) {
                 try {
@@ -119,11 +117,13 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.tab_grey);
                         tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.white);
                         tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.tab_grey);
+                        tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
                     } else {
                         addedTopics.add(tag.text);
                         tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.white);
                         tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.colorPrimary);
                         tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.white);
+                        tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
                     }
 
 
@@ -133,6 +133,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     tagDummy.layoutBorderSize = 1f;
                     tagDummy.layoutColor = getResources().getColor(android.R.color.white);
                     tagDummy.tagTextColor = getResources().getColor(R.color.tab_grey);
+                    tagDummy.layoutColorPress = getResources().getColor(R.color.colorPrimary);
 
                     tagGroup.addTag(tagDummy);
                     tagGroup.remove(tagGroup.getTags().size() - 1);
@@ -152,7 +153,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
 
         //set delete listener
-        tagGroup.setOnTagDeleteListener(new OnTagDeleteListener() {
+        tagGroup.setOnTagDeleteListener(new TagView.OnTagDeleteListener() {
             @Override
             public void onTagDeleted(final TagView view, final Tag tag, final int position) {
             }
@@ -223,7 +224,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         private TagView tagGroup;
 
         public TagLoader(List<Topics> topics, TagView tagGroup) {
-            this.dummyTopicsList = topics;
+            this.dummyTopicsList = new ArrayList<>(topics);
             this.tagGroup = tagGroup;
         }
 
@@ -233,31 +234,18 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             showProgressDialog();
             topicsList = new ArrayList<Topics>();
             tagGroup.setVisibility(View.GONE);
+            initialTags.clear();
         }
 
         @Override
         protected ArrayList<Tag> doInBackground(Void... params) {
+            topicsList.clear();
             topicsList.addAll(dummyTopicsList);
-            for (Topics topic : topicsList) {
-                final TagSelected tag = prepareTag(topic);
-                initialTags.add(tag);
-                publishProgress(tag);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            synchronized (initialTags) {
+                for (Topics topic : topicsList) {
+                    final TagSelected tag = prepareTag(topic);
+                    initialTags.add(tag);
                 }
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        tagGroup.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                tagGroup.addTag(tag);
-//                            }
-//                        }, 1000);
-//                    }
-//                });
             }
             return initialTags;
         }
@@ -273,6 +261,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         @Override
         protected void onPostExecute(final ArrayList<Tag> tagSelected) {
             super.onPostExecute(tagSelected);
+            tagGroup.addTags(tagSelected);
             dismissProgressDialog();
             if (tagGroup != null) {
                 tagGroup.setVisibility(View.VISIBLE);
@@ -290,6 +279,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tag.layoutBorderSize = 1f;
         tag.layoutColor = getResources().getColor(android.R.color.white);
         tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+        tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
+
 
         // if (i % 2 == 0) // you can set deletable or not
         //     tag.isDeletable = true;
@@ -297,11 +288,13 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             tag.setSelected(true);
             tag.layoutColor = getResources().getColor(R.color.colorPrimary);
             tag.tagTextColor = getResources().getColor(android.R.color.white);
+            tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
             tag.setSelected(true);
             addedTopics.add(tag.text);
         } else {
             tag.layoutColor = getResources().getColor(android.R.color.white);
             tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+            tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
             tag.setSelected(false);
         }
         return tag;
@@ -385,7 +378,6 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     }
 
     private void setTags(CharSequence cs) {
-
         tagGroup.getTags().clear();
         tagGroup.removeAllViews();
 
@@ -399,7 +391,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         String text = cs.toString();
         searchTags = new ArrayList<Tag>();
         for (Tag tag : initialTags) {
-            if (tag.text.toLowerCase().contains(text.toLowerCase())) {
+            if (TextUtils.isEmpty(text) || tag.text.toLowerCase().contains(text.toLowerCase())) {
                 tagGroup.addTag(tag);
                 searchTags.add(tag);
             }

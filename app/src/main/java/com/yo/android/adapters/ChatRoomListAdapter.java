@@ -28,7 +28,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     public ChatRoomListAdapter(Context context) {
         super(context);
         Injector.obtain(context.getApplicationContext()).inject(this);
-
     }
 
     @Override

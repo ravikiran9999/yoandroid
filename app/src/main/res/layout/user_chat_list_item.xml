@@ -11,18 +11,25 @@
     android:padding="10dp">
 
     <LinearLayout
-        android:id="@+id/linear_text_back"
+        android:id="@+id/linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_sms_grey"
-        android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingBottom="10dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:paddingTop="10dp">
+        >
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="9160985789"
+            />
 
+        <LinearLayout
+            android:id="@+id/linear_text_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
 
+            />
     </LinearLayout>
 
     <TextView
