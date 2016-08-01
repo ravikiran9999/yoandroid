@@ -6,12 +6,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -19,6 +22,7 @@ import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.uploadphoto.ImageLoader;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.io.File;
 
@@ -46,7 +50,8 @@ public class UpdateProfileActivity extends BaseActivity {
     ImagePickHelper cameraIntent;
     private String mobileNumberTxt;
     File imgFile;
-
+    @Inject
+    ConnectivityHelper mHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,23 +65,43 @@ public class UpdateProfileActivity extends BaseActivity {
         mobileNumberTxt = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         mobileNum.setText(mobileNumberTxt);
 
+
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (UpdateProfileActivity.this != null) {
+                    Util.hideKeyboard(UpdateProfileActivity.this, getCurrentFocus());
+                }
                 cameraIntent.showDialog();
             }
         });
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!TextUtils.isEmpty(username.getText().toString().trim())) {
-                    loadUserProfileInfo();
-                } else {
-                    toastFactory.showToast(getResources().getString(R.string.enter_username));
-                }
+                performActionNext();
 
             }
         });
+
+        username.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //do here
+                    performActionNext();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void performActionNext() {
+        if (!TextUtils.isEmpty(username.getText().toString().trim())) {
+            loadUserProfileInfo();
+        } else {
+            toastFactory.showToast(getResources().getString(R.string.enter_username));
+        }
     }
 
 
@@ -116,14 +141,8 @@ public class UpdateProfileActivity extends BaseActivity {
 
             case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
-                    Uri targetUri = data.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     try {
-                        Cursor cursor = this.getContentResolver().query(targetUri,
-                                filePathColumn, null, null, null);
-                        cursor.moveToFirst();
-                        int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
-                        String imagePath = cursor.getString(columnIndex);
+                        String imagePath = ImagePickHelper.getGalleryImagePath(this,data);
                         imgFile = new File(imagePath);
                         new ImageLoader(profileImage, imgFile, this).execute();
                         addPhoto.setText(getResources().getString(R.string.change_picture));
@@ -138,6 +157,10 @@ public class UpdateProfileActivity extends BaseActivity {
     }
 
     private void loadUserProfileInfo() {
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
         showProgressDialog();
         String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getUserInfo(access).enqueue(new Callback<UserProfileInfo>() {
@@ -162,6 +185,10 @@ public class UpdateProfileActivity extends BaseActivity {
     }
 
     private void uploadFile(File file) {
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
         showProgressDialog();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         MultipartBody.Part body;
@@ -186,8 +213,8 @@ public class UpdateProfileActivity extends BaseActivity {
                 if (response.isSuccessful()) {
                     //TODO:Disable flag for Profile
                     //TODO:Enable flag for Follow more
-                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN,false);
-                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN,true);
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, false);
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
