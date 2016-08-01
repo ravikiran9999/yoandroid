@@ -33,10 +33,12 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     private TextView groupName;
     private ListView selectedList;
     private SelectedContactsAdapter selectedContactsAdapter;
-    private ArrayList<Contact> contactArrayList;
+    private ArrayList<Contact> selectedContactsArrayList;
     private String mGroupName;
 
     private static final int REQUEST_SELECTED_CONTACTS = 1;
+
+    public static List<Contact> ContactsArrayList;
 
     @Inject
     @Named("login")
@@ -49,7 +51,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         groupName = (TextView) findViewById(R.id.et_new_chat_group_name);
         TextView addContactIcon = (TextView) findViewById(R.id.add_contact);
         selectedList = (ListView) findViewById(R.id.selected_contacts_list);
-        contactArrayList = new ArrayList<>();
+        ContactsArrayList = new ArrayList<>();
+        selectedContactsArrayList = new ArrayList<>();
         addContactIcon.setOnClickListener(this);
         enableBack();
     }
@@ -87,22 +90,22 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SELECTED_CONTACTS) {
             if (resultCode == RESULT_OK) {
-                contactArrayList = data.getParcelableArrayListExtra(Constants.SELECTED_CONTACTS);
-                selectedContactsAdapter = new SelectedContactsAdapter(this, contactArrayList);
+                selectedContactsArrayList = data.getParcelableArrayListExtra(Constants.SELECTED_CONTACTS);
+                selectedContactsAdapter = new SelectedContactsAdapter(this, selectedContactsArrayList);
                 selectedList.setAdapter(selectedContactsAdapter);
-                selectedContactsAdapter.addItems(contactArrayList);
+                selectedContactsAdapter.addItems(selectedContactsArrayList);
             }
         }
     }
 
     private void createGroup() {
 
-        if (contactArrayList.size() > 0) {
+        if (selectedContactsArrayList.size() > 0) {
             showProgressDialog();
 
             List<String> selectedUsers = new ArrayList<>();
-            for (int i = 0; i < contactArrayList.size(); i++) {
-                String userId = contactArrayList.get(i).getId();
+            for (int i = 0; i < selectedContactsArrayList.size(); i++) {
+                String userId = selectedContactsArrayList.get(i).getId();
                 selectedUsers.add(userId);
             }
             String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
@@ -110,6 +113,9 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 @Override
                 public void onResponse(Call<Room> call, Response<Room> response) {
                     response.body();
+                    if(!ContactsArrayList.isEmpty()) {
+                        ContactsArrayList.clear();
+                    }
                     dismissProgressDialog();
                     finish();
                 }
@@ -121,6 +127,14 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
             });
         } else {
             Toast.makeText(this, "Atleast one contact should be selected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(!ContactsArrayList.isEmpty()) {
+            ContactsArrayList.clear();
         }
     }
 }

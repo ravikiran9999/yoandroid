@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'sonar-runner'
+
 android {
     signingConfigs {
         config {
@@ -17,17 +18,32 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.9.0"
+        versionName "16.3.9.1"
     }
     productFlavors {
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+
+            buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
+            buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""
+            buildConfigField "String", "CLIENT_SECRET", "\"1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com/Rooms/\""
         }
         stage {
+            applicationIdSuffix ".stage"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
-            applicationId "com.yo.android.stage"
+            //applicationId "com.yo.android.stage"
+
+            buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
+            buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
+            buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com/Rooms/\""
+//            applicationId "com.yo.android.stage"
+
 
             //signingConfig signingConfigs.config
         }
@@ -38,10 +54,12 @@ android {
         }
     }
     buildTypes {
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
     }
     lintOptions {
         abortOnError false
@@ -72,6 +90,7 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:9.0.2'
     compile 'com.firebase:firebase-client-android:2.5.2'
     compile project(':flip')
+    compile project(':tagview')
     //    compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
     //Butter knife - view injector
     compile 'com.squareup.dagger:dagger:1.2.2'
@@ -95,7 +114,7 @@ dependencies {
     stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
     stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'*/
 
-    compile 'com.github.Cutta:TagView:c15dd8288a'
+//    compile 'com.github.Cutta:TagView:c15dd8288a'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'

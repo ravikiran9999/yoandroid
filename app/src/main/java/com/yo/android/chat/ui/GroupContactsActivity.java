@@ -68,11 +68,16 @@ public class GroupContactsActivity extends BaseActivity {
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         listView = (ListView) findViewById(R.id.lv_app_contacts);
 
-
-        getYoAppUsers();
         arrayOfUsers = new ArrayList<>();
         groupContactsListAdapter = new GroupContactsListAdapter(this);
         listView.setAdapter(groupContactsListAdapter);
+
+        if (CreateGroupActivity.ContactsArrayList.isEmpty()) {
+            getYoAppUsers();
+        } else {
+            groupContactsListAdapter.addItems(CreateGroupActivity.ContactsArrayList);
+        }
+
     }
 
     @Override
@@ -103,6 +108,7 @@ public class GroupContactsActivity extends BaseActivity {
                         }
                     }
                     groupContactsListAdapter.addItems(contactList);
+                    CreateGroupActivity.ContactsArrayList = contactList;
                 }
                 dismissProgressDialog();
             }
@@ -112,7 +118,6 @@ public class GroupContactsActivity extends BaseActivity {
                 dismissProgressDialog();
             }
         });
-
     }
 
     @Override
@@ -126,7 +131,12 @@ public class GroupContactsActivity extends BaseActivity {
     }
 
     private void done() {
-        ArrayList<Contact> contactArrayList = groupContactsListAdapter.getmSelectedItems();
+        ArrayList<Contact> contactArrayList = new ArrayList<>();
+        for (int i = 0; i < CreateGroupActivity.ContactsArrayList.size(); i++) {
+            if (CreateGroupActivity.ContactsArrayList.get(i).isSelected()) {
+                contactArrayList.add(CreateGroupActivity.ContactsArrayList.get(i));
+            }
+        }
 
         Intent intent = new Intent();
         intent.putParcelableArrayListExtra(Constants.SELECTED_CONTACTS, contactArrayList);

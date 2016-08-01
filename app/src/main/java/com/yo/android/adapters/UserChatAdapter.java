@@ -20,11 +20,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.util.Constants;
-import com.yo.android.util.FirebaseConfig;
 import com.yo.android.util.Util;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
@@ -117,14 +117,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 }
 
                 layout.setLayoutParams(layoutParams);
-                layoutParams.setMargins(60, 0, 0, 0);
-
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 
-                    holder.getLinearLayoutText().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_yellow));
+                    holder.getLl().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_yellow));
                 } else {
-                    holder.getLinearLayoutText().setBackgroundResource(R.drawable.bg_sms_yellow);
+                    holder.getLl().setBackgroundResource(R.drawable.bg_sms_yellow);
                 }
                 holder.getLinearLayoutText().setLayoutParams(layoutParams);
                 addView(holder.getLinearLayoutText(), item, holder);
@@ -140,16 +138,14 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 }
 
                 layout.setLayoutParams(layoutParams);
-                layoutParams.setMargins(0, 0, 60, 0);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    holder.getLinearLayoutText().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_grey));
+                    holder.getLl().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_grey));
                 } else {
-                    holder.getLinearLayoutText().setBackgroundResource(R.drawable.bg_sms_grey);
+                    holder.getLl().setBackgroundResource(R.drawable.bg_sms_grey);
                 }
 
                 holder.getLinearLayoutText().setLayoutParams(layoutParams);
-
                 addView(holder.getLinearLayoutText(), item, holder);
 
             }
@@ -165,10 +161,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         if (item.getType().equals(Constants.TEXT)) {
             if (roomType != null) {
-                TextView tvName = new TextView(context);
-                tvName.setTextColor(context.getResources().getColor(colorPrimaryDark));
-                tvName.setText(item.getSenderID());
-                linearLayout.addView(tvName);
+                holder.getName().setText(item.getSenderID());
             }
 
             TextView textView = new TextView(context);
@@ -183,17 +176,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {
                 if (roomType != null) {
-                    TextView tvName = new TextView(context);
-                    tvName.setTextColor(context.getResources().getColor(colorPrimaryDark));
-                    tvName.setText(item.getSenderID());
-                    linearLayout.addView(tvName);
+                    holder.getName().setText(item.getSenderID());
                 }
 
                 final ImageView imageView = new ImageView(context);
                 imageView.setTag(holder);
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 // Create a storage reference from our app
                 FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReferenceFromUrl(FirebaseConfig.STORAGE_BUCKET);
+                StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
                 StorageReference imageRef = storageRef.child(item.getImagePath());
                 linearLayout.addView(imageView);
                 if (item.getImageUrl() != null) {

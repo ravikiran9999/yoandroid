@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -87,7 +86,7 @@ public class OtherProfilesFollowers extends BaseFragment {
                 otherProfileIntent.putExtra("MagazinesCount", findPeopleAdapter.getItem(position).getMagzinesCount());
                 otherProfileIntent.putExtra("FollowersCount", findPeopleAdapter.getItem(position).getFollowersCount());
                 otherProfileIntent.putExtra("LikedArticlesCount", findPeopleAdapter.getItem(position).getLikedArticlesCount());
-                startActivityForResult(otherProfileIntent,11);
+                startActivityForResult(otherProfileIntent, 11);
             }
         });
     }
@@ -97,7 +96,7 @@ public class OtherProfilesFollowers extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed  here it is 2
         if (requestCode == 11 && resultCode == getActivity().RESULT_OK) {
-            if(data!= null) {
+            if (data != null) {
                 showProgressDialog();
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 yoService.getOtherProfilesFollowersAPI(accessToken, userID).enqueue(new Callback<List<FindPeople>>() {
@@ -107,8 +106,11 @@ public class OtherProfilesFollowers extends BaseFragment {
                         if (response.body().size() > 0) {
                             noData.setVisibility(View.GONE);
                             lvFindPeople.setVisibility(View.VISIBLE);
-                            TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count);
-                            count.setText("" + response.body().size());
+                            if (getActivity() instanceof OthersProfileActivity) {
+
+                            }
+//                            TextView count = (TextView) OthersProfileActivity.getTabAt(1).getCustomView().findViewById(R.id.count);
+//                            count.setText("" + response.body().size());
                             List<FindPeople> findPeopleList = response.body();
                             findPeopleAdapter.clearAll();
                             findPeopleAdapter.addItemsAll(findPeopleList);

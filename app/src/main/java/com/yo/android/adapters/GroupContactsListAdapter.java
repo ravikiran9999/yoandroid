@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.CheckBox;
 
 import com.yo.android.R;
+import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.AppRegisteredContactsViewHolder;
 import com.yo.android.helpers.GroupContactsViewHolder;
 import com.yo.android.model.Contact;
@@ -18,15 +19,9 @@ import java.util.ArrayList;
 
 public class GroupContactsListAdapter extends AbstractBaseAdapter<Contact, GroupContactsViewHolder> {
 
-    private ArrayList<Contact> mSelectedItems;
 
     public GroupContactsListAdapter(Context context) {
         super(context);
-        mSelectedItems = new ArrayList<>();
-    }
-
-    public ArrayList<Contact> getmSelectedItems() {
-        return mSelectedItems;
     }
 
     @Override
@@ -52,7 +47,6 @@ public class GroupContactsListAdapter extends AbstractBaseAdapter<Contact, Group
                 CheckBox cb = (CheckBox) v;
                 Contact contact = (Contact) cb.getTag();
                 contact.setSelected(cb.isChecked());
-                mSelectedItems.add(contact);
             }
         });
 

@@ -20,6 +20,8 @@ public class Room implements Parcelable {
     private String lastChat;
     private boolean isImage;
     private String timeStamp;
+    //For sorting
+    private long time;
 
     public String getId() {
         return id;
@@ -105,7 +107,7 @@ public class Room implements Parcelable {
         this.firebaseRoomId = in.readString();
         this.groupName = in.readString();
         this.image = in.readString();
-        in.readTypedList(members,Members.CREATOR);
+        in.readTypedList(members, Members.CREATOR);
     }
 
     public static final Parcelable.Creator<Room> CREATOR = new Parcelable.Creator<Room>() {
@@ -119,4 +121,12 @@ public class Room implements Parcelable {
             return new Room[size];
         }
     };
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
 }
