@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -15,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -387,12 +385,13 @@ public class MyCollectionDetails extends BaseActivity {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Util.shareArticle(v, data.getUrl());
+                    Util.shareIntent(v, data.getUrl(),"Sharing Article");
                 }
             });
 
-            holder.articleFollow.setEnabled(false);
-            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));
+            /*holder.articleFollow.setEnabled(false);
+            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));*/
+            holder.articleFollow.setVisibility(View.GONE);
 
             /*if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
@@ -461,7 +460,7 @@ public class MyCollectionDetails extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_collections_detail, menu);
-        menu.getItem(0).setTitle("Following");
+        //menu.getItem(0).setTitle("Following");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -500,7 +499,7 @@ public class MyCollectionDetails extends BaseActivity {
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    menuItem.setTitle("Follow");
+                                    //menuItem.setTitle("Follow");
                                     Intent intent = new Intent();
                                     setResult(6, intent);
                                     finish();
@@ -509,7 +508,8 @@ public class MyCollectionDetails extends BaseActivity {
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    menuItem.setTitle("Following");
+                                    //menuItem.setTitle("Following");
+                                    menuItem.setIcon(R.drawable.ic_mycollections_tick);
                                 }
                             });
                         }
@@ -544,7 +544,7 @@ public class MyCollectionDetails extends BaseActivity {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     dismissProgressDialog();
-                                    menuItem.setTitle("Follow");
+                                    //menuItem.setTitle("Follow");
                                     Intent intent = new Intent();
                                     setResult(6, intent);
                                     finish();
@@ -553,8 +553,9 @@ public class MyCollectionDetails extends BaseActivity {
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     dismissProgressDialog();
-                                    menuItem.setTitle("Following");
+                                    //menuItem.setTitle("Following");
                                     //menuItem.setIcon(R.drawable.ic_magazine_following);
+                                    menuItem.setIcon(R.drawable.ic_mycollections_tick);
 
                                 }
                             });

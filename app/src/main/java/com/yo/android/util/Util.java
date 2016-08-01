@@ -188,7 +188,7 @@ public class Util {
         return new SimpleDateFormat("hh:mm a").format(new Date(time));
     }
 
-    public static void prepareSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
+    public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -205,6 +205,8 @@ public class Util {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG, "onQueryTextChange: " + query);
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
                 return true;
             }
 
@@ -220,6 +222,8 @@ public class Util {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
                 if (adapter != null) {
                     adapter.performSearch("");
                 }
@@ -228,7 +232,7 @@ public class Util {
         });
     }
 
-    public static void prepareContactsSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter, final String roomType) {
+    public static void prepareContactsSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final String roomType) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -245,6 +249,8 @@ public class Util {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG, "onQueryTextChange: " + query);
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
                 return true;
             }
 
@@ -264,6 +270,8 @@ public class Util {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
                 if (adapter != null) {
                     adapter.performSearch("");
                 }
@@ -330,7 +338,7 @@ public class Util {
         }
     }
 
-    public static void shareArticle(View view, String url) {
+    public static void shareIntent(View view, String url, String title) {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");

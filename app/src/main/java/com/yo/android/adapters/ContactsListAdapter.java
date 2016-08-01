@@ -43,6 +43,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
     public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
         if (!item.getYoAppUser()) {
             holder.getContactNumber().setText(item.getPhoneNo());
+            holder.getContactMail().setText("");
         } else {
             holder.getContactNumber().setText(item.getName());
             holder.getContactMail().setText(item.getPhoneNo());

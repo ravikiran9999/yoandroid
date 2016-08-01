@@ -37,7 +37,7 @@
             android:gravity="center"
             android:drawablePadding="5dp"
             android:drawableLeft="@drawable/ic_more_camera"
-            android:text="Change Photo"
+            android:text="Change Picture"
             android:textColor="@color/white" />
     </FrameLayout>
 

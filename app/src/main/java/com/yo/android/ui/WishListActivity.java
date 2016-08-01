@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -30,7 +29,6 @@ import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
-import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.model.Articles;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -377,7 +375,7 @@ public class WishListActivity extends BaseActivity {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Util.shareArticle(v, data.getUrl());
+                    Util.shareIntent(v, data.getUrl(),"Sharing Article");
                 }
             });
 
@@ -407,6 +405,7 @@ public class WishListActivity extends BaseActivity {
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                             data.setIsFollowing("true");
                             isFollowing = true;
+                            notifyDataSetChanged();
                         }
 
                         @Override
@@ -416,6 +415,7 @@ public class WishListActivity extends BaseActivity {
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                             data.setIsFollowing("false");
                             isFollowing = false;
+                            notifyDataSetChanged();
 
                         }
                     });
@@ -452,6 +452,7 @@ public class WishListActivity extends BaseActivity {
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                         data.setIsFollowing("false");
                                         isFollowing = false;
+                                        notifyDataSetChanged();
 
                                     }
 
@@ -462,6 +463,7 @@ public class WishListActivity extends BaseActivity {
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                         data.setIsFollowing("true");
                                         isFollowing = true;
+                                        notifyDataSetChanged();
 
                                     }
                                 });

@@ -2,21 +2,19 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.firebase.client.utilities.Utilities;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
-import com.orion.android.common.util.ToastFactory;
-import com.orion.android.common.util.ToastFactoryImpl;
 import com.yo.android.R;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.util.Constants;
@@ -29,7 +27,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,6 +66,17 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         enableBack();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         setDataFromPreferences();
+        statusEdt.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //do here
+                    saveSettings();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void setDataFromPreferences() {
@@ -108,7 +116,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
     @OnClick(R.id.share_lint_btn)
     public void shareLinkAction() {
         String url = "Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com";
-        Util.shareArticle(shareLinkBtn, url);
+        Util.shareIntent(shareLinkBtn, url,"Sharing Link");
     }
 
     @Override
@@ -117,14 +125,18 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         final MenuItem menuItem = item;
         if (menuItem.getItemId() == R.id.menu_save_settings) {
             //do nothing..
-            dismissProgressDialog();
-            if (isValid()) {
-                updateSettings();
-            } else {
-                mToastFactory.showToast(R.string.username_empty);
-            }
+            saveSettings();
         }
         return true;
+    }
+
+    private void saveSettings() {
+        dismissProgressDialog();
+        if (isValid()) {
+            updateSettings();
+        } else {
+            mToastFactory.showToast(R.string.username_empty);
+        }
     }
 
     private boolean isValid() {

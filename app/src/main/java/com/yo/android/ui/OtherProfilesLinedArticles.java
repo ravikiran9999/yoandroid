@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,6 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
-import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.model.Articles;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -347,7 +345,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Util.shareArticle(v, data.getUrl());
+                    Util.shareIntent(v, data.getUrl(),"Sharing Article");
                 }
             });
 
@@ -377,6 +375,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                             data.setIsFollowing("true");
                             isFollowing = true;
+                            notifyDataSetChanged();
                         }
 
                         @Override
@@ -386,6 +385,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                             data.setIsFollowing("false");
                             isFollowing = false;
+                            notifyDataSetChanged();
 
                         }
                     });
@@ -422,6 +422,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                         data.setIsFollowing("false");
                                         isFollowing = false;
+                                        notifyDataSetChanged();
 
                                     }
 
@@ -432,6 +433,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                         data.setIsFollowing("true");
                                         isFollowing = true;
+                                        notifyDataSetChanged();
 
                                     }
                                 });

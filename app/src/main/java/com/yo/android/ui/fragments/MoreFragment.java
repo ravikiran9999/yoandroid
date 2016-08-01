@@ -300,15 +300,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
             case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
-                    Uri targetUri = data.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     try {
-                        Cursor cursor = getActivity().getContentResolver().query(targetUri,
-                                filePathColumn, null, null, null);
-                        cursor.moveToFirst();
-                        int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
-                        String imagePath = cursor.getString(columnIndex);
-
+                        String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(),data);
                         uploadFile(new File(imagePath));
                     } catch (Exception e) {
                         e.printStackTrace();
