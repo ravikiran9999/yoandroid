@@ -2,7 +2,6 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -12,11 +11,8 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.firebase.client.utilities.Utilities;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
-import com.orion.android.common.util.ToastFactory;
-import com.orion.android.common.util.ToastFactoryImpl;
 import com.yo.android.R;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.util.Constants;
@@ -29,7 +25,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -108,7 +103,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
     @OnClick(R.id.share_lint_btn)
     public void shareLinkAction() {
         String url = "Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com";
-        Util.shareArticle(shareLinkBtn, url);
+        Util.shareIntent(shareLinkBtn, url,"Sharing Link");
     }
 
     @Override

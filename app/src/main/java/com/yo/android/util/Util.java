@@ -338,7 +338,7 @@ public class Util {
         }
     }
 
-    public static void shareArticle(View view, String url) {
+    public static void shareIntent(View view, String url, String title) {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
