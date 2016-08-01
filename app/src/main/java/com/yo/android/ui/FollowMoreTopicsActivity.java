@@ -231,6 +231,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             showProgressDialog();
+            topicsList = new ArrayList<Topics>();
             tagGroup.setVisibility(View.GONE);
         }
 
@@ -361,6 +362,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG, "onQueryTextSubmit: " + query);
+                if (this != null)
+                    Util.hideKeyboard(FollowMoreTopicsActivity.this, getCurrentFocus());
                 return true;
             }
 
@@ -374,18 +377,25 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                if (this != null)
+                    Util.hideKeyboard(FollowMoreTopicsActivity.this, getCurrentFocus());
                 return true;
             }
         });
     }
 
     private void setTags(CharSequence cs) {
-        if (TextUtils.isEmpty(cs.toString().trim())) {
-            //new TagLoader(topicsList, tagGroup).execute();
-            return;
-        }
+
         tagGroup.getTags().clear();
         tagGroup.removeAllViews();
+
+        if (TextUtils.isEmpty(cs.toString().trim())) {
+            Util.hideKeyboard(this, getCurrentFocus());
+            noSearchResults.setVisibility(View.GONE);
+            new TagLoader(topicsList, tagGroup).execute();
+            return;
+        }
+
         String text = cs.toString();
         searchTags = new ArrayList<Tag>();
         for (Tag tag : initialTags) {
