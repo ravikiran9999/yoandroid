@@ -1,17 +1,13 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
-import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.CheckBox;
 
 import com.yo.android.R;
-import com.yo.android.chat.ui.CreateGroupActivity;
-import com.yo.android.helpers.AppRegisteredContactsViewHolder;
 import com.yo.android.helpers.GroupContactsViewHolder;
 import com.yo.android.model.Contact;
 
-import java.util.ArrayList;
 
 /**
  * Created by rdoddapaneni on 7/18/2016.

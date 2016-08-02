@@ -66,6 +66,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         if (!TextUtils.isEmpty(avatar)) {
             Picasso.with(this)
                     .load(avatar)
+                    .placeholder(R.drawable.img_placeholder_profile)
                     .into(profileImage);
         }
         //profileName.setText(userName);

@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.model.Contact;
@@ -32,10 +34,6 @@ public class ChatActivity extends BaseActivity {
         if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.ROOM)) {
             room = getIntent().getParcelableExtra(Constants.ROOM);
 
-        /*args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
-        args.putString(Constants.OPPONENT_PHONE_NUMBER, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
-        args.putString(Constants.OPPONENT_ID, getIntent().getStringExtra(Constants.OPPONENT_ID));*/
-
             args.putString(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
             opponent = getOppenent(room);
             if (opponent != null) {
@@ -55,7 +53,6 @@ public class ChatActivity extends BaseActivity {
             args.putString(Constants.OPPONENT_ID, contact.getId());
         }
 
-
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
             args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
         }
@@ -73,13 +70,17 @@ public class ChatActivity extends BaseActivity {
             View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
 
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
+            ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
             customTitle.setText(opponent);
-
+            if (room.getGroupName() != null) {
+                Picasso.with(this).load(R.drawable.ic_group).into(imageView);
+            } else {
+                Picasso.with(this).load(R.drawable.ic_contactprofile).into(imageView);
+            }
             customTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
-
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     startActivity(intent);
                 }

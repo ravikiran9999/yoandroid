@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="15dp"
+    android:descendantFocusability="blocksDescendants"
     android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -14,7 +15,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:src="@drawable/ic_contacts" />
+        android:src="@drawable/ic_contactprofile" />
 
     <TextView
         android:id="@+id/tv_phone_number"

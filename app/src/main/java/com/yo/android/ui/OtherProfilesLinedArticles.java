@@ -375,6 +375,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                             data.setIsFollowing("true");
                             isFollowing = true;
+                            notifyDataSetChanged();
                         }
 
                         @Override
@@ -384,6 +385,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                             data.setIsFollowing("false");
                             isFollowing = false;
+                            notifyDataSetChanged();
 
                         }
                     });
@@ -420,6 +422,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                         data.setIsFollowing("false");
                                         isFollowing = false;
+                                        notifyDataSetChanged();
 
                                     }
 
@@ -430,6 +433,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                         data.setIsFollowing("true");
                                         isFollowing = true;
+                                        notifyDataSetChanged();
 
                                     }
                                 });

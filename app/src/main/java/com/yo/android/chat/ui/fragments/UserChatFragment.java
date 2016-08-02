@@ -57,6 +57,7 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.ShowPhotoActivity;
+import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -66,6 +67,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -367,6 +370,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.image:
                 getImageFromGallery();
+                break;
+            case R.id.view_contact :
+                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
+                startActivity(intent);
                 break;
 
         }
@@ -694,8 +702,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
 
 
-    /*private void loadMessages() {
-        chatMessageArray = firebaseService.getChatMessageList();
+    private void loadMessages() {
+
+        if (myServiceConnection.isServiceConnection()) {
+            chatMessageArray = firebaseService.getChatMessageList();
+        }
         if (chatMessageArray == null) {
             showProgressDialog();
             Timer t = new Timer();
@@ -717,6 +728,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             userChatAdapter.addItems(chatMessageArray);
             listView.smoothScrollToPosition(userChatAdapter.getCount());
         }
-    }*/
+    }
 }
 

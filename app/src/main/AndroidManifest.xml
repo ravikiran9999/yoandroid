@@ -203,7 +203,9 @@
             android:name=".ui.FollowingsActivity"
             android:screenOrientation="portrait" />
 
-        <service android:name=".chat.firebase.FirebaseService" />
+        <service
+            android:name=".chat.firebase.FirebaseService"
+            android:enabled="true" />
 
         <activity
             android:name=".ui.OthersMagazinesDetailActivity"
