@@ -58,6 +58,7 @@ public class Constants {
     public static final int GO_TO_SETTINGS = 103;
     public static final String ENABLE_PROFILE_SCREEN = "enable_profile_screen";
     public static final String ENABLE_FOLLOW_TOPICS_SCREEN = "enable_follow_more_topics_screen";
+    public static final String OPPONENT_CONTACT_IMAGE = "contact_image";
     public static int SUCCESS_CODE = 200;
 
     public static final int ADD_IMAGE_CAPTURE = 1;

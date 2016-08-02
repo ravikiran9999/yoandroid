@@ -16,7 +16,7 @@
             android:layout_height="300dp"
             android:background="?android:selectableItemBackground"
             android:scaleType="centerCrop"
-            android:src="@drawable/magazine_dummy_image" />
+            android:src="@drawable/img_placeholder" />
 
         <RelativeLayout
             android:id="@+id/rl_transparent"

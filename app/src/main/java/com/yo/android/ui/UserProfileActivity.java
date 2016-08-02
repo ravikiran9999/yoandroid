@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
-import com.yo.android.adapters.AppContactsListAdapter;
 import com.yo.android.adapters.ProfileMembersAdapter;
 import com.yo.android.util.Constants;
 
@@ -36,6 +36,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     private ProfileMembersAdapter profileMembersAdapter;
     private ListView membersList;
+    private String opponentPhn;
+    private String opponentImg;
 
 
     @Override
@@ -45,8 +47,17 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         ButterKnife.bind(this);
         enableBack();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        String phone = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
-        setDataFromPreferences(phone);
+        Intent intent = getIntent();
+        if(intent !=null){
+            if(intent.hasExtra(Constants.OPPONENT_PHONE_NUMBER)){
+                opponentPhn = intent.getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+            }
+            if(intent.hasExtra(Constants.OPPONENT_CONTACT_IMAGE)){
+                opponentImg = intent.getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
+            }
+            setDataFromPreferences(opponentPhn,opponentImg);
+        }
+
         membersList = (ListView)findViewById(R.id.members);
         profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
         membersList.setAdapter(profileMembersAdapter);
@@ -59,13 +70,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     }
 
-    private void setDataFromPreferences(String phone) {
+    private void setDataFromPreferences(String phone, String img) {
         //String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         //String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
-        String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
-        if (!TextUtils.isEmpty(avatar)) {
+        //String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
+        if (!TextUtils.isEmpty(img)) {
             Picasso.with(this)
-                    .load(avatar)
+                    .load(img)
                     .placeholder(R.drawable.img_placeholder_profile)
                     .into(profileImage);
         }
