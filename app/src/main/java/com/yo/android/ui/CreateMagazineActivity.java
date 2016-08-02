@@ -105,7 +105,8 @@ public class CreateMagazineActivity extends BaseActivity {
                                 mToastFactory.showToast("Article added into " + createMagazinesAdapter.getItem(position).getName());
                                 finish();
                             } else {
-                                new ToastFactoryImpl(CreateMagazineActivity.this).showToast(getResources().getString(R.string.some_thing_wrong));
+                                new ToastFactoryImpl(CreateMagazineActivity.this).showToast("Selected Article already available");
+                                finish();
                             }
                         }
 
