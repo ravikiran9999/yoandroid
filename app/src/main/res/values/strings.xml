@@ -39,6 +39,7 @@
     <string name="not_sender">You dont have permission to delete message </string>
 
     <string name="enter_mobile_number">Enter your mobile number to get started!</string>
+    <string name="re_enter_mobile_number">Re-enter your mobile number to get started!</string>
 
     <string name="magazines_fragment">Hello magazine fragment</string>
 
@@ -155,5 +156,10 @@
     <string name="add_picture">Add Picture</string>
     <string name="change_picture">Change Picture</string>
     <string name="no_result_found">No search results found</string>
+    <string name="no">NO</string>
+    <string name="yes">YES</string>
+    <string name="sign_out">Sign out</string>
+    <string name="signout_text">Are you sure you want to sign out ?</string>
+    <string name="empty_fields">Please do not leave fields empty</string>
 
 </resources>

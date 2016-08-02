@@ -100,6 +100,7 @@ public class UpdateProfileActivity extends BaseActivity {
         if (!TextUtils.isEmpty(username.getText().toString().trim())) {
             loadUserProfileInfo();
         } else {
+            Util.hideKeyboard(this,getCurrentFocus());
             toastFactory.showToast(getResources().getString(R.string.enter_username));
         }
     }

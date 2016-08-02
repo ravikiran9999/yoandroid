@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -116,6 +117,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         });
         loadImage();
 
+
     }
 
     private void loadImage() {
@@ -125,7 +127,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             Picasso.with(getActivity())
                     .load(avatar)
                     .into(profilePic);
-        }else{
+        } else {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
         }
 
@@ -252,34 +254,54 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
 
     public void showLogoutDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Sign out");
-        builder.setMessage("Are you sure you want to sign out ?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                        }
+        if(getActivity()!=null) {
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                        }
-                    });
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            final View view = layoutInflater.inflate(R.layout.custom_signout, null);
+            builder.setView(view);
+
+            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+            Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                    preferenceEndPoint.clearAll();
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    getActivity().finish();
                 }
-                preferenceEndPoint.clearAll();
-                startActivity(new Intent(getActivity(), LoginActivity.class));
-                getActivity().finish();
+            });
 
-            }
-        });
-        builder.setNegativeButton("No", null);
-        builder.create().show();
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+        }
     }
 
 
@@ -301,7 +323,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
                     try {
-                        String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(),data);
+                        String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(), data);
                         uploadFile(new File(imagePath));
                     } catch (Exception e) {
                         e.printStackTrace();
