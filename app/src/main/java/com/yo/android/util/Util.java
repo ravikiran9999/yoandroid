@@ -196,7 +196,7 @@ public class Util {
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -240,7 +240,7 @@ public class Util {
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -327,7 +327,7 @@ public class Util {
 
     public static void changeSearchProperties(Menu menu) {
         SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        search.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
+        search.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         AutoCompleteTextView searchTextView = (AutoCompleteTextView) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
             searchTextView.setTextColor(Color.WHITE);
