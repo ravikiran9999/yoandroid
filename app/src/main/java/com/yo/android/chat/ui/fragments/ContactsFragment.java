@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -120,7 +118,10 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         Contact contact = (Contact)listView.getItemAtPosition(position);
         if(contact.getYoAppUser()) {
             Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, contact.getPhoneNo());
+            intent.putExtra(Constants.CONTACT, contact);
+//            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, contact.getPhoneNo());
+//            intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE,contact.getImage());
+//            intent.putExtra(Constants.IS_OPPONENT_YO_USER,contact.getYoAppUser());
             startActivity(intent);
         }
 

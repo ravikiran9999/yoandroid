@@ -85,6 +85,7 @@ public class Contact implements Parcelable {
         dest.writeString(image);
         dest.writeString(phoneNo);
         dest.writeString(firebaseRoomId);
+        dest.writeInt(yoAppUser ? 0 : 1);
     }
 
     private Contact(Parcel in) {
@@ -93,6 +94,7 @@ public class Contact implements Parcelable {
         this.image = in.readString();
         this.phoneNo = in.readString();
         this.firebaseRoomId = in.readString();
+        this.yoAppUser = in.readInt() == 0;
     }
 
     public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {

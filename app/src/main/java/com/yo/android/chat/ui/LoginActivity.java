@@ -43,6 +43,7 @@ import butterknife.OnClick;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.http.Part;
 
 
 /**
@@ -75,6 +76,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
     private List<CountryCode> mList;
     @Inject
     ConnectivityHelper mHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +117,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         spCountrySpinner.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Util.hideKeyboard(LoginActivity.this,v);
+                Util.hideKeyboard(LoginActivity.this, v);
                 return false;
             }
         });
@@ -152,13 +154,23 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
 
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(phoneNumber)) {
+        if (TextUtils.isEmpty(phoneNumber) && TextUtils.isEmpty(reEnterPhone)) {
+            Util.hideKeyboard(this,getCurrentFocus());
             focusView = mPhoneNumberView;
             cancel = true;
+            mToastFactory.showToast(getResources().getString(R.string.empty_fields));
+        } else if (TextUtils.isEmpty(phoneNumber)) {
+            Util.hideKeyboard(this,getCurrentFocus());
+            focusView = mPhoneNumberView;
+            mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number));
+            cancel = true;
         } else if (TextUtils.isEmpty(reEnterPhone)) {
+            Util.hideKeyboard(this,getCurrentFocus());
+            mToastFactory.showToast(getResources().getString(R.string.re_enter_mobile_number));
             focusView = mReEnterPhoneNumberView;
             cancel = true;
         } else if (!phoneNumber.equals(reEnterPhone)) {
+            Util.hideKeyboard(this,getCurrentFocus());
             mToastFactory.showToast("Phone numbers should match");
             focusView = mPhoneNumberView;
             cancel = true;
