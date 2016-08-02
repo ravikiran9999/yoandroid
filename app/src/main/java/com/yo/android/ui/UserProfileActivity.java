@@ -2,16 +2,21 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.ProfileMembersAdapter;
+import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.model.Contact;
 import com.yo.android.util.Constants;
+import com.yo.android.voip.OutGoingCallActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,12 +37,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     TextView profileName;
     @Bind(R.id.profile_number)
     TextView profileNumber;
-
-
     private ProfileMembersAdapter profileMembersAdapter;
     private ListView membersList;
-    private String opponentPhn;
-    private String opponentImg;
+    private Contact contact;
 
 
     @Override
@@ -48,17 +50,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         enableBack();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         Intent intent = getIntent();
-        if(intent !=null){
-            if(intent.hasExtra(Constants.OPPONENT_PHONE_NUMBER)){
-                opponentPhn = intent.getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+        if (intent != null) {
+            if (intent.hasExtra(Constants.CONTACT)) {
+                contact = getIntent().getParcelableExtra(Constants.CONTACT);
+                setDataFromPreferences();
             }
-            if(intent.hasExtra(Constants.OPPONENT_CONTACT_IMAGE)){
-                opponentImg = intent.getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
-            }
-            setDataFromPreferences(opponentPhn,opponentImg);
         }
-
-        membersList = (ListView)findViewById(R.id.members);
+        membersList = (ListView) findViewById(R.id.members);
         profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
         membersList.setAdapter(profileMembersAdapter);
     }
@@ -70,19 +68,27 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     }
 
-    private void setDataFromPreferences(String phone, String img) {
+    private void setDataFromPreferences() {
         //String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         //String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
         //String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
-        if (!TextUtils.isEmpty(img)) {
-            Picasso.with(this)
-                    .load(img)
-                    .placeholder(R.drawable.img_placeholder_profile)
-                    .into(profileImage);
+        if(contact!=null) {
+            if (!TextUtils.isEmpty(contact.getImage())) {
+                Picasso.with(this)
+                        .load(contact.getImage())
+                        .placeholder(R.drawable.img_placeholder_profile)
+                        .into(profileImage);
+            }
+            //profileName.setText(userName);
+            profileName.setText(contact.getName());
+            profileNumber.setText(contact.getPhoneNo());
+            getSupportActionBar().setTitle(contact.getPhoneNo());
+            if (contact.getYoAppUser()) {
+                profileMsg.setImageResource(R.mipmap.ic_profile_chat);
+            } else {
+                profileMsg.setImageResource(R.drawable.ic_invitefriends);
+            }
         }
-        //profileName.setText(userName);
-        profileNumber.setText(phone);
-        getSupportActionBar().setTitle(phone);
     }
 
     @Override
@@ -106,11 +112,32 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     @OnClick(R.id.profile_call)
     public void callUser() {
         //do nothing...
+        if (contact != null && contact.getPhoneNo() != null) {
+            Intent intent = new Intent(this, OutGoingCallActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(OutGoingCallActivity.CALLER_NO, contact.getPhoneNo());
+            startActivity(intent);
+        }
+
     }
 
     @OnClick(R.id.profile_message)
     public void messageUser() {
-        finish();
+        if (contact != null && contact.getYoAppUser()) {
+            navigateToChatScreen();
+        }else {
+            Toast.makeText(this, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void navigateToChatScreen() {
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constants.CONTACT, contact);
+        intent.putExtra(Constants.TYPE, Constants.CONTACT);
+        startActivity(intent);
+
     }
 
 
