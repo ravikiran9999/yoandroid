@@ -194,7 +194,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             mProgress.setVisibility(View.VISIBLE);
         }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
+        yoService.getUserArticlesAPI(accessToken).enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
                 if (!isAdded()) {
