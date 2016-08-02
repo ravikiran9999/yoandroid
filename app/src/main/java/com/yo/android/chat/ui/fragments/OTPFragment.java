@@ -10,9 +10,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -105,13 +107,7 @@ public class OTPFragment extends BaseFragment {
                         generateDummyOTP();
                     }
                 } else {
-                    String password = etOtp.getText().toString().trim();
-                    if (TextUtils.isEmpty(password)) {
-                        mToastFactory.showToast(getString(R.string.otp_empty));
-                    } else {
-                        stopTimer();
-                        signUp(phoneNumber, password);
-                    }
+                    performNext();
                 }
             }
         });
@@ -128,7 +124,29 @@ public class OTPFragment extends BaseFragment {
             }
         });
         mHandler.post(runnable);
+
+        etOtp.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //do here
+                    performNext();
+                    return true;
+                }
+                return false;
+            }
+        });
         return view;
+    }
+
+    private void performNext() {
+        String password = etOtp.getText().toString().trim();
+        if (TextUtils.isEmpty(password)) {
+            mToastFactory.showToast(getString(R.string.otp_empty));
+        } else {
+            stopTimer();
+            signUp(phoneNumber, password);
+        }
     }
 
     @Override
