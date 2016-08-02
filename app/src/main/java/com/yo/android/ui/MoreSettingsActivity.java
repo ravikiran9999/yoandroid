@@ -87,6 +87,8 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         userNameText.setSelection(userName.length());
         mobileNumberText.setText(phone);
         statusEdt.setText(mStatus + "");
+        syncContactsSwitch.setEnabled(preferenceEndPoint.getBooleanPreference(Constants.SYNCE_CONTACTS));
+        notificationSwitch.setEnabled(preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS));
     }
 
     @Override
@@ -165,12 +167,18 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         RequestBody firstName =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), userName);
+        RequestBody syncContacts = RequestBody.create(
+                MediaType.parse("multipart/form-data"), String.valueOf(syncContactsSwitch.isEnabled()));
+
+        RequestBody notificationAlerts = RequestBody.create(
+                MediaType.parse("multipart/form-data"), String.valueOf(notificationSwitch.isEnabled()));
         showProgressDialog();
-        yoService.updateProfile(userId, description, firstName, null).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, description, firstName, null, notificationAlerts, syncContacts).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
                 if (response.body() != null) {
+                    Util.saveUserDetails(response, preferenceEndPoint);
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());

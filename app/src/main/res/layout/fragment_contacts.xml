@@ -6,6 +6,17 @@
     android:orientation="vertical"
     tools:context="com.yo.android.chat.ui.fragments.ContactsFragment">
 
+    <TextView
+        android:id="@+id/no_search_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/tab_grey"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/no_result_found"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
