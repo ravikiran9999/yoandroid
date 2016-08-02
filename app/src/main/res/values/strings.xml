@@ -155,5 +155,9 @@
     <string name="add_picture">Add Picture</string>
     <string name="change_picture">Change Picture</string>
     <string name="no_result_found">No search results found</string>
+    <string name="no">NO</string>
+    <string name="yes">YES</string>
+    <string name="sign_out">Sign out</string>
+    <string name="signout_text">Are you sure you want to sign out ?</string>
 
 </resources>
