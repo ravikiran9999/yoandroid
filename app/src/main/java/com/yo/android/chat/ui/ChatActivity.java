@@ -72,11 +72,13 @@ public class ChatActivity extends BaseActivity {
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
             customTitle.setText(opponent);
-            if (room.getGroupName() != null) {
+
+            /*if (room.getGroupName() != null) {
                 Picasso.with(this).load(R.drawable.ic_group).into(imageView);
             } else {
                 Picasso.with(this).load(R.drawable.ic_contactprofile).into(imageView);
-            }
+            }*/
+
             customTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
