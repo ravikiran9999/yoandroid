@@ -6,7 +6,8 @@ android {
         config {
             keyAlias 'yoapp'
             keyPassword '123456'
-            storeFile file('E:\\Yo\\yo-android\\yoapp-stage.jks')
+//            storeFile file('E:\\Yo\\yo-android\\yoapp-stage.jks')
+            storeFile file('../yoapp-stage.jks')
             storePassword '123456'
         }
     }
