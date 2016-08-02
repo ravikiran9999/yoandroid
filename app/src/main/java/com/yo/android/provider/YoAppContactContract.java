@@ -24,7 +24,7 @@ public class YoAppContactContract {
     /**
      * Path component for "entry"-type resources..
      */
-    private static final String PATH_ENTRIES = "entries";
+    private static final String PATH_ENTRIES = "contacts";
 
     /**
      * Columns supported by "entries" records.

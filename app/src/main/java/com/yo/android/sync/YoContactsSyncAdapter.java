@@ -61,6 +61,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String TAG = "SyncAdapter";
     @Inject
     protected YoApi.YoService mYoService;
+    @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
     /**
@@ -105,6 +106,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     public YoContactsSyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
         mContentResolver = context.getContentResolver();
+        Injector.obtain(context.getApplicationContext()).inject(this);
     }
 
     /**
@@ -127,7 +129,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                               ContentProviderClient provider, SyncResult syncResult) {
         Log.i(TAG, "Beginning network synchronization");
         try {
-            String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+            String access = loginPrefs == null ? "" : loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
             if (TextUtils.isEmpty(access)) {
                 return;
             }
@@ -180,7 +182,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         // Build hash table of incoming entries
         HashMap<String, Entry> entryMap = new HashMap<String, Entry>();
         for (Entry e : entries) {
-            entryMap.put(e.entryId, e);
+            entryMap.put(e.phone, e);
         }
 
         // Get list of all items
@@ -207,14 +209,14 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             image = c.getString(COLUMN_IMAGE);
             roomId = c.getString(COLUMN_FIREBASE_ROOM_ID);
             yoAppUser = c.getInt(COLUMN_YO_USER) != 0;
-            Entry match = entryMap.get(entryId);
+            Entry match = entryMap.get(phone);
             if (match != null) {
                 // Entry exists. Remove from entry map to prevent insert later.
-                entryMap.remove(entryId);
+                entryMap.remove(phone);
                 // Check to see if the entry needs to be updated
                 Uri existingUri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI.buildUpon()
                         .appendPath(Integer.toString(id)).build();
-                if ((match.entryId != null && !match.entryId.equals(entryId)) ||
+                if (/*(match.entryId != null && !match.entryId.equals(entryId)) ||*/
                         (match.phone != null && !match.phone.equals(phone))
                         ) {
                     // Update existing record
@@ -242,7 +244,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
 
         // Add new items
         for (Entry e : entryMap.values()) {
-            Log.i(TAG, "Scheduling insert: entry_id=" + e.entryId);
+            Log.i(TAG, "Scheduling insert: phone=" + e.phone);
             batch.add(ContentProviderOperation.newInsert(YoAppContactContract.YoAppContactsEntry.CONTENT_URI)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_USER_ID, e.entryId)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME, e.name)

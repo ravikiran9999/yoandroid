@@ -29,6 +29,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.sync.SyncUtils;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
@@ -131,7 +132,8 @@ public class BottomTabsActivity extends BaseActivity {
         loadUserProfileInfo();
         updateDeviceToken();
         contactsSyncManager.syncContacts();
-
+        SyncUtils.CreateSyncAccount(this, preferenceEndPoint);
+//        SyncUtils.TriggerRefresh();
     }
 
     @Override

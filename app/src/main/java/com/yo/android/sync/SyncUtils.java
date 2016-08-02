@@ -21,8 +21,8 @@ import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.sync.accounts.GenericAccountService;
 
@@ -39,10 +39,9 @@ public class SyncUtils {
      *
      * @param context Context
      */
-    public static void CreateSyncAccount(Context context) {
+    public static void CreateSyncAccount(Context context, PreferenceEndPoint preferenceEndPoint) {
         boolean newAccount = false;
-        boolean setupComplete = PreferenceManager
-                .getDefaultSharedPreferences(context).getBoolean(PREF_SETUP_COMPLETE, false);
+        boolean setupComplete = preferenceEndPoint.getBooleanPreference(PREF_SETUP_COMPLETE, false);
 
         // Create account, if it's missing. (Either first run, or user has deleted account.)
         Account account = GenericAccountService.GetAccount();
@@ -64,8 +63,7 @@ public class SyncUtils {
         // the account list, so wee need to check both.)
         if (newAccount || !setupComplete) {
             TriggerRefresh();
-            PreferenceManager.getDefaultSharedPreferences(context).edit()
-                    .putBoolean(PREF_SETUP_COMPLETE, true).commit();
+            preferenceEndPoint.saveBooleanPreference(PREF_SETUP_COMPLETE, true);
         }
     }
 
