@@ -1,10 +1,11 @@
 package com.yo.android.adapters;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
@@ -85,7 +86,18 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                     }*/
 
                 } else {
-                    Toast.makeText(mContext, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
+                    try {
+                        String url = mContext.getString(R.string.invite_link);
+                        Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                        smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                        smsIntent.setType("vnd.android-dir/mms-sms");
+                        smsIntent.putExtra("sms_body", url);
+                        smsIntent.setData(Uri.parse("sms:" + item.getPhoneNo()));
+                        smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(smsIntent);
+                    } catch (ActivityNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

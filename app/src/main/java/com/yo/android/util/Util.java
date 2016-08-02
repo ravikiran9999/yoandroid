@@ -346,9 +346,9 @@ public class Util {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
-            i.putExtra(Intent.EXTRA_SUBJECT, "Sharing Article");
+            i.putExtra(Intent.EXTRA_SUBJECT, title);
             i.putExtra(Intent.EXTRA_TEXT, url);
-            view.getContext().startActivity(Intent.createChooser(i, "Sharing Article"));
+            view.getContext().startActivity(Intent.createChooser(i, title));
         } catch (ActivityNotFoundException e) {
 
         }
@@ -402,8 +402,8 @@ public class Util {
         preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
         preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
         preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
-        preferenceEndPoint.saveBooleanPreference(Constants.SYNCE_CONTACTS,response.body().isSyncContacts());
-        preferenceEndPoint.saveBooleanPreference(Constants.NOTIFICATION_ALERTS,response.body().isNotificationAlert());
+        preferenceEndPoint.saveBooleanPreference(Constants.SYNCE_CONTACTS, response.body().isSyncContacts());
+        preferenceEndPoint.saveBooleanPreference(Constants.NOTIFICATION_ALERTS, response.body().isNotificationAlert());
 
     }
 }

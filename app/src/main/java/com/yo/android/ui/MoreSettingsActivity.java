@@ -117,7 +117,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
 
     @OnClick(R.id.share_lint_btn)
     public void shareLinkAction() {
-        String url = "Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com";
+        String url = getString(R.string.invite_link);
         Util.shareIntent(shareLinkBtn, url, "Sharing Link");
     }
 
