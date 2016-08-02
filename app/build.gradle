@@ -6,6 +6,7 @@ android {
         config {
             keyAlias 'yoapp'
             keyPassword '123456'
+//          storeFile file('E:\\Yo\\yo-android\\yoapp-stage.jks')
             storeFile file('../yoapp-stage.jks')
             storePassword '123456'
         }
@@ -45,7 +46,6 @@ android {
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com/Rooms/\""
 //            applicationId "com.yo.android.stage"
-
 
 
         }
