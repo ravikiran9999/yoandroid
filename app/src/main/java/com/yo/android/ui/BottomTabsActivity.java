@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -22,6 +23,8 @@ import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
@@ -60,6 +63,8 @@ public class BottomTabsActivity extends BaseActivity {
     private int toolBarColor;
     @Inject
     ContactsSyncManager contactsSyncManager;
+    @Inject
+    MyServiceConnection myServiceConnection;
 
 
     @Override
@@ -108,6 +113,15 @@ public class BottomTabsActivity extends BaseActivity {
 
             }
         });
+
+        // firebase service
+
+        if (!myServiceConnection.isServiceConnection()) {
+            Intent intent = new Intent(this, FirebaseService.class);
+            startService(intent);
+
+            bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
+        }
 
         //
         Intent in = new Intent(getApplicationContext(), SipService.class);
