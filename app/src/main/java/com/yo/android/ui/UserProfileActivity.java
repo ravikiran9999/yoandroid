@@ -73,16 +73,15 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         //String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
         //String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if(contact!=null) {
+            getSupportActionBar().setTitle(contact.getName());
             if (!TextUtils.isEmpty(contact.getImage())) {
                 Picasso.with(this)
                         .load(contact.getImage())
                         .placeholder(R.drawable.img_placeholder_profile)
                         .into(profileImage);
             }
-            //profileName.setText(userName);
             profileName.setText(contact.getName());
             profileNumber.setText(contact.getPhoneNo());
-            getSupportActionBar().setTitle(contact.getPhoneNo());
             if (contact.getYoAppUser()) {
                 profileMsg.setImageResource(R.mipmap.ic_profile_chat);
             } else {
