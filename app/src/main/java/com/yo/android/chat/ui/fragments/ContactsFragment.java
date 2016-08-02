@@ -1,12 +1,15 @@
 package com.yo.android.chat.ui.fragments;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -39,6 +42,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     private Menu menu;
     @Inject
     ContactsSyncManager mSyncManager;
+    private static final int PICK_CONTACT_REQUEST = 100;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -66,34 +70,48 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
         listView.setOnItemClickListener(this);
-        if (mSyncManager.getContacts().isEmpty()) {
-            showProgressDialog();
-            mSyncManager.loadContacts(new Callback<List<Contact>>() {
-                @Override
-                public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                    contactsListAdapter.addItems(mSyncManager.getContacts());
-                    dismissProgressDialog();
-                }
-
-                @Override
-                public void onFailure(Call<List<Contact>> call, Throwable t) {
-                    dismissProgressDialog();
-                }
-            });
-        } else {
+        if (!mSyncManager.getContacts().isEmpty()) {
             contactsListAdapter.addItems(mSyncManager.getContacts());
         }
+        if (mSyncManager.getContacts().isEmpty()) {
+            showProgressDialog();
+        }
+        mSyncManager.loadContacts(new Callback<List<Contact>>() {
+            @Override
+            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                contactsListAdapter.addItems(mSyncManager.getContacts());
+                dismissProgressDialog();
+            }
+
+            @Override
+            public void onFailure(Call<List<Contact>> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_contacts, menu);
         this.menu = menu;
-        Util.prepareContactsSearch(getActivity(), menu,contactsListAdapter, Constants.CONT_FRAG);
+        Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.invite) {
+            Intent i = new Intent(Intent.ACTION_INSERT);
+            i.setType(ContactsContract.Contacts.CONTENT_TYPE);
+            if (Integer.valueOf(Build.VERSION.SDK) > 14)
+                i.putExtra("finishActivityOnSaveCompleted", true); // Fix for 4.0.3 +
+            startActivityForResult(i, PICK_CONTACT_REQUEST);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void showProgressDialog() {
@@ -115,8 +133,8 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Contact contact = (Contact)listView.getItemAtPosition(position);
-        if(contact.getYoAppUser()) {
+        Contact contact = (Contact) listView.getItemAtPosition(position);
+        if (contact.getYoAppUser()) {
             Intent intent = new Intent(getActivity(), UserProfileActivity.class);
             intent.putExtra(Constants.CONTACT, contact);
 //            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, contact.getPhoneNo());

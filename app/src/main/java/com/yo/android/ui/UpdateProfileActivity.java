@@ -1,10 +1,7 @@
 package com.yo.android.ui;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -100,7 +97,7 @@ public class UpdateProfileActivity extends BaseActivity {
         if (!TextUtils.isEmpty(username.getText().toString().trim())) {
             loadUserProfileInfo();
         } else {
-            Util.hideKeyboard(this,getCurrentFocus());
+            Util.hideKeyboard(this, getCurrentFocus());
             toastFactory.showToast(getResources().getString(R.string.enter_username));
         }
     }
@@ -143,7 +140,7 @@ public class UpdateProfileActivity extends BaseActivity {
             case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
                     try {
-                        String imagePath = ImagePickHelper.getGalleryImagePath(this,data);
+                        String imagePath = ImagePickHelper.getGalleryImagePath(this, data);
                         imgFile = new File(imagePath);
                         new ImageLoader(profileImage, imgFile, this).execute();
                         addPhoto.setText(getResources().getString(R.string.change_picture));
@@ -168,6 +165,7 @@ public class UpdateProfileActivity extends BaseActivity {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 if (response.body() != null) {
+                    Util.saveUserDetails(response, preferenceEndPoint);
                     preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
@@ -207,18 +205,19 @@ public class UpdateProfileActivity extends BaseActivity {
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("user[first_name]"), descriptionString);
-        yoService.updateProfile(userId, null, description, body).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, null, description, null, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
                 if (response.isSuccessful()) {
                     //TODO:Disable flag for Profile
                     //TODO:Enable flag for Follow more
-                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, false);
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+                    Util.saveUserDetails(response, preferenceEndPoint);
                     Intent intent = new Intent(UpdateProfileActivity.this, FollowMoreTopicsActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("From", "UpdateProfileActivity");

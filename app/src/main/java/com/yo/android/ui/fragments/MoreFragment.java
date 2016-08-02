@@ -2,13 +2,9 @@ package com.yo.android.ui.fragments;
 
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -21,7 +17,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -33,10 +28,9 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
-import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.MoreSettingsActivity;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
-import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 
@@ -165,7 +159,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         RequestBody username =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.USER_NAME));
-        yoService.updateProfile(userId, description, null, body).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, description, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
@@ -255,7 +249,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     public void showLogoutDialog() {
 
-        if(getActivity()!=null) {
+        if (getActivity() != null) {
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 

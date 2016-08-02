@@ -156,8 +156,9 @@ public class YoApi {
         Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
                                             @Part("user[description]") RequestBody descBody,
                                             @Part("user[first_name]") RequestBody firstName,
+                                            @Part("user[notification_alert]") RequestBody notificationsAlert,
+                                            @Part("user[contacts_sync]") RequestBody syncContacts,
                                             @Part MultipartBody.Part file);
-
 
         @GET("api/articles.json")
         Call<List<Articles>> getWishListAPI(@Query("access_token") String access_token, @Query("liked") String liked);

@@ -5,11 +5,11 @@
 
 
     <TextView
+        android:id="@+id/network_failure"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:id="@+id/network_failure"
         android:padding="10dp"
         android:text="@string/connectivity_network_settings"
         android:visibility="gone" />
@@ -63,7 +63,8 @@
         <FrameLayout
             android:id="@+id/flipView_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/white" />
     </FrameLayout>
 
 </FrameLayout>
