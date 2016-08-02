@@ -13,6 +13,7 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.model.Contact;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 import com.yo.android.voip.OutGoingCallActivity;
 
 /**
@@ -86,18 +87,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                     }*/
 
                 } else {
-                    try {
-                        String url = mContext.getString(R.string.invite_link);
-                        Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
-                        smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                        smsIntent.setType("vnd.android-dir/mms-sms");
-                        smsIntent.putExtra("sms_body", url);
-                        smsIntent.setData(Uri.parse("sms:" + item.getPhoneNo()));
-                        smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        mContext.startActivity(smsIntent);
-                    } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    Util.inviteFriend(context,item.getPhoneNo());
                 }
             }
         });

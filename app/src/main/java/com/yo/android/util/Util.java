@@ -9,6 +9,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -405,5 +406,20 @@ public class Util {
         preferenceEndPoint.saveBooleanPreference(Constants.SYNCE_CONTACTS, response.body().isSyncContacts());
         preferenceEndPoint.saveBooleanPreference(Constants.NOTIFICATION_ALERTS, response.body().isNotificationAlert());
 
+    }
+
+    public static void inviteFriend(Context context, String phoneNo) {
+        try {
+            String url = context.getString(R.string.invite_link);
+            Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+            smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+            smsIntent.setType("vnd.android-dir/mms-sms");
+            smsIntent.putExtra("sms_body", url);
+            smsIntent.setData(Uri.parse("sms:" + phoneNo));
+            smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(smsIntent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

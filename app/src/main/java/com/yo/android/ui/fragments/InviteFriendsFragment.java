@@ -7,15 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.yo.android.R;
-import com.yo.android.adapters.GroupContactsListAdapter;
 import com.yo.android.adapters.InviteFriendsAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Contact;
+import com.yo.android.util.Util;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InviteFriendsFragment extends BaseFragment {
+public class InviteFriendsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private ListView lv_invite;
     private InviteFriendsAdapter inviteFriendsAdapter;
@@ -72,6 +72,7 @@ public class InviteFriendsFragment extends BaseFragment {
         } else {
             inviteFriendsAdapter.addItems(mSyncManager.getContacts());
         }
+        lv_invite.setOnItemClickListener(this);
     }
 
     @Override
@@ -86,5 +87,12 @@ public class InviteFriendsFragment extends BaseFragment {
         if (getView() != null) {
             getView().findViewById(R.id.progress).setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        InviteFriendsAdapter adapter = (InviteFriendsAdapter) parent.getAdapter();
+        Contact contact = adapter.getItem(position);
+        Util.inviteFriend(getActivity(), contact.getPhoneNo());
     }
 }
