@@ -167,13 +167,21 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         RequestBody firstName =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), userName);
-        RequestBody syncContacts = RequestBody.create(
-                MediaType.parse("multipart/form-data"), String.valueOf(syncContactsSwitch.isEnabled()));
 
-        RequestBody notificationAlerts = RequestBody.create(
-                MediaType.parse("multipart/form-data"), String.valueOf(notificationSwitch.isEnabled()));
+        RequestBody syncContacts =
+                RequestBody.create(
+                        MediaType.parse("user[contacts_sync]"), String.valueOf(syncContactsSwitch.isChecked()));
+        RequestBody notificationAlerts =
+                RequestBody.create(
+                        MediaType.parse("user[notification_alert]"), String.valueOf(notificationSwitch.isChecked()));
+
+//        RequestBody syncContacts = RequestBody.create(
+//                MediaType.parse("multipart/form-data"), String.valueOf(syncContactsSwitch.isEnabled()));
+
+//        RequestBody notificationAlerts = RequestBody.create(
+//                MediaType.parse("multipart/form-data"), String.valueOf(notificationSwitch.isEnabled()));
         showProgressDialog();
-        yoService.updateProfile(userId, description, firstName, null, notificationAlerts, syncContacts).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, description, firstName, notificationAlerts, syncContacts, null).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
