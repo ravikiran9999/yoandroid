@@ -24,8 +24,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.BottomTabsActivity;
 
 import java.io.IOException;
@@ -40,6 +42,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import retrofit2.Response;
 
 /**
  * Created by Ramesh on 1/7/16.
@@ -393,4 +397,13 @@ public class Util {
         return time;
     }
 
+    public static void saveUserDetails(Response<UserProfileInfo> response, PreferenceEndPoint preferenceEndPoint) {
+
+        preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+        preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
+        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+        preferenceEndPoint.saveBooleanPreference(Constants.SYNCE_CONTACTS,response.body().isSyncContacts());
+        preferenceEndPoint.saveBooleanPreference(Constants.NOTIFICATION_ALERTS,response.body().isNotificationAlert());
+
+    }
 }
