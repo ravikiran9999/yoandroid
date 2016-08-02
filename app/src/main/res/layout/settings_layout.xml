@@ -133,6 +133,7 @@
                 android:imeOptions="actionNext"
                 android:id="@+id/user_name_edt"
                 android:paddingBottom="10dp"
+                android:singleLine="true"
                 android:paddingLeft="5dp"
                 android:paddingRight="10dp"
                 android:textColor="#797474"
@@ -160,6 +161,7 @@
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
                 android:text="@string/status_title"
+                android:imeOptions="actionDone"
                 android:textColor="#797474"
                 android:textSize="17sp" />
 

@@ -117,6 +117,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         });
         loadImage();
 
+
     }
 
     private void loadImage() {
@@ -254,50 +255,53 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     public void showLogoutDialog() {
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        if(getActivity()!=null) {
 
-        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-        final View view = layoutInflater.inflate(R.layout.custom_signout, null);
-        builder.setView(view);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-        Button noBtn = (Button) view.findViewById(R.id.no_btn);
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            final View view = layoutInflater.inflate(R.layout.custom_signout, null);
+            builder.setView(view);
+
+            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+            Button noBtn = (Button) view.findViewById(R.id.no_btn);
 
 
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.setCancelable(false);
-        alertDialog.show();
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
 
-        yesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
+                    preferenceEndPoint.clearAll();
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    getActivity().finish();
                 }
-                preferenceEndPoint.clearAll();
-                startActivity(new Intent(getActivity(), LoginActivity.class));
-                getActivity().finish();
-            }
-        });
+            });
 
-        noBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+        }
     }
 
 
