@@ -44,6 +44,7 @@ public class FireBaseHelper {
     public Firebase authWithCustomToken(final String authToken) {
         //Url from Firebase dashboard
         final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
+
         ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
@@ -62,5 +63,4 @@ public class FireBaseHelper {
         });
         return ref;
     }
-
 }

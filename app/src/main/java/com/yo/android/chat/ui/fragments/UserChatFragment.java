@@ -191,6 +191,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         listView.setOnItemClickListener(this);
         send.setOnClickListener(this);
+
+        //loadMessages(childRoomId,userChatAdapter);
         return view;
     }
 
@@ -224,7 +226,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //loadMessages();
+
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -702,12 +704,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
 
 
-    private void loadMessages() {
+    private void loadMessages(String childRoomId, UserChatAdapter userChatAdapter) {
 
         if (myServiceConnection.isServiceConnection()) {
-            chatMessageArray = firebaseService.getChatMessageList();
+            firebaseService.getChatMessageList(childRoomId, userChatAdapter);
         }
-        if (chatMessageArray == null) {
+
+        /*if (chatMessageArray == null) {
             showProgressDialog();
             Timer t = new Timer();
             t.schedule(new TimerTask() {
@@ -715,7 +718,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void run() {
 
-                    chatMessageArray =firebaseService.getChatMessageList();
+                    chatMessageArray =firebaseService.getChatMessageList(childRoomId);
                     if((chatMessageArray != null)&&(chatMessageArray.size() > 0)) {
                         userChatAdapter.addItems(chatMessageArray);
                         listView.smoothScrollToPosition(userChatAdapter.getCount());
@@ -727,7 +730,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         } else {
             userChatAdapter.addItems(chatMessageArray);
             listView.smoothScrollToPosition(userChatAdapter.getCount());
-        }
+        }*/
     }
 }
 

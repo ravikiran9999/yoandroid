@@ -41,9 +41,6 @@ public class SplashScreenActivity extends BaseActivity {
     private Handler mHandler = new Handler();
     private static final long DURATION = 1000L;
 
-    @Inject
-    MyServiceConnection myServiceConnection;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,14 +58,6 @@ public class SplashScreenActivity extends BaseActivity {
         }
 //        testVox();
 
-        // firebase service
-
-        if (!myServiceConnection.isServiceConnection()) {
-            Intent intent = new Intent(this, FirebaseService.class);
-            startService(intent);
-
-            bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
-        }
     }
 
     @Override
