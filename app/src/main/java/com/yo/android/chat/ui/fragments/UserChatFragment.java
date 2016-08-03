@@ -702,35 +702,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     }
 
-
-
     private void loadMessages(String childRoomId, UserChatAdapter userChatAdapter) {
 
         if (myServiceConnection.isServiceConnection()) {
             firebaseService.getChatMessageList(childRoomId, userChatAdapter);
         }
 
-        /*if (chatMessageArray == null) {
-            showProgressDialog();
-            Timer t = new Timer();
-            t.schedule(new TimerTask() {
-
-                @Override
-                public void run() {
-
-                    chatMessageArray =firebaseService.getChatMessageList(childRoomId);
-                    if((chatMessageArray != null)&&(chatMessageArray.size() > 0)) {
-                        userChatAdapter.addItems(chatMessageArray);
-                        listView.smoothScrollToPosition(userChatAdapter.getCount());
-                    }
-                    this.cancel();
-                    dismissProgressDialog();
-                }
-            }, 30000L);
-        } else {
-            userChatAdapter.addItems(chatMessageArray);
-            listView.smoothScrollToPosition(userChatAdapter.getCount());
-        }*/
     }
 }
 
