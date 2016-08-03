@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'sonar-runner'
+
 
 android {
     signingConfigs {
@@ -7,7 +7,7 @@ android {
             keyAlias 'yoapp'
             keyPassword '123456'
 //          storeFile file('E:\\Yo\\yo-android\\yoapp-stage.jks')
-            storeFile file('../yoapp-stage.jks')
+            storeFile file('config/yoapp-stage.jks')
             storePassword '123456'
         }
     }
@@ -50,10 +50,10 @@ android {
 
         }
         //This will flavor will enable BeepSend SMS gateway for verification
-        stagePaidSms {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
-        }
+//        stagePaidSms {
+//            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+//            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+//        }
     }
     buildTypes {
 
@@ -125,30 +125,39 @@ dependencies {
 }
 apply plugin: 'com.google.gms.google-services'
 
-sonarRunner {
-    sonarProperties {
-        property 'sonar.projectKey', 'YO-AndroidApp'
-        property 'sonar.projectName', 'YOAndroid'
-        property 'sonar.sources', 'src/main/java'
-        property 'sonar.tests', 'test'
-        property 'sonar.test.inclusion', '**/*Test.*'
-        property 'sonar.binaries', 'build/intermediates/classes/release'
-        property 'sonar.java.binaries', 'build/intermediates/classes/release'
-        property 'sonar.junit.reportsPath', 'build/test-results/release'
-        property 'sonar.dynamicAnalysis', 'reuseReports'
-        property 'sonar.java.coveragePlugin', 'jacoco'
-        property 'sonar.jacoco.reportPath', 'build/jacoco/jacoco.merged.exec'
-        property 'sonar.sourceEncoding', 'windows-1252'
-        property 'sonar.scm.disabled', 'true'
-        property 'sonar.exclusions', '**/R.class, **/R$*.class,**/BuildConfig.*,**/Manifest*.*,**/*.xml'
-        compile 'de.hdodenhof:circleimageview:2.1.0'
-    }
-
-}
 
 public Properties getAwsProperties() {
     Properties props = new Properties()
     File propsFile = new File("gradle.properties");
     props.load(propsFile.newDataInputStream());
     return props;
+}
+
+def releasePath = file("${rootDir}/apks")
+def publish = project.tasks.create("publishAll")
+android.applicationVariants.all { variant ->
+    if (variant.buildType.name == 'debug') {
+        def n = 0
+        def task = project.tasks.create("publish${variant.name}Apk", Copy)
+        task.from(variant.outputs[0].outputFile)
+//       def file = variant.outputs[0].outputFile
+        task.into(releasePath)
+//    baseName
+
+        def name = variant.baseName.replace("-debug", "");//.toUpperCase();
+        name = name.substring(0, 1).toUpperCase() + name.substring(1)
+        def oldName = "app-${variant.productFlavors.name}-${variant.buildType.name}.apk";
+        def newFollow = "Yo_App_Android_${name}_V${android.defaultConfig.versionName}.apk";
+        println("base name- " + name)
+        println("flavor name- " + variant.productFlavors.name)
+        task.rename({ String fileName ->
+            n = n + 1
+            println("file name- " + newFollow)
+            fileName - fileName + newFollow
+            // fileName - '.apk' + n + 'test.apk'
+        })
+//Yo_App_Android_V
+        task.dependsOn variant.assemble
+        publish.dependsOn task
+    }
 }

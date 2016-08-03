@@ -25,6 +25,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -154,8 +155,10 @@ public class YoApi {
 // access_token=2538a604f78a24170b6b37db15e4e782c1d1c2c0b65e89a67ce4315c2ad61c4e&user[first_name]=bhumi&user[last_name]=parimi&user[email]=email@example.com&user[phone_no]=123456789&user[avatar]=image-file
         @Multipart
         @PUT("/api/user/{user_id}.json")
-        Call<UserProfileInfo> updateProfile(@Path("user_id") String userId,
-                                            @Part("user[description]") RequestBody descBody,
+        Call<UserProfileInfo> updateProfile(
+                @Path("user_id") String userId,
+                @Header("Authorization") String authorization,
+                @Part("user[description]") RequestBody descBody,
                                             @Part("user[first_name]") RequestBody firstName,
                                             @Part("user[notification_alert]") RequestBody notificationsAlert,
                                             @Part("user[contacts_sync]") RequestBody syncContacts,

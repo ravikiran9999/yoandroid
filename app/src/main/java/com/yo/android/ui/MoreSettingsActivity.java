@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.api.YoApi;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -181,7 +182,8 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
 //        RequestBody notificationAlerts = RequestBody.create(
 //                MediaType.parse("multipart/form-data"), String.valueOf(notificationSwitch.isEnabled()));
         showProgressDialog();
-        yoService.updateProfile(userId, description, firstName, notificationAlerts, syncContacts, null).enqueue(new Callback<UserProfileInfo>() {
+        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.updateProfile(userId, access, description, firstName, notificationAlerts, syncContacts, null).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();

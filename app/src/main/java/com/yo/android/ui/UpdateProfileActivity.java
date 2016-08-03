@@ -205,7 +205,8 @@ public class UpdateProfileActivity extends BaseActivity {
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("user[first_name]"), descriptionString);
-        yoService.updateProfile(userId, null, description, null, null, body).enqueue(new Callback<UserProfileInfo>() {
+        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.updateProfile(userId, access, null, description, null, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
@@ -231,7 +232,7 @@ public class UpdateProfileActivity extends BaseActivity {
             @Override
             public void onFailure(Call<UserProfileInfo> call, Throwable t) {
                 dismissProgressDialog();
-                toastFactory.showToast(getResources().getString(R.string.unable_to_fetch));
+                toastFactory.showToast("Unable to update the profile");
             }
         });
 
