@@ -267,13 +267,14 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
-                        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
-                            String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
-                            if (prefTags != null) {
-                                List<String> tagIds = Arrays.asList(prefTags);
-                                mMagazineFlipArticlesFragment.loadArticles(tagIds);
-                            }
-                        }
+                        mMagazineFlipArticlesFragment.loadArticles(null);
+//                        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+//                            String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
+//                            if (prefTags != null) {
+//                                List<String> tagIds = Arrays.asList(prefTags);
+//                                mMagazineFlipArticlesFragment.loadArticles(null);
+//                            }
+//                        }
 
                     }
                     return true;

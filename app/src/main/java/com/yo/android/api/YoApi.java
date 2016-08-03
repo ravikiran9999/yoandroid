@@ -72,6 +72,7 @@ public class YoApi {
         @GET("api/tags/current_user_articles.json")
         Call<List<Articles>> getUserArticlesAPI(@Query("access_token") String access_token);
 
+        //For Search
         @FormUrlEncoded
         @POST("api/tags/get_articles.json")
         Call<List<Articles>> getArticlesAPI(@Field("access_token") String access_token, @Field("tag_ids[]") List<String> tag_ids);
