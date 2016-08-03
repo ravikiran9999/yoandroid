@@ -48,6 +48,8 @@ public class NotificationsActivity extends BaseActivity {
 
         EventBus.getDefault().register(this);
 
+        preferenceEndPoint.saveBooleanPreference("isNotifications", true);
+
         notificationsAdapter = new NotificationsAdapter(this);
         lvNotifications = (ListView) findViewById(R.id.lv_notifications);
         noData = (TextView) findViewById(R.id.no_data);
@@ -85,6 +87,7 @@ public class NotificationsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        preferenceEndPoint.saveBooleanPreference("isNotifications", false);
         EventBus.getDefault().unregister(this);
     }
     public void onEvent(final String action) {

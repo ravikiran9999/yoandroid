@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.orion.android.common.logger.Log;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.ui.MainActivity;
@@ -19,6 +20,7 @@ import com.yo.android.util.Constants;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
 
@@ -31,6 +33,9 @@ public class PushNotificationService extends FirebaseMessagingService {
 
     @Inject
     protected Log mLog;
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
 
     @Override
     public void onCreate() {
@@ -49,7 +54,12 @@ public class PushNotificationService extends FirebaseMessagingService {
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
         mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
         EventBus.getDefault().post(Constants.UPDATE_NOTIFICATIONS);
-        createNotification(data.get("title").toString(), data.get("message").toString());
+        if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
+        mLog.i(TAG, "In Notifications screen");
+        }
+        else {
+            createNotification(data.get("title").toString(), data.get("message").toString());
+        }
     }
 
     public void createNotification(String title, String message) {
