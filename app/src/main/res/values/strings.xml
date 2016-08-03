@@ -156,4 +156,5 @@
     <string name="change_picture">Change Picture</string>
     <string name="no_result_found">No search results found</string>
 
+    <string name="service_started">%s started</string>
 </resources>

@@ -64,8 +64,6 @@ public class BottomTabsActivity extends BaseActivity {
     private int toolBarColor;
     @Inject
     ContactsSyncManager contactsSyncManager;
-    @Inject
-    MyServiceConnection myServiceConnection;
 
 
     @Override
@@ -114,15 +112,6 @@ public class BottomTabsActivity extends BaseActivity {
 
             }
         });
-
-        // firebase service
-
-        if (!myServiceConnection.isServiceConnection()) {
-            Intent intent = new Intent(this, FirebaseService.class);
-            startService(intent);
-
-            bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
-        }
 
         //
         Intent in = new Intent(getApplicationContext(), SipService.class);

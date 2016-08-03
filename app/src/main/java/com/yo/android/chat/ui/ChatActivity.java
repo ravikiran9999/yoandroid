@@ -51,6 +51,12 @@ public class ChatActivity extends BaseActivity {
             args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
             args.putString(Constants.OPPONENT_PHONE_NUMBER, contact.getPhoneNo());
             args.putString(Constants.OPPONENT_ID, contact.getId());
+
+        } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
+            opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+            args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
+            args.putString(Constants.OPPONENT_PHONE_NUMBER, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
+
         }
 
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {

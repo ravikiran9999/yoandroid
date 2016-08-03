@@ -142,7 +142,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
         if (myServiceConnection.isServiceConnection()) {
-            firebaseService.getFirebaseAuth();
+            //firebaseService.getFirebaseAuth();
         }
 
         authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
@@ -669,11 +669,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
             if (getActivity() instanceof ChatActivity) {
-                //  Toast.makeText(getActivity(), "In UCF", Toast.LENGTH_SHORT).show();
                 chatMessageArray.add(chatMessage);
-            } else if (getActivity() == null) {
-                baseActivity.createNotification(chatMessage.getSenderID(), chatMessage.getMessage());
-                //Toast.makeText(getActivity(), "Not in UCF", Toast.LENGTH_SHORT).show();
             }
             userChatAdapter.addItems(chatMessageArray);
             listView.smoothScrollToPosition(userChatAdapter.getCount());
@@ -704,33 +700,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
 
 
-    private void loadMessages(String childRoomId, UserChatAdapter userChatAdapter) {
+    /*private void loadMessages(String childRoomId, UserChatAdapter userChatAdapter) {
 
         if (myServiceConnection.isServiceConnection()) {
             firebaseService.getChatMessageList(childRoomId, userChatAdapter);
         }
-
-        /*if (chatMessageArray == null) {
-            showProgressDialog();
-            Timer t = new Timer();
-            t.schedule(new TimerTask() {
-
-                @Override
-                public void run() {
-
-                    chatMessageArray =firebaseService.getChatMessageList(childRoomId);
-                    if((chatMessageArray != null)&&(chatMessageArray.size() > 0)) {
-                        userChatAdapter.addItems(chatMessageArray);
-                        listView.smoothScrollToPosition(userChatAdapter.getCount());
-                    }
-                    this.cancel();
-                    dismissProgressDialog();
-                }
-            }, 30000L);
-        } else {
-            userChatAdapter.addItems(chatMessageArray);
-            listView.smoothScrollToPosition(userChatAdapter.getCount());
-        }*/
-    }
+    }*/
 }
 

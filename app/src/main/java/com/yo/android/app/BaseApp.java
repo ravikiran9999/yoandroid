@@ -1,6 +1,7 @@
 package com.yo.android.app;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.firebase.client.Firebase;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,6 +26,8 @@ public class BaseApp extends Application {
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
     }
+
+
 
     private void injectDependencies() {
         objectGraph = ObjectGraph.create(new RootModule(this));

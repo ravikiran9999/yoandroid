@@ -59,7 +59,7 @@ public class Util {
         notificationStyle.bigText(body);
 
         Notification notification = new NotificationCompat.Builder(context.getApplicationContext())
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_yo_notification)
                 .setContentTitle(title == null ? "Yo App" : title)
                 .setContentText(body)
                 .setOngoing(true)

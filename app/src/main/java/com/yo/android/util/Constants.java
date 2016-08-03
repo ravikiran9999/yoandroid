@@ -23,6 +23,7 @@ public class Constants {
     public static final String CHAT_FRAG = "ChatFrag";
     public static final String CONT_FRAG = "ContFrag";
     public static final String Yo_CONT_FRAG = "YoContFrag";
+    public static final String YO_NOTIFICATION = "notification";
 
     //Preference
     public static final String USER_ID = "user_id";
