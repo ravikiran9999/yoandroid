@@ -220,7 +220,8 @@
             android:theme="@style/AppTheme.NoActionBar.Translucent" />
         <activity
             android:name=".ui.NotificationsActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"></activity>
 
         <provider
             android:name=".provider.YoAppContactProvider"

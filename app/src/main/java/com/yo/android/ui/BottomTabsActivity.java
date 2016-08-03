@@ -83,6 +83,8 @@ public class BottomTabsActivity extends BaseActivity {
         mAdapter.addFragment(new MoreFragment(), null);
         viewPager.setAdapter(mAdapter);
 
+        preferenceEndPoint.saveBooleanPreference("isNotifications", false);
+
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         dataList = createTabsList();
