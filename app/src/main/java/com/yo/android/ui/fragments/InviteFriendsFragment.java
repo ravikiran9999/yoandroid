@@ -17,6 +17,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Contact;
 import com.yo.android.util.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -60,7 +61,14 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
             mSyncManager.loadContacts(new Callback<List<Contact>>() {
                 @Override
                 public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                    inviteFriendsAdapter.addItems(mSyncManager.getContacts());
+                    List<Contact> nonYoAppContacts = new ArrayList<Contact>();
+                    List<Contact> contacts = mSyncManager.getContacts();
+                    for (Contact con : contacts) {
+                        if (!con.getYoAppUser()) {
+                            nonYoAppContacts.add(con);
+                        }
+                    }
+                    inviteFriendsAdapter.addItems(nonYoAppContacts);
                     dismissProgressDialog();
                 }
 
@@ -70,7 +78,14 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
                 }
             });
         } else {
-            inviteFriendsAdapter.addItems(mSyncManager.getContacts());
+            List<Contact> nonYoAppContacts = new ArrayList<Contact>();
+            List<Contact> contacts = mSyncManager.getContacts();
+            for (Contact con : contacts) {
+                if (!con.getYoAppUser()) {
+                    nonYoAppContacts.add(con);
+                }
+            }
+            inviteFriendsAdapter.addItems(nonYoAppContacts);
         }
         lv_invite.setOnItemClickListener(this);
     }
