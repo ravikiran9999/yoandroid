@@ -14,10 +14,13 @@ import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NotificationsActivity;
+import com.yo.android.util.Constants;
 
 import java.util.Map;
 
 import javax.inject.Inject;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by rdoddapaneni on 6/22/2016.
@@ -45,6 +48,7 @@ public class PushNotificationService extends FirebaseMessagingService {
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
         mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
+        EventBus.getDefault().post(Constants.UPDATE_NOTIFICATIONS);
         createNotification(data.get("title").toString(), data.get("message").toString());
     }
 
