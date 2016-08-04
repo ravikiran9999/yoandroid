@@ -19,7 +19,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.9.4"
+        versionName "16.3.9.5"
     }
     productFlavors {
         dev {
@@ -36,7 +36,7 @@ android {
         }
         stage {
             applicationIdSuffix ".stage"
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             //applicationId "com.yo.android.stage"
 
