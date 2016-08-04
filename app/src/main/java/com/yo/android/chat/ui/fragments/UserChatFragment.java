@@ -437,7 +437,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if (firebaseError == null) {
                         // successfully sent
-                        //chatMessage.setSent(1);
+                        chatMessage.setSent(1);
                     } else {
                         Log.e(TAG, firebaseError.getMessage());
                     }
@@ -635,10 +635,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
             if (getActivity() instanceof ChatActivity) {
                 chatMessageArray.add(chatMessage);
-            } /*else if (getActivity() == null) {
-                baseActivity.createNotification(chatMessage.getSenderID(), chatMessage.getMessage());
-                //Toast.makeText(getActivity(), "Not in UCF", Toast.LENGTH_SHORT).show();
-            }*/
+            }
             userChatAdapter.addItems(chatMessageArray);
             listView.smoothScrollToPosition(userChatAdapter.getCount());
         } catch (Exception e) {
@@ -663,7 +660,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onCancelled(FirebaseError firebaseError) {
-
+        firebaseError.getMessage();
     }
 
     private void loadMessages(String childRoomId, UserChatAdapter userChatAdapter) {

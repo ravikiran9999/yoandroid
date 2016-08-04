@@ -104,11 +104,14 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
             LinearLayout layout = new LinearLayout(context);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
             holder.getChatTimeStamp().setText(Util.getChatListTimeFormat(item.getTime()) + " " + Util.getTimeFormat(mContext, item.getTime()));
 
             if (userId.equals(item.getSenderID())) {
 
                 holder.getLinearLayout().setGravity(Gravity.END);
+
                 if (item.getType().equals(Constants.TEXT)) {
                     layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -124,10 +127,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 } else {
                     holder.getLl().setBackgroundResource(R.drawable.bg_sms_yellow);
                 }
-                holder.getLinearLayoutText().setLayoutParams(layoutParams);
-                addView(holder.getLinearLayoutText(), item, holder);
+
+                holder.getLl().setLayoutParams(layoutParams);
+                addView(layout, item, holder);
 
             } else {
+
                 holder.getLinearLayout().setGravity(Gravity.START);
 
                 if (item.getType().equals(Constants.TEXT)) {
@@ -145,9 +150,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     holder.getLl().setBackgroundResource(R.drawable.bg_sms_grey);
                 }
 
-                holder.getLinearLayoutText().setLayoutParams(layoutParams);
-                addView(holder.getLinearLayoutText(), item, holder);
-
+                holder.getLl().setLayoutParams(layoutParams);
+                addView(layout, item, holder);
             }
 
         } catch (Exception e) {
@@ -161,22 +165,27 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         if (item.getType().equals(Constants.TEXT)) {
             if (roomType != null) {
-                holder.getName().setText(item.getSenderID());
+                TextView senderId = new TextView(context);
+                senderId.setText(item.getSenderID());
+                senderId.setTextColor(Color.RED);
+                linearLayout.addView(senderId);
             }
 
             TextView textView = new TextView(context);
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
-//            if (linearLayout.getTag() == null) {
             linearLayout.setTag(holder);
-
             linearLayout.addView(textView);
-//            }
+
+            holder.getLl().addView(linearLayout);
 
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {
                 if (roomType != null) {
-                    holder.getName().setText(item.getSenderID());
+                    TextView senderId = new TextView(context);
+                    senderId.setText(item.getSenderID());
+                    senderId.setTextColor(Color.RED);
+                    linearLayout.addView(senderId);
                 }
 
                 final ImageView imageView = new ImageView(context);
@@ -211,7 +220,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             } finally {
 
             }
+            holder.getLl().addView(linearLayout);
+        } else {
+            holder.getLl().addView(null);
         }
+
+
     }
 
     @Override
