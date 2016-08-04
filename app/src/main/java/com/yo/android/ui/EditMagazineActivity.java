@@ -1,5 +1,7 @@
 package com.yo.android.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.inputmethodservice.Keyboard;
 import android.support.v7.app.AppCompatActivity;
@@ -70,25 +72,56 @@ public class EditMagazineActivity extends BaseActivity {
         tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.deleteMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        mToastFactory.showToast("Magazine " + magazineTitle + "  deleted successfully");
-                        EventBus.getDefault().post(Constants.DELETE_MAGAZINE_ACTION);
-                        finish();
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
-
+                showDeleteAlert(magazineTitle);
             }
         });
 
 
+    }
+
+    private void deleteMagazine(final String magazineTitle) {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.deleteMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                mToastFactory.showToast("Magazine " + magazineTitle + "  deleted successfully");
+                EventBus.getDefault().post(Constants.DELETE_MAGAZINE_ACTION);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void showDeleteAlert(final String title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getResources().getString(R.string.delete_topic_message));
+        builder.setCancelable(false);
+
+        builder.setPositiveButton(
+                getResources().getString(R.string.yes),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        dialog.dismiss();
+                        deleteMagazine(title);
+                    }
+                });
+
+        builder.setNegativeButton(
+                getResources().getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Override
@@ -102,17 +135,16 @@ public class EditMagazineActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.menu_save:
 
                 final String title = etTitle.getText().toString();
                 final String description = etDesc.getText().toString();
 
-                if(TextUtils.isEmpty(title.trim())) {
+                if (TextUtils.isEmpty(title.trim())) {
                     mToastFactory.showToast("Please enter the Magazine Title");
 
-                }
-                else {
+                } else {
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.updateMagazinesAPI(magazineId, accessToken, title, description, magazinePrivacy).enqueue(new Callback<UpdateMagazine>() {
                         @Override

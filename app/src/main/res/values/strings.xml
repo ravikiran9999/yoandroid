@@ -158,9 +158,10 @@
     <string name="no_result_found">No search results found</string>
     <string name="no">NO</string>
     <string name="yes">YES</string>
-    <string name="sign_out">Sign out</string>
+    <string name="sign_out">Sign Out</string>
     <string name="signout_text">Are you sure you want to sign out ?</string>
     <string name="empty_fields">Please do not leave fields empty</string>
+    <string name="delete_topic_message">Are you sure you want to delete ?</string>
     <string name="invite_link">Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com</string>
 
 </resources>

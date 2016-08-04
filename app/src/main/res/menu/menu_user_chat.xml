@@ -44,7 +44,7 @@
             <item
                 android:id="@+id/image"
                 android:menuCategory="container"
-                android:title="@string/image"
+                android:title="@string/gallery"
                 app:showAsAction="always"
                 android:orderInCategory="99"
                 />

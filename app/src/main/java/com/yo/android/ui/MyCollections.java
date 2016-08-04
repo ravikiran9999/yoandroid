@@ -1,5 +1,7 @@
 package com.yo.android.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -82,7 +84,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        if(position != 0) {
+        if (position != 0) {
             contextualMenu = true;
             invalidateOptionsMenu();
             myCollectionsAdapter.setContextualMenuEnable(contextualMenu);
@@ -99,8 +101,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             List<Collections> collections = myCollectionsAdapter.getSelectedItems();
             collections.clear();
             myCollectionsAdapter.notifyDataSetChanged();
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
 
@@ -120,7 +121,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Collections collections = (Collections) parent.getAdapter().getItem(position);
         if (contextualMenu) {
-            if(position !=0 ) {
+            if (position != 0) {
                 collections.toggleSelection();
                 myCollectionsAdapter.notifyDataSetChanged();
                 //
@@ -146,17 +147,16 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_collections, menu);
 
-        if (contextualMenu)
-        {
+        if (contextualMenu) {
             for (int i = 0; i < menu.size(); i++)
                 menu.getItem(i).setVisible(true);
-        }
-        else {
+        } else {
             for (int i = 0; i < menu.size(); i++)
                 menu.getItem(i).setVisible(false);
         }
@@ -168,50 +168,10 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     public boolean onOptionsItemSelected(MenuItem item) {
 
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.menu_delete:
                 super.onOptionsItemSelected(item);
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                List<Collections> collections = myCollectionsAdapter.getSelectedItems();
-                List<String> topicIds = new ArrayList<String>();
-                for(int i=0 ;i<collections.size(); i++) {
-                    topicIds.add(collections.get(i).getId());
-                }
-                yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
-                            @Override
-                            public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
-                                dismissContextualMenu();
-                                invalidateOptionsMenu();
-                                final List<Collections> collectionsList = new ArrayList<Collections>();
-                                Collections collections = new Collections();
-                                collections.setName("Follow more topics");
-                                collections.setImage("");
-                                collectionsList.add(0, collections);
-                                if (response == null || response.body() == null) {
-                                    return;
-                                }
-                                collectionsList.addAll(response.body());
-                                myCollectionsAdapter.addItems(collectionsList);
-                                gridView.setAdapter(myCollectionsAdapter);
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<List<Collections>> call, Throwable t) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
+                showDeleteAlert();
                 break;
             case android.R.id.home:
                 /*if (dismissContextualMenu()) {
@@ -226,12 +186,83 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         return true;
     }
 
+    private void showDeleteAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getResources().getString(R.string.delete_topic_message));
+        builder.setCancelable(false);
+
+        builder.setPositiveButton(
+                getResources().getString(R.string.yes),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        dialog.dismiss();
+                        deleteTopic();
+                    }
+                });
+
+        builder.setNegativeButton(
+                getResources().getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void deleteTopic() {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        List<Collections> collections = myCollectionsAdapter.getSelectedItems();
+        List<String> topicIds = new ArrayList<String>();
+        for (int i = 0; i < collections.size(); i++) {
+            topicIds.add(collections.get(i).getId());
+        }
+        yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
+                    @Override
+                    public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                        dismissContextualMenu();
+                        invalidateOptionsMenu();
+                        final List<Collections> collectionsList = new ArrayList<Collections>();
+                        Collections collections = new Collections();
+                        collections.setName("Follow more topics");
+                        collections.setImage("");
+                        collectionsList.add(0, collections);
+                        if (response == null || response.body() == null) {
+                            return;
+                        }
+                        collectionsList.addAll(response.body());
+                        myCollectionsAdapter.addItems(collectionsList);
+                        gridView.setAdapter(myCollectionsAdapter);
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Collections>> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==2)
-        {
+        if (requestCode == 2) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                 @Override
@@ -256,8 +287,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 }
             });
 
-        }
-        else if(requestCode == 6) {
+        } else if (requestCode == 6) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                 @Override
