@@ -699,7 +699,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         List<String> selectedUsers = new ArrayList<>();
         selectedUsers.add(opponentId);
-
         yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
             @Override
             public void onResponse(Call<Room> call, Response<Room> response) {
