@@ -130,7 +130,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.i(TAG, "Beginning network synchronization");
         try {
             String access = loginPrefs == null ? "" : loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-            if (TextUtils.isEmpty(access)) {
+            if (true && TextUtils.isEmpty(access)) {
                 return;
             }
             Response<List<Contact>> list = mYoService.getContacts(access).execute();

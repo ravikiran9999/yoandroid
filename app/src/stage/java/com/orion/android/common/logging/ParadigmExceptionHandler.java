@@ -345,14 +345,14 @@ public class ParadigmExceptionHandler implements
         final String phoneModels = "" + android.os.Build.MODEL;
 
         final File logFile = new File(logFileFullPath);
-        //TODO:Need to check with Rajesh
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                StoreToS3.sendToS3(logFile, "android/logs/" + now + "/" + GlobalClass.LOG_FB_USER_NAME
-                        + "_" + phoneModels + "_V" + versionName + "_" + randomID + ".log", null);
-            }
-        }).start();
+        try {
+            StoreToS3.sendToS3(logFile, "android/logs/" + now + "/" + GlobalClass.LOG_FB_USER_NAME
+                    + "_" + phoneModels + "_V" + versionName + "_" + randomID + ".log", null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 
