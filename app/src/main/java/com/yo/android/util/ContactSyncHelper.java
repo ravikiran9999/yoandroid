@@ -10,16 +10,21 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 
 import com.orion.android.common.logger.Log;
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.sync.SyncUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
@@ -33,18 +38,43 @@ public class ContactSyncHelper {
 //    4. Register to contact observer
 //    5. Follow the step 1 to 3 if any contact change happens
     private static final String TAG = "ContactSyncHelper";
-    private boolean initiated;
     final Context context;
     final Log mLog;
     private String lastContactsVersions = "";
     ContactsSyncManager contactsSyncManager;
+    ContentObserver contentObserver;
+    HashMap<Integer, Contact> contactsBook = new HashMap<>();
+    HashMap<Integer, Contact> cacheContacts = new HashMap<>();
+    public static volatile DispatchQueue globalQueue = new DispatchQueue("globalQueue");
+    public int syncMode = NONE;
+    public static final int NONE = 0;
+    public static final int INIT = 1;
+    public static final int PROCESSING = 2;
+    public static final int FINISHED = 3;
+    PreferenceEndPoint loginPrefs;
 
     @Inject
-    public ContactSyncHelper(Context context, Log log, ContactsSyncManager contactsSyncManager) {
+    public ContactSyncHelper(Context context, Log log, ContactsSyncManager contactsSyncManager, @Named("login") PreferenceEndPoint loginPrefs) {
         this.context = context;
         mLog = log;
         this.contactsSyncManager = contactsSyncManager;
-        context.getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, new MyContentObserver());
+        contentObserver = new MyContentObserver();
+        context.getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contentObserver);
+        this.loginPrefs = loginPrefs;
+    }
+
+    //Call this method after validate OTP,
+    public void init() {
+        context.getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contentObserver);
+    }
+
+    //Clean this
+    public void clean() {
+//        context.getContentResolver().unregisterContentObserver(contentObserver);
+        globalQueue.cleanupQueue();
+        contactsBook.clear();
+        cacheContacts.clear();
+        syncMode = NONE;
     }
 
     private class MyContentObserver extends ContentObserver {
@@ -56,7 +86,11 @@ public class ContactSyncHelper {
         @Override
         public void onChange(boolean selfChange) {
             super.onChange(selfChange);
-            checkContacts();
+            //Allow this if user is logged only.
+            String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+            if (!TextUtils.isEmpty(access)) {
+                checkContacts();
+            }
         }
 
     }
@@ -65,32 +99,45 @@ public class ContactSyncHelper {
         globalQueue.postRunnable(new Runnable() {
             @Override
             public void run() {
+                if (cacheContacts.isEmpty()) {
+                    setSyncMode(INIT);
+                } else {
+                    setSyncMode(PROCESSING);
+                }
                 mLog.e(TAG, "detected contacts change>>>start");
-                performContactSync(yoAppServer);
-                initiated = true;
+                performContactSync(cacheContacts);
                 mLog.e(TAG, "detected contacts change>>>End");
+                setSyncMode(FINISHED);
             }
         });
     }
 
-    private void performContactSync(HashMap<Integer, Contact> contactHashMap) {
-        HashMap<Integer, Contact> contactsMap = readContactsFromPhoneBook();
+    private void setSyncMode(int mode) {
+        syncMode = mode;
+    }
+
+    public int getSyncMode() {
+        return syncMode;
+    }
+
+    private void performContactSync(HashMap<Integer, Contact> cachePhoneBookHashMap) {
+        HashMap<Integer, Contact> contactPhoneBookMap = readContactsFromPhoneBook();
         if (contactsBook.isEmpty()) {
-            contactsBook.putAll(contactsMap);
+            contactsBook.putAll(contactPhoneBookMap);
         }
         ArrayList<com.yo.android.model.Contact> toImport = new ArrayList<>();
         HashMap<String, Contact> contactShortHashMap = new HashMap<>();
-        for (HashMap.Entry<Integer, Contact> entry : contactHashMap.entrySet()) {
+        for (HashMap.Entry<Integer, Contact> entry : cachePhoneBookHashMap.entrySet()) {
             Contact c = entry.getValue();
             for (String sphone : c.shortPhones) {
                 contactShortHashMap.put(sphone, c);
             }
         }
 
-        for (HashMap.Entry<Integer, Contact> pair : contactsMap.entrySet()) {
+        for (HashMap.Entry<Integer, Contact> pair : contactPhoneBookMap.entrySet()) {
             Integer id = pair.getKey();
             Contact value = pair.getValue();
-            Contact existing = contactHashMap.get(id);
+            Contact existing = cachePhoneBookHashMap.get(id);
             boolean contactModify = false;
             if (existing == null) {
                 for (String s : value.shortPhones) {
@@ -102,6 +149,7 @@ public class ContactSyncHelper {
                     }
                 }
             } else {
+                boolean contactDeleted = false;
                 for (String s : value.shortPhones) {
                     Contact c = contactShortHashMap.get(s);
                     if (c == null) {
@@ -125,30 +173,38 @@ public class ContactSyncHelper {
                 }
             }
         }
-        List<com.yo.android.model.Contact> yoAppContacts = new ArrayList<>(contactsSyncManager.getContacts());
+
         mLog.e(TAG, "Import Size before check>>>:" + toImport.size());
         //1. Upload to server
         //2.toImport
-        Iterator<com.yo.android.model.Contact> iterator = yoAppContacts.iterator();
-        while (iterator.hasNext()) {
-            com.yo.android.model.Contact contact = iterator.next();
-            Iterator<com.yo.android.model.Contact> toImportIterator1 = toImport.iterator();
-            while (toImportIterator1.hasNext()) {
-                com.yo.android.model.Contact contact1 = toImportIterator1.next();
-                if (contact1.getPhoneNo() != null && contact1.getPhoneNo().equals(contact.getPhoneNo())) {
-                    toImportIterator1.remove();
-                }
+        Iterator<com.yo.android.model.Contact> toImportIterator1 = toImport.iterator();
+        Map<String, com.yo.android.model.Contact> cachedYoContacts = contactsSyncManager.getCachedContacts();
+        while (toImportIterator1.hasNext()) {
+            com.yo.android.model.Contact contact1 = toImportIterator1.next();
+            com.yo.android.model.Contact contact = cachedYoContacts.get(contact1.getPhoneNo());
+            //TODO:Require to check names too
+            if (contact != null) {
+                toImportIterator1.remove();
             }
         }
-        mLog.e(TAG, "Import Size after check>>>:" + toImport.size());
-        yoAppServer = contactsMap;
+        List<String> contacts = new ArrayList<>();
+        for (com.yo.android.model.Contact contact : toImport) {
+            contacts.add(contact.getPhoneNo());
+        }
+        try {
+            if (!contacts.isEmpty()) {
+                contactsSyncManager.syncContactsAPI(contacts);
+                mLog.e(TAG, "Import Size after check>>>:" + toImport.size());
+                //Call sync
+                SyncUtils.TriggerRefresh();
+            }
+            cacheContacts = contactPhoneBookMap;
+        } catch (Exception e) {
+            mLog.e(TAG, "Exception:>>", e);
+        }
 
     }
 
-    HashMap<Integer, Contact> contactsBook = new HashMap<>();
-    HashMap<Integer, Contact> yoAppServer = new HashMap<>();
-    public static volatile DispatchQueue globalQueue = new DispatchQueue("globalQueue");
-    public static volatile DispatchQueue phoneBookQueue = new DispatchQueue("photoBookQueue");
 
     public static class Contact {
         public int id;
@@ -200,7 +256,7 @@ public class ContactSyncHelper {
                         if (number.length() == 0) {
                             continue;
                         }
-                        mLog.e(TAG, "Phone number: " + number);
+                        mLog.i(TAG, "Phone number: " + number);
 
                         String shortNumber = number;
 

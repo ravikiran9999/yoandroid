@@ -216,8 +216,11 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                 // Check to see if the entry needs to be updated
                 Uri existingUri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI.buildUpon()
                         .appendPath(Integer.toString(id)).build();
-                if (/*(match.entryId != null && !match.entryId.equals(entryId)) ||*/
-                        (match.phone != null && !match.phone.equals(phone))
+                if ((match.yoappuser != yoAppUser) ||
+                        (match.phone != null && !match.phone.equals(phone)) ||
+                        (match.firebaseRoomId != null && !match.firebaseRoomId.equals(roomId)) ||
+                        (match.name != null && !match.name.equals(name)) ||
+                        (match.image != null && !match.image.equals(image))
                         ) {
                     // Update existing record
                     Log.i(TAG, "Scheduling update: " + existingUri);

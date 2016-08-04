@@ -4,6 +4,7 @@ package com.yo.android.ui.fragments;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,11 +29,13 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
+import com.yo.android.util.ContactSyncHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,6 +64,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
+    @Inject
+    ContactSyncHelper mContactSyncHelper;
+
     @Inject
     YoApi.YoService yoService;
     FrameLayout changePhoto;
@@ -271,6 +277,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
+                    //Clean contact sync
+                    mContactSyncHelper.clean();
+                    Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
+                    int deleteContacts = getActivity().getContentResolver().delete(uri, null, null);
+                    mLog.i("MoreFragment", "Deleted contacts >>>>%d", deleteContacts);
                     if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {

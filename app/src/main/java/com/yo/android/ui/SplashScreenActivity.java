@@ -48,7 +48,7 @@ public class SplashScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageResource(R.drawable.ic_splash);
-         mHandler.postDelayed(runnable, DURATION);
+        mHandler.postDelayed(runnable, DURATION);
         try {
             TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             String mPhoneNumber = tMgr.getLine1Number();
@@ -58,7 +58,7 @@ public class SplashScreenActivity extends BaseActivity {
             mLog.w(TAG, e);
         }
 //        testVox();
-        mContactSyncHelper.checkContacts();
+//        mContactSyncHelper.checkContacts();
 
     }
 

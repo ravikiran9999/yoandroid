@@ -1,11 +1,16 @@
 package com.yo.android.chat.ui.fragments;
 
 import android.content.Intent;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,10 +24,13 @@ import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.Contact;
+import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.sync.SyncUtils;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,14 +43,38 @@ import retrofit2.Response;
  * A simple {@link Fragment} subclass.
  */
 
-public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Project used when querying content provider. Returns all known fields.
+     */
+    private static final String[] PROJECTION = new String[]{
+            YoAppContactContract.YoAppContactsEntry._ID,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_USER_ID,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER,
+    };
+    // Constants representing column positions from PROJECTION.
+    public static final int COLUMN_ID = 0;
+    public static final int COLUMN_ENTRY_ID = 1;
+    public static final int COLUMN_NAME = 2;
+    public static final int COLUMN_PHONE = 3;
+    public static final int COLUMN_IMAGE = 4;
+    public static final int COLUMN_FIREBASE_ROOM_ID = 5;
+    public static final int COLUMN_YO_USER = 6;
+
     private ContactsListAdapter contactsListAdapter;
+    ContentObserver contentObserver;
     private ListView listView;
 
     private Menu menu;
     @Inject
     ContactsSyncManager mSyncManager;
     private static final int PICK_CONTACT_REQUEST = 100;
+
+    private boolean CONTACT_SYNC = true;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -53,7 +85,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -70,24 +101,63 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
         listView.setOnItemClickListener(this);
-        if (!mSyncManager.getContacts().isEmpty()) {
-            contactsListAdapter.addItems(mSyncManager.getContacts());
-        }
-        if (mSyncManager.getContacts().isEmpty()) {
-            showProgressDialog();
-        }
-        mSyncManager.loadContacts(new Callback<List<Contact>>() {
-            @Override
-            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+        if (CONTACT_SYNC) {
+            getLoaderManager().initLoader(0, null, this);
+            //Manual refresh
+            SyncUtils.TriggerRefresh();
+        } else {
+            if (!mSyncManager.getContacts().isEmpty()) {
                 contactsListAdapter.addItems(mSyncManager.getContacts());
-                dismissProgressDialog();
             }
+            if (mSyncManager.getContacts().isEmpty()) {
+                showProgressDialog();
+            }
+            mSyncManager.loadContacts(new Callback<List<Contact>>() {
+                @Override
+                public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                    contactsListAdapter.addItems(mSyncManager.getContacts());
+                    dismissProgressDialog();
+                }
 
-            @Override
-            public void onFailure(Call<List<Contact>> call, Throwable t) {
-                dismissProgressDialog();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<Contact>> call, Throwable t) {
+                    dismissProgressDialog();
+                }
+            });
+
+        }
+
+
+    }
+
+    private void loadContacts(Cursor c) {
+        List<Contact> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                Contact contact = prepareContact(c);
+                list.add(contact);
+            } while (c.moveToNext());
+        }
+        contactsListAdapter.addItems(list);
+
+    }
+
+    private Contact prepareContact(Cursor c) {
+        String entryId = c.getString(COLUMN_ENTRY_ID);
+        String name = c.getString(COLUMN_NAME);
+        String phone = c.getString(COLUMN_PHONE);
+        String image = c.getString(COLUMN_IMAGE);
+        String roomId = c.getString(COLUMN_FIREBASE_ROOM_ID);
+        boolean yoAppUser = c.getInt(COLUMN_YO_USER) != 0;
+        //
+        Contact contact = new Contact();
+        contact.setId(entryId);
+        contact.setName(name);
+        contact.setPhoneNo(phone);
+        contact.setImage(image);
+        contact.setFirebaseRoomId(roomId);
+        contact.setYoAppUser(yoAppUser);
+        return contact;
     }
 
     @Override
@@ -137,11 +207,32 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         if (contact.getYoAppUser()) {
             Intent intent = new Intent(getActivity(), UserProfileActivity.class);
             intent.putExtra(Constants.CONTACT, contact);
-//            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, contact.getPhoneNo());
-//            intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE,contact.getImage());
-//            intent.putExtra(Constants.IS_OPPONENT_YO_USER,contact.getYoAppUser());
             startActivity(intent);
         }
 
     }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        showProgressDialog();
+        return new CursorLoader(getActivity(),
+                YoAppContactContract.YoAppContactsEntry.CONTENT_URI,
+                PROJECTION,
+                null,
+                null,
+                YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        dismissProgressDialog();
+        loadContacts(data);
+    }
+
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        //
+    }
+
 }
