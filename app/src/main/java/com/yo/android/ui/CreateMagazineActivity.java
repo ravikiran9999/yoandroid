@@ -2,6 +2,8 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -13,6 +15,7 @@ import com.yo.android.adapters.CreateMagazinesAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +60,7 @@ public class CreateMagazineActivity extends BaseActivity {
         }
 
         gridView = (GridView) findViewById(R.id.create_magazines_gridview);
-         createMagazinesAdapter = new CreateMagazinesAdapter(CreateMagazineActivity.this);
+        createMagazinesAdapter = new CreateMagazinesAdapter(CreateMagazineActivity.this);
         gridView.setAdapter(createMagazinesAdapter);
         final String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getMagazinesAPI(accessToken).enqueue(new Callback<List<OwnMagazine>>() {
@@ -89,14 +92,15 @@ public class CreateMagazineActivity extends BaseActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                if (position == 0) {
+                OwnMagazine ownMagazine = (OwnMagazine) parent.getItemAtPosition(position);
+                if (position == 0 && ownMagazine.getName().equalsIgnoreCase("+ New Magazine")) {
                     Intent intent = new Intent(CreateMagazineActivity.this, NewMagazineActivity.class);
                     startActivityForResult(intent, 2);// Activity is started with requestCode 2
                 } else if (addArticleMagazineId != null) {
                     List<String> articlesList = new ArrayList<>();
                     articlesList.add(addArticleMagazineId);
 
-                    yoService.addArticleMagazineApi(accessToken, createMagazinesAdapter.getItem(position).getId(), articlesList).enqueue(new Callback<com.yo.android.model.Response>() {
+                    yoService.addArticleMagazineApi(accessToken, ownMagazine.getId(), articlesList).enqueue(new Callback<com.yo.android.model.Response>() {
                         @Override
                         public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
                             if (response.code() == Constants.SUCCESS_CODE) {
@@ -117,10 +121,10 @@ public class CreateMagazineActivity extends BaseActivity {
                     });
                 } else {
                     Intent intent = new Intent(CreateMagazineActivity.this, CreatedMagazineDetailActivity.class);
-                    intent.putExtra("MagazineTitle",createMagazinesAdapter.getItem(position).getName());
-                    intent.putExtra("MagazineId",createMagazinesAdapter.getItem(position).getId());
-                    intent.putExtra("MagazineDesc", createMagazinesAdapter.getItem(position).getDescription());
-                    intent.putExtra("MagazinePrivacy", createMagazinesAdapter.getItem(position).getPrivacy());
+                    intent.putExtra("MagazineTitle",ownMagazine.getName());
+                    intent.putExtra("MagazineId",ownMagazine.getId());
+                    intent.putExtra("MagazineDesc", ownMagazine.getDescription());
+                    intent.putExtra("MagazinePrivacy", ownMagazine.getPrivacy());
                     startActivity(intent);
                 }
             }
@@ -151,6 +155,7 @@ public class CreateMagazineActivity extends BaseActivity {
                         ownMagazineList.add(response.body().get(i));
                     }
 
+                    createMagazinesAdapter.clearAll();
                     createMagazinesAdapter.addItems(ownMagazineList);
                 }
 
@@ -188,7 +193,7 @@ public class CreateMagazineActivity extends BaseActivity {
                     for (int i = 0; i < response.body().size(); i++) {
                         ownMagazineList.add(response.body().get(i));
                     }
-
+                    createMagazinesAdapter.clearAll();
                     createMagazinesAdapter.addItems(ownMagazineList);
                 }
 
@@ -200,4 +205,10 @@ public class CreateMagazineActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        Util.prepareSearch(this, menu, createMagazinesAdapter);
+        return super.onCreateOptionsMenu(menu);
+    }
 }
