@@ -122,6 +122,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Inject
     BaseActivity baseActivity;
+    private String opponentImg;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -136,6 +137,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
+        opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
 
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -366,7 +368,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.attach:
                 break;
-
             case R.id.camera:
                 takePicture();
                 break;
@@ -376,6 +377,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             case R.id.view_contact :
                 Intent intent = new Intent(getActivity(), UserProfileActivity.class);
                 intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
+                intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE,opponentImg);
+                intent.putExtra(Constants.FROM_CHAT_ROOMS,Constants.FROM_CHAT_ROOMS);
                 startActivity(intent);
                 break;
 

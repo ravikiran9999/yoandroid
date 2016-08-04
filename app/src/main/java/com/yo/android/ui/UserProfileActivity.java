@@ -2,7 +2,6 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ImageView;
@@ -40,6 +39,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private ProfileMembersAdapter profileMembersAdapter;
     private ListView membersList;
     private Contact contact;
+    private String opponentNo;
+    private String opponentImg;
+    private boolean fromChatRooms;
 
 
     @Override
@@ -54,8 +56,22 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (intent.hasExtra(Constants.CONTACT)) {
                 contact = getIntent().getParcelableExtra(Constants.CONTACT);
                 setDataFromPreferences();
+            } else if (intent.hasExtra(Constants.FROM_CHAT_ROOMS)) {
+                fromChatRooms = true;
+                if (intent.hasExtra(Constants.OPPONENT_PHONE_NUMBER)) {
+                    opponentNo = intent.getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+                }
+                if (intent.hasExtra(Constants.OPPONENT_CONTACT_IMAGE)) {
+                    opponentImg = intent.getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
+                }
+                contact = new Contact();
+                contact.setPhoneNo(opponentNo);
+                contact.setImage(opponentImg);
+                contact.setYoAppUser(true);
+                setDataFromPreferences();
             }
         }
+
         membersList = (ListView) findViewById(R.id.members);
         profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
         membersList.setAdapter(profileMembersAdapter);
@@ -72,7 +88,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         //String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         //String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
         //String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
-        if(contact!=null) {
+        if (contact != null) {
             getSupportActionBar().setTitle(contact.getName());
             if (!TextUtils.isEmpty(contact.getImage())) {
                 Picasso.with(this)
@@ -123,8 +139,12 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     @OnClick(R.id.profile_message)
     public void messageUser() {
         if (contact != null && contact.getYoAppUser()) {
-            navigateToChatScreen();
-        }else {
+            if (fromChatRooms) {
+                finish();
+            } else {
+                navigateToChatScreen();
+            }
+        } else {
             Toast.makeText(this, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
         }
 
