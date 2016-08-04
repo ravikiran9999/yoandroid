@@ -5,31 +5,28 @@
     android:background="@color/colorPrimary"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:padding="20dp"
     tools:context="com.yo.android.chat.ui.fragments.OTPFragment">
 
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:src="@drawable/app_logo" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginTop="40dp"
         android:text="An SMS with PIN would be sent to this number for verification"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="10dp"/>
+        android:textColor="@android:color/white" />
 
     <org.angmarch.views.NiceSpinner xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:textTint="@color/black"
         android:id="@+id/spCountrySpinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:textTint="@color/black" />
 
     <EditText
         android:id="@+id/et_enter_phone"
@@ -39,8 +36,8 @@
         android:layout_marginTop="20dp"
         android:background="@android:color/white"
         android:ems="10"
-        android:imeOptions="actionNext"
         android:hint="Enter mobile number"
+        android:imeOptions="actionNext"
         android:inputType="number"
         android:padding="13dp"
         android:singleLine="true" />
@@ -53,8 +50,8 @@
         android:background="@android:color/white"
         android:ems="10"
         android:hint="Re-enter mobile mumber"
-        android:inputType="number"
         android:imeOptions="actionDone"
+        android:inputType="number"
         android:padding="13dp"
         android:singleLine="true" />
 
