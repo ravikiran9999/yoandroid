@@ -11,7 +11,7 @@
         android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
-        android:background="@drawable/ic_new_chat_group" />
+        android:src="@drawable/image_creategroup" />
 
     <EditText
         android:id="@+id/et_new_chat_group_name"
