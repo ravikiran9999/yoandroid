@@ -283,6 +283,51 @@ public class WishListActivity extends BaseActivity {
                                 notifyDataSetChanged();
                                 //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
+
+                                articlesList.clear();
+                                myBaseAdapter.addItems(articlesList);
+                                if (mProgress != null) {
+                                    mProgress.setVisibility(View.VISIBLE);
+                                }
+                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                                yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
+                                    @Override
+                                    public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                                        if (mProgress != null) {
+                                            mProgress.setVisibility(View.GONE);
+                                        }
+                                        if (response.body() != null && response.body().size() > 0) {
+                                            for (int i = 0; i < response.body().size(); i++) {
+                                                flipContainer.setVisibility(View.VISIBLE);
+                                                if (noArticals != null) {
+                                                    noArticals.setVisibility(View.GONE);
+                                                }
+                                                //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                                                //articlesList = new ArrayList<Travels.Data>();
+                                                articlesList.add(response.body().get(i));
+                                                // }
+                                            }
+                                            myBaseAdapter.addItems(articlesList);
+                                        } else {
+                                            flipContainer.setVisibility(View.GONE);
+                                            if (noArticals != null) {
+                                                noArticals.setVisibility(View.VISIBLE);
+                                            }
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<List<Articles>> call, Throwable t) {
+                                        if (mProgress != null) {
+                                            mProgress.setVisibility(View.GONE);
+                                        }
+                                        flipContainer.setVisibility(View.GONE);
+                                        if (noArticals != null) {
+                                            noArticals.setVisibility(View.VISIBLE);
+                                        }
+                                    }
+                                });
                                 //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     /*}
                                     else {
@@ -453,6 +498,51 @@ public class WishListActivity extends BaseActivity {
                                         data.setIsFollowing("false");
                                         isFollowing = false;
                                         notifyDataSetChanged();
+
+                                        articlesList.clear();
+                                        myBaseAdapter.addItems(articlesList);
+                                        if (mProgress != null) {
+                                            mProgress.setVisibility(View.VISIBLE);
+                                        }
+                                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                                        yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
+                                            @Override
+                                            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                                                if (mProgress != null) {
+                                                    mProgress.setVisibility(View.GONE);
+                                                }
+                                                if (response.body() != null && response.body().size() > 0) {
+                                                    for (int i = 0; i < response.body().size(); i++) {
+                                                        flipContainer.setVisibility(View.VISIBLE);
+                                                        if (noArticals != null) {
+                                                            noArticals.setVisibility(View.GONE);
+                                                        }
+                                                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                                                        //articlesList = new ArrayList<Travels.Data>();
+                                                        articlesList.add(response.body().get(i));
+                                                        // }
+                                                    }
+                                                    myBaseAdapter.addItems(articlesList);
+                                                } else {
+                                                    flipContainer.setVisibility(View.GONE);
+                                                    if (noArticals != null) {
+                                                        noArticals.setVisibility(View.VISIBLE);
+                                                    }
+                                                }
+
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<List<Articles>> call, Throwable t) {
+                                                if (mProgress != null) {
+                                                    mProgress.setVisibility(View.GONE);
+                                                }
+                                                flipContainer.setVisibility(View.GONE);
+                                                if (noArticals != null) {
+                                                    noArticals.setVisibility(View.VISIBLE);
+                                                }
+                                            }
+                                        });
 
                                     }
 

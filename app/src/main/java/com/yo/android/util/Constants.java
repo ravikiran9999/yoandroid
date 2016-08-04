@@ -73,4 +73,5 @@ public class Constants {
     public static String EDIT_MAGAZINE_ACTION = "com.edit.magazine.EDIT";
     public static String SESSION_EXPIRE = "SESSION_EXPIRE";
     public static String CHAT_ROOM_REFRESH = "CHAT_ROOM_REFRESH";
+    public static String UPDATE_NOTIFICATIONS = "UPDATE_NOTIFICATIONS";
 }

@@ -11,6 +11,7 @@ import com.yo.android.vox.VoxApi;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -74,6 +75,9 @@ public class NetWorkModule {
         //
         OkHttpClient defaultHttpClient = builder
                 .addInterceptor(interceptor)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 //work like charm! Enable later
 //                .addNetworkInterceptor(new CacheInterceptor(connectivityHelper))
                 .build();

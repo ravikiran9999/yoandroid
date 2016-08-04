@@ -265,6 +265,9 @@ public class MyCollectionDetails extends BaseActivity {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                notifyDataSetChanged();
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                                 //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     /*}
@@ -277,6 +280,7 @@ public class MyCollectionDetails extends BaseActivity {
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
+                                data.setLiked("false");
                                 notifyDataSetChanged();
                             }
                         });
@@ -286,6 +290,10 @@ public class MyCollectionDetails extends BaseActivity {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+
+                                notifyDataSetChanged();
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
                                 //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     /*}
@@ -298,6 +306,7 @@ public class MyCollectionDetails extends BaseActivity {
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
+                                data.setLiked("true");
                                 notifyDataSetChanged();
                             }
                         });

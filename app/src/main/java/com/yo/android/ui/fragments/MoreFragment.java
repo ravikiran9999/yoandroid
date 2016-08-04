@@ -2,13 +2,9 @@ package com.yo.android.ui.fragments;
 
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -21,7 +17,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -33,10 +28,9 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
-import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.MoreSettingsActivity;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
-import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 
@@ -126,6 +120,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
             Picasso.with(getActivity())
                     .load(avatar)
+                    .fit()
                     .into(profilePic);
         } else {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
@@ -135,7 +130,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     //Tested and image update is working
     //Make a prompt for pick a image from gallery/camera
-    private void uploadFile(File file) {
+    private void uploadFile(final File file) {
         if (!mHelper.isConnected()) {
             mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
@@ -157,15 +152,16 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
-        String descriptionString = "Hey there! I am using YoApp";
-        RequestBody description =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), descriptionString);
+//        String descriptionString = "Hey there! I am using YoApp";
+//        RequestBody description =
+//                RequestBody.create(
+//                        MediaType.parse("multipart/form-data"), descriptionString);
 
         RequestBody username =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.USER_NAME));
-        yoService.updateProfile(userId, description, null, body, null, null).enqueue(new Callback<UserProfileInfo>() {
+        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.updateProfile(userId, access, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();

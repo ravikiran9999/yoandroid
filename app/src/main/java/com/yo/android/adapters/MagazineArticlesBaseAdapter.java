@@ -241,7 +241,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.shareIntent(v, data.getUrl(),"Sharing Article");
+                Util.shareIntent(v, data.getUrl(), "Sharing Article");
             }
         });
 
@@ -345,6 +345,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
 
     public void addItems(List<Articles> articlesList) {
         items = new ArrayList<>(articlesList);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        items.clear();
         notifyDataSetChanged();
     }
 

@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,46 +66,75 @@ public class MyCollectionsAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.create_magazine_item, parent, false);
+        ViewHolder holder = null;
+        View layout = convertView;
+        if (layout == null) {
+            layout = LayoutInflater.from(mContext).inflate(R.layout.create_magazine_item, parent, false);
+            holder = new ViewHolder();
+            holder.imageView = (ImageView) layout.findViewById(R.id.img_magazine);
+            holder.textView = (TextView) layout.findViewById(R.id.tv_title);
+            holder.tick = (ImageView) layout.findViewById(R.id.imv_magazine_tick);
+            layout.setTag(holder);
+        } else {
+            holder = (ViewHolder) layout.getTag();
         }
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.img_magazine);
+
         Collections mCollections = getItem(position);
-        if (collectionsList.get(position).getImage() != "") {
+        if (position == 0) {
+            Picasso.with(mContext)
+                    .load(R.color.grey_divider)
+                    .into(holder.imageView);
+        } else if (!TextUtils.isEmpty(collectionsList.get(position).getImage())) {
             Picasso.with(mContext)
                     .load(collectionsList.get(position).getImage())
-                    .into(imageView);
-        }
-        TextView textView = (TextView) convertView.findViewById(R.id.tv_title);
-        textView.setText(collectionsList.get(position).getName());
-        if (position != 0) {
-            textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
+                    .into(holder.imageView);
         } else {
+            Picasso.with(mContext)
+                    .load(R.color.grey_divider)
+                    .into(holder.imageView);
+        }
+        holder.textView.setText(collectionsList.get(position).getName());
+        if (position != 0) {
+            holder.textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.LEFT | Gravity.TOP;
+            params.leftMargin = 5;
+            params.rightMargin = 5;
+            holder.textView.setLayoutParams(params);
+
+        } else {
+            holder.textView.setTextColor(mContext.getResources().getColor(android.R.color.black));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER;
-            textView.setLayoutParams(params);
+            holder.textView.setLayoutParams(params);
         }
         //
         if (!contextualMenuEnable) {
             mCollections.setSelect(false);
         }
         //1. Hide tick
-        ImageView tick = (ImageView) convertView.findViewById(R.id.imv_magazine_tick);
-        tick.setVisibility(View.GONE);
+        holder.tick.setVisibility(View.GONE);
         if (contextualMenuEnable) {
             if (mCollections.isSelect()) {
                 //Show tick
-                if(position != 0) {
-                    tick.setVisibility(View.VISIBLE);
-                }
-                else {
-                    tick.setVisibility(View.GONE);
+                if (position != 0) {
+                    holder.tick.setVisibility(View.VISIBLE);
+                } else {
+                    holder.tick.setVisibility(View.GONE);
                 }
             }
         }
 
-        return convertView;
+        return layout;
+    }
+
+    private class ViewHolder {
+
+        private ImageView imageView;
+        private TextView textView;
+        private ImageView tick;
+
     }
 }

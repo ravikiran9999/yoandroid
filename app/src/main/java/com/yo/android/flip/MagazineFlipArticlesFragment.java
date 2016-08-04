@@ -117,7 +117,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
                 List<String> tagIds = Arrays.asList(prefTags);
-                loadArticles(tagIds);
+                loadArticles(null);
             }
         } else {
             mProgress.setVisibility(View.GONE);
@@ -176,8 +176,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
     public void loadArticles(List<String> tagIds) {
-        myBaseAdapter.addItems(new ArrayList<Articles>());
+
         if (!mHelper.isConnected()) {
+            myBaseAdapter.clear();
             if (articlesRootLayout.getChildCount() > 0) {
                 articlesRootLayout.setVisibility(View.GONE);
                 networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
@@ -194,57 +195,66 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             mProgress.setVisibility(View.VISIBLE);
         }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getUserArticlesAPI(accessToken).enqueue(new Callback<List<Articles>>() {
-            @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                if (!isAdded()) {
-                    return;
-                }
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
-
-                if (response.body() != null && !response.body().isEmpty()) {
-                    myBaseAdapter.addItems(response.body());
-                    if (llNoArticles != null) {
-                        llNoArticles.setVisibility(View.GONE);
-                        flipContainer.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    //mToastFactory.showToast("No Articles");
-                    if (llNoArticles != null) {
-                        flipContainer.setVisibility(View.GONE);
-                        flipView.refreshAllPages();
-                        llNoArticles.setVisibility(View.VISIBLE);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                if (t instanceof UnknownHostException) {
-                    mLog.e("Magazine", "Please check network settings");
-                }
-                //Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (llNoArticles != null) {
-                            networkFailureText.setVisibility(View.GONE);
-                            llNoArticles.setVisibility(View.VISIBLE);
-                            flipContainer.setVisibility(View.GONE);
-//                            flipView.refreshAllPages();
-                        }
-
-                    }
-                }, 500L);
-            }
-        });
+        if (tagIds != null) {
+            yoService.getArticlesAPI(accessToken, tagIds).enqueue(callback);
+        } else {
+            yoService.getUserArticlesAPI(accessToken).enqueue(callback);
+        }
     }
+
+    private Callback<List<Articles>> callback = new Callback<List<Articles>>() {
+        @Override
+        public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+            if (!isAdded()) {
+                return;
+            }
+            myBaseAdapter.clear();
+            if (mProgress != null) {
+                mProgress.setVisibility(View.GONE);
+            }
+
+            if (response.body() != null && !response.body().isEmpty()) {
+                myBaseAdapter.addItems(response.body());
+                if (llNoArticles != null) {
+                    llNoArticles.setVisibility(View.GONE);
+                    flipContainer.setVisibility(View.VISIBLE);
+                }
+            } else {
+                //mToastFactory.showToast("No Articles");
+                if (llNoArticles != null) {
+                    flipContainer.setVisibility(View.GONE);
+                    flipView.refreshAllPages();
+                    llNoArticles.setVisibility(View.VISIBLE);
+                }
+            }
+
+        }
+
+        @Override
+        public void onFailure(Call<List<Articles>> call, Throwable t) {
+            if (t instanceof UnknownHostException) {
+                mLog.e("Magazine", "Please check network settings");
+            }
+            myBaseAdapter.clear();
+            //Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
+            if (mProgress != null) {
+                mProgress.setVisibility(View.GONE);
+            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (llNoArticles != null) {
+                        networkFailureText.setVisibility(View.GONE);
+                        llNoArticles.setVisibility(View.VISIBLE);
+                        flipContainer.setVisibility(View.GONE);
+//                            flipView.refreshAllPages();
+                    }
+
+                }
+            }, 500L);
+        }
+
+    };
 
     public void onDestroyView() {
         super.onDestroyView();
@@ -276,7 +286,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
                 if (prefTags != null) {
                     List<String> tagIds = Arrays.asList(prefTags);
-                    loadArticles(tagIds);
+                    loadArticles(null);
                 }
             } else {
                 //mToastFactory.showToast("No articles. Select topic");
@@ -300,7 +310,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
                 List<String> tagIds = Arrays.asList(prefTags);
-                loadArticles(tagIds);
+                loadArticles(null);
             }
 //            if (getParentFragment() instanceof MagazinesFragment) {
 //                ((MagazinesFragment) getParentFragment()).refreshSearch();

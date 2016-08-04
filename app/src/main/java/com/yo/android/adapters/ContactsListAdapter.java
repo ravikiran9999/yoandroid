@@ -1,10 +1,11 @@
 package com.yo.android.adapters;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
@@ -12,6 +13,7 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.model.Contact;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 import com.yo.android.voip.OutGoingCallActivity;
 
 /**
@@ -85,7 +87,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                     }*/
 
                 } else {
-                    Toast.makeText(mContext, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
+                    Util.inviteFriend(context,item.getPhoneNo());
                 }
             }
         });
