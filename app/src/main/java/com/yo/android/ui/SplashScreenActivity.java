@@ -11,10 +11,9 @@ import android.widget.ImageView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
-import com.yo.android.chat.firebase.FirebaseService;
-import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
 
@@ -40,6 +39,8 @@ public class SplashScreenActivity extends BaseActivity {
     VoxApi.VoxService voxService;
     private Handler mHandler = new Handler();
     private static final long DURATION = 1000L;
+    @Inject
+    ContactSyncHelper mContactSyncHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class SplashScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageResource(R.drawable.ic_splash);
-        mHandler.postDelayed(runnable, DURATION);
+         mHandler.postDelayed(runnable, DURATION);
         try {
             TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             String mPhoneNumber = tMgr.getLine1Number();
@@ -57,6 +58,7 @@ public class SplashScreenActivity extends BaseActivity {
             mLog.w(TAG, e);
         }
 //        testVox();
+        mContactSyncHelper.checkContacts();
 
     }
 
