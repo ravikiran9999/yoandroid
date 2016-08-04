@@ -89,7 +89,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         //String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
         //String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (contact != null) {
-            getSupportActionBar().setTitle(contact.getName());
+            if(fromChatRooms) {
+                getSupportActionBar().setTitle(getResources().getString(R.string.profile));
+            }else{
+                getSupportActionBar().setTitle(contact.getName());
+            }
             if (!TextUtils.isEmpty(contact.getImage())) {
                 Picasso.with(this)
                         .load(contact.getImage())
