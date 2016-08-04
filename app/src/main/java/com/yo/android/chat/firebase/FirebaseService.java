@@ -71,9 +71,6 @@ public class FirebaseService extends InjectedService {
 
     private Context context;
 
-    //ServiceManager serviceManager;
-    //ServiceManager serviceManager2;
-
     private boolean isRunning = false;
 
 
@@ -93,7 +90,7 @@ public class FirebaseService extends InjectedService {
             Log.i(TAG, "Service running");
             getFirebaseAuth();
             //getChatMessageList();
-            getAllRooms();
+
         }
 
         return START_STICKY;
@@ -125,6 +122,7 @@ public class FirebaseService extends InjectedService {
                         jsonObject = new JSONObject(response.body().string());
                         String name = jsonObject.getString("firebase_token");
                         loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, name);
+                        getAllRooms();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -142,50 +140,40 @@ public class FirebaseService extends InjectedService {
 
 
     private void getAllRooms() {
-
+        authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterator iterator = dataSnapshot.getChildren().iterator();
-                while(iterator.hasNext()) {
-                    DataSnapshot xx = dataSnapshot.getChildren().iterator().next();
-                    String roomId = xx.getKey();
 
-                    //getChatMessageList(roomId);
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    getChatMessageList(child.getKey());
                 }
 
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
+                firebaseError.getMessage();
             }
         };
         authReference.addValueEventListener(valueEventListener);
     }
+
     public void getChatMessageList(String roomId) {
         try {
             roomReference = authReference.child(roomId).child(Constants.CHATS);
-            //authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+
 
             childEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
-                        DataSnapshot keyDataSnapshot = dataSnapshot;
-                        String roomId = keyDataSnapshot.getKey();
-                        if (dataSnapshot.hasChild(Constants.CHATS)) {
 
-                            DataSnapshot cc = dataSnapshot.child(Constants.CHATS);
+                        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
 
-                            if (cc.getChildren().iterator().hasNext()) {
-                                DataSnapshot dataSnapshot1 = cc.getChildren().iterator().next();
-                                //Util.createNotification(FirebaseService.this,vv.getValue(ChatMessage.class).getSenderID(), vv.getValue(ChatMessage.class).getMessage(), ChatActivity.class, );
+                        postNotif(chatMessage.getRoomId(), chatMessage);
 
-                                postNotif(roomId, dataSnapshot1);
-                            }
 
-                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -211,7 +199,7 @@ public class FirebaseService extends InjectedService {
                     firebaseError.getMessage();
                 }
             };
-            roomReference.addChildEventListener(childEventListener);
+            roomReference.limitToLast(1).addChildEventListener(childEventListener);
 
 
         } catch (Exception e) {
@@ -226,15 +214,14 @@ public class FirebaseService extends InjectedService {
         }
     }
 
-    private void postNotif(String roomId, DataSnapshot dataSnapshot) {
+    private void postNotif(String roomId, ChatMessage chatMessage) {
         try {
 
-            String body = dataSnapshot.getValue(ChatMessage.class).getMessage();
-            String title = dataSnapshot.getValue(ChatMessage.class).getSenderID();
-            ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+            String body = chatMessage.getMessage();
+            String title = chatMessage.getSenderID();
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            int notificationId = dataSnapshot.getValue(ChatMessage.class).getMessage().hashCode();
+            int notificationId = chatMessage.getMessage().hashCode();
 
             NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
             notificationStyle.bigText(body);
