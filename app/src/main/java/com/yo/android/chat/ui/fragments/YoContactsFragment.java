@@ -87,7 +87,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getYoAppUsers();
+
 
         if (getArguments() != null) {
             forwardChatMessages = getArguments().getParcelableArrayList(Constants.CHAT_FORWARD);
@@ -96,13 +96,14 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         arrayOfUsers = new ArrayList<>();
         appContactsListAdapter = new AppContactsListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(appContactsListAdapter);
+        getYoAppUsers();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_app_contacts, menu);
         this.menu = menu;
-        Util.prepareContactsSearch(getActivity(), menu,appContactsListAdapter, Constants.Yo_CONT_FRAG);
+        Util.prepareContactsSearch(getActivity(), menu, appContactsListAdapter, Constants.Yo_CONT_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -110,15 +111,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Contact contact = (Contact) listView.getItemAtPosition(position);
-
-        /*if (forwardChatMessages != null) {
-            navigateToChatScreen(contact.getFirebaseRoomId(), opponentPhoneNumber, forwardChatMessages, contact.getId());
-
-        } else if (contact.getFirebaseRoomId() != null) {
-            navigateToChatScreen(contact.getFirebaseRoomId(), opponentPhoneNumber, yourPhoneNumber, null);
-        } else {
-            navigateToChatScreen("", opponentPhoneNumber, yourPhoneNumber, contact.getId());
-        }*/
 
         if (forwardChatMessages != null) {
             navigateToChatScreen(contact, forwardChatMessages);
@@ -138,21 +130,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         getActivity().finish();
     }
 
-    /*private void navigateToChatScreen(String roomId, String opponentPhoneNumber, ArrayList<ChatMessage> forward, String opponentId) {
-        *//*if (preferenceEndPoint.getStringPreference(Constants.CHAT_FORWARD) != null) {
-            preferenceEndPoint.removePreference(Constants.CHAT_FORWARD);
-        }*//*
-
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
-        intent.putExtra(Constants.OPPONENT_ID, opponentId);
-        intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, forward);
-        startActivity(intent);
-        getActivity().finish();
-    }*/
-
-    private void navigateToChatScreen(Contact contact,  ArrayList<ChatMessage> forward) {
+    private void navigateToChatScreen(Contact contact, ArrayList<ChatMessage> forward) {
 
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(Constants.CONTACT, contact);
@@ -171,7 +149,19 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void getYoAppUsers() {
-        showProgressDialog();
+
+        if (mContactsSyncManager.getContacts().isEmpty()) {
+            showProgressDialog();
+        }
+        List < Contact > contactList = new ArrayList<>();
+         for (int i = 0; i < mContactsSyncManager.getContacts().size(); i++) {
+             if (mContactsSyncManager.getContacts().get(i).getYoAppUser()) {
+                contactList.add(mContactsSyncManager.getContacts().get(i));
+
+            }
+
+        }
+        appContactsListAdapter.addItems(contactList);
 
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
