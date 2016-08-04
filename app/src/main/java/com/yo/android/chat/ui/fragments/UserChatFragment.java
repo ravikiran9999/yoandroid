@@ -67,8 +67,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -109,6 +107,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String roomType;
     ArrayList<ChatMessage> chatForwards;
 
+    String mobilenumber;
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -138,7 +137,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
 
-
+        mobilenumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
@@ -235,6 +234,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 //BUG FIX - 5576	Chat - User shouldn't be able to copy images
                 boolean imageSelected = false;
                 SparseBooleanArray selected = userChatAdapter.getSelectedIds();
+                boolean canDelete = true;
                 for (int i = (selected.size() - 1); i >= 0; i--) {
                     if (selected.valueAt(i)) {
 
@@ -242,10 +242,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         if (selectedItem.getType().equalsIgnoreCase(Constants.IMAGE)) {
                             imageSelected = true;
                         }
+                        if (!selectedItem.getSenderID().equals(mobilenumber)) {
+                            canDelete = false;
+                        }
                     }
                 }
                 Menu menu = mode.getMenu();
                 menu.findItem(R.id.copy).setVisible(!imageSelected);
+                menu.findItem(R.id.delete).setVisible(canDelete);
 
                 if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
                     getActivity().invalidateOptionsMenu();
