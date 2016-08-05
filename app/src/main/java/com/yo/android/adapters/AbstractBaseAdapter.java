@@ -8,8 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.model.Contact;
+import com.yo.android.model.Members;
+import com.yo.android.model.Room;
+import com.yo.android.util.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Created by Ramesh on 14/1/16.
@@ -20,6 +29,11 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     protected final Context mContext;
     private List<T> mOriginalList = new ArrayList<>();
     private SparseBooleanArray mSelectedItemsIds;
+    private String myNumber;
+
+    @Inject
+    @Named("login")
+    PreferenceEndPoint loginPrefs;
 
     public AbstractBaseAdapter(Context context) {
         mContext = context;
@@ -76,9 +90,10 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     /**
      * Use this method for search to clear data when calling addItems() multiple times.
      */
-    public void clearData() {
+    public void clearAll() {
         mOriginalList.clear();
         mList.clear();
+        notifyDataSetChanged();
     }
 
     public void performSearch(@NonNull String key) {
@@ -88,6 +103,57 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
                 if (hasData(event, key)) {
+                    temp.add(event);
+                }
+            }
+            addItems(temp);
+        }
+    }
+
+    public void performContactsSearch(@NonNull String key) {
+        if (key.isEmpty()) {
+            addItems(mOriginalList);
+        } else {
+
+            List<T> temp = new ArrayList<>();
+            try {
+                if (loginPrefs != null) {
+                    myNumber = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
+                }
+            } catch (Exception e) {
+            }
+
+            for (T event : mOriginalList) {
+                List<Members> memberses = ((Room) event).getMembers();
+
+                for (int j = 0; j < memberses.size(); j++) {
+                    String number = memberses.get(j).getMobileNumber();
+                    if (number != null && !number.contentEquals(myNumber)) {
+                        String mKey = memberses.get(j).getMobileNumber();
+                        if (mKey.contains(key)) {
+                            temp.add(event);
+                        } else if (mKey.contains(key)) {
+                            temp.clear();
+                            temp.add(event);
+                        }
+                    }
+                }
+            }
+            addItems(temp);
+        }
+    }
+
+    public void performYoContactsSearch(@NonNull String key) {
+        if (key.isEmpty()) {
+            addItems(mOriginalList);
+        } else {
+
+            List<T> temp = new ArrayList<>();
+            for (T event : mOriginalList) {
+                if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(key.toLowerCase())) {
+                    temp.add(event);
+                }
+                if (((Contact) event).getPhoneNo() != null && ((Contact) event).getPhoneNo().contains(key)) {
                     temp.add(event);
                 }
             }

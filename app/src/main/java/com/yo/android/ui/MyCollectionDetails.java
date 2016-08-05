@@ -1,21 +1,25 @@
 package com.yo.android.ui;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +32,9 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
+import com.yo.android.model.MagazineArticles;
+import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +58,8 @@ public class MyCollectionDetails extends BaseActivity {
     private FlipViewController flipView;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
+    private String type;
+    private String topicId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +75,9 @@ public class MyCollectionDetails extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        String topicId = intent.getStringExtra("TopicId");
+        topicId = intent.getStringExtra("TopicId");
         String topicName = intent.getStringExtra("TopicName");
+        type = intent.getStringExtra("Type");
 
         String title = topicName;
 
@@ -75,28 +85,57 @@ public class MyCollectionDetails extends BaseActivity {
 
         articlesList.clear();
 
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getArticlesAPI(accessToken, topicId).enqueue(new Callback<List<Articles>>() {
-            @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                if (response.body().size() > 0) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                        //articlesList = new ArrayList<Travels.Data>();
-                        articlesList.add(response.body().get(i));
-                        // }
+        if(type.equals("Tag")) {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            List<String> tagIds = new ArrayList<String>();
+            tagIds.add(topicId);
+            yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
+                @Override
+                public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                    if (response.body().size() > 0) {
+                        for (int i = 0; i < response.body().size(); i++) {
+                            //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                            //articlesList = new ArrayList<Travels.Data>();
+                            articlesList.add(response.body().get(i));
+                            // }
+                        }
+                        myBaseAdapter.addItems(articlesList);
+                    } else {
+                        mToastFactory.showToast("No Articles");
                     }
-                    myBaseAdapter.addItems(articlesList);
-                } else {
-                    mToastFactory.showToast("No Articles");
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                Toast.makeText(MyCollectionDetails.this, "Error retrieving Articles", Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<Articles>> call, Throwable t) {
+                    Toast.makeText(MyCollectionDetails.this, "Error retrieving Articles", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        else {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.getArticlesOfMagazineAPI(topicId, accessToken).enqueue(new Callback<MagazineArticles>() {
+                @Override
+                public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
+                    final String id = response.body().getId();
+                    if (response.body().getArticlesList()!= null && response.body().getArticlesList().size() > 0) {
+                        for (int i = 0; i < response.body().getArticlesList().size(); i++) {
+                            //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
+                            //articlesList = new ArrayList<Travels.Data>();
+
+                            articlesList.add(response.body().getArticlesList().get(i));
+                            // }
+                        }
+                        myBaseAdapter.addItems(articlesList);
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<MagazineArticles> call, Throwable t) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -139,7 +178,7 @@ public class MyCollectionDetails extends BaseActivity {
 
         @Override
         public Articles getItem(int position) {
-            if (getCount() > position) {
+            if (position>=0 && getCount() > position) {
                 return items.get(position);
             }
             return null;
@@ -173,6 +212,10 @@ public class MyCollectionDetails extends BaseActivity {
                 holder.magazineLike = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like);
 
                 holder.magazineAdd = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add);
+
+                holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
+
+                holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
 
                 layout.setTag(holder);
             } else {
@@ -222,6 +265,9 @@ public class MyCollectionDetails extends BaseActivity {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                notifyDataSetChanged();
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                                 //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     /*}
@@ -234,6 +280,7 @@ public class MyCollectionDetails extends BaseActivity {
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
+                                data.setLiked("false");
                                 notifyDataSetChanged();
                             }
                         });
@@ -243,6 +290,10 @@ public class MyCollectionDetails extends BaseActivity {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+
+                                notifyDataSetChanged();
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
                                 //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     /*}
@@ -255,6 +306,7 @@ public class MyCollectionDetails extends BaseActivity {
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
+                                data.setLiked("true");
                                 notifyDataSetChanged();
                             }
                         });
@@ -312,6 +364,7 @@ public class MyCollectionDetails extends BaseActivity {
                 //photoView.loadUrl(data.getImage_filename());
                 Picasso.with(MyCollectionDetails.this)
                         .load(data.getImage_filename())
+                        .fit()
                         .into(photoView);
             }
             //}
@@ -332,12 +385,111 @@ public class MyCollectionDetails extends BaseActivity {
                 public void onClick(View v) {
 
                     Intent intent = new Intent(MyCollectionDetails.this, CreateMagazineActivity.class);
-                    startActivity(intent);
+                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
+                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                }
+            });
+
+            ImageView share = holder.magazineShare;
+            share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Util.shareIntent(v, data.getUrl(),"Sharing Article");
+                }
+            });
+
+            /*holder.articleFollow.setEnabled(false);
+            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));*/
+            //holder.articleFollow.setVisibility(View.GONE);
+
+            if(data.getIsFollowing().equals("true")) {
+                holder.articleFollow.setText("Following");
+                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+            }
+            else {
+                holder.articleFollow.setText("Follow");
+                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
+
+            final ViewHolder finalHolder = holder;
+            holder.articleFollow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!data.getIsFollowing().equals("true")) {
+                    ((BaseActivity)context).showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Following");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            data.setIsFollowing("true");
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Follow");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            data.setIsFollowing("false");
+                            notifyDataSetChanged();
+
+                        }
+                    });
+                    } else {
+                        showUnFollowConfirmationDialog(data, finalHolder);
+                    }
                 }
             });
 
 
             return layout;
+        }
+
+        private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
+            final Dialog dialog = new Dialog(context);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.unfollow_alert_dialog);
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+            Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    ((BaseActivity) context).showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Follow");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            data.setIsFollowing("false");
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Following");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            data.setIsFollowing("true");
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
+            });
+
+            dialog.show();
         }
 
 
@@ -359,5 +511,122 @@ public class MyCollectionDetails extends BaseActivity {
         private CheckBox magazineLike;
 
         private ImageView magazineAdd;
+
+        private ImageView magazineShare;
+
+        private Button articleFollow;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_my_collections_detail, menu);
+        //menu.getItem(0).setTitle("Following");
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        final MenuItem menuItem = item;
+        switch (item.getItemId()) {
+            case R.id.menu_follow_magazine:
+                if (type.equals("Tag")) {
+                    final Dialog dialog = new Dialog(MyCollectionDetails.this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            List<String> topicIds = new ArrayList<String>();
+                            topicIds.add(topicId);
+                            yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    //menuItem.setTitle("Follow");
+                                    Intent intent = new Intent();
+                                    setResult(6, intent);
+                                    finish();
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    //menuItem.setTitle("Following");
+                                    menuItem.setIcon(R.drawable.ic_mycollections_tick);
+                                }
+                            });
+                        }
+                    });
+
+                    dialog.show();
+                } else {
+                    final Dialog dialog = new Dialog(MyCollectionDetails.this);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.unfollow_alert_dialog);
+
+                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            showProgressDialog();
+                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            yoService.unfollowMagazineAPI(topicId, accessToken).enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    dismissProgressDialog();
+                                    //menuItem.setTitle("Follow");
+                                    Intent intent = new Intent();
+                                    setResult(6, intent);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    dismissProgressDialog();
+                                    //menuItem.setTitle("Following");
+                                    //menuItem.setIcon(R.drawable.ic_magazine_following);
+                                    menuItem.setIcon(R.drawable.ic_mycollections_tick);
+
+                                }
+                            });
+                        }
+                    });
+
+                    dialog.show();
+                }
+
+        }
+        return true;
     }
 }

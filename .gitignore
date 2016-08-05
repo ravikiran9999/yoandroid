@@ -57,3 +57,4 @@ gradle.properties
 *.iml
 checkapks.cmd
 *.ipr
+/apks/

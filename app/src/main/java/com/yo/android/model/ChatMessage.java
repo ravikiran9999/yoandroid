@@ -4,7 +4,6 @@ package com.yo.android.model;
  * Created by rdoddapaneni on 6/27/2016.
  */
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -32,11 +31,17 @@ public class ChatMessage implements Parcelable {
     @DatabaseField
     private boolean readUnreadStatus;
 
+    private int delivered;
+    private int sent;
+
+
     private String stickeyHeader;
 
     private String type;
     private String roomId;
     private boolean selected;
+    //For caching the image
+    private String imageUrl;
 
     public ChatMessage() {
     }
@@ -127,6 +132,21 @@ public class ChatMessage implements Parcelable {
         return stickeyHeader;
     }
 
+    public int getDelivered() {
+        return delivered;
+    }
+
+    public void setDelivered(int delivered) {
+        this.delivered = delivered;
+    }
+
+    public int getSent() {
+        return sent;
+    }
+
+    public void setSent(int sent) {
+        this.sent = sent;
+    }
 
     @Override
     public int describeContents() {
@@ -144,6 +164,8 @@ public class ChatMessage implements Parcelable {
         dest.writeString(type);
         dest.writeString(roomId);
         dest.writeString(stickeyHeader);
+        dest.writeInt(sent);
+        dest.writeInt(delivered);
 
     }
 
@@ -157,6 +179,8 @@ public class ChatMessage implements Parcelable {
         this.type = in.readString();
         this.roomId = in.readString();
         this.stickeyHeader = in.readString();
+        this.sent = in.readInt();
+        this.delivered = in.readInt();
     }
 
     public static final Parcelable.Creator<ChatMessage> CREATOR = new Parcelable.Creator<ChatMessage>() {
@@ -171,4 +195,11 @@ public class ChatMessage implements Parcelable {
         }
     };
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

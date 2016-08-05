@@ -1,220 +1,223 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--<ScrollView
+<?xml version="1.0" encoding="utf-8"?><!--<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">-->
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <!--<TextView
+        android:id="@+id/tv_category_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-    android:background="@android:color/white">
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
 
-        <!--<TextView
-            android:id="@+id/tv_category_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
+        android:textColor="@color/colorPrimary" />android:text="Top Stories"-->
 
-            android:textColor="@color/colorPrimary" />android:text="Top Stories"-->
-
-<!--        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card_view:cardCornerRadius="4dp">-->
-
-<!--            <LinearLayout
+    <!--        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">-->
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="4dp">-->
 
-                <!--<ImageView
-                    android:id="@+id/photo"
+    <!--            <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_gravity="center_horizontal" />-->
-<!--                <ImageView android:layout_gravity="center_horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="120dp"
-                    android:scaleType="centerCrop"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:id="@+id/photo"
-                    />-->
-                <RelativeLayout android:id="@+id/rl_top"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">-->
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:id="@+id/photo"
-                    android:layout_gravity="center_horizontal"
-                    android:scaleType="centerCrop"
-                    android:layout_weight="1"></ImageView>
+    <!--<ImageView
+        android:id="@+id/photo"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_gravity="center_horizontal" />-->
+    <!--                <ImageView android:layout_gravity="center_horizontal"
+                        android:layout_width="fill_parent"
+                        android:layout_height="120dp"
+                        android:scaleType="centerCrop"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1"
+                        android:id="@+id/photo"
+                        />-->
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/magazine_image_height">
 
-                    <Button
-                        android:id="@+id/imv_magazine_follow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/ic_magazine_follow"
-                        android:text="Follow"
-                        android:textAllCaps="false"
-                        android:textColor="@android:color/white"
-                        android:gravity="center"
-                        android:textSize="16sp"
-                        android:layout_alignParentBottom="true"/>
+        <ImageView
+            android:id="@+id/photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:scaleType="fitCenter"></ImageView>
 
-                </RelativeLayout>
+        <Button
+            android:id="@+id/imv_magazine_follow"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/ic_magazine_follow"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Follow"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
         android:layout_below="@+id/rl_top"
-        android:layout_alignParentBottom="true">
+        android:orientation="vertical">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
-                    <CheckBox
-                        android:id="@+id/cb_magazine_like"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:button="@drawable/magazine_like_selector" />
+            <CheckBox
+                android:id="@+id/cb_magazine_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:button="@drawable/magazine_like_selector" />
 
-                    <ImageView
-                        android:id="@+id/imv_magazine_add"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_toRightOf="@+id/cb_magazine_like"
-                        android:background="@drawable/ic_new_chat_group_add_contact" />
+            <ImageView
+                android:id="@+id/imv_magazine_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@+id/cb_magazine_like"
+                android:background="@drawable/ic_new_chat_group_add_contact" />
 
-                    <ImageView
-                        android:id="@+id/imv_magazine_share"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_toRightOf="@+id/imv_magazine_add"
-                        android:background="@drawable/ic_magazine_share" />
+            <ImageView
+                android:id="@+id/imv_magazine_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@+id/imv_magazine_add"
+                android:background="@drawable/ic_magazine_share" />
 
-                    <Button
-                        android:id="@+id/btn_magazine_follow_topics"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginLeft="20dp"
-                        android:background="@drawable/button_border"
-                        android:text="Follow More Topics"
-                        android:textAllCaps="false"
-                        android:textColor="@color/tab_grey"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:gravity="center"
-                        android:layout_marginTop="10dp"/>
-                </RelativeLayout>
+            <Button
+                android:id="@+id/btn_magazine_follow_topics"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_border"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Follow More Topics"
+                android:textAllCaps="false"
+                android:textColor="@color/tab_grey" />
+        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/tv_article_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />android:text="Article 1"
+        <TextView
+            android:id="@+id/tv_article_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />android:text="Article 1"
 
-                <TextView android:id="@+id/tv_article_short_desc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:maxLines="5"
-                    android:ellipsize="end"
-                    android:lineSpacingMultiplier="1.2"
-                    android:textSize="12sp" />android:text="This is the first magazine article content. This is a dummy content."
+        <TextView
+            android:id="@+id/tv_article_short_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:lineSpacingMultiplier="1.2"
+            android:maxLines="5"
+            android:textSize="12sp"
+            tools:text="This is the first magazine article content. This is a dummy content." />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Full story"
-                        android:textColor="@android:color/black" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full story"
+                android:textColor="@android:color/black" />
 
-                    <TextView
-                        android:id="@+id/tv_category_full_story"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:maxLines="2"
-                        android:ellipsize="end"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="14sp" />android:text="Business Standard"
-                </LinearLayout>
+            <TextView
+                android:id="@+id/tv_category_full_story"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
+        </LinearLayout>
     </LinearLayout>
 
 
-            <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
 
-       <!-- </android.support.v7.widget.CardView>-->
+    <!-- </android.support.v7.widget.CardView>-->
 
-        <!--<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <!--<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        card_view:cardCornerRadius="4dp">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp"
-            card_view:cardCornerRadius="4dp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            android:layout_marginLeft="10dp">
+
+            <TextView
+                android:id="@+id/tv_find_ppl_follow"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:text="Find People to Follow"
+                android:textColor="@android:color/black" />
 
-                android:layout_marginLeft="10dp">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/tv_find_ppl_follow"
+                android:background="@drawable/dialer_default_avatar" />
 
-                <TextView
-                    android:id="@+id/tv_find_ppl_follow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Find People to Follow"
-                    android:textColor="@android:color/black" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/ic_right_arrow" />
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="40dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_toRightOf="@+id/tv_find_ppl_follow"
-                    android:background="@drawable/dialer_default_avatar" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/ic_right_arrow" />
-
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>-->
-    </RelativeLayout>
-<!--
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>-->
+</RelativeLayout><!--
 </ScrollView>-->

@@ -1,10 +1,14 @@
 package com.yo.android.util;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+
+import android.util.Log;
+
+import com.firebase.client.AuthData;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.yo.android.BuildConfig;
 import com.yo.android.model.ChatMessage;
 
 import java.util.HashMap;
@@ -18,34 +22,15 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class FireBaseHelper {
+
+    private static final String TAG = "FireBaseHelper";
+
     private DatabaseReference roomReference;
     private Map<String, ChatMessage> map = new HashMap<>();
 
     @Inject
     public FireBaseHelper() {
-        roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
-    }
 
-    public void startListenForRooms() {
-
-    }
-
-    public void startListeningRoom(final String roomId) {
-        if (!map.containsKey(roomId)) {
-            DatabaseReference roomIdReference = roomReference.child(roomId);
-            roomIdReference.limitToLast(1).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                    map.put(roomId, chatMessage);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
     }
 
     public ChatMessage getLastMessage(String roomId) {
@@ -56,5 +41,26 @@ public class FireBaseHelper {
         return map.get(roomId);
     }
 
+    public Firebase authWithCustomToken(final String authToken) {
+        //Url from Firebase dashboard
+        final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
 
+        ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                if (authData != null) {
+                    Log.i(TAG, "Login Succeeded!");
+
+                } else {
+                    Log.i(TAG, "Login un Succeeded!");
+                }
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                Log.e(TAG, "Login Failed! Auth token expired" + firebaseError.getMessage());
+            }
+        });
+        return ref;
+    }
 }

@@ -25,15 +25,21 @@
     </string>
     <string name="next">Next</string>
     <string name="verify">Verify</string>
-    <string name="enter_otp">Enter OTP</string>
+    <string name="enter_otp">Enter PIN</string>
+    <string name="enter_username">Enter Username</string>
 
     <!--chat-->
     <string name="send">Send</string>
     <string name="type_a_message">Type a message</string>
     <string name="copy_message">Message Copied</string>
+    <string name="copy_messages">Messages Copied</string>
+    <string name="add_contact">Add Contact</string>
+    <string name="new_group">New Group</string>
 
+    <string name="not_sender">You dont have permission to delete message </string>
 
     <string name="enter_mobile_number">Enter your mobile number to get started!</string>
+    <string name="re_enter_mobile_number">Re-enter your mobile number to get started!</string>
 
     <string name="magazines_fragment">Hello magazine fragment</string>
 
@@ -97,7 +103,7 @@
         <item>Entrepreneurship</item>
     </string-array>
     <string name="title_activity_magazine_article_details">MagazineArticleDetailsActivity</string>
-    <string name="connectivity_network_settings">Problem with network connection. Please Try again.</string>
+    <string name="connectivity_network_settings">Unable to connect, Please check you network connection.</string>
     <string name="enter_mobile_number_started">Enter your mobile number to get started!</string>
 
 
@@ -123,6 +129,38 @@
     <string name="activity_contry_selection_title">Select Country</string>
     <string name="no_article_added">There is no article added yet.\nAdd any article to create your own magazine</string>
     <string name="yesterday">"Yesterday "</string>
-    <string name="otp_failure">Sorry, Unable to validate your OTP.</string>
+    <string name="otp_empty">Please enter valid PIN</string>
+    <string name="otp_failure">Please enter valid PIN</string>
+    <string name="some_thing_wrong">Something went wrong. Please try again later</string>
+    <string name="article_added_success">Article added successfully</string>
+    <string name="no_text">No Data Available.</string>
+    <string name="user_name">Username</string>
+    <string name="add_photo">Add Picture</string>
+    <string name="profile">Profile</string>
+    <string name="okay">okay</string>
+    <string name="gallery">Gallery</string>
+    <string name="unable_to_fetch">Unable to fetch user data at this moment.Please try again later.</string>
+    <string name="resend_otp_text">Re-send PIN</string>
+    <string name="otp_button_submit">Submit</string>
+    <string name="share_invite_title">Share and Invite</string>
+    <string name="notifications">Notifications</string>
+    <string name="sync_contacts">Sync Contacts</string>
+    <string name="mobile_number_title">Mobile Number</string>
+    <string name="status_title">Status</string>
+    <string name="status_char_length">136 characters</string>
+    <string name="account_privacy_title">Account Privacy</string>
+    <string name="settings_label">Settings</string>
+    <string name="user_profile">Profile</string>
+    <string name="username_empty">Please provide user name before updating the profile details.</string>
+    <string name="change_photo">Change Picture</string>
+    <string name="add_picture">Add Picture</string>
+    <string name="change_picture">Change Picture</string>
+    <string name="no_result_found">No search results found</string>
+    <string name="no">NO</string>
+    <string name="yes">YES</string>
+    <string name="sign_out">Sign out</string>
+    <string name="signout_text">Are you sure you want to sign out ?</string>
+    <string name="empty_fields">Please do not leave fields empty</string>
+    <string name="invite_link">Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com</string>
 
 </resources>

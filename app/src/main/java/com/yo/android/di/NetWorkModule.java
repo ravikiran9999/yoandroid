@@ -4,11 +4,14 @@ import android.content.Context;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
+import com.yo.android.BuildConfig;
 import com.yo.android.api.YoApi;
 import com.yo.android.vox.VoxApi;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -36,38 +39,47 @@ public class NetWorkModule {
 
     @Singleton
     @Provides
-    VoxApi.VoxService provideVoxService() {
+    VoxApi.VoxService provideVoxService(Context context, ConnectivityHelper connectivityHelper) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        return buildAdapter(VoxApi.BASE_URL, VoxApi.VoxService.class, builder);
+        enableCache(context, builder);
+        return buildAdapter(VoxApi.BASE_URL, VoxApi.VoxService.class, builder, connectivityHelper);
     }
 
     @Singleton
     @Provides
-    YoApi.YoService provideYoService(Context context, YoApi.YoRefreshTokenService tokenService, @Named("login") PreferenceEndPoint endPoint, Log log) {
+    YoApi.YoService provideYoService(Context context, YoApi.YoRefreshTokenService tokenService, @Named("login") PreferenceEndPoint endPoint, Log log, ConnectivityHelper connectivityHelper) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.authenticator(new TokenAuthenticator(tokenService, endPoint, log));
+        builder.authenticator(new TokenAuthenticator(context, tokenService, endPoint, log));
+        enableCache(context, builder);
+        return buildAdapter(BuildConfig.BASE_URL, YoApi.YoService.class, builder, connectivityHelper);
+    }
+
+    private void enableCache(Context context, OkHttpClient.Builder builder) {
         long SIZE_OF_CACHE = 10 * 1024 * 1024; // 10 MB
         Cache cache = new Cache(new File(context.getCacheDir(), "http"), SIZE_OF_CACHE);
         builder.cache(cache);
-        return buildAdapter(YoApi.BASE_URL, YoApi.YoService.class, builder);
+
     }
 
     @Singleton
     @Provides
-    YoApi.YoRefreshTokenService provideYoRefreshTokenService() {
+    YoApi.YoRefreshTokenService provideYoRefreshTokenService(Context context, ConnectivityHelper connectivityHelper) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        return buildAdapter(YoApi.BASE_URL, YoApi.YoRefreshTokenService.class, builder);
+        enableCache(context, builder);
+        return buildAdapter(BuildConfig.BASE_URL, YoApi.YoRefreshTokenService.class, builder, connectivityHelper);
     }
 
-    private <T> T buildAdapter(String baseUrl, Class<T> clazz, OkHttpClient.Builder builder) {
+    private <T> T buildAdapter(String baseUrl, Class<T> clazz, OkHttpClient.Builder builder, ConnectivityHelper connectivityHelper) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         //
-
         OkHttpClient defaultHttpClient = builder
                 .addInterceptor(interceptor)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 //work like charm! Enable later
-//                .addNetworkInterceptor(mCacheControlInterceptor)
+//                .addNetworkInterceptor(new CacheInterceptor(connectivityHelper))
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .client(defaultHttpClient)
@@ -77,18 +89,31 @@ public class NetWorkModule {
         return retrofit.create(clazz);
     }
 
-    //https://gist.github.com/polbins/1c7f9303d2b7d169a3b1
-    private static final Interceptor mCacheControlInterceptor = new Interceptor() {
+    public class CacheInterceptor implements Interceptor {
+        ConnectivityHelper mConnectivityHelper;
+
+        public CacheInterceptor(ConnectivityHelper connectivityHelper) {
+            mConnectivityHelper = connectivityHelper;
+        }
+
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
-
+            boolean isCacheEnable = true;
+            if (request.url().toString().contains("api/tags.json")) {
+                isCacheEnable = false;
+            }
+            if (!isCacheEnable) {
+                Response response = chain.proceed(request);
+                return response;
+            }
             // Add Cache Control only for GET methods
-            if (request.method().equals("GET")) {
-                if (false/*ConnectivityHelper.isNetworkAvailable(mContext)*/) {
+            if (isCacheEnable && request.method().equals("GET") /*|| request.method().equals("POST")*/) {
+                if (mConnectivityHelper.isConnected()) {
                     // 1 day
                     request.newBuilder()
-                            .header("Cache-Control", "only-if-cached")
+//                            .header("Cache-Control", "only-if-cached")
+                            .header("Cache-Control", "only-if-cached,max-age=31536000")
                             .build();
                 } else {
                     // 4 weeks stale
@@ -101,10 +126,42 @@ public class NetWorkModule {
             Response response = chain.proceed(request);
 
             // Re-write response CC header to force use of cache
-            return response;
-//            .newBuilder()
+            return response
+                    .newBuilder()
+                    .header("Cache-Control", "public, max-age=86400") // 1 day
+                    .build();
+
+        }
+    }
+
+    //https://gist.github.com/polbins/1c7f9303d2b7d169a3b1
+//    private static final Interceptor mCacheControlInterceptor = new Interceptor() {
+//        @Override
+//        public Response intercept(Chain chain) throws IOException {
+//            Request request = chain.request();
+//
+//            // Add Cache Control only for GET methods
+//            if (request.method().equals("GET")) {
+//                if (false/*ConnectivityHelper.isNetworkAvailable(mContext)*/) {
+//                    // 1 day
+//                    request.newBuilder()
+//                            .header("Cache-Control", "only-if-cached")
+//                            .build();
+//                } else {
+//                    // 4 weeks stale
+//                    request.newBuilder()
+//                            .header("Cache-Control", "public, max-stale=2419200")
+//                            .build();
+//                }
+//            }
+//
+//            Response response = chain.proceed(request);
+//
+//            // Re-write response CC header to force use of cache
+//            return response
+//                    .newBuilder()
 //                    .header("Cache-Control", "public, max-age=86400") // 1 day
 //                    .build();
-        }
-    };
+//        }
+//    };
 }

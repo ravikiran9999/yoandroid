@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yo.android">
 
+    <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -17,6 +18,14 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <!-- Required to register a SyncStatusObserver to display a "syncing..." progress indicator. -->
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <!-- Required to enable our SyncAdapter after it's created. -->
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <!-- Required because we're manually creating a new account. -->
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
 
     <uses-feature
         android:name="android.hardware.sip.voip"
@@ -47,27 +56,32 @@
         </activity>
 
         <!-- uncomment below lines to enable notifications -->
-        <!--
         <service
-            android:name=".notification.PushNotificationService"
+            android:name=".chat.notification.PushNotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".notification.MyInstanceIDListenerService"
+            android:name=".chat.notification.MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        -->
 
         <activity
             android:name=".ui.SettingsActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".ui.UpdateProfileActivity"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.OthersProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.ShowPhotoActivity"
             android:screenOrientation="portrait" />
@@ -78,14 +92,15 @@
         <activity
             android:name=".ui.BottomTabsActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".chat.ui.ChatActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".chat.ui.LoginActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -110,6 +125,15 @@
             android:taskAffinity=".outgoing"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".ui.UserProfileActivity"
+            android:label="@string/user_profile" />
+        <activity
+            android:name=".ui.MoreSettingsActivity"
+            android:label="@string/settings_label"
+            android:theme="@style/AppTheme.Switch"
+            android:windowSoftInputMode="stateHidden" />
+
         <service android:name=".voip.SipService" />
 
         <activity android:name=".chat.ui.SignupActivity" />
@@ -119,15 +143,22 @@
         <activity android:name=".chat.ui.fragments.AppContactsActivity" />
         <activity
             android:name=".ui.FollowMoreTopicsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.NewMagazineActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible"/>
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".ui.LoadMagazineActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".chat.ui.CreateGroupActivity" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".chat.ui.CreateGroupActivity"
+            android:label="@string/new_group" />
+        <activity
+            android:name=".chat.ui.GroupContactsActivity"
+            android:label="@string/new_group" />
         <activity
             android:name=".ui.CountryListActivity"
             android:screenOrientation="portrait" />
@@ -137,10 +168,98 @@
         <activity
             android:name=".ui.MyCollections"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.MyCollectionDetails"
+        <activity
+            android:name=".ui.MyCollectionDetails"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.UserCreatedMagazineActivity"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.UserCreatedMagazineActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CreatedMagazineDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.EditMagazineActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".ui.FindPeopleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.FollowersActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.WishListActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.fragments.InviteActivity" />
+
+        <!-- SMS Receiver -->
+        <receiver android:name=".voip.IncomingSmsReceiver">
+            <intent-filter android:priority="99999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".ui.FollowingsActivity"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name=".chat.firebase.FirebaseService"
+            android:enabled="true" />
+
+        <activity
+            android:name=".ui.OthersMagazinesDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TabsHeaderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".inapp.UnManageInAppPurchaseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Translucent" />
+        <activity
+            android:name=".ui.NotificationsActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"></activity>
+
+        <provider
+            android:name=".provider.YoAppContactProvider"
+            android:authorities="com.yo.android.provider.contacts"
+            android:exported="false" />
+        <!-- This service implements our SyncAdapter. It needs to be exported, so that the system
+                sync framework can access it. -->
+        <service
+            android:name=".sync.SyncService"
+            android:exported="true">
+            <!-- This intent filter is required. It allows the system to launch our sync service
+            as needed. -->
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <!-- This points to a required XML file which describes our SyncAdapter. -->
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <!-- This implements the account we'll use as an attachment point for our SyncAdapter. Since
+        our SyncAdapter doesn't need to authenticate the current user (it just fetches a public RSS
+        feed), this account's implementation is largely empty.
+
+        It's also possible to attach a SyncAdapter to an existing account provided by another
+        package. In that case, this element could be omitted here. -->
+        <service android:name=".sync.accounts.GenericAccountService">
+            <!-- Required filter used by the system to launch our account service. -->
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <!-- This points to an XMLf ile which describes our account service. -->
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
     </application>
 
 </manifest>

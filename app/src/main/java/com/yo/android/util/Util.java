@@ -5,23 +5,30 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.BottomTabsActivity;
 
 import java.io.IOException;
@@ -35,6 +42,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
+
+import retrofit2.Response;
 
 /**
  * Created by Ramesh on 1/7/16.
@@ -128,7 +138,7 @@ public class Util {
     public static String parseDate(String s) {
         try {
             Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
-            String timeStamp = DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
+            String timeStamp = DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
             return timeStamp;
         } catch (ParseException e) {
             e.printStackTrace();
@@ -138,7 +148,9 @@ public class Util {
 
     public static long getTime(String str) {
         try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(str);
+            SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sourceFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = sourceFormat.parse(str);
             return date.getTime();
         } catch (ParseException e) {
             e.printStackTrace();
@@ -181,7 +193,7 @@ public class Util {
         return new SimpleDateFormat("hh:mm a").format(new Date(time));
     }
 
-    public static void prepareSearch(Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
+    public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -189,6 +201,7 @@ public class Util {
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -197,6 +210,8 @@ public class Util {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG, "onQueryTextChange: " + query);
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
                 return true;
             }
 
@@ -212,6 +227,56 @@ public class Util {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
+                if (adapter != null) {
+                    adapter.performSearch("");
+                }
+                return true;
+            }
+        });
+    }
+
+    public static void prepareContactsSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final String roomType) {
+        final SearchManager searchManager =
+                (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem;
+        SearchView searchView;
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(activity.getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            public static final String TAG = "PrepareSearch in Util";
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "onQueryTextChange: " + query);
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG, "onQueryTextChange: " + newText);
+                if (adapter != null) {
+                    if (roomType.equalsIgnoreCase(Constants.CHAT_FRAG)) {
+                        adapter.performContactsSearch(newText);
+                    } else {
+                        adapter.performYoContactsSearch(newText);
+                    }
+                }
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
                 if (adapter != null) {
                     adapter.performSearch("");
                 }
@@ -229,6 +294,7 @@ public class Util {
             }
         }
     }
+
     public static void registerSearchLister(final Activity activity, final Menu menu) {
         MenuItem view = menu.findItem(R.id.menu_search);
         MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
@@ -242,12 +308,14 @@ public class Util {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 if (activity instanceof BottomTabsActivity) {
                     ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
+                    ((BottomTabsActivity) activity).refresh();
                 }
                 Util.changeMenuItemsVisibility(menu, -1, true);
                 return true;
             }
         });
     }
+
     public static String getChatListTimeFormat(long time) {
         Calendar smsTime = Calendar.getInstance();
         smsTime.setTimeInMillis(time);
@@ -264,14 +332,94 @@ public class Util {
 
     public static void changeSearchProperties(Menu menu) {
         SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-
+        search.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         AutoCompleteTextView searchTextView = (AutoCompleteTextView) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
-            searchTextView.setTextColor(Color.BLACK);
+            searchTextView.setTextColor(Color.WHITE);
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
             mCursorDrawableRes.setAccessible(true);
-            mCursorDrawableRes.set(searchTextView,R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+            mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
         } catch (Exception e) {
+        }
+    }
+
+    public static void shareIntent(View view, String url, String title) {
+        try {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, title);
+            i.putExtra(Intent.EXTRA_TEXT, url);
+            view.getContext().startActivity(Intent.createChooser(i, title));
+        } catch (ActivityNotFoundException e) {
+
+        }
+    }
+
+    public static void hideKeyboard(Context context, View view) {
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+
+    public static void showSoftKeyboard(View view) {
+        // requesting the view Focus
+        if (view != null && view.requestFocus()) {
+            // Gets the input method service ....
+            InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
+    public static Date convertUtcToGmt(String time) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date gmtTime = sdf.parse(time);
+            return gmtTime;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String parseConvertUtcToGmt(String time) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date gmtTime = sdf.parse(time);
+            String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+            return timeStamp;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+
+    public static void saveUserDetails(Response<UserProfileInfo> response, PreferenceEndPoint preferenceEndPoint) {
+
+        preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+        preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
+        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+        preferenceEndPoint.saveBooleanPreference(Constants.SYNCE_CONTACTS, response.body().isSyncContacts());
+        preferenceEndPoint.saveBooleanPreference(Constants.NOTIFICATION_ALERTS, response.body().isNotificationAlert());
+
+    }
+
+    public static void inviteFriend(Context context, String phoneNo) {
+        try {
+            String url = context.getString(R.string.invite_link);
+            Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+            smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+            smsIntent.setType("vnd.android-dir/mms-sms");
+            smsIntent.putExtra("sms_body", url);
+            smsIntent.setData(Uri.parse("sms:" + phoneNo));
+            smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(smsIntent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

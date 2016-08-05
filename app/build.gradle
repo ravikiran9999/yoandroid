@@ -1,6 +1,16 @@
 apply plugin: 'com.android.application'
-apply plugin: 'sonar-runner'
+
+
 android {
+    signingConfigs {
+        config {
+            keyAlias 'yoapp'
+            keyPassword '123456'
+//          storeFile file('E:\\Yo\\yo-android\\yoapp-stage.jks')
+            storeFile file('config/yoapp-stage.jks')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
     useLibrary 'org.apache.http.legacy'
@@ -9,21 +19,49 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.3.4"
+        versionName "16.3.9.6"
     }
     productFlavors {
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+
+            buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
+            buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""
+            buildConfigField "String", "CLIENT_SECRET", "\"1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com/Rooms/\""
+            //signingConfig signingConfigs.config
+
         }
         stage {
+            applicationIdSuffix ".stage"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            //applicationId "com.yo.android.stage"
+
+            buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
+            buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
+            buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com/Rooms/\""
+//            applicationId "com.yo.android.stage"
+
+
         }
+        //This will flavor will enable BeepSend SMS gateway for verification
+//        stagePaidSms {
+//            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+//            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+//        }
     }
     buildTypes {
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
     }
     lintOptions {
         abortOnError false
@@ -38,13 +76,12 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     //Support libs
     compile "com.android.support:appcompat-v7:${supportAppcompatVersion}"
     compile "com.android.support:design:${supportDesignVersion}"
     compile "com.android.support:cardview-v7:${supportCardViewVersion}"
     compile "com.android.support:recyclerview-v7:${supportRecyclerViewVersion}"
-
     // ormlite
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
@@ -53,15 +90,13 @@ dependencies {
     compile 'com.google.firebase:firebase-auth:9.0.2'
     compile 'com.google.firebase:firebase-database:9.0.2'
     compile 'com.google.firebase:firebase-storage:9.0.2'
-
-    compile project(":flip")
-
+    compile 'com.firebase:firebase-client-android:2.5.2'
+    compile project(':flip')
+    compile project(':tagview')
     //    compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
     //Butter knife - view injector
-
     compile 'com.squareup.dagger:dagger:1.2.2'
     compile 'com.android.support:support-v4:23.4.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
@@ -70,39 +105,59 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     testCompile 'junit:junit:4.12'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-    stageCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.18'
+    compile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
+    /*stageCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     stageCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
-    stageCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
-    compile 'com.github.Cutta:TagView:c15dd8288a'
+    stageCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'*/
+
+    /*stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
+    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
+    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'*/
+
+//    compile 'com.github.Cutta:TagView:c15dd8288a'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile "com.android.support:palette-v7:${supportAppcompatVersion}"
 }
 apply plugin: 'com.google.gms.google-services'
 
-sonarRunner {
-    sonarProperties {
-        property 'sonar.projectKey', 'YO-AndroidApp'
-        property 'sonar.projectName', 'YOAndroid'
-        property 'sonar.sources', 'src/main/java'
-        property 'sonar.tests', 'test'
-        property 'sonar.test.inclusion', '**/*Test.*'
-        property 'sonar.binaries', 'build/intermediates/classes/release'
-        property 'sonar.java.binaries', 'build/intermediates/classes/release'
-        property 'sonar.junit.reportsPath', 'build/test-results/release'
-        property 'sonar.dynamicAnalysis', 'reuseReports'
-        property 'sonar.java.coveragePlugin', 'jacoco'
-        property 'sonar.jacoco.reportPath', 'build/jacoco/jacoco.merged.exec'
-        property 'sonar.sourceEncoding', 'windows-1252'
-        property 'sonar.scm.disabled', 'true'
-        property 'sonar.exclusions', '**/R.class, **/R$*.class,**/BuildConfig.*,**/Manifest*.*,**/*.xml'
-    }
-
-}
 
 public Properties getAwsProperties() {
     Properties props = new Properties()
     File propsFile = new File("gradle.properties");
     props.load(propsFile.newDataInputStream());
     return props;
+}
+
+def releasePath = file("${rootDir}/apks")
+def publish = project.tasks.create("publishAll")
+android.applicationVariants.all { variant ->
+    if (variant.buildType.name == 'debug') {
+        def n = 0
+        def task = project.tasks.create("publish${variant.name}Apk", Copy)
+        task.from(variant.outputs[0].outputFile)
+//       def file = variant.outputs[0].outputFile
+        task.into(releasePath)
+//    baseName
+
+        def name = variant.baseName.replace("-debug", "");//.toUpperCase();
+        name = name.substring(0, 1).toUpperCase() + name.substring(1)
+        def oldName = "app-${variant.productFlavors.name}-${variant.buildType.name}.apk";
+        def newFollow = "Yo_App_Android_${name}_V${android.defaultConfig.versionName}.apk";
+        println("base name- " + name)
+        println("flavor name- " + variant.productFlavors.name)
+        task.rename({ String fileName ->
+            n = n + 1
+            println("file name- " + newFollow)
+            fileName - fileName + newFollow
+            // fileName - '.apk' + n + 'test.apk'
+        })
+//Yo_App_Android_V
+        task.dependsOn variant.assemble
+        publish.dependsOn task
+    }
 }

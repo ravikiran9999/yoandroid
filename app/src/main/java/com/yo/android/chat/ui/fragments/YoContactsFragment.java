@@ -13,21 +13,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.yo.android.R;
 import com.yo.android.adapters.AppContactsListAdapter;
-import com.yo.android.adapters.ContactsListAdapter;
+import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
-import com.yo.android.model.ChatRoom;
+import com.yo.android.model.ChatMessage;
+import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
+import com.yo.android.model.Room;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,8 +48,19 @@ import java.util.ArrayList;
 public class YoContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private ArrayList<Registration> arrayOfUsers;
+    private ArrayList<ChatMessage> forwardChatMessages;
     private AppContactsListAdapter appContactsListAdapter;
     private ListView listView;
+    private Menu menu;
+
+    @Inject
+    YoApi.YoService yoService;
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
+
+    public Menu getMenu() {
+        return menu;
+    }
 
     public YoContactsFragment() {
         // Required empty public constructor
@@ -46,6 +70,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -62,88 +87,103 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getRegisteredAppUsers();
+
+
+        if (getArguments() != null) {
+            forwardChatMessages = getArguments().getParcelableArrayList(Constants.CHAT_FORWARD);
+        }
+
         arrayOfUsers = new ArrayList<>();
         appContactsListAdapter = new AppContactsListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(appContactsListAdapter);
+        getYoAppUsers();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_app_contacts, menu);
+        this.menu = menu;
+        Util.prepareContactsSearch(getActivity(), menu, appContactsListAdapter, Constants.Yo_CONT_FRAG);
+        Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Registration registration = (Registration) listView.getItemAtPosition(position);
-        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        String opponentPhoneNumber = registration.getPhoneNumber();
-        showUserChatScreen(yourPhoneNumber, opponentPhoneNumber);
+        Contact contact = (Contact) listView.getItemAtPosition(position);
+
+        if (forwardChatMessages != null) {
+            navigateToChatScreen(contact, forwardChatMessages);
+
+        } else {
+            navigateToChatScreen(contact);
+        }
     }
 
-    private void showUserChatScreen(@NonNull final String yourPhoneNumber, @NonNull final String opponentPhoneNumber) {
-        final String roomCombination1 = yourPhoneNumber + ":" + opponentPhoneNumber;
-        final String roomCombination2 = opponentPhoneNumber + ":" + yourPhoneNumber;
-        DatabaseReference databaseRoomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-        databaseRoomReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean value1 = dataSnapshot.hasChild(roomCombination1);
-                boolean value2 = dataSnapshot.hasChild(roomCombination2);
-                if (value1) {
-                    navigateToChatScreen(roomCombination1, opponentPhoneNumber, yourPhoneNumber);
-                } else if (value2) {
-                    navigateToChatScreen(roomCombination2, opponentPhoneNumber, yourPhoneNumber);
-                } else {
-                    String chatRoomId = yourPhoneNumber + ":" + opponentPhoneNumber;
-                    ChatRoom chatRoom = new ChatRoom(yourPhoneNumber, opponentPhoneNumber, chatRoomId);
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM);
-                    DatabaseReference databaseRoomReference = databaseReference.child(chatRoomId);
-                    databaseRoomReference.setValue(chatRoom);
-                    navigateToChatScreen(chatRoomId, opponentPhoneNumber,yourPhoneNumber);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, String yourPhoneNumber) {
+    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, String yourPhoneNumber, String opponentId) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
+        intent.putExtra(Constants.OPPONENT_ID, opponentId);
         intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
         startActivity(intent);
+        getActivity().finish();
     }
 
+    private void navigateToChatScreen(Contact contact, ArrayList<ChatMessage> forward) {
 
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra(Constants.CONTACT, contact);
+        intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, forward);
+        intent.putExtra(Constants.TYPE, Constants.CONTACT);
+        startActivity(intent);
+        getActivity().finish();
+    }
 
-    private void getRegisteredAppUsers() {
-        showProgressDialog();
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference(Constants.APP_USERS);
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void navigateToChatScreen(Contact contact) {
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra(Constants.CONTACT, contact);
+        intent.putExtra(Constants.TYPE, Constants.CONTACT);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
+    private void getYoAppUsers() {
+
+        if (mContactsSyncManager.getContacts().isEmpty()) {
+            showProgressDialog();
+        }
+        List < Contact > contactList = new ArrayList<>();
+         for (int i = 0; i < mContactsSyncManager.getContacts().size(); i++) {
+             if (mContactsSyncManager.getContacts().get(i).getYoAppUser()) {
+                contactList.add(mContactsSyncManager.getContacts().get(i));
+
+            }
+
+        }
+        appContactsListAdapter.addItems(contactList);
+
+        mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arrayOfUsers.clear();
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Registration registeredUsers = child.getValue(Registration.class);
-                    if (!(registeredUsers.getPhoneNumber().equals(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER)))) {
-                        arrayOfUsers.add(registeredUsers);
+            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                List<Contact> contactList = new ArrayList<>();
+                if (response.body() != null) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        if (response.body().get(i).getYoAppUser()) {
+                            contactList.add(response.body().get(i));
+                        }
                     }
+                    appContactsListAdapter.addItems(contactList);
                 }
-                appContactsListAdapter.addItems(arrayOfUsers);
                 dismissProgressDialog();
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
             }
         });
+
     }
 
     @Override

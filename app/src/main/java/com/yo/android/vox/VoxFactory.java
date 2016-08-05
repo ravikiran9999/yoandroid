@@ -2,6 +2,7 @@ package com.yo.android.vox;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,8 +14,8 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class VoxFactory {
-    private String LOGINUSER = "droid";
-    private String LOGINSECRET = "30aa498c5be84f703add8e0b1ff69fc9620e71a7";
+    private String LOGINUSER = "droid";//user4app
+    private String LOGINSECRET = "30aa498c5be84f703add8e0b1ff69fc9620e71a7";//f7c3bc1d808e04732adf679965ccc34ca7ae3441
 
     @Inject
     public VoxFactory() {
@@ -46,10 +47,44 @@ public class VoxFactory {
         return addSubscriberBody;
     }
 
+    public String addSubscriber(String username, String mobile, String countryCode) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("PACKAGEID", "1");
+        data.put("USERNAME", username);
+        data.put("PASSWORD", "123456");
+        data.put("FULLNAME", "John Dev");
+        data.put("ADDRESS", "22-2-11,xyz");
+        data.put("EXPIRYDATE", "2019-08-27");
+        data.put("EMAILID", "test@gmail.com");
+        data.put("PHONENUMBER", mobile);
+        data.put("STATUS", "1");
+        data.put("COUNTRYCODE", countryCode);
+        data.put("MAXCALL", "1");
+        data.put("CREDIT", "2");
+        ArrayList CALLERIDARRAY = new ArrayList<String>();
+        CALLERIDARRAY.add(mobile);
+        data.put("CALLERIDARRAY", mobile);
+        return prepareRequest("SUBSCRIBER", "ADD", data);
+    }
+
+
     public String getBalanceBody(String subscriberId) {
         Map<String, Object> data = new HashMap<>();
         data.put("SUBSCRIBERID", subscriberId);
         return prepareRequest("SUBSCRIBER", "GETBALANCE", data);
+    }
+
+    public String getPaymentHistory(String subscriberId) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("SUBSCRIBERID", subscriberId);
+        return prepareRequest("SUBSCRIBER", "PAYMENTHISTORY", data);
+    }
+
+    public String addBalanceBody(String subscriberId, String credit) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("SUBSCRIBERID", subscriberId);
+        data.put("CREDIT", credit);
+        return prepareRequest("SUBSCRIBER", "ADDBALANCE", data);
     }
 
 
@@ -57,6 +92,14 @@ public class VoxFactory {
         Map<String, Object> data = new HashMap<>();
         data.put("USERNAME", mobile);
         return prepareRequest("BALANCE", "CDR", data);
+    }
+
+    public String verifyOTP(String pin) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("PIN", "+919573535345");
+        data.put("TYPE", "1");
+        data.put("PACKAGEID", "1");
+        return prepareRequest("OTP", "OTPREQUEST", data);
     }
 
     public String getCallRatesBody(String packageId) {
@@ -71,6 +114,17 @@ public class VoxFactory {
         Map<String, Object> data = new HashMap<>();
         data.put("USERNAME", mobile);
         return prepareRequest("SUBSCRIBER", "GETSUBSCRIBERID", data);
+    }
+
+    //2014­10­01
+    public String getSpentDetailsHistoryBody(String subscriberId, String fromDate, String toDate, String limit) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("SUBSCRIBERID", subscriberId);
+        data.put("FROMDATE", fromDate);
+        data.put("TODATE", toDate);
+        data.put("LIMIT", limit);
+        data.put("COUNT", "0");
+        return prepareRequest("SUBSCRIBER", "CDRDATERANGE", data);
     }
 
     private String prepareRequest(String section, String action, Map<String, Object> data) {

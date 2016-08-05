@@ -12,6 +12,9 @@ public class Articles {
     private String summary;
     private boolean isChecked;
     private String liked;
+    private boolean isFollow;
+    private String isFollowing;
+    private String magzine_id;
 
     public String getId() {
         return id;
@@ -67,5 +70,29 @@ public class Articles {
 
     public void setLiked(String liked) {
         this.liked = liked;
+    }
+
+    public boolean isFollow() {
+        return isFollow;
+    }
+
+    public void setIsFollow(boolean isFollow) {
+        this.isFollow = isFollow;
+    }
+
+    public String getIsFollowing() {
+        return isFollowing;
+    }
+
+    public void setIsFollowing(String isFollowing) {
+        this.isFollowing = isFollowing;
+    }
+
+    public String getMagzine_id() {
+        return magzine_id;
+    }
+
+    public void setMagzine_id(String magzine_id) {
+        this.magzine_id = magzine_id;
     }
 }

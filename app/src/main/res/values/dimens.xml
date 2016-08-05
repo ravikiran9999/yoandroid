@@ -37,5 +37,9 @@
     <dimen name="dialpad_key_number_margin_bottom">3dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-
+    <dimen name="three_grid_unit">24dp</dimen>
+    <dimen name="one_and_a_half_grid_unit">12dp</dimen>
+    <dimen name="photo_width">110dp</dimen>
+    <dimen name="photo_height">110dp</dimen>
+    <dimen name="magazine_image_height">150dp</dimen>
 </resources>

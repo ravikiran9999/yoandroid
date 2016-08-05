@@ -58,6 +58,9 @@ public class Receiver extends InjectedBroadcastReceiver {
             }
 
         } else if (VoipConstants.NEW_ACCOUNT_REGISTRATION.equals(intentAction)) {
+            if (register != null) {
+                register.closeLocalProfile();
+            }
             doNewAccountRegistration(context, intent);
         } else if (intentAction.equals(Intent.ACTION_BOOT_COMPLETED)) {
             mLog.d("Yo.RECEIVER", "BOOT COMPLETE RECEIVED");
@@ -136,6 +139,9 @@ public class Receiver extends InjectedBroadcastReceiver {
                     ||
                     register.getCurrentState() == RegisterSip.UNREGISTERED) {
                 manager = SipManager.newInstance(context);
+                if (register != null) {
+                    register.closeLocalProfile();
+                }
                 register = new RegisterSip(mLog, manager, profile, context, username, password,
                         DOMAIN_ADDRESS);
                 profile = register.getProfile();

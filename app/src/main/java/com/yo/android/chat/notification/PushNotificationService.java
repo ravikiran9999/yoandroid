@@ -10,13 +10,19 @@ import android.support.v4.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.orion.android.common.logger.Log;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.ui.MainActivity;
+import com.yo.android.ui.NotificationsActivity;
+import com.yo.android.util.Constants;
 
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by rdoddapaneni on 6/22/2016.
@@ -27,11 +33,13 @@ public class PushNotificationService extends FirebaseMessagingService {
 
     @Inject
     protected Log mLog;
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
 
-    /**
-     * Constructor
-     */
-    public PushNotificationService() {
+    @Override
+    public void onCreate() {
+        super.onCreate();
         Injector.obtain(getApplication()).inject(this);
     }
 
@@ -39,37 +47,59 @@ public class PushNotificationService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String body = remoteMessage.getNotification().getBody();
-        String title = remoteMessage.getNotification().getTitle();
+//        String body = remoteMessage.getNotification().getBody();
+//        String title = remoteMessage.getNotification().getTitle();
         Map data = remoteMessage.getData();
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
-        mLog.i(TAG, "onMessageReceived: title- %s and data- %s", title, data.toString());
-        createNotification(body);
+        mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
+        EventBus.getDefault().post(Constants.UPDATE_NOTIFICATIONS);
+        if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
+        mLog.i(TAG, "In Notifications screen");
+        }
+        else {
+            createNotification(data.get("title").toString(), data.get("message").toString());
+        }
     }
 
-    private void createNotification(String body) {
+    public void createNotification(String title, String message) {
 
-        Intent destinationIntent = new Intent(this, MainActivity.class);
+        Intent destinationIntent = new Intent(this, NotificationsActivity.class);
 
-        int notificationId = body.hashCode();
+        int notificationId = title.hashCode();
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);
 
-        NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
-        notificationStyle.bigText(body);
+       /* NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
+        notificationStyle.bigText(title);
 
         Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle("FCM ChatMessage")
-                .setContentText(body)
+                .setSmallIcon(getNotificationIcon())
+                .setContentTitle(title)
+                .setContentText(message)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setStyle(notificationStyle)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationId, notification);
+        notificationManager.notify(notificationId, notification);*/
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext())
+                .setSmallIcon(getNotificationIcon())
+                .setContentTitle(title)
+                .setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_SOUND)
+                .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(message)).setContentIntent(pendingIntent);
+        mNotificationManager.notify((int) System.currentTimeMillis(), notification.build());
 
 
+    }
+
+    private int getNotificationIcon() {
+        boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
+        return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
     }
 }

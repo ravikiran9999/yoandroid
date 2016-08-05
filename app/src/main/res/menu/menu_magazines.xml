@@ -2,14 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--<item xmlns:app="http://schemas.android.com/apk/res-auto"
+    <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search_white_36dp"
         android:title="Search"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="always|collapseActionView" />-->
+        app:showAsAction="always|collapseActionView" />
     <item android:id="@+id/menu_followers"
         android:title="Followers"
+        app:showAsAction="never" />
+    <item android:id="@+id/menu_followings"
+        android:title="Followings"
         app:showAsAction="never" />
     <item android:id="@+id/menu_find_people"
         android:title="Find People"
@@ -19,5 +22,8 @@
         app:showAsAction="never" />
     <item android:id="@+id/menu_my_collections"
         android:title="My Collections"
+        app:showAsAction="never" />
+    <item android:id="@+id/menu_wish_list"
+        android:title="Wish List"
         app:showAsAction="never" />
 </menu>

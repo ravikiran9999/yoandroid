@@ -1,7 +1,7 @@
 package com.yo.android.ui;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,14 +18,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
+import com.yo.android.model.UserProfileInfo;
+import com.yo.android.sync.SyncUtils;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
@@ -34,6 +43,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -48,6 +62,11 @@ public class BottomTabsActivity extends BaseActivity {
     TabsPagerAdapter mAdapter;
     CustomViewPager viewPager;
     private int toolBarColor;
+    @Inject
+    ContactsSyncManager contactsSyncManager;
+    @Inject
+    MyServiceConnection myServiceConnection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +74,6 @@ public class BottomTabsActivity extends BaseActivity {
         setContentView(R.layout.activity_bottom_tabs);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         viewPager = (CustomViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);
@@ -64,6 +82,8 @@ public class BottomTabsActivity extends BaseActivity {
         mAdapter.addFragment(new ContactsFragment(), null);
         mAdapter.addFragment(new MoreFragment(), null);
         viewPager.setAdapter(mAdapter);
+
+        preferenceEndPoint.saveBooleanPreference("isNotifications", false);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -78,11 +98,7 @@ public class BottomTabsActivity extends BaseActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
+                setToolBarColor(getResources().getColor(R.color.colorPrimary));
                 try {
                     setToolBarTitle((dataList.get(position)).getTitle());
                 } catch (Exception e) {
@@ -91,16 +107,35 @@ public class BottomTabsActivity extends BaseActivity {
             }
 
             @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
             public void onPageScrollStateChanged(int state) {
 
             }
         });
 
+        // firebase service
+
+        if (!myServiceConnection.isServiceConnection()) {
+            Intent intent = new Intent(this, FirebaseService.class);
+            startService(intent);
+
+            bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
+        }
+
         //
         Intent in = new Intent(getApplicationContext(), SipService.class);
         startService(in);
         balanceHelper.checkBalance();
-
+        //
+        loadUserProfileInfo();
+        updateDeviceToken();
+        contactsSyncManager.syncContacts();
+        SyncUtils.CreateSyncAccount(this, preferenceEndPoint);
+//        SyncUtils.TriggerRefresh();
     }
 
     @Override
@@ -136,8 +171,8 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (getSupportFragmentManager().findFragmentById(R.id.content) != null) {
-            getSupportFragmentManager().findFragmentById(R.id.content).onActivityResult(requestCode, resultCode, data);
+        if (getFragment() != null) {
+            getFragment().onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -174,14 +209,16 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (R.id.menu_search == item.getItemId()) {
-            setToolBarColor(Color.WHITE);
+            setToolBarColor(getResources().getColor(R.color.colorPrimary));
             Menu menu = null;
             if (getFragment() instanceof ChatFragment) {
                 menu = ((ChatFragment) getFragment()).getMenu();
-            }else if (getFragment() instanceof ContactsFragment) {
+            } else if (getFragment() instanceof ContactsFragment) {
                 menu = ((ContactsFragment) getFragment()).getMenu();
-            }else if (getFragment() instanceof DialerFragment) {
+            } else if (getFragment() instanceof DialerFragment) {
                 menu = ((DialerFragment) getFragment()).getMenu();
+            } else if (getFragment() instanceof MagazinesFragment) {
+                menu = ((MagazinesFragment) getFragment()).getMenu();
             }
             if (menu != null) {
                 Util.changeMenuItemsVisibility(menu, R.id.menu_search, false);
@@ -189,6 +226,12 @@ public class BottomTabsActivity extends BaseActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void refresh() {
+        if (getFragment() instanceof MagazinesFragment) {
+            ((MagazinesFragment) getFragment()).getmMagazineFlipArticlesFragment().refresh();
+        }
     }
 
     public class TabsData {
@@ -210,5 +253,49 @@ public class BottomTabsActivity extends BaseActivity {
         }
     }
 
+    private void loadUserProfileInfo() {
+        String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.getUserInfo(access).enqueue(new Callback<UserProfileInfo>() {
+            @Override
+            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                if (response.body() != null) {
+                    Util.saveUserDetails(response,preferenceEndPoint);
+                    preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
+                    preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
+                    if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.USER_NAME))) {
+                        preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void updateDeviceToken() {
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        if (!TextUtils.isEmpty(refreshedToken)) {
+            preferenceEndPoint.saveStringPreference(Constants.FCM_REFRESH_TOKEN, refreshedToken);
+        } else {
+            refreshedToken = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        }
+        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+        }
+    }
 }
