@@ -24,7 +24,7 @@ public class MyServiceConnection implements ServiceConnection {
     public void onServiceConnected(ComponentName name, IBinder service) {
         FirebaseService.MyBinder myBinder = (FirebaseService.MyBinder) service;
         firebaseService = myBinder.getService();
-        setServiceConnection(true) ;
+
     }
 
     @Override

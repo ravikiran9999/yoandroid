@@ -213,26 +213,30 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                try {
+                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
 
-                if (dataSnapshot.hasChildren()) {
-                    room.setLastChat(chatMessage.getMessage());
-                    if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
-                        room.setImage(true);
-                    } else {
-                        room.setImage(false);
+                    if (dataSnapshot.hasChildren()) {
+                        room.setLastChat(chatMessage.getMessage());
+                        if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
+                            room.setImage(true);
+                        } else {
+                            room.setImage(false);
+                        }
+                        room.setTime(chatMessage.getTime());
+                        room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
                     }
-                    room.setTime(chatMessage.getTime());
-                    room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+                    Collections.sort(arrayOfUsers, new Comparator<Room>() {
+                        @Override
+                        public int compare(Room lhs, Room rhs) {
+                            return (int) (rhs.getTime() - lhs.getTime());
+                        }
+                    });
+
+                    chatRoomListAdapter.addItems(arrayOfUsers);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                Collections.sort(arrayOfUsers, new Comparator<Room>() {
-                    @Override
-                    public int compare(Room lhs, Room rhs) {
-                        return (int) (rhs.getTime() - lhs.getTime());
-                    }
-                });
-
-                chatRoomListAdapter.addItems(arrayOfUsers);
             }
 
             @Override
@@ -242,14 +246,19 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                if (dataSnapshot.hasChildren()) {
-                    room.setLastChat("");
-                    room.setImage(false);
-                    room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
-                }
-                if (chatRoomListAdapter != null) {
-                    chatRoomListAdapter.notifyDataSetChanged();
+                try {
+
+                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                    if (dataSnapshot.hasChildren()) {
+                        room.setLastChat("");
+                        room.setImage(false);
+                        room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+                    }
+                    if (chatRoomListAdapter != null) {
+                        chatRoomListAdapter.notifyDataSetChanged();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 

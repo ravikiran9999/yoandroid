@@ -164,4 +164,5 @@
     <string name="delete_topic_message">Are you sure you want to delete ?</string>
     <string name="invite_link">Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com</string>
 
+    <string name="service_started">%s started</string>
 </resources>

@@ -38,7 +38,7 @@ android {
         stage {
             applicationIdSuffix ".stage"
 
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             //applicationId "com.yo.android.stage"
 
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""

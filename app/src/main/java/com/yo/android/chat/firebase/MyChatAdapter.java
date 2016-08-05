@@ -36,7 +36,7 @@ public class MyChatAdapter extends FireBaseListAdapter<ChatMessage> {
 
     @Override
     protected void populateView(View v, ChatMessage item, int position) {
-        UserChatViewHolder holder = new UserChatViewHolder(v);
+        /*UserChatViewHolder holder = new UserChatViewHolder(v);
         LinearLayout layout = new LinearLayout(activity);
         holder.getChatTimeStamp().setText(Util.getChatListTimeFormat(item.getTime()) + " " + Util.getTimeFormat(activity, item.getTime()));
         LinearLayout.LayoutParams layoutParams;
@@ -77,7 +77,7 @@ public class MyChatAdapter extends FireBaseListAdapter<ChatMessage> {
             holder.getLinearLayoutText().setLayoutParams(layoutParams);
             addView(holder.getLinearLayoutText(), item, holder);
 
-        }
+        }*/
     }
 
     private void addView(final LinearLayout linearLayout, ChatMessage item, final UserChatViewHolder holder) {
