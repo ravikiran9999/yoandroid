@@ -74,7 +74,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     ContactsSyncManager mSyncManager;
     private static final int PICK_CONTACT_REQUEST = 100;
 
-    private boolean CONTACT_SYNC = true;
+    private boolean CONTACT_SYNC = false;
 
     public ContactsFragment() {
         // Required empty public constructor
