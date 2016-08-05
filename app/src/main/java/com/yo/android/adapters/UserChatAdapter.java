@@ -106,7 +106,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.VERTICAL);
 
-            holder.getChatTimeStamp().setText(Util.getChatListTimeFormat(item.getTime()) + " " + Util.getTimeFormat(mContext, item.getTime()));
+            if (item.getSent() != 0) {
+                holder.getChatTimeStamp().setText(Util.getChatListTimeFormat(item.getTime()) + " " + Util.getTimeFormat(mContext, item.getTime()));
+            }
 
             if (userId.equals(item.getSenderID())) {
 
@@ -128,7 +130,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     holder.getLl().setBackgroundResource(R.drawable.bg_sms_yellow);
                 }
 
-                holder.getLl().setLayoutParams(layoutParams);
+                //holder.getLl().setLayoutParams(layoutParams);
                 addView(layout, item, holder);
 
             } else {
@@ -150,7 +152,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     holder.getLl().setBackgroundResource(R.drawable.bg_sms_grey);
                 }
 
-                holder.getLl().setLayoutParams(layoutParams);
+                //holder.getLl().setLayoutParams(layoutParams);
                 addView(layout, item, holder);
             }
 
@@ -160,8 +162,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
     private void addView(final LinearLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
-        linearLayout.removeAllViews();
-        linearLayout.setTag(holder);
+        //linearLayout.removeAllViews();
+        //linearLayout.setTag(holder);
+
+        holder.getLl().removeAllViews();
+        holder.getLl().setTag(holder);
 
         if (item.getType().equals(Constants.TEXT)) {
             if (roomType != null) {
@@ -174,10 +179,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             TextView textView = new TextView(context);
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
-            linearLayout.setTag(holder);
             linearLayout.addView(textView);
+            //linearLayout.setTag(holder);
 
+            holder.getLl().setTag(holder);
             holder.getLl().addView(linearLayout);
+
 
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {

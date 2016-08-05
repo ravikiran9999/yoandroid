@@ -46,6 +46,23 @@ public class ChatMessage implements Parcelable {
     public ChatMessage() {
     }
 
+    public ChatMessage(String msgID, String message, String senderID, int status, String imagePath, long time, boolean readUnreadStatus, int delivered, int sent, String stickeyHeader, String type, String roomId, boolean selected, String imageUrl) {
+        this.msgID = msgID;
+        this.message = message;
+        this.senderID = senderID;
+        this.status = status;
+        this.imagePath = imagePath;
+        this.time = time;
+        this.readUnreadStatus = readUnreadStatus;
+        this.delivered = delivered;
+        this.sent = sent;
+        this.stickeyHeader = stickeyHeader;
+        this.type = type;
+        this.roomId = roomId;
+        this.selected = selected;
+        this.imageUrl = imageUrl;
+    }
+
     public String getMsgID() {
         return msgID;
     }
