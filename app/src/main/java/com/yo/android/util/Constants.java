@@ -27,7 +27,7 @@ public class Constants {
 
     public static final String SENT = "SENT";
     public static final String SEEN = "SEEN";
-    public static final String DELIVERED = "DELIVERED";
+    public static final String RECEIVED = "RECEIVED";
 
     //Preference
     public static final String USER_ID = "user_id";

@@ -155,7 +155,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
 
                 if (item.getDeliveredTime() != 0) {
-                    holder.getSeenTimeStamp().setText(Constants.DELIVERED + " " + Util.getTimeFormat(mContext, item.getDeliveredTime()));
+                    holder.getSeenTimeStamp().setText(Constants.RECEIVED + " " + Util.getTimeFormat(mContext, item.getDeliveredTime()));
                 } else {
                     holder.getSeenTimeStamp().setText("");
                 }
