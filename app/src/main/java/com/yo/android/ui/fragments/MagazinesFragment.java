@@ -212,7 +212,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     private void prepareTopicsSearch(Menu menu) {
         SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        search.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
+        search.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         final SearchView.SearchAutoComplete searchTextView = (SearchView.SearchAutoComplete) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
             MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
@@ -267,13 +267,14 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
-                        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
-                            String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
-                            if (prefTags != null) {
-                                List<String> tagIds = Arrays.asList(prefTags);
-                                mMagazineFlipArticlesFragment.loadArticles(tagIds);
-                            }
-                        }
+                        mMagazineFlipArticlesFragment.loadArticles(null);
+//                        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+//                            String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
+//                            if (prefTags != null) {
+//                                List<String> tagIds = Arrays.asList(prefTags);
+//                                mMagazineFlipArticlesFragment.loadArticles(null);
+//                            }
+//                        }
 
                     }
                     return true;

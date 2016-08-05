@@ -241,20 +241,20 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Util.shareIntent(v, data.getUrl(),"Sharing Article");
+                Util.shareIntent(v, data.getUrl(), "Sharing Article");
             }
         });
 
         if (data.getIsFollowing().equals("true")) {
             holder.articleFollow.setText("Following");
             holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-            holder.articleFollow.setEnabled(false);
-            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));
+            /*holder.articleFollow.setEnabled(false);
+            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));*/
         } else {
             holder.articleFollow.setText("Follow");
             holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            holder.articleFollow.setEnabled(true);
-            holder.articleFollow.setBackgroundResource(R.drawable.ic_magazine_follow);
+           /* holder.articleFollow.setEnabled(true);
+            holder.articleFollow.setBackgroundResource(R.drawable.ic_magazine_follow);*/
         }
 
         final ViewHolder finalHolder = holder;
@@ -280,6 +280,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
                     finalHolder.articleFollow.setText("Following");
                     finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                     data.setIsFollowing("true");
+                    notifyDataSetChanged();
                 }
 
                 @Override
@@ -288,6 +289,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
                     finalHolder.articleFollow.setText("Follow");
                     finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     data.setIsFollowing("false");
+                    notifyDataSetChanged();
 
                 }
             });
@@ -322,6 +324,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
                         finalHolder.articleFollow.setText("Follow");
                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                         data.setIsFollowing("false");
+                        notifyDataSetChanged();
                     }
 
                     @Override
@@ -330,6 +333,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
                         finalHolder.articleFollow.setText("Following");
                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                         data.setIsFollowing("true");
+                        notifyDataSetChanged();
                     }
                 });
             }
@@ -341,6 +345,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
 
     public void addItems(List<Articles> articlesList) {
         items = new ArrayList<>(articlesList);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        items.clear();
         notifyDataSetChanged();
     }
 

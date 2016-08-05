@@ -346,7 +346,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

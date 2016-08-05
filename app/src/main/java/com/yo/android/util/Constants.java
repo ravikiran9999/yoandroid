@@ -25,6 +25,10 @@ public class Constants {
     public static final String Yo_CONT_FRAG = "YoContFrag";
     public static final String YO_NOTIFICATION = "notification";
 
+    public static final String SENT = "SENT";
+    public static final String SEEN = "SEEN";
+    public static final String DELIVERED = "DELIVERED";
+
     //Preference
     public static final String USER_ID = "user_id";
     public static final String USER_AVATAR = "user_avatar";
@@ -59,6 +63,10 @@ public class Constants {
     public static final int GO_TO_SETTINGS = 103;
     public static final String ENABLE_PROFILE_SCREEN = "enable_profile_screen";
     public static final String ENABLE_FOLLOW_TOPICS_SCREEN = "enable_follow_more_topics_screen";
+    public static final String OPPONENT_CONTACT_IMAGE = "contact_image";
+    public static final String IS_OPPONENT_YO_USER = "is_yo_user";
+    public static final String NOTIFICATION_ALERTS = "notification_alerts";
+    public static final String SYNCE_CONTACTS = "sync_contacts";
     public static int SUCCESS_CODE = 200;
 
     public static final int ADD_IMAGE_CAPTURE = 1;
@@ -69,4 +77,5 @@ public class Constants {
     public static String EDIT_MAGAZINE_ACTION = "com.edit.magazine.EDIT";
     public static String SESSION_EXPIRE = "SESSION_EXPIRE";
     public static String CHAT_ROOM_REFRESH = "CHAT_ROOM_REFRESH";
+    public static String UPDATE_NOTIFICATIONS = "UPDATE_NOTIFICATIONS";
 }

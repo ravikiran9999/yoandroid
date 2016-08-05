@@ -123,6 +123,7 @@
             android:screenOrientation="portrait"
             android:taskAffinity=".outgoing"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ui.UserProfileActivity"
             android:label="@string/user_profile" />
@@ -219,24 +220,21 @@
             android:theme="@style/AppTheme.NoActionBar.Translucent" />
         <activity
             android:name=".ui.NotificationsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            />
 
         <provider
             android:name=".provider.YoAppContactProvider"
             android:authorities="com.yo.android.provider.contacts"
             android:exported="false" />
-        <!--
-             This service implements our SyncAdapter. It needs to be exported, so that the system
-                sync framework can access it.
-        -->
+        <!-- This service implements our SyncAdapter. It needs to be exported, so that the system
+                sync framework can access it. -->
         <service
             android:name=".sync.SyncService"
             android:exported="true">
-
-            <!--
-            This intent filter is required. It allows the system to launch our sync service
-            as needed.
-            -->
+            <!-- This intent filter is required. It allows the system to launch our sync service
+            as needed. -->
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -246,16 +244,13 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
-        <!--
-        This implements the account we'll use as an attachment point for our SyncAdapter. Since
+        <!-- This implements the account we'll use as an attachment point for our SyncAdapter. Since
         our SyncAdapter doesn't need to authenticate the current user (it just fetches a public RSS
         feed), this account's implementation is largely empty.
 
         It's also possible to attach a SyncAdapter to an existing account provided by another
-        package. In that case, this element could be omitted here.
-        -->
+        package. In that case, this element could be omitted here. -->
         <service android:name=".sync.accounts.GenericAccountService">
-
             <!-- Required filter used by the system to launch our account service. -->
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
@@ -265,14 +260,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-        <service
-            android:name=".chat.firebase.NotificationService"
-            android:enabled="true"
-            android:exported="false" />
-        <service
-            android:name=".chat.firebase.SomeService"
-            android:enabled="true"
-            android:exported="false"></service>
+
     </application>
 
 </manifest>

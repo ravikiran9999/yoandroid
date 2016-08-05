@@ -2,13 +2,9 @@ package com.yo.android.ui.fragments;
 
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -16,11 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -32,10 +28,9 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
-import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.MoreSettingsActivity;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
-import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 
@@ -116,6 +111,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         });
         loadImage();
 
+
     }
 
     private void loadImage() {
@@ -124,8 +120,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
             Picasso.with(getActivity())
                     .load(avatar)
+                    .fit()
                     .into(profilePic);
-        }else{
+        } else {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
         }
 
@@ -133,7 +130,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     //Tested and image update is working
     //Make a prompt for pick a image from gallery/camera
-    private void uploadFile(File file) {
+    private void uploadFile(final File file) {
         if (!mHelper.isConnected()) {
             mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
@@ -155,15 +152,16 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
-        String descriptionString = "Hey there! I am using YoApp";
-        RequestBody description =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), descriptionString);
+//        String descriptionString = "Hey there! I am using YoApp";
+//        RequestBody description =
+//                RequestBody.create(
+//                        MediaType.parse("multipart/form-data"), descriptionString);
 
         RequestBody username =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.USER_NAME));
-        yoService.updateProfile(userId, description, null, body).enqueue(new Callback<UserProfileInfo>() {
+        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.updateProfile(userId, access, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
@@ -252,34 +250,54 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
 
     public void showLogoutDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Sign out");
-        builder.setMessage("Are you sure you want to sign out ?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                        }
+        if (getActivity() != null) {
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                        }
-                    });
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            final View view = layoutInflater.inflate(R.layout.custom_signout, null);
+            builder.setView(view);
+
+            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+            Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                    preferenceEndPoint.clearAll();
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    getActivity().finish();
                 }
-                preferenceEndPoint.clearAll();
-                startActivity(new Intent(getActivity(), LoginActivity.class));
-                getActivity().finish();
+            });
 
-            }
-        });
-        builder.setNegativeButton("No", null);
-        builder.create().show();
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+        }
     }
 
 
@@ -301,7 +319,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
                     try {
-                        String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(),data);
+                        String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(), data);
                         uploadFile(new File(imagePath));
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -265,6 +265,9 @@ public class MyCollectionDetails extends BaseActivity {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                notifyDataSetChanged();
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                                 //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     /*}
@@ -277,6 +280,7 @@ public class MyCollectionDetails extends BaseActivity {
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
+                                data.setLiked("false");
                                 notifyDataSetChanged();
                             }
                         });
@@ -286,6 +290,10 @@ public class MyCollectionDetails extends BaseActivity {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+
+                                notifyDataSetChanged();
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
                                 //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                     /*}
@@ -298,6 +306,7 @@ public class MyCollectionDetails extends BaseActivity {
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
+                                data.setLiked("true");
                                 notifyDataSetChanged();
                             }
                         });
@@ -391,9 +400,9 @@ public class MyCollectionDetails extends BaseActivity {
 
             /*holder.articleFollow.setEnabled(false);
             holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));*/
-            holder.articleFollow.setVisibility(View.GONE);
+            //holder.articleFollow.setVisibility(View.GONE);
 
-            /*if(data.getIsFollowing().equals("true")) {
+            if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             }
@@ -406,6 +415,7 @@ public class MyCollectionDetails extends BaseActivity {
             holder.articleFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (!data.getIsFollowing().equals("true")) {
                     ((BaseActivity)context).showProgressDialog();
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -414,6 +424,8 @@ public class MyCollectionDetails extends BaseActivity {
                             ((BaseActivity) context).dismissProgressDialog();
                             finalHolder.articleFollow.setText("Following");
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            data.setIsFollowing("true");
+                            notifyDataSetChanged();
                         }
 
                         @Override
@@ -421,14 +433,63 @@ public class MyCollectionDetails extends BaseActivity {
                             ((BaseActivity) context).dismissProgressDialog();
                             finalHolder.articleFollow.setText("Follow");
                             finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            data.setIsFollowing("false");
+                            notifyDataSetChanged();
 
                         }
                     });
+                    } else {
+                        showUnFollowConfirmationDialog(data, finalHolder);
+                    }
                 }
-            });*/
+            });
 
 
             return layout;
+        }
+
+        private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
+            final Dialog dialog = new Dialog(context);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.unfollow_alert_dialog);
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+            Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    ((BaseActivity) context).showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Follow");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            data.setIsFollowing("false");
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            finalHolder.articleFollow.setText("Following");
+                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            data.setIsFollowing("true");
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
+            });
+
+            dialog.show();
         }
 
 

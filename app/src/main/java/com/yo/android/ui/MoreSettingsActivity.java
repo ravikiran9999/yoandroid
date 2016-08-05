@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.api.YoApi;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -87,6 +88,8 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         userNameText.setSelection(userName.length());
         mobileNumberText.setText(phone);
         statusEdt.setText(mStatus + "");
+        syncContactsSwitch.setEnabled(preferenceEndPoint.getBooleanPreference(Constants.SYNCE_CONTACTS));
+        notificationSwitch.setEnabled(preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS));
     }
 
     @Override
@@ -115,8 +118,8 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
 
     @OnClick(R.id.share_lint_btn)
     public void shareLinkAction() {
-        String url = "Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com";
-        Util.shareIntent(shareLinkBtn, url,"Sharing Link");
+        String url = getString(R.string.invite_link);
+        Util.shareIntent(shareLinkBtn, url, "Sharing Link");
     }
 
     @Override
@@ -165,12 +168,27 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         RequestBody firstName =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), userName);
+
+        RequestBody syncContacts =
+                RequestBody.create(
+                        MediaType.parse("user[contacts_sync]"), String.valueOf(syncContactsSwitch.isChecked()));
+        RequestBody notificationAlerts =
+                RequestBody.create(
+                        MediaType.parse("user[notification_alert]"), String.valueOf(notificationSwitch.isChecked()));
+
+//        RequestBody syncContacts = RequestBody.create(
+//                MediaType.parse("multipart/form-data"), String.valueOf(syncContactsSwitch.isEnabled()));
+
+//        RequestBody notificationAlerts = RequestBody.create(
+//                MediaType.parse("multipart/form-data"), String.valueOf(notificationSwitch.isEnabled()));
         showProgressDialog();
-        yoService.updateProfile(userId, description, firstName, null).enqueue(new Callback<UserProfileInfo>() {
+        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.updateProfile(userId, access, description, firstName, notificationAlerts, syncContacts, null).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
                 if (response.body() != null) {
+                    Util.saveUserDetails(response, preferenceEndPoint);
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());

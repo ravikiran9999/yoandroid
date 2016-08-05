@@ -101,12 +101,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private StorageReference storageReference;
     private Firebase authReference;
     private Firebase roomReference;
-    private ChatMessage chatMessage;
+    //private ChatMessage chatMessage;
     private TextView listStickeyHeader;
     private int roomExist = 0;
     private Boolean isChildEventListenerAdd = Boolean.FALSE;
     private String childRoomId;
     private String roomType;
+    ArrayList<ChatMessage> chatForwards;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -142,9 +143,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
         if (myServiceConnection.isServiceConnection()) {
-            //firebaseService.getFirebaseAuth();
+            firebaseService.getFirebaseAuth();
         }
 
+        chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
         if ((childRoomId != null) && (!childRoomId.equals(""))) {
@@ -152,21 +154,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             roomReference = authReference.child(childRoomId).child(Constants.CHATS);
             registerChildEventListener(roomReference);
-        }
 
-        ArrayList<ChatMessage> chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
-
-        if (chatForwards != null) {
-            for (int i = 0; i < chatForwards.size(); i++) {
-                if (chatForwards.get(i).getType().equals(Constants.IMAGE)) {
-                    sendChatMessage(chatForwards.get(i).getImagePath(), chatForwards.get(i).getType());
-                } else if (chatForwards.get(i).getType().equals(Constants.TEXT)) {
-                    sendChatMessage(chatForwards.get(i).getMessage(), chatForwards.get(i).getType());
-                }
-                chatForwards.get(i).setSelected(false);
+            if (chatForwards != null) {
+                receiveForward(chatForwards);
             }
         }
 
+        if ((childRoomId == null) && (chatForwards != null)) {
+            createRoom("Message", null);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -192,7 +188,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setOnItemClickListener(this);
         send.setOnClickListener(this);
 
-        //loadMessages(childRoomId,userChatAdapter);
         return view;
     }
 
@@ -231,7 +226,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                chatMessage = (ChatMessage) listView.getItemAtPosition(position);
+                ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
                 final int checkedCount = listView.getCheckedItemCount();
                 mode.setTitle(Integer.toString(checkedCount));
                 userChatAdapter.toggleSelection(position);
@@ -373,7 +368,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             case R.id.image:
                 getImageFromGallery();
                 break;
-            case R.id.view_contact :
+            case R.id.view_contact:
                 Intent intent = new Intent(getActivity(), UserProfileActivity.class);
                 intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
                 startActivity(intent);
@@ -407,13 +402,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void sendChatMessage(@NonNull final String message, @NonNull String userId, @NonNull String type) {
 
         long timestamp = System.currentTimeMillis();
-        String timeStp = Long.toString(timestamp);
         final ChatMessage chatMessage = new ChatMessage();
         chatMessage.setType(type);
         chatMessage.setTime(timestamp);
         chatMessage.setSenderID(userId);
         chatMessage.setSent(0); // message sent 0, read 1
         chatMessage.setDelivered(0);
+        chatMessage.setDeliveredTime(0);
 
         if (type.equals(Constants.TEXT)) {
             chatMessage.setMessage(message);
@@ -421,44 +416,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             chatMessage.setImagePath(message);
         }
 
-
         if (roomExist == 0) {
-
-            String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-            List<String> selectedUsers = new ArrayList<>();
-            selectedUsers.add(opponentId);
-
-            yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
-                @Override
-                public void onResponse(Call<Room> call, Response<Room> response) {
-                    if (response.isSuccessful()) {
-                        Room room = response.body();
-                        if (room.getFirebaseRoomId() != null) {
-                            roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
-                            registerChildEventListener(roomReference);
-                            sendChatMessage(chatMessage);
-                            roomExist = 1;
-                            EventBus.getDefault().post(Constants.CHAT_ROOM_REFRESH);
-                        }
-                    } else {
-                        if (chatText != null) {
-                            //Restore the message if room fails
-                            chatText.setText(message);
-                            mToastFactory.showToast("Chat initiation failed! Please try again.");
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Room> call, Throwable t) {
-                    dismissProgressDialog();
-                }
-            });
+            createRoom(message, chatMessage);
 
         } else {
             sendChatMessage(chatMessage);
         }
-
     }
 
     private void sendChatMessage(final ChatMessage chatMessage) {
@@ -466,13 +429,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             String timeStp = Long.toString(chatMessage.getTime());
             Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
 
-            Firebase roomChildReference = roomReference.child(timeStp);
+            final Firebase roomChildReference = roomReference.child(timeStp);
             roomChildReference.updateChildren(hashtaghMap, new Firebase.CompletionListener() {
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if (firebaseError == null) {
                         // successfully sent
-                        //chatMessage.setSent(1);
+                        chatMessage.setSent(1);
+                        Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
+                        firebase.updateChildren(hashtaghMap);
+
                     } else {
                         Log.e(TAG, firebaseError.getMessage());
                     }
@@ -668,11 +634,22 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         try {
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-            if (getActivity() instanceof ChatActivity) {
-                chatMessageArray.add(chatMessage);
-            }
+            chatMessageArray.add(chatMessage);
             userChatAdapter.addItems(chatMessageArray);
             listView.smoothScrollToPosition(userChatAdapter.getCount());
+
+            // Delivered message
+
+            if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0)) {
+                if (getActivity() instanceof ChatActivity) {
+                    long timestamp = System.currentTimeMillis();
+
+                    chatMessage.setDelivered(1);
+                    chatMessage.setDeliveredTime(timestamp);
+                    Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
+                    dataSnapshot.getRef().updateChildren(hashtaghMap);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -680,7 +657,23 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
+        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
 
+        if (getActivity() instanceof ChatActivity) {
+            try {
+                for (int i = 0; i < chatMessageArray.size(); i++) {
+                    if (chatMessageArray.get(i).getTime() == chatMessage.getTime()) {
+                        chatMessageArray.set(i, chatMessage);
+                    }
+                }
+                userChatAdapter.addItems(chatMessageArray);
+                listView.smoothScrollToPosition(userChatAdapter.getCount());
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -695,16 +688,61 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onCancelled(FirebaseError firebaseError) {
-
+        firebaseError.getMessage();
     }
 
+    private void receiveForward(ArrayList<ChatMessage> chatForwards) {
 
-
-    /*private void loadMessages(String childRoomId, UserChatAdapter userChatAdapter) {
-
-        if (myServiceConnection.isServiceConnection()) {
-            firebaseService.getChatMessageList(childRoomId, userChatAdapter);
+        if (chatForwards != null) {
+            for (int i = 0; i < chatForwards.size(); i++) {
+                if (chatForwards.get(i).getType().equals(Constants.IMAGE)) {
+                    sendChatMessage(chatForwards.get(i).getImagePath(), chatForwards.get(i).getType());
+                } else if (chatForwards.get(i).getType().equals(Constants.TEXT)) {
+                    sendChatMessage(chatForwards.get(i).getMessage(), chatForwards.get(i).getType());
+                }
+                chatForwards.get(i).setSelected(false);
+            }
         }
-    }*/
+    }
+
+    private void createRoom(final String message, final ChatMessage chatMessage) {
+        String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        List<String> selectedUsers = new ArrayList<>();
+        selectedUsers.add(opponentId);
+
+        yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
+            @Override
+            public void onResponse(Call<Room> call, Response<Room> response) {
+                if (response.isSuccessful()) {
+                    Room room = response.body();
+                    if (room.getFirebaseRoomId() != null) {
+                        roomExist = 1;
+                        roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
+                        registerChildEventListener(roomReference);
+
+                        if (chatForwards != null) {
+                            receiveForward(chatForwards);
+                        } else if (chatMessage != null) {
+                            sendChatMessage(chatMessage);
+                        }
+
+                        EventBus.getDefault().post(Constants.CHAT_ROOM_REFRESH);
+                    }
+                } else {
+                    if (chatText != null) {
+                        //Restore the message if room fails
+                        chatText.setText(message);
+                        mToastFactory.showToast("Chat initiation failed! Please try again.");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Room> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
+
+    }
 }
 

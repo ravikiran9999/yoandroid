@@ -9,6 +9,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -24,8 +25,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.BottomTabsActivity;
 
 import java.io.IOException;
@@ -40,6 +43,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import retrofit2.Response;
 
 /**
  * Created by Ramesh on 1/7/16.
@@ -196,7 +201,7 @@ public class Util {
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -240,7 +245,7 @@ public class Util {
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -327,7 +332,7 @@ public class Util {
 
     public static void changeSearchProperties(Menu menu) {
         SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        search.setQueryHint(Html.fromHtml("<font color = #FFFFFF>" + "Search...." + "</font>"));
+        search.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         AutoCompleteTextView searchTextView = (AutoCompleteTextView) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         try {
             searchTextView.setTextColor(Color.WHITE);
@@ -342,9 +347,9 @@ public class Util {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
-            i.putExtra(Intent.EXTRA_SUBJECT, "Sharing Article");
+            i.putExtra(Intent.EXTRA_SUBJECT, title);
             i.putExtra(Intent.EXTRA_TEXT, url);
-            view.getContext().startActivity(Intent.createChooser(i, "Sharing Article"));
+            view.getContext().startActivity(Intent.createChooser(i, title));
         } catch (ActivityNotFoundException e) {
 
         }
@@ -393,4 +398,28 @@ public class Util {
         return time;
     }
 
+    public static void saveUserDetails(Response<UserProfileInfo> response, PreferenceEndPoint preferenceEndPoint) {
+
+        preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+        preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
+        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+        preferenceEndPoint.saveBooleanPreference(Constants.SYNCE_CONTACTS, response.body().isSyncContacts());
+        preferenceEndPoint.saveBooleanPreference(Constants.NOTIFICATION_ALERTS, response.body().isNotificationAlert());
+
+    }
+
+    public static void inviteFriend(Context context, String phoneNo) {
+        try {
+            String url = context.getString(R.string.invite_link);
+            Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+            smsIntent.addCategory(Intent.CATEGORY_DEFAULT);
+            smsIntent.setType("vnd.android-dir/mms-sms");
+            smsIntent.putExtra("sms_body", url);
+            smsIntent.setData(Uri.parse("sms:" + phoneNo));
+            smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(smsIntent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }
