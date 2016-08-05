@@ -163,13 +163,23 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
                         Intent data = new Intent();
                         data.putExtra("sku", ITEM_SKU);
                         data.putExtra("details", info.toString());
-                        setResult(RESULT_OK, data);
+                        if(response.isSuccessful()) {
+                            setResult(RESULT_OK, data);
+                        }
+                        else {
+                            setResult(RESULT_CANCELED, data);
+                        }
                         finish();
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         dismissProgressDialog();
+                        Intent data = new Intent();
+                        data.putExtra("sku", ITEM_SKU);
+                        data.putExtra("details", info.toString());
+                        setResult(RESULT_CANCELED, data);
+                        finish();
                     }
                 });
             }
