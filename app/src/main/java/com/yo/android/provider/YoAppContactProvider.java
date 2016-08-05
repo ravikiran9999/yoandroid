@@ -211,7 +211,7 @@ public class YoAppContactProvider extends ContentProvider {
                         YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + TYPE_TEXT + COMMA_SEP +
                         YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE + TYPE_TEXT + COMMA_SEP +
                         YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID + TYPE_TEXT + COMMA_SEP +
-                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + TYPE_BOOLEAN +
+                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + TYPE_INTEGER +
                         ")";
 
         /**

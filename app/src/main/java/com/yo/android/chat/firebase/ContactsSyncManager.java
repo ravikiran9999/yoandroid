@@ -4,13 +4,19 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Contact;
+import com.yo.android.util.ContactSyncHelper;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -70,6 +76,13 @@ public class ContactsSyncManager {
 
     }
 
+    public Response<List<Contact>> syncContactsAPI(List<String> contacts) throws IOException {
+        String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+        Response<List<Contact>> response = yoService.syncContactsAPI(access, contacts).execute();
+        list = response.body();
+        return response;
+    }
+
     private List<String> readContacts() {
         List<String> nc = new ArrayList<>();
         Cursor contactsCursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
@@ -104,6 +117,16 @@ public class ContactsSyncManager {
             }
         });
         return list;
+    }
+
+    public Map<String, Contact> getCachedContacts() {
+        List<Contact> contactList = new ArrayList<>(getContacts());
+        Map<String, Contact> cacheYoAppContacts = new HashMap<>();
+        for (Contact contact : contactList) {
+            String number = ContactSyncHelper.stripExceptNumbers(contact.getPhoneNo(), false);
+            cacheYoAppContacts.put(number, contact);
+        }
+        return cacheYoAppContacts;
     }
 
     public void loadContacts(final Callback<List<Contact>> callback) {

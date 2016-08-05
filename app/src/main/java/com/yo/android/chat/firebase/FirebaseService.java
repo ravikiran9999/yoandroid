@@ -1,24 +1,18 @@
 package com.yo.android.chat.firebase;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.annotations.NotNull;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.ui.ChatActivity;
-import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.util.Constants;
@@ -29,7 +23,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -125,10 +118,6 @@ public class FirebaseService extends InjectedService {
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         try {
 
-                            //if(( instanceof UserChatFragment) {
-
-                            //getActivityManager();
-
                             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                             chatMessageArray.add(chatMessage);
                             userChatAdapter.addItems(chatMessageArray);
@@ -176,6 +165,4 @@ public class FirebaseService extends InjectedService {
             return FirebaseService.this;
         }
     }
-
-
 }
