@@ -17,6 +17,11 @@ public class Contact implements Parcelable {
     public Contact() {
     }
 
+    public Contact(String phoneNo, String name) {
+        this.phoneNo = phoneNo;
+        this.name = name;
+    }
+
     public String getId() {
         return id;
     }

@@ -27,4 +27,6 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+    def releasePath = file("${rootDir}/apks")
+    delete releasePath
 }

@@ -4,4 +4,10 @@
     android:id="@+id/menu_delete"
     android:icon="@drawable/ic_my_collections_delete"
     app:showAsAction="always|collapseActionView" />
+    <item xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search_white_36dp"
+        android:title="Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
 </menu>

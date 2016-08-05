@@ -67,8 +67,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -109,6 +107,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String roomType;
     ArrayList<ChatMessage> chatForwards;
 
+    String mobilenumber;
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -123,6 +122,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Inject
     BaseActivity baseActivity;
+    private String opponentImg;
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -137,8 +137,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
+        opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
 
-
+        mobilenumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
@@ -235,6 +236,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 //BUG FIX - 5576	Chat - User shouldn't be able to copy images
                 boolean imageSelected = false;
                 SparseBooleanArray selected = userChatAdapter.getSelectedIds();
+                boolean canDelete = true;
                 for (int i = (selected.size() - 1); i >= 0; i--) {
                     if (selected.valueAt(i)) {
 
@@ -242,10 +244,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         if (selectedItem.getType().equalsIgnoreCase(Constants.IMAGE)) {
                             imageSelected = true;
                         }
+                        if (!selectedItem.getSenderID().equals(mobilenumber)) {
+                            canDelete = false;
+                        }
                     }
                 }
                 Menu menu = mode.getMenu();
                 menu.findItem(R.id.copy).setVisible(!imageSelected);
+                menu.findItem(R.id.delete).setVisible(canDelete);
 
                 if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
                     getActivity().invalidateOptionsMenu();
@@ -362,7 +368,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.attach:
                 break;
-
             case R.id.camera:
                 takePicture();
                 break;
@@ -372,6 +377,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             case R.id.view_contact:
                 Intent intent = new Intent(getActivity(), UserProfileActivity.class);
                 intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
+                intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE,opponentImg);
+                intent.putExtra(Constants.FROM_CHAT_ROOMS,Constants.FROM_CHAT_ROOMS);
                 startActivity(intent);
                 break;
 
@@ -689,7 +696,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         List<String> selectedUsers = new ArrayList<>();
         selectedUsers.add(opponentId);
-
         yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
             @Override
             public void onResponse(Call<Room> call, Response<Room> response) {
