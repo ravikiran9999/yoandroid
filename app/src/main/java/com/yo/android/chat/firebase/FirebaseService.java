@@ -171,7 +171,7 @@ public class FirebaseService extends InjectedService {
 
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
 
-                        postNotif(chatMessage.getRoomId(), chatMessage);
+                        //postNotif(chatMessage.getRoomId(), chatMessage);
 
 
                     } catch (Exception e) {
@@ -200,7 +200,6 @@ public class FirebaseService extends InjectedService {
                 }
             };
             roomReference.limitToLast(1).addChildEventListener(childEventListener);
-
 
         } catch (Exception e) {
             e.printStackTrace();
