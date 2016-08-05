@@ -7,9 +7,13 @@ package com.yo.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class name will be tablename
@@ -33,7 +37,7 @@ public class ChatMessage implements Parcelable {
 
     private int delivered;
     private int sent;
-
+    private long deliveredTime;
 
     private String stickeyHeader;
 
@@ -148,6 +152,14 @@ public class ChatMessage implements Parcelable {
         this.sent = sent;
     }
 
+    public long getDeliveredTime() {
+        return deliveredTime;
+    }
+
+    public void setDeliveredTime(long deliveredTime) {
+        this.deliveredTime = deliveredTime;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -202,4 +214,5 @@ public class ChatMessage implements Parcelable {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
 }

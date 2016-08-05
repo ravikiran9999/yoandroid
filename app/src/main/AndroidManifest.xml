@@ -26,7 +26,6 @@
     <!-- Required because we're manually creating a new account. -->
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
-
     <uses-feature
         android:name="android.hardware.sip.voip"
         android:required="true" />
@@ -205,7 +204,8 @@
 
         <service
             android:name=".chat.firebase.FirebaseService"
-            android:enabled="true" />
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
             android:name=".ui.OthersMagazinesDetailActivity"
@@ -221,7 +221,8 @@
         <activity
             android:name=".ui.NotificationsActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTop"
+            />
 
         <provider
             android:name=".provider.YoAppContactProvider"

@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.squareup.picasso.Picasso;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -26,6 +27,9 @@ import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -44,6 +48,10 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private Context context;
     private SparseBooleanArray mSelectedItemsIds;
     private LinearLayout.LayoutParams layoutParams;
+
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
 
     public UserChatAdapter(Activity context) {
         super(context);
@@ -104,11 +112,26 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
             LinearLayout layout = new LinearLayout(context);
-            holder.getChatTimeStamp().setText(Util.getChatListTimeFormat(item.getTime()) + " " + Util.getTimeFormat(mContext, item.getTime()));
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+
+
 
             if (userId.equals(item.getSenderID())) {
 
+                if (item.getSent() != 0) {
+                    holder.getChatTimeStamp().setText(Constants.SENT + " " + Util.getTimeFormat(mContext, item.getTime()));
+                } else {
+                    holder.getChatTimeStamp().setText("");
+                }
+                if (item.getDeliveredTime() != 0) {
+                    holder.getSeenTimeStamp().setText(Constants.SEEN + " " + Util.getTimeFormat(mContext, item.getDeliveredTime()));
+                } else {
+                    holder.getSeenTimeStamp().setText("");
+                }
+
                 holder.getLinearLayout().setGravity(Gravity.END);
+
                 if (item.getType().equals(Constants.TEXT)) {
                     layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -124,10 +147,19 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 } else {
                     holder.getLl().setBackgroundResource(R.drawable.bg_sms_yellow);
                 }
-                holder.getLinearLayoutText().setLayoutParams(layoutParams);
-                addView(holder.getLinearLayoutText(), item, holder);
+
+                //holder.getLl().setLayoutParams(layoutParams);
+                addView(layout, item, holder);
 
             } else {
+
+
+                if (item.getDeliveredTime() != 0) {
+                    holder.getSeenTimeStamp().setText(Constants.RECEIVED + " " + Util.getTimeFormat(mContext, item.getDeliveredTime()));
+                } else {
+                    holder.getSeenTimeStamp().setText("");
+                }
+
                 holder.getLinearLayout().setGravity(Gravity.START);
 
                 if (item.getType().equals(Constants.TEXT)) {
@@ -145,9 +177,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     holder.getLl().setBackgroundResource(R.drawable.bg_sms_grey);
                 }
 
-                holder.getLinearLayoutText().setLayoutParams(layoutParams);
-                addView(holder.getLinearLayoutText(), item, holder);
-
+                //holder.getLl().setLayoutParams(layoutParams);
+                addView(layout, item, holder);
             }
 
         } catch (Exception e) {
@@ -156,27 +187,37 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
     private void addView(final LinearLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
-        linearLayout.removeAllViews();
-        linearLayout.setTag(holder);
+        //linearLayout.removeAllViews();
+        //linearLayout.setTag(holder);
+
+        holder.getLl().removeAllViews();
+        holder.getLl().setTag(holder);
 
         if (item.getType().equals(Constants.TEXT)) {
             if (roomType != null) {
-                holder.getName().setText(item.getSenderID());
+                TextView senderId = new TextView(context);
+                senderId.setText(item.getSenderID());
+                senderId.setTextColor(Color.RED);
+                linearLayout.addView(senderId);
             }
 
             TextView textView = new TextView(context);
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
-//            if (linearLayout.getTag() == null) {
-            linearLayout.setTag(holder);
-
             linearLayout.addView(textView);
-//            }
+            //linearLayout.setTag(holder);
+
+            holder.getLl().setTag(holder);
+            holder.getLl().addView(linearLayout);
+
 
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {
                 if (roomType != null) {
-                    holder.getName().setText(item.getSenderID());
+                    TextView senderId = new TextView(context);
+                    senderId.setText(item.getSenderID());
+                    senderId.setTextColor(Color.RED);
+                    linearLayout.addView(senderId);
                 }
 
                 final ImageView imageView = new ImageView(context);
@@ -211,7 +252,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             } finally {
 
             }
+            holder.getLl().addView(linearLayout);
+        } else {
+            holder.getLl().addView(null);
         }
+
+
     }
 
     @Override

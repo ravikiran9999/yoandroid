@@ -17,6 +17,8 @@ import com.orion.android.common.util.ResourcesHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.di.AwsLogsCallBack;
 import com.yo.android.di.Injector;
 import com.yo.android.util.ProgressDialogFactory;
@@ -57,6 +59,9 @@ public class BaseActivity extends AppCompatActivity {
     @Inject
     protected YoApi.YoService yoService;
 
+    @Inject
+    MyServiceConnection myServiceConnection;
+
 
     protected Dialog mProgressDialog;
     private boolean enableBack;
@@ -68,6 +73,9 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Injector.obtain(getApplication()).inject(this);
         mAwsLogsCallBack.onCalled(getBaseContext(), getIntent());
+
+        Intent intent = new Intent(this, FirebaseService.class);
+        startService(intent);
 
     }
 
@@ -126,7 +134,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public void createNotification(String title, String message) {
 
-        Intent destinationIntent = new Intent(this, NotificationsActivity.class);
+        Intent destinationIntent = new Intent(BaseActivity.this, NotificationsActivity.class);
 
         int notificationId = title.hashCode();
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);
