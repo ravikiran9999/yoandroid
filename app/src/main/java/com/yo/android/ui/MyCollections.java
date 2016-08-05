@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.MyCollectionsAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Collections;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,7 +134,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             }
 
         } else {
-            if (position == 0) {
+            invalidateOptionsMenu();
+            if (position == 0 && collections.getName().equalsIgnoreCase("Follow more topics")) {
                 Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
                 intent.putExtra("From", "MyCollections");
                 startActivityForResult(intent, 2);
@@ -147,21 +150,24 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     }
 
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_collections, menu);
 
         if (contextualMenu) {
-            for (int i = 0; i < menu.size(); i++)
-                menu.getItem(i).setVisible(true);
+            //Show delete icon
+            menu.findItem(R.id.menu_delete).setVisible(true);
+            //Hide search icon
+            menu.findItem(R.id.menu_search).setVisible(false);
         } else {
-            for (int i = 0; i < menu.size(); i++)
-                menu.getItem(i).setVisible(false);
+            menu.findItem(R.id.menu_delete).setVisible(false);
+            menu.findItem(R.id.menu_search).setVisible(true);
         }
 
-        return super.onCreateOptionsMenu(menu);
+        Util.prepareSearch(this, menu, myCollectionsAdapter);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -239,6 +245,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             return;
                         }
                         collectionsList.addAll(response.body());
+                        myCollectionsAdapter.clearAll();
                         myCollectionsAdapter.addItems(collectionsList);
                         gridView.setAdapter(myCollectionsAdapter);
 
@@ -276,6 +283,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         return;
                     }
                     collectionsList.addAll(response.body());
+                    myCollectionsAdapter.clearAll();
                     myCollectionsAdapter.addItems(collectionsList);
                     gridView.setAdapter(myCollectionsAdapter);
 
@@ -301,6 +309,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         return;
                     }
                     collectionsList.addAll(response.body());
+                    myCollectionsAdapter.clearAll();
                     myCollectionsAdapter.addItems(collectionsList);
                     gridView.setAdapter(myCollectionsAdapter);
 
