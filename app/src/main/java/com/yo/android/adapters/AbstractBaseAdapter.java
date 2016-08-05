@@ -97,6 +97,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     }
 
     public void performSearch(@NonNull String key) {
+        key = key.trim();
         if (key.isEmpty()) {
             addItems(mOriginalList);
         } else {

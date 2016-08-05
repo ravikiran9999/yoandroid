@@ -53,7 +53,7 @@ public class WishListActivity extends BaseActivity {
     private String topicName;
     private TextView noArticals;
     private FrameLayout flipContainer;
-    private ProgressBar mProgress;
+    //private ProgressBar mProgress;
     private boolean isFollowing;
 
     @Override
@@ -70,7 +70,7 @@ public class WishListActivity extends BaseActivity {
 
         noArticals = (TextView) findViewById(R.id.no_data);
         flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
-        mProgress = (ProgressBar) findViewById(R.id.progress);
+        //mProgress = (ProgressBar) findViewById(R.id.progress);
         flipView = new FlipViewController(this);
         myBaseAdapter = new MyBaseAdapter(this, flipView);
         flipView.setAdapter(myBaseAdapter);
@@ -80,16 +80,18 @@ public class WishListActivity extends BaseActivity {
 
         articlesList.clear();
         myBaseAdapter.addItems(articlesList);
-        if (mProgress != null) {
+        /*if (mProgress != null) {
             mProgress.setVisibility(View.VISIBLE);
-        }
+        }*/
+        showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                if (mProgress != null) {
+               /* if (mProgress != null) {
                     mProgress.setVisibility(View.GONE);
-                }
+                }*/
+                dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
                         flipContainer.setVisibility(View.VISIBLE);
@@ -113,9 +115,10 @@ public class WishListActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<List<Articles>> call, Throwable t) {
-                if (mProgress != null) {
+                /*if (mProgress != null) {
                     mProgress.setVisibility(View.GONE);
-                }
+                }*/
+                dismissProgressDialog();
                 flipContainer.setVisibility(View.GONE);
                 if (noArticals != null) {
                     noArticals.setVisibility(View.VISIBLE);
@@ -286,16 +289,18 @@ public class WishListActivity extends BaseActivity {
 
                                 articlesList.clear();
                                 myBaseAdapter.addItems(articlesList);
-                                if (mProgress != null) {
+                                /*if (mProgress != null) {
                                     mProgress.setVisibility(View.VISIBLE);
-                                }
+                                }*/
+                                showProgressDialog();
                                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                                 yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
                                     @Override
                                     public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                                        if (mProgress != null) {
+                                        /*if (mProgress != null) {
                                             mProgress.setVisibility(View.GONE);
-                                        }
+                                        }*/
+                                        dismissProgressDialog();
                                         if (response.body() != null && response.body().size() > 0) {
                                             for (int i = 0; i < response.body().size(); i++) {
                                                 flipContainer.setVisibility(View.VISIBLE);
@@ -319,9 +324,10 @@ public class WishListActivity extends BaseActivity {
 
                                     @Override
                                     public void onFailure(Call<List<Articles>> call, Throwable t) {
-                                        if (mProgress != null) {
+                                        /*if (mProgress != null) {
                                             mProgress.setVisibility(View.GONE);
-                                        }
+                                        }*/
+                                        dismissProgressDialog();
                                         flipContainer.setVisibility(View.GONE);
                                         if (noArticals != null) {
                                             noArticals.setVisibility(View.VISIBLE);
@@ -501,16 +507,18 @@ public class WishListActivity extends BaseActivity {
 
                                         articlesList.clear();
                                         myBaseAdapter.addItems(articlesList);
-                                        if (mProgress != null) {
+                                        /*if (mProgress != null) {
                                             mProgress.setVisibility(View.VISIBLE);
-                                        }
+                                        }*/
+                                        showProgressDialog();
                                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                                         yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
                                             @Override
                                             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                                                if (mProgress != null) {
+                                                /*if (mProgress != null) {
                                                     mProgress.setVisibility(View.GONE);
-                                                }
+                                                }*/
+                                                dismissProgressDialog();
                                                 if (response.body() != null && response.body().size() > 0) {
                                                     for (int i = 0; i < response.body().size(); i++) {
                                                         flipContainer.setVisibility(View.VISIBLE);
@@ -534,9 +542,10 @@ public class WishListActivity extends BaseActivity {
 
                                             @Override
                                             public void onFailure(Call<List<Articles>> call, Throwable t) {
-                                                if (mProgress != null) {
+                                                /*if (mProgress != null) {
                                                     mProgress.setVisibility(View.GONE);
-                                                }
+                                                }*/
+                                                dismissProgressDialog();
                                                 flipContainer.setVisibility(View.GONE);
                                                 if (noArticals != null) {
                                                     noArticals.setVisibility(View.VISIBLE);

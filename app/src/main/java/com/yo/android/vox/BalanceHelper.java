@@ -54,14 +54,14 @@ public class BalanceHelper {
 
     public void checkBalance() {
         if (TextUtils.isEmpty(prefs.getStringPreference(Constants.SUBSCRIBER_ID))) {
-            loadSubscriberId();
+            loadSubscriberId(null);
         } else {
             loadBalance();
         }
 
     }
 
-    private void loadSubscriberId() {
+    private void loadSubscriberId(final Callback<ResponseBody> callback) {
         voxService.executeAction(voxFactory.getSubscriberIdBody(prefs.getStringPreference(Constants.PHONE_NUMBER))).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -71,6 +71,9 @@ public class BalanceHelper {
                     String subscriberId = jsonObject.getJSONObject("DATA").getString("SUBSCRIBERID");
                     prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);
                     loadBalance();
+                    if (callback != null) {
+                        callback.onResponse(call, response);
+                    }
                 } catch (IOException | JSONException e) {
                     mLog.w(TAG, "loadSubscriberId", e);
                 }
@@ -79,6 +82,9 @@ public class BalanceHelper {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 mLog.w(TAG, "loadSubscriberId:onFailure called");
+                if (callback != null) {
+                    callback.onFailure(call, t);
+                }
             }
         });
     }
@@ -109,7 +115,26 @@ public class BalanceHelper {
     }
 
     public void addBalance(final String credit, final Callback<ResponseBody> callback) {
-        String accessToken = prefs.getStringPreference("access_token");
+        final String accessToken = prefs.getStringPreference("access_token");
+        if (TextUtils.isEmpty(prefs.getStringPreference(Constants.SUBSCRIBER_ID))) {
+            loadSubscriberId(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    reAddBalance(accessToken,credit,callback);
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+        } else {
+            reAddBalance(accessToken,credit,callback);
+        }
+
+    }
+
+    private void reAddBalance(String accessToken, String credit, final Callback<ResponseBody> callback) {
         yoService.addBalance(accessToken, prefs.getStringPreference(Constants.SUBSCRIBER_ID), credit).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

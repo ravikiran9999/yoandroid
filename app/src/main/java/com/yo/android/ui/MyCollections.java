@@ -57,10 +57,12 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         gridView = (GridView) findViewById(R.id.create_magazines_gridview);
 
         myCollectionsAdapter = new MyCollectionsAdapter(MyCollections.this);
+        showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                dismissProgressDialog();
                 final List<Collections> collectionsList = new ArrayList<Collections>();
                 Collections collections = new Collections();
                 collections.setName("Follow more topics");
@@ -77,7 +79,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
             @Override
             public void onFailure(Call<List<Collections>> call, Throwable t) {
-
+                dismissProgressDialog();
             }
         });
         gridView.setOnItemLongClickListener(this);
