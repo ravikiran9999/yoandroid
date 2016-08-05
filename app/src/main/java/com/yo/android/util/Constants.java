@@ -67,6 +67,7 @@ public class Constants {
     public static final String IS_OPPONENT_YO_USER = "is_yo_user";
     public static final String NOTIFICATION_ALERTS = "notification_alerts";
     public static final String SYNCE_CONTACTS = "sync_contacts";
+    public static final String FROM_CHAT_ROOMS = "from_chat_activity";
     public static int SUCCESS_CODE = 200;
 
     public static final int ADD_IMAGE_CAPTURE = 1;

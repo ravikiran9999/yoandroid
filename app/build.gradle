@@ -19,12 +19,13 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.9.5"
+        versionName "16.3.9.6"
+        buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
     }
     productFlavors {
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+         //   buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
 
             buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""
@@ -36,8 +37,8 @@ android {
         }
         stage {
             applicationIdSuffix ".stage"
+
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             //applicationId "com.yo.android.stage"
 
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
@@ -56,7 +57,9 @@ android {
 //        }
     }
     buildTypes {
-
+        sms {
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -136,7 +139,7 @@ public Properties getAwsProperties() {
 def releasePath = file("${rootDir}/apks")
 def publish = project.tasks.create("publishAll")
 android.applicationVariants.all { variant ->
-    if (variant.buildType.name == 'debug') {
+    if (variant.buildType.name != 'release') {
         def n = 0
         def task = project.tasks.create("publish${variant.name}Apk", Copy)
         task.from(variant.outputs[0].outputFile)
@@ -144,7 +147,7 @@ android.applicationVariants.all { variant ->
         task.into(releasePath)
 //    baseName
 
-        def name = variant.baseName.replace("-debug", "");//.toUpperCase();
+        def name = variant.baseName.replace("-debug", "").replace("-sms","_SMS");//.toUpperCase();
         name = name.substring(0, 1).toUpperCase() + name.substring(1)
         def oldName = "app-${variant.productFlavors.name}-${variant.buildType.name}.apk";
         def newFollow = "Yo_App_Android_${name}_V${android.defaultConfig.versionName}.apk";

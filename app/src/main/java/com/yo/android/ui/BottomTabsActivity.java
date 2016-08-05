@@ -34,6 +34,7 @@ import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
+import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
@@ -64,6 +65,10 @@ public class BottomTabsActivity extends BaseActivity {
     private int toolBarColor;
     @Inject
     ContactsSyncManager contactsSyncManager;
+    @Inject
+    MyServiceConnection myServiceConnection;
+    @Inject
+    ContactSyncHelper mContactSyncHelper;
 
 
     @Override
@@ -115,6 +120,15 @@ public class BottomTabsActivity extends BaseActivity {
             }
         });
 
+        // firebase service
+
+        if (!myServiceConnection.isServiceConnection()) {
+            Intent intent = new Intent(this, FirebaseService.class);
+            startService(intent);
+
+            bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
+        }
+
         //
         Intent in = new Intent(getApplicationContext(), SipService.class);
         startService(in);
@@ -125,6 +139,9 @@ public class BottomTabsActivity extends BaseActivity {
         contactsSyncManager.syncContacts();
         SyncUtils.CreateSyncAccount(this, preferenceEndPoint);
 //        SyncUtils.TriggerRefresh();
+        if (mContactSyncHelper.getSyncMode() == ContactSyncHelper.NONE) {
+            mContactSyncHelper.checkContacts();
+        }
     }
 
     @Override
@@ -248,7 +265,7 @@ public class BottomTabsActivity extends BaseActivity {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 if (response.body() != null) {
-                    Util.saveUserDetails(response,preferenceEndPoint);
+                    Util.saveUserDetails(response, preferenceEndPoint);
                     preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
