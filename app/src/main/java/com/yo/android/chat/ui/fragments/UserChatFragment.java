@@ -2,6 +2,7 @@ package com.yo.android.chat.ui.fragments;
 
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -55,6 +56,7 @@ import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
+import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.UserProfileActivity;
@@ -731,7 +733,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         } else if (chatMessage != null) {
                             sendChatMessage(chatMessage);
                         }
-
+                        String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+                        update(opponentNumber,room.getFirebaseRoomId());
                         EventBus.getDefault().post(Constants.CHAT_ROOM_REFRESH);
                     }
                 } else {
@@ -749,6 +752,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         });
 
+    }
+    public void update(String phoneNumber,String roomId) {
+        Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
+        String where = YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "=?";
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID, roomId);
+        getActivity().getContentResolver()
+                .update(uri, contentValues, where,
+                        new String[]{phoneNumber});
     }
 }
 

@@ -193,9 +193,10 @@ public class ContactSyncHelper {
         }
         try {
             if (!contacts.isEmpty()) {
+                //up to server
                 contactsSyncManager.syncContactsAPI(contacts);
                 mLog.e(TAG, "Import Size after check>>>:" + toImport.size());
-                //Call sync
+                //Call sync - get contact
                 SyncUtils.TriggerRefresh();
             }
             cacheContacts = contactPhoneBookMap;

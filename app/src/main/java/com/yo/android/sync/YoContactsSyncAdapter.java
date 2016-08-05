@@ -188,7 +188,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         // Get list of all items
         Log.i(TAG, "Fetching local entries for merge");
         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
-        Cursor c = contentResolver.query(uri, PROJECTION, null, null, null);
+        Cursor c = contentResolver.query(uri, PROJECTION, null, null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
         assert c != null;
         Log.i(TAG, "Found " + c.getCount() + " local entries. Computing merge solution...");
 
@@ -219,16 +219,17 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                 if ((match.yoappuser != yoAppUser) ||
                         (match.phone != null && !match.phone.equals(phone)) ||
                         (match.firebaseRoomId != null && !match.firebaseRoomId.equals(roomId)) ||
+                        (roomId != null && !roomId.equals(match.firebaseRoomId)) ||
                         (match.name != null && !match.name.equals(name)) ||
                         (match.image != null && !match.image.equals(image))
                         ) {
                     // Update existing record
                     Log.i(TAG, "Scheduling update: " + existingUri);
                     batch.add(ContentProviderOperation.newUpdate(existingUri)
-                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME, name)
-                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE, image)
-                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID, roomId)
-                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER, yoAppUser)
+                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME, match.name)
+                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE, match.image)
+                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID, match.firebaseRoomId)
+                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER, match.yoappuser)
                             .build());
                     syncResult.stats.numUpdates++;
                 } else {
