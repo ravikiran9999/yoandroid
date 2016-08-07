@@ -55,8 +55,6 @@ public class FlipAsyncContentActivity extends Activity {
 
     private FlipViewController flipView;
 
-    //private Spinner topicsSpinner;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,19 +131,6 @@ public class FlipAsyncContentActivity extends Activity {
                     .<TextView>findViewById(layout, R.id.tv_article_short_desc)
                     .setText(Html.fromHtml(data.getDescription()));
 
-           /* UI
-                    .<Button>findViewById(layout, R.id.wikipedia)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(data.getLink())
-                            );
-                            inflater.getContext().startActivity(intent);
-                        }
-                    });
-*/
             ImageView photoView = UI.findViewById(layout, R.id.photo);
             //Use an async task to load the bitmap
             boolean needReload = true;

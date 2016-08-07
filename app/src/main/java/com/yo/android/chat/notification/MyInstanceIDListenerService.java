@@ -55,21 +55,6 @@ public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
 
         if (refreshedToken != null) {
             preferenceEndPoint.saveStringPreference(Constants.FCM_REFRESH_TOKEN, refreshedToken);
-            // send fcm registration token to server
-            /*if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))){
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
-            }*/
         }
     }
 }

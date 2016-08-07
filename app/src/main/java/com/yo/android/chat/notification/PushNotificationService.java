@@ -47,8 +47,6 @@ public class PushNotificationService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-//        String body = remoteMessage.getNotification().getBody();
-//        String title = remoteMessage.getNotification().getTitle();
         Map data = remoteMessage.getData();
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
@@ -68,21 +66,6 @@ public class PushNotificationService extends FirebaseMessagingService {
 
         int notificationId = title.hashCode();
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);
-
-       /* NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
-        notificationStyle.bigText(title);
-
-        Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(getNotificationIcon())
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .setStyle(notificationStyle)
-                .build();
-
-        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationId, notification);*/
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext())

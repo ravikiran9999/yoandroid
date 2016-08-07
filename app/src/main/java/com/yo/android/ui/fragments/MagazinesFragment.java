@@ -108,8 +108,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //MagazineTopicsSelectionFragment fragment = new MagazineTopicsSelectionFragment();
-        //getChildFragmentManager().beginTransaction().add(R.id.top, fragment).commit();
 
         mAdapter = new ArrayAdapter<String>
                 (getActivity(), R.layout.textviewitem, new ArrayList<String>());
@@ -134,7 +132,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     private void callApiSearchTopics() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        //showProgressDialog();
+
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
@@ -251,10 +249,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     }
                     if (getActivity() != null)
                         Util.hideKeyboard(getActivity(), searchTextView);
-//                    MagazineFlipArticlesFragment fragment = (MagazineFlipArticlesFragment) getChildFragmentManager().getFragments().get(0);
                     List<String> tagIds = new ArrayList<String>();
                     tagIds.add(topicId);
-//                    fragment.loadArticles(tagIds);
                     if (mMagazineFlipArticlesFragment != null) {
                         mMagazineFlipArticlesFragment.loadArticles(tagIds);
                     }
@@ -268,13 +264,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
                         mMagazineFlipArticlesFragment.loadArticles(null);
-//                        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
-//                            String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
-//                            if (prefTags != null) {
-//                                List<String> tagIds = Arrays.asList(prefTags);
-//                                mMagazineFlipArticlesFragment.loadArticles(null);
-//                            }
-//                        }
 
                     }
                     return true;

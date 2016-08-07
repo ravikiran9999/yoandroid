@@ -94,10 +94,7 @@ public class MyCollectionDetails extends BaseActivity {
                 public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
                     if (response.body().size() > 0) {
                         for (int i = 0; i < response.body().size(); i++) {
-                            //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                            //articlesList = new ArrayList<Travels.Data>();
                             articlesList.add(response.body().get(i));
-                            // }
                         }
                         myBaseAdapter.addItems(articlesList);
                     } else {
@@ -119,11 +116,7 @@ public class MyCollectionDetails extends BaseActivity {
                     final String id = response.body().getId();
                     if (response.body().getArticlesList()!= null && response.body().getArticlesList().size() > 0) {
                         for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                            //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                            //articlesList = new ArrayList<Travels.Data>();
-
                             articlesList.add(response.body().getArticlesList().get(i));
-                            // }
                         }
                         myBaseAdapter.addItems(articlesList);
                     }
@@ -198,9 +191,6 @@ public class MyCollectionDetails extends BaseActivity {
 
                 holder = new ViewHolder();
 
-                /*holder.categoryName = UI
-                        .<TextView>findViewById(layout, R.id.tv_category_name);*/
-
                 holder.articleTitle = UI.
                         <TextView>findViewById(layout, R.id.tv_article_title);
 
@@ -222,18 +212,11 @@ public class MyCollectionDetails extends BaseActivity {
                 holder = (ViewHolder) layout.getTag();
             }
 
-            //final Travels.Data data = Travels.getImgDescriptions().get(position);
             final Articles data = getItem(position);
             if (data == null) {
                 return layout;
             }
             holder.magazineLike.setTag(position);
-            //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
-            //articlesList = new ArrayList<Travels.Data>();
-            //articlesList.add(data);
-
-            /*holder.categoryName
-                    .setText(AphidLog.format("%s", topicName));*/
 
             holder.articleTitle
                     .setText(AphidLog.format("%s", data.getTitle()));
@@ -242,13 +225,11 @@ public class MyCollectionDetails extends BaseActivity {
                 holder.articleShortDesc
                         .setText(Html.fromHtml(data.getSummary()));
             }
-            //TODO:
+
             holder.magazineLike.setOnCheckedChangeListener(null);
             if (data.getLiked().equals("true")) {
-                // holder.magazineLike.setChecked(true);
                 data.setIsChecked(true);
             } else {
-                //holder.magazineLike.setChecked(false);
                 data.setIsChecked(false);
             }
 
@@ -264,16 +245,10 @@ public class MyCollectionDetails extends BaseActivity {
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    /*}
-                                    else {
-                                        Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    }*/
                             }
 
                             @Override
@@ -289,17 +264,11 @@ public class MyCollectionDetails extends BaseActivity {
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 data.setIsChecked(false);
                                 data.setLiked("false");
 
                                 notifyDataSetChanged();
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
-                                //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    /*}
-                                    else {
-                                        Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    }*/
                             }
 
                             @Override
@@ -313,8 +282,6 @@ public class MyCollectionDetails extends BaseActivity {
                     }
                 }
             });
-            //TODO:
-
 
             UI
                     .<TextView>findViewById(layout, R.id.tv_category_full_story)
@@ -326,8 +293,6 @@ public class MyCollectionDetails extends BaseActivity {
                         public void onClick(View v) {
                             Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                             intent.putExtra("Title", data.getTitle());
-                                /*String detailedDesc = Html.fromHtml(data.getDescription()).toString();
-                                intent.putExtra("DetailedDesc", detailedDesc);*/
                             intent.putExtra("Image", data.getUrl());
                             context.startActivity(intent);
                         }
@@ -337,47 +302,14 @@ public class MyCollectionDetails extends BaseActivity {
             ImageView photoView = holder.articlePhoto;
 
             if (data.getImage_filename() != null) {
-                //Use an async task to load the bitmap
-                /*boolean needReload = true;
-                AsyncImageTask previousTask = AsyncDrawable.getTask(photoView);
-                if (previousTask != null) {
-                    //check if the convertView happens to be previously used
-                    if (previousTask.getPageIndex() == position && previousTask.getImageName()
-                            .equals(data.getImage_filename())) {
-                        needReload = false;
-                    } else {
-                        previousTask.cancel(true);
-                    }
-                }
-
-                if (needReload) {
-                    AsyncImageTask
-                            task =
-                            new AsyncImageTask(layout.getContext().getAssets(), photoView, controller, position,
-                                    data.getImage_filename());
-                    photoView
-                            .setImageDrawable(new AsyncDrawable(context.getResources(), placeholderBitmap, task));
-
-                    task.execute();
-                }*/
-
-                //photoView.loadUrl(data.getImage_filename());
                 Picasso.with(MyCollectionDetails.this)
                         .load(data.getImage_filename())
                         .fit()
                         .into(photoView);
             }
-            //}
 
             Button followMoreTopics = (Button)layout.findViewById(R.id.btn_magazine_follow_topics);
             followMoreTopics.setVisibility(View.GONE);
-           /* followMoreTopics.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
-                    startActivity(intent);
-                }
-            });*/
 
             ImageView add = holder.magazineAdd;
             add.setOnClickListener(new View.OnClickListener() {
@@ -397,10 +329,6 @@ public class MyCollectionDetails extends BaseActivity {
                     Util.shareIntent(v, data.getUrl(),"Sharing Article");
                 }
             });
-
-            /*holder.articleFollow.setEnabled(false);
-            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));*/
-            //holder.articleFollow.setVisibility(View.GONE);
 
             if(data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
@@ -500,7 +428,6 @@ public class MyCollectionDetails extends BaseActivity {
     }
 
     private static class ViewHolder {
-        //private TextView categoryName;
 
         private TextView articleTitle;
 
@@ -521,7 +448,6 @@ public class MyCollectionDetails extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_collections_detail, menu);
-        //menu.getItem(0).setTitle("Following");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -560,7 +486,6 @@ public class MyCollectionDetails extends BaseActivity {
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    //menuItem.setTitle("Follow");
                                     Intent intent = new Intent();
                                     setResult(6, intent);
                                     finish();
@@ -569,7 +494,6 @@ public class MyCollectionDetails extends BaseActivity {
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    //menuItem.setTitle("Following");
                                     menuItem.setIcon(R.drawable.ic_mycollections_tick);
                                 }
                             });
@@ -605,7 +529,6 @@ public class MyCollectionDetails extends BaseActivity {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     dismissProgressDialog();
-                                    //menuItem.setTitle("Follow");
                                     Intent intent = new Intent();
                                     setResult(6, intent);
                                     finish();
@@ -614,8 +537,6 @@ public class MyCollectionDetails extends BaseActivity {
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     dismissProgressDialog();
-                                    //menuItem.setTitle("Following");
-                                    //menuItem.setIcon(R.drawable.ic_magazine_following);
                                     menuItem.setIcon(R.drawable.ic_mycollections_tick);
 
                                 }

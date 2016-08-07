@@ -65,7 +65,6 @@ public class OtherProfilesLinedArticles extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.magazine_flip_fragment, container, false);
-        //return inflater.inflate(R.layout.profile_magazines, container, false);
 
         noArticals = (TextView) view.findViewById(R.id.txtEmptyArticals);
         flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
@@ -108,12 +107,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                         if (noArticals != null) {
                             noArticals.setVisibility(View.GONE);
                         }
-                        /*TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(2).getCustomView().findViewById(R.id.count);
-                        count.setText("" + response.body().size());*/
-                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                        //articlesList = new ArrayList<Travels.Data>();
                         articlesList.add(response.body().get(i));
-                        // }
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
@@ -233,7 +227,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                 holder.articleShortDesc
                         .setText(Html.fromHtml(data.getSummary()));
             }
-            //TODO:
+
             holder.magazineLike.setOnCheckedChangeListener(null);
             if (data.getLiked().equals("true")) {
                 data.setIsChecked(true);
@@ -295,8 +289,6 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                     }
                 }
             });
-            //TODO:
-
 
             UI
                     .<TextView>findViewById(layout, R.id.tv_category_full_story)
@@ -308,8 +300,6 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                         public void onClick(View v) {
                             Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                             intent.putExtra("Title", data.getTitle());
-                                /*String detailedDesc = Html.fromHtml(data.getDescription()).toString();
-                                intent.putExtra("DetailedDesc", detailedDesc);*/
                             intent.putExtra("Image", data.getUrl());
                             context.startActivity(intent);
                         }
@@ -457,7 +447,6 @@ public class OtherProfilesLinedArticles extends BaseFragment {
     }
 
     private static class ViewHolder {
-        //private TextView categoryName;
 
         private TextView articleTitle;
 

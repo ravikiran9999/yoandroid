@@ -30,27 +30,6 @@ public class Travels {
                 "<b>Samye Monastery</b> is the first Buddhist monastery built in Tibet, was most probably first constructed between 775 and 779 CE.",
                 "China", "Samye",
                 "http://en.wikipedia.org/wiki/Samye", false));
-        /*Travels.IMG_DESCRIPTIONS.add(
-                new Data("Tashilunpo Monastery", "tashilunpo_monastery.jpg",
-                        "<b>Tashilhunpo Monastery</b>, founded in 1447 by Gendun Drup, the First Dalai Lama, is a historic and culturally important monastery next to Shigatse, the second-largest city in Tibet.",
-                        "China", "Shigatse",
-                        "http://en.wikipedia.org/wiki/Tashilhunpo_Monastery"));
-        Travels.IMG_DESCRIPTIONS.add(new Data("Zhangmu Port", "zhangmu_port.jpg",
-                "<b>Zhangmu/Dram</b> is a customs town and port of entry located in Nyalam County on the Nepal-China border, just uphill and across the Bhote Koshi River from the Nepalese town of Kodari.",
-                "China", "Zhangmu",
-                "http://en.wikipedia.org/wiki/Zhangmu"));
-        Travels.IMG_DESCRIPTIONS.add(new Data("Kathmandu", "kathmandu.jpg",
-                "<b>Kathmandu</b> is the capital and, with more than one million inhabitants, the largest metropolitan city of Nepal.",
-                "Nepal", "Kathmandu",
-                "http://en.wikipedia.org/wiki/Kathmandu"));
-        Travels.IMG_DESCRIPTIONS.add(new Data("Pokhara", "pokhara.jpg",
-                "<b>Pokhara Sub-Metropolitan City</b> is the second largest city of Nepal with approximately 250,000 inhabitants and is situated about 200 km west of the capital Kathmandu.",
-                "Nepal", "Pokhara",
-                "http://en.wikipedia.org/wiki/Pokhara"));
-        Travels.IMG_DESCRIPTIONS.add(new Data("Patan", "patan.jpg",
-                "<b>Patan</b>, officially Lalitpur Sub-Metropolitan City, is one of the major cities of Nepal located in the south-central part of Kathmandu Valley.",
-                "Nepal", "Patan",
-                "http://en.wikipedia.org/wiki/Patan,_Nepal"));*/
     }
 
     public static final class Data {

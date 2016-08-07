@@ -51,15 +51,6 @@ public class MagazineTopicsSelectionFragment extends BaseFragment implements Ada
 
         topicsSpinner.setOnItemSelectedListener(this);
 
-        /*ArrayAdapter<Topics> topicsArrayAdapter = new ArrayAdapter<Topics>(getActivity(), android.R.layout.simple_spinner_item, topicsList);
-        topicsSpinner.setAdapter(topicsArrayAdapter);
-
-        topicsSpinner.setOnItemSelectedListener(this);
-        //selectedTopic = "Top Stories";
-        if(topicsList.size() >0) {
-            selectedTopic = topicsList.get(0).getName();
-        }*/
-
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
@@ -71,11 +62,9 @@ public class MagazineTopicsSelectionFragment extends BaseFragment implements Ada
                     topicsList.add(response.body().get(i));
                 }
 
-                //ArrayAdapter<Topics> topicsArrayAdapter = new ArrayAdapter<Topics>(getActivity(), android.R.layout.simple_spinner_item, topicsList);
                 TopicsSpinnerAdapter topicsArrayAdapter = new TopicsSpinnerAdapter(getActivity(), android.R.layout.simple_list_item_1, topicsList);
                 topicsSpinner.setAdapter(topicsArrayAdapter);
 
-                //selectedTopic = "Top Stories";
                 if (topicsList.size() > 0) {
                     selectedTopic = topicsList.get(0).getName();
                 }
@@ -87,28 +76,12 @@ public class MagazineTopicsSelectionFragment extends BaseFragment implements Ada
             }
         });
 
-       /* yoService.getArticlesAPI("1eb510a50d86f49784741ba6abda3a888cda9fe592cea6a21dbefd1b64c3878e", "577a48b92434bc000356501a").enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });*/
-
-        // Inflate the layout for this fragment
         return view;
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        /*Toast.makeText(parent.getContext(),
-                "Selected topic : " + parent.getItemAtPosition(position).toString(),
-                Toast.LENGTH_SHORT).show();*/
-        //selectedTopic = parent.getItemAtPosition(position).toString();
+
         selectedTopic = topicsList.get(position).getName();
         Intent intent = new Intent();
         intent.setAction("com.yo.magazine.SendBroadcast");

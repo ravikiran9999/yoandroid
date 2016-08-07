@@ -126,7 +126,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
             holder.articleShortDesc
                     .setText(Html.fromHtml(data.getSummary()));
         }
-        //TODO:
+
         holder.magazineLike.setOnCheckedChangeListener(null);
         if (data.getLiked().equals("true")) {
             data.setIsChecked(true);
@@ -248,13 +248,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
         if (data.getIsFollowing().equals("true")) {
             holder.articleFollow.setText("Following");
             holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-            /*holder.articleFollow.setEnabled(false);
-            holder.articleFollow.setBackgroundColor(context.getResources().getColor(R.color.grey_divider));*/
         } else {
             holder.articleFollow.setText("Follow");
             holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-           /* holder.articleFollow.setEnabled(true);
-            holder.articleFollow.setBackgroundResource(R.drawable.ic_magazine_follow);*/
         }
 
         final ViewHolder finalHolder = holder;
@@ -354,7 +350,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
     }
 
     private static class ViewHolder {
-        //private TextView categoryName;
 
         private TextView articleTitle;
 

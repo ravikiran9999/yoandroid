@@ -56,8 +56,6 @@ public class OthersProfileMagazines extends BaseFragment {
         gridView = (GridView) view.findViewById(R.id.magazines_gridview);
         noData = (TextView) view.findViewById(R.id.no_data);
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
-        //userID = "577a21902a8b0f000346d328"
-
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getOtherProfilesMagazinesAPI(accessToken, userID).enqueue(new Callback<List<OwnMagazine>>() {
@@ -65,8 +63,6 @@ public class OthersProfileMagazines extends BaseFragment {
             public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
-                   /* TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(0).getCustomView().findViewById(R.id.count);
-                    count.setText("" + response.body().size());*/
                     List<OwnMagazine> magazineList = response.body();
                     adapter = new OthersMagazinesAdapter(getActivity());
                     adapter.addItems(magazineList);
