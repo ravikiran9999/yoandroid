@@ -146,6 +146,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     ((BaseActivity) context).dismissProgressDialog();
+                                    removeItem(item);
                                     holder.getBtnFindPeopleFollow().setText("Follow");
                                     holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                     item.setIsFollowing("false");
