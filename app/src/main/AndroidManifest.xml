@@ -28,13 +28,13 @@
 
     <uses-feature
         android:name="android.hardware.sip.voip"
-        android:required="true" />
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.wifi"
-        android:required="true" />
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.microphone"
-        android:required="true" />
+        android:required="false" />
 
     <application
         android:name=".app.BaseApp"
