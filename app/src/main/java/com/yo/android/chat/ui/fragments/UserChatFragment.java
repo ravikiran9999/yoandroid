@@ -753,14 +753,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         });
 
     }
-    public void update(String phoneNumber,String roomId) {
+    public void update(String phoneNumber, String roomId) {
         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
         String where = YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "=?";
         ContentValues contentValues = new ContentValues();
         contentValues.put(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID, roomId);
-        getActivity().getContentResolver()
-                .update(uri, contentValues, where,
-                        new String[]{phoneNumber});
+        if (getActivity() != null) {
+            getActivity().getContentResolver()
+                    .update(uri, contentValues, where,
+                            new String[]{phoneNumber});
+        }
     }
 }
 

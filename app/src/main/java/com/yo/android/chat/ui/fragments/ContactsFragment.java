@@ -232,7 +232,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        //
+        getLoaderManager().restartLoader(0, null, this);
     }
 
 }
