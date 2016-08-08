@@ -68,6 +68,8 @@ public class Constants {
     public static final String NOTIFICATION_ALERTS = "notification_alerts";
     public static final String SYNCE_CONTACTS = "sync_contacts";
     public static final String FROM_CHAT_ROOMS = "from_chat_activity";
+    public static final String LIKE_EVENT = "like_event";
+    public static final String FOLLOW_EVENT = "follow_event";
     public static int SUCCESS_CODE = 200;
 
     public static final int ADD_IMAGE_CAPTURE = 1;

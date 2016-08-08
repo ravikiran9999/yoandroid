@@ -30,6 +30,7 @@ import com.yo.android.model.Articles;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -41,11 +42,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MagazineArticlesBaseAdapter extends BaseAdapter {
+public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener {
 
     private Context context;
-
     private LayoutInflater inflater;
+    public static AutoReflectWishListActionsListener reflectListener;
 
 
     private List<Articles> items;
@@ -58,6 +59,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
                                        YoApi.YoService yoService, ToastFactory mToastFactory) {
         inflater = LayoutInflater.from(context);
         this.context = context;
+        reflectListener = this;
         this.preferenceEndPoint = preferenceEndPoint;
         this.yoService = yoService;
         this.mToastFactory = mToastFactory;
@@ -347,6 +349,34 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter {
     public void clear() {
         items.clear();
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateFollowOrLikesStatus(Articles data, String type) {
+        if (data != null) {
+
+            if (Constants.FOLLOW_EVENT.equals(type)) {
+                for (Articles article : items) {
+                    if (data.getId() != null && data.getId().equals(article.getId())) {
+                        article.setIsFollowing(data.getIsFollowing());
+                        article.setIsFollow(data.isFollow());
+                        notifyDataSetChanged();
+                        break;
+                    }
+                }
+            } else {
+                for (Articles article : items) {
+                    if (data.getId() != null && data.getId().equals(article.getId())) {
+                        article.setLiked(data.getLiked());
+                        article.setIsChecked(data.isChecked());
+                        notifyDataSetChanged();
+                        break;
+                    }
+
+                }
+            }
+        }
+
     }
 
     private static class ViewHolder {
