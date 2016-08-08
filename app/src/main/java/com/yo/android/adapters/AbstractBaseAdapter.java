@@ -96,14 +96,14 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         notifyDataSetChanged();
     }
 
-    public void performSearch(@NonNull String key) {
-        key = key.trim();
-        if (key.isEmpty()) {
+    public void performSearch(final @NonNull String key) {
+        String searchKey = key.trim();
+        if (searchKey.isEmpty()) {
             addItems(mOriginalList);
         } else {
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
-                if (hasData(event, key)) {
+                if (hasData(event, searchKey)) {
                     temp.add(event);
                 }
             }
@@ -111,8 +111,9 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
     }
 
-    public void performContactsSearch(@NonNull String key) {
-        if (key.isEmpty()) {
+    public void performContactsSearch(final @NonNull String key) {
+        String searchKey = key.trim();
+        if (searchKey.isEmpty()) {
             addItems(mOriginalList);
         } else {
 
@@ -131,9 +132,9 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                     String number = memberses.get(j).getMobileNumber();
                     if (number != null && !number.contentEquals(myNumber)) {
                         String mKey = memberses.get(j).getMobileNumber();
-                        if (mKey.contains(key)) {
+                        if (mKey.contains(searchKey)) {
                             temp.add(event);
-                        } else if (mKey.contains(key)) {
+                        } else if (mKey.contains(searchKey)) {
                             temp.clear();
                             temp.add(event);
                         }
@@ -144,17 +145,18 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
     }
 
-    public void performYoContactsSearch(@NonNull String key) {
-        if (key.isEmpty()) {
+    public void performYoContactsSearch(final @NonNull String key) {
+        String searchKey = key.trim();
+        if (searchKey.isEmpty()) {
             addItems(mOriginalList);
         } else {
 
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
-                if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(key.toLowerCase())) {
+                if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(searchKey.toLowerCase())) {
                     temp.add(event);
                 }
-                if (((Contact) event).getPhoneNo() != null && ((Contact) event).getPhoneNo().contains(key)) {
+                if (((Contact) event).getPhoneNo() != null && ((Contact) event).getPhoneNo().contains(searchKey)) {
                     temp.add(event);
                 }
             }

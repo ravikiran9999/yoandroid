@@ -19,13 +19,13 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.10.0"
+        versionName "16.3.10.1"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
     }
     productFlavors {
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
-         //   buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            //buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
 
             buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""

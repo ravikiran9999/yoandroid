@@ -220,45 +220,92 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         List<Collections> collections = myCollectionsAdapter.getSelectedItems();
         List<String> topicIds = new ArrayList<String>();
+        List<String> magazineIds = new ArrayList<>();
         for (int i = 0; i < collections.size(); i++) {
-            topicIds.add(collections.get(i).getId());
+            if(collections.get(i).getType().equals("Tag")) {
+                topicIds.add(collections.get(i).getId());
+            }
+            else {
+                magazineIds.add(collections.get(i).getId());
+            }
         }
-        yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
-                    @Override
-                    public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
-                        dismissContextualMenu();
-                        invalidateOptionsMenu();
-                        final List<Collections> collectionsList = new ArrayList<Collections>();
-                        Collections collections = new Collections();
-                        collections.setName("Follow more topics");
-                        collections.setImage("");
-                        collectionsList.add(0, collections);
-                        if (response == null || response.body() == null) {
-                            return;
+        if(topicIds.size() > 0) {
+            yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
+                        @Override
+                        public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                            dismissContextualMenu();
+                            invalidateOptionsMenu();
+                            final List<Collections> collectionsList = new ArrayList<Collections>();
+                            Collections collections = new Collections();
+                            collections.setName("Follow more topics");
+                            collections.setImage("");
+                            collectionsList.add(0, collections);
+                            if (response == null || response.body() == null) {
+                                return;
+                            }
+                            collectionsList.addAll(response.body());
+                            myCollectionsAdapter.clearAll();
+                            myCollectionsAdapter.addItems(collectionsList);
+                            gridView.setAdapter(myCollectionsAdapter);
+
                         }
-                        collectionsList.addAll(response.body());
-                        myCollectionsAdapter.clearAll();
-                        myCollectionsAdapter.addItems(collectionsList);
-                        gridView.setAdapter(myCollectionsAdapter);
 
-                    }
+                        @Override
+                        public void onFailure(Call<List<Collections>> call, Throwable t) {
 
-                    @Override
-                    public void onFailure(Call<List<Collections>> call, Throwable t) {
+                        }
+                    });
+                }
 
-                    }
-                });
-            }
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                }
+            });
+        }
 
-            }
-        });
+        if(magazineIds.size() > 0) {
+            yoService.removeMagazinesAPI(accessToken, magazineIds).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
+                        @Override
+                        public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                            dismissContextualMenu();
+                            invalidateOptionsMenu();
+                            final List<Collections> collectionsList = new ArrayList<Collections>();
+                            Collections collections = new Collections();
+                            collections.setName("Follow more topics");
+                            collections.setImage("");
+                            collectionsList.add(0, collections);
+                            if (response == null || response.body() == null) {
+                                return;
+                            }
+                            collectionsList.addAll(response.body());
+                            myCollectionsAdapter.clearAll();
+                            myCollectionsAdapter.addItems(collectionsList);
+                            gridView.setAdapter(myCollectionsAdapter);
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Collections>> call, Throwable t) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+        }
     }
 
     @Override
