@@ -97,7 +97,6 @@ public class OthersProfileActivity extends BaseActivity {
                 finish();
             }
         });
-//        viewPager.setCurrentItem(2);
         viewPager.setCurrentItem(1);
         viewPager.setCurrentItem(0);
 

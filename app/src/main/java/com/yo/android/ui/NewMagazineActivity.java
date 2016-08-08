@@ -129,27 +129,11 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
 
         if (!TextUtils.isEmpty(magazineTitle.trim())) {
 
-            /*String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
-                @Override
-                public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
-                    if(response.body() != null) {*/
             Intent intent = new Intent(NewMagazineActivity.this, LoadMagazineActivity.class);
-            //intent.putExtra("MagazineId", response.body().getId());
             intent.putExtra("MagazineTitle", magazineTitle);
             intent.putExtra("MagazineDesc", magazineDesc);
             intent.putExtra("MagazinePrivacy", magazinePrivacy);
             startActivityForResult(intent, Constants.ADD_STORY_ACTION);
-                    /*}
-                    else {
-                        mToastFactory.showToast("Magazine Title is already taken");
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<OwnMagazine> call, Throwable t) {
-                }
-            });*/
         } else {
             Util.hideKeyboard(this, v);
             mToastFactory.showToast("Please enter the Magazine Title");

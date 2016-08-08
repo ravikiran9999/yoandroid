@@ -92,7 +92,6 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
-//                dismissProgressDialog();
                 if (response == null || response.body() == null) {
                     dismissProgressDialog();
                     return;
@@ -294,9 +293,6 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tag.tagTextColor = getResources().getColor(R.color.tab_grey);
         tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
 
-
-        // if (i % 2 == 0) // you can set deletable or not
-        //     tag.isDeletable = true;
         if (topics.isSelected()) {
             tag.setSelected(true);
             tag.layoutColor = getResources().getColor(R.color.colorPrimary);
@@ -524,7 +520,6 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         private void oldOpenCamera() {
             try {
-//                mCamera = Camera.open(1);
             } catch (RuntimeException e) {
                 Log.e("", "failed to open front camera");
             }

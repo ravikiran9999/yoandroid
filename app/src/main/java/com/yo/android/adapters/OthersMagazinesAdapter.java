@@ -65,7 +65,6 @@ public class OthersMagazinesAdapter extends BaseAdapter {
         TextView textViewDesc = (TextView) convertView.findViewById(R.id.tv_desc);
         textViewDesc.setText(ownMagazineList.get(position).getDescription());
 
-        //if (position != 0) {
             if (!TextUtils.isEmpty(ownMagazineList.get(position).getImage())) {
                 Picasso.with(mContext)
                         .load(ownMagazineList.get(position).getImage())
@@ -84,15 +83,6 @@ public class OthersMagazinesAdapter extends BaseAdapter {
             params.gravity = Gravity.TOP | Gravity.LEFT;
             params.leftMargin = 10;
             textView.setLayoutParams(params);
-        /*} else {
-
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.CENTER;
-            textView.setLayoutParams(params);
-            imageView.setImageDrawable(new ColorDrawable(mContext.getResources().getColor(R.color.grey_divider)));
-            squareItemLinearLayout.setBackgroundColor(mContext.getResources().getColor(R.color.grey_divider));
-        }*/
 
         return convertView;
     }

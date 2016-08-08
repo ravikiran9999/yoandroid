@@ -83,11 +83,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         EventBus.getDefault().register(this);
 
         Intent intent = getIntent();
-        /*final String articleId = intent.getStringExtra("ArticleId");
-        final String articleTitle = intent.getStringExtra("ArticleTitle");
-        final String articleUrl = intent.getStringExtra("ArticleUrl");
-        String articleSummary = intent.getStringExtra("ArticleSummary");
-        String articleImage = intent.getStringExtra("ArticleImage");*/
         magazineTitle = intent.getStringExtra("MagazineTitle");
         magazineId = intent.getStringExtra("MagazineId");
         magazineDesc = intent.getStringExtra("MagazineDesc");
@@ -95,70 +90,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(magazineTitle);
 
-       /* TextView tvTitle = (TextView) findViewById(R.id.tv_article_title);
-        TextView tvSummary = (TextView) findViewById(R.id.tv_article_short_desc);
-        ImageView tvImage = (ImageView) findViewById(R.id.photo);
-        TextView tvFullStory = (TextView) findViewById(R.id.tv_category_full_story);
-        CheckBox magazineLike = (CheckBox) findViewById(R.id.cb_magazine_like);*/
-
-
         loadArticles();
-
-
-        /*tvTitle.setText(articleTitle);
-        tvSummary.setText(articleSummary);
-        if (articleImage != null) {
-            Picasso.with(this)
-                .load(articleImage)
-                .into(tvImage);
-        }
-        tvFullStory.setText(articleTitle);
-        tvFullStory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CreatedMagazineDetailActivity.this, MagazineArticleDetailsActivity.class);
-                intent.putExtra("Title", articleTitle);
-                intent.putExtra("Image", articleUrl);
-                startActivity(intent);
-            }
-        });
-
-        magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.likeArticlesAPI(articleId, accessToken).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                            mToastFactory.showToast("You have liked the article " + articleTitle);
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            mToastFactory.showToast("Error while liking article " + articleTitle);
-                        }
-                    });
-                } else {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.unlikeArticlesAPI(articleId, accessToken).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                            mToastFactory.showToast("You have unliked the article " + articleTitle);
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            mToastFactory.showToast("Error while unliking article " + articleTitle);
-                        }
-                    });
-                }
-            }
-        });*/
 
     }
 
@@ -171,14 +103,11 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 final String id = response.body().getId();
                 if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
                     for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                        //articlesList = new ArrayList<Travels.Data>();
                         flipContainer.setVisibility(View.VISIBLE);
                         if (noArticals != null) {
                             noArticals.setVisibility(View.GONE);
                         }
                         articlesList.add(response.body().getArticlesList().get(i));
-                        // }
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
@@ -274,9 +203,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                 holder = new ViewHolder();
 
-                /*holder.categoryName = UI
-                        .<TextView>findViewById(layout, R.id.tv_category_name);*/
-
                 holder.articleTitle = UI.
                         <TextView>findViewById(layout, R.id.tv_article_title);
 
@@ -296,18 +222,11 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 holder = (ViewHolder) layout.getTag();
             }
 
-            //final Travels.Data data = Travels.getImgDescriptions().get(position);
             final Articles data = getItem(position);
             if (data == null) {
                 return layout;
             }
             holder.magazineLike.setTag(position);
-            //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
-            //articlesList = new ArrayList<Travels.Data>();
-            //articlesList.add(data);
-
-            /*holder.categoryName
-                    .setText(AphidLog.format("%s", topicName));*/
 
             holder.articleTitle
                     .setText(AphidLog.format("%s", data.getTitle()));
@@ -316,13 +235,11 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 holder.articleShortDesc
                         .setText(Html.fromHtml(data.getSummary()));
             }
-            //TODO:
+
             holder.magazineLike.setOnCheckedChangeListener(null);
             if (data.getLiked().equals("true")) {
-                // holder.magazineLike.setChecked(true);
                 data.setIsChecked(true);
             } else {
-                //holder.magazineLike.setChecked(false);
                 data.setIsChecked(false);
             }
 
@@ -342,13 +259,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
-                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    /*}
-                                    else {
-                                        Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    }*/
                             }
 
                             @Override
@@ -369,13 +280,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                 data.setLiked("false");
 
                                 notifyDataSetChanged();
-                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
-                                //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    /*}
-                                    else {
-                                        Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    }*/
                             }
 
                             @Override
@@ -389,8 +294,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                     }
                 }
             });
-            //TODO:
-
 
             UI
                     .<TextView>findViewById(layout, R.id.tv_category_full_story)
@@ -402,8 +305,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                         public void onClick(View v) {
                             Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                             intent.putExtra("Title", data.getTitle());
-                                /*String detailedDesc = Html.fromHtml(data.getDescription()).toString();
-                                intent.putExtra("DetailedDesc", detailedDesc);*/
                             intent.putExtra("Image", data.getUrl());
                             context.startActivity(intent);
                         }
@@ -451,7 +352,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     }
 
     private static class ViewHolder {
-        //private TextView categoryName;
 
         private TextView articleTitle;
 
@@ -522,7 +422,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // check if the request code is same as what is passed  here it is 2
         if (requestCode == 2 && resultCode == RESULT_OK) {
             loadArticles();
         } else if (requestCode == 3 && resultCode == RESULT_OK) {

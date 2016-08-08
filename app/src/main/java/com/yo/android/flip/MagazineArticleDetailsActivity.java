@@ -25,32 +25,15 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("Title");
-        //String detailedDesc = intent.getStringExtra("DetailedDesc");
         String image = intent.getStringExtra("Image");
 
         getSupportActionBar().setTitle(title);
-       /* UI
-                .<TextView>findViewById(this, R.id.tv_article_long_desc)
-                .setText(detailedDesc);*/
-        /*ImageView photoView = UI.findViewById(this, R.id.photo);
-        // load image
-        try {
-            // get input stream
-            InputStream ims = getAssets().open(image);
-            // load image as Drawable
-            Drawable d = Drawable.createFromStream(ims, null);
-            // set image to ImageView
-            photoView.setImageDrawable(d);
-        } catch (IOException ex) {
-            return;
-        }*/
 
         WebView webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
 
         webview.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                //Toast.makeText(activity, description, Toast.LENGTH_SHORT).show();
             }
         });
 

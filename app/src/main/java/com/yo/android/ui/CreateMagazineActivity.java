@@ -37,7 +37,6 @@ public class CreateMagazineActivity extends BaseActivity {
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
     private GridView gridView;
-    //private List<OwnMagazine> ownMagazineList;
     private String addArticleMagazineId = null;
 
     @Override
@@ -142,7 +141,6 @@ public class CreateMagazineActivity extends BaseActivity {
                 @Override
                 public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
                     List<OwnMagazine> ownMagazineList = new ArrayList<OwnMagazine>();
-                    //List<OwnMagazine> ownMagazineList = new ArrayList<OwnMagazine>();
                     OwnMagazine ownMagazine = new OwnMagazine();
                     ownMagazine.setName("+ New Magazine");
                     ownMagazine.setImage("");

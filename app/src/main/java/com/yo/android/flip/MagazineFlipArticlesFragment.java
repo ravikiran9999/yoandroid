@@ -44,12 +44,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     private FlipViewController flipView;
     private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
-    //private static List<Travels.Data> articlesList = new ArrayList<Travels.Data>();
     private MagazineArticlesBaseAdapter myBaseAdapter;
     @Inject
     YoApi.YoService yoService;
     private String topicName;
-    //private TextView noArticals;
     private LinearLayout llNoArticles;
     private FrameLayout flipContainer;
     private ProgressBar mProgress;
@@ -74,9 +72,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* IntentFilter filter = new IntentFilter("com.yo.magazine.SendBroadcast");
-        myReceiver = new MyReceiver();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myReceiver, filter);*/
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -100,18 +95,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        /*if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Constants.ADD_ARTICLES_TO_MAGAZINE && getActivity() != null) {
-                new ToastFactoryImpl(getActivity()).showToast(getResources().getString(R.string.article_added_success));
-            }
-        }*/
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //loadArticles(magazineTopicsSelectionFragment.getSelectedTopic());
 
         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
@@ -125,43 +113,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             llNoArticles.setVisibility(View.VISIBLE);
         }
 
-//        Intent intent = getActivity().getIntent();
-//        if (intent.hasExtra("tagIds")) {
-//            List<String> tagIds = intent.getStringArrayListExtra("tagIds");
-//            loadArticles(tagIds);
-//        } else {
-//            if (mProgress != null) {
-//                mProgress.setVisibility(View.GONE);
-//            }
-//            final List<Topics> topicsList = new ArrayList<Topics>();
-//
-//            String accessToken = preferenceEndPoint.getStringPreference("access_token");
-//            showProgressDialog();
-//            yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
-//                @Override
-//                public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
-//                    dismissProgressDialog();
-//                    if (response == null || response.body() == null) {
-//                        return;
-//                    }
-//                    topicsList.addAll(response.body());
-//
-//                    List<String> topicIdsList = new ArrayList<String>();
-//                    for (int i = 0; i < topicsList.size(); i++) {
-//                        if (topicsList.get(i).getSelected().equals("true")) {
-//                            topicIdsList.add(topicsList.get(i).getId());
-//                        }
-//                    }
-//                    loadArticles(topicIdsList);
-//                }
-//
-//                @Override
-//                public void onFailure(Call<List<Topics>> call, Throwable t) {
-//                    dismissProgressDialog();
-//                }
-//            });
-//        }
-
         followMoreTopics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,8 +121,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 startActivity(intent);
             }
         });
-
-        //loadAllArticles();
 
     }
 
@@ -184,7 +133,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
                 networkFailureText.setVisibility(View.VISIBLE);
             }
-            //mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
         } else {
             articlesRootLayout.setVisibility(View.VISIBLE);
@@ -220,7 +168,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     flipContainer.setVisibility(View.VISIBLE);
                 }
             } else {
-                //mToastFactory.showToast("No Articles");
                 if (llNoArticles != null) {
                     flipContainer.setVisibility(View.GONE);
                     flipView.refreshAllPages();
@@ -236,7 +183,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 mLog.e("Magazine", "Please check network settings");
             }
             myBaseAdapter.clear();
-            //Toast.makeText(getActivity(), "Error retrieving Articles", Toast.LENGTH_LONG).show();
             if (mProgress != null) {
                 mProgress.setVisibility(View.GONE);
             }
@@ -247,7 +193,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         networkFailureText.setVisibility(View.GONE);
                         llNoArticles.setVisibility(View.VISIBLE);
                         flipContainer.setVisibility(View.GONE);
-//                            flipView.refreshAllPages();
                     }
 
                 }
@@ -289,7 +234,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     loadArticles(null);
                 }
             } else {
-                //mToastFactory.showToast("No articles. Select topic");
                 myBaseAdapter.addItems(new ArrayList<Articles>());
                 if (llNoArticles != null) {
                     llNoArticles.setVisibility(View.VISIBLE);
@@ -305,16 +249,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
 
     public void refresh() {
-        //mToastFactory.showToast("Testing search close");
         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
                 List<String> tagIds = Arrays.asList(prefTags);
                 loadArticles(null);
             }
-//            if (getParentFragment() instanceof MagazinesFragment) {
-//                ((MagazinesFragment) getParentFragment()).refreshSearch();
-//            }
         }
     }
 

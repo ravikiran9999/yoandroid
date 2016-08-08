@@ -53,7 +53,6 @@ public class WishListActivity extends BaseActivity {
     private String topicName;
     private TextView noArticals;
     private FrameLayout flipContainer;
-    //private ProgressBar mProgress;
     private boolean isFollowing;
 
     @Override
@@ -70,7 +69,6 @@ public class WishListActivity extends BaseActivity {
 
         noArticals = (TextView) findViewById(R.id.no_data);
         flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
-        //mProgress = (ProgressBar) findViewById(R.id.progress);
         flipView = new FlipViewController(this);
         myBaseAdapter = new MyBaseAdapter(this, flipView);
         flipView.setAdapter(myBaseAdapter);
@@ -80,17 +78,11 @@ public class WishListActivity extends BaseActivity {
 
         articlesList.clear();
         myBaseAdapter.addItems(articlesList);
-        /*if (mProgress != null) {
-            mProgress.setVisibility(View.VISIBLE);
-        }*/
         showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-               /* if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }*/
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
@@ -98,10 +90,7 @@ public class WishListActivity extends BaseActivity {
                         if (noArticals != null) {
                             noArticals.setVisibility(View.GONE);
                         }
-                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                        //articlesList = new ArrayList<Travels.Data>();
                         articlesList.add(response.body().get(i));
-                        // }
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
@@ -115,9 +104,6 @@ public class WishListActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<List<Articles>> call, Throwable t) {
-                /*if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }*/
                 dismissProgressDialog();
                 flipContainer.setVisibility(View.GONE);
                 if (noArticals != null) {
@@ -187,9 +173,6 @@ public class WishListActivity extends BaseActivity {
 
                 holder = new ViewHolder();
 
-                /*holder.categoryName = UI
-                        .<TextView>findViewById(layout, R.id.tv_category_name);*/
-
                 holder.articleTitle = UI.
                         <TextView>findViewById(layout, R.id.tv_article_title);
 
@@ -211,18 +194,11 @@ public class WishListActivity extends BaseActivity {
                 holder = (ViewHolder) layout.getTag();
             }
 
-            //final Travels.Data data = Travels.getImgDescriptions().get(position);
             final Articles data = getItem(position);
             if (data == null) {
                 return layout;
             }
             holder.magazineLike.setTag(position);
-            //if (magazineTopicsSelectionFragment.getSelectedTopic().equals(data.getTopicName())) {
-            //articlesList = new ArrayList<Travels.Data>();
-            //articlesList.add(data);
-
-            /*holder.categoryName
-                    .setText(AphidLog.format("%s", topicName));*/
 
             holder.articleTitle
                     .setText(AphidLog.format("%s", data.getTitle()));
@@ -231,13 +207,11 @@ public class WishListActivity extends BaseActivity {
                 holder.articleShortDesc
                         .setText(Html.fromHtml(data.getSummary()));
             }
-            //TODO:
+
             holder.magazineLike.setOnCheckedChangeListener(null);
             if (data.getLiked().equals("true")) {
-                // holder.magazineLike.setChecked(true);
                 data.setIsChecked(true);
             } else {
-                //holder.magazineLike.setChecked(false);
                 data.setIsChecked(false);
             }
 
@@ -257,13 +231,7 @@ public class WishListActivity extends BaseActivity {
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
-                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                //  Toast.makeText(context, "You have liked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    /*}
-                                    else {
-                                        Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    }*/
                             }
 
                             @Override
@@ -284,22 +252,15 @@ public class WishListActivity extends BaseActivity {
                                 data.setLiked("false");
 
                                 notifyDataSetChanged();
-                                //if(response.body().getCode().equals(200) && response.body().getResponse().equals("Success")) {
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
 
                                 articlesList.clear();
                                 myBaseAdapter.addItems(articlesList);
-                                /*if (mProgress != null) {
-                                    mProgress.setVisibility(View.VISIBLE);
-                                }*/
                                 showProgressDialog();
                                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                                 yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
                                     @Override
                                     public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                                        /*if (mProgress != null) {
-                                            mProgress.setVisibility(View.GONE);
-                                        }*/
                                         dismissProgressDialog();
                                         if (response.body() != null && response.body().size() > 0) {
                                             for (int i = 0; i < response.body().size(); i++) {
@@ -307,10 +268,7 @@ public class WishListActivity extends BaseActivity {
                                                 if (noArticals != null) {
                                                     noArticals.setVisibility(View.GONE);
                                                 }
-                                                //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                                                //articlesList = new ArrayList<Travels.Data>();
                                                 articlesList.add(response.body().get(i));
-                                                // }
                                             }
                                             myBaseAdapter.addItems(articlesList);
                                         } else {
@@ -324,9 +282,6 @@ public class WishListActivity extends BaseActivity {
 
                                     @Override
                                     public void onFailure(Call<List<Articles>> call, Throwable t) {
-                                        /*if (mProgress != null) {
-                                            mProgress.setVisibility(View.GONE);
-                                        }*/
                                         dismissProgressDialog();
                                         flipContainer.setVisibility(View.GONE);
                                         if (noArticals != null) {
@@ -334,11 +289,6 @@ public class WishListActivity extends BaseActivity {
                                         }
                                     }
                                 });
-                                //  Toast.makeText(context, "You have unliked the article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    /*}
-                                    else {
-                                        Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                    }*/
                             }
 
                             @Override
@@ -352,8 +302,6 @@ public class WishListActivity extends BaseActivity {
                     }
                 }
             });
-            //TODO:
-
 
             UI
                     .<TextView>findViewById(layout, R.id.tv_category_full_story)
@@ -365,8 +313,6 @@ public class WishListActivity extends BaseActivity {
                         public void onClick(View v) {
                             Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                             intent.putExtra("Title", data.getTitle());
-                                /*String detailedDesc = Html.fromHtml(data.getDescription()).toString();
-                                intent.putExtra("DetailedDesc", detailedDesc);*/
                             intent.putExtra("Image", data.getUrl());
                             context.startActivity(intent);
                         }
@@ -376,36 +322,10 @@ public class WishListActivity extends BaseActivity {
             ImageView photoView = holder.articlePhoto;
 
             if (data.getImage_filename() != null) {
-                //Use an async task to load the bitmap
-                /*boolean needReload = true;
-                AsyncImageTask previousTask = AsyncDrawable.getTask(photoView);
-                if (previousTask != null) {
-                    //check if the convertView happens to be previously used
-                    if (previousTask.getPageIndex() == position && previousTask.getImageName()
-                            .equals(data.getImage_filename())) {
-                        needReload = false;
-                    } else {
-                        previousTask.cancel(true);
-                    }
-                }
-
-                if (needReload) {
-                    AsyncImageTask
-                            task =
-                            new AsyncImageTask(layout.getContext().getAssets(), photoView, controller, position,
-                                    data.getImage_filename());
-                    photoView
-                            .setImageDrawable(new AsyncDrawable(context.getResources(), placeholderBitmap, task));
-
-                    task.execute();
-                }*/
-
-                //photoView.loadUrl(data.getImage_filename());
                 Picasso.with(WishListActivity.this)
                         .load(data.getImage_filename())
                         .into(photoView);
             }
-            //}
 
             Button followMoreTopics = (Button) layout.findViewById(R.id.btn_magazine_follow_topics);
             followMoreTopics.setVisibility(View.GONE);
@@ -507,17 +427,11 @@ public class WishListActivity extends BaseActivity {
 
                                         articlesList.clear();
                                         myBaseAdapter.addItems(articlesList);
-                                        /*if (mProgress != null) {
-                                            mProgress.setVisibility(View.VISIBLE);
-                                        }*/
                                         showProgressDialog();
                                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                                         yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
                                             @Override
                                             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                                                /*if (mProgress != null) {
-                                                    mProgress.setVisibility(View.GONE);
-                                                }*/
                                                 dismissProgressDialog();
                                                 if (response.body() != null && response.body().size() > 0) {
                                                     for (int i = 0; i < response.body().size(); i++) {
@@ -525,10 +439,7 @@ public class WishListActivity extends BaseActivity {
                                                         if (noArticals != null) {
                                                             noArticals.setVisibility(View.GONE);
                                                         }
-                                                        //if (selectedTopic.equalsIgnoreCase(response.body().get(i).getTopicName())) {
-                                                        //articlesList = new ArrayList<Travels.Data>();
                                                         articlesList.add(response.body().get(i));
-                                                        // }
                                                     }
                                                     myBaseAdapter.addItems(articlesList);
                                                 } else {
@@ -542,9 +453,6 @@ public class WishListActivity extends BaseActivity {
 
                                             @Override
                                             public void onFailure(Call<List<Articles>> call, Throwable t) {
-                                                /*if (mProgress != null) {
-                                                    mProgress.setVisibility(View.GONE);
-                                                }*/
                                                 dismissProgressDialog();
                                                 flipContainer.setVisibility(View.GONE);
                                                 if (noArticals != null) {
@@ -585,7 +493,6 @@ public class WishListActivity extends BaseActivity {
     }
 
     private static class ViewHolder {
-        //private TextView categoryName;
 
         private TextView articleTitle;
 

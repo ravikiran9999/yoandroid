@@ -39,17 +39,10 @@ public class NotificationsAdapter extends AbstractBaseAdapter<Notification, Noti
     public void bindView(final int position, final NotificationsViewHolder holder, final Notification item) {
 
         holder.getTvNotificationsDesc().setText(item.getMessage());
-        //if (item.getMessage().contains("is following you")) {
         holder.getImvNotificationsType().setImageResource(R.drawable.ic_follow_notification);
-        //}
-        /*else {
-            holder.getImvNotificationsType().setImageResource(0);
-            holder.getImvNotificationsType().setImageResource(R.drawable.ic_yo_notification);
-        }*/
 
         long time = 0;
         String modifiedTime = item.getUpdated_at().substring(0, item.getUpdated_at().lastIndexOf("."));
-//            Date date=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
         Date date = Util.convertUtcToGmt(modifiedTime);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);

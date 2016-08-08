@@ -182,12 +182,6 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 showDeleteAlert();
                 break;
             case android.R.id.home:
-                /*if (dismissContextualMenu()) {
-                    invalidateOptionsMenu();
-                }
-                else {
-                    finish();
-                }*/
                 onBackPressed();
                 break;
         }

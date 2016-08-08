@@ -52,7 +52,6 @@ public class OtherProfilesFollowers extends BaseFragment {
         noData = (TextView) view.findViewById(R.id.no_data);
         lvFindPeople.setAdapter(findPeopleAdapter);
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
-        //userID = "577a21902a8b0f000346d328"
         showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getOtherProfilesFollowersAPI(accessToken, userID).enqueue(new Callback<List<FindPeople>>() {
@@ -62,8 +61,6 @@ public class OtherProfilesFollowers extends BaseFragment {
                 if (response.body().size() > 0) {
                     noData.setVisibility(View.GONE);
                     lvFindPeople.setVisibility(View.VISIBLE);
-                    /*TextView count = (TextView) OthersProfileActivity.tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count);
-                    count.setText("" + response.body().size());*/
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItemsAll(findPeopleList);
                 }
@@ -94,7 +91,6 @@ public class OtherProfilesFollowers extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // check if the request code is same as what is passed  here it is 2
         if (requestCode == 11 && resultCode == getActivity().RESULT_OK) {
             if (data != null) {
                 showProgressDialog();
@@ -109,8 +105,6 @@ public class OtherProfilesFollowers extends BaseFragment {
                             if (getActivity() instanceof OthersProfileActivity) {
 
                             }
-//                            TextView count = (TextView) OthersProfileActivity.getTabAt(1).getCustomView().findViewById(R.id.count);
-//                            count.setText("" + response.body().size());
                             List<FindPeople> findPeopleList = response.body();
                             findPeopleAdapter.clearAll();
                             findPeopleAdapter.addItemsAll(findPeopleList);
