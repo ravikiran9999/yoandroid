@@ -321,32 +321,33 @@ public class DialerFragment extends BaseFragment {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 dismissProgressDialog();
                 try {
-                    CallLogsResponse callLogsResponse = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), CallLogsResponse.class);
-                    List<CallLogsResult> list = callLogsResponse.getDATA().getRESULT();
-                    if (list != null) {
-                        for (CallLogsResult callLogsResult : list) {
-                            if ("SIP2SIP Call".equalsIgnoreCase(callLogsResult.getDestination_name())) {
-                                appCalls.add(callLogsResult);
-                            } else {
-                                paidCalls.add(callLogsResult);
+                    if (response.isSuccessful()) {
+                        CallLogsResponse callLogsResponse = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), CallLogsResponse.class);
+                        List<CallLogsResult> list = callLogsResponse.getDATA().getRESULT();
+                        if (list != null) {
+                            for (CallLogsResult callLogsResult : list) {
+                                if ("SIP2SIP Call".equalsIgnoreCase(callLogsResult.getDestination_name())) {
+                                    appCalls.add(callLogsResult);
+                                } else {
+                                    paidCalls.add(callLogsResult);
+                                }
                             }
+                            Collections.sort(appCalls, new Comparator<CallLogsResult>() {
+                                @Override
+                                public int compare(CallLogsResult lhs, CallLogsResult rhs) {
+                                    return (int) (Util.getTime(rhs.getStime()) - Util.getTime(lhs.getStime()));
+                                }
+                            });
+                            Collections.sort(paidCalls, new Comparator<CallLogsResult>() {
+                                @Override
+                                public int compare(CallLogsResult lhs, CallLogsResult rhs) {
+                                    return (int) (Util.getTime(rhs.getStime()) - Util.getTime(lhs.getStime()));
+                                }
+                            });
+                            showDataOnFilter();
                         }
-                        Collections.sort(appCalls, new Comparator<CallLogsResult>() {
-                            @Override
-                            public int compare(CallLogsResult lhs, CallLogsResult rhs) {
-                                return (int) (Util.getTime(rhs.getStime()) - Util.getTime(lhs.getStime()));
-                            }
-                        });
-                        Collections.sort(paidCalls, new Comparator<CallLogsResult>() {
-                            @Override
-                            public int compare(CallLogsResult lhs, CallLogsResult rhs) {
-                                return (int) (Util.getTime(rhs.getStime()) - Util.getTime(lhs.getStime()));
-                            }
-                        });
-                        showDataOnFilter();
-
                     }
-                } catch (JsonSyntaxException e) {
+                } catch (Exception e) {
                     mLog.w("DialerFragment", "loadCallLogs", e);
                 }
                 showEmptyText();

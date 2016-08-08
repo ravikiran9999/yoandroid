@@ -78,8 +78,8 @@ public class NetWorkModule {
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
-                //work like charm! Enable later
-//                .addNetworkInterceptor(new CacheInterceptor(connectivityHelper))
+                .addInterceptor(new OfflineResponseInterceptor(connectivityHelper))
+                .addNetworkInterceptor(new RewriteResponseInterceptor())
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .client(defaultHttpClient)
@@ -90,7 +90,7 @@ public class NetWorkModule {
     }
 
     public class CacheInterceptor implements Interceptor {
-        ConnectivityHelper mConnectivityHelper;
+        final ConnectivityHelper mConnectivityHelper;
 
         public CacheInterceptor(ConnectivityHelper connectivityHelper) {
             mConnectivityHelper = connectivityHelper;
@@ -131,6 +131,50 @@ public class NetWorkModule {
                     .header("Cache-Control", "public, max-age=86400") // 1 day
                     .build();
 
+        }
+    }
+
+    //Solution: http://stackoverflow.com/a/36795214/874752
+    public class RewriteResponseInterceptor implements Interceptor {
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+
+            Response originalResponse = chain.proceed(chain.request());
+            String cacheControl = originalResponse.header("Cache-Control");
+
+            if (cacheControl == null || cacheControl.contains("no-store") || cacheControl.contains("no-cache") ||
+                    cacheControl.contains("must-revalidate") || cacheControl.contains("max-age=0")) {
+                return originalResponse.newBuilder()
+                        .header("Cache-Control", "public, max-age=" + 10)
+                        .build();
+            } else {
+                return originalResponse;
+            }
+        }
+
+    }
+
+    public class OfflineResponseInterceptor implements Interceptor {
+        final ConnectivityHelper mConnectivityHelper;
+
+        public OfflineResponseInterceptor(ConnectivityHelper connectivityHelper) {
+            mConnectivityHelper = connectivityHelper;
+        }
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+
+            if (!mConnectivityHelper.isConnected()) {
+                // tolerate 4-weeks stale
+                int maxStale = 60 * 60 * 24 * 28;
+                request = request.newBuilder()
+                        .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
+                        .build();
+            }
+
+            return chain.proceed(request);
         }
     }
 
