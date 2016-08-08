@@ -233,7 +233,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
                     transaction.disallowAddToBackStack();
                     transaction.commit();
                 } else {
-                    mToastFactory.showToast("Please check valid phone number.");
+                    mToastFactory.showToast("Please enter valid phone number.");
                 }
 
             }

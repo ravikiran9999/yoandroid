@@ -28,11 +28,14 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
+import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
+import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
+import com.yo.android.util.OtherPeopleMagazineReflectListener;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -48,11 +51,12 @@ import retrofit2.Response;
 /**
  * Created by root on 15/7/16.
  */
-public class OtherProfilesLinedArticles extends BaseFragment {
+public class OtherProfilesLinedArticles extends BaseFragment implements OtherPeopleMagazineReflectListener {
 
     private FlipViewController flipView;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
+    public static OtherProfilesLinedArticles listener;
     @Inject
     YoApi.YoService yoService;
     private String topicName;
@@ -60,6 +64,14 @@ public class OtherProfilesLinedArticles extends BaseFragment {
     private FrameLayout flipContainer;
     private ProgressBar mProgress;
     private boolean isFollowing;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        listener = this;
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -132,18 +144,25 @@ public class OtherProfilesLinedArticles extends BaseFragment {
 
     }
 
-            @Override
-            public void onResume() {
-                super.onResume();
-                flipView.onResume();
-            }
+    @Override
+    public void onResume() {
+        super.onResume();
+        flipView.onResume();
+    }
 
-            public void onPause() {
-                super.onPause();
-                flipView.onPause();
-            }
+    public void onPause() {
+        super.onPause();
+        flipView.onPause();
+    }
 
-    private class MyBaseAdapter extends BaseAdapter {
+    @Override
+    public void updateOtherPeopleStatus(Articles data, String follow) {
+        if (myBaseAdapter != null) {
+            myBaseAdapter.autoReflectFollowOrLikes(data, follow);
+        }
+    }
+
+    public class MyBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener {
 
         private FlipViewController controller;
 
@@ -154,11 +173,12 @@ public class OtherProfilesLinedArticles extends BaseFragment {
         private Bitmap placeholderBitmap;
         private List<Articles> items;
 
+
         private MyBaseAdapter(Context context, FlipViewController controller) {
             inflater = LayoutInflater.from(context);
             this.context = context;
             this.controller = controller;
-
+            MagazineArticlesBaseAdapter.reflectListener = this;
             //Use a system resource as the placeholder
             placeholderBitmap =
                     BitmapFactory.decodeResource(context.getResources(), android.R.drawable.dark_header);
@@ -172,7 +192,7 @@ public class OtherProfilesLinedArticles extends BaseFragment {
 
         @Override
         public Articles getItem(int position) {
-            if (position>=0 && getCount() > position) {
+            if (position >= 0 && getCount() > position) {
                 return items.get(position);
             }
             return null;
@@ -247,12 +267,16 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if(MagazineArticlesBaseAdapter.mListener!=null){
+                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data,Constants.LIKE_EVENT);
+                                }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-
                             }
 
                             @Override
@@ -260,7 +284,6 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-
                                 notifyDataSetChanged();
                             }
                         });
@@ -271,9 +294,13 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if(MagazineArticlesBaseAdapter.mListener!=null){
+                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data,Constants.LIKE_EVENT);
+                                }
                                 notifyDataSetChanged();
-
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
 
                             }
@@ -335,16 +362,15 @@ public class OtherProfilesLinedArticles extends BaseFragment {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Util.shareIntent(v, data.getUrl(),"Sharing Article");
+                    Util.shareIntent(v, data.getUrl(), "Sharing Article");
                 }
             });
 
-            if(data.getIsFollowing().equals("true")) {
+            if (data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                 isFollowing = true;
-            }
-            else {
+            } else {
                 holder.articleFollow.setText("Follow");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 isFollowing = false;
@@ -355,30 +381,36 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     if (!data.getIsFollowing().equals("true")) {
-                    ((BaseActivity)context).showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            finalHolder.articleFollow.setText("Following");
-                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                            data.setIsFollowing("true");
-                            isFollowing = true;
-                            notifyDataSetChanged();
-                        }
+                        ((BaseActivity) context).showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                finalHolder.articleFollow.setText("Following");
+                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                data.setIsFollowing("true");
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                }
+                                if(MagazineArticlesBaseAdapter.mListener!=null){
+                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data,Constants.FOLLOW_EVENT);
+                                }
+                                isFollowing = true;
+                                notifyDataSetChanged();
+                            }
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            finalHolder.articleFollow.setText("Follow");
-                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                            data.setIsFollowing("false");
-                            isFollowing = false;
-                            notifyDataSetChanged();
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                finalHolder.articleFollow.setText("Follow");
+                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                data.setIsFollowing("false");
+                                isFollowing = false;
+                                notifyDataSetChanged();
 
-                        }
-                    });
+                            }
+                        });
                     } else {
 
                         final Dialog dialog = new Dialog(getActivity());
@@ -411,6 +443,12 @@ public class OtherProfilesLinedArticles extends BaseFragment {
                                         finalHolder.articleFollow.setText("Follow");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                         data.setIsFollowing("false");
+                                        if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                            MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                        }
+                                        if(MagazineArticlesBaseAdapter.mListener!=null){
+                                            MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data,Constants.FOLLOW_EVENT);
+                                        }
                                         isFollowing = false;
                                         notifyDataSetChanged();
 
@@ -443,6 +481,36 @@ public class OtherProfilesLinedArticles extends BaseFragment {
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
             notifyDataSetChanged();
+        }
+
+        @Override
+        public void updateFollowOrLikesStatus(Articles data, String type) {
+            autoReflectFollowOrLikes(data, type);
+        }
+
+        private void autoReflectFollowOrLikes(Articles data, String type) {
+            if (data != null) {
+
+                if (Constants.FOLLOW_EVENT.equals(type)) {
+                    for (Articles article : items) {
+                        if (data.getId() != null && data.getId().equals(article.getId())) {
+                            article.setIsFollowing(data.getIsFollowing());
+                            article.setIsFollow(data.isFollow());
+                            notifyDataSetChanged();
+                            break;
+                        }
+                    }
+                } else {
+                    for (Articles article : items) {
+                        if (data.getId() != null && data.getId().equals(article.getId())) {
+                            article.setLiked(data.getLiked());
+                            article.setIsChecked(data.isChecked());
+                            notifyDataSetChanged();
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 
