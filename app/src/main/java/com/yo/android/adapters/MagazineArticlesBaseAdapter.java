@@ -30,8 +30,11 @@ import com.yo.android.model.Articles;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.ui.OtherProfilesLinedArticles;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
+import com.yo.android.util.MagazineOtherPeopleReflectListener;
+import com.yo.android.util.OtherPeopleMagazineReflectListener;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -42,11 +45,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener {
+public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener, MagazineOtherPeopleReflectListener {
 
     private Context context;
     private LayoutInflater inflater;
     public static AutoReflectWishListActionsListener reflectListener;
+    public static MagazineOtherPeopleReflectListener mListener;
 
 
     private List<Articles> items;
@@ -60,6 +64,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         inflater = LayoutInflater.from(context);
         this.context = context;
         reflectListener = this;
+        mListener = this;
         this.preferenceEndPoint = preferenceEndPoint;
         this.yoService = yoService;
         this.mToastFactory = mToastFactory;
@@ -152,6 +157,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             data.setIsChecked(true);
                             data.setLiked("true");
                             notifyDataSetChanged();
+                            OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                             mToastFactory.showToast("You have liked the article " + data.getTitle());
 
                         }
@@ -171,7 +177,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             data.setIsChecked(false);
                             data.setLiked("false");
-
+                            OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                             notifyDataSetChanged();
 
                             mToastFactory.showToast("You have un-liked the article " + data.getTitle());
@@ -278,6 +284,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     finalHolder.articleFollow.setText("Following");
                     finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                     data.setIsFollowing("true");
+                    OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
                     notifyDataSetChanged();
                 }
 
@@ -322,6 +329,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         finalHolder.articleFollow.setText("Follow");
                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                         data.setIsFollowing("false");
+                        OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
                         notifyDataSetChanged();
                     }
 
@@ -353,6 +361,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     @Override
     public void updateFollowOrLikesStatus(Articles data, String type) {
+        autoReflectStatus(data, type);
+    }
+
+    private void autoReflectStatus(Articles data, String type) {
         if (data != null) {
 
             if (Constants.FOLLOW_EVENT.equals(type)) {
@@ -376,7 +388,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 }
             }
         }
+    }
 
+    @Override
+    public void updateMagazineStatus(Articles data, String follow) {
+        autoReflectStatus(data, follow);
     }
 
     private static class ViewHolder {

@@ -30,10 +30,12 @@ import com.aphidmobile.utils.UI;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
+import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.model.MagazineArticles;
+import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -156,7 +158,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         flipView.onPause();
     }
 
-    private class MyBaseAdapter extends BaseAdapter {
+    private class MyBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener {
 
         private FlipViewController controller;
 
@@ -171,6 +173,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             inflater = LayoutInflater.from(context);
             this.context = context;
             this.controller = controller;
+            MagazineArticlesBaseAdapter.reflectListener=this;
 
             //Use a system resource as the placeholder
             placeholderBitmap =
@@ -444,6 +447,33 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
             notifyDataSetChanged();
+        }
+
+        @Override
+        public void updateFollowOrLikesStatus(Articles data, String type) {
+            if (data != null) {
+
+                if (Constants.FOLLOW_EVENT.equals(type)) {
+                    for (Articles article : items) {
+                        if (data.getId() != null && data.getId().equals(article.getId())) {
+                            article.setIsFollowing(data.getIsFollowing());
+                            article.setIsFollow(data.isFollow());
+                            notifyDataSetChanged();
+                            break;
+                        }
+                    }
+                } else {
+                    for (Articles article : items) {
+                        if (data.getId() != null && data.getId().equals(article.getId())) {
+                            article.setLiked(data.getLiked());
+                            article.setIsChecked(data.isChecked());
+                            notifyDataSetChanged();
+                            break;
+                        }
+
+                    }
+                }
+            }
         }
     }
 
