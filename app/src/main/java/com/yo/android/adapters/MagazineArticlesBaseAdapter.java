@@ -36,7 +36,6 @@ import com.yo.android.ui.OtherProfilesLinedArticles;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
-import com.yo.android.util.OtherPeopleMagazineReflectListener;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -159,7 +158,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             data.setIsChecked(true);
                             data.setLiked("true");
                             notifyDataSetChanged();
-                            OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
+                            if (OtherProfilesLinedArticles.listener != null) {
+                                OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
+                            }
                             mToastFactory.showToast("You have liked the article " + data.getTitle());
 
                         }
@@ -179,7 +180,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             data.setIsChecked(false);
                             data.setLiked("false");
-                            OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
+                            if (OtherProfilesLinedArticles.listener != null) {
+                                OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
+                            }
                             notifyDataSetChanged();
 
                             mToastFactory.showToast("You have un-liked the article " + data.getTitle());
@@ -294,7 +297,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     finalHolder.articleFollow.setText("Following");
                     finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                     data.setIsFollowing("true");
-                    OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
+                    if (OtherProfilesLinedArticles.listener != null) {
+                        OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
+                    }
                     notifyDataSetChanged();
                 }
 
@@ -339,7 +344,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         finalHolder.articleFollow.setText("Follow");
                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                         data.setIsFollowing("false");
-                        OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
+                        if (OtherProfilesLinedArticles.listener != null) {
+                            OtherProfilesLinedArticles.listener.updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
+                        }
                         notifyDataSetChanged();
                     }
 
