@@ -31,6 +31,7 @@ public class Constants {
 
     //Preference
     public static final String USER_ID = "user_id";
+    public static final String FIREBASE_USER_ID = "firebase_user_id";
     public static final String USER_AVATAR = "user_avatar";
     public static final String USER_NAME = "first_name";
     public static final String USER_STATUS = "user_status";

@@ -419,6 +419,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
 
+
         if (type.equals(Constants.TEXT)) {
             chatMessage.setMessage(message);
         } else if (type.equals(Constants.IMAGE)) {
@@ -429,6 +430,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             createRoom(message, chatMessage);
 
         } else {
+            chatMessage.setRoomId(childRoomId);
             sendChatMessage(chatMessage);
         }
     }
@@ -725,12 +727,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     Room room = response.body();
                     if (room.getFirebaseRoomId() != null) {
                         roomExist = 1;
-                        roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
                         registerChildEventListener(roomReference);
 
                         if (chatForwards != null) {
                             receiveForward(chatForwards);
                         } else if (chatMessage != null) {
+
+                            chatMessage.setRoomId(room.getFirebaseRoomId());
                             sendChatMessage(chatMessage);
                         }
                         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);

@@ -24,6 +24,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.Room;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
@@ -47,12 +48,13 @@ import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
 
-public class FirebaseService extends InjectedService {
+public class FirebaseService extends InjectedService implements ValueEventListener {
 
     private static String LOG_TAG = "BoundService";
     private IBinder mBinder = new MyBinder();
     private Firebase authReference;
     private Firebase roomReference;
+    private Firebase allRoomsReference;
 
     @Inject
     @Named("login")
@@ -62,9 +64,6 @@ public class FirebaseService extends InjectedService {
 
     @Inject
     FireBaseHelper fireBaseHelper;
-
-    @Inject
-    BaseActivity baseActivity;
 
     private ChildEventListener childEventListener;
     private ValueEventListener valueEventListener;
@@ -79,7 +78,7 @@ public class FirebaseService extends InjectedService {
         super.onCreate();
 
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
-
+        //allRoomsReference = authReference.child()
         isRunning = true;
     }
 
@@ -138,31 +137,33 @@ public class FirebaseService extends InjectedService {
         });
     }
 
-
     private void getAllRooms() {
-        authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-        valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    getChatMessageList(child.getKey());
+        String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.getAllRoomsAPI(access).enqueue(new Callback<List<Room>>() {
+            @Override
+            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
+                if (response.body() != null) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        final Room room = response.body().get(i);
+                        getChatMessageList(room.getFirebaseRoomId());
+                    }
                 }
 
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                firebaseError.getMessage();
+            public void onFailure(Call<List<Room>> call, Throwable t) {
             }
-        };
-        authReference.addValueEventListener(valueEventListener);
+        });
+
     }
+
 
     public void getChatMessageList(String roomId) {
         try {
-            roomReference = authReference.child(roomId).child(Constants.CHATS);
 
+            roomReference = authReference.child(roomId).child(Constants.CHATS);
 
             childEventListener = new ChildEventListener() {
                 @Override
@@ -170,9 +171,9 @@ public class FirebaseService extends InjectedService {
                     try {
 
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-
-                        //postNotif(chatMessage.getRoomId(), chatMessage);
-
+                        if (chatMessage.getDelivered() == 0) {
+                            postNotif(chatMessage.getRoomId(), chatMessage);
+                        }
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -211,6 +212,16 @@ public class FirebaseService extends InjectedService {
         public FirebaseService getService() {
             return FirebaseService.this;
         }
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+
+    }
+
+    @Override
+    public void onCancelled(FirebaseError firebaseError) {
+        firebaseError.getMessage();
     }
 
     private void postNotif(String roomId, ChatMessage chatMessage) {

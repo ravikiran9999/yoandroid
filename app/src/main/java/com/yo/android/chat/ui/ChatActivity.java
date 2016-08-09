@@ -62,7 +62,7 @@ public class ChatActivity extends BaseActivity {
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
             opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
             args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
-            args.putString(Constants.OPPONENT_PHONE_NUMBER, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
+            args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
 
         }
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {

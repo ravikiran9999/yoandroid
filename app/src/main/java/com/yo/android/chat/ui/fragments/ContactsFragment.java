@@ -234,5 +234,4 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onLoaderReset(Loader<Cursor> loader) {
         //
     }
-
 }
