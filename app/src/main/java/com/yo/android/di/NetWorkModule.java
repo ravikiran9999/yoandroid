@@ -78,8 +78,10 @@ public class NetWorkModule {
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
-                .addInterceptor(new OfflineResponseInterceptor(connectivityHelper))
-                .addNetworkInterceptor(new RewriteResponseInterceptor())
+                //Commented below code as Getting OOM : Created an issue in
+                // https://github.com/square/okhttp/issues/2781
+//                .addInterceptor(new OfflineResponseInterceptor(connectivityHelper))
+//                .addNetworkInterceptor(new RewriteResponseInterceptor())
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .client(defaultHttpClient)

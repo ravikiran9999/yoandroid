@@ -128,6 +128,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         if (!mHelper.isConnected()) {
             myBaseAdapter.clear();
+            if (articlesRootLayout.getChildCount() > 0) {
+                articlesRootLayout.setVisibility(View.GONE);
+                networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
+                networkFailureText.setVisibility(View.VISIBLE);
+            }
+            return;
         } else {
             articlesRootLayout.setVisibility(View.VISIBLE);
             networkFailureText.setVisibility(View.GONE);
