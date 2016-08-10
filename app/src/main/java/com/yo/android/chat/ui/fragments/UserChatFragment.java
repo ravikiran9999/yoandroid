@@ -155,7 +155,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if ((childRoomId != null) && (!childRoomId.equals(""))) {
             roomExist = 1;
 
-            roomReference = authReference.child(childRoomId).child(Constants.CHATS);
+            roomReference = authReference.child(Constants.ROOMS).child(childRoomId).child(Constants.CHATS);
             registerChildEventListener(roomReference);
 
             if (chatForwards != null) {
@@ -456,6 +456,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         } catch (FirebaseException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
@@ -725,7 +727,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     Room room = response.body();
                     if (room.getFirebaseRoomId() != null) {
                         roomExist = 1;
-                        roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
+                        roomReference = authReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
                         registerChildEventListener(roomReference);
 
                         if (chatForwards != null) {

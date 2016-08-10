@@ -47,7 +47,7 @@ import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
 
-public class FirebaseService extends InjectedService {
+public class FirebaseService extends InjectedService implements ValueEventListener {
 
     private static String LOG_TAG = "BoundService";
     private IBinder mBinder = new MyBinder();
@@ -63,13 +63,8 @@ public class FirebaseService extends InjectedService {
     @Inject
     FireBaseHelper fireBaseHelper;
 
-    @Inject
-    BaseActivity baseActivity;
-
     private ChildEventListener childEventListener;
     private ValueEventListener valueEventListener;
-
-    private Context context;
 
     private boolean isRunning = false;
 
@@ -78,8 +73,8 @@ public class FirebaseService extends InjectedService {
     public void onCreate() {
         super.onCreate();
 
-        authReference = new Firebase(BuildConfig.FIREBASE_URL);
-
+        //authReference = new Firebase(BuildConfig.FIREBASE_URL);
+        //roomReference = authReference.child()
         isRunning = true;
     }
 
@@ -156,13 +151,12 @@ public class FirebaseService extends InjectedService {
                 firebaseError.getMessage();
             }
         };
-        authReference.addValueEventListener(valueEventListener);
+        authReference.child(Constants.ROOMS).addValueEventListener(valueEventListener);
     }
 
     public void getChatMessageList(String roomId) {
         try {
-            roomReference = authReference.child(roomId).child(Constants.CHATS);
-
+            roomReference = authReference.child(Constants.ROOMS).child(roomId).child(Constants.CHATS);
 
             childEventListener = new ChildEventListener() {
                 @Override
@@ -211,6 +205,17 @@ public class FirebaseService extends InjectedService {
         public FirebaseService getService() {
             return FirebaseService.this;
         }
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        //authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        dataSnapshot.getValue();
+    }
+
+    @Override
+    public void onCancelled(FirebaseError firebaseError) {
+        firebaseError.getMessage();
     }
 
     private void postNotif(String roomId, ChatMessage chatMessage) {
