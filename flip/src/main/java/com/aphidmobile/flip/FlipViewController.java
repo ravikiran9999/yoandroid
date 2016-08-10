@@ -127,15 +127,15 @@ public class FlipViewController extends AdapterView<Adapter> {
 
         TypedArray
                 a =
-                context.getTheme().obtainStyledAttributes(attrs, R.styleable.FlipViewController, 0, 0);
+                context.getTheme().obtainStyledAttributes(attrs, R.styleable.FlipViewController1, 0, 0);
 
         try {
-            int value = a.getInteger(R.styleable.FlipViewController_orientation, VERTICAL);
+            int value = a.getInteger(R.styleable.FlipViewController1_orientation_1, VERTICAL);
             if (value == HORIZONTAL) {
                 orientation = HORIZONTAL;
             }
 
-            value = a.getInteger(R.styleable.FlipViewController_animationBitmapFormat, 0);
+            value = a.getInteger(R.styleable.FlipViewController1_animationBitmapFormat, 0);
             if (value == 1) {
                 setAnimationBitmapFormat(Bitmap.Config.ARGB_4444);
             } else if (value == 2) {
