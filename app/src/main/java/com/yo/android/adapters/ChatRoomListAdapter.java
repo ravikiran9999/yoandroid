@@ -48,10 +48,10 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getGroupName() == null) {
-            if (!item.getMembers().get(0).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
-                holder.getOpponentName().setText(item.getMembers().get(0).getMobileNumber());
-            } else if (!item.getMembers().get(1).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
-                holder.getOpponentName().setText(item.getMembers().get(1).getMobileNumber());
+            for (int i = 0; item.getMembers() != null && i < item.getMembers().size(); i++) {
+                if (!item.getMembers().get(i).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
+                    holder.getOpponentName().setText(item.getMembers().get(i).getMobileNumber());
+                }
             }
             Picasso.with(context).load(R.drawable.ic_contactprofile).into(holder.getChatRoomPic());
 

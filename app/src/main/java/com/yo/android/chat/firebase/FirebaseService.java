@@ -122,7 +122,7 @@ public class FirebaseService extends InjectedService {
                         jsonObject = new JSONObject(response.body().string());
                         String name = jsonObject.getString("firebase_token");
                         loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, name);
-                        getAllRooms();
+//                        getAllRooms();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

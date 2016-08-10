@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
@@ -11,6 +12,7 @@ import android.provider.ContactsContract;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Contact;
+import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.sync.YoContactsSyncAdapter;
 import com.yo.android.util.ContactSyncHelper;
 
@@ -43,6 +45,24 @@ public class ContactsSyncManager {
     private Object lock = new Object();
     PreferenceEndPoint loginPrefs;
     final boolean IS_CONTACT_SYNC_ON = false;
+    private static final String[] PROJECTION = new String[]{
+            YoAppContactContract.YoAppContactsEntry._ID,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_USER_ID,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER,
+    };
+    // Constants representing column positions from PROJECTION.
+    public static final int COLUMN_ID = 0;
+    public static final int COLUMN_ENTRY_ID = 1;
+    public static final int COLUMN_NAME = 2;
+    public static final int COLUMN_PHONE = 3;
+    public static final int COLUMN_IMAGE = 4;
+    public static final int COLUMN_FIREBASE_ROOM_ID = 5;
+    public static final int COLUMN_YO_USER = 6;
+
 
     @Inject
     public ContactsSyncManager(YoApi.YoService yoService, Context context, @Named("login") PreferenceEndPoint loginPrefs) {
@@ -139,7 +159,18 @@ public class ContactsSyncManager {
     }
 
     public Map<String, Contact> getCachedContacts() {
-        List<Contact> contactList = new ArrayList<>(getContacts());
+        Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
+        Cursor c = context.getContentResolver().query(uri, PROJECTION, null, null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
+        List<Contact> contactList = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                Contact contact = ContactsSyncManager.prepareContact(c);
+                contactList.add(contact);
+            } while (c.moveToNext());
+        }
+        if (c != null) {
+            c.close();
+        }
         Map<String, Contact> cacheYoAppContacts = new HashMap<>();
         for (Contact contact : contactList) {
             String number = ContactSyncHelper.stripExceptNumbers(contact.getPhoneNo(), false);
@@ -174,4 +205,23 @@ public class ContactsSyncManager {
             }
         });
     }
+
+    public static com.yo.android.model.Contact prepareContact(Cursor c) {
+        String entryId = c.getString(COLUMN_ENTRY_ID);
+        String name = c.getString(COLUMN_NAME);
+        String phone = c.getString(COLUMN_PHONE);
+        String image = c.getString(COLUMN_IMAGE);
+        String roomId = c.getString(COLUMN_FIREBASE_ROOM_ID);
+        boolean yoAppUser = c.getInt(COLUMN_YO_USER) != 0;
+        //
+        com.yo.android.model.Contact contact = new com.yo.android.model.Contact();
+        contact.setId(entryId);
+        contact.setName(name);
+        contact.setPhoneNo(phone);
+        contact.setImage(image);
+        contact.setFirebaseRoomId(roomId);
+        contact.setYoAppUser(yoAppUser);
+        return contact;
+    }
+
 }
