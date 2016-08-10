@@ -24,7 +24,6 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.Room;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
@@ -54,7 +53,6 @@ public class FirebaseService extends InjectedService implements ValueEventListen
     private IBinder mBinder = new MyBinder();
     private Firebase authReference;
     private Firebase roomReference;
-    private Firebase allRoomsReference;
 
     @Inject
     @Named("login")
@@ -68,8 +66,6 @@ public class FirebaseService extends InjectedService implements ValueEventListen
     private ChildEventListener childEventListener;
     private ValueEventListener valueEventListener;
 
-    private Context context;
-
     private boolean isRunning = false;
 
 
@@ -77,8 +73,8 @@ public class FirebaseService extends InjectedService implements ValueEventListen
     public void onCreate() {
         super.onCreate();
 
-        authReference = new Firebase(BuildConfig.FIREBASE_URL);
-        //allRoomsReference = authReference.child()
+        //authReference = new Firebase(BuildConfig.FIREBASE_URL);
+        //roomReference = authReference.child()
         isRunning = true;
     }
 
@@ -137,33 +133,30 @@ public class FirebaseService extends InjectedService implements ValueEventListen
         });
     }
 
-    private void getAllRooms() {
 
-        String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-        yoService.getAllRoomsAPI(access).enqueue(new Callback<List<Room>>() {
+    private void getAllRooms() {
+        authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        valueEventListener = new ValueEventListener() {
             @Override
-            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
-                if (response.body() != null) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        final Room room = response.body().get(i);
-                        getChatMessageList(room.getFirebaseRoomId());
-                    }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    getChatMessageList(child.getKey());
                 }
 
             }
 
             @Override
-            public void onFailure(Call<List<Room>> call, Throwable t) {
+            public void onCancelled(FirebaseError firebaseError) {
+                firebaseError.getMessage();
             }
-        });
-
+        };
+        authReference.child(Constants.ROOMS).addValueEventListener(valueEventListener);
     }
-
 
     public void getChatMessageList(String roomId) {
         try {
-
-            roomReference = authReference.child(roomId).child(Constants.CHATS);
+            roomReference = authReference.child(Constants.ROOMS).child(roomId).child(Constants.CHATS);
 
             childEventListener = new ChildEventListener() {
                 @Override
@@ -216,7 +209,8 @@ public class FirebaseService extends InjectedService implements ValueEventListen
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-
+        //authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        dataSnapshot.getValue();
     }
 
     @Override

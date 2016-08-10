@@ -19,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.squareup.picasso.Picasso;
@@ -124,9 +127,22 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (!TextUtils.isEmpty(avatar)) {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
-            Picasso.with(getActivity())
+//            Picasso.with(getActivity())
+//                    .load(avatar)
+//                    .fit()
+//                    .into(profilePic);
+            //
+            // setup Glide request without the into() method
+            DrawableRequestBuilder<String> thumbnailRequest = Glide
+                    .with(getActivity())
+                    .load(avatar);
+
+
+            Glide.with(getActivity())
                     .load(avatar)
-                    .fit()
+                    .fitCenter()
+//                    .thumbnail(thumbnailRequest)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(profilePic);
         } else {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));

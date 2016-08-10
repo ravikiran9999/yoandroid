@@ -1,13 +1,17 @@
 package com.yo.android.chat.firebase;
 
 import android.content.Context;
+import android.content.OperationApplicationException;
+import android.content.SyncResult;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.RemoteException;
 import android.provider.ContactsContract;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Contact;
+import com.yo.android.sync.YoContactsSyncAdapter;
 import com.yo.android.util.ContactSyncHelper;
 
 import java.io.IOException;
@@ -35,8 +39,10 @@ public class ContactsSyncManager {
 
     private YoApi.YoService yoService;
     private Context context;
-    List<Contact> list;
+    private List<Contact> cacheList;
+    private Object lock = new Object();
     PreferenceEndPoint loginPrefs;
+    final boolean IS_CONTACT_SYNC_ON = false;
 
     @Inject
     public ContactsSyncManager(YoApi.YoService yoService, Context context, @Named("login") PreferenceEndPoint loginPrefs) {
@@ -47,7 +53,9 @@ public class ContactsSyncManager {
 
 
     public void syncContacts() {
-
+        if (!IS_CONTACT_SYNC_ON) {
+            return;
+        }
         new AsyncTask<Void, Void, List<String>>() {
             @Override
             protected List<String> doInBackground(Void... params) {
@@ -62,7 +70,7 @@ public class ContactsSyncManager {
                     @Override
                     public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                         if (response != null) {
-                            list = response.body();
+                            setContacts(response.body());
                         }
                     }
 
@@ -79,7 +87,7 @@ public class ContactsSyncManager {
     public Response<List<Contact>> syncContactsAPI(List<String> contacts) throws IOException {
         String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         Response<List<Contact>> response = yoService.syncContactsAPI(access, contacts).execute();
-        list = response.body();
+        setContacts(response.body());
         return response;
     }
 
@@ -106,17 +114,28 @@ public class ContactsSyncManager {
         return nc;
     }
 
-    public List<Contact> getContacts() {
-        if (list == null) {
-            list = new ArrayList<>();
-        }
-        Collections.sort(list, new Comparator<Contact>() {
-            @Override
-            public int compare(Contact lhs, Contact rhs) {
-                return Boolean.valueOf(rhs.getYoAppUser()).compareTo(Boolean.valueOf(lhs.getYoAppUser()));
+    public void setContacts(List<Contact> list) {
+        synchronized (lock) {
+            if (list == null) {
+                list = new ArrayList<>();
             }
-        });
-        return list;
+            this.cacheList = new ArrayList<>(list);
+            Collections.sort(cacheList, new Comparator<Contact>() {
+                @Override
+                public int compare(Contact lhs, Contact rhs) {
+                    return Boolean.valueOf(rhs.getYoAppUser()).compareTo(Boolean.valueOf(lhs.getYoAppUser()));
+                }
+            });
+        }
+    }
+
+    public List<Contact> getContacts() {
+        synchronized (lock) {
+            if (cacheList == null) {
+                cacheList = new ArrayList<>();
+            }
+        }
+        return cacheList;
     }
 
     public Map<String, Contact> getCachedContacts() {
@@ -135,15 +154,20 @@ public class ContactsSyncManager {
         yoService.getContacts(access).enqueue(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                list = response.body();
+                setContacts(response.body());
                 if (callback != null) {
                     callback.onResponse(call, response);
                 }
+                try {
+                    YoContactsSyncAdapter.updateLocalFeedData(context, cacheList, new SyncResult());
+                } catch (RemoteException | OperationApplicationException e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
-                list = null;
                 if (callback != null) {
                     callback.onFailure(call, t);
                 }

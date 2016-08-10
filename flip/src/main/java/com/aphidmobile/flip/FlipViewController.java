@@ -582,14 +582,14 @@ public class FlipViewController extends AdapterView<Adapter> {
                 onViewFlipListener.onViewFlipped(bufferedViews.get(bufferIndex), adapterIndex);
             }
 
-            handler.post(new Runnable() {
+            handler.postDelayed(new Runnable() {
                 public void run() {
                     if (!inFlipAnimation) {
-                      //  cards.setVisible(false);
+                        cards.setVisible(false);
                         surfaceView.requestRender(); //ask OpenGL to clear its display
                     }
                 }
-            });
+            },100);
         }
     }
 

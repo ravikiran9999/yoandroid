@@ -33,6 +33,7 @@ import android.util.Log;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.Injector;
 import com.yo.android.model.Contact;
 import com.yo.android.provider.YoAppContactContract;
@@ -64,10 +65,15 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
+
     /**
      * Content resolver, for performing database operations.
      */
     private final ContentResolver mContentResolver;
+
+    private static Object lock = new Object();
 
     /**
      * Project used when querying content provider. Returns all known fields.
@@ -136,7 +142,9 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             Response<List<Contact>> list = mYoService.getContacts(access).execute();
             if (list.isSuccessful()) {
                 List<Contact> contacts = list.body();
-                updateLocalFeedData(contacts, syncResult);
+                //Store them in cache
+                mContactsSyncManager.setContacts(contacts);
+                updateLocalFeedData(getContext(), contacts, syncResult);
             }
 
         } catch (IOException e) {
@@ -169,9 +177,9 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
      * (At this point, incoming database only contains missing items.)<br/>
      * 3. For any items remaining in incoming list, ADD to database.
      */
-    public void updateLocalFeedData(List<Contact> contacts, final SyncResult syncResult) throws RemoteException, OperationApplicationException {
-        final ContentResolver contentResolver = getContext().getContentResolver();
-
+    public static synchronized void updateLocalFeedData(Context context, List<Contact> contacts, final SyncResult syncResult) throws RemoteException, OperationApplicationException {
+        final ContentResolver contentResolver = context.getContentResolver();
+        ContentResolver mContentResolver = context.getContentResolver();
         Log.i(TAG, "Parsing stream as Atom feed");
         final List<Entry> entries = prepareEntries(contacts);
         Log.i(TAG, "Parsing complete. Found " + entries.size() + " entries");
@@ -269,7 +277,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         // syncToNetwork=false in the line above to prevent duplicate syncs.
     }
 
-    private List<Entry> prepareEntries(List<Contact> contacts) {
+    private static List<Entry> prepareEntries(List<Contact> contacts) {
         List<Entry> list = new ArrayList<>();
         for (Contact contact : contacts) {
             Entry entry = new Entry(contact.getId(),

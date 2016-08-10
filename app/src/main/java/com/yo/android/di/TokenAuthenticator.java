@@ -1,14 +1,12 @@
 package com.yo.android.di;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.util.Constants;
 
@@ -54,7 +52,8 @@ public class TokenAuthenticator implements Authenticator {
             } else {
                 mLog.e("TokenAuthenticator", "TokenExpireCount - %d", tokenExpireCount);
             }
-        } else*/ if (!isRequestForTokens && response.code() == 401 && !TextUtils.isEmpty(refreshToken)) {
+        } else*/
+        if (!isRequestForTokens && response.code() == 401 && !TextUtils.isEmpty(refreshToken)) {
             try {
                 tokenExpireCount++;
                 mLog.e("TokenAuthenticator", "TokenExpireCount - %d", tokenExpireCount);

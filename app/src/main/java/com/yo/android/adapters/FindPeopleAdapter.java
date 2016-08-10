@@ -8,6 +8,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
@@ -72,9 +74,15 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                     .fit()
                     .into(holder.getImvFindPeoplePic());
         } else {
-            Picasso.with(context)
+//            Picasso.with(context)
+//                    .load(item.getAvatar())
+//                    .fit()
+//                    .into(holder.getImvFindPeoplePic());
+            Glide.with(context)
                     .load(item.getAvatar())
-                    .fit()
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getImvFindPeoplePic());
         }
         if (!TextUtils.isEmpty(item.getFirst_name())) {
@@ -146,6 +154,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     ((BaseActivity) context).dismissProgressDialog();
+                                    removeItem(item);
                                     holder.getBtnFindPeopleFollow().setText("Follow");
                                     holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                     item.setIsFollowing("false");

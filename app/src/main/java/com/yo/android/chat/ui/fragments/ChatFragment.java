@@ -194,7 +194,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 Firebase firebaseReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
                 for (int i = 0; i < arrayOfUsers.size(); i++) {
                     final Room room = arrayOfUsers.get(i);
-                    Firebase firebaseRoomReference = firebaseReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
+                    Firebase firebaseRoomReference = firebaseReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
                     firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
                 }
 
