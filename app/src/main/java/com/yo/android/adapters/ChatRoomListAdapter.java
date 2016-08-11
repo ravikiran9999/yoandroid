@@ -53,6 +53,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                     holder.getOpponentName().setText(item.getMembers().get(i).getMobileNumber());
                 }
             }
+
             Picasso.with(context).load(R.drawable.ic_contactprofile).into(holder.getChatRoomPic());
 
         } else if (item.getGroupName() != null) {

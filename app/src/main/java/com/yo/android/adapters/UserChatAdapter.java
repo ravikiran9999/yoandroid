@@ -33,7 +33,6 @@ import javax.inject.Named;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
-import static com.yo.android.R.color.colorPrimaryDark;
 
 
 /**
@@ -114,9 +113,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             LinearLayout layout = new LinearLayout(context);
             layout.setOrientation(LinearLayout.VERTICAL);
 
-
-
-
             if (userId.equals(item.getSenderID())) {
 
                 if (item.getSent() != 0) {
@@ -137,6 +133,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                 } else if (item.getType().equals(Constants.IMAGE)) {
                     layoutParams = new LinearLayout.LayoutParams(300, 300);
+
                 }
 
                 layout.setLayoutParams(layoutParams);
@@ -148,13 +145,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     holder.getLl().setBackgroundResource(R.drawable.bg_sms_yellow);
                 }
 
-                //holder.getLl().setLayoutParams(layoutParams);
                 addView(layout, item, holder);
 
             } else {
 
-
                 if (item.getDeliveredTime() != 0) {
+                    holder.getChatTimeStamp().setText("");
                     holder.getSeenTimeStamp().setText(Constants.RECEIVED + " " + Util.getTimeFormat(mContext, item.getDeliveredTime()));
                 } else {
                     holder.getSeenTimeStamp().setText("");
@@ -177,7 +173,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     holder.getLl().setBackgroundResource(R.drawable.bg_sms_grey);
                 }
 
-                //holder.getLl().setLayoutParams(layoutParams);
                 addView(layout, item, holder);
             }
 
@@ -187,8 +182,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
     private void addView(final LinearLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
-        //linearLayout.removeAllViews();
-        //linearLayout.setTag(holder);
 
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
@@ -205,7 +198,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
             linearLayout.addView(textView);
-            //linearLayout.setTag(holder);
 
             holder.getLl().setTag(holder);
             holder.getLl().addView(linearLayout);
@@ -223,6 +215,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 final ImageView imageView = new ImageView(context);
                 imageView.setTag(holder);
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
                 // Create a storage reference from our app
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
@@ -249,8 +242,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 outOfMemoryError.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-
             }
             holder.getLl().addView(linearLayout);
         } else {

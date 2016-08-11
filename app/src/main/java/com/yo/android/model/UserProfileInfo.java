@@ -10,6 +10,7 @@ public class UserProfileInfo {
     private String id;
     private String phoneNumber;
     private String description;
+    private String firebaseUserId;
 
     private String first_name;
     private String avatar;
@@ -68,5 +69,13 @@ public class UserProfileInfo {
 
     public String getAvatar() {
         return avatar;
+    }
+
+    public String getFirebaseUserId() {
+        return firebaseUserId;
+    }
+
+    public void setFirebaseUserId(String firebaseUserId) {
+        this.firebaseUserId = firebaseUserId;
     }
 }
