@@ -7,13 +7,9 @@ package com.yo.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.database.Exclude;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Class name will be tablename
@@ -48,6 +44,20 @@ public class ChatMessage implements Parcelable {
     private String imageUrl;
 
     public ChatMessage() {
+    }
+
+    private ChatMessage(Parcel in) {
+        this.msgID = in.readString();
+        this.message = in.readString();
+        this.senderID = in.readString();
+        this.status = in.readInt();
+        this.imagePath = in.readString();
+        this.time = in.readLong();
+        this.type = in.readString();
+        this.roomId = in.readString();
+        this.stickeyHeader = in.readString();
+        this.sent = in.readInt();
+        this.delivered = in.readInt();
     }
 
     public String getMsgID() {
@@ -181,19 +191,6 @@ public class ChatMessage implements Parcelable {
 
     }
 
-    private ChatMessage(Parcel in) {
-        this.msgID = in.readString();
-        this.message = in.readString();
-        this.senderID = in.readString();
-        this.status = in.readInt();
-        this.imagePath = in.readString();
-        this.time = in.readLong();
-        this.type = in.readString();
-        this.roomId = in.readString();
-        this.stickeyHeader = in.readString();
-        this.sent = in.readInt();
-        this.delivered = in.readInt();
-    }
 
     public static final Parcelable.Creator<ChatMessage> CREATOR = new Parcelable.Creator<ChatMessage>() {
         @Override

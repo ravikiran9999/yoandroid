@@ -3,10 +3,8 @@ package com.yo.android.chat.ui.fragments;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,7 +37,6 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
@@ -62,7 +59,6 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.voip.OutGoingCallActivity;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +97,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private int roomExist = 0;
     private Boolean isChildEventListenerAdd = Boolean.FALSE;
     private String childRoomId;
-    ArrayList<ChatMessage> chatForwards;
+    List<ChatMessage> chatForwards;
 
     String mobilenumber;
     @Inject
@@ -140,7 +136,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
-        if ((childRoomId != null) && (!"".equals(childRoomId))) {
+        if (!TextUtils.isEmpty(childRoomId)) {
             roomExist = 1;
 
             roomReference = authReference.child(Constants.ROOMS).child(childRoomId).child(Constants.CHATS);
@@ -200,10 +196,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                 listStickeyHeader.setText(headerText);
                         }
                     } catch (Exception e) {
+                        mLog.w("UserChat", e);
                     }
                 }
             });
         } catch (NoClassDefFoundError e) {
+            mLog.w("UserChat", e);
         }
 
     }
@@ -667,7 +665,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         firebaseError.getMessage();
     }
 
-    private void receiveForward(ArrayList<ChatMessage> chatForwards) {
+    private void receiveForward(List<ChatMessage> chatForwards) {
 
         if (chatForwards != null) {
             for (int i = 0; i < chatForwards.size(); i++) {

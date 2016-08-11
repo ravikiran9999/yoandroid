@@ -139,14 +139,13 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             holder.getDate().setText(item.getTime());
             holder.getDuration().setText(item.getDuration());
             holder.getTxtPhone().setText(item.getDestination());
-//            holder.getTxtPulse().setText(item.getPulse());
             holder.getTxtPrice().setText("$" + item.getCallcost());
             try {
                 DecimalFormat df = new DecimalFormat("0.000");
                 String format = df.format(Double.valueOf(item.getCallcost()));
                 holder.getTxtPrice().setText("$" + format);
             } catch (Exception e) {
-//                mLog.w(TAG, "getCurrentBalance", e);
+                e.printStackTrace();
             }
 
             holder.getArrow().setOnClickListener(new View.OnClickListener() {

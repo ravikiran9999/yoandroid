@@ -14,8 +14,6 @@
 
 package com.yo.android.inapp.inapputil;
 
-// This code was converted from code at http://iharder.sourceforge.net/base64/
-// Lots of extraneous features were removed.
 /* The original code said:
  * <p>
  * I am placing this code in the Public Domain. Do with it as you will.
@@ -40,16 +38,16 @@ package com.yo.android.inapp.inapputil;
  */
 public class Base64 {
     /** Specify encoding (value is {@code true}). */
-    public final static boolean ENCODE = true;
+    public static final boolean ENCODE = true;
 
     /** Specify decoding (value is {@code false}). */
-    public final static boolean DECODE = false;
+    public static final boolean DECODE = false;
 
     /** The equals sign (=) as a byte. */
-    private final static byte EQUALS_SIGN = (byte) '=';
+    private static final byte EQUALS_SIGN = (byte) '=';
 
     /** The new line character (\n) as a byte. */
-    private final static byte NEW_LINE = (byte) '\n';
+    private static final byte NEW_LINE = (byte) '\n';
 
     /**
      * The 64 valid Base64 values.

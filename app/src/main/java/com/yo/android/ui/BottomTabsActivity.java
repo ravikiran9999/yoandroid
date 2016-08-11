@@ -137,8 +137,8 @@ public class BottomTabsActivity extends BaseActivity {
         loadUserProfileInfo();
         updateDeviceToken();
         contactsSyncManager.syncContacts();
-        SyncUtils.CreateSyncAccount(this, preferenceEndPoint);
-//        SyncUtils.TriggerRefresh();
+        SyncUtils.createSyncAccount(this, preferenceEndPoint);
+//        SyncUtils.triggerRefresh();
             mContactSyncHelper.checkContacts();
     }
 
