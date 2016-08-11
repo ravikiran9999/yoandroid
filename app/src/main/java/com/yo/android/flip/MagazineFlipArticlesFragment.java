@@ -36,13 +36,14 @@ import javax.inject.Inject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import se.emilsjolander.flipview.FlipView;
 
 /**
  * Created by creatives on 6/30/2016.
  */
 public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private FlipViewController flipView;
+    //private FlipViewController flipView;
     private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
     private MagazineArticlesBaseAdapter myBaseAdapter;
     @Inject
@@ -84,10 +85,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
         networkFailureText = (TextView) view.findViewById(R.id.network_failure);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
-        flipView = new FlipViewController(getActivity());
+        //flipView = new FlipViewController(getActivity());
+        FlipView flipView = (FlipView) view.findViewById(R.id.flip_view);
         myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory);
         flipView.setAdapter(myBaseAdapter);
-        flipContainer.addView(flipView);
+        //flipView.setAdapter(myBaseAdapter);
+        //flipContainer.addView(flipView);
         followMoreTopics = (Button) view.findViewById(R.id.btn_magazine_follow_topics);
         return view;
     }
@@ -170,7 +173,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             } else {
                 if (llNoArticles != null) {
                     flipContainer.setVisibility(View.GONE);
-                    flipView.refreshAllPages();
+                    //flipView.refreshAllPages();
                     llNoArticles.setVisibility(View.VISIBLE);
                 }
             }
@@ -215,12 +218,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     @Override
     public void onResume() {
         super.onResume();
-        flipView.onResume();
+        //flipView.onResume();
     }
 
     public void onPause() {
         super.onPause();
-        flipView.onPause();
+        //flipView.onPause();
     }
 
 

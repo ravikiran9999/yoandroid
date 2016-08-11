@@ -43,10 +43,11 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import se.emilsjolander.flipview.FlipView;
 
 public class WishListActivity extends BaseActivity {
 
-    private FlipViewController flipView;
+    //private FlipViewController flipView;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
     @Inject
@@ -70,10 +71,11 @@ public class WishListActivity extends BaseActivity {
 
         noArticals = (TextView) findViewById(R.id.no_data);
         flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
-        flipView = new FlipViewController(this);
-        myBaseAdapter = new MyBaseAdapter(this, flipView);
+        //flipView = new FlipViewController(this);
+        FlipView flipView = (FlipView) findViewById(R.id.flip_view);
+        myBaseAdapter = new MyBaseAdapter(this);
         flipView.setAdapter(myBaseAdapter);
-        flipContainer.addView(flipView);
+        //flipContainer.addView(flipView);
 
         flipContainer.setVisibility(View.GONE);
 
@@ -117,17 +119,17 @@ public class WishListActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        flipView.onResume();
+        //flipView.onResume();
     }
 
     public void onPause() {
         super.onPause();
-        flipView.onPause();
+        //flipView.onPause();
     }
 
     private class MyBaseAdapter extends BaseAdapter {
 
-        private FlipViewController controller;
+        //private FlipViewController controller;
 
         private Context context;
 
@@ -136,10 +138,10 @@ public class WishListActivity extends BaseActivity {
         private Bitmap placeholderBitmap;
         private List<Articles> items;
 
-        private MyBaseAdapter(Context context, FlipViewController controller) {
+        private MyBaseAdapter(Context context) {
             inflater = LayoutInflater.from(context);
             this.context = context;
-            this.controller = controller;
+            //this.controller = controller;
 
             //Use a system resource as the placeholder
             placeholderBitmap =

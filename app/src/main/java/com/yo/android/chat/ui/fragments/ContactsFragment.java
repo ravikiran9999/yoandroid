@@ -134,7 +134,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         List<Contact> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
-                Contact contact = prepareContact(c);
+                Contact contact = ContactsSyncManager.prepareContact(c);
                 list.add(contact);
             } while (c.moveToNext());
         }
@@ -142,23 +142,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     }
 
-    private Contact prepareContact(Cursor c) {
-        String entryId = c.getString(COLUMN_ENTRY_ID);
-        String name = c.getString(COLUMN_NAME);
-        String phone = c.getString(COLUMN_PHONE);
-        String image = c.getString(COLUMN_IMAGE);
-        String roomId = c.getString(COLUMN_FIREBASE_ROOM_ID);
-        boolean yoAppUser = c.getInt(COLUMN_YO_USER) != 0;
-        //
-        Contact contact = new Contact();
-        contact.setId(entryId);
-        contact.setName(name);
-        contact.setPhoneNo(phone);
-        contact.setImage(image);
-        contact.setFirebaseRoomId(roomId);
-        contact.setYoAppUser(yoAppUser);
-        return contact;
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

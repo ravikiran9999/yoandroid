@@ -48,9 +48,13 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getGroupName() == null) {
+<<<<<<< HEAD
 
 
             for (int i = 0; i < item.getMembers().size(); i++) {
+=======
+            for (int i = 0; item.getMembers() != null && i < item.getMembers().size(); i++) {
+>>>>>>> f573b0e9a700156244b6491652b9936be4fcd99a
                 if (!item.getMembers().get(i).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
                     holder.getOpponentName().setText(item.getMembers().get(i).getMobileNumber());
                 }
