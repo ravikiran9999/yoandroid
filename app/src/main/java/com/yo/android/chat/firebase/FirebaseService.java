@@ -63,9 +63,6 @@ public class FirebaseService extends InjectedService {
     @Inject
     FireBaseHelper fireBaseHelper;
 
-    private ChildEventListener childEventListener;
-    private ValueEventListener valueEventListener;
-
     private boolean isRunning = false;
 
 
