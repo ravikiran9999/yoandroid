@@ -5,7 +5,9 @@
 
 
     <application
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true"
+        >
 
     </application>
 

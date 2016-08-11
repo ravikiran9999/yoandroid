@@ -114,12 +114,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     FireBaseHelper fireBaseHelper;
 
     @Inject
-    FirebaseService firebaseService;
-
-    @Inject
-    MyServiceConnection myServiceConnection;
-
-    @Inject
     YoApi.YoService yoService;
 
     @Inject
@@ -145,9 +139,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
-        if (myServiceConnection.isServiceConnection()) {
+        /*if (myServiceConnection.isServiceConnection()) {
             firebaseService.getFirebaseAuth();
-        }
+        }*/
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
@@ -155,7 +149,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if ((childRoomId != null) && (!childRoomId.equals(""))) {
             roomExist = 1;
 
-            roomReference = authReference.child(childRoomId).child(Constants.CHATS);
+            roomReference = authReference.child(Constants.ROOMS).child(childRoomId).child(Constants.CHATS);
             registerChildEventListener(roomReference);
 
             if (chatForwards != null) {
@@ -390,7 +384,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
 
-        String message = chatText.getText().toString();
+        String message = chatText.getText().toString().trim();
         sendChatMessage(message, Constants.TEXT);
     }
 
@@ -429,6 +423,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             createRoom(message, chatMessage);
 
         } else {
+            chatMessage.setRoomId(childRoomId);
             sendChatMessage(chatMessage);
         }
     }
@@ -455,6 +450,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             });
 
         } catch (FirebaseException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -725,12 +722,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     Room room = response.body();
                     if (room.getFirebaseRoomId() != null) {
                         roomExist = 1;
-                        roomReference = authReference.child(room.getFirebaseRoomId()).child(Constants.CHATS);
+                        roomReference = authReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
                         registerChildEventListener(roomReference);
 
                         if (chatForwards != null) {
                             receiveForward(chatForwards);
                         } else if (chatMessage != null) {
+
+                            chatMessage.setRoomId(room.getFirebaseRoomId());
                             sendChatMessage(chatMessage);
                         }
                         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);

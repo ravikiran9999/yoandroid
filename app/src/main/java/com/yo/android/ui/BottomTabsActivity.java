@@ -267,6 +267,7 @@ public class BottomTabsActivity extends BaseActivity {
                     preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
                     preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
+                    preferenceEndPoint.saveStringPreference(Constants.FIREBASE_USER_ID, response.body().getFirebaseUserId());
                     if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.USER_NAME))) {
                         preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     }

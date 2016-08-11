@@ -2,6 +2,7 @@ package com.yo.android.util;
 
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
@@ -9,6 +10,8 @@ import com.firebase.client.FirebaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.yo.android.BuildConfig;
+import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.model.ChatMessage;
 
 import java.util.HashMap;
@@ -29,6 +32,12 @@ public class FireBaseHelper {
     private Map<String, ChatMessage> map = new HashMap<>();
 
     @Inject
+    MyServiceConnection myServiceConnection;
+
+    /*@Inject
+    FirebaseService firebaseService;*/
+
+    @Inject
     public FireBaseHelper() {
 
     }
@@ -43,24 +52,31 @@ public class FireBaseHelper {
 
     public Firebase authWithCustomToken(final String authToken) {
         //Url from Firebase dashboard
-        final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
+        Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
+        AuthData authData = ref.getAuth();
+        if (authData == null) {
 
-        ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                if (authData != null) {
-                    Log.i(TAG, "Login Succeeded!");
-
-                } else {
-                    Log.i(TAG, "Login un Succeeded!");
+            ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
+                @Override
+                public void onAuthenticated(AuthData authData) {
+                    if (authData != null) {
+                        Log.i(TAG, "Login Succeeded!");
+                    } else {
+                        Log.i(TAG, "Login un Succeeded!");
+                    }
                 }
-            }
 
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                Log.e(TAG, "Login Failed! Auth token expired" + firebaseError.getMessage());
-            }
-        });
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError) {
+                    Log.e(TAG, "Login Failed! Auth token expired" + firebaseError.getMessage());
+                    /*if (myServiceConnection.isServiceConnection()) {
+                        firebaseService.getFirebaseAuth();
+                    }*/
+                }
+            });
+        } else {
+            return ref;
+        }
         return ref;
     }
 }

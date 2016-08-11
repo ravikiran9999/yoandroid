@@ -20,7 +20,6 @@ import com.yo.android.util.Constants;
  */
 public class ChatActivity extends BaseActivity {
 
-    private Room room;
     private String opponent;
     private String mOpponentImg;
 
@@ -32,15 +31,15 @@ public class ChatActivity extends BaseActivity {
         Bundle args = new Bundle();
 
         if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.ROOM)) {
-            room = getIntent().getParcelableExtra(Constants.ROOM);
+            Room room = getIntent().getParcelableExtra(Constants.ROOM);
 
             args.putString(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
             opponent = getOppenent(room);
 
             String opponentImg = room.getImage();
-            if(opponentImg!=null){
+            if (opponentImg != null) {
                 mOpponentImg = opponentImg;
-                args.putString(Constants.OPPONENT_CONTACT_IMAGE,mOpponentImg);
+                args.putString(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
             }
 
             if (opponent != null) {
@@ -56,13 +55,13 @@ public class ChatActivity extends BaseActivity {
             opponent = contact.getPhoneNo();
             args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
             args.putString(Constants.OPPONENT_PHONE_NUMBER, contact.getPhoneNo());
-            args.putString(Constants.OPPONENT_CONTACT_IMAGE,contact.getImage());
+            args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
             args.putString(Constants.OPPONENT_ID, contact.getId());
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
             opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
             args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
-            args.putString(Constants.OPPONENT_PHONE_NUMBER, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
+            args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
 
         }
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
@@ -95,9 +94,9 @@ public class ChatActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
-                    intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE,mOpponentImg);
+                    intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
-                    intent.putExtra(Constants.FROM_CHAT_ROOMS,Constants.FROM_CHAT_ROOMS);
+                    intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
                     startActivity(intent);
                 }
             });

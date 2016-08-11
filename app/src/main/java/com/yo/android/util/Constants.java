@@ -31,6 +31,7 @@ public class Constants {
 
     //Preference
     public static final String USER_ID = "user_id";
+    public static final String FIREBASE_USER_ID = "firebase_user_id";
     public static final String USER_AVATAR = "user_avatar";
     public static final String USER_NAME = "first_name";
     public static final String USER_STATUS = "user_status";
@@ -50,6 +51,8 @@ public class Constants {
     // Firebase tables
     public static final String APP_USERS = "AppUsers";
     public static final String ROOMS = "Rooms";
+    public static final String MY_ROOMS = "rooms";
+    public static final String USERS = "Users";
     public static final String ROOM = "Room";
     public static final String CHATS = "chats";
     public static final String ROOM_ID = "RoomID";

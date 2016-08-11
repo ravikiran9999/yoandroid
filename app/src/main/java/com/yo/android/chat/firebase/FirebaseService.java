@@ -63,14 +63,6 @@ public class FirebaseService extends InjectedService {
     @Inject
     FireBaseHelper fireBaseHelper;
 
-    @Inject
-    BaseActivity baseActivity;
-
-    private ChildEventListener childEventListener;
-    private ValueEventListener valueEventListener;
-
-    private Context context;
-
     private boolean isRunning = false;
 
 
@@ -78,8 +70,8 @@ public class FirebaseService extends InjectedService {
     public void onCreate() {
         super.onCreate();
 
-        authReference = new Firebase(BuildConfig.FIREBASE_URL);
-
+        //authReference = new Firebase(BuildConfig.FIREBASE_URL);
+        //roomReference = authReference.child()
         isRunning = true;
     }
 
@@ -120,16 +112,15 @@ public class FirebaseService extends InjectedService {
                 try {
                     if (response.body() != null) {
                         jsonObject = new JSONObject(response.body().string());
-                        String name = jsonObject.getString("firebase_token");
-                        loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, name);
-//                        getAllRooms();
+                        String firebaseToken = jsonObject.getString("firebase_token");
+                        loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, firebaseToken);
+                        getAllRooms();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -141,38 +132,53 @@ public class FirebaseService extends InjectedService {
 
     private void getAllRooms() {
         authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-        valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    getChatMessageList(child.getKey());
-                }
+        ChildEventListener mChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                getChatMessageList(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                //getChatMessageList(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                firebaseError.getMessage();
+
             }
         };
-        authReference.addValueEventListener(valueEventListener);
+        String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
+        if(!firebaseUserId.isEmpty()) {
+            authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addChildEventListener(mChildEventListener);
+        }
     }
 
     public void getChatMessageList(String roomId) {
         try {
-            roomReference = authReference.child(roomId).child(Constants.CHATS);
+            roomReference = authReference.child(Constants.ROOMS).child(roomId).child(Constants.CHATS);
 
-
-            childEventListener = new ChildEventListener() {
+            ChildEventListener childEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
 
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-
-                        //postNotif(chatMessage.getRoomId(), chatMessage);
-
+                        String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
+                        if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0) {
+                            postNotif(chatMessage.getRoomId(), chatMessage);
+                        }
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -253,6 +259,4 @@ public class FirebaseService extends InjectedService {
         super.onDestroy();
         Toast.makeText(this, "FirebaseService killed", Toast.LENGTH_LONG).show();
     }
-
-
 }
