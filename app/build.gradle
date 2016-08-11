@@ -39,6 +39,7 @@ android {
             applicationIdSuffix ".stage"
 
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+            //buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             //applicationId "com.yo.android.stage"
 
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
@@ -63,6 +64,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //signingConfig signingConfigs.config
         }
 
     }
