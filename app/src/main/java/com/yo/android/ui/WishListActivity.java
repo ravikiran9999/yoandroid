@@ -56,6 +56,7 @@ public class WishListActivity extends BaseActivity {
     private TextView noArticals;
     private FrameLayout flipContainer;
     private boolean isFollowing;
+    private LinearLayout llNoWishlist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,7 @@ public class WishListActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         noArticals = (TextView) findViewById(R.id.no_data);
+        llNoWishlist = (LinearLayout) findViewById(R.id.ll_no_wishlist);
         flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
         //flipView = new FlipViewController(this);
         FlipView flipView = (FlipView) findViewById(R.id.flip_view);
@@ -92,6 +94,7 @@ public class WishListActivity extends BaseActivity {
                         flipContainer.setVisibility(View.VISIBLE);
                         if (noArticals != null) {
                             noArticals.setVisibility(View.GONE);
+                            llNoWishlist.setVisibility(View.GONE);
                         }
                         articlesList.add(response.body().get(i));
                     }
@@ -99,7 +102,8 @@ public class WishListActivity extends BaseActivity {
                 } else {
                     flipContainer.setVisibility(View.GONE);
                     if (noArticals != null) {
-                        noArticals.setVisibility(View.VISIBLE);
+                        noArticals.setVisibility(View.GONE);
+                        llNoWishlist.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -110,7 +114,8 @@ public class WishListActivity extends BaseActivity {
                 dismissProgressDialog();
                 flipContainer.setVisibility(View.GONE);
                 if (noArticals != null) {
-                    noArticals.setVisibility(View.VISIBLE);
+                    noArticals.setVisibility(View.GONE);
+                    llNoWishlist.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -251,9 +256,11 @@ public class WishListActivity extends BaseActivity {
                         });
                     } else {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        showProgressDialog();
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 if(MagazineArticlesBaseAdapter.reflectListener!=null){
@@ -265,39 +272,8 @@ public class WishListActivity extends BaseActivity {
 
                                 articlesList.clear();
                                 myBaseAdapter.addItems(articlesList);
-                                showProgressDialog();
-                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                                yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
-                                    @Override
-                                    public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                                        dismissProgressDialog();
-                                        if (response.body() != null && response.body().size() > 0) {
-                                            for (int i = 0; i < response.body().size(); i++) {
-                                                flipContainer.setVisibility(View.VISIBLE);
-                                                if (noArticals != null) {
-                                                    noArticals.setVisibility(View.GONE);
-                                                }
-                                                articlesList.add(response.body().get(i));
-                                            }
-                                            myBaseAdapter.addItems(articlesList);
-                                        } else {
-                                            flipContainer.setVisibility(View.GONE);
-                                            if (noArticals != null) {
-                                                noArticals.setVisibility(View.VISIBLE);
-                                            }
-                                        }
 
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<List<Articles>> call, Throwable t) {
-                                        dismissProgressDialog();
-                                        flipContainer.setVisibility(View.GONE);
-                                        if (noArticals != null) {
-                                            noArticals.setVisibility(View.VISIBLE);
-                                        }
-                                    }
-                                });
+                                refreshWishList();
                             }
 
                             @Override
@@ -305,6 +281,7 @@ public class WishListActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
+                                dismissProgressDialog();
                                 notifyDataSetChanged();
                             }
                         });
@@ -442,8 +419,10 @@ public class WishListActivity extends BaseActivity {
 
                                         articlesList.clear();
                                         myBaseAdapter.addItems(articlesList);
-                                        showProgressDialog();
-                                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+
+                                        refreshWishList();
+
+                                        /*String accessToken = preferenceEndPoint.getStringPreference("access_token");
                                         yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
                                             @Override
                                             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
@@ -474,7 +453,7 @@ public class WishListActivity extends BaseActivity {
                                                     noArticals.setVisibility(View.VISIBLE);
                                                 }
                                             }
-                                        });
+                                        });*/
 
                                     }
 
@@ -505,6 +484,50 @@ public class WishListActivity extends BaseActivity {
             items = new ArrayList<>(articlesList);
             notifyDataSetChanged();
         }
+    }
+
+    private void refreshWishList() {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
+            @Override
+            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                //dismissProgressDialog();
+                if (response.body() != null && response.body().size() > 0) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        if(!hasDestroyed()) {
+                            if (noArticals != null) {
+                                noArticals.setVisibility(View.GONE);
+                                llNoWishlist.setVisibility(View.GONE);
+                                flipContainer.setVisibility(View.VISIBLE);
+                            }
+                            articlesList.add(response.body().get(i));
+                        }
+                    }
+                    myBaseAdapter.addItems(articlesList);
+                } else {
+                    if(!hasDestroyed()) {
+                        if (noArticals != null) {
+                            noArticals.setVisibility(View.GONE);
+                            flipContainer.setVisibility(View.GONE);
+                            llNoWishlist.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Articles>> call, Throwable t) {
+                //dismissProgressDialog();
+                if(!hasDestroyed()) {
+                if (noArticals != null) {
+                    noArticals.setVisibility(View.GONE);
+                    flipContainer.setVisibility(View.GONE);
+                    llNoWishlist.setVisibility(View.VISIBLE);
+                }
+                }
+            }
+        });
     }
 
     private static class ViewHolder {

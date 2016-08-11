@@ -165,7 +165,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
             final Intent intent = new Intent(this, UnManageInAppPurchaseActivity.class);
-            intent.putExtra("sku", "com.yo.product.credits.FIVE");
+            intent.putExtra("sku", "com.yo.products.credit.FIVE");
             intent.putExtra("price", 5f);
             final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
             intent.putExtra(Constants.USER_ID, userId);

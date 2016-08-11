@@ -60,7 +60,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @OnClick(R.id.btn1)
     public void onBtnClick() {
         final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
-        intent.putExtra("sku", "com.yo.product.credits.FIVE");
+        intent.putExtra("sku", "com.yo.products.credit.FIVE");
         intent.putExtra("price", 5f);
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
@@ -70,7 +70,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @OnClick(R.id.btn2)
     public void onBtnClick2() {
         final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
-        intent.putExtra("sku", "com.yo.product.credits.TEN");
+        intent.putExtra("sku", "com.yo.products.credit.TEN");
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
         intent.putExtra("price", 10f);
@@ -80,7 +80,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @OnClick(R.id.btn3)
     public void onBtnClick3() {
         final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
-        intent.putExtra("sku", "com.yo.product.credits.FIFTEEN");
+        intent.putExtra("sku", "com.yo.products.credit.FIFTEEN");
         intent.putExtra("price", 15f);
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
