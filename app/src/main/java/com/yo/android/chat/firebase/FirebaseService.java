@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,27 +14,20 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
-import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
-import com.yo.android.util.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -70,7 +62,7 @@ public class FirebaseService extends InjectedService {
     public void onCreate() {
         super.onCreate();
 
-        //authReference = new Firebase(BuildConfig.FIREBASE_URL);
+        authReference = new Firebase(BuildConfig.FIREBASE_URL);
         //roomReference = authReference.child()
         isRunning = true;
     }
@@ -81,8 +73,6 @@ public class FirebaseService extends InjectedService {
         if (isRunning) {
             Log.i(TAG, "Service running");
             getFirebaseAuth();
-            //getChatMessageList();
-
         }
 
         return START_STICKY;
@@ -177,7 +167,7 @@ public class FirebaseService extends InjectedService {
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
                         if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0) {
-                            postNotif(chatMessage.getRoomId(), chatMessage);
+                            postNotification(chatMessage.getRoomId(), chatMessage);
                         }
 
                     } catch (Exception e) {
@@ -219,7 +209,7 @@ public class FirebaseService extends InjectedService {
         }
     }
 
-    private void postNotif(String roomId, ChatMessage chatMessage) {
+    private void postNotification(String roomId, ChatMessage chatMessage) {
         try {
 
             String body = chatMessage.getMessage();
