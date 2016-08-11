@@ -47,13 +47,14 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import se.emilsjolander.flipview.FlipView;
 
 /**
  * Created by root on 15/7/16.
  */
 public class OtherProfilesLinedArticles extends BaseFragment implements OtherPeopleMagazineReflectListener {
 
-    private FlipViewController flipView;
+    //private FlipViewController flipView;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
     public static OtherProfilesLinedArticles listener;
@@ -81,10 +82,11 @@ public class OtherProfilesLinedArticles extends BaseFragment implements OtherPeo
         noArticals = (TextView) view.findViewById(R.id.txtEmptyArticals);
         flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
-        flipView = new FlipViewController(getActivity());
-        myBaseAdapter = new MyBaseAdapter(getActivity(), flipView);
+        //flipView = new FlipViewController(getActivity());
+        FlipView flipView = (FlipView) view.findViewById(R.id.flip_view);
+        myBaseAdapter = new MyBaseAdapter(getActivity());
         flipView.setAdapter(myBaseAdapter);
-        flipContainer.addView(flipView);
+        //flipContainer.addView(flipView);
 
         flipContainer.setVisibility(View.GONE);
 
@@ -147,12 +149,12 @@ public class OtherProfilesLinedArticles extends BaseFragment implements OtherPeo
     @Override
     public void onResume() {
         super.onResume();
-        flipView.onResume();
+        //flipView.onResume();
     }
 
     public void onPause() {
         super.onPause();
-        flipView.onPause();
+        //flipView.onPause();
     }
 
     @Override
@@ -164,7 +166,7 @@ public class OtherProfilesLinedArticles extends BaseFragment implements OtherPeo
 
     public class MyBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener {
 
-        private FlipViewController controller;
+        //private FlipViewController controller;
 
         private Context context;
 
@@ -174,10 +176,10 @@ public class OtherProfilesLinedArticles extends BaseFragment implements OtherPeo
         private List<Articles> items;
 
 
-        private MyBaseAdapter(Context context, FlipViewController controller) {
+        private MyBaseAdapter(Context context) {
             inflater = LayoutInflater.from(context);
             this.context = context;
-            this.controller = controller;
+            //this.controller = controller;
             MagazineArticlesBaseAdapter.reflectListener = this;
             //Use a system resource as the placeholder
             placeholderBitmap =

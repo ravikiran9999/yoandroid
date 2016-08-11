@@ -19,7 +19,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.10.2"
+        versionName "16.3.10.3"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
     }
     productFlavors {
@@ -126,6 +126,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile "com.android.support:palette-v7:${supportAppcompatVersion}"
     compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile 'se.emilsjolander:android-flipview:1.1.0'
 }
 apply plugin: 'com.google.gms.google-services'
 

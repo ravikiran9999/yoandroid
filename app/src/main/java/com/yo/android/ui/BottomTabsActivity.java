@@ -139,9 +139,7 @@ public class BottomTabsActivity extends BaseActivity {
         contactsSyncManager.syncContacts();
         SyncUtils.CreateSyncAccount(this, preferenceEndPoint);
 //        SyncUtils.TriggerRefresh();
-        if (mContactSyncHelper.getSyncMode() == ContactSyncHelper.NONE) {
             mContactSyncHelper.checkContacts();
-        }
     }
 
     @Override
