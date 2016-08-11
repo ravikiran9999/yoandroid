@@ -34,8 +34,8 @@ public class FireBaseHelper {
     @Inject
     MyServiceConnection myServiceConnection;
 
-    @Inject
-    FirebaseService firebaseService;
+    /*@Inject
+    FirebaseService firebaseService;*/
 
     @Inject
     public FireBaseHelper() {

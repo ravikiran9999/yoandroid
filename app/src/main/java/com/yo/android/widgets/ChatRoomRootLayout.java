@@ -20,7 +20,6 @@ import com.yo.android.util.Util;
  * Created by Ramesh on 13/7/16.
  */
 public class ChatRoomRootLayout extends RelativeLayout {
-    DatabaseReference roomReference = FirebaseDatabase.getInstance().getReference(Constants.ROOM_ID);
 
     public ChatRoomRootLayout(Context context) {
         super(context);
@@ -81,5 +80,4 @@ public class ChatRoomRootLayout extends RelativeLayout {
 
         }
     };
-
 }
