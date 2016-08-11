@@ -31,6 +31,15 @@
         android:layout_marginTop="5dp"
         android:divider="@android:color/transparent"
         />
+
+    <ImageView
+        android:id="@+id/empty_chat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_empty_chat"
+        android:visibility="invisible"
+
+        />
     <!--<FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"

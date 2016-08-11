@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ import retrofit2.Response;
 public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private ListView listView;
+    private ImageView emptyImageView;
     private List<ChildEventListener> childEventListenersList;
     private List<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
@@ -130,6 +132,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         listView = (ListView) view.findViewById(R.id.lv_chat_room);
+        emptyImageView = (ImageView) view.findViewById(R.id.empty_chat);
         listView.setOnItemClickListener(this);
 
         return view;
@@ -180,22 +183,24 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             showProgressDialog();
         }
         String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-        String userId = loginPrefs.getStringPreference(Constants.USER_ID);
-        ArrayList<String> stringArrayList = new ArrayList<>();
-        stringArrayList.add(userId);
         yoService.getAllRoomsAPI(access).enqueue(new Callback<List<Room>>() {
             @Override
             public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
                 arrayOfUsers = response.body();
                 if (arrayOfUsers == null) {
-                    arrayOfUsers = new ArrayList<Room>();
+                    arrayOfUsers = new ArrayList<>();
                 }
-                chatRoomListAdapter.addItems(arrayOfUsers);
-                Firebase firebaseReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
-                for (int i = 0; i < arrayOfUsers.size(); i++) {
-                    final Room room = arrayOfUsers.get(i);
-                    Firebase firebaseRoomReference = firebaseReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
-                    firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+                if (arrayOfUsers.isEmpty()) {
+                    emptyImageView.setVisibility(View.VISIBLE);
+                    listView.setVisibility(View.INVISIBLE);
+                } else {
+                    chatRoomListAdapter.addItems(arrayOfUsers);
+                    Firebase firebaseReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+                    for (int i = 0; i < arrayOfUsers.size(); i++) {
+                        final Room room = arrayOfUsers.get(i);
+                        Firebase firebaseRoomReference = firebaseReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
+                        firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+                    }
                 }
 
                 dismissProgressDialog();
@@ -269,7 +274,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
+                firebaseError.getMessage();
             }
         };
     }

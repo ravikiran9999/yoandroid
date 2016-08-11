@@ -2,15 +2,11 @@ package com.yo.android.util;
 
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.yo.android.BuildConfig;
-import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.model.ChatMessage;
 
@@ -28,7 +24,6 @@ public class FireBaseHelper {
 
     private static final String TAG = "FireBaseHelper";
 
-    private DatabaseReference roomReference;
     private Map<String, ChatMessage> map = new HashMap<>();
 
     @Inject
