@@ -51,6 +51,8 @@ public class Constants {
     // Firebase tables
     public static final String APP_USERS = "AppUsers";
     public static final String ROOMS = "Rooms";
+    public static final String MY_ROOMS = "rooms";
+    public static final String USERS = "Users";
     public static final String ROOM = "Room";
     public static final String CHATS = "chats";
     public static final String ROOM_ID = "RoomID";

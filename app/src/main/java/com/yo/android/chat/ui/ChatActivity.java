@@ -109,11 +109,6 @@ public class ChatActivity extends BaseActivity {
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (room.getGroupName() == null) {
-            /*if (!room.getMembers().get(0).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
-                return room.getMembers().get(0).getMobileNumber();
-            } else if (!room.getMembers().get(1).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
-                return room.getMembers().get(1).getMobileNumber();
-            }*/
             for (int i = 0; i < room.getMembers().size(); i++) {
                 if (!room.getMembers().get(i).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
                     return room.getMembers().get(i).getMobileNumber();

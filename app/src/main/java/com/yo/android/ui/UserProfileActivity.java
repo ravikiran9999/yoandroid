@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -146,7 +147,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (fromChatRooms) {
                 finish();
             } else {
-                navigateToChatScreen();
+                navigateToChatScreen(contact);
             }
         } else {
             Toast.makeText(this, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
@@ -154,7 +155,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     }
 
-    private void navigateToChatScreen() {
+    private void navigateToChatScreen(Contact contact) {
         Intent intent = new Intent(this, ChatActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.CONTACT, contact);

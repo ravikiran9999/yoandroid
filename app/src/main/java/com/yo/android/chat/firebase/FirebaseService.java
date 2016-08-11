@@ -47,7 +47,7 @@ import retrofit2.Response;
 
 import static android.content.ContentValues.TAG;
 
-public class FirebaseService extends InjectedService implements ValueEventListener {
+public class FirebaseService extends InjectedService {
 
     private static String LOG_TAG = "BoundService";
     private IBinder mBinder = new MyBinder();
@@ -115,8 +115,8 @@ public class FirebaseService extends InjectedService implements ValueEventListen
                 try {
                     if (response.body() != null) {
                         jsonObject = new JSONObject(response.body().string());
-                        String name = jsonObject.getString("firebase_token");
-                        loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, name);
+                        String firebaseToken = jsonObject.getString("firebase_token");
+                        loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, firebaseToken);
                         getAllRooms();
                     }
                 } catch (JSONException e) {
@@ -124,7 +124,6 @@ public class FirebaseService extends InjectedService implements ValueEventListen
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -136,35 +135,51 @@ public class FirebaseService extends InjectedService implements ValueEventListen
 
     private void getAllRooms() {
         authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-        valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    getChatMessageList(child.getKey());
-                }
+        ChildEventListener mChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                getChatMessageList(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                //getChatMessageList(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                firebaseError.getMessage();
+
             }
         };
-        authReference.child(Constants.ROOMS).addValueEventListener(valueEventListener);
+        String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
+        if(!firebaseUserId.isEmpty()) {
+            authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addChildEventListener(mChildEventListener);
+        }
     }
 
     public void getChatMessageList(String roomId) {
         try {
             roomReference = authReference.child(Constants.ROOMS).child(roomId).child(Constants.CHATS);
 
-            childEventListener = new ChildEventListener() {
+            ChildEventListener childEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
 
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                        if (chatMessage.getDelivered() == 0) {
+                        String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
+                        if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0) {
                             postNotif(chatMessage.getRoomId(), chatMessage);
                         }
 
@@ -207,17 +222,6 @@ public class FirebaseService extends InjectedService implements ValueEventListen
         }
     }
 
-    @Override
-    public void onDataChange(DataSnapshot dataSnapshot) {
-        //authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-        dataSnapshot.getValue();
-    }
-
-    @Override
-    public void onCancelled(FirebaseError firebaseError) {
-        firebaseError.getMessage();
-    }
-
     private void postNotif(String roomId, ChatMessage chatMessage) {
         try {
 
@@ -258,6 +262,4 @@ public class FirebaseService extends InjectedService implements ValueEventListen
         super.onDestroy();
         Toast.makeText(this, "FirebaseService killed", Toast.LENGTH_LONG).show();
     }
-
-
 }
