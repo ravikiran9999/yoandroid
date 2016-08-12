@@ -22,6 +22,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
@@ -69,13 +70,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Named("login")
     PreferenceEndPoint loginPrefs;
 
-    public Menu getMenu() {
-        return menu;
-    }
-
-
     public ChatFragment() {
         // Required empty public constructor
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 
     @Override
@@ -176,6 +176,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onResume() {
         super.onResume();
         getChatRoomList();
+        //getAllRooms();
     }
 
     private void getChatRoomList() {
@@ -202,7 +203,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
                     }
                 }
-
                 dismissProgressDialog();
             }
 
@@ -211,6 +211,55 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 dismissProgressDialog();
             }
         });
+    }
+
+    private void getAllRooms() {
+        Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+
+        ChildEventListener mChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.MEMBERS);
+                memberReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        dataSnapshot.getKey();
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+                //getChatMessageList(dataSnapshot.getKey());
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                //getChatMessageList(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        };
+        String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
+        if(!firebaseUserId.isEmpty()) {
+            authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addChildEventListener(mChildEventListener);
+        }
     }
 
     @NonNull

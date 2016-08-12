@@ -41,7 +41,7 @@ import static android.content.ContentValues.TAG;
 
 public class FirebaseService extends InjectedService {
 
-    private static String LOG_TAG = "BoundService";
+    private static String TAG = "BoundService";
     private IBinder mBinder = new MyBinder();
     private Firebase authReference;
     private Firebase roomReference;
