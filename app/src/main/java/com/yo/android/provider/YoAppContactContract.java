@@ -8,8 +8,6 @@ import android.provider.BaseColumns;
  * Field and table name constants for
  */
 public class YoAppContactContract {
-    private YoAppContactContract() {
-    }
 
     /**
      * Content provider authority.
@@ -65,4 +63,8 @@ public class YoAppContactContract {
         public static final String COLUMN_NAME_FIREBASE_ROOM_ID = "firebase_room_id";
 
     }
+
+    private YoAppContactContract() {
+    }
+
 }

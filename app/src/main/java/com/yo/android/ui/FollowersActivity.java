@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ public class FollowersActivity extends BaseActivity {
     private ListView lvFindPeople;
     private FindPeopleAdapter findPeopleAdapter;
     private TextView noData;
+    private LinearLayout llNoPeople;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class FollowersActivity extends BaseActivity {
         findPeopleAdapter = new FindPeopleAdapter(this);
         lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
         noData = (TextView) findViewById(R.id.no_data);
+        llNoPeople = (LinearLayout) findViewById(R.id.ll_no_people);
         lvFindPeople.setAdapter(findPeopleAdapter);
 
         showProgressDialog();
@@ -56,15 +59,24 @@ public class FollowersActivity extends BaseActivity {
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     noData.setVisibility(View.GONE);
+                    llNoPeople.setVisibility(View.GONE);
                     lvFindPeople.setVisibility(View.VISIBLE);
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItems(findPeopleList);
+                }
+                else {
+                    noData.setVisibility(View.VISIBLE);
+                    llNoPeople.setVisibility(View.VISIBLE);
+                    lvFindPeople.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                 dismissProgressDialog();
+                    noData.setVisibility(View.VISIBLE);
+                    llNoPeople.setVisibility(View.VISIBLE);
+                    lvFindPeople.setVisibility(View.GONE);
             }
         });
 
@@ -106,16 +118,25 @@ public class FollowersActivity extends BaseActivity {
                         dismissProgressDialog();
                         if (response.body().size() > 0) {
                             noData.setVisibility(View.GONE);
+                            llNoPeople.setVisibility(View.GONE);
                             lvFindPeople.setVisibility(View.VISIBLE);
                             List<FindPeople> findPeopleList = response.body();
                             findPeopleAdapter.clearAll();
                             findPeopleAdapter.addItems(findPeopleList);
+                        }
+                        else {
+                            noData.setVisibility(View.VISIBLE);
+                            llNoPeople.setVisibility(View.VISIBLE);
+                            lvFindPeople.setVisibility(View.GONE);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                         dismissProgressDialog();
+                            noData.setVisibility(View.VISIBLE);
+                            llNoPeople.setVisibility(View.VISIBLE);
+                            lvFindPeople.setVisibility(View.GONE);
                     }
                 });
             }

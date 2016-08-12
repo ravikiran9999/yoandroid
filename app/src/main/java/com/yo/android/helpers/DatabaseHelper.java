@@ -113,7 +113,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             chatRoomDao = OpenHelperManager.getHelper(context, DatabaseHelper.class).getChatRoomDao();
             chatRoomDao.create(obj);
-            mLog.i(TAG, "Added Chat Room Object To Database");
+            mLog.i(TAG, "Chat Room Object To Database");
             return true;
         } catch (SQLException e) {
             mLog.e(TAG, e.toString());

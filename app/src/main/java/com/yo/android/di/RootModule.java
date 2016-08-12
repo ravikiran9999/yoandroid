@@ -45,7 +45,7 @@ import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewMagazineActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.OtherProfilesFollowers;
-import com.yo.android.ui.OtherProfilesLinedArticles;
+import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.OthersMagazinesDetailActivity;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
@@ -126,7 +126,7 @@ import dagger.Provides;
                 InviteActivity.class,
                 OthersProfileMagazines.class,
                 OtherProfilesFollowers.class,
-                OtherProfilesLinedArticles.class,
+                OtherProfilesLikedArticles.class,
                 OthersMagazinesDetailActivity.class,
                 UnManageInAppPurchaseActivity.class,
                 NotificationsActivity.class,

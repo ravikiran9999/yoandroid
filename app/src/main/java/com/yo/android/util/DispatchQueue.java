@@ -3,14 +3,17 @@ package com.yo.android.util;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
+
+import com.orion.android.common.logger.Log;
+import com.orion.android.common.logger.LogImpl;
 
 import java.util.concurrent.CountDownLatch;
 
 public class DispatchQueue extends Thread {
-
+    private static final String TAG = "DispatchQueue";
     private volatile Handler handler = null;
     private CountDownLatch syncLatch = new CountDownLatch(1);
+    private Log mLog = new LogImpl();
 
     public DispatchQueue(final String threadName) {
         setName(threadName);
@@ -26,7 +29,7 @@ public class DispatchQueue extends Thread {
                 handler.sendMessageDelayed(msg, delay);
             }
         } catch (Exception e) {
-//            Log.e("tmessages", e);
+            mLog.w(TAG, e);
         }
     }
 
@@ -35,7 +38,7 @@ public class DispatchQueue extends Thread {
             syncLatch.await();
             handler.removeCallbacks(runnable);
         } catch (Exception e) {
-//            FileLog.e("tmessages", e);
+            mLog.w(TAG, e);
         }
     }
 
@@ -52,7 +55,7 @@ public class DispatchQueue extends Thread {
                 handler.postDelayed(runnable, delay);
             }
         } catch (Exception e) {
-//            FileLog.e("tmessages", e);
+            mLog.w(TAG, e);
         }
     }
 
@@ -61,7 +64,7 @@ public class DispatchQueue extends Thread {
             syncLatch.await();
             handler.removeCallbacksAndMessages(null);
         } catch (Exception e) {
-//            FileLog.e("tmessages", e);
+            mLog.w(TAG, e);
         }
     }
 

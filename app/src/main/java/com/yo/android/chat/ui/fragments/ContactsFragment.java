@@ -104,7 +104,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         if (CONTACT_SYNC) {
             getLoaderManager().initLoader(0, null, this);
             //Manual refresh
-            SyncUtils.TriggerRefresh();
+            SyncUtils.triggerRefresh();
         } else {
             if (!mSyncManager.getContacts().isEmpty()) {
                 contactsListAdapter.addItems(mSyncManager.getContacts());

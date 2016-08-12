@@ -2,6 +2,7 @@ package com.yo.android.ui;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ public class NotificationsActivity extends BaseActivity {
     private ListView lvNotifications;
     private NotificationsAdapter notificationsAdapter;
     private TextView noData;
+    private LinearLayout llNoNotifications;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class NotificationsActivity extends BaseActivity {
         notificationsAdapter = new NotificationsAdapter(this);
         lvNotifications = (ListView) findViewById(R.id.lv_notifications);
         noData = (TextView) findViewById(R.id.no_data);
+        llNoNotifications = (LinearLayout) findViewById(R.id.ll_no_notifications);
         lvNotifications.setAdapter(notificationsAdapter);
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -63,7 +66,8 @@ public class NotificationsActivity extends BaseActivity {
                 dismissProgressDialog();
                 if (response == null || response.body() == null) {
                     lvNotifications.setVisibility(View.GONE);
-                    noData.setVisibility(View.VISIBLE);
+                    noData.setVisibility(View.GONE);
+                    llNoNotifications.setVisibility(View.VISIBLE);
                     return;
                 }
                 if (response != null && response.body().size() > 0) {
@@ -71,6 +75,7 @@ public class NotificationsActivity extends BaseActivity {
                     notificationsAdapter.addItems(notificationList);
                     lvNotifications.setVisibility(View.VISIBLE);
                     noData.setVisibility(View.GONE);
+                    llNoNotifications.setVisibility(View.GONE);
 
                 }
             }
@@ -79,7 +84,8 @@ public class NotificationsActivity extends BaseActivity {
             public void onFailure(Call<List<Notification>> call, Throwable t) {
                 dismissProgressDialog();
                 lvNotifications.setVisibility(View.GONE);
-                noData.setVisibility(View.VISIBLE);
+                noData.setVisibility(View.GONE);
+                llNoNotifications.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -109,7 +115,8 @@ public class NotificationsActivity extends BaseActivity {
                     dismissProgressDialog();
                     if (response == null || response.body() == null) {
                         lvNotifications.setVisibility(View.GONE);
-                        noData.setVisibility(View.VISIBLE);
+                        noData.setVisibility(View.GONE);
+                        llNoNotifications.setVisibility(View.VISIBLE);
                         return;
                     }
                     if (response != null && response.body().size() > 0) {
@@ -117,6 +124,7 @@ public class NotificationsActivity extends BaseActivity {
                         notificationsAdapter.addItems(notificationList);
                         lvNotifications.setVisibility(View.VISIBLE);
                         noData.setVisibility(View.GONE);
+                        llNoNotifications.setVisibility(View.GONE);
 
                     }
                 }
@@ -125,7 +133,8 @@ public class NotificationsActivity extends BaseActivity {
                 public void onFailure(Call<List<Notification>> call, Throwable t) {
                     dismissProgressDialog();
                     lvNotifications.setVisibility(View.GONE);
-                    noData.setVisibility(View.VISIBLE);
+                    noData.setVisibility(View.GONE);
+                    llNoNotifications.setVisibility(View.VISIBLE);
                 }
             });
         }

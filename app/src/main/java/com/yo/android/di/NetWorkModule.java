@@ -110,11 +110,10 @@ public class NetWorkModule {
                 return response;
             }
             // Add Cache Control only for GET methods
-            if (isCacheEnable && request.method().equals("GET") /*|| request.method().equals("POST")*/) {
+            if (isCacheEnable && request.method().equals("GET")) {
                 if (mConnectivityHelper.isConnected()) {
                     // 1 day
                     request.newBuilder()
-//                            .header("Cache-Control", "only-if-cached")
                             .header("Cache-Control", "only-if-cached,max-age=31536000")
                             .build();
                 } else {
@@ -179,35 +178,4 @@ public class NetWorkModule {
             return chain.proceed(request);
         }
     }
-
-    //https://gist.github.com/polbins/1c7f9303d2b7d169a3b1
-//    private static final Interceptor mCacheControlInterceptor = new Interceptor() {
-//        @Override
-//        public Response intercept(Chain chain) throws IOException {
-//            Request request = chain.request();
-//
-//            // Add Cache Control only for GET methods
-//            if (request.method().equals("GET")) {
-//                if (false/*ConnectivityHelper.isNetworkAvailable(mContext)*/) {
-//                    // 1 day
-//                    request.newBuilder()
-//                            .header("Cache-Control", "only-if-cached")
-//                            .build();
-//                } else {
-//                    // 4 weeks stale
-//                    request.newBuilder()
-//                            .header("Cache-Control", "public, max-stale=2419200")
-//                            .build();
-//                }
-//            }
-//
-//            Response response = chain.proceed(request);
-//
-//            // Re-write response CC header to force use of cache
-//            return response
-//                    .newBuilder()
-//                    .header("Cache-Control", "public, max-age=86400") // 1 day
-//                    .build();
-//        }
-//    };
 }

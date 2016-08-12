@@ -3,8 +3,6 @@ package com.yo.android.ui;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -18,11 +16,9 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.squareup.picasso.Picasso;
@@ -47,15 +43,12 @@ import se.emilsjolander.flipview.FlipView;
 
 public class WishListActivity extends BaseActivity {
 
-    //private FlipViewController flipView;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
-    @Inject
-    YoApi.YoService yoService;
-    private String topicName;
+
     private TextView noArticals;
     private FrameLayout flipContainer;
-    private boolean isFollowing;
+    private LinearLayout llNoWishlist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +63,11 @@ public class WishListActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         noArticals = (TextView) findViewById(R.id.no_data);
+        llNoWishlist = (LinearLayout) findViewById(R.id.ll_no_wishlist);
         flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
-        //flipView = new FlipViewController(this);
         FlipView flipView = (FlipView) findViewById(R.id.flip_view);
         myBaseAdapter = new MyBaseAdapter(this);
         flipView.setAdapter(myBaseAdapter);
-        //flipContainer.addView(flipView);
 
         flipContainer.setVisibility(View.GONE);
 
@@ -92,6 +84,7 @@ public class WishListActivity extends BaseActivity {
                         flipContainer.setVisibility(View.VISIBLE);
                         if (noArticals != null) {
                             noArticals.setVisibility(View.GONE);
+                            llNoWishlist.setVisibility(View.GONE);
                         }
                         articlesList.add(response.body().get(i));
                     }
@@ -99,7 +92,8 @@ public class WishListActivity extends BaseActivity {
                 } else {
                     flipContainer.setVisibility(View.GONE);
                     if (noArticals != null) {
-                        noArticals.setVisibility(View.VISIBLE);
+                        noArticals.setVisibility(View.GONE);
+                        llNoWishlist.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -110,7 +104,8 @@ public class WishListActivity extends BaseActivity {
                 dismissProgressDialog();
                 flipContainer.setVisibility(View.GONE);
                 if (noArticals != null) {
-                    noArticals.setVisibility(View.VISIBLE);
+                    noArticals.setVisibility(View.GONE);
+                    llNoWishlist.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -119,33 +114,24 @@ public class WishListActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        //flipView.onResume();
     }
 
     public void onPause() {
         super.onPause();
-        //flipView.onPause();
     }
 
     private class MyBaseAdapter extends BaseAdapter {
 
-        //private FlipViewController controller;
 
         private Context context;
 
         private LayoutInflater inflater;
 
-        private Bitmap placeholderBitmap;
         private List<Articles> items;
 
         private MyBaseAdapter(Context context) {
             inflater = LayoutInflater.from(context);
             this.context = context;
-            //this.controller = controller;
-
-            //Use a system resource as the placeholder
-            placeholderBitmap =
-                    BitmapFactory.decodeResource(context.getResources(), android.R.drawable.dark_header);
             items = new ArrayList<>();
         }
 
@@ -156,7 +142,7 @@ public class WishListActivity extends BaseActivity {
 
         @Override
         public Articles getItem(int position) {
-            if (position>=0 && getCount() > position) {
+            if (position >= 0 && getCount() > position) {
                 return items.get(position);
             }
             return null;
@@ -169,7 +155,7 @@ public class WishListActivity extends BaseActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
+            ViewHolder holder;
             View layout = convertView;
             if (layout == null) {
                 layout = inflater.inflate(R.layout.magazine_flip_layout, null);
@@ -233,8 +219,8 @@ public class WishListActivity extends BaseActivity {
 
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                if(MagazineArticlesBaseAdapter.reflectListener!=null){
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data,Constants.LIKE_EVENT);
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
                                 notifyDataSetChanged();
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
@@ -251,13 +237,15 @@ public class WishListActivity extends BaseActivity {
                         });
                     } else {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        showProgressDialog();
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                if(MagazineArticlesBaseAdapter.reflectListener!=null){
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data,Constants.LIKE_EVENT);
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
 
                                 notifyDataSetChanged();
@@ -265,39 +253,8 @@ public class WishListActivity extends BaseActivity {
 
                                 articlesList.clear();
                                 myBaseAdapter.addItems(articlesList);
-                                showProgressDialog();
-                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                                yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
-                                    @Override
-                                    public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                                        dismissProgressDialog();
-                                        if (response.body() != null && response.body().size() > 0) {
-                                            for (int i = 0; i < response.body().size(); i++) {
-                                                flipContainer.setVisibility(View.VISIBLE);
-                                                if (noArticals != null) {
-                                                    noArticals.setVisibility(View.GONE);
-                                                }
-                                                articlesList.add(response.body().get(i));
-                                            }
-                                            myBaseAdapter.addItems(articlesList);
-                                        } else {
-                                            flipContainer.setVisibility(View.GONE);
-                                            if (noArticals != null) {
-                                                noArticals.setVisibility(View.VISIBLE);
-                                            }
-                                        }
 
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<List<Articles>> call, Throwable t) {
-                                        dismissProgressDialog();
-                                        flipContainer.setVisibility(View.GONE);
-                                        if (noArticals != null) {
-                                            noArticals.setVisibility(View.VISIBLE);
-                                        }
-                                    }
-                                });
+                                refreshWishList();
                             }
 
                             @Override
@@ -305,6 +262,7 @@ public class WishListActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
+                                dismissProgressDialog();
                                 notifyDataSetChanged();
                             }
                         });
@@ -355,19 +313,16 @@ public class WishListActivity extends BaseActivity {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Util.shareIntent(v, data.getUrl(),"Sharing Article");
+                    Util.shareIntent(v, data.getUrl(), "Sharing Article");
                 }
             });
 
-            if(data.getIsFollowing().equals("true")) {
+            if (data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                isFollowing = true;
-            }
-            else {
+            } else {
                 holder.articleFollow.setText("Follow");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                isFollowing = false;
             }
 
             final ViewHolder finalHolder = holder;
@@ -375,33 +330,31 @@ public class WishListActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     if (!data.getIsFollowing().equals("true")) {
-                    ((BaseActivity)context).showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            finalHolder.articleFollow.setText("Following");
-                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                            data.setIsFollowing("true");
-                            if(MagazineArticlesBaseAdapter.reflectListener!=null){
-                                MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data,Constants.FOLLOW_EVENT);
+                        ((BaseActivity) context).showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                finalHolder.articleFollow.setText("Following");
+                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                data.setIsFollowing("true");
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                }
+                                notifyDataSetChanged();
                             }
-                            isFollowing = true;
-                            notifyDataSetChanged();
-                        }
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            finalHolder.articleFollow.setText("Follow");
-                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                            data.setIsFollowing("false");
-                            isFollowing = false;
-                            notifyDataSetChanged();
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                finalHolder.articleFollow.setText("Follow");
+                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                data.setIsFollowing("false");
+                                notifyDataSetChanged();
 
-                        }
-                    });
+                            }
+                        });
                     } else {
 
                         final Dialog dialog = new Dialog(WishListActivity.this);
@@ -434,48 +387,15 @@ public class WishListActivity extends BaseActivity {
                                         finalHolder.articleFollow.setText("Follow");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                         data.setIsFollowing("false");
-                                        if(MagazineArticlesBaseAdapter.reflectListener!=null){
-                                            MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data,Constants.FOLLOW_EVENT);
+                                        if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                            MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
                                         }
-                                        isFollowing = false;
                                         notifyDataSetChanged();
 
                                         articlesList.clear();
                                         myBaseAdapter.addItems(articlesList);
-                                        showProgressDialog();
-                                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                                        yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
-                                            @Override
-                                            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                                                dismissProgressDialog();
-                                                if (response.body() != null && response.body().size() > 0) {
-                                                    for (int i = 0; i < response.body().size(); i++) {
-                                                        flipContainer.setVisibility(View.VISIBLE);
-                                                        if (noArticals != null) {
-                                                            noArticals.setVisibility(View.GONE);
-                                                        }
-                                                        articlesList.add(response.body().get(i));
-                                                    }
-                                                    myBaseAdapter.addItems(articlesList);
-                                                } else {
-                                                    flipContainer.setVisibility(View.GONE);
-                                                    if (noArticals != null) {
-                                                        noArticals.setVisibility(View.VISIBLE);
-                                                    }
-                                                }
 
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                                                dismissProgressDialog();
-                                                flipContainer.setVisibility(View.GONE);
-                                                if (noArticals != null) {
-                                                    noArticals.setVisibility(View.VISIBLE);
-                                                }
-                                            }
-                                        });
-
+                                        refreshWishList();
                                     }
 
                                     @Override
@@ -484,7 +404,6 @@ public class WishListActivity extends BaseActivity {
                                         finalHolder.articleFollow.setText("Following");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                         data.setIsFollowing("true");
-                                        isFollowing = true;
                                         notifyDataSetChanged();
 
                                     }
@@ -505,6 +424,48 @@ public class WishListActivity extends BaseActivity {
             items = new ArrayList<>(articlesList);
             notifyDataSetChanged();
         }
+    }
+
+    private void refreshWishList() {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
+            @Override
+            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                if (response.body() != null && response.body().size() > 0) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        if (!hasDestroyed()) {
+                            if (noArticals != null) {
+                                noArticals.setVisibility(View.GONE);
+                                llNoWishlist.setVisibility(View.GONE);
+                                flipContainer.setVisibility(View.VISIBLE);
+                            }
+                            articlesList.add(response.body().get(i));
+                        }
+                    }
+                    myBaseAdapter.addItems(articlesList);
+                } else {
+                    if (!hasDestroyed()) {
+                        if (noArticals != null) {
+                            noArticals.setVisibility(View.GONE);
+                            flipContainer.setVisibility(View.GONE);
+                            llNoWishlist.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Articles>> call, Throwable t) {
+                if (!hasDestroyed()) {
+                    if (noArticals != null) {
+                        noArticals.setVisibility(View.GONE);
+                        flipContainer.setVisibility(View.GONE);
+                        llNoWishlist.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
     }
 
     private static class ViewHolder {

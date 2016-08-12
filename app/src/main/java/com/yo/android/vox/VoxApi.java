@@ -19,18 +19,6 @@ public class VoxApi {
     public interface VoxService {
         @Multipart
         @POST("api.php")
-        Call<ResponseBody> loginUserAPI(@Part("request") Task task);
-
-        @Multipart
-        @POST("api.php")
-        Call<ResponseBody> sendOTP(@Part("request") OTPBody task);
-
-        @Multipart
-        @POST("api.php")
-        Call<ResponseBody> getBalance(@Part("request") GetBalance task);
-
-        @Multipart
-        @POST("api.php")
         Call<ResponseBody> getData(@Part("request") UserDetails task);
 
         @FormUrlEncoded

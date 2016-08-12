@@ -18,7 +18,6 @@ public class IncomingSmsReceiver extends BroadcastReceiver {
         String intentAction = intent.getAction();
         Log.d("Action is ", intentAction);
         final Bundle bundle = intent.getExtras();
-        //extractOTP(bundle);
         EventBus.getDefault().post(bundle);
     }
 
@@ -35,7 +34,7 @@ public class IncomingSmsReceiver extends BroadcastReceiver {
 
                     // if the SMS is not from our gateway, ignore the message
                     if (senderAddress.toLowerCase().contains("020001")
-                            || senderAddress.equalsIgnoreCase("MD-Beepse")
+                            || "MD-Beepse".equalsIgnoreCase(senderAddress)
                             ) {
                         // verification code from sms
                         String verificationCode = getVerificationCode(message);

@@ -51,8 +51,6 @@ public class Receiver extends InjectedBroadcastReceiver {
                     doSipRegistration(context, intent);
                 } else {
                     mLog.e(TAG, "DEVICE ERROR - %s", "SIP NOT SUPPORTED");
-//                    Toast.makeText(context, "VoIP is not supported in your device",
-//                            Toast.LENGTH_SHORT).show();
 
                 }
             }
@@ -167,8 +165,7 @@ public class Receiver extends InjectedBroadcastReceiver {
         ConnectivityManager connectivityManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
-        boolean isConnected = activeNetInfo != null && activeNetInfo.isConnectedOrConnecting();
-        return isConnected;
+        return activeNetInfo != null && activeNetInfo.isConnectedOrConnecting();
     }
 
     public static void setCallState(int callState) {

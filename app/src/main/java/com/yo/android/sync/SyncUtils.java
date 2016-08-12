@@ -30,7 +30,13 @@ import com.yo.android.sync.accounts.GenericAccountService;
  * Static helper methods for working with the sync framework.
  */
 public class SyncUtils {
-    private static final long SYNC_FREQUENCY = 60 * 60;  // 1 hour (in seconds)
+
+    private SyncUtils() {
+
+    }
+
+    // 1 hour (in seconds)
+    private static final long SYNC_FREQUENCY = 60 * 60;
     private static final String CONTENT_AUTHORITY = YoAppContactContract.CONTENT_AUTHORITY;
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
 
@@ -39,7 +45,7 @@ public class SyncUtils {
      *
      * @param context Context
      */
-    public static void CreateSyncAccount(Context context, PreferenceEndPoint preferenceEndPoint) {
+    public static void createSyncAccount(Context context, PreferenceEndPoint preferenceEndPoint) {
         boolean newAccount = false;
         boolean setupComplete = preferenceEndPoint.getBooleanPreference(PREF_SETUP_COMPLETE, false);
 
@@ -62,7 +68,7 @@ public class SyncUtils {
         // data has been deleted. (Note that it's possible to clear app data WITHOUT affecting
         // the account list, so wee need to check both.)
         if (newAccount || !setupComplete) {
-            TriggerRefresh();
+            triggerRefresh();
             preferenceEndPoint.saveBooleanPreference(PREF_SETUP_COMPLETE, true);
         }
     }
@@ -78,14 +84,14 @@ public class SyncUtils {
      * but the user is not actively waiting for that data, you should omit this flag; this will give
      * the OS additional freedom in scheduling your sync request.
      */
-    public static void TriggerRefresh() {
+    public static void triggerRefresh() {
         Bundle b = new Bundle();
         // Disable sync backoff and ignore sync preferences. In other words...perform sync NOW!
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         ContentResolver.requestSync(
-                GenericAccountService.GetAccount(),      // Sync account
-                YoAppContactContract.CONTENT_AUTHORITY, // Content authority
-                b);                                      // Extras
+                GenericAccountService.GetAccount(),
+                YoAppContactContract.CONTENT_AUTHORITY,
+                b);
     }
 }

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,6 +32,8 @@ public class FollowingsActivity extends BaseActivity {
     private ListView lvFindPeople;
     private FindPeopleAdapter findPeopleAdapter;
     private TextView noData;
+    private LinearLayout llNoPeople;
+    private ImageView imvEmptyFollowings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,9 @@ public class FollowingsActivity extends BaseActivity {
         findPeopleAdapter = new FindPeopleAdapter(this);
         lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
         noData = (TextView) findViewById(R.id.no_data);
+        llNoPeople = (LinearLayout) findViewById(R.id.ll_no_people);
+        imvEmptyFollowings = (ImageView) findViewById(R.id.imv_empty_followings);
+        imvEmptyFollowings.setImageResource(R.drawable.ic_empty_followings);
         lvFindPeople.setAdapter(findPeopleAdapter);
 
         showProgressDialog();
@@ -57,9 +64,15 @@ public class FollowingsActivity extends BaseActivity {
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     noData.setVisibility(View.GONE);
+                    llNoPeople.setVisibility(View.GONE);
                     lvFindPeople.setVisibility(View.VISIBLE);
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItems(findPeopleList);
+                }
+                else {
+                    noData.setVisibility(View.GONE);
+                    llNoPeople.setVisibility(View.VISIBLE);
+                    lvFindPeople.setVisibility(View.GONE);
                 }
 
             }
@@ -68,6 +81,9 @@ public class FollowingsActivity extends BaseActivity {
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
 
                 dismissProgressDialog();
+                    noData.setVisibility(View.GONE);
+                    llNoPeople.setVisibility(View.VISIBLE);
+                    lvFindPeople.setVisibility(View.GONE);
 
             }
         });
@@ -83,7 +99,7 @@ public class FollowingsActivity extends BaseActivity {
                 otherProfileIntent.putExtra("MagazinesCount", findPeopleAdapter.getItem(position).getMagzinesCount());
                 otherProfileIntent.putExtra("FollowersCount", findPeopleAdapter.getItem(position).getFollowersCount());
                 otherProfileIntent.putExtra("LikedArticlesCount", findPeopleAdapter.getItem(position).getLikedArticlesCount());
-                startActivityForResult(otherProfileIntent,10);
+                startActivityForResult(otherProfileIntent, 10);
             }
         });
     }
@@ -109,10 +125,16 @@ public class FollowingsActivity extends BaseActivity {
                         dismissProgressDialog();
                         if (response.body().size() > 0) {
                             noData.setVisibility(View.GONE);
+                            llNoPeople.setVisibility(View.GONE);
                             lvFindPeople.setVisibility(View.VISIBLE);
                             List<FindPeople> findPeopleList = response.body();
                             findPeopleAdapter.clearAll();
                             findPeopleAdapter.addItems(findPeopleList);
+                        }
+                        else {
+                            noData.setVisibility(View.GONE);
+                            llNoPeople.setVisibility(View.VISIBLE);
+                            lvFindPeople.setVisibility(View.GONE);
                         }
 
                     }
@@ -121,6 +143,9 @@ public class FollowingsActivity extends BaseActivity {
                     public void onFailure(Call<List<FindPeople>> call, Throwable t) {
 
                         dismissProgressDialog();
+                            noData.setVisibility(View.GONE);
+                            llNoPeople.setVisibility(View.VISIBLE);
+                            lvFindPeople.setVisibility(View.GONE);
 
                     }
                 });

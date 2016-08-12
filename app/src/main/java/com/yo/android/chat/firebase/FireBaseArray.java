@@ -6,20 +6,26 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class implements an array-like collection on top of a Firebase location.
  */
 public class FireBaseArray implements ChildEventListener {
     public interface OnChangedListener {
-        enum EventType {Added, Changed, Removed, Moved}
+        enum EventType {
+            ADDED,
+            CHANGED,
+            REMOVED,
+            MOVED
+        }
 
         void onChanged(EventType type, int index, int oldIndex);
     }
 
     private Query mQuery;
     private OnChangedListener mListener;
-    private ArrayList<DataSnapshot> mSnapshots;
+    private List<DataSnapshot> mSnapshots;
 
     public FireBaseArray(Query ref) {
         mQuery = ref;
@@ -59,19 +65,19 @@ public class FireBaseArray implements ChildEventListener {
             index = getIndexForKey(previousChildKey) + 1;
         }
         mSnapshots.add(index, snapshot);
-        notifyChangedListeners(OnChangedListener.EventType.Added, index);
+        notifyChangedListeners(OnChangedListener.EventType.ADDED, index);
     }
 
     public void onChildChanged(DataSnapshot snapshot, String previousChildKey) {
         int index = getIndexForKey(snapshot.getKey());
         mSnapshots.set(index, snapshot);
-        notifyChangedListeners(OnChangedListener.EventType.Changed, index);
+        notifyChangedListeners(OnChangedListener.EventType.CHANGED, index);
     }
 
     public void onChildRemoved(DataSnapshot snapshot) {
         int index = getIndexForKey(snapshot.getKey());
         mSnapshots.remove(index);
-        notifyChangedListeners(OnChangedListener.EventType.Removed, index);
+        notifyChangedListeners(OnChangedListener.EventType.REMOVED, index);
     }
 
     public void onChildMoved(DataSnapshot snapshot, String previousChildKey) {
@@ -79,11 +85,11 @@ public class FireBaseArray implements ChildEventListener {
         mSnapshots.remove(oldIndex);
         int newIndex = previousChildKey == null ? 0 : (getIndexForKey(previousChildKey) + 1);
         mSnapshots.add(newIndex, snapshot);
-        notifyChangedListeners(OnChangedListener.EventType.Moved, newIndex, oldIndex);
+        notifyChangedListeners(OnChangedListener.EventType.MOVED, newIndex, oldIndex);
     }
 
     public void onCancelled(DatabaseError firebaseError) {
-        // TODO: what do we do with this?
+        // Do nothing
     }
     // End of ChildEventListener methods
 

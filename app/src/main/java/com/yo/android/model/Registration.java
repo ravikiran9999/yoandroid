@@ -1,9 +1,7 @@
 package com.yo.android.model;
 
-import android.database.Cursor;
-import android.provider.ContactsContract;
-
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rdoddapaneni on 6/29/2016.
@@ -11,7 +9,7 @@ import java.util.ArrayList;
 
 public class Registration {
 
-    private ArrayList<Contacts> mPhoneContacts;
+    private List<Contacts> mPhoneContacts;
 
     //private String emailId;
     private String password;
@@ -35,7 +33,7 @@ public class Registration {
         return phoneNumber;
     }
 
-    public ArrayList<Contacts> getmPhoneContacts() {
+    public List<Contacts> getmPhoneContacts() {
         return mPhoneContacts;
     }
 
