@@ -44,6 +44,7 @@ public class OthersProfileActivity extends BaseActivity {
     private int magazinesCount;
     private int followersCount;
     private int likedArticlesCount;
+    private Button btnFolow;
 
     private static Fragment currentFragment;
 
@@ -68,7 +69,7 @@ public class OthersProfileActivity extends BaseActivity {
         viewPager.setAdapter(mAdapter);
         CircleImageView picture = (CircleImageView) findViewById(R.id.picture);
         TextView tvName = (TextView) findViewById(R.id.follower_name);
-        final Button btnFolow = (Button) findViewById(R.id.follow_btn);
+        btnFolow = (Button) findViewById(R.id.follow_btn);
 
         magazinesCount = getIntent().getIntExtra("MagazinesCount", 0);
         followersCount = getIntent().getIntExtra("FollowersCount", 0);
@@ -93,6 +94,7 @@ public class OthersProfileActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
+                intent.putExtra("FollowState", btnFolow.getText());
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -249,6 +251,7 @@ public class OthersProfileActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
+        intent.putExtra("FollowState", btnFolow.getText());
         setResult(RESULT_OK, intent);
         finish();
         super.onBackPressed();

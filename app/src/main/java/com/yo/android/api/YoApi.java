@@ -232,6 +232,9 @@ public class YoApi {
         @POST("api/magzines/remove_magzines.json")
         Call<ResponseBody> removeMagazinesAPI(@Field("access_token") String access_token, @Field("magzine_ids[]") List<String> magzine_ids);
 
+        @GET("api/user/search.json")
+        Call<List<FindPeople>> searchInFindPeople(@Query("access_token") String access_token, @Query("search_item") String search_item, @Query("page") int page, @Query("limit") int limit);
+
     }
 
     public interface YoRefreshTokenService {

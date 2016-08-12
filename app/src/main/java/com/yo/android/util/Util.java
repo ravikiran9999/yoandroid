@@ -30,6 +30,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.ui.FindPeopleActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -309,6 +310,10 @@ public class Util {
                 if (activity instanceof BottomTabsActivity) {
                     ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
                     ((BottomTabsActivity) activity).refresh();
+                }
+                else if(activity instanceof FindPeopleActivity) {
+                    //((FindPeopleActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
+                    ((FindPeopleActivity) activity).refresh();
                 }
                 Util.changeMenuItemsVisibility(menu, -1, true);
                 return true;
