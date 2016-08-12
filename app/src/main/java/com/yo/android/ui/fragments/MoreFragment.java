@@ -127,11 +127,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (!TextUtils.isEmpty(avatar)) {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
-//            Picasso.with(getActivity())
-//                    .load(avatar)
-//                    .fit()
-//                    .into(profilePic);
-            //
             // setup Glide request without the into() method
             DrawableRequestBuilder<String> thumbnailRequest = Glide
                     .with(getActivity())
@@ -141,7 +136,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             Glide.with(getActivity())
                     .load(avatar)
                     .fitCenter()
-//                    .thumbnail(thumbnailRequest)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(profilePic);
         } else {
@@ -165,8 +159,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         showProgressDialog();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        //TODO: Dynamic
-        //File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ram_charan.jpg");
         // create RequestBody instance from file
         RequestBody requestFile =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -174,14 +166,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
-//        String descriptionString = "Hey there! I am using YoApp";
-//        RequestBody description =
-//                RequestBody.create(
-//                        MediaType.parse("multipart/form-data"), descriptionString);
-
-        RequestBody username =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.updateProfile(userId, access, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
@@ -266,7 +250,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         } else if ("Settings".equals(name)) {
             Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
             startActivityForResult(intent, Constants.GO_TO_SETTINGS);
-            //startActivity(new Intent(getActivity(), MoreSettingsActivity.class));
         }
     }
 
@@ -340,6 +323,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     uploadFile(new File(imagePath));
 
                 } catch (Exception e) {
+                    mLog.w("MoreFragment", e);
                 }
                 break;
 
@@ -349,7 +333,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(), data);
                         uploadFile(new File(imagePath));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        mLog.w("MoreFragment", e);
                     }
                 }
             }

@@ -34,7 +34,6 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     private IabHelper mHelper;
     private static String ITEM_SKU = "com.yo.test.hundred";
     private static float ITEM_PRICE;
-    //        public static String ITEM_SKU = "android.test.purchased";
     private static final int REQUEST_CODE = 585;
     //Can be userid
     private String emailAddress = "ramesh.akula@mtuity.com";
@@ -89,7 +88,6 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
                     logError("mReceivedInventoryListener: verifyPayLoad true");
                 } else {
                     logDebug("Calling Consuming..");
-//                    Toast.makeText(UnManageInAppPurchaseActivity.this, "Calling Consuming..", Toast.LENGTH_SHORT).show();
                     //Calling the consume function will "free" your item and make it "available" again. (Your user will be able to purchase it as many time as he wants)
                     mHelper.consumeAsync(purchase, mConsumeFinishedListener);
                 }
@@ -112,7 +110,6 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
                     } else {
                         logError("mConsumeFinishedListener: Failed to get consume your product");
                         Toast.makeText(UnManageInAppPurchaseActivity.this, "Failed to get consume your product! Please try again later", Toast.LENGTH_SHORT).show();
-                        //showMessage(result.getMessage(), "Failed to get consume your product! Please try again later");
                     }
                 }
             };
@@ -120,7 +117,6 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     private IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         @Override
         public void onIabPurchaseFinished(IabResult result, final Purchase info) {
-            //Toast.makeText(UnManageInAppPurchaseActivity.this, "Purchase finished called!", Toast.LENGTH_SHORT).show();
             logError("mPurchaseFinishedListener: Purchase finished called");
             if (mHelper == null) {
                 return;
@@ -136,17 +132,6 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
 //                Toast.makeText(UnManageInAppPurchaseActivity.this, "Product purchased Successfully!", Toast.LENGTH_SHORT).show();
                 //Calling the consume function will "free" your item and make it "available" again. (Your user will be able to purchase it as many time as he wants)
                 consumePurchase(info);
-//                CommonUtils.showAlert(UnManageInAppPurchaseActivity.this, "Yo - Product purchased Successfully!", new DialogInterface.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        Intent data = new Intent();
-//                        data.putExtra("sku", ITEM_SKU);
-//                        data.putExtra("details", info.toString());
-//                        setResult(RESULT_OK, data);
-//                        finish();
-//                    }
-//                });
             }
         }
     };
@@ -163,10 +148,9 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
                         Intent data = new Intent();
                         data.putExtra("sku", ITEM_SKU);
                         data.putExtra("details", info.toString());
-                        if(response.isSuccessful()) {
+                        if (response.isSuccessful()) {
                             setResult(RESULT_OK, data);
-                        }
-                        else {
+                        } else {
                             setResult(RESULT_CANCELED, data);
                         }
                         finish();

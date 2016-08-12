@@ -64,7 +64,7 @@ public class OthersProfileActivity extends BaseActivity {
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new OthersProfileMagazines(), null);
         mAdapter.addFragment(new OtherProfilesFollowers(), null);
-        mAdapter.addFragment(new OtherProfilesLinedArticles(), null);
+        mAdapter.addFragment(new OtherProfilesLikedArticles(), null);
         viewPager.setAdapter(mAdapter);
         CircleImageView picture = (CircleImageView) findViewById(R.id.picture);
         TextView tvName = (TextView) findViewById(R.id.follower_name);

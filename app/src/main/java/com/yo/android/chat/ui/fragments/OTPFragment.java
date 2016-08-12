@@ -46,8 +46,6 @@ import retrofit2.Response;
  */
 public class OTPFragment extends BaseFragment {
 
-//    private static final String tempPassword = "123456";
-
     private String phoneNumber;
     private EditText etOtp;
     private Button verifyButton;
@@ -114,12 +112,11 @@ public class OTPFragment extends BaseFragment {
         reSendTextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ("Resend".equalsIgnoreCase(reSendTextBtn.getText().toString())) {
-                    if (getActivity() instanceof LoginActivity) {
-                        ((LoginActivity) getActivity()).callLoginService(phoneNumber);
-                        mHandler.post(runnable);
-                        generateDummyOTP();
-                    }
+                if ("Resend".equalsIgnoreCase(reSendTextBtn.getText().toString())
+                        && getActivity() instanceof LoginActivity) {
+                    ((LoginActivity) getActivity()).callLoginService(phoneNumber);
+                    mHandler.post(runnable);
+                    generateDummyOTP();
                 }
             }
         });
@@ -159,10 +156,6 @@ public class OTPFragment extends BaseFragment {
         @Override
         public void run() {
             dummyOTPHandler.removeCallbacks(this);
-            try {
-                // showOTPConfirmationDialog("123456");
-            } catch (Exception e) {
-            }
             stopTimer();
         }
     };
@@ -173,7 +166,6 @@ public class OTPFragment extends BaseFragment {
         int duration = Math.max(0, random.nextInt(35));
         if (!BuildConfig.ORIGINAL_SMS_VERIFICATION) {
             dummyOTPHandler.removeCallbacks(dummyOTPRunnable);
-            // mToastFactory.showToast("Your PIN will be sent in " + duration + " seconds.");
             dummyOTPHandler.postDelayed(dummyOTPRunnable, duration * 1000L);
         }
     }
