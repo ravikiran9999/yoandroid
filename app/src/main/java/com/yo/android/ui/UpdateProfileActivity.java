@@ -72,6 +72,7 @@ public class UpdateProfileActivity extends BaseActivity {
                 cameraIntent.showDialog();
             }
         });
+
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,13 +128,15 @@ public class UpdateProfileActivity extends BaseActivity {
         switch (requestCode) {
 
             case Constants.ADD_IMAGE_CAPTURE:
-                try {
-                    String imagePath = cameraIntent.mFileTemp.getPath();
-                    imgFile = new File(imagePath);
-                    new ImageLoader(profileImage, imgFile, this).execute();
-                    addPhoto.setText(getResources().getString(R.string.change_picture));
+                if(resultCode == RESULT_OK) {
+                    try {
+                        String imagePath = cameraIntent.mFileTemp.getPath();
+                        imgFile = new File(imagePath);
+                        new ImageLoader(profileImage, imgFile, this).execute();
+                        addPhoto.setText(getResources().getString(R.string.change_picture));
 
-                } catch (Exception e) {
+                    } catch (Exception e) {
+                    }
                 }
                 break;
 

@@ -47,7 +47,7 @@ public class FireBaseHelper {
 
     public Firebase authWithCustomToken(final String authToken) {
         //Url from Firebase dashboard
-        Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
+        final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
         AuthData authData = ref.getAuth();
         if (authData == null) {
 
@@ -56,6 +56,7 @@ public class FireBaseHelper {
                 public void onAuthenticated(AuthData authData) {
                     if (authData != null) {
                         Log.i(TAG, "Login Succeeded!");
+
                     } else {
                         Log.i(TAG, "Login un Succeeded!");
                     }
