@@ -45,11 +45,9 @@ public class WishListActivity extends BaseActivity {
 
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
-    @Inject
-    private YoApi.YoService yoService;
+
     private TextView noArticals;
     private FrameLayout flipContainer;
-    private boolean isFollowing;
     private LinearLayout llNoWishlist;
 
     @Override
@@ -322,11 +320,9 @@ public class WishListActivity extends BaseActivity {
             if (data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                isFollowing = true;
             } else {
                 holder.articleFollow.setText("Follow");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                isFollowing = false;
             }
 
             final ViewHolder finalHolder = holder;
@@ -346,7 +342,6 @@ public class WishListActivity extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
                                 }
-                                isFollowing = true;
                                 notifyDataSetChanged();
                             }
 
@@ -356,7 +351,6 @@ public class WishListActivity extends BaseActivity {
                                 finalHolder.articleFollow.setText("Follow");
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                 data.setIsFollowing("false");
-                                isFollowing = false;
                                 notifyDataSetChanged();
 
                             }
@@ -396,7 +390,6 @@ public class WishListActivity extends BaseActivity {
                                         if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                             MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
                                         }
-                                        isFollowing = false;
                                         notifyDataSetChanged();
 
                                         articlesList.clear();
@@ -411,7 +404,6 @@ public class WishListActivity extends BaseActivity {
                                         finalHolder.articleFollow.setText("Following");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                         data.setIsFollowing("true");
-                                        isFollowing = true;
                                         notifyDataSetChanged();
 
                                     }
