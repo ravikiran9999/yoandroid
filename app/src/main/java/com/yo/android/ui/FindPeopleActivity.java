@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -131,7 +132,7 @@ public class FindPeopleActivity extends BaseActivity {
                 int threshold = 1;
                 int count = lvFindPeople.getCount();
                 if (scrollState == SCROLL_STATE_IDLE) {
-                    if (isMoreLoading==false && lvFindPeople.getLastVisiblePosition() >= count - threshold && searchView.isIconified()) {
+                    if (isMoreLoading==false && lvFindPeople.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                         doPagination();
                     }
                 }
