@@ -3,11 +3,16 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config {
+        devconfig {
             keyAlias 'yoapp'
             keyPassword '123456'
-//          storeFile file('E:\\Yo\\yo-android\\yoapp-stage.jks')
-            storeFile file('config/yoapp-stage.jks')
+            storeFile file('config/yoapp-dev.jks')
+            storePassword '123456'
+        }
+        stageconfig {
+            keyAlias 'yoappstage'
+            keyPassword '123456'
+            storeFile file('config/yo-app-stage.jks')
             storePassword '123456'
         }
     }
@@ -32,7 +37,7 @@ android {
             buildConfigField "String", "CLIENT_SECRET", "\"1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
-            //signingConfig signingConfigs.config
+            signingConfig signingConfigs.devconfig
 
         }
         stage {
@@ -48,6 +53,7 @@ android {
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
 //            applicationId "com.yo.android.stage"
+            signingConfig signingConfigs.stageconfig
 
 
         }
@@ -62,6 +68,7 @@ android {
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         }
         release {
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
