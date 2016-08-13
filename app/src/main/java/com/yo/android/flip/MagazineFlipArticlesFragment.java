@@ -22,6 +22,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.helpers.LruCacheHelper;
 import com.yo.android.model.Articles;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
@@ -59,6 +60,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     ConnectivityHelper mHelper;
     private FrameLayout articlesRootLayout;
     private TextView networkFailureText;
+    @Inject
+    protected LruCacheHelper lruCacheHelper;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -130,13 +133,21 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void loadArticles(List<String> tagIds) {
 
         if (!mHelper.isConnected()) {
-            myBaseAdapter.clear();
-            if (articlesRootLayout.getChildCount() > 0) {
-                articlesRootLayout.setVisibility(View.GONE);
-                networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
-                networkFailureText.setVisibility(View.VISIBLE);
+            if(lruCacheHelper.get("magazines_cache") != null) {
+              List<Articles> cacheArticlesList = (List<Articles>) lruCacheHelper.get("magazines_cache");
+                myBaseAdapter.addItems(cacheArticlesList);
+                articlesRootLayout.setVisibility(View.VISIBLE);
+                networkFailureText.setVisibility(View.GONE);
             }
-            return;
+            else {
+                myBaseAdapter.clear();
+                if (articlesRootLayout.getChildCount() > 0) {
+                    articlesRootLayout.setVisibility(View.GONE);
+                    networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
+                    networkFailureText.setVisibility(View.VISIBLE);
+                }
+                return;
+            }
         } else {
             articlesRootLayout.setVisibility(View.VISIBLE);
             networkFailureText.setVisibility(View.GONE);
@@ -166,6 +177,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             if (response.body() != null && !response.body().isEmpty()) {
                 myBaseAdapter.addItems(response.body());
+                lruCacheHelper.put("magazines_cache", response.body());
                 if (llNoArticles != null) {
                     llNoArticles.setVisibility(View.GONE);
                     flipContainer.setVisibility(View.VISIBLE);
@@ -192,10 +204,18 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if(lruCacheHelper.get("magazines_cache") != null) {
+                        List<Articles> cacheArticlesList = (List<Articles>) lruCacheHelper.get("magazines_cache");
+                        myBaseAdapter.addItems(cacheArticlesList);
+                        articlesRootLayout.setVisibility(View.VISIBLE);
+                        networkFailureText.setVisibility(View.GONE);
+                    }
+                    else {
                     if (llNoArticles != null) {
                         networkFailureText.setVisibility(View.GONE);
                         llNoArticles.setVisibility(View.VISIBLE);
                         flipContainer.setVisibility(View.GONE);
+                    }
                     }
 
                 }

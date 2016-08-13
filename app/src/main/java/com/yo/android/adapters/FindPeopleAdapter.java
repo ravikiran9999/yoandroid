@@ -1,5 +1,6 @@
 package com.yo.android.adapters;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import com.yo.android.di.Injector;
 import com.yo.android.helpers.FindPeopleViewHolder;
 import com.yo.android.model.FindPeople;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.FollowingsActivity;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -154,7 +156,12 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     ((BaseActivity) context).dismissProgressDialog();
+                                    if((BaseActivity)context instanceof FollowingsActivity){
                                     removeItem(item);
+                                    }
+                                    else {
+
+                                    }
                                     holder.getBtnFindPeopleFollow().setText("Follow");
                                     holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                     item.setIsFollowing("false");
