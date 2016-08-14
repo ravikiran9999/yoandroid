@@ -79,7 +79,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     private void performAction(Intent intent) {
-
+        if (intent == null) {
+            return;
+        }
         if (VoipConstants.CALL_ACTION_OUT_GOING.equalsIgnoreCase(intent.getAction())) {
             if (currentCall == null) {
                 String number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);

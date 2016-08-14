@@ -23,6 +23,9 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Util;
 
+import org.pjsip.pjsua2.CallInfo;
+import org.pjsip.pjsua2.pjsip_inv_state;
+
 import de.greenrobot.event.EventBus;
 
 
@@ -57,6 +60,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
+            updateState();
         }
 
         @Override
@@ -64,6 +68,18 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             sipBinder = null;
         }
     };
+
+    private void updateState() {
+        if (sipBinder != null) {
+            CallInfo callInfo = sipBinder.getHandler().getInfo();
+            boolean isConnected = callInfo.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED;
+            if (isConnected) {
+                running = true;
+                mHandler.post(startTimer);
+                onCallAccepted();
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +89,6 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         initViews();
-        bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
         callModel = new SipCallModel();
         bus.register(this);
         //
@@ -95,6 +110,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         log.setCallMode(VoipConstants.CALL_MODE_VOIP);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
         notificationId = Util.createNotification(this, getIntent().getStringExtra(CALLER_NO), "Incoming call", InComingCallActivity.class, getIntent());
+        bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
     }
 
     private void initViews() {
@@ -181,12 +197,18 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     running = false;
                     mHandler.removeCallbacks(startTimer);
                 }
+                Util.cancelNotification(this, notificationId);
                 callModel.setOnCall(false);
                 log.setCallType(VoipConstants.CALL_DIRECTION_IN);
                 bus.post(callModel);
                 bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 finish();
             case R.id.btnAcceptCall:
+                if (sipBinder != null) {
+                    sipBinder.getHandler().acceptCall();
+                }
+                running = true;
+                mHandler.post(startTimer);
                 onCallAccepted();
                 break;
             case R.id.btnMessage:
@@ -198,11 +220,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     }
 
     public void onCallAccepted() {
-        if (sipBinder != null) {
-            sipBinder.getHandler().acceptCall();
-            running = true;
-            mHandler.post(startTimer);
-        }
+
         log.setCallType(VoipConstants.CALL_DIRECTION_IN);
         mReceivedCallHeader.setVisibility(View.VISIBLE);
         findViewById(R.id.btnEndCall).setVisibility(View.VISIBLE);
