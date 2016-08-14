@@ -59,7 +59,6 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
-    //private FlipViewController flipView;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
     private TextView noArticals;
@@ -78,11 +77,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         setContentView(R.layout.created_magazines);
         noArticals = (TextView) findViewById(R.id.txtEmptyArticals);
         flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
-        //flipView = new FlipViewController(this);
         FlipView flipView = (FlipView) findViewById(R.id.flip_view);
         myBaseAdapter = new MyBaseAdapter(this);
         flipView.setAdapter(myBaseAdapter);
-        //flipContainer.addView(flipView);
 
         flipContainer.setVisibility(View.GONE);
 
@@ -152,17 +149,13 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        //flipView.onResume();
     }
 
     public void onPause() {
         super.onPause();
-        //flipView.onPause();
     }
 
     private class MyBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener {
-
-        //private FlipViewController controller;
 
         private Context context;
 
@@ -174,7 +167,6 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         private MyBaseAdapter(Context context) {
             inflater = LayoutInflater.from(context);
             this.context = context;
-            //this.controller = controller;
             MagazineArticlesBaseAdapter.reflectListener=this;
 
             //Use a system resource as the placeholder
@@ -246,7 +238,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             }
 
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if (data.getLiked().equals("true")) {
+            if ("true".equals(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
@@ -257,14 +249,12 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    int pos = (int) buttonView.getTag();
                     data.setIsChecked(isChecked);
                     if (isChecked) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
@@ -276,7 +266,6 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-
                                 notifyDataSetChanged();
                             }
                         });
@@ -353,8 +342,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                 isFollowing = true;
-            }
-            else {
+            } else {
                 holder.articleFollow.setText("Follow");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 isFollowing = false;
@@ -364,7 +352,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             holder.articleFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!data.getIsFollowing().equals("true")) {
+                    if (!"true".equals(data.getIsFollowing())) {
                         ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -501,12 +489,11 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_collections_detail, menu);
 
-        if(magazineIsFollowing.equals("true")) {
+        if("true".equals(magazineIsFollowing)) {
             menu.getItem(0).setTitle("");
             menu.getItem(0).setIcon(R.drawable.ic_mycollections_tick);
             isFollowingMagazine = true;
-        }
-        else {
+        } else {
             menu.getItem(0).setIcon(null);
             menu.getItem(0).setTitle("Follow");
             isFollowingMagazine = false;
@@ -591,6 +578,8 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     dialog.show();
                 }
 
+                break;
+            default:
                 break;
         }
         return true;

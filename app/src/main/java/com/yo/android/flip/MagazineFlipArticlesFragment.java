@@ -44,17 +44,14 @@ import se.emilsjolander.flipview.FlipView;
  */
 public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    //private FlipViewController flipView;
     private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
     private MagazineArticlesBaseAdapter myBaseAdapter;
     @Inject
     YoApi.YoService yoService;
-    private String topicName;
     private LinearLayout llNoArticles;
     private FrameLayout flipContainer;
     private ProgressBar mProgress;
     private Button followMoreTopics;
-    private boolean isFollowing;
 
     @Inject
     ConnectivityHelper mHelper;
@@ -88,12 +85,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
         networkFailureText = (TextView) view.findViewById(R.id.network_failure);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
-        //flipView = new FlipViewController(getActivity());
         FlipView flipView = (FlipView) view.findViewById(R.id.flip_view);
         myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory);
         flipView.setAdapter(myBaseAdapter);
-        //flipView.setAdapter(myBaseAdapter);
-        //flipContainer.addView(flipView);
         followMoreTopics = (Button) view.findViewById(R.id.btn_magazine_follow_topics);
         return view;
     }
@@ -110,7 +104,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
-                List<String> tagIds = Arrays.asList(prefTags);
                 loadArticles(null);
             }
         } else {
@@ -138,8 +131,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 myBaseAdapter.addItems(cacheArticlesList);
                 articlesRootLayout.setVisibility(View.VISIBLE);
                 networkFailureText.setVisibility(View.GONE);
-            }
-            else {
+            } else {
                 myBaseAdapter.clear();
                 if (articlesRootLayout.getChildCount() > 0) {
                     articlesRootLayout.setVisibility(View.GONE);
@@ -185,7 +177,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             } else {
                 if (llNoArticles != null) {
                     flipContainer.setVisibility(View.GONE);
-                    //flipView.refreshAllPages();
                     llNoArticles.setVisibility(View.VISIBLE);
                 }
             }
@@ -209,8 +200,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         myBaseAdapter.addItems(cacheArticlesList);
                         articlesRootLayout.setVisibility(View.VISIBLE);
                         networkFailureText.setVisibility(View.GONE);
-                    }
-                    else {
+                    } else {
                     if (llNoArticles != null) {
                         networkFailureText.setVisibility(View.GONE);
                         llNoArticles.setVisibility(View.VISIBLE);
@@ -238,22 +228,19 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     @Override
     public void onResume() {
         super.onResume();
-        //flipView.onResume();
     }
 
     public void onPause() {
         super.onPause();
-        //flipView.onPause();
     }
 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("magazine_tags")) {
+        if ("magazine_tags".equals(key)) {
             if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
                 String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
                 if (prefTags != null) {
-                    List<String> tagIds = Arrays.asList(prefTags);
                     loadArticles(null);
                 }
             } else {
@@ -275,7 +262,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
-                List<String> tagIds = Arrays.asList(prefTags);
                 loadArticles(null);
             }
         }

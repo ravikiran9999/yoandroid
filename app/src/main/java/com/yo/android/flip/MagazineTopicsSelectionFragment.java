@@ -72,7 +72,7 @@ public class MagazineTopicsSelectionFragment extends BaseFragment implements Ada
 
             @Override
             public void onFailure(Call<List<Topics>> call, Throwable t) {
-
+                   // do nothing
             }
         });
 
@@ -93,7 +93,7 @@ public class MagazineTopicsSelectionFragment extends BaseFragment implements Ada
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        // do nothing
     }
 
     public String getSelectedTopic() {

@@ -1,6 +1,5 @@
 package com.yo.android.adapters;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
@@ -76,10 +75,6 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                     .fit()
                     .into(holder.getImvFindPeoplePic());
         } else {
-//            Picasso.with(context)
-//                    .load(item.getAvatar())
-//                    .fit()
-//                    .into(holder.getImvFindPeoplePic());
             Glide.with(context)
                     .load(item.getAvatar())
                     .fitCenter()
@@ -93,7 +88,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
             holder.getTvFindPeopleName().setText("Unknown");
         }
         holder.getTvFindPeopleDesc().setText(item.getDescription());
-        if (item.getIsFollowing().equals("true")) {
+        if ("true".equals(item.getIsFollowing())) {
             holder.getBtnFindPeopleFollow().setText("Following");
             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             isFollowingUser = true;
@@ -105,7 +100,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         holder.getBtnFindPeopleFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!item.getIsFollowing().equals("true")) {
+                if (!"true".equals(item.getIsFollowing())) {
                     ((BaseActivity) context).showProgressDialog();
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
@@ -158,9 +153,8 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                     ((BaseActivity) context).dismissProgressDialog();
                                     if((BaseActivity)context instanceof FollowingsActivity){
                                     removeItem(item);
-                                    }
-                                    else {
-
+                                    } else {
+                                     // do nothing
                                     }
                                     holder.getBtnFindPeopleFollow().setText("Follow");
                                     holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);

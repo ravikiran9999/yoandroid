@@ -259,7 +259,6 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    int pos = (int) buttonView.getTag();
                     data.setIsChecked(isChecked);
                     if (isChecked) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");

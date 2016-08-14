@@ -53,7 +53,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
-    //private FlipViewController flipView;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
     private TextView noArticals;
@@ -71,11 +70,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         setContentView(R.layout.created_magazines);
         noArticals = (TextView) findViewById(R.id.txtEmptyArticals);
         flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
-        //flipView = new FlipViewController(this);
         FlipView flipView = (FlipView) findViewById(R.id.flip_view);
         myBaseAdapter = new MyBaseAdapter(this);
         flipView.setAdapter(myBaseAdapter);
-        //flipContainer.addView(flipView);
 
         flipContainer.setVisibility(View.GONE);
 
@@ -148,17 +145,13 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        //flipView.onResume();
     }
 
     public void onPause() {
         super.onPause();
-        //flipView.onPause();
     }
 
     private class MyBaseAdapter extends BaseAdapter {
-
-        //private FlipViewController controller;
 
         private Context context;
 
@@ -170,7 +163,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         private MyBaseAdapter(Context context) {
             inflater = LayoutInflater.from(context);
             this.context = context;
-            //this.controller = controller;
 
             //Use a system resource as the placeholder
             placeholderBitmap =
@@ -239,7 +231,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
             }
 
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if (data.getLiked().equals("true")) {
+            if ("true".equals(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
@@ -250,7 +242,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    int pos = (int) buttonView.getTag();
                     data.setIsChecked(isChecked);
                     if (isChecked) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -404,6 +395,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 intent.putExtra("MagazinePrivacy", magazinePrivacy);
                 startActivityForResult(intent, 2);
 
+                break;
+            default:
                 break;
         }
         return true;

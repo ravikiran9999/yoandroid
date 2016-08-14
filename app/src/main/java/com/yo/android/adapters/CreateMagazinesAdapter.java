@@ -4,22 +4,13 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.helpers.OwnMagazineViewHolder;
 import com.yo.android.model.OwnMagazine;
-import com.yo.android.widgets.SquareItemLinearLayout;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by creatives on 7/9/2016.
@@ -52,8 +43,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                         .load(item.getImage())
                         .into(holder.getImageView());
 
-            }
-            else {
+            } else {
                 Picasso.with(mContext)
                         .load(R.color.black)
                         .into(holder.getImageView());
@@ -66,15 +56,13 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             params.gravity = Gravity.TOP|Gravity.LEFT;
             params.leftMargin = 10;
             holder.getTextView().setLayoutParams(params);
-        }
-        else if(position == 0 && !item.getName().equalsIgnoreCase("+ New Magazine")) {
+        } else if(position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) {
             if(!TextUtils.isEmpty(item.getImage())) {
                 Picasso.with(mContext)
                         .load(item.getImage())
                         .into(holder.getImageView());
 
-            }
-            else {
+            } else {
                 Picasso.with(mContext)
                         .load(R.color.black)
                         .into(holder.getImageView());
@@ -87,9 +75,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             params.gravity = Gravity.TOP|Gravity.LEFT;
             params.leftMargin = 10;
             holder.getTextView().setLayoutParams(params);
-        }
-
-        else {
+        } else {
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);

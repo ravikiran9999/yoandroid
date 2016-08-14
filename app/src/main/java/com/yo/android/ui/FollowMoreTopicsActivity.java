@@ -157,6 +157,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tagGroup.setOnTagDeleteListener(new TagView.OnTagDeleteListener() {
             @Override
             public void onTagDeleted(final TagView view, final Tag tag, final int position) {
+                // do nothing
             }
         });
     }
@@ -170,8 +171,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
             intent.putExtra(Constants.USER_ID, userId);
             startActivityForResult(intent, 14);
-        }
-        else {
+        } else {
             if (searchTags != null && !searchTags.isEmpty()) {
                 for (int i = 0; i < initialTags.size(); i++) {
                     for (int j = 0; j < searchTags.size(); j++) {
@@ -364,8 +364,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.i(TAG, "onQueryTextSubmit: " + query);
-                if (this != null)
+                if (this != null) {
                     Util.hideKeyboard(FollowMoreTopicsActivity.this, getCurrentFocus());
+                }
                 return true;
             }
 
@@ -379,8 +380,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                if (this != null)
+                if (this != null) {
                     Util.hideKeyboard(FollowMoreTopicsActivity.this, getCurrentFocus());
+                }
                 return true;
             }
         });
@@ -520,8 +522,10 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         private void oldOpenCamera() {
             try {
+                // do nothing
             } catch (RuntimeException e) {
                 Log.e("", "failed to open front camera");
+                // do nothing
             }
         }
     }
