@@ -19,6 +19,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
     useLibrary 'org.apache.http.legacy'
+    // Enabling multidex support.
     defaultConfig {
         applicationId "com.yo.android"
         minSdkVersion 15
@@ -26,6 +27,7 @@ android {
         versionCode 1
         versionName "16.3.10.4"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+        multiDexEnabled true
     }
     productFlavors {
         dev {
@@ -38,35 +40,24 @@ android {
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
             signingConfig signingConfigs.devconfig
-
+            minSdkVersion 21
         }
         stage {
             applicationIdSuffix ".stage"
 
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
-            //buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
-            //applicationId "com.yo.android.stage"
 
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
             buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
-//            applicationId "com.yo.android.stage"
             signingConfig signingConfigs.stageconfig
 
 
         }
-        //This will flavor will enable BeepSend SMS gateway for verification
-//        stagePaidSms {
-//            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
-//            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
-//        }
     }
     buildTypes {
-        sms {
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
-        }
         release {
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             minifyEnabled false
@@ -89,6 +80,7 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.so'], dir: 'libs')
     //Support libs
     compile "com.android.support:appcompat-v7:${supportAppcompatVersion}"
     compile "com.android.support:design:${supportDesignVersion}"
@@ -105,7 +97,7 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.5.2'
     compile project(':flip')
     compile project(':tagview')
-    //    compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
+    compile project(':yopjsip')
     //Butter knife - view injector
     compile 'com.squareup.dagger:dagger:1.2.2'
     compile 'com.android.support:support-v4:23.4.0'
@@ -120,15 +112,6 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
-    /*stageCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
-    stageCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
-    stageCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'*/
-
-    /*stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-core:2.2.18'
-    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
-    stagePaidSmsCompile 'com.amazonaws:aws-android-sdk-s3:2.2.18'*/
-
-//    compile 'com.github.Cutta:TagView:c15dd8288a'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
@@ -136,6 +119,7 @@ dependencies {
     compile "com.android.support:palette-v7:${supportAppcompatVersion}"
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'se.emilsjolander:android-flipview:1.1.0'
+    compile 'com.android.support:multidex:1.0.0'
 }
 apply plugin: 'com.google.gms.google-services'
 
@@ -158,7 +142,7 @@ android.applicationVariants.all { variant ->
         task.into(releasePath)
 //    baseName
 
-        def name = variant.baseName.replace("-debug", "").replace("-sms","_SMS");//.toUpperCase();
+        def name = variant.baseName.replace("-debug", "").replace("-sms", "_SMS");//.toUpperCase();
         name = name.substring(0, 1).toUpperCase() + name.substring(1)
         def oldName = "app-${variant.productFlavors.name}-${variant.buildType.name}.apk";
         def newFollow = "Yo_App_Android_${name}_V${android.defaultConfig.versionName}.apk";

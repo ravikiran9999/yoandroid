@@ -1,10 +1,13 @@
 package com.yo.android.ui;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -29,6 +32,9 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.pjsip.SipBinder;
+import com.yo.android.pjsip.SipProfile;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.sync.SyncUtils;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
@@ -69,6 +75,31 @@ public class BottomTabsActivity extends BaseActivity {
     @Inject
     ContactSyncHelper mContactSyncHelper;
 
+    private SipBinder sipBinder;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            sipBinder = (SipBinder) service;
+            addAccount();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            sipBinder = null;
+        }
+    };
+
+    private void addAccount() {
+        String username = preferenceEndPoint.getStringPreference("phone", null);
+        String password = preferenceEndPoint.getStringPreference("password", null);
+        SipProfile sipProfile = new SipProfile.Builder()
+                .withUserName(username)
+                .withPassword(password)
+                .withServer("209.239.120.239")
+                .build();
+        sipBinder.getHandler().addAccount(sipProfile);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +169,13 @@ public class BottomTabsActivity extends BaseActivity {
         contactsSyncManager.syncContacts();
         SyncUtils.createSyncAccount(this, preferenceEndPoint);
         mContactSyncHelper.checkContacts();
+        bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(connection);
     }
 
     @Override

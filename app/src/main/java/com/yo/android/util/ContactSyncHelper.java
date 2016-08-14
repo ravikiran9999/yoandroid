@@ -104,9 +104,9 @@ public class ContactSyncHelper {
                 } else {
                     setSyncMode(PROCESSING);
                 }
-                mLog.e(TAG, "detected contacts change>>>start");
+                mLog.i(TAG, "detected contacts change>>>start");
                 performContactSync(cacheContacts);
-                mLog.e(TAG, "detected contacts change>>>End");
+                mLog.i(TAG, "detected contacts change>>>End");
                 setSyncMode(FINISHED);
             }
         });
@@ -153,7 +153,7 @@ public class ContactSyncHelper {
                 for (String s : value.shortPhones) {
                     Contact c = contactShortHashMap.get(s);
                     if (c == null) {
-                        mLog.e("TAG", "Contact modified");
+                        mLog.i("TAG", "Contact modified");
                         contactModify = true;
                         break;
                     }
@@ -174,7 +174,7 @@ public class ContactSyncHelper {
             }
         }
 
-        mLog.e(TAG, "Import Size before check>>>:" + toImport.size());
+        mLog.i(TAG, "Import Size before check>>>:" + toImport.size());
         //1. Upload to server
         //2.toImport
         Iterator<com.yo.android.model.Contact> toImportIterator1 = toImport.iterator();
@@ -195,13 +195,13 @@ public class ContactSyncHelper {
             if (!contacts.isEmpty()) {
                 //up to server
                 contactsSyncManager.syncContactsAPI(contacts);
-                mLog.e(TAG, "Import Size after check>>>:" + toImport.size());
+                mLog.i(TAG, "Import Size after check>>>:" + toImport.size());
                 //Call sync - get contact
                 SyncUtils.triggerRefresh();
             }
             cacheContacts = contactPhoneBookMap;
         } catch (Exception e) {
-            mLog.e(TAG, "Exception:>>", e);
+            mLog.i(TAG, "Exception:>>", e);
         }
 
     }
@@ -257,8 +257,6 @@ public class ContactSyncHelper {
                         if (number.length() == 0) {
                             continue;
                         }
-                        mLog.i(TAG, "Phone number: " + number);
-
                         String shortNumber = number;
 
                         if (number.startsWith("+")) {

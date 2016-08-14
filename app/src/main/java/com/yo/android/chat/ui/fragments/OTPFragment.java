@@ -209,7 +209,7 @@ public class OTPFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, response.body().getAccessToken());
         preferenceEndPoint.saveStringPreference(YoApi.REFRESH_TOKEN, response.body().getRefreshToken());
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
-        preferenceEndPoint.saveStringPreference("password", password);
+        preferenceEndPoint.saveStringPreference("password", "123456");
         dismissProgressDialog();
         finishAndNavigateToHome();
     }

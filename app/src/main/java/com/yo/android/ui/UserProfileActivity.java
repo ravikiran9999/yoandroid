@@ -1,6 +1,5 @@
 package com.yo.android.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,8 +14,8 @@ import com.yo.android.R;
 import com.yo.android.adapters.ProfileMembersAdapter;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.Contact;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
-import com.yo.android.voip.OutGoingCallActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -90,9 +89,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         //String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
         //String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (contact != null) {
-            if(fromChatRooms) {
+            if (fromChatRooms) {
                 getSupportActionBar().setTitle(getResources().getString(R.string.profile));
-            }else{
+            } else {
                 getSupportActionBar().setTitle(contact.getName());
             }
             if (!TextUtils.isEmpty(contact.getImage())) {
@@ -133,10 +132,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     public void callUser() {
         //do nothing...
         if (contact != null && contact.getPhoneNo() != null) {
-            Intent intent = new Intent(this, OutGoingCallActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(OutGoingCallActivity.CALLER_NO, contact.getPhoneNo());
-            startActivity(intent);
+            SipHelper.makeCall(this, contact.getPhoneNo());
         }
 
     }

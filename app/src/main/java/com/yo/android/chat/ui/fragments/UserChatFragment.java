@@ -51,13 +51,13 @@ import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
-import com.yo.android.voip.OutGoingCallActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -337,9 +337,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         switch (item.getItemId()) {
             case R.id.call:
                 if (opponentNumber != null) {
-                    Intent intent = new Intent(getActivity(), OutGoingCallActivity.class);
-                    intent.putExtra(OutGoingCallActivity.CALLER_NO, opponentNumber);
-                    startActivity(intent);
+                    SipHelper.makeCall(getActivity(), opponentNumber);
                 }
                 break;
             case R.id.attach:

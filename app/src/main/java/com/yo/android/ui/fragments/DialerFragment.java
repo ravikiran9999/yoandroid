@@ -27,18 +27,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResponse;
 import com.yo.android.model.dialer.CallLogsResult;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.DialPadView;
-import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
@@ -194,7 +193,12 @@ public class DialerFragment extends BaseFragment {
                     dialPadView.getDigits().setText("+");
                     dialPadView.getDigits().setSelection(1);
                     return true;
+                } else {
+                    int startPos = dialPadView.getDigits().getSelectionStart();
+                    int endPos = dialPadView.getDigits().getSelectionEnd();
+                    //TODO: Number already entered without "+", need to add this symbol at first position
                 }
+
                 return false;
             }
         });
@@ -276,7 +280,7 @@ public class DialerFragment extends BaseFragment {
                 }
                 String number = temp.replace(" ", "").replace("+", "");
                 if (cPrefix != null && !number.startsWith(cPrefix)) {
-                    number = cPrefix + number;
+//                    number = cPrefix + number;
                 }
                 mLog.i(TAG, "Dialing number after normalized: " + number);
                 //End Normalizing PSTN number
@@ -289,9 +293,7 @@ public class DialerFragment extends BaseFragment {
                 } else if (number.length() == 0) {
                     mToastFactory.showToast("Please enter number.");
                 } else {
-                    Intent intent = new Intent(getActivity(), OutGoingCallActivity.class);
-                    intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
-                    startActivity(intent);
+                    SipHelper.makeCall(getActivity(), number);
                 }
             }
         };
