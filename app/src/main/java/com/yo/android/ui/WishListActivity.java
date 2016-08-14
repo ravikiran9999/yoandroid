@@ -24,7 +24,6 @@ import com.aphidmobile.utils.UI;
 import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
-import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.util.Constants;
@@ -32,8 +31,6 @@ import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -198,7 +195,7 @@ public class WishListActivity extends BaseActivity {
             }
 
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if (data.getLiked().equals("true")) {
+            if ("true".equals(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
@@ -209,7 +206,6 @@ public class WishListActivity extends BaseActivity {
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    int pos = (int) buttonView.getTag();
                     data.setIsChecked(isChecked);
                     if (isChecked) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -317,7 +313,7 @@ public class WishListActivity extends BaseActivity {
                 }
             });
 
-            if (data.getIsFollowing().equals("true")) {
+            if ("true".equals(data.getIsFollowing())) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             } else {
@@ -329,7 +325,7 @@ public class WishListActivity extends BaseActivity {
             holder.articleFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!data.getIsFollowing().equals("true")) {
+                    if (!"true".equals(data.getIsFollowing())) {
                         ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {

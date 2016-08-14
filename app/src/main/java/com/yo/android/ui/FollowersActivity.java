@@ -63,8 +63,7 @@ public class FollowersActivity extends BaseActivity {
                     lvFindPeople.setVisibility(View.VISIBLE);
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItems(findPeopleList);
-                }
-                else {
+                } else {
                     noData.setVisibility(View.VISIBLE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
@@ -123,8 +122,7 @@ public class FollowersActivity extends BaseActivity {
                             List<FindPeople> findPeopleList = response.body();
                             findPeopleAdapter.clearAll();
                             findPeopleAdapter.addItems(findPeopleList);
-                        }
-                        else {
+                        } else {
                             noData.setVisibility(View.VISIBLE);
                             llNoPeople.setVisibility(View.VISIBLE);
                             lvFindPeople.setVisibility(View.GONE);

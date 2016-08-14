@@ -62,7 +62,6 @@ public class BottomTabsActivity extends BaseActivity {
     BalanceHelper balanceHelper;
     TabsPagerAdapter mAdapter;
     CustomViewPager viewPager;
-    private int toolBarColor;
     @Inject
     ContactsSyncManager contactsSyncManager;
     @Inject

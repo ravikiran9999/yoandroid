@@ -33,7 +33,6 @@ public class OtherProfilesFollowers extends BaseFragment {
     private ListView lvFindPeople;
     @Inject
     YoApi.YoService yoService;
-    private int pageCount = 1;
     private String userID;
     private TextView noData;
 
@@ -102,9 +101,6 @@ public class OtherProfilesFollowers extends BaseFragment {
                         if (response.body().size() > 0) {
                             noData.setVisibility(View.GONE);
                             lvFindPeople.setVisibility(View.VISIBLE);
-                            if (getActivity() instanceof OthersProfileActivity) {
-
-                            }
                             List<FindPeople> findPeopleList = response.body();
                             findPeopleAdapter.clearAll();
                             findPeopleAdapter.addItemsAll(findPeopleList);

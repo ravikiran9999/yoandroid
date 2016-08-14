@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
-import com.yo.android.adapters.CreateMagazinesAdapter;
 import com.yo.android.adapters.OthersMagazinesAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;

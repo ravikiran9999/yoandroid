@@ -3,8 +3,6 @@ package com.yo.android.ui;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.inputmethodservice.Keyboard;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -19,8 +17,6 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.util.Constants;
-
-import org.w3c.dom.Text;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -91,7 +87,7 @@ public class EditMagazineActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+               // do nothing
             }
         });
     }
@@ -134,7 +130,6 @@ public class EditMagazineActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-
         switch (item.getItemId()) {
             case R.id.menu_save:
 
@@ -159,13 +154,14 @@ public class EditMagazineActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(Call<UpdateMagazine> call, Throwable t) {
-
+                           // do nothing
                         }
                     });
                 }
 
                 break;
-
+            default:
+                break;
 
         }
         return true;

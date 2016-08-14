@@ -66,7 +66,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
         webview.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-
+             // do nothing
             }
         });
 
@@ -134,7 +134,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
             @Override
             public void onFailure(Call<Articles> call, Throwable t) {
-
+                // do nothing
             }
         });
     }
@@ -149,7 +149,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
             @Override
             public void onFailure(Call<Articles> call, Throwable t) {
-
+              // do nothing
             }
         });
     }

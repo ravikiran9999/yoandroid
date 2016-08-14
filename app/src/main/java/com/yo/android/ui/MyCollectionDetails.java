@@ -83,7 +83,7 @@ public class MyCollectionDetails extends BaseActivity {
 
         articlesList.clear();
 
-        if (type.equals("Tag")) {
+        if ("Tag".equals(type)) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             List<String> tagIds = new ArrayList<String>();
             tagIds.add(topicId);
@@ -110,7 +110,6 @@ public class MyCollectionDetails extends BaseActivity {
             yoService.getArticlesOfMagazineAPI(topicId, accessToken).enqueue(new Callback<MagazineArticles>() {
                 @Override
                 public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
-                    final String id = response.body().getId();
                     if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
                         for (int i = 0; i < response.body().getArticlesList().size(); i++) {
                             articlesList.add(response.body().getArticlesList().get(i));
@@ -122,7 +121,7 @@ public class MyCollectionDetails extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<MagazineArticles> call, Throwable t) {
-
+                    // do nothing
                 }
             });
         }
@@ -215,7 +214,7 @@ public class MyCollectionDetails extends BaseActivity {
             }
 
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if (data.getLiked().equals("true")) {
+            if ("true".equals(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
@@ -226,7 +225,6 @@ public class MyCollectionDetails extends BaseActivity {
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    int pos = (int) buttonView.getTag();
                     data.setIsChecked(isChecked);
                     if (isChecked) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -329,7 +327,7 @@ public class MyCollectionDetails extends BaseActivity {
                 }
             });
 
-            if (data.getIsFollowing().equals("true")) {
+            if ("true".equals(data.getIsFollowing())) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             } else {
@@ -341,7 +339,7 @@ public class MyCollectionDetails extends BaseActivity {
             holder.articleFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!data.getIsFollowing().equals("true")) {
+                    if (!"true".equals(data.getIsFollowing())) {
                         ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -468,7 +466,7 @@ public class MyCollectionDetails extends BaseActivity {
         final MenuItem menuItem = item;
         switch (item.getItemId()) {
             case R.id.menu_follow_magazine:
-                if (type.equals("Tag")) {
+                if ("Tag".equals(type)) {
                     final Dialog dialog = new Dialog(MyCollectionDetails.this);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.unfollow_alert_dialog);
@@ -556,6 +554,9 @@ public class MyCollectionDetails extends BaseActivity {
 
                     dialog.show();
                 }
+                break;
+            default:
+                break;
 
         }
         return true;

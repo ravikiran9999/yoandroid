@@ -81,8 +81,7 @@ public class FindPeopleActivity extends BaseActivity {
                     llNoPeople.setVisibility(View.GONE);
                     originalList = response.body();
 
-                }
-                else {
+                } else {
                     noData.setVisibility(View.VISIBLE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
@@ -119,7 +118,6 @@ public class FindPeopleActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
         menu1 = menu;
-        //Util.prepareSearch(this, menu, findPeopleAdapter);
         searchPeople(menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -141,6 +139,7 @@ public class FindPeopleActivity extends BaseActivity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
                                  int totalItemCount) {
+                // do nothing
             }
         };
     }
@@ -172,46 +171,12 @@ public class FindPeopleActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // check if the request code is same as what is passed  here it is 2
         if (requestCode == 8 && resultCode == RESULT_OK) {
             if(data!= null) {
-                /*showProgressDialog();
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
-                    @Override
-                    public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                        dismissProgressDialog();
-                        if (response.body().size() > 0) {
-                            List<FindPeople> findPeopleList = response.body();
-                            findPeopleAdapter.clearAll();
-                            findPeopleAdapter.addItemsAll(findPeopleList);
-                            lvFindPeople.setVisibility(View.VISIBLE);
-                            noData.setVisibility(View.GONE);
-                            llNoPeople.setVisibility(View.GONE);
-                            originalList = response.body();
-
-                        }
-                        else {
-                            noData.setVisibility(View.VISIBLE);
-                            llNoPeople.setVisibility(View.VISIBLE);
-                            lvFindPeople.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<FindPeople>> call, Throwable t) {
-                        dismissProgressDialog();
-                        noData.setVisibility(View.VISIBLE);
-                        llNoPeople.setVisibility(View.VISIBLE);
-                        lvFindPeople.setVisibility(View.GONE);
-                    }
-                });*/
-
-                if(data.getStringExtra("FollowState").equals("Following")) {
+                if("Following".equals(data.getStringExtra("FollowState"))) {
                     findPeopleAdapter.getItem(pos).setIsFollowing("true");
                     findPeopleAdapter.notifyDataSetChanged();
-                }
-                else {
+                } else {
                     findPeopleAdapter.getItem(pos).setIsFollowing("false");
                     findPeopleAdapter.notifyDataSetChanged();
                 }
@@ -244,9 +209,6 @@ public class FindPeopleActivity extends BaseActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
-                /*if (findPeopleAdapter != null) {
-                    findPeopleAdapter.performSearch(newText);
-                }*/
                 callSearchingService(newText);
                 return true;
             }
@@ -255,10 +217,6 @@ public class FindPeopleActivity extends BaseActivity {
             @Override
             public boolean onClose() {
                 Util.hideKeyboard(FindPeopleActivity.this, FindPeopleActivity.this.getCurrentFocus());
-                /*if (findPeopleAdapter != null) {
-                    findPeopleAdapter.performSearch("");
-                }*/
-                //callSearchingService("");
                 findPeopleAdapter.clearAll();
                 findPeopleAdapter.addItemsAll(originalList);
                 lvFindPeople.setVisibility(View.VISIBLE);
@@ -275,8 +233,7 @@ public class FindPeopleActivity extends BaseActivity {
         if (searchKey.isEmpty()) {
             findPeopleAdapter.clearAll();
             findPeopleAdapter.addItemsAll(originalList);
-        }
-        else {
+        } else {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.searchInFindPeople(accessToken, newText, 1, 100).enqueue(new Callback<List<FindPeople>>() {
                 @Override

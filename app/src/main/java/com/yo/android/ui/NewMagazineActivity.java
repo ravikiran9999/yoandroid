@@ -76,8 +76,6 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
 
         switch (item.getItemId()) {
             case R.id.menu_save:
-
-
                 final String magazineTitle = etTitle.getText().toString().trim();
                 final String magazineDesc = etDesc.getText().toString().trim();
 
@@ -95,12 +93,13 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                         public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
                             Intent intent = new Intent();
                             setResult(2, intent);
-                            finish();//finishing activity
+                            //finishing activity
+                            finish();
                         }
 
                         @Override
                         public void onFailure(Call<OwnMagazine> call, Throwable t) {
-
+                          // do nothing
                         }
                     });
                 } else {
@@ -109,6 +108,8 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                     mToastFactory.showToast("Please enter the Magazine Title");
                 }
 
+                break;
+            default:
                 break;
 
 

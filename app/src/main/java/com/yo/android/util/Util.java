@@ -310,9 +310,7 @@ public class Util {
                 if (activity instanceof BottomTabsActivity) {
                     ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
                     ((BottomTabsActivity) activity).refresh();
-                }
-                else if(activity instanceof FindPeopleActivity) {
-                    //((FindPeopleActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
+                } else if(activity instanceof FindPeopleActivity) {
                     ((FindPeopleActivity) activity).refresh();
                 }
                 Util.changeMenuItemsVisibility(menu, -1, true);
@@ -343,7 +341,8 @@ public class Util {
             searchTextView.setTextColor(Color.WHITE);
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
             mCursorDrawableRes.setAccessible(true);
-            mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+            //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+            mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor);
         } catch (Exception e) {
         }
     }

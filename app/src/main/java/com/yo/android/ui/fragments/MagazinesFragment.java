@@ -36,7 +36,6 @@ import com.yo.android.util.Util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -204,6 +203,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 Intent followingstIntent = new Intent(getActivity(), FollowingsActivity.class);
                 startActivity(followingstIntent);
                 break;
+            default:
+                break;
         }
         return true;
     }
@@ -231,7 +232,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             searchTextView.setAdapter(mAdapter);
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
             mCursorDrawableRes.setAccessible(true);
-            mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor); //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+            //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+            mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor);
 
             searchTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -247,8 +249,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                             break;
                         }
                     }
-                    if (getActivity() != null)
+                    if (getActivity() != null) {
                         Util.hideKeyboard(getActivity(), searchTextView);
+                    }
                     List<String> tagIds = new ArrayList<String>();
                     tagIds.add(topicId);
                     if (mMagazineFlipArticlesFragment != null) {
@@ -271,7 +274,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // do nothing
         }
     }
 
@@ -281,6 +284,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
+                 // do nothing
     }
 }

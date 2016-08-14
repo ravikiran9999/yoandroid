@@ -3,7 +3,6 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -84,7 +83,7 @@ public class CreateMagazineActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<List<OwnMagazine>> call, Throwable t) {
-
+               // do nothing
             }
         });
 
@@ -92,9 +91,10 @@ public class CreateMagazineActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 OwnMagazine ownMagazine = (OwnMagazine) parent.getItemAtPosition(position);
-                if (position == 0 && ownMagazine.getName().equalsIgnoreCase("+ New Magazine")) {
+                if (position == 0 && "+ New Magazine".equalsIgnoreCase(ownMagazine.getName())) {
                     Intent intent = new Intent(CreateMagazineActivity.this, NewMagazineActivity.class);
-                    startActivityForResult(intent, 2);// Activity is started with requestCode 2
+                    // Activity is started with requestCode 2
+                    startActivityForResult(intent, 2);
                 } else if (addArticleMagazineId != null) {
                     List<String> articlesList = new ArrayList<>();
                     articlesList.add(addArticleMagazineId);
@@ -159,7 +159,7 @@ public class CreateMagazineActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<List<OwnMagazine>> call, Throwable t) {
-
+                  // do nothing
                 }
             });
         }
@@ -197,7 +197,7 @@ public class CreateMagazineActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<List<OwnMagazine>> call, Throwable t) {
-
+                  // do nothing
                 }
             });
         }

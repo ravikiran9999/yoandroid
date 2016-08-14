@@ -13,7 +13,6 @@ import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
-import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 
@@ -54,8 +53,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         EventBus.getDefault().post(Constants.UPDATE_NOTIFICATIONS);
         if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
         mLog.i(TAG, "In Notifications screen");
-        }
-        else {
+        } else {
             createNotification(data.get("title").toString(), data.get("message").toString());
         }
     }

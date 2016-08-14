@@ -9,7 +9,6 @@ import com.yo.android.helpers.NotificationsViewHolder;
 import com.yo.android.model.Notification;
 import com.yo.android.util.Util;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 

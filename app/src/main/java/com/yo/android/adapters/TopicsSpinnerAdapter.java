@@ -45,10 +45,10 @@ public class TopicsSpinnerAdapter extends BaseAdapter {
 
     @Override
     public android.view.View getView(int position, View convertView, ViewGroup parent) {
-
-
-        View view = convertView; // re-use an existing view, if one is available
-        if (view == null) { // otherwise create a new one
+        // re-use an existing view, if one is available
+        View view = convertView;
+        // otherwise create a new one
+        if (view == null) {
             view = context.getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
         }
 

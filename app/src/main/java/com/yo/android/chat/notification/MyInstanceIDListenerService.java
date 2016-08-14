@@ -1,8 +1,6 @@
 package com.yo.android.chat.notification;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
@@ -10,16 +8,10 @@ import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.di.Injector;
-import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by rdoddapaneni on 6/22/2016.
