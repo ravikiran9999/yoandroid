@@ -9,6 +9,7 @@ public interface VoipConstants {
     String CALL_ACTION_OUT_GOING = "android.yo.OUTGOING_CALL";
     String CALL_ACTION_IN_COMING = "android.SipPrac.INCOMING_CALL";
     String NEW_ACCOUNT_REGISTRATION = "com.yo.NewAccountSipRegistration";
+    String ACCOUNT_LOGOUT = "com.yo.android.ACCOUNT_LOGOUT";
 
     int BASE = 100;
     int CALL_DIRECTION_OUT = BASE + 1;

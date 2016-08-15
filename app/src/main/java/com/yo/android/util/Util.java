@@ -54,6 +54,10 @@ public class Util {
     public static final int DEFAULT_BUFFER_SIZE = 1024;
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
+        return createNotification(context, title, body, clzz, intent, true);
+    }
+
+    public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent, boolean onGoing) {
         //
         Intent destinationIntent = new Intent(context, clzz);
         destinationIntent.putExtra("from_notification", true);
@@ -63,16 +67,18 @@ public class Util {
 
         NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
         notificationStyle.bigText(body);
-
-        Notification notification = new NotificationCompat.Builder(context.getApplicationContext())
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context.getApplicationContext())
                 .setSmallIcon(R.drawable.ic_yo_notification)
                 .setContentTitle(title == null ? "Yo App" : title)
                 .setContentText(body)
-                .setOngoing(true)
-//                .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setStyle(notificationStyle)
-                .build();
+                .setStyle(notificationStyle);
+        if (onGoing) {
+            builder.setOngoing(true);
+        } else {
+            builder.setAutoCancel(true);
+        }
+        Notification notification = builder.build();
 
         NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(notificationId, notification);
@@ -310,7 +316,7 @@ public class Util {
                 if (activity instanceof BottomTabsActivity) {
                     ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
                     ((BottomTabsActivity) activity).refresh();
-                } else if(activity instanceof FindPeopleActivity) {
+                } else if (activity instanceof FindPeopleActivity) {
                     ((FindPeopleActivity) activity).refresh();
                 }
                 Util.changeMenuItemsVisibility(menu, -1, true);

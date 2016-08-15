@@ -21,7 +21,6 @@ import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
-import com.yo.android.util.Util;
 
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
@@ -47,7 +46,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     int sec = 0, min = 0, hr = 0;
     private Handler handler;
     private EventBus bus = EventBus.getDefault();
-    int notificationId;
     private Handler mHandler = new Handler();
     boolean running;
 
@@ -98,7 +96,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         //CallLogs Model
         String mobile = getIntent().getStringExtra(CALLER_NO);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
-        notificationId = Util.createNotification(this, mobile, "Outgoing call", OutGoingCallActivity.class, getIntent());
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
     }
 
@@ -109,12 +106,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callerName = (TextView) findViewById(R.id.tv_caller_name);
         callerNumber = (TextView) findViewById(R.id.tv_caller_number);
         callDuration = (TextView) findViewById(R.id.tv_dialing);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Util.createNotification(this, "Yo App Calling", "Outgoing call", OutGoingCallActivity.class, intent);
     }
 
     @Override
@@ -169,7 +160,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 }
                 callModel.setOnCall(false);
                 bus.post(callModel);
-                Util.cancelNotification(this, notificationId);
                 finish();
                 break;
             default:
@@ -187,7 +177,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                     || model.getEvent() == UserAgent.CALL_STATE_ERROR
                     || model.getEvent() == UserAgent.CALL_STATE_END
                     ) {
-                Util.cancelNotification(this, notificationId);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -210,7 +199,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 @Override
                 public void run() {
                     mToastFactory.showToast("Call ended.");
-                    Util.cancelNotification(context, notificationId);
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
             });

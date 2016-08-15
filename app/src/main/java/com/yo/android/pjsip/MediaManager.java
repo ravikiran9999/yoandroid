@@ -58,5 +58,8 @@ public class MediaManager {
         }
     }
 
+    public void setAudioMode(int mode) {
+        audioManager.setMode(mode);
+    }
 
 }

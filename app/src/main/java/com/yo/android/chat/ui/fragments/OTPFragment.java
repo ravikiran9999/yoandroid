@@ -26,6 +26,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.util.Constants;
@@ -230,7 +231,9 @@ public class OTPFragment extends BaseFragment {
         } else {
             startActivity(new Intent(getActivity(), BottomTabsActivity.class));
         }
-        //
+        //Start Sip service
+        getActivity().startService(new Intent(getActivity(), YoSipService.class));
+
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(VoipConstants.NEW_ACCOUNT_REGISTRATION);
         getActivity().sendBroadcast(broadcastIntent);

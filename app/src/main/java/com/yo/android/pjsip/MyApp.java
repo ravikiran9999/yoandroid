@@ -55,6 +55,9 @@ class MyApp {
                      boolean own_worker_thread) {
         observer = obs;
         appDir = app_dir;
+        if (ep == null) {
+            ep = new Endpoint();
+        }
 
 		/* Create endpoint */
         try {
@@ -169,7 +172,7 @@ class MyApp {
         JsonDocument json = new JsonDocument();
 
         try {
-			/* Load file */
+            /* Load file */
             json.loadFile(filename);
             ContainerNode root = json.getRootContainer();
 
@@ -193,7 +196,7 @@ class MyApp {
         }
 
 		/*
-		 * Force delete json now, as I found that Java somehow destroys it after
+         * Force delete json now, as I found that Java somehow destroys it after
 		 * lib has been destroyed and from non-registered thread.
 		 */
         json.delete();

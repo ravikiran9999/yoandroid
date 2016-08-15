@@ -13,22 +13,14 @@ public class SipCallState {
     public static final int IN_CALL = 4;
     public static final int CALL_FINISHED = 5;
 
-    private boolean inComing;
-
     private long startTime;
 
-    private int callState;
+    private int callState = NONE;
 
-    private int callDir;
+    private int callDirection;
 
+    private String mobileNumber;
 
-    public boolean isInComing() {
-        return inComing;
-    }
-
-    public void setInComing(boolean inComing) {
-        this.inComing = inComing;
-    }
 
     public long getStartTime() {
         return startTime;
@@ -47,10 +39,18 @@ public class SipCallState {
     }
 
     public int getCallDir() {
-        return callDir;
+        return callDirection;
     }
 
     public void setCallDir(int callDir) {
-        this.callDir = callDir;
+        this.callDirection = callDir;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 }

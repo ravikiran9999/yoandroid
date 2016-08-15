@@ -23,4 +23,8 @@ public interface SipServiceHandler {
     void hangupCall();
 
     long getCallStartDuration();
+
+    SipCallState getSipCallState();
+
+    String getRegistrationStatus();
 }

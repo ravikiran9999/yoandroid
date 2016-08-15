@@ -21,7 +21,6 @@ import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
-import com.yo.android.util.Util;
 
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
@@ -53,7 +52,6 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private View mReceivedCallHeader;
     private View mInComingHeader;
 
-    private int notificationId;
     private SipBinder sipBinder;
     private Handler mHandler = new Handler();
     private ServiceConnection connection = new ServiceConnection() {
@@ -109,7 +107,6 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         log.setCallType(VoipConstants.CALL_DIRECTION_IN_MISSED);
         log.setCallMode(VoipConstants.CALL_MODE_VOIP);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
-        notificationId = Util.createNotification(this, getIntent().getStringExtra(CALLER_NO), "Incoming call", InComingCallActivity.class, getIntent());
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
     }
 
@@ -197,7 +194,6 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     running = false;
                     mHandler.removeCallbacks(startTimer);
                 }
-                Util.cancelNotification(this, notificationId);
                 callModel.setOnCall(false);
                 log.setCallType(VoipConstants.CALL_DIRECTION_IN);
                 bus.post(callModel);
@@ -242,7 +238,6 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     || model.getEvent() == UserAgent.CALL_STATE_ERROR
                     || model.getEvent() == UserAgent.CALL_STATE_END
                     ) {
-                Util.cancelNotification(this, notificationId);
                 finish();
                 bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 runOnUiThread(new Runnable() {
@@ -271,7 +266,6 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Util.cancelNotification(context, notificationId);
                     mToastFactory.showToast("Call ended.");
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
