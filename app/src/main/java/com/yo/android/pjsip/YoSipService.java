@@ -226,6 +226,22 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
         if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+            //
+            try {
+                int statusCode = call.getInfo().getLastStatusCode().swigValue();
+                //TODO:Handle more error codes to display proper messages to the user
+                // 603 Decline - when end call
+                //503 Service Unavailable  - Buddy is not available
+                //603 Allocated Channels Busy -Lines are busy
+                if (statusCode == 503) {
+                    mLog.e(TAG, "503 >>> Buddy is not online at this moment");
+                }
+                mLog.e(TAG, "%d %s", call.getInfo().getLastStatusCode().swigValue(), call.getInfo().getLastReason());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
             callDisconnected();
         } else if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
