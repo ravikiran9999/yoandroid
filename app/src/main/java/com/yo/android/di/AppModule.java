@@ -1,7 +1,6 @@
 package com.yo.android.di;
 
 import android.content.Context;
-import android.net.sip.SipManager;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.logger.LogImpl;
@@ -63,7 +62,7 @@ public class AppModule {
     @Provides
     @Named("voip_support")
     boolean provideIsVoipSupported(Context context) {
-        return SipManager.isApiSupported(context) && SipManager.isVoipSupported(context);
+        return true;
     }
 
 }
