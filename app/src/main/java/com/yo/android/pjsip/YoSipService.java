@@ -187,6 +187,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private synchronized void showInComingCall(MyCall mycall) throws Exception {
         long currentElapsedTime = SystemClock.elapsedRealtime();
         if (lastLaunchCallHandler + LAUNCH_TRIGGER_DELAY < currentElapsedTime) {
+            //Always set default speaker off
+            mediaManager.setSpeakerOn(false);
             Intent intent = new Intent(this, InComingCallActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.putExtra(InComingCallActivity.CALLER, getPhoneNumber(mycall.getInfo().getRemoteUri()));
@@ -343,6 +345,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         CallOpParam prm = new CallOpParam(true);
 
         try {
+
             call.makeCall(finalUri, prm);
         } catch (Exception e) {
             mLog.w(TAG, e);
@@ -355,6 +358,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     private void showCallActivity(String destination, Bundle options) {
+        //Always set default speaker off
+        mediaManager.setSpeakerOn(false);
+
         sipCallState.setCallDir(SipCallState.OUTGOING);
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
