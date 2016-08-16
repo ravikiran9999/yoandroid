@@ -23,7 +23,9 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.Query;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.api.YoApi;
@@ -219,9 +221,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         ChildEventListener mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
+                String ky = dataSnapshot.getKey();
                 Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.MEMBERS);
-                memberReference.addValueEventListener(new ValueEventListener() {
+                /*memberReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         dataSnapshot.getKey();
@@ -231,9 +233,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     public void onCancelled(FirebaseError firebaseError) {
 
                     }
-                });
+                });*/
                 //getChatMessageList(dataSnapshot.getKey());
 
+                //memberReference.keepSynced(true);
             }
 
             @Override
@@ -253,11 +256,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
+                firebaseError.getMessage();
             }
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
-        if(!firebaseUserId.isEmpty()) {
+        if (!firebaseUserId.isEmpty()) {
             authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addChildEventListener(mChildEventListener);
         }
     }
