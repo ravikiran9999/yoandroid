@@ -7,7 +7,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.OwnMagazineViewHolder;
 import com.yo.android.model.OwnMagazine;
@@ -39,14 +41,23 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
 
         if(position != 0) {
             if(!TextUtils.isEmpty(item.getImage())) {
-                Picasso.with(mContext)
+
+                Glide.with(mContext)
                         .load(item.getImage())
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
 
             } else {
-                Picasso.with(mContext)
+
+                Glide.with(mContext)
                         .load(R.color.black)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
+
             }
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));
             holder.getTextViewDesc().setTextColor(mContext.getResources().getColor(android.R.color.white));
@@ -58,13 +69,21 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             holder.getTextView().setLayoutParams(params);
         } else if(position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) {
             if(!TextUtils.isEmpty(item.getImage())) {
-                Picasso.with(mContext)
+
+                Glide.with(mContext)
                         .load(item.getImage())
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
 
             } else {
-                Picasso.with(mContext)
+
+                Glide.with(mContext)
                         .load(R.color.black)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
             }
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));

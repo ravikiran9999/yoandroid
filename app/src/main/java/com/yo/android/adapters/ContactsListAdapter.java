@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
@@ -50,18 +52,22 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         }
 
         if (!TextUtils.isEmpty(item.getImage())) {
-            Picasso.with(mContext)
+
+            Glide.with(mContext)
                     .load(item.getImage())
-                    .fit()
+                    .fitCenter()
                     .placeholder(R.drawable.ic_contacts)
-                    .error(R.drawable.ic_contacts)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getContactPic());
         } else {
-            Picasso.with(mContext)
+
+            Glide.with(mContext)
                     .load(R.drawable.ic_contacts)
-                    .fit()
+                    .fitCenter()
                     .placeholder(R.drawable.ic_contacts)
-                    .error(R.drawable.ic_contacts)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getContactPic());
         }
 

@@ -24,7 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
@@ -154,8 +154,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             return;
         }
 
-        Picasso.with(getActivity())
+        Glide.with(getActivity())
                 .load(file)
+                .fitCenter()
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profilePic);
 
 

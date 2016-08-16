@@ -9,7 +9,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.adapters.ProfileMembersAdapter;
 import com.yo.android.chat.ui.ChatActivity;
@@ -95,9 +97,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 getSupportActionBar().setTitle(contact.getName());
             }
             if (!TextUtils.isEmpty(contact.getImage())) {
-                Picasso.with(this)
+
+                Glide.with(this)
                         .load(contact.getImage())
                         .placeholder(R.drawable.img_placeholder_profile)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
             }
             profileName.setText(contact.getName());
@@ -121,8 +127,12 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         } else if (Constants.USER_AVATAR.equals(key)) {
             String image = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
             if (!TextUtils.isEmpty(image)) {
-                Picasso.with(this)
+
+                Glide.with(this)
                         .load(image)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
             }
         }

@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.di.Injector;
@@ -70,9 +70,11 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
     public void bindView(final int position, final FindPeopleViewHolder holder, final FindPeople item) {
 
         if (item.getAvatar() == null || TextUtils.isEmpty(item.getAvatar())) {
-            Picasso.with(context)
+            Glide.with(context)
                     .load(R.drawable.ic_contacts)
-                    .fit()
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getImvFindPeoplePic());
         } else {
             Glide.with(context)

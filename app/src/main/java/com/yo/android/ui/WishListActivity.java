@@ -21,7 +21,9 @@ import android.widget.Toast;
 
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
@@ -285,8 +287,13 @@ public class WishListActivity extends BaseActivity {
             ImageView photoView = holder.articlePhoto;
 
             if (data.getImage_filename() != null) {
-                Picasso.with(WishListActivity.this)
+                Glide.with(context)
                         .load(data.getImage_filename())
+                        .centerCrop()
+                        //Image size will be reduced 50%
+                        .thumbnail(0.5f)
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(photoView);
             }
 

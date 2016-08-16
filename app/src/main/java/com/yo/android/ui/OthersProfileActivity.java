@@ -16,7 +16,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.util.Constants;
@@ -108,14 +110,20 @@ public class OthersProfileActivity extends BaseActivity {
         String isFollowing = getIntent().getStringExtra("PersonIsFollowing");
 
         if (!TextUtils.isEmpty(pic)) {
-            Picasso.with(this)
+
+            Glide.with(this)
                     .load(pic)
-                    .fit()
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(picture);
         } else {
-            Picasso.with(this)
+           
+            Glide.with(this)
                     .load(R.drawable.ic_contacts)
-                    .fit()
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(picture);
         }
 

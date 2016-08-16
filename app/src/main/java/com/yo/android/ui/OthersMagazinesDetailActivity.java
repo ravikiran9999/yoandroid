@@ -27,8 +27,10 @@ import android.widget.Toast;
 import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
@@ -313,8 +315,13 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
             if (data.getImage_filename() != null) {
 
-                Picasso.with(OthersMagazinesDetailActivity.this)
+                Glide.with(context)
                         .load(data.getImage_filename())
+                        .centerCrop()
+                        //Image size will be reduced 50%
+                        .thumbnail(0.5f)
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(photoView);
             }
 
