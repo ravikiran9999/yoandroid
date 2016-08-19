@@ -24,7 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
@@ -32,6 +32,7 @@ import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.NotificationsActivity;
@@ -39,6 +40,7 @@ import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
+import com.yo.android.voip.VoipConstants;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -152,8 +154,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             return;
         }
 
-        Picasso.with(getActivity())
+        Glide.with(getActivity())
                 .load(file)
+                .fitCenter()
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profilePic);
 
 
@@ -296,6 +301,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         });
                     }
                     preferenceEndPoint.clearAll();
+                    //Stop SIP service
+                    Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
+                    getActivity().startService(intent);
+                    //Start login activity
                     startActivity(new Intent(getActivity(), LoginActivity.class));
                     getActivity().finish();
                 }

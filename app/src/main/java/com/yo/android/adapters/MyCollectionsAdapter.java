@@ -1,18 +1,14 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.MyCollectionsViewHolder;
 import com.yo.android.model.Collections;
@@ -44,17 +40,30 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
     @Override
     public void bindView(int position, MyCollectionsViewHolder holder, Collections item) {
 
-        if (position == 0 && item.getName().equalsIgnoreCase("Follow more topics")) {
-            Picasso.with(mContext)
+        if (position == 0 && "Follow more topics".equalsIgnoreCase(item.getName())) {
+
+            Glide.with(mContext)
                     .load(R.color.grey_divider)
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getImageView());
+
         } else if (!TextUtils.isEmpty(item.getImage())) {
-            Picasso.with(mContext)
+
+            Glide.with(mContext)
                     .load(item.getImage())
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getImageView());
         } else {
-            Picasso.with(mContext)
+
+            Glide.with(mContext)
                     .load(R.color.grey_divider)
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getImageView());
         }
         holder.getTextView().setText(item.getName());
@@ -67,8 +76,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             params.rightMargin = 5;
             holder.getTextView().setLayoutParams(params);
 
-        }
-        else if(position == 0 && !item.getName().equalsIgnoreCase("Follow more topics")) {
+        } else if(position == 0 && !"Follow more topics".equalsIgnoreCase(item.getName())) {
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -76,8 +84,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             params.leftMargin = 5;
             params.rightMargin = 5;
             holder.getTextView().setLayoutParams(params);
-        }
-        else {
+        } else {
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.black));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -119,7 +126,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
 
     @Override
     protected boolean hasData(Collections collections, String key) {
-        if (collections.getName() != null && !collections.getName().equals("Follow more topics")) {
+        if (collections.getName() != null && !"Follow more topics".equals(collections.getName())) {
             if (containsValue(collections.getName().toLowerCase(), key)) {
                 return true;
             }

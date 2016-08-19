@@ -4,8 +4,10 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
@@ -56,14 +58,32 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
 
             holder.getOpponentName().setText(item.getFullName());
 
-            Picasso.with(context).load(R.drawable.ic_contactprofile).into(holder.getChatRoomPic());
+            Glide.with(context)
+                    .load(R.drawable.ic_contactprofile)
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.getChatRoomPic());
+
 
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
-            Picasso.with(context).load(R.drawable.ic_group).into(holder.getChatRoomPic());
+
+            Glide.with(context)
+                    .load(R.drawable.ic_group)
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.getChatRoomPic());
         } else {
             holder.getOpponentName().setText("");
-            Picasso.with(context).load(R.drawable.ic_contactprofile).into(holder.getChatRoomPic());
+
+            Glide.with(context)
+                    .load(R.drawable.ic_contactprofile)
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.getChatRoomPic());
         }
 
         if (item.isImages()) {

@@ -1,7 +1,6 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,7 +11,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.widgets.SquareItemLinearLayout;
@@ -66,13 +67,21 @@ public class OthersMagazinesAdapter extends BaseAdapter {
         textViewDesc.setText(ownMagazineList.get(position).getDescription());
 
             if (!TextUtils.isEmpty(ownMagazineList.get(position).getImage())) {
-                Picasso.with(mContext)
+
+                Glide.with(mContext)
                         .load(ownMagazineList.get(position).getImage())
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(imageView);
 
             } else {
-                Picasso.with(mContext)
+
+                Glide.with(mContext)
                         .load(R.color.black)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(imageView);
             }
             textView.setTextColor(mContext.getResources().getColor(android.R.color.white));

@@ -135,7 +135,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
 
         holder.magazineLike.setOnCheckedChangeListener(null);
-        if (data.getLiked().equals("true")) {
+        if ("true".equals(data.getLiked())) {
             data.setIsChecked(true);
         } else {
             data.setIsChecked(false);
@@ -146,7 +146,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int pos = (int) buttonView.getTag();
                 data.setIsChecked(isChecked);
                 if (isChecked) {
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -218,10 +217,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         ImageView photoView = holder.articlePhoto;
 
         if (data.getImage_filename() != null) {
-//            Picasso.with(context)
-//                    .load(data.getImage_filename())
-//                    .fit()
-//                    .into(photoView);
             Glide.with(context)
                     .load(data.getImage_filename())
                     .centerCrop()
@@ -265,7 +260,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             }
         });
 
-        if (data.getIsFollowing().equals("true")) {
+        if ("true".equals(data.getIsFollowing())) {
             holder.articleFollow.setText("Following");
             holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
         } else {
@@ -286,7 +281,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
     private void followArticle(final Articles data, final ViewHolder finalHolder) {
-        if (!data.getIsFollowing().equals("true")) {
+        if (!"true".equals(data.getIsFollowing())) {
             ((BaseActivity) context).showProgressDialog();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {

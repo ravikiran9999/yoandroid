@@ -1,22 +1,29 @@
 package com.yo.android.voip;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yo.android.R;
+import com.yo.android.pjsip.SipBinder;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
-import com.yo.android.util.Util;
+
+import org.pjsip.pjsua2.CallInfo;
+import org.pjsip.pjsua2.pjsip_inv_state;
 
 import de.greenrobot.event.EventBus;
 
@@ -39,7 +46,33 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     int sec = 0, min = 0, hr = 0;
     private Handler handler;
     private EventBus bus = EventBus.getDefault();
-    int notificationId;
+    private Handler mHandler = new Handler();
+    boolean running;
+
+    private SipBinder sipBinder;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            sipBinder = (SipBinder) service;
+            updateState();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            sipBinder = null;
+        }
+    };
+
+    private void updateState() {
+        if (sipBinder != null) {
+            CallInfo callInfo = sipBinder.getHandler().getInfo();
+            boolean isConnected = callInfo.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED;
+            if (isConnected) {
+                running = true;
+                mHandler.post(startTimer);
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,23 +92,11 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
         callerName.setText(getIntent().getStringExtra(CALLER_NO));
         callDuration.setText("Calling...");
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(VoipConstants.CALL_ACTION_OUT_GOING);
-        Bundle callBundle = new Bundle();
-        callBundle.putString(CALLER_NO, getIntent().getStringExtra(CALLER_NO));
-        broadcastIntent.putExtras(callBundle);
-        sendBroadcast(broadcastIntent);
         callModel.setOnCall(true);
         //CallLogs Model
-        log = new CallLogsModel();
         String mobile = getIntent().getStringExtra(CALLER_NO);
-        log.setCallerName("Sandeep Dev");
-        log.setCallTime(System.currentTimeMillis() / 1000L);
-        log.setCallerNo(mobile);
-        log.setCallType(VoipConstants.CALL_DIRECTION_OUT);
-        log.setCallMode(VoipConstants.CALL_MODE_VOIP);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
-        notificationId = Util.createNotification(this, mobile, "Outgoing call", OutGoingCallActivity.class, getIntent());
+        bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
     }
 
     private void initViews() {
@@ -84,19 +105,14 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.btnEndCall).setOnClickListener(this);
         callerName = (TextView) findViewById(R.id.tv_caller_name);
         callerNumber = (TextView) findViewById(R.id.tv_caller_number);
-//        callDuration = (TextView) findViewById(R.id.tv_call_duration);
         callDuration = (TextView) findViewById(R.id.tv_dialing);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Util.createNotification(this, "Yo App Calling", "Outgoing call", OutGoingCallActivity.class, intent);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(connection);
+        running = false;
         bus.unregister(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
@@ -107,6 +123,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.imv_mic_off:
                 isMute = !isMute;
+                if (sipBinder != null) {
+                    sipBinder.getHandler().getMediaManager().setMicrophoneMuteOn(isMute);
+                }
                 if (isMute) {
                     callModel.setEvent(MUTE_ON);
                     ((ImageView) v).setImageResource(R.drawable.ic_mute_active_dailing);
@@ -119,6 +138,10 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.imv_speaker:
                 isSpeakerOn = !isSpeakerOn;
+                if (sipBinder != null) {
+                    sipBinder.getHandler().getMediaManager().setSpeakerOn(isSpeakerOn);
+                }
+
                 if (isSpeakerOn) {
                     callModel.setEvent(SPEAKER_ON);
                     v.setAlpha(1f);
@@ -130,9 +153,13 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 mToastFactory.showToast("Speaker " + (isSpeakerOn ? "ON" : "OFF"));
                 break;
             case R.id.btnEndCall:
+                if (sipBinder != null) {
+                    sipBinder.getHandler().hangupCall();
+                    running = false;
+                    mHandler.removeCallbacks(startTimer);
+                }
                 callModel.setOnCall(false);
                 bus.post(callModel);
-                Util.cancelNotification(this, notificationId);
                 finish();
                 break;
             default:
@@ -143,17 +170,13 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     //    @Subscribe
     public void onEvent(SipCallModel model) {
         if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    startTimer();
-                }
-            });
+            running = true;
+            mHandler.post(startTimer);
         } else if (!model.isOnCall()) {
             if (model.getEvent() == UserAgent.CALL_STATE_BUSY
                     || model.getEvent() == UserAgent.CALL_STATE_ERROR
                     || model.getEvent() == UserAgent.CALL_STATE_END
                     ) {
-                Util.cancelNotification(this, notificationId);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -168,31 +191,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     }
 
 
-    private void startTimer() {
-        handler = new Handler(Looper.getMainLooper());
-
-        final Runnable r = new Runnable() {
-            public void run() {
-                if (!hasDestroyed()) {
-                    sec++;
-                    min += sec / 60;
-                    hr += min / 60;
-                    sec = sec % 60;
-                    callDuration.setText(String.format("%02d:%02d:%02d", hr, min, sec));
-                    handler.postDelayed(this, 1000);
-                }
-            }
-        };
-        handler.postDelayed(r, 1000);
-
-    }
-
-    @Override
-    public void onBackPressed() {
-//        super.onBackPressed();
-        moveTaskToBack(true);
-    }
-
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -201,12 +199,28 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 @Override
                 public void run() {
                     mToastFactory.showToast("Call ended.");
-                    Util.cancelNotification(context, notificationId);
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
             });
 
         }
     };
+    private Runnable startTimer = new Runnable() {
+        @Override
+        public void run() {
+            if (running) {
+                mHandler.postDelayed(this, 1000);
+            }
+            if (sipBinder != null) {
+                long start = sipBinder.getHandler().getCallStartDuration();
+                long now = System.currentTimeMillis();
+                long seconds = now - start;
+                seconds /= 1000;
+                StringBuilder mRecycle = new StringBuilder(8);
+                String text = DateUtils.formatElapsedTime(mRecycle, seconds);
+                callDuration.setText(text);
+            }
 
+        }
+    };
 }

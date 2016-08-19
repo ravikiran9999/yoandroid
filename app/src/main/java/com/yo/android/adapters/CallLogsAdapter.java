@@ -8,7 +8,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.helpers.CallLogsViewHolder;
 import com.yo.android.model.dialer.CallLogsResult;
-import com.yo.android.util.Constants;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Util;
 import com.yo.android.voip.OutGoingCallActivity;
 
@@ -60,10 +60,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
         holder.getCallIcon().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, OutGoingCallActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(OutGoingCallActivity.CALLER_NO, item.getDialnumber());
-                mContext.startActivity(intent);
+                SipHelper.makeCall(mContext, item.getDialnumber());
             }
         });
         holder.getMessageIcon().setOnClickListener(new View.OnClickListener() {

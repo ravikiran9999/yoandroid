@@ -16,7 +16,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.util.Constants;
@@ -44,6 +46,7 @@ public class OthersProfileActivity extends BaseActivity {
     private int magazinesCount;
     private int followersCount;
     private int likedArticlesCount;
+    private Button btnFolow;
 
     private static Fragment currentFragment;
 
@@ -68,7 +71,7 @@ public class OthersProfileActivity extends BaseActivity {
         viewPager.setAdapter(mAdapter);
         CircleImageView picture = (CircleImageView) findViewById(R.id.picture);
         TextView tvName = (TextView) findViewById(R.id.follower_name);
-        final Button btnFolow = (Button) findViewById(R.id.follow_btn);
+        btnFolow = (Button) findViewById(R.id.follow_btn);
 
         magazinesCount = getIntent().getIntExtra("MagazinesCount", 0);
         followersCount = getIntent().getIntExtra("FollowersCount", 0);
@@ -93,6 +96,7 @@ public class OthersProfileActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
+                intent.putExtra("FollowState", btnFolow.getText());
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -106,14 +110,20 @@ public class OthersProfileActivity extends BaseActivity {
         String isFollowing = getIntent().getStringExtra("PersonIsFollowing");
 
         if (!TextUtils.isEmpty(pic)) {
-            Picasso.with(this)
+
+            Glide.with(this)
                     .load(pic)
-                    .fit()
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(picture);
         } else {
-            Picasso.with(this)
+           
+            Glide.with(this)
                     .load(R.drawable.ic_contacts)
-                    .fit()
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(picture);
         }
 
@@ -249,6 +259,7 @@ public class OthersProfileActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
+        intent.putExtra("FollowState", btnFolow.getText());
         setResult(RESULT_OK, intent);
         finish();
         super.onBackPressed();

@@ -4,22 +4,15 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.OwnMagazineViewHolder;
 import com.yo.android.model.OwnMagazine;
-import com.yo.android.widgets.SquareItemLinearLayout;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by creatives on 7/9/2016.
@@ -48,15 +41,23 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
 
         if(position != 0) {
             if(!TextUtils.isEmpty(item.getImage())) {
-                Picasso.with(mContext)
+
+                Glide.with(mContext)
                         .load(item.getImage())
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
 
-            }
-            else {
-                Picasso.with(mContext)
+            } else {
+
+                Glide.with(mContext)
                         .load(R.color.black)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
+
             }
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));
             holder.getTextViewDesc().setTextColor(mContext.getResources().getColor(android.R.color.white));
@@ -66,17 +67,23 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             params.gravity = Gravity.TOP|Gravity.LEFT;
             params.leftMargin = 10;
             holder.getTextView().setLayoutParams(params);
-        }
-        else if(position == 0 && !item.getName().equalsIgnoreCase("+ New Magazine")) {
+        } else if(position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) {
             if(!TextUtils.isEmpty(item.getImage())) {
-                Picasso.with(mContext)
+
+                Glide.with(mContext)
                         .load(item.getImage())
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
 
-            }
-            else {
-                Picasso.with(mContext)
+            } else {
+
+                Glide.with(mContext)
                         .load(R.color.black)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
             }
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));
@@ -87,9 +94,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             params.gravity = Gravity.TOP|Gravity.LEFT;
             params.leftMargin = 10;
             holder.getTextView().setLayoutParams(params);
-        }
-
-        else {
+        } else {
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);

@@ -1,6 +1,8 @@
 package com.yo.android.app;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDexApplication;
 
 import com.firebase.client.Firebase;
 import com.yo.android.di.Injector;
@@ -11,7 +13,7 @@ import dagger.ObjectGraph;
 /**
  * Created by Ramesh on 17/06/16.
  */
-public class BaseApp extends Application {
+public class BaseApp extends MultiDexApplication {
 
     private ObjectGraph objectGraph;
 

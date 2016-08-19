@@ -1,2 +1,2 @@
-include ':app', ':flip', ':tagview'
+include ':app', ':flip', ':tagview', ':yopjsip'
 //':yocsipsimple'

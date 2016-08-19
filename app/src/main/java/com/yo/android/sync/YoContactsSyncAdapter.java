@@ -68,11 +68,6 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
-    /**
-     * Content resolver, for performing database operations.
-     */
-    private final ContentResolver mContentResolver;
-
     private static Object lock = new Object();
 
     /**
@@ -102,7 +97,6 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
      */
     public YoContactsSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        mContentResolver = context.getContentResolver();
         Injector.obtain(context.getApplicationContext()).inject(this);
     }
 
@@ -111,7 +105,6 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
      */
     public YoContactsSyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
-        mContentResolver = context.getContentResolver();
         Injector.obtain(context.getApplicationContext()).inject(this);
     }
 
@@ -136,7 +129,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.i(TAG, "Beginning network synchronization");
         try {
             String access = loginPrefs == null ? "" : loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-            if (true && TextUtils.isEmpty(access)) {
+            if (TextUtils.isEmpty(access)) {
                 return;
             }
             Response<List<Contact>> list = mYoService.getContacts(access).execute();
@@ -240,8 +233,6 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER, match.yoappuser)
                             .build());
                     syncResult.stats.numUpdates++;
-                } else {
-                    Log.i(TAG, "No action: " + existingUri);
                 }
             } else {
                 // Entry doesn't exist. Remove it from the database.

@@ -15,10 +15,10 @@ import android.widget.Toast;
 
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.DialPadView;
-import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.SipService;
 
 import javax.inject.Inject;
@@ -108,9 +108,7 @@ public class DialerActivity extends BaseActivity {
                 } else if (number.length() == 0) {
                     mToastFactory.showToast("Please enter number.");
                 } else {
-                    Intent intent = new Intent(DialerActivity.this, OutGoingCallActivity.class);
-                    intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
-                    startActivity(intent);
+                    SipHelper.makeCall(DialerActivity.this, number);
                 }
             }
         });

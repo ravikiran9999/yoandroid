@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -137,7 +136,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
         } else {
             invalidateOptionsMenu();
-            if (position == 0 && collections.getName().equalsIgnoreCase("Follow more topics")) {
+            if (position == 0 && "Follow more topics".equalsIgnoreCase(collections.getName())) {
                 Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
                 intent.putExtra("From", "MyCollections");
                 startActivityForResult(intent, 2);
@@ -174,8 +173,6 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-
         switch (item.getItemId()) {
             case R.id.menu_delete:
                 super.onOptionsItemSelected(item);
@@ -183,6 +180,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 break;
             case android.R.id.home:
                 onBackPressed();
+                break;
+            default:
                 break;
         }
         return true;
@@ -222,10 +221,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         List<String> topicIds = new ArrayList<String>();
         List<String> magazineIds = new ArrayList<>();
         for (int i = 0; i < collections.size(); i++) {
-            if(collections.get(i).getType().equals("Tag")) {
+            if("Tag".equals(collections.get(i).getType())) {
                 topicIds.add(collections.get(i).getId());
-            }
-            else {
+            } else {
                 magazineIds.add(collections.get(i).getId());
             }
         }
@@ -256,14 +254,14 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                         @Override
                         public void onFailure(Call<List<Collections>> call, Throwable t) {
-
+                        // do nothing
                         }
                     });
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                      // do nothing
                 }
             });
         }
@@ -295,14 +293,14 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                         @Override
                         public void onFailure(Call<List<Collections>> call, Throwable t) {
-
+                           // do nothing
                         }
                     });
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                           // do nothing
                 }
             });
         }
@@ -334,7 +332,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                 @Override
                 public void onFailure(Call<List<Collections>> call, Throwable t) {
-
+                    // do nothing
                 }
             });
 
@@ -360,7 +358,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                 @Override
                 public void onFailure(Call<List<Collections>> call, Throwable t) {
-
+                 // do nothing
                 }
             });
         }

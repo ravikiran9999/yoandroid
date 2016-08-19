@@ -6,6 +6,7 @@
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
+
     <TextView
         android:id="@+id/tv_dialing"
         android:layout_width="wrap_content"
@@ -64,29 +65,29 @@
 
     </LinearLayout>
 
-<!--    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="80dp">
-
-        <ImageView
-            android:id="@+id/imv_speaker"
-            android:layout_width="wrap_content"
+    <!--    <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="60dp"
-            android:background="@drawable/ic_dialer_speaker"
-            android:tint="@color/colorAccent"
-            android:visibility="gone" />
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="80dp">
 
-        <ImageView
-            android:id="@+id/imv_mic_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:background="@drawable/ic_dialer_mic_off"
-            android:visibility="gone" />
+            <ImageView
+                android:id="@+id/imv_speaker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="60dp"
+                android:background="@drawable/ic_dialer_speaker"
+                android:tint="@color/colorAccent"
+                android:visibility="gone" />
 
-    </LinearLayout>-->
+            <ImageView
+                android:id="@+id/imv_mic_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:background="@drawable/ic_dialer_mic_off"
+                android:visibility="gone" />
+
+        </LinearLayout>-->
 </LinearLayout>

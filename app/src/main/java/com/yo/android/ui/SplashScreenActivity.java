@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.util.Constants;
 
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ public class SplashScreenActivity extends BaseActivity {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageResource(R.drawable.ic_splash);
         mHandler.postDelayed(runnable, DURATION);
+        startService(new Intent(this, YoSipService.class));
     }
 
 

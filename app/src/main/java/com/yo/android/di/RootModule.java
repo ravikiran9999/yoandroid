@@ -11,13 +11,13 @@ import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
+import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.SignupActivity;
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
-import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.chat.ui.fragments.YoContactsFragment;
@@ -25,6 +25,7 @@ import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.sync.YoContactsSyncAdapter;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CountryListActivity;
@@ -49,11 +50,11 @@ import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.OthersMagazinesDetailActivity;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
-import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.TabsHeaderActivity;
+import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.WishListActivity;
@@ -157,7 +158,8 @@ import dagger.Provides;
                 FindPeopleAdapter.class,
 
                 FirebaseService.class,
-                YoContactsSyncAdapter.class
+                YoContactsSyncAdapter.class,
+                YoSipService.class
         },
         includes = {
                 AppModule.class,

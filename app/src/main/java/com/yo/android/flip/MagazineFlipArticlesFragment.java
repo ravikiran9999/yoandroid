@@ -22,6 +22,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.helpers.LruCacheHelper;
 import com.yo.android.model.Articles;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
@@ -43,22 +44,21 @@ import se.emilsjolander.flipview.FlipView;
  */
 public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    //private FlipViewController flipView;
     private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
     private MagazineArticlesBaseAdapter myBaseAdapter;
     @Inject
     YoApi.YoService yoService;
-    private String topicName;
     private LinearLayout llNoArticles;
     private FrameLayout flipContainer;
     private ProgressBar mProgress;
     private Button followMoreTopics;
-    private boolean isFollowing;
 
     @Inject
     ConnectivityHelper mHelper;
     private FrameLayout articlesRootLayout;
     private TextView networkFailureText;
+    @Inject
+    protected LruCacheHelper lruCacheHelper;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -85,12 +85,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
         networkFailureText = (TextView) view.findViewById(R.id.network_failure);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
-        //flipView = new FlipViewController(getActivity());
         FlipView flipView = (FlipView) view.findViewById(R.id.flip_view);
         myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory);
         flipView.setAdapter(myBaseAdapter);
-        //flipView.setAdapter(myBaseAdapter);
-        //flipContainer.addView(flipView);
         followMoreTopics = (Button) view.findViewById(R.id.btn_magazine_follow_topics);
         return view;
     }
@@ -107,7 +104,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
-                List<String> tagIds = Arrays.asList(prefTags);
                 loadArticles(null);
             }
         } else {
@@ -130,13 +126,20 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void loadArticles(List<String> tagIds) {
 
         if (!mHelper.isConnected()) {
-            myBaseAdapter.clear();
-            if (articlesRootLayout.getChildCount() > 0) {
-                articlesRootLayout.setVisibility(View.GONE);
-                networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
-                networkFailureText.setVisibility(View.VISIBLE);
+            if(lruCacheHelper.get("magazines_cache") != null) {
+              List<Articles> cacheArticlesList = (List<Articles>) lruCacheHelper.get("magazines_cache");
+                myBaseAdapter.addItems(cacheArticlesList);
+                articlesRootLayout.setVisibility(View.VISIBLE);
+                networkFailureText.setVisibility(View.GONE);
+            } else {
+                myBaseAdapter.clear();
+                if (articlesRootLayout.getChildCount() > 0) {
+                    articlesRootLayout.setVisibility(View.GONE);
+                    networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
+                    networkFailureText.setVisibility(View.VISIBLE);
+                }
+                return;
             }
-            return;
         } else {
             articlesRootLayout.setVisibility(View.VISIBLE);
             networkFailureText.setVisibility(View.GONE);
@@ -166,6 +169,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             if (response.body() != null && !response.body().isEmpty()) {
                 myBaseAdapter.addItems(response.body());
+                lruCacheHelper.put("magazines_cache", response.body());
                 if (llNoArticles != null) {
                     llNoArticles.setVisibility(View.GONE);
                     flipContainer.setVisibility(View.VISIBLE);
@@ -173,7 +177,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             } else {
                 if (llNoArticles != null) {
                     flipContainer.setVisibility(View.GONE);
-                    //flipView.refreshAllPages();
                     llNoArticles.setVisibility(View.VISIBLE);
                 }
             }
@@ -192,10 +195,17 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if(lruCacheHelper.get("magazines_cache") != null) {
+                        List<Articles> cacheArticlesList = (List<Articles>) lruCacheHelper.get("magazines_cache");
+                        myBaseAdapter.addItems(cacheArticlesList);
+                        articlesRootLayout.setVisibility(View.VISIBLE);
+                        networkFailureText.setVisibility(View.GONE);
+                    } else {
                     if (llNoArticles != null) {
                         networkFailureText.setVisibility(View.GONE);
                         llNoArticles.setVisibility(View.VISIBLE);
                         flipContainer.setVisibility(View.GONE);
+                    }
                     }
 
                 }
@@ -218,22 +228,19 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     @Override
     public void onResume() {
         super.onResume();
-        //flipView.onResume();
     }
 
     public void onPause() {
         super.onPause();
-        //flipView.onPause();
     }
 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("magazine_tags")) {
+        if ("magazine_tags".equals(key)) {
             if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
                 String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
                 if (prefTags != null) {
-                    List<String> tagIds = Arrays.asList(prefTags);
                     loadArticles(null);
                 }
             } else {
@@ -255,7 +262,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
-                List<String> tagIds = Arrays.asList(prefTags);
                 loadArticles(null);
             }
         }

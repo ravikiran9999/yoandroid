@@ -26,6 +26,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.util.Constants;
@@ -209,7 +210,7 @@ public class OTPFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, response.body().getAccessToken());
         preferenceEndPoint.saveStringPreference(YoApi.REFRESH_TOKEN, response.body().getRefreshToken());
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
-        preferenceEndPoint.saveStringPreference("password", password);
+        preferenceEndPoint.saveStringPreference("password", "123456");
         dismissProgressDialog();
         finishAndNavigateToHome();
     }
@@ -230,7 +231,9 @@ public class OTPFragment extends BaseFragment {
         } else {
             startActivity(new Intent(getActivity(), BottomTabsActivity.class));
         }
-        //
+        //Start Sip service
+        getActivity().startService(new Intent(getActivity(), YoSipService.class));
+
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(VoipConstants.NEW_ACCOUNT_REGISTRATION);
         getActivity().sendBroadcast(broadcastIntent);

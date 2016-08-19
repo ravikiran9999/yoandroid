@@ -11,13 +11,14 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.FindPeopleViewHolder;
 import com.yo.android.model.FindPeople;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.FollowingsActivity;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -69,15 +70,13 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
     public void bindView(final int position, final FindPeopleViewHolder holder, final FindPeople item) {
 
         if (item.getAvatar() == null || TextUtils.isEmpty(item.getAvatar())) {
-            Picasso.with(context)
+            Glide.with(context)
                     .load(R.drawable.ic_contacts)
-                    .fit()
+                    .fitCenter()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getImvFindPeoplePic());
         } else {
-//            Picasso.with(context)
-//                    .load(item.getAvatar())
-//                    .fit()
-//                    .into(holder.getImvFindPeoplePic());
             Glide.with(context)
                     .load(item.getAvatar())
                     .fitCenter()
@@ -91,7 +90,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
             holder.getTvFindPeopleName().setText("Unknown");
         }
         holder.getTvFindPeopleDesc().setText(item.getDescription());
-        if (item.getIsFollowing().equals("true")) {
+        if ("true".equals(item.getIsFollowing())) {
             holder.getBtnFindPeopleFollow().setText("Following");
             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             isFollowingUser = true;
@@ -103,7 +102,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         holder.getBtnFindPeopleFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!item.getIsFollowing().equals("true")) {
+                if (!"true".equals(item.getIsFollowing())) {
                     ((BaseActivity) context).showProgressDialog();
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
@@ -154,7 +153,11 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     ((BaseActivity) context).dismissProgressDialog();
+                                    if((BaseActivity)context instanceof FollowingsActivity){
                                     removeItem(item);
+                                    } else {
+                                     // do nothing
+                                    }
                                     holder.getBtnFindPeopleFollow().setText("Follow");
                                     holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                     item.setIsFollowing("false");

@@ -34,6 +34,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
 
         webview.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                // do nothing
             }
         });
 

@@ -41,8 +41,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:largeHeap="true"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.SplashScreenActivity"
@@ -134,7 +134,7 @@
             android:theme="@style/AppTheme.Switch"
             android:windowSoftInputMode="stateHidden" />
 
-        <service android:name=".voip.SipService" />
+       <!-- <service android:name=".voip.SipService" />-->
 
         <activity android:name=".chat.ui.SignupActivity" />
         <activity
@@ -221,9 +221,8 @@
             android:theme="@style/AppTheme.NoActionBar.Translucent" />
         <activity
             android:name=".ui.NotificationsActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
-            />
+            android:screenOrientation="portrait" />
 
         <provider
             android:name=".provider.YoAppContactProvider"
@@ -262,6 +261,7 @@
                 android:resource="@xml/authenticator" />
         </service>
 
+        <service android:name=".pjsip.YoSipService"></service>
     </application>
 
 </manifest>
