@@ -129,10 +129,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
-        /*if (myServiceConnection.isServiceConnection()) {
-            firebaseService.getFirebaseAuth();
-        }*/
-
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
@@ -171,7 +167,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessageArray = new ArrayList<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType);
         listView.setAdapter(userChatAdapter);
-
+        listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
         send.setOnClickListener(this);
 
@@ -409,23 +405,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void sendChatMessage(final ChatMessage chatMessage) {
         try {
             String timeStp = Long.toString(chatMessage.getTime());
+            chatMessage.setSent(1);
+
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
 
             final Firebase roomChildReference = roomReference.child(timeStp);
-            roomChildReference.updateChildren(updateMessageMap, new Firebase.CompletionListener() {
-                @Override
-                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                    if (firebaseError == null) {
-                        // successfully sent
-                        chatMessage.setSent(1);
-                        Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
-                        firebase.updateChildren(hashtaghMap);
-
-                    } else {
-                        Log.e(TAG, firebaseError.getMessage());
-                    }
-                }
-            });
+            roomChildReference.updateChildren(updateMessageMap);
 
         } catch (FirebaseException | NullPointerException e) {
             e.printStackTrace();
@@ -435,6 +420,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void registerChildEventListener(Firebase roomReference) {
         if (!isChildEventListenerAdd) {
             roomReference.addChildEventListener(this);
+            roomReference.keepSynced(true);
         }
     }
 
@@ -611,6 +597,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
             chatMessageArray.add(chatMessage);
+
             userChatAdapter.addItems(chatMessageArray);
             listView.smoothScrollToPosition(userChatAdapter.getCount());
 

@@ -3,6 +3,8 @@ package com.yo.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import java.util.List;
  * Created by rdoddapaneni on 7/20/2016.
  */
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Room implements Parcelable {
 
     private String id;
@@ -18,10 +21,16 @@ public class Room implements Parcelable {
     private String image;
     private List<Members> members = new ArrayList<>();
     private String lastChat;
-    private boolean isImage;
+    private boolean isImages;
     private String timeStamp;
     //For sorting
     private long time;
+    private String fullName;
+    private String mobileNumber;
+
+    public Room() {
+        // empty default constructor, necessary for Firebase to be able to deserialize
+    }
 
     public String getId() {
         return id;
@@ -71,12 +80,12 @@ public class Room implements Parcelable {
         this.lastChat = lastChat;
     }
 
-    public boolean isImage() {
-        return isImage;
+    public boolean isImages() {
+        return isImages;
     }
 
-    public void setImage(boolean image) {
-        isImage = image;
+    public void setImages(boolean images) {
+        isImages = images;
     }
 
     public String getTimeStamp() {
@@ -85,6 +94,22 @@ public class Room implements Parcelable {
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 
     @Override
