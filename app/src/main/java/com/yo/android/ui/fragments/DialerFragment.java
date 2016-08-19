@@ -24,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -275,21 +274,24 @@ public class DialerFragment extends BaseFragment {
                 //Begin Normalizing PSTN number
                 String temp = dialPadView.getDigits().getText().toString().trim();
                 String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
+                boolean prefixrequired;
+                String number;
+                if (temp.startsWith("+")) {
+                    prefixrequired = false;
+                    number = temp;
+                } else if (!TextUtils.isEmpty(cPrefix)) {
+                    number = cPrefix + temp;
+                } else {
+                    number = temp;
+                }
+                number = number.replace(" ", "").replace("+", "");
                 if (cPrefix != null) {
                     cPrefix = cPrefix.replace("+", "");
                 }
-                String number = temp.replace(" ", "").replace("+", "");
-                if (cPrefix != null && !number.startsWith(cPrefix)) {
-//                    number = cPrefix + number;
-                }
                 mLog.i(TAG, "Dialing number after normalized: " + number);
                 //End Normalizing PSTN number
-                if (!isVoipSupported) {
-                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_SHORT);
-                } else if (!mConnectivityHelper.isConnected()) {
+                if (!mConnectivityHelper.isConnected()) {
                     mToastFactory.showToast(getString(R.string.connectivity_network_settings));
-                } else if (!isVoipSupported) {
-                    mToastFactory.newToast(getString(R.string.voip_not_supported_error_message), Toast.LENGTH_LONG);
                 } else if (number.length() == 0) {
                     mToastFactory.showToast("Please enter number.");
                 } else {
