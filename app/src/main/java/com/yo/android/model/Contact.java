@@ -14,12 +14,34 @@ public class Contact implements Parcelable {
     private boolean selected;
     private String firebaseRoomId;
 
+    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
+        @Override
+        public Contact createFromParcel(Parcel source) {
+            return new Contact(source);
+        }
+
+        @Override
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
+
     public Contact() {
+        // empty default constructor, necessary for Firebase to be able to deserialize
     }
 
     public Contact(String phoneNo, String name) {
         this.phoneNo = phoneNo;
         this.name = name;
+    }
+
+    private Contact(Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+        this.image = in.readString();
+        this.phoneNo = in.readString();
+        this.firebaseRoomId = in.readString();
+        this.yoAppUser = in.readInt() == 0;
     }
 
     public String getId() {
@@ -92,30 +114,4 @@ public class Contact implements Parcelable {
         dest.writeString(firebaseRoomId);
         dest.writeInt(yoAppUser ? 0 : 1);
     }
-
-    private Contact(Parcel in) {
-        this.id = in.readString();
-        this.name = in.readString();
-        this.image = in.readString();
-        this.phoneNo = in.readString();
-        this.firebaseRoomId = in.readString();
-        this.yoAppUser = in.readInt() == 0;
-    }
-
-    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
-        @Override
-        public Contact createFromParcel(Parcel source) {
-            return new Contact(source);
-        }
-
-        @Override
-        public Contact[] newArray(int size) {
-            return new Contact[size];
-        }
-    };
-
-    /*@Override
-    public String toString() {
-        return "ClassPojo [id = " + id + ", phoneNo = " + phoneNo + ", yoAppUser = " + yoAppUser + ", firebaseRoomId = " + firebaseRoomId + "]";
-    }*/
 }

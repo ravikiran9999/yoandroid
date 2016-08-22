@@ -14,7 +14,11 @@ import com.yo.android.api.YoApi;
 import com.yo.android.model.Contact;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.sync.YoContactsSyncAdapter;
+import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +47,7 @@ public class ContactsSyncManager {
     private Context context;
     private List<Contact> cacheList;
     private Object lock = new Object();
-    PreferenceEndPoint loginPrefs;
+    private PreferenceEndPoint loginPrefs;
     final boolean IS_CONTACT_SYNC_ON = false;
     private static final String[] PROJECTION = new String[]{
             YoAppContactContract.YoAppContactsEntry._ID,
@@ -76,17 +80,18 @@ public class ContactsSyncManager {
         if (!IS_CONTACT_SYNC_ON) {
             return;
         }
-        new AsyncTask<Void, Void, List<String>>() {
+        new AsyncTask<Void, Void, List<Contact>>() {
             @Override
-            protected List<String> doInBackground(Void... params) {
+            protected List<Contact> doInBackground(Void... params) {
                 return readContacts();
             }
 
             @Override
-            protected void onPostExecute(List<String> strings) {
-                super.onPostExecute(strings);
+            protected void onPostExecute(List<Contact> contactsObject) {
+                super.onPostExecute(contactsObject);
                 String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-                yoService.syncContactsAPI(access, strings).enqueue(new Callback<List<Contact>>() {
+
+                yoService.syncContactsAPI(access, contactsObject).enqueue(new Callback<List<Contact>>() {
                     @Override
                     public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                         if (response != null) {
@@ -104,34 +109,50 @@ public class ContactsSyncManager {
 
     }
 
-    public Response<List<Contact>> syncContactsAPI(List<String> contacts) throws IOException {
+    public Response<List<Contact>> syncContactsAPI(List<Contact> contacts) throws IOException {
         String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-        Response<List<Contact>> response = yoService.syncContactsAPI(access, contacts).execute();
+        List<JSONObject> nameAndNumber = new ArrayList<>();
+        for (int i = 0; i < contacts.size(); i++) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put(Constants.NUMBER, contacts.get(i).getPhoneNo());
+                jsonObject.put(Constants.NAME, contacts.get(i).getName());
+                nameAndNumber.add(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute();
         setContacts(response.body());
         return response;
     }
 
-    private List<String> readContacts() {
-        List<String> nc = new ArrayList<>();
+    private List<Contact> readContacts() {
+        List<Contact> contactList = new ArrayList<>();
+
         Cursor contactsCursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         if (contactsCursor != null) {
             while (contactsCursor.moveToNext()) {
+                Contact contact = new Contact();
                 String contactId = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts._ID));
+                contact.setName(contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
                 if (Integer.parseInt(contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
                     Cursor phoneNumberCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contactId}, null);
                     if (phoneNumberCursor != null) {
+
                         while (phoneNumberCursor.moveToNext()) {
                             String phoneNumber = phoneNumberCursor.getString(phoneNumberCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            nc.add(phoneNumber);
+                            contact.setPhoneNo(phoneNumber);
                         }
                         phoneNumberCursor.close();
+                        contactList.add(contact);
                     }
                 }
             }
             contactsCursor.close();
 
         }
-        return nc;
+        return contactList;
     }
 
     public void setContacts(List<Contact> list) {
@@ -206,7 +227,7 @@ public class ContactsSyncManager {
         });
     }
 
-    public static com.yo.android.model.Contact prepareContact(Cursor c) {
+    public static Contact prepareContact(Cursor c) {
         String entryId = c.getString(COLUMN_ENTRY_ID);
         String name = c.getString(COLUMN_NAME);
         String phone = c.getString(COLUMN_PHONE);
@@ -214,7 +235,7 @@ public class ContactsSyncManager {
         String roomId = c.getString(COLUMN_FIREBASE_ROOM_ID);
         boolean yoAppUser = c.getInt(COLUMN_YO_USER) != 0;
         //
-        com.yo.android.model.Contact contact = new com.yo.android.model.Contact();
+        Contact contact = new Contact();
         contact.setId(entryId);
         contact.setName(name);
         contact.setPhoneNo(phone);

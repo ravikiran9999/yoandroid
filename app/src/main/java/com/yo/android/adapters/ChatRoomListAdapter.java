@@ -50,11 +50,13 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getGroupName() == null) {
-            for (int i = 0; item.getMembers() != null && i < item.getMembers().size(); i++) {
+            /*for (int i = 0; item.getMembers() != null && i < item.getMembers().size(); i++) {
                 if (!item.getMembers().get(i).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
                     holder.getOpponentName().setText(item.getMembers().get(i).getMobileNumber());
                 }
-            }
+            }*/
+
+            holder.getOpponentName().setText(item.getFullName());
 
             Glide.with(context)
                     .load(R.drawable.ic_contactprofile)
@@ -84,7 +86,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                     .into(holder.getChatRoomPic());
         }
 
-        if (item.isImage()) {
+        if (item.isImages()) {
             holder.getChat().setText(mContext.getResources().getString(R.string.image));
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
         } else if (!TextUtils.isEmpty(item.getLastChat())) {
