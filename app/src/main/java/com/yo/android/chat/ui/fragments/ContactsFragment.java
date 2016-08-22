@@ -126,8 +126,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             });
 
         }
-
-
     }
 
     private void loadContacts(Cursor c) {

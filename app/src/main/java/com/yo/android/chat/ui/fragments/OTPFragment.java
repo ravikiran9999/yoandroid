@@ -306,14 +306,12 @@ public class OTPFragment extends BaseFragment {
             duration--;
             if (duration > 0) {
                 mHandler.postDelayed(this, 1000);
-//                verifyButton.setEnabled(false);
             } else {
                 txtTimer.setVisibility(View.GONE);
                 reSendTextBtn.setText("Resend");
                 reSendTextBtn.setEnabled(true);
                 //Reset
                 duration = MAX_DURATION;
-                // verifyButton.setText(R.string.resend_otp_text);
                 verifyButton.setEnabled(true);
                 stopTimer();
             }

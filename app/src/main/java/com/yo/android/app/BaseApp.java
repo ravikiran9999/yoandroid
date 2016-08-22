@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
 import com.firebase.client.Firebase;
-import com.google.firebase.database.FirebaseDatabase;
 import com.yo.android.di.Injector;
 import com.yo.android.di.RootModule;
 
@@ -24,7 +23,7 @@ public class BaseApp extends MultiDexApplication {
         injectDependencies();
 
         /* Enable disk persistence  */
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
     }
 

@@ -13,6 +13,7 @@ import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.model.Contact;
 import com.yo.android.sync.SyncUtils;
 
 import java.util.ArrayList;
@@ -46,12 +47,12 @@ public class ContactSyncHelper {
     HashMap<Integer, Contact> contactsBook = new HashMap<>();
     HashMap<Integer, Contact> cacheContacts = new HashMap<>();
     public static volatile DispatchQueue globalQueue = new DispatchQueue("globalQueue");
-    public int syncMode = NONE;
-    public static final int NONE = 0;
-    public static final int INIT = 1;
-    public static final int PROCESSING = 2;
-    public static final int FINISHED = 3;
-    PreferenceEndPoint loginPrefs;
+    private int syncMode = NONE;
+    private static final int NONE = 0;
+    private static final int INIT = 1;
+    private static final int PROCESSING = 2;
+    private static final int FINISHED = 3;
+    private PreferenceEndPoint loginPrefs;
 
     @Inject
     public ContactSyncHelper(Context context, Log log, ContactsSyncManager contactsSyncManager, @Named("login") PreferenceEndPoint loginPrefs) {
@@ -148,6 +149,7 @@ public class ContactSyncHelper {
                         break;
                     }
                 }
+
             } else {
                 boolean contactDeleted = false;
                 for (String s : value.shortPhones) {
@@ -169,7 +171,7 @@ public class ContactSyncHelper {
                     && !existing.last_name.equals(value.last_name));
             if (contactModify || existing == null || nameChanged) {
                 for (int a = 0; a < value.phones.size(); a++) {
-                    toImport.add(new com.yo.android.model.Contact(value.phones.get(a), ""));
+                    toImport.add(new com.yo.android.model.Contact(value.phones.get(a), value.first_name));
                 }
             }
         }
@@ -187,9 +189,9 @@ public class ContactSyncHelper {
                 toImportIterator1.remove();
             }
         }
-        List<String> contacts = new ArrayList<>();
+        List<com.yo.android.model.Contact> contacts = new ArrayList<>();
         for (com.yo.android.model.Contact contact : toImport) {
-            contacts.add(contact.getPhoneNo());
+            contacts.add(contact);
         }
         try {
             if (!contacts.isEmpty()) {
@@ -246,8 +248,7 @@ public class ContactSyncHelper {
             ArrayList<Integer> idsArr = new ArrayList<>();
             Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projectionPhones, null, null, null);
             if (pCur != null) {
-                if (pCur.getCount()
-                        > 0) {
+                if (pCur.getCount() > 0) {
                     while (pCur.moveToNext()) {
                         String number = pCur.getString(1);
                         if (number == null || number.length() == 0) {
