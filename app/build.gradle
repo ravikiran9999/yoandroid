@@ -38,7 +38,6 @@ android {
             buildConfigField "String", "CLIENT_SECRET", "\"1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
-            signingConfig signingConfigs.devconfig
             minSdkVersion 18
         }
         stage {
@@ -51,7 +50,6 @@ android {
             buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
-            signingConfig signingConfigs.stageconfig
 
         }
     }
@@ -61,6 +59,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
+            productFlavors.dev.signingConfig signingConfigs.devconfig
+            productFlavors.stage.signingConfig signingConfigs.stageconfig
         }
 
     }
@@ -132,7 +132,7 @@ public Properties getAwsProperties() {
 def releasePath = file("${rootDir}/apks")
 def publish = project.tasks.create("publishAll")
 android.applicationVariants.all { variant ->
-    if (variant.buildType.name != 'release') {
+//    if (variant.buildType.name != 'release') {
         def n = 0
         def task = project.tasks.create("publish${variant.name}Apk", Copy)
         task.from(variant.outputs[0].outputFile)
@@ -155,5 +155,5 @@ android.applicationVariants.all { variant ->
 //Yo_App_Android_V
         task.dependsOn variant.assemble
         publish.dependsOn task
-    }
+//    }
 }
