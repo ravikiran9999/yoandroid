@@ -53,6 +53,7 @@ public class Constants {
     public static final String ROOMS = "Rooms";
     public static final String MY_ROOMS = "rooms";
     public static final String USERS = "Users";
+    public static final String PROFILE = "profile";
     public static final String MEMBERS = "members";
     public static final String ROOM = "Room";
     public static final String CHATS = "chats";
@@ -85,4 +86,8 @@ public class Constants {
     public static String SESSION_EXPIRE = "SESSION_EXPIRE";
     public static String CHAT_ROOM_REFRESH = "CHAT_ROOM_REFRESH";
     public static String UPDATE_NOTIFICATIONS = "UPDATE_NOTIFICATIONS";
+
+    // Contacts
+    public static final String NUMBER = "number";
+    public static final String NAME = "name";
 }

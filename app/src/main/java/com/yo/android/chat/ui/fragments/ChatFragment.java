@@ -361,15 +361,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
             if (dataSnapshot.getChildrenCount() == 2) {
                 if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
-                    Log.i(TAG, ":" + snapshot.getKey());
-                    authReference.child(Constants.USERS).child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot profileDataSnapshot) {
                             Room room = profileDataSnapshot.getValue(Room.class);
                             room.setFirebaseRoomId(dataSnapshot.getRef().getParent().getKey());
                             arrayOfUsers.add(room);
                             chatRoomListAdapter.addItems(arrayOfUsers);
-                            Log.i(TAG, "firebaseRoomId :" + dataSnapshot.getRef().getParent().getKey());
                             Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getRef().getParent().getKey()).child(Constants.CHATS);
                             firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
 

@@ -117,7 +117,6 @@ public class UpdateProfileActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         String title = getResources().getString(R.string.profile);
-
         getSupportActionBar().setTitle(title);
     }
 
@@ -128,7 +127,7 @@ public class UpdateProfileActivity extends BaseActivity {
         switch (requestCode) {
 
             case Constants.ADD_IMAGE_CAPTURE:
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     try {
                         String imagePath = cameraIntent.mFileTemp.getPath();
                         imgFile = new File(imagePath);

@@ -15,6 +15,9 @@ import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -123,13 +126,18 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/user/contacts_sync.json")
-        Call<List<Contact>> syncContactsAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<String> user);
+        Call<List<Contact>> syncContactsAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<Contact> user);
+
+        @FormUrlEncoded
+        @POST("api/user/contacts_sync_with_name.json")
+        Call<List<Contact>> syncContactsWithNameAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<JSONObject> user);
 
         @FormUrlEncoded
         @POST("api/user/firebase_token.json")
         Call<ResponseBody> firebaseAuthToken(@Field("access_token") String access_token);
 
-        @GET("/api/user/contacts.json")
+        //@GET("/api/user/contacts.json")
+        @GET("api/user/contacts_with_name.json")
         Call<List<Contact>> getContacts(@Query("access_token") String access_token);
 
         @FormUrlEncoded
@@ -159,10 +167,10 @@ public class YoApi {
                 @Path("user_id") String userId,
                 @Header("Authorization") String authorization,
                 @Part("user[description]") RequestBody descBody,
-                                            @Part("user[first_name]") RequestBody firstName,
-                                            @Part("user[notification_alert]") RequestBody notificationsAlert,
-                                            @Part("user[contacts_sync]") RequestBody syncContacts,
-                                            @Part MultipartBody.Part file);
+                @Part("user[first_name]") RequestBody firstName,
+                @Part("user[notification_alert]") RequestBody notificationsAlert,
+                @Part("user[contacts_sync]") RequestBody syncContacts,
+                @Part MultipartBody.Part file);
 
         @GET("api/articles.json")
         Call<List<Articles>> getWishListAPI(@Query("access_token") String access_token, @Query("liked") String liked);
