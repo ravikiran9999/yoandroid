@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -20,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -32,7 +35,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
-
 
 
 /**
@@ -110,8 +112,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     @Override
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
-            LinearLayout layout = new LinearLayout(context);
-            layout.setOrientation(LinearLayout.VERTICAL);
+            //LinearLayout layout = new LinearLayout(context);
+            RelativeLayout layout = new RelativeLayout(context);
+            //layout.setOrientation(LinearLayout.VERTICAL);
 
             if (userId.equals(item.getSenderID())) {
 
@@ -181,7 +184,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     }
 
-    private void addView(final LinearLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
+    //private void addView(final LinearLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
+    private void addView(final RelativeLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
 
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
@@ -205,6 +209,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         } else if (item.getType().equals(Constants.IMAGE)) {
             try {
+
+                final ProgressBar progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleLarge);
+                progressBar.setIndeterminate(true);
+                progressBar.setVisibility(View.VISIBLE);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
+                params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                linearLayout.addView(progressBar, params);
+
+
                 if (roomType != null) {
                     TextView senderId = new TextView(context);
                     senderId.setText(item.getSenderID());
@@ -222,12 +235,32 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 StorageReference imageRef = storageRef.child(item.getImagePath());
                 linearLayout.addView(imageView);
                 if (item.getImageUrl() != null) {
-                    Picasso.with(context).load(Uri.parse(item.getImageUrl())).into(imageView);
+                    Picasso.with(context).load(Uri.parse(item.getImageUrl())).into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
                 } else {
                     imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Picasso.with(context).load(uri).into(imageView);
+                            Picasso.with(context).load(uri).into(imageView, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                }
+
+                                @Override
+                                public void onError() {
+
+                                }
+                            });
                             item.setImageUrl(uri.toString());
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -247,7 +280,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         } else {
             holder.getLl().addView(null);
         }
-
 
     }
 

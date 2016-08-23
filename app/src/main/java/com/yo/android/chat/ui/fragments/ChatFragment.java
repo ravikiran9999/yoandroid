@@ -32,6 +32,7 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
+import com.yo.android.model.RoomInfo;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
@@ -225,7 +226,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                 getMembersId(dataSnapshot);
 
-                //memberReference.keepSynced(true);
             }
 
             @Override
@@ -338,7 +338,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void getMembersId(DataSnapshot dataSnapshot) {
 
-        Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.MEMBERS);
+        //Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.MEMBERS);
+        Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey());
         memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -353,33 +354,70 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getMembersProfile(final DataSnapshot dataSnapshot) {
-        if(!arrayOfUsers.isEmpty()){
+        if (!arrayOfUsers.isEmpty()) {
             arrayOfUsers.clear();
         }
         final Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
-        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-            if (dataSnapshot.getChildrenCount() == 2) {
-                if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
-                    authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot profileDataSnapshot) {
-                            Room room = profileDataSnapshot.getValue(Room.class);
-                            room.setFirebaseRoomId(dataSnapshot.getRef().getParent().getKey());
-                            arrayOfUsers.add(room);
-                            chatRoomListAdapter.addItems(arrayOfUsers);
-                            Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getRef().getParent().getKey()).child(Constants.CHATS);
-                            firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+        if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
+            RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
+            if (roomInfo.getName().isEmpty()) {
+                for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
+                    if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
+                        //getMembersProfile(authReference, dataSnapshot, snapshot.getKey());
+                        authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot profileDataSnapshot) {
+                                Room room = profileDataSnapshot.getValue(Room.class);
+                                room.setFirebaseRoomId(dataSnapshot.getRef().getParent().getKey());
+                                arrayOfUsers.add(room);
+                                chatRoomListAdapter.addItems(arrayOfUsers);
+                                Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getRef().getParent().getKey()).child(Constants.CHATS);
+                                firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+                            }
 
-                        }
-
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-                            firebaseError.getMessage();
-                        }
-                    });
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+                                firebaseError.getMessage();
+                            }
+                        });
+                    }
                 }
+            } else if (!roomInfo.getName().isEmpty()) {
+
+                Room room = new Room();
+                room.setFirebaseRoomId(dataSnapshot.getRef().getParent().getKey());
+                room.setGroupName(roomInfo.getName());
+                arrayOfUsers.add(room);
+                chatRoomListAdapter.addItems(arrayOfUsers);
+                Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getRef().getParent().getKey()).child(Constants.CHATS);
+                firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
             }
+
+        }
+
+    }
+
+    private void getMembersProfile(final Firebase authReference, final DataSnapshot dataSnapshot, String opponentfirebaseUserId) {
+        if (!opponentfirebaseUserId.isEmpty()) {
+            authReference.child(Constants.USERS).child(opponentfirebaseUserId).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot profileDataSnapshot) {
+                    Room room = profileDataSnapshot.getValue(Room.class);
+                    room.setFirebaseRoomId(dataSnapshot.getRef().getParent().getKey());
+                    arrayOfUsers.add(room);
+                    chatRoomListAdapter.addItems(arrayOfUsers);
+                    Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getRef().getParent().getKey()).child(Constants.CHATS);
+                    firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    firebaseError.getMessage();
+                }
+            });
+        } else {
+
         }
     }
 }
