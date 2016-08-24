@@ -15,6 +15,7 @@ public class Articles {
     private boolean isFollow;
     private String isFollowing;
     private String magzine_id;
+    private String generated_url;
 
     public String getId() {
         return id;
@@ -94,5 +95,13 @@ public class Articles {
 
     public void setMagzine_id(String magzine_id) {
         this.magzine_id = magzine_id;
+    }
+
+    public String getGenerated_url() {
+        return generated_url;
+    }
+
+    public void setGenerated_url(String generated_url) {
+        this.generated_url = generated_url;
     }
 }

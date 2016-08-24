@@ -8,8 +8,13 @@ import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -28,6 +33,7 @@ import android.widget.TextView;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.model.Articles;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
@@ -38,6 +44,9 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -365,6 +374,21 @@ public class Util {
         }
     }
 
+    public static void shareNewIntent(View view, String url, String title, String body, Uri bmpUri) {
+        try {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("image/*");
+            i.putExtra(Intent.EXTRA_SUBJECT, title);
+            i.putExtra(Intent.EXTRA_TEXT, body + "\n\n" + url);
+            if(bmpUri != null) {
+                i.putExtra(Intent.EXTRA_STREAM, bmpUri);
+            }
+            view.getContext().startActivity(Intent.createChooser(i, "Sharing Article"));
+        } catch (ActivityNotFoundException e) {
+
+        }
+    }
+
     public static void hideKeyboard(Context context, View view) {
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -430,6 +454,80 @@ public class Util {
             context.startActivity(smsIntent);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static class ImageLoaderTask extends AsyncTask<String, Void, Bitmap> {
+
+        private View v;
+        private Articles data;
+        public ImageLoaderTask(View v, Articles data) {
+            this.v = v;
+            this.data = data;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            URL url = null;
+            try {
+                url = new URL(params[0]);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            HttpURLConnection connection = null;
+            try {
+                if (url != null) {
+                    connection = (HttpURLConnection) url.openConnection();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (connection != null) {
+                connection.setDoInput(true);
+            }
+
+            try {
+                if (connection != null) {
+                    connection.connect();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            InputStream input = null;
+            try {
+                if (connection != null) {
+                    input = connection.getInputStream();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            Bitmap immutableBpm = BitmapFactory.decodeStream(input);
+
+            Bitmap mutableBitmap = immutableBpm.copy(Bitmap.Config.ARGB_8888, true);
+            return mutableBitmap;
+
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            View view  = new View(v.getContext());
+
+            view.draw(new Canvas(bitmap));
+
+            String path = MediaStore.Images.Media.insertImage(v.getContext().getContentResolver(), bitmap, "Yo", null);
+
+            if(path!=null) {
+                Uri uri = Uri.parse(path);
+                shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), uri);
+            }
+
         }
     }
 }
