@@ -341,7 +341,12 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Util.shareIntent(v, data.getUrl(),"Sharing Article");
+                    if(data.getImage_filename() !=null) {
+                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
+                    }
+                    else {
+                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                    }
                 }
             });
 
