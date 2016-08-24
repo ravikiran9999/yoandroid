@@ -21,6 +21,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -78,6 +79,8 @@ public class DialerFragment extends BaseFragment {
     TextView txtEmptyCallLogs;
     @Bind(R.id.floatingDialer)
     View floatingDialer;
+    @Bind(R.id.ll_no_calls)
+    LinearLayout llNoCalls;
 
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -395,13 +398,17 @@ public class DialerFragment extends BaseFragment {
     private void showEmptyText() {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
         if (filter.equalsIgnoreCase("all calls")) {
-            txtEmptyCallLogs.setVisibility(View.VISIBLE);
+            txtEmptyCallLogs.setVisibility(View.GONE);
             txtEmptyCallLogs.setText("No call logs history available.");
+            llNoCalls.setVisibility(View.VISIBLE);
         } else {
+            txtEmptyCallLogs.setVisibility(View.GONE);
             txtEmptyCallLogs.setText(String.format("No %s history available.", filter));
+            llNoCalls.setVisibility(View.VISIBLE);
         }
         boolean nonEmpty = show || (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
-        txtEmptyCallLogs.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
+        txtEmptyCallLogs.setVisibility(View.GONE);
+        llNoCalls.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -438,6 +445,7 @@ public class DialerFragment extends BaseFragment {
         showOrHideTabs(false);
         show = true;
         txtEmptyCallLogs.setVisibility(View.GONE);
+        llNoCalls.setVisibility(View.GONE);
         dialPadView.setVisibility(View.VISIBLE);
         floatingDialer.setVisibility(View.GONE);
         Animation bottomUp = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.bottom_up);
