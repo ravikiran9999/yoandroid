@@ -25,10 +25,8 @@ public class CallLogsResult {
     private String destination_name;
     private boolean header;
     private String headerTitle;
-
-
-
     private int callType;
+
     public String getSalerate() {
         return salerate;
     }

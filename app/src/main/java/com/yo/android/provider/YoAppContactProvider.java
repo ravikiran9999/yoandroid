@@ -249,6 +249,7 @@ public class YoAppContactProvider extends ContentProvider {
                         CallLog.Calls.CACHED_NUMBER_TYPE + TYPE_TEXT + COMMA_SEP +
                         CallLog.Calls.NEW + TYPE_INTEGER + COMMA_SEP +
                         CallLog.Calls.CALLTYPE + TYPE_INTEGER +
+                        CallLog.Calls.APP_OR_PSTN + TYPE_INTEGER +
                         ")";
 
         /**

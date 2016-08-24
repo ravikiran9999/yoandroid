@@ -49,6 +49,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private EventBus bus = EventBus.getDefault();
     private Handler mHandler = new Handler();
     boolean running;
+    private String mobile;
 
     private SipBinder sipBinder;
     private ServiceConnection connection = new ServiceConnection() {
@@ -95,7 +96,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callDuration.setText("Calling...");
         callModel.setOnCall(true);
         //CallLogs Model
-        String mobile = getIntent().getStringExtra(CALLER_NO);
+        mobile = getIntent().getStringExtra(CALLER_NO);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
     }

@@ -10,8 +10,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.di.Injector;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.util.Constants;
 import com.yo.android.util.TimeZoneUtils;
 
 import org.apache.http.ParseException;
@@ -23,10 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 /**
  * The CallLog provider contains information about placed and received calls.
  */
 public class CallLog {
+
+
     public static final String AUTHORITY = YoAppContactContract.CONTENT_AUTHORITY;
 
     /**
@@ -39,6 +47,8 @@ public class CallLog {
      * Contains the recent calls.
      */
     public static class Calls implements BaseColumns {
+
+
         /**
          * The content:// style URL for this table
          */
@@ -93,6 +103,15 @@ public class CallLog {
          * Call log type for missed calls.
          */
         public static final int MISSED_TYPE = 3;
+
+        /**
+         * App to app call.
+         */
+        public static final int APP_TO_APP_CALL = 1;
+        /**
+         * App to app call.
+         */
+        public static final int APP_TO_PSTN_CALL = 2;
         /**
          * Call log type for voicemails.
          *
@@ -136,6 +155,8 @@ public class CallLog {
         public static final String NEW = "new";
 
         public static final String CALLTYPE = "calltype";
+
+        public static final String APP_OR_PSTN = "calltype";
 
 
         /**
@@ -255,7 +276,7 @@ public class CallLog {
          *                 {@hide}
          */
         public static Uri addCall(CallerInfo ci, Context context, String number,
-                                  int callType, long start, int duration) {
+                                  int callType, long start, int duration, int pstnorapp) {
             final ContentResolver resolver = context.getContentResolver();
 
 
@@ -265,10 +286,12 @@ public class CallLog {
             Date currentDate = new Date(TimeZoneUtils.getTime(dateFormat));
             values.put(NUMBER, number);
             values.put(TYPE, Integer.valueOf(callType));
-            values.put(DATE,dateFormat.format(currentDate));
+            values.put(DATE, dateFormat.format(currentDate));
             values.put(DURATION, Long.valueOf(duration));
             values.put(NEW, Integer.valueOf(1));
             values.put(CALLTYPE, callType);
+            values.put(APP_OR_PSTN, pstnorapp);
+
             if (ci != null) {
                 values.put(CACHED_NAME, ci.name);
                 values.put(CACHED_NUMBER_TYPE, ci.numberType);
@@ -324,6 +347,80 @@ public class CallLog {
                         CONTENT_URI,
                         null,
                         null,
+                        null,
+                        DEFAULT_SORT_ORDER);
+                if (c == null || !c.moveToFirst()) {
+                    return callerInfos;
+                } else {
+                    do {
+                        CallLogsResult info = new CallLogsResult();
+                        info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
+                        info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
+                        info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
+                        callerInfos.add(info);
+                    } while (c.moveToNext());
+                    return callerInfos;
+
+                }
+            } finally {
+                if (c != null) c.close();
+            }
+        }
+
+        /**
+         * Query the call log database for the last dialed number.
+         *
+         * @param context Used to get the content resolver.
+         * @return The last phone number dialed (outgoing) or an empty
+         * string if none exist yet.
+         */
+        public static ArrayList<CallLogsResult> getPSTNCallLog(Context context) {
+            final ContentResolver resolver = context.getContentResolver();
+            ArrayList<CallLogsResult> callerInfos = new ArrayList<CallLogsResult>();
+
+            Cursor c = null;
+            try {
+                c = resolver.query(
+                        CONTENT_URI,
+                        null,
+                        Calls.APP_OR_PSTN + " = " + APP_TO_PSTN_CALL,
+                        null,
+                        DEFAULT_SORT_ORDER);
+                if (c == null || !c.moveToFirst()) {
+                    return callerInfos;
+                } else {
+                    do {
+                        CallLogsResult info = new CallLogsResult();
+                        info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
+                        info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
+                        info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
+                        callerInfos.add(info);
+                    } while (c.moveToNext());
+                    return callerInfos;
+
+                }
+            } finally {
+                if (c != null) c.close();
+            }
+        }
+
+        /**
+         * Query the call log database for the last dialed number.
+         *
+         * @param context Used to get the content resolver.
+         * @return The last phone number dialed (outgoing) or an empty
+         * string if none exist yet.
+         */
+        public static ArrayList<CallLogsResult> getAppToAppCallLog(Context context) {
+            final ContentResolver resolver = context.getContentResolver();
+            ArrayList<CallLogsResult> callerInfos = new ArrayList<CallLogsResult>();
+
+            Cursor c = null;
+            try {
+                c = resolver.query(
+                        CONTENT_URI,
+                        null,
+                        Calls.APP_OR_PSTN + " = " + APP_TO_APP_CALL,
                         null,
                         DEFAULT_SORT_ORDER);
                 if (c == null || !c.moveToFirst()) {
