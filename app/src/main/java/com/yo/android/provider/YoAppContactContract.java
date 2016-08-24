@@ -39,6 +39,7 @@ public class YoAppContactContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.yoappcontacts.entry";
 
+
         /**
          * Fully qualified URI for "entry" resources.
          */

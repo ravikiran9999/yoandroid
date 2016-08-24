@@ -20,7 +20,7 @@ public interface SipServiceHandler {
 
     void acceptCall();
 
-    void hangupCall();
+    void hangupCall(int callType);
 
     long getCallStartDuration();
 
