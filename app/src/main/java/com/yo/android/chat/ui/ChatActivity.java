@@ -21,6 +21,7 @@ import com.yo.android.util.Constants;
 public class ChatActivity extends BaseActivity {
 
     private String opponent;
+    private String opponentNumber;
     private String mOpponentImg;
 
     @Override
@@ -108,11 +109,11 @@ public class ChatActivity extends BaseActivity {
 
         if (room.getGroupName() == null) {
 
-            if(!room.getFullName().isEmpty()) {
+            /*if(!room.getFullName().isEmpty()) {
                 return room.getFullName();
-            } else {
+            } else {*/
                 return room.getMobileNumber();
-            }
+            //}
 
         } else if (room.getGroupName() != null) {
             return room.getGroupName();

@@ -54,7 +54,6 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
-import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
@@ -86,7 +85,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ListView listView;
     private String opponentNumber;
     private String opponentId;
-    private String yourNumber;
     private File mFileTemp;
     private static final int ADD_IMAGE_CAPTURE = 1;
     private static final int ADD_SELECT_PICTURE = 2;
@@ -121,7 +119,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         childRoomId = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         opponentId = bundle.getString(Constants.OPPONENT_ID);
-        yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
         opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
 
         mobilenumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
@@ -185,10 +182,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     try {
-                        if (userChatAdapter != null && userChatAdapter.getCount() > 0) {
+                        if (userChatAdapter != null && userChatAdapter.getCount() > 0 && (listStickeyHeader != null)) {
                             String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-                            if (listStickeyHeader != null)
-                                listStickeyHeader.setText(headerText);
+                            listStickeyHeader.setText(headerText);
                         }
                     } catch (Exception e) {
                         mLog.w("UserChat", e);
@@ -344,11 +340,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 getImageFromGallery();
                 break;
             case R.id.view_contact:
-                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-                intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
-                intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
-                intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
-                startActivity(intent);
+                viewContact();
                 break;
 
         }
@@ -363,6 +355,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if (chatText.getText() != null) {
             chatText.setText("");
         }
+    }
+
+    private void viewContact() {
+        Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
+        intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
+        intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+        startActivity(intent);
     }
 
     private void sendChatMessage(String chatMessage, String type) {
@@ -564,7 +564,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         @Override
         protected void onProgressUpdate(Double... values) {
             super.onProgressUpdate(values);
-
         }
 
         @Override
