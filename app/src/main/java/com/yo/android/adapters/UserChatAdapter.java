@@ -112,9 +112,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     @Override
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
-            //LinearLayout layout = new LinearLayout(context);
             RelativeLayout layout = new RelativeLayout(context);
-            //layout.setOrientation(LinearLayout.VERTICAL);
 
             if (userId.equals(item.getSenderID())) {
 
@@ -189,19 +187,25 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
+        LinearLayout linearLayout1 = new LinearLayout(context);
+        linearLayout1.setOrientation(LinearLayout.VERTICAL);
 
         if (item.getType().equals(Constants.TEXT)) {
+
             if (roomType != null) {
                 TextView senderId = new TextView(context);
                 senderId.setText(item.getSenderID());
                 senderId.setTextColor(Color.RED);
-                linearLayout.addView(senderId);
+                linearLayout1.addView(senderId);
+                //linearLayout.addView(senderId);
+
             }
 
             TextView textView = new TextView(context);
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
-            linearLayout.addView(textView);
+            linearLayout1.addView(textView);
+            linearLayout.addView(linearLayout1);
 
             holder.getLl().setTag(holder);
             holder.getLl().addView(linearLayout);
@@ -222,7 +226,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     TextView senderId = new TextView(context);
                     senderId.setText(item.getSenderID());
                     senderId.setTextColor(Color.RED);
-                    linearLayout.addView(senderId);
+
+                    linearLayout1.addView(senderId);
                 }
 
                 final ImageView imageView = new ImageView(context);
@@ -233,7 +238,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
                 StorageReference imageRef = storageRef.child(item.getImagePath());
-                linearLayout.addView(imageView);
+                linearLayout1.addView(imageView);
+                linearLayout.addView(linearLayout1);
                 if (item.getImageUrl() != null) {
                     Picasso.with(context).load(Uri.parse(item.getImageUrl())).into(imageView, new Callback() {
                         @Override

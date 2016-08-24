@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,9 +45,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,6 +59,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private List<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
     private Menu menu;
+    private Room room;
 
     @Inject
     YoApi.YoService yoService;
@@ -89,7 +86,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         childEventListenersList = new ArrayList<>();
         arrayOfUsers = new ArrayList<>();
         EventBus.getDefault().register(this);
-
     }
 
     @Override
@@ -179,43 +175,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onResume() {
         super.onResume();
-        //getChatRoomList();
         getAllRooms();
     }
 
-    private void getChatRoomList() {
-        if (arrayOfUsers == null || arrayOfUsers.isEmpty()) {
-            showProgressDialog();
-        }
-        String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-        yoService.getAllRoomsAPI(access).enqueue(new Callback<List<Room>>() {
-            @Override
-            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
-                arrayOfUsers = response.body();
-                if (arrayOfUsers == null) {
-                    arrayOfUsers = new ArrayList<>();
-                }
-                if (arrayOfUsers.isEmpty()) {
-                    emptyImageView.setVisibility(View.VISIBLE);
-                    listView.setVisibility(View.INVISIBLE);
-                } else {
-                    chatRoomListAdapter.addItems(arrayOfUsers);
-                    Firebase firebaseReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
-                    for (int i = 0; i < arrayOfUsers.size(); i++) {
-                        final Room room = arrayOfUsers.get(i);
-                        Firebase firebaseRoomReference = firebaseReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
-                        firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
-                    }
-                }
-                dismissProgressDialog();
-            }
-
-            @Override
-            public void onFailure(Call<List<Room>> call, Throwable t) {
-                dismissProgressDialog();
-            }
-        });
-    }
 
     private void getAllRooms() {
         Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
@@ -338,7 +300,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void getMembersId(DataSnapshot dataSnapshot) {
 
-        //Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.MEMBERS);
         Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey());
         memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -354,6 +315,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getMembersProfile(final DataSnapshot dataSnapshot) {
+
         if (!arrayOfUsers.isEmpty()) {
             arrayOfUsers.clear();
         }
@@ -361,18 +323,18 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
+
             if (roomInfo.getName().isEmpty()) {
                 for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
                     if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
-                        //getMembersProfile(authReference, dataSnapshot, snapshot.getKey());
                         authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot profileDataSnapshot) {
-                                Room room = profileDataSnapshot.getValue(Room.class);
-                                room.setFirebaseRoomId(dataSnapshot.getRef().getParent().getKey());
+                                room = profileDataSnapshot.getValue(Room.class);
+                                room.setFirebaseRoomId(dataSnapshot.getKey());
                                 arrayOfUsers.add(room);
                                 chatRoomListAdapter.addItems(arrayOfUsers);
-                                Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getRef().getParent().getKey()).child(Constants.CHATS);
+                                Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
                             }
 
@@ -384,40 +346,16 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             } else if (!roomInfo.getName().isEmpty()) {
-
-                Room room = new Room();
-                room.setFirebaseRoomId(dataSnapshot.getRef().getParent().getKey());
+                room = new Room();
+                room.setFirebaseRoomId(dataSnapshot.getKey());
                 room.setGroupName(roomInfo.getName());
                 arrayOfUsers.add(room);
                 chatRoomListAdapter.addItems(arrayOfUsers);
-                Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getRef().getParent().getKey()).child(Constants.CHATS);
+                Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
             }
 
         }
 
-    }
-
-    private void getMembersProfile(final Firebase authReference, final DataSnapshot dataSnapshot, String opponentfirebaseUserId) {
-        if (!opponentfirebaseUserId.isEmpty()) {
-            authReference.child(Constants.USERS).child(opponentfirebaseUserId).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot profileDataSnapshot) {
-                    Room room = profileDataSnapshot.getValue(Room.class);
-                    room.setFirebaseRoomId(dataSnapshot.getRef().getParent().getKey());
-                    arrayOfUsers.add(room);
-                    chatRoomListAdapter.addItems(arrayOfUsers);
-                    Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getRef().getParent().getKey()).child(Constants.CHATS);
-                    firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                    firebaseError.getMessage();
-                }
-            });
-        } else {
-
-        }
     }
 }
