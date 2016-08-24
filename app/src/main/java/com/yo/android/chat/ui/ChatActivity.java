@@ -105,20 +105,20 @@ public class ChatActivity extends BaseActivity {
     }
 
     private String getOppenent(@NonNull Room room) {
-        String opponent = null;
-        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (room.getGroupName() == null) {
-            for (int i = 0; room.getMembers() != null && i < room.getMembers().size(); i++) {
-                if (!room.getMembers().get(i).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
-                    return room.getMembers().get(i).getMobileNumber();
-                }
+
+            if(!room.getFullName().isEmpty()) {
+                return room.getFullName();
+            } else {
+                return room.getMobileNumber();
             }
+
         } else if (room.getGroupName() != null) {
             return room.getGroupName();
         }
 
-        return opponent;
+        return null;
     }
 
 }

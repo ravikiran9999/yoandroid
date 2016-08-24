@@ -142,7 +142,6 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
      */
     @OnClick(R.id.email_sign_in_button)
     public void attemptLogin() {
-
         // Reset errors.
         mPhoneNumberView.setError(null);
         // Store values at the time of the login attempt.
@@ -186,7 +185,6 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
 
             //Add subscriber
             String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
-            //TODO: Revathi will do that
             String yoUser = phoneNumber;
             UserDetails userDetails = voxFactory.newAddSubscriber(yoUser, yoUser);
             //Debug
