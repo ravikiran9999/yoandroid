@@ -124,6 +124,8 @@ public class Room implements Parcelable {
         dest.writeString(groupName);
         dest.writeString(image);
         dest.writeTypedList(members);
+        dest.writeString(fullName);
+        dest.writeString(mobileNumber);
     }
 
     public Room(Parcel in) {
@@ -133,6 +135,8 @@ public class Room implements Parcelable {
         this.groupName = in.readString();
         this.image = in.readString();
         in.readTypedList(members, Members.CREATOR);
+        this.fullName = in.readString();
+        this.mobileNumber = in.readString();
     }
 
     public static final Parcelable.Creator<Room> CREATOR = new Parcelable.Creator<Room>() {
