@@ -81,6 +81,9 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE,
+
     };
 
     // Constants representing column positions from PROJECTION.
@@ -91,6 +94,10 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int COLUMN_IMAGE = 4;
     public static final int COLUMN_FIREBASE_ROOM_ID = 5;
     public static final int COLUMN_YO_USER = 6;
+    public static final int COLUMN_VOX_USERNAME = 7;
+    public static final int COLUMN_COUNTRY_CODE = 8;
+
+
 
     /**
      * Constructor. Obtains handle to content resolver for later use.
@@ -201,6 +208,9 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         String image;
         String roomId;
         boolean yoAppUser;
+        String voxUserName;
+        String countryCode;
+
         while (c.moveToNext()) {
             syncResult.stats.numEntries++;
             id = c.getInt(COLUMN_ID);
@@ -210,6 +220,8 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             image = c.getString(COLUMN_IMAGE);
             roomId = c.getString(COLUMN_FIREBASE_ROOM_ID);
             yoAppUser = c.getInt(COLUMN_YO_USER) != 0;
+            voxUserName = c.getString(COLUMN_VOX_USERNAME);
+            countryCode = c.getString(COLUMN_COUNTRY_CODE);
             Entry match = entryMap.get(phone);
             if (match != null) {
                 // Entry exists. Remove from entry map to prevent insert later.
@@ -222,7 +234,9 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                         (match.firebaseRoomId != null && !match.firebaseRoomId.equals(roomId)) ||
                         (roomId != null && !roomId.equals(match.firebaseRoomId)) ||
                         (match.name != null && !match.name.equals(name)) ||
-                        (match.image != null && !match.image.equals(image))
+                        (match.image != null && !match.image.equals(image))||
+                        (match.voxUserName != null && !match.voxUserName.equals(voxUserName))||
+                        (match.countryCode != null && !match.countryCode.equals(countryCode))
                         ) {
                     // Update existing record
                     Log.i(TAG, "Scheduling update: " + existingUri);
@@ -231,6 +245,8 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE, match.image)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID, match.firebaseRoomId)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER, match.yoappuser)
+                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME, match.voxUserName)
+                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE, match.countryCode)
                             .build());
                     syncResult.stats.numUpdates++;
                 }
@@ -250,11 +266,14 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.i(TAG, "Scheduling insert: phone=" + e.phone);
             batch.add(ContentProviderOperation.newInsert(YoAppContactContract.YoAppContactsEntry.CONTENT_URI)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_USER_ID, e.entryId)
+
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME, e.name)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER, e.phone)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE, e.image)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID, e.firebaseRoomId)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER, e.yoappuser)
+                    .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME, e.voxUserName)
+                    .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE, e.countryCode)
                     .build());
             syncResult.stats.numInserts++;
         }
@@ -272,7 +291,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         List<Entry> list = new ArrayList<>();
         for (Contact contact : contacts) {
             Entry entry = new Entry(contact.getId(),
-                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.getYoAppUser());
+                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.getYoAppUser(),contact.getVoxUserName(),contact.getCountryCode());
             list.add(entry);
         }
         return list;
@@ -290,14 +309,18 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         public final String image;
         public final boolean yoappuser;
         public final String firebaseRoomId;
+        public final String voxUserName;
+        public final String countryCode;
 
-        Entry(String id, String name, String phone, String image, String firebaseRoomId, boolean yoappuser) {
+        Entry(String id, String name, String phone, String image, String firebaseRoomId, boolean yoappuser,String voxUserName,String countryCode) {
             this.entryId = id;
             this.name = name;
             this.phone = phone;
             this.image = image;
             this.yoappuser = yoappuser;
             this.firebaseRoomId = firebaseRoomId;
+            this.voxUserName = voxUserName;
+            this.countryCode = countryCode;
         }
     }
 

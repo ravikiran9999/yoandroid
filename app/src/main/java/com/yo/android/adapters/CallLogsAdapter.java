@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.calllogs.CallLog;
 import com.yo.android.helpers.CallLogsViewHolder;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.pjsip.SipHelper;
@@ -50,7 +51,16 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
             holder.getHeader().setVisibility(View.VISIBLE);
             holder.getRowContainer().setVisibility(View.GONE);
             holder.getHeader().setText(item.getHeaderTitle());
-        } else if (item.getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
+        } else if (item.getCallType() == CallLog.Calls.MISSED_TYPE) {
+            holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_missed_holo_dark, 0, 0, 0);
+            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));
+        }else if(item.getCallType() == CallLog.Calls.INCOMING_TYPE){
+            holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_incoming_holo_dark, 0, 0, 0);
+            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));        }
+        else if(item.getCallType() == CallLog.Calls.OUTGOING_TYPE){
+            holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_outgoing_holo_dark, 0, 0, 0);
+            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));
+        }else if (item.getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
             holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
         } else {

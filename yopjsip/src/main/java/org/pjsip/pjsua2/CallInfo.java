@@ -204,4 +204,8 @@ public class CallInfo {
         this(pjsua2JNI.new_CallInfo(), true);
     }
 
+    @Override
+    public String toString() {
+        return "ID = " + getId() + ", AccId = " + getAccId() + ", CPtr = " + getCPtr(this) + ", RemAudioCount = " + getRemAudioCount() + ", CallIdString = " + getCallIdString() + ", ConnectDuration = " + getConnectDuration().getSec() + ", LastReason = " + getLastReason() + ", LastStatusCode swigValue= " + getLastStatusCode().swigValue()+ ", LocalContact = " + getLocalContact() + ", LocalUri = " + getLocalUri() + ", Role = " + getRole() + ", StateText = " + getStateText() + ", TotalDuration = " + getTotalDuration().getSec();
+    }
 }

@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
+import com.yo.android.calllogs.CallLog;
+import com.yo.android.calllogs.CallLogContract;
+
 public class YoAppContactProvider extends ContentProvider {
     private YoAppContactDatabase mDatabaseHelper;
 
@@ -25,6 +28,8 @@ public class YoAppContactProvider extends ContentProvider {
      * URI ID for route: /contacts/{ID}
      */
     public static final int ROUTE_CONTACTS_ENTRIES_ID = 2;
+    public static final int CALL_LOGS = 3;
+
 
     /**
      * UriMatcher, used to decode incoming URIs.
@@ -34,6 +39,7 @@ public class YoAppContactProvider extends ContentProvider {
     static {
         sUriMatcher.addURI(AUTHORITY, "contacts", CONTACTS_ENTRIES);
         sUriMatcher.addURI(AUTHORITY, "contacts/*", ROUTE_CONTACTS_ENTRIES_ID);
+        sUriMatcher.addURI(AUTHORITY, "callLogs", CALL_LOGS);
     }
 
     @Override
@@ -53,6 +59,8 @@ public class YoAppContactProvider extends ContentProvider {
                 return YoAppContactContract.YoAppContactsEntry.CONTENT_TYPE;
             case ROUTE_CONTACTS_ENTRIES_ID:
                 return YoAppContactContract.YoAppContactsEntry.CONTENT_ITEM_TYPE;
+            case CALL_LOGS:
+                return CallLogContract.CALL_LOG_CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -71,6 +79,9 @@ public class YoAppContactProvider extends ContentProvider {
         SelectionBuilder builder = new SelectionBuilder();
         int uriMatch = sUriMatcher.match(uri);
         switch (uriMatch) {
+            case CALL_LOGS:
+                builder.table(CallLogContract.TABLE_NAME);
+                return builder.query(db,projection,selection,null,sortOrder,null);
             case ROUTE_CONTACTS_ENTRIES_ID:
                 // Return a single entry, by ID.
                 String id = uri.getLastPathSegment();
@@ -105,6 +116,10 @@ public class YoAppContactProvider extends ContentProvider {
                 long id = db.insertOrThrow(YoAppContactContract.YoAppContactsEntry.TABLE_NAME, null, values);
                 result = Uri.parse(YoAppContactContract.YoAppContactsEntry.CONTENT_URI + "/" + id);
                 break;
+            case CALL_LOGS:
+                id = db.insertOrThrow(CallLogContract.TABLE_NAME, null, values);
+                result = Uri.parse(CallLogContract.CALL_LOG_CONTENT_TYPE + "/" + id);
+                break;
             case ROUTE_CONTACTS_ENTRIES_ID:
                 throw new UnsupportedOperationException("Insert not supported on URI: " + uri);
             default:
@@ -129,6 +144,11 @@ public class YoAppContactProvider extends ContentProvider {
         switch (match) {
             case CONTACTS_ENTRIES:
                 count = builder.table(YoAppContactContract.YoAppContactsEntry.TABLE_NAME)
+                        .where(selection, selectionArgs)
+                        .delete(db);
+                break;
+            case CALL_LOGS:
+                count = builder.table(CallLogContract.TABLE_NAME)
                         .where(selection, selectionArgs)
                         .delete(db);
                 break;
@@ -161,6 +181,11 @@ public class YoAppContactProvider extends ContentProvider {
         switch (match) {
             case CONTACTS_ENTRIES:
                 count = builder.table(YoAppContactContract.YoAppContactsEntry.TABLE_NAME)
+                        .where(selection, selectionArgs)
+                        .update(db, values);
+                break;
+            case CALL_LOGS:
+                count = builder.table(CallLogContract.TABLE_NAME)
                         .where(selection, selectionArgs)
                         .update(db, values);
                 break;
@@ -211,7 +236,22 @@ public class YoAppContactProvider extends ContentProvider {
                         YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + TYPE_TEXT + COMMA_SEP +
                         YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE + TYPE_TEXT + COMMA_SEP +
                         YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID + TYPE_TEXT + COMMA_SEP +
-                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + TYPE_INTEGER +
+                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + TYPE_INTEGER + COMMA_SEP +
+                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + TYPE_TEXT  +COMMA_SEP +
+                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE + TYPE_TEXT  +
+                        ")";
+        private static final String SQL_CREATE_CALL_LOG =
+                "CREATE TABLE " + CallLogContract.TABLE_NAME + " (" +
+                        CallLog.Calls.NUMBER + TYPE_TEXT + COMMA_SEP +
+                        CallLog.Calls.TYPE + TYPE_TEXT + COMMA_SEP +
+                        CallLog.Calls.DATE + TYPE_TEXT + COMMA_SEP +
+                        CallLog.Calls.DURATION + TYPE_TEXT + COMMA_SEP +
+                        CallLog.Calls.CACHED_NAME + TYPE_TEXT + COMMA_SEP +
+                        CallLog.Calls.CACHED_NUMBER_LABEL + TYPE_TEXT + COMMA_SEP +
+                        CallLog.Calls.CACHED_NUMBER_TYPE + TYPE_TEXT + COMMA_SEP +
+                        CallLog.Calls.NEW + TYPE_INTEGER + COMMA_SEP +
+                        CallLog.Calls.CALLTYPE + TYPE_INTEGER +
+                        CallLog.Calls.APP_OR_PSTN + TYPE_INTEGER +
                         ")";
 
         /**
@@ -219,6 +259,9 @@ public class YoAppContactProvider extends ContentProvider {
          */
         private static final String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + YoAppContactContract.YoAppContactsEntry.TABLE_NAME;
+        private static final String SQL_DELETE_CALL_LOGS =
+                "DROP TABLE IF EXISTS " + YoAppContactContract.YoAppContactsEntry.TABLE_NAME;
+
 
         public YoAppContactDatabase(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -227,6 +270,7 @@ public class YoAppContactProvider extends ContentProvider {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SQL_CREATE_ENTRIES);
+            db.execSQL(SQL_CREATE_CALL_LOG);
         }
 
         @Override
@@ -234,6 +278,7 @@ public class YoAppContactProvider extends ContentProvider {
             // This database is only a cache for online data, so its upgrade policy is
             // to simply to discard the data and start over
             db.execSQL(SQL_DELETE_ENTRIES);
+            db.execSQL(SQL_DELETE_CALL_LOGS);
             onCreate(db);
         }
     }

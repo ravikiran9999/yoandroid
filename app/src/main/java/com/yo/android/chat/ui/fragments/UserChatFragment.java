@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -53,7 +54,6 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
-import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
@@ -85,7 +85,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ListView listView;
     private String opponentNumber;
     private String opponentId;
-    private String yourNumber;
     private File mFileTemp;
     private static final int ADD_IMAGE_CAPTURE = 1;
     private static final int ADD_SELECT_PICTURE = 2;
@@ -106,8 +105,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Inject
     YoApi.YoService yoService;
 
-    @Inject
-    BaseActivity baseActivity;
     private String opponentImg;
 
     public UserChatFragment() {
@@ -122,7 +119,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         childRoomId = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         opponentId = bundle.getString(Constants.OPPONENT_ID);
-        yourNumber = bundle.getString(Constants.YOUR_PHONE_NUMBER);
         opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
 
         mobilenumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
@@ -186,10 +182,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     try {
-                        if (userChatAdapter != null && userChatAdapter.getCount() > 0) {
+                        if (userChatAdapter != null && userChatAdapter.getCount() > 0 && (listStickeyHeader != null)) {
                             String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-                            if (listStickeyHeader != null)
-                                listStickeyHeader.setText(headerText);
+                            listStickeyHeader.setText(headerText);
                         }
                     } catch (Exception e) {
                         mLog.w("UserChat", e);
@@ -345,11 +340,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 getImageFromGallery();
                 break;
             case R.id.view_contact:
-                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-                intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
-                intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
-                intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
-                startActivity(intent);
+                viewContact();
                 break;
 
         }
@@ -364,6 +355,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if (chatText.getText() != null) {
             chatText.setText("");
         }
+    }
+
+    private void viewContact() {
+        Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
+        intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
+        intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+        startActivity(intent);
     }
 
     private void sendChatMessage(String chatMessage, String type) {
@@ -491,15 +490,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         uploadImage(filePath);
                         cursor.close();
 
-                        /*if (filePath != null && filePath.length() > 0) {
-                            if (filePath.endsWith(".jpg")
-                                    || filePath.endsWith(".png")
-                                    || filePath.endsWith(".bmp")) {
-                                File file = new File(filePath);
-                                cursor.close();
-                            }
-                        }*/
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -525,6 +515,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         StorageReference imagesRef = storageReference.child("images/" + file.getLastPathSegment());
         UploadTask uploadTask = imagesRef.putFile(file, metadata);
+
+        //new UploadImageTask(uploadTask).execute(path);
 
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -555,6 +547,65 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         });
 
+    }
+
+    protected class UploadImageTask extends AsyncTask<String, Double, String> {
+        UploadTask uploadTask;
+
+        public UploadImageTask(UploadTask uploadTask) {
+            this.uploadTask = uploadTask;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Double... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected String doInBackground(final String... params) {
+
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Handle unsuccessful uploads
+                    uploadImage(params[0]);
+                    e.printStackTrace();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    if (downloadUrl != null) {
+                        sendImage(downloadUrl.getLastPathSegment());
+                    }
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = 100.0 * (taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                    Log.i(TAG, "Upload is " + progress + "% done");
+                }
+            }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(getActivity(), "Upload is paused", Toast.LENGTH_LONG).show();
+                }
+            });
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 
     private void sendImage(@NonNull String imagePathName) {

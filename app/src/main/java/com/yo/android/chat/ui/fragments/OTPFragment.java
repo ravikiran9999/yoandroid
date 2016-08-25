@@ -26,6 +26,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
+import com.yo.android.model.Subscriber;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.UpdateProfileActivity;
@@ -187,12 +188,13 @@ public class OTPFragment extends BaseFragment {
                 "password", countryCode + phoneNumber, etOtp.getText().toString().trim()).enqueue(new Callback<OTPResponse>() {
             @Override
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
-                dismissProgressDialog();
+                //dismissProgressDialog();
                 if (response.isSuccessful()) {
                     preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, false);
                     contactsSyncManager.syncContacts();
                     count++;
-                    navigateToNext(response, phoneNumber, password);
+                    storeTokens(response, phoneNumber, password);
+                    addSubscriber(response.body().getAccessToken());
                 } else {
                     mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
                 }
@@ -206,13 +208,34 @@ public class OTPFragment extends BaseFragment {
         });
     }
 
-    private void navigateToNext(Response<OTPResponse> response, @NonNull String phoneNumber, @NonNull String password) {
+    private void addSubscriber(String accessToken) {
+        yoService.subscribe(accessToken).enqueue(new Callback<Subscriber>() {
+            @Override
+            public void onResponse(Call<Subscriber> call, Response<Subscriber> response) {
+                dismissProgressDialog();
+                if (response.isSuccessful()) {
+                    preferenceEndPoint.saveStringPreference(Constants.SUBSCRIBER_ID, response.body().getDATA().getSUBSCRIBERID());
+                    preferenceEndPoint.saveStringPreference(Constants.CALLINGCARDNUMBER, response.body().getDATA().getCALLINGCARDNUMBER());
+                    preferenceEndPoint.saveStringPreference(Constants.VOX_USER_NAME, response.body().getDATA().getUSERNAME());
+                    preferenceEndPoint.saveStringPreference(Constants.PASSWORD, response.body().getDATA().getPASSWORD());
+                    finishAndNavigateToHome();
+                } else {
+                    mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Subscriber> call, Throwable t) {
+                dismissProgressDialog();
+                mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+            }
+        });
+    }
+
+    private void storeTokens(Response<OTPResponse> response, @NonNull String phoneNumber, @NonNull String password) {
         preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, response.body().getAccessToken());
         preferenceEndPoint.saveStringPreference(YoApi.REFRESH_TOKEN, response.body().getRefreshToken());
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NUMBER, phoneNumber);
-        preferenceEndPoint.saveStringPreference("password", "123456");
-        dismissProgressDialog();
-        finishAndNavigateToHome();
     }
 
     private void finishAndNavigateToHome() {

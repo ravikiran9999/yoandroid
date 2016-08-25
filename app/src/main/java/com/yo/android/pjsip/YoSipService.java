@@ -11,9 +11,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.orion.android.common.logger.Log;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
+import com.yo.android.calllogs.CallLog;
 import com.yo.android.di.InjectedService;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -30,10 +33,12 @@ import org.pjsip.pjsua2.StringVector;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
 
@@ -63,6 +68,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private SipCallState sipCallState;
     private Handler mHandler;
     private String registrationStatus = "";
+
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
 
     @Override
     public void onCreate() {
@@ -230,9 +239,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             try {
                 int statusCode = call.getInfo().getLastStatusCode().swigValue();
                 //TODO:Handle more error codes to display proper messages to the user
-                // 603 Decline - when end call
-                //503 Service Unavailable  - Buddy is not available
-                //603 Allocated Channels Busy -Lines are busy
+
+                handlerErrorCodes(call.getInfo(), sipCallState);
                 if (statusCode == 503) {
                     mLog.e(TAG, "503 >>> Buddy is not online at this moment");
                 }
@@ -249,6 +257,20 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
 
 
+    }
+
+    private void handlerErrorCodes(final CallInfo call, SipCallState sipCallState) {
+        int statusCode = call.getLastStatusCode().swigValue();
+        mLog.e(TAG, sipCallState.getMobileNumber() + ",Call Object " + call.toString());
+        // 603 Decline - when end call
+        //503 Service Unavailable  - Buddy is not available
+        //603 Allocated Channels Busy -Lines are busy
+        // 487 missed call
+        switch (statusCode) {
+            case 487:
+                storeCallLog(CallLog.Calls.MISSED_TYPE);
+                break;
+        }
     }
 
     private void callAccepted() {
@@ -437,17 +459,34 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
-    public void hangupCall() {
+    public void hangupCall(int callType) {
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
             try {
                 currentCall.hangup(prm);
                 sipCallState.setCallState(SipCallState.CALL_FINISHED);
+                storeCallLog(callType);
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
         }
+    }
+
+    private void storeCallLog(int callType) {
+        long currentTime = System.currentTimeMillis();
+        int callDuration = (int) TimeUnit.MILLISECONDS.toSeconds(currentTime);
+        if (callType == CallLog.Calls.MISSED_TYPE) {
+            callDuration = 0;
+        }
+        String prefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
+        int pstnorapp = 0;
+        if (sipCallState.getMobileNumber().startsWith(prefix)) {
+            pstnorapp = CallLog.Calls.APP_TO_PSTN_CALL;
+        } else {
+            pstnorapp = CallLog.Calls.APP_TO_APP_CALL;
+        }
+        CallLog.Calls.addCall(null, getBaseContext(), sipCallState.getMobileNumber(), callType, callStarted, callDuration, pstnorapp);
     }
 
     public long getCallStartDuration() {

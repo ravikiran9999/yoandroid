@@ -11,6 +11,7 @@ import com.yo.android.model.OwnMagazine;
 import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.model.Response;
 import com.yo.android.model.Room;
+import com.yo.android.model.Subscriber;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
@@ -69,6 +70,9 @@ public class YoApi {
                 @Field("phone_no") String phone_no,
                 @Field("otp") String otp
         );
+
+        @POST("api/user/vox_subscribe.json")
+        Call<Subscriber> subscribe(@Query("access_token") String access_token);
 
         @GET("api/tags.json")
         Call<List<Topics>> tagsAPI(@Query("access_token") String access_token);

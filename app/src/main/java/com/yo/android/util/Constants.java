@@ -34,6 +34,11 @@ public class Constants {
     public static final String FIREBASE_USER_ID = "firebase_user_id";
     public static final String USER_AVATAR = "user_avatar";
     public static final String USER_NAME = "first_name";
+    public static final String VOX_USER_NAME = "vox_user_name";
+    public static final String PASSWORD = "password";
+    public static final String CALLINGCARDNUMBER = "calling_card_number";
+
+
     public static final String USER_STATUS = "user_status";
     public static final String PHONE_NUMBER = "phone";
     public static final String CURRENT_BALANCE = "current_balance";
@@ -59,6 +64,7 @@ public class Constants {
     public static final String CHATS = "chats";
     public static final String ROOM_ID = "RoomID";
     public static final String FIREBASE_TOKEN = "firebase_token";
+    public static final String ROOM_INFO = "room_info";
 
     public static final String MAGAZINE_ADD_ARTICLE_ID = "magazine_add_article_id";
     public static final int ADD_ARTICLES_TO_MAGAZINE = 201;

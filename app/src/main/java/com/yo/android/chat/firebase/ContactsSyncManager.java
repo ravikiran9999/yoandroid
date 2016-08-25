@@ -57,6 +57,8 @@ public class ContactsSyncManager {
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE
     };
     // Constants representing column positions from PROJECTION.
     public static final int COLUMN_ID = 0;
@@ -66,6 +68,9 @@ public class ContactsSyncManager {
     public static final int COLUMN_IMAGE = 4;
     public static final int COLUMN_FIREBASE_ROOM_ID = 5;
     public static final int COLUMN_YO_USER = 6;
+    public static final int COLUMN_VOX_USERNAME = 7;
+    public static final int COLUMN_COUNTRY_CODE = 8;
+
 
 
     @Inject
@@ -234,6 +239,8 @@ public class ContactsSyncManager {
         String image = c.getString(COLUMN_IMAGE);
         String roomId = c.getString(COLUMN_FIREBASE_ROOM_ID);
         boolean yoAppUser = c.getInt(COLUMN_YO_USER) != 0;
+        String voxUserName = c.getString(COLUMN_VOX_USERNAME);
+        String countryCode = c.getString(COLUMN_COUNTRY_CODE);
         //
         Contact contact = new Contact();
         contact.setId(entryId);
@@ -242,6 +249,8 @@ public class ContactsSyncManager {
         contact.setImage(image);
         contact.setFirebaseRoomId(roomId);
         contact.setYoAppUser(yoAppUser);
+        contact.setCountryCode(countryCode);
+        contact.setVoxUserName(voxUserName);
         return contact;
     }
 

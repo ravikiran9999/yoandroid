@@ -142,7 +142,6 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
      */
     @OnClick(R.id.email_sign_in_button)
     public void attemptLogin() {
-
         // Reset errors.
         mPhoneNumberView.setError(null);
         // Store values at the time of the login attempt.
@@ -186,13 +185,12 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
 
             //Add subscriber
             String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
-            //TODO: Revathi will do that
             String yoUser = phoneNumber;
             UserDetails userDetails = voxFactory.newAddSubscriber(yoUser, yoUser);
             //Debug
             String action = voxFactory.addSubscriber(yoUser, phoneNumber, countryCode);
             mLog.e(TAG, "Request for adding vox api: %s", action);
-            voxService.getData(userDetails).enqueue(new Callback<ResponseBody>() {
+            /*voxService.getData(userDetails).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
 
@@ -203,7 +201,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
 
                 }
             });
-
+*/
             callLoginService(phoneNumber);
 
         }

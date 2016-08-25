@@ -43,17 +43,12 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
     @Override
     public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
-        /*if (!item.getYoAppUser()) {
-            holder.getContactNumber().setText(item.getPhoneNo());
-            holder.getContactMail().setText("");
-        } else {
-            holder.getContactNumber().setText(item.getName());
-            holder.getContactMail().setText(item.getPhoneNo());
-        }*/
 
         holder.getContactNumber().setText(item.getName());
-        if (!item.getName().equals(item.getPhoneNo())) {
+        if (!item.getName().replaceAll("\\s+","").equalsIgnoreCase(item.getPhoneNo().trim())) {
             holder.getContactMail().setText(item.getPhoneNo());
+        } else {
+            holder.getContactMail().setText("");
         }
 
         if (!TextUtils.isEmpty(item.getImage())) {
@@ -106,10 +101,16 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             public void onClick(View v) {
                 //Registration registration = getAllItems().get(position);
                 //String opponentPhoneNumber = registration.getPhoneNumber();
-                String opponentPhoneNumber = item.getPhoneNo();
+                String opponentPhoneNumber = item.getVoxUserName();
 
                 if (opponentPhoneNumber != null) {
                     SipHelper.makeCall(mContext, opponentPhoneNumber);
+                }else{
+                    if(item.getCountryCode() !=null && item.getPhoneNo() !=null) {
+                        SipHelper.makeCall(mContext, item.getCountryCode() + item.getPhoneNo());
+                    }else{
+                        //TODO: Think about it
+                    }
                 }
             }
         });

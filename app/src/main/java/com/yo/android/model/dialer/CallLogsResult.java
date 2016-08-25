@@ -25,6 +25,7 @@ public class CallLogsResult {
     private String destination_name;
     private boolean header;
     private String headerTitle;
+    private int callType;
 
     public String getSalerate() {
         return salerate;
@@ -80,6 +81,13 @@ public class CallLogsResult {
 
     public void setDestination_name(String destination_name) {
         this.destination_name = destination_name;
+    }
+    public int getCallType() {
+        return callType;
+    }
+
+    public void setCallType(int callType) {
+        this.callType = callType;
     }
 
     @Override

@@ -30,6 +30,7 @@ import com.google.gson.Gson;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
+import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResponse;
 import com.yo.android.model.dialer.CallLogsResult;
@@ -319,54 +320,12 @@ public class DialerFragment extends BaseFragment {
     }
 
     private void loadCallLogs() {
-        showProgressDialog();
         appCalls.clear();
         paidCalls.clear();
-        final String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        service.executeAction(voxFactory.getCallLogsBody(phone)).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                dismissProgressDialog();
-                try {
-                    if (response.isSuccessful()) {
-                        CallLogsResponse callLogsResponse = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), CallLogsResponse.class);
-                        List<CallLogsResult> list = callLogsResponse.getDATA().getRESULT();
-                        if (list != null) {
-                            for (CallLogsResult callLogsResult : list) {
-                                if ("SIP2SIP Call".equalsIgnoreCase(callLogsResult.getDestination_name())) {
-                                    appCalls.add(callLogsResult);
-                                } else {
-                                    paidCalls.add(callLogsResult);
-                                }
-                            }
-                            Collections.sort(appCalls, new Comparator<CallLogsResult>() {
-                                @Override
-                                public int compare(CallLogsResult lhs, CallLogsResult rhs) {
-                                    return (int) (Util.getTime(rhs.getStime()) - Util.getTime(lhs.getStime()));
-                                }
-                            });
-                            Collections.sort(paidCalls, new Comparator<CallLogsResult>() {
-                                @Override
-                                public int compare(CallLogsResult lhs, CallLogsResult rhs) {
-                                    return (int) (Util.getTime(rhs.getStime()) - Util.getTime(lhs.getStime()));
-                                }
-                            });
-                            showDataOnFilter();
-                        }
-                    }
-                } catch (Exception e) {
-                    mLog.w("DialerFragment", "loadCallLogs", e);
-                }
-                showEmptyText();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                dismissProgressDialog();
-                showEmptyText();
-            }
-        });
-
+        appCalls = CallLog.Calls.getAppToAppCallLog(getActivity());
+        paidCalls = CallLog.Calls.getPSTNCallLog(getActivity());
+        showEmptyText();
+        showDataOnFilter();
     }
 
     private void showDataOnFilter() {
@@ -382,7 +341,6 @@ public class DialerFragment extends BaseFragment {
         }
         adapter.addItems(results);
         showEmptyText();
-
     }
 
     private void prepare(String type, List<CallLogsResult> results, List<CallLogsResult> checkList) {

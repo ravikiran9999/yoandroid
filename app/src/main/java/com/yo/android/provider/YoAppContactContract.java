@@ -39,6 +39,7 @@ public class YoAppContactContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.yoappcontacts.entry";
 
+
         /**
          * Fully qualified URI for "entry" resources.
          */
@@ -61,6 +62,11 @@ public class YoAppContactContract {
         public static final String COLUMN_NAME_IS_YOAPP_USER = "is_yoapp_user";
 
         public static final String COLUMN_NAME_FIREBASE_ROOM_ID = "firebase_room_id";
+
+        public static final String COLUMN_NAME_VOX_USER_NAME = "vox_user_name";
+
+        public static final String COLUMN_NAME_COUNTRY_CODE = "country_code";
+
 
     }
 
