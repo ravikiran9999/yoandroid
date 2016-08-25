@@ -2,25 +2,33 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
+import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.CallLogsViewHolder;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.OutGoingCallActivity;
 
 public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLogsViewHolder> {
 
     private final PreferenceEndPoint mPrefs;
+    private ContactsSyncManager contactsSyncManager;
 
-    public CallLogsAdapter(Context context, PreferenceEndPoint prefs) {
+    public CallLogsAdapter(Context context, PreferenceEndPoint prefs,ContactsSyncManager contactsSyncManager) {
         super(context);
         this.mPrefs = prefs;
+        this.contactsSyncManager = contactsSyncManager;
     }
+
+
 
     @Override
     public int getLayoutId() {
@@ -80,7 +88,10 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
         holder.getMessageIcon().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ContactsListAdapter.showUserChatScreen(mContext, mPrefs.getStringPreference(Constants.PHONE_NUMBER), item.getDialnumber());
+                Intent intent = new Intent(mContext, ChatActivity.class);
+                intent.putExtra(Constants.CONTACT,contactsSyncManager.getContactByVoxUserName(item.getDialnumber()) );
+                intent.putExtra(Constants.TYPE, Constants.CONTACT);
+                mContext.startActivity(intent);
             }
         });
 

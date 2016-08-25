@@ -386,7 +386,7 @@ public class CallLog {
                 c = resolver.query(
                         CONTENT_URI,
                         null,
-                        Calls.CALLTYPE + " = " + APP_TO_PSTN_CALL,
+                        Calls.APP_OR_PSTN + " = " + APP_TO_PSTN_CALL,
                         null,
                         DEFAULT_SORT_ORDER);
                 if (c == null || !c.moveToFirst()) {
@@ -397,7 +397,6 @@ public class CallLog {
                         info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
-                        info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         callerInfos.add(info);
                     } while (c.moveToNext());
                     return callerInfos;

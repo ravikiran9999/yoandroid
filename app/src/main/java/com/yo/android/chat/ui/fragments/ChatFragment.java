@@ -27,9 +27,11 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.util.Constants;
@@ -71,6 +73,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
+
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -333,6 +338,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             public void onDataChange(DataSnapshot profileDataSnapshot) {
                                 room = profileDataSnapshot.getValue(Room.class);
                                 room.setFirebaseRoomId(dataSnapshot.getKey());
+                               Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getVoxUserName());
+                               if(contact !=null && contact.getName() !=null) {
+                                   room.setFullName(contact.getName());
+                               }
                                 arrayOfUsers.add(room);
                                 chatRoomListAdapter.addItems(arrayOfUsers);
                                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);

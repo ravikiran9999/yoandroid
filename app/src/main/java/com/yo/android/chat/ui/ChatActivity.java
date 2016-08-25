@@ -89,7 +89,7 @@ public class ChatActivity extends BaseActivity {
 
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
-            Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(opponent));
+            Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
             if(contact !=null && contact.getName() !=null) {
                 customTitle.setText(contact.getName());
             }else{

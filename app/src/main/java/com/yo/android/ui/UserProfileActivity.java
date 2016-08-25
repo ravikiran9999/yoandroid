@@ -141,11 +141,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     @OnClick(R.id.profile_call)
     public void callUser() {
         //do nothing...
-        if (contact != null && contact.getPhoneNo() != null) {
-
-            SipHelper.makeCall(this, contact.getPhoneNo());
+        if (contact != null && contact.getVoxUserName() != null) {
+            SipHelper.makeCall(this, contact.getVoxUserName());
         }
-
     }
 
     @OnClick(R.id.profile_message)

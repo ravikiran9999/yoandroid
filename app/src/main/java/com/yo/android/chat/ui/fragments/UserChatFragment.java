@@ -49,6 +49,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.Clipboard;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
@@ -106,6 +107,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     YoApi.YoService yoService;
 
     private String opponentImg;
+
+
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -732,9 +735,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         if (chatForwards != null) {
                             receiveForward(chatForwards);
                         } else if (chatMessage != null) {
-
                             chatMessage.setRoomId(room.getFirebaseRoomId());
-                            chatMessage.setVoxUserName(room.getVoxUserName());
+                            chatMessage.setVoxUserName("youser919490570722");
                             sendChatMessage(chatMessage);
                         }
                         update(opponentNumber, room.getFirebaseRoomId());

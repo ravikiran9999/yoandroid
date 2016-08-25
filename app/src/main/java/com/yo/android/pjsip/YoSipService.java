@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.PhoneNumberUtils;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -269,17 +268,18 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     }
 
-    private void handlerErrorCodes(final CallInfo call, SipCallState sipCallState) {
+    private void handlerErrorCodes(final CallInfo call, SipCallState sipCallstate) {
         int statusCode = call.getLastStatusCode().swigValue();
         mLog.e(TAG, sipCallState.getMobileNumber() + ",Call Object " + call.toString());
         // 603 Decline - when end call
         //503 Service Unavailable  - Buddy is not available
         //603 Allocated Channels Busy -Lines are busy
         // 487 missed call
-        switch (statusCode) {
-            case 487:
-                storeCallLog(CallLog.Calls.MISSED_TYPE);
-                break;
+        if(sipCallState !=null && sipCallState.getMobileNumber() == null && statusCode == 603){
+            storeCallLog(CallLog.Calls.INCOMING_TYPE, sipCallstate.getMobileNumber());
+        }else if (!isHangup) {
+            storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
+            isHangup = false;
         }
     }
 
@@ -393,7 +393,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         CallOpParam prm = new CallOpParam(true);
 
         try {
-
             call.makeCall(finalUri, prm);
         } catch (Exception e) {
             mLog.w(TAG, e);
@@ -469,29 +468,34 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
+    private boolean isHangup;
+
     public void hangupCall(int callType) {
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
             try {
                 currentCall.hangup(prm);
+                isHangup = true;
                 sipCallState.setCallState(SipCallState.CALL_FINISHED);
-                storeCallLog(callType);
+                if(sipCallState.getMobileNumber() !=null) {
+                    storeCallLog(callType, sipCallState.getMobileNumber());
+                }
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
         }
     }
 
-    private void storeCallLog(int callType) {
+    private void storeCallLog(int callType, String mobileNumber) {
         long currentTime = System.currentTimeMillis();
         int callDuration = (int) TimeUnit.MILLISECONDS.toSeconds(currentTime);
-        if (callType == CallLog.Calls.MISSED_TYPE) {
+        if (callType == CallLog.Calls.MISSED_TYPE || callType == -1) {
             callDuration = 0;
         }
         String prefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
         int pstnorapp = 0;
-        Contact contact = mContactsSyncManager.getContactByVoxUserName(sipCallState.getMobileNumber());
+        Contact contact = mContactsSyncManager.getContactByVoxUserName(mobileNumber);
         CallerInfo info = new CallerInfo();
         if (contact != null && contact.getName() != null) {
             info.name = contact.getName();
@@ -500,10 +504,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
             try {
                 // phone must begin with '+'
-                Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + sipCallState.getMobileNumber(), "");
+                Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + mobileNumber, "");
                 int countryCode = numberProto.getCountryCode();
-                String phoneNumber =  sipCallState.getMobileNumber().replace(countryCode+"","");
-                contact = mContactsSyncManager.getContactPSTN(countryCode,phoneNumber);
+                String mobiletemp = mobileNumber;
+                String phoneNumber = mobiletemp.replace(countryCode + "", "");
+                contact = mContactsSyncManager.getContactPSTN(countryCode, phoneNumber);
             } catch (NumberParseException e) {
                 System.err.println("NumberParseException was thrown: " + e.toString());
             }
@@ -512,7 +517,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             }
             pstnorapp = CallLog.Calls.APP_TO_PSTN_CALL;
         }
-        CallLog.Calls.addCall(info, getBaseContext(), sipCallState.getMobileNumber(), callType, callStarted, callDuration, pstnorapp);
+        CallLog.Calls.addCall(info, getBaseContext(), mobileNumber, callType, callStarted, callDuration, pstnorapp);
     }
 
     public long getCallStartDuration() {

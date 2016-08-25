@@ -31,6 +31,7 @@ import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
 import com.yo.android.calllogs.CallLog;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResponse;
 import com.yo.android.model.dialer.CallLogsResult;
@@ -111,6 +112,9 @@ public class DialerFragment extends BaseFragment {
     private List<CallLogsResult> appCalls = new ArrayList<>();
     private List<CallLogsResult> paidCalls = new ArrayList<>();
     private String sUserSimCountryCode;
+
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
 
 
     @Override
@@ -309,7 +313,7 @@ public class DialerFragment extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loadDefaultSimCountry();
-        adapter = new CallLogsAdapter(getActivity(), preferenceEndPoint);
+        adapter = new CallLogsAdapter(getActivity(), preferenceEndPoint,mContactsSyncManager);
         listView.setAdapter(adapter);
         loadCallLogs();
     }
@@ -332,10 +336,8 @@ public class DialerFragment extends BaseFragment {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
         List<CallLogsResult> results = new ArrayList<>();
         if (filter.equalsIgnoreCase("all calls")) {
-            ArrayList<CallLogsResult> allCalls = new ArrayList<>();
-            allCalls.addAll(paidCalls);
-            allCalls.addAll(appCalls);
-            prepare("All Calls", results, allCalls);
+
+            prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
         } else if (filter.equalsIgnoreCase("App Calls")) {
             prepare("App Calls", results, appCalls);
         } else {
