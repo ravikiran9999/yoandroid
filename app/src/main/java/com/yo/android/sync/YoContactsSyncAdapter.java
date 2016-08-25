@@ -83,7 +83,6 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE,
-
     };
 
     // Constants representing column positions from PROJECTION.

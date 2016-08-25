@@ -332,8 +332,10 @@ public class DialerFragment extends BaseFragment {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
         List<CallLogsResult> results = new ArrayList<>();
         if (filter.equalsIgnoreCase("all calls")) {
-            prepare("All Calls", results, appCalls);
-            prepare("Paid Calls", results, paidCalls);
+            ArrayList<CallLogsResult> allCalls = new ArrayList<>();
+            allCalls.addAll(paidCalls);
+            allCalls.addAll(appCalls);
+            prepare("All Calls", results, allCalls);
         } else if (filter.equalsIgnoreCase("App Calls")) {
             prepare("App Calls", results, appCalls);
         } else {

@@ -43,6 +43,16 @@ public class ChatMessage implements Parcelable {
     //For caching the image
     private String imageUrl;
 
+    public String getVoxUserName() {
+        return voxUserName;
+    }
+
+    public void setVoxUserName(String voxUserName) {
+        this.voxUserName = voxUserName;
+    }
+
+    private String voxUserName;
+
     public ChatMessage() {
     }
 
@@ -58,6 +68,7 @@ public class ChatMessage implements Parcelable {
         this.stickeyHeader = in.readString();
         this.sent = in.readInt();
         this.delivered = in.readInt();
+        this.voxUserName = in.readString();
     }
 
     public String getMsgID() {
@@ -188,7 +199,7 @@ public class ChatMessage implements Parcelable {
         dest.writeString(stickeyHeader);
         dest.writeInt(sent);
         dest.writeInt(delivered);
-
+        dest.writeString(voxUserName);
     }
 
 

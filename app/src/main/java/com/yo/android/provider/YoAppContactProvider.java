@@ -80,8 +80,9 @@ public class YoAppContactProvider extends ContentProvider {
         int uriMatch = sUriMatcher.match(uri);
         switch (uriMatch) {
             case CALL_LOGS:
-                builder.table(CallLogContract.TABLE_NAME);
-                return builder.query(db,projection,selection,null,sortOrder,null);
+                builder.table(CallLogContract.TABLE_NAME)
+                        .where(selection, selectionArgs);
+                return builder.query(db,projection,sortOrder);
             case ROUTE_CONTACTS_ENTRIES_ID:
                 // Return a single entry, by ID.
                 String id = uri.getLastPathSegment();
@@ -250,7 +251,7 @@ public class YoAppContactProvider extends ContentProvider {
                         CallLog.Calls.CACHED_NUMBER_LABEL + TYPE_TEXT + COMMA_SEP +
                         CallLog.Calls.CACHED_NUMBER_TYPE + TYPE_TEXT + COMMA_SEP +
                         CallLog.Calls.NEW + TYPE_INTEGER + COMMA_SEP +
-                        CallLog.Calls.CALLTYPE + TYPE_INTEGER +
+                        CallLog.Calls.CALLTYPE + TYPE_INTEGER + COMMA_SEP +
                         CallLog.Calls.APP_OR_PSTN + TYPE_INTEGER +
                         ")";
 

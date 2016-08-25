@@ -63,6 +63,8 @@ public class Contact implements Parcelable {
         this.phoneNo = in.readString();
         this.firebaseRoomId = in.readString();
         this.yoAppUser = in.readInt() == 0;
+        this.voxUserName = in.readString();
+        this.countryCode = in.readString();
     }
 
     public String getId() {
@@ -134,5 +136,7 @@ public class Contact implements Parcelable {
         dest.writeString(phoneNo);
         dest.writeString(firebaseRoomId);
         dest.writeInt(yoAppUser ? 0 : 1);
+        dest.writeString(voxUserName);
+        dest.writeString(countryCode);
     }
 }
