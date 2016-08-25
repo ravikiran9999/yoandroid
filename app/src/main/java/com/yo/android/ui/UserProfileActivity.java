@@ -142,6 +142,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     public void callUser() {
         //do nothing...
         if (contact != null && contact.getPhoneNo() != null) {
+
             SipHelper.makeCall(this, contact.getPhoneNo());
         }
 

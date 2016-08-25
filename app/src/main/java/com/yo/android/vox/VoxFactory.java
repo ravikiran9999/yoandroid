@@ -60,7 +60,7 @@ public class VoxFactory {
         data.put("STATUS", "1");
         data.put("COUNTRYCODE", countryCode);
         data.put("MAXCALL", "1");
-        data.put("CREDIT", "2");
+        data.put("CREDIT", "0");
         ArrayList CALLERIDARRAY = new ArrayList<String>();
         CALLERIDARRAY.add(mobile);
         data.put("CALLERIDARRAY", mobile);

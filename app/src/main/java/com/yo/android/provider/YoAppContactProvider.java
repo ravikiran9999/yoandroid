@@ -236,7 +236,9 @@ public class YoAppContactProvider extends ContentProvider {
                         YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + TYPE_TEXT + COMMA_SEP +
                         YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE + TYPE_TEXT + COMMA_SEP +
                         YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID + TYPE_TEXT + COMMA_SEP +
-                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + TYPE_INTEGER +
+                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + TYPE_INTEGER + COMMA_SEP +
+                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + TYPE_TEXT  +COMMA_SEP +
+                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE + TYPE_TEXT  +
                         ")";
         private static final String SQL_CREATE_CALL_LOG =
                 "CREATE TABLE " + CallLogContract.TABLE_NAME + " (" +

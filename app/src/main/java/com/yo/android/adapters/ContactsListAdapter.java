@@ -101,10 +101,16 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             public void onClick(View v) {
                 //Registration registration = getAllItems().get(position);
                 //String opponentPhoneNumber = registration.getPhoneNumber();
-                String opponentPhoneNumber = item.getPhoneNo();
+                String opponentPhoneNumber = item.getVoxUserName();
 
                 if (opponentPhoneNumber != null) {
                     SipHelper.makeCall(mContext, opponentPhoneNumber);
+                }else{
+                    if(item.getCountryCode() !=null && item.getPhoneNo() !=null) {
+                        SipHelper.makeCall(mContext, item.getCountryCode() + item.getPhoneNo());
+                    }else{
+                        //TODO: Think about it
+                    }
                 }
             }
         });

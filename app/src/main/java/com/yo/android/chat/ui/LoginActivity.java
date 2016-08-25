@@ -190,7 +190,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
             //Debug
             String action = voxFactory.addSubscriber(yoUser, phoneNumber, countryCode);
             mLog.e(TAG, "Request for adding vox api: %s", action);
-            voxService.getData(userDetails).enqueue(new Callback<ResponseBody>() {
+            /*voxService.getData(userDetails).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
 
@@ -201,7 +201,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
 
                 }
             });
-
+*/
             callLoginService(phoneNumber);
 
         }

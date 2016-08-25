@@ -90,8 +90,8 @@ public class BottomTabsActivity extends BaseActivity {
     };
 
     private void addAccount() {
-        String username = preferenceEndPoint.getStringPreference("phone", null);
-        String password = preferenceEndPoint.getStringPreference("password", null);
+        String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
+        String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
                 .withUserName(username)
                 .withPassword(password)

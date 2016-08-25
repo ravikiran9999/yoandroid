@@ -13,6 +13,27 @@ public class Contact implements Parcelable {
     private boolean yoAppUser;
     private boolean selected;
     private String firebaseRoomId;
+    private String voxUserName;
+    private String countryCode;
+
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+
+    public String getVoxUserName() {
+        return voxUserName;
+    }
+
+    public void setVoxUserName(String voxUserName) {
+        this.voxUserName = voxUserName;
+    }
+
 
     public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
         @Override
