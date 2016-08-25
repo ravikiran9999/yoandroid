@@ -72,7 +72,6 @@ public class ContactsSyncManager {
     public static final int COLUMN_COUNTRY_CODE = 8;
 
 
-
     @Inject
     public ContactsSyncManager(YoApi.YoService yoService, Context context, @Named("login") PreferenceEndPoint loginPrefs) {
         this.yoService = yoService;
@@ -182,6 +181,31 @@ public class ContactsSyncManager {
             }
         }
         return cacheList;
+    }
+
+    public Contact getContactByVoxUserName(String voxUserName) {
+        if (voxUserName != null) {
+            Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
+            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + "= '" + voxUserName + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
+            if (c != null && c.moveToFirst()) {
+                Contact contact = ContactsSyncManager.prepareContact(c);
+                return contact;
+
+            }
+        }
+        return null;
+    }
+    public Contact getContactPSTN(int countrycode,String pstnnumber) {
+        if (pstnnumber != null) {
+            Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
+            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE + "= '" + countrycode + "' and "+YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER+ " = '" + pstnnumber+"'", null,null);
+            if (c != null && c.moveToFirst()) {
+                Contact contact = ContactsSyncManager.prepareContact(c);
+                return contact;
+
+            }
+        }
+        return null;
     }
 
     public Map<String, Contact> getCachedContacts() {

@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
+import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.model.Contact;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
@@ -25,6 +27,8 @@ import com.yo.android.ui.fragments.DialerFragment;
 
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -55,6 +59,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
     private SipBinder sipBinder;
     private Handler mHandler = new Handler();
+
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -91,13 +98,21 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         callModel = new SipCallModel();
         bus.register(this);
         //
-        if (getIntent().getStringExtra(CALLER_NAME) != null) {
-            callerName.setText(getIntent().getStringExtra(CALLER_NAME));
-        } else {
+
+        //To display name of the user based on vox username
+        Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER));
+
+        if (contact != null && contact.getName() != null) {
+            callerName.setText(contact.getName());
+            callerName2.setText(contact.getName());
+        } else if (getIntent().getStringExtra(CALLER_NO) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NO));
+            callerName2.setText(getIntent().getStringExtra(CALLER_NO));
+        } else if (getIntent().getStringExtra(CALLER) != null) {
+            callerName.setText(getIntent().getStringExtra(CALLER));
+            callerName2.setText(getIntent().getStringExtra(CALLER));
+
         }
-        callerName.setText(getIntent().getStringExtra(CALLER));
-        callerName2.setText(getIntent().getStringExtra(CALLER));
         callDuration.setText("Connecting...");
         callModel.setOnCall(true);
         //CallLogs Model

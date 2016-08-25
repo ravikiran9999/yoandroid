@@ -42,7 +42,11 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
 
     @Override
     public void bindView(int position, CallLogsViewHolder holder, final CallLogsResult item) {
-        holder.getOpponentName().setText(item.getDialnumber());
+        if(item.getDestination_name()!=null) {
+            holder.getOpponentName().setText(item.getDestination_name());
+        }else{
+            holder.getOpponentName().setText(item.getDialnumber());
+        }
         item.getDialedstatus();//NOT  ANSWER,ANSWER
         //By default set these properties
         holder.getHeader().setVisibility(View.GONE);

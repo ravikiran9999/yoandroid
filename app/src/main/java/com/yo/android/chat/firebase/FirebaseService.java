@@ -214,6 +214,7 @@ public class FirebaseService extends InjectedService {
 
             String body = chatMessage.getMessage();
             String title = chatMessage.getSenderID();
+            String voxUsername = chatMessage.getVoxUserName();
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             int notificationId = chatMessage.getMessage().hashCode();
@@ -223,6 +224,7 @@ public class FirebaseService extends InjectedService {
             Intent notificationIntent = new Intent(this, ChatActivity.class);
             notificationIntent.putExtra(Constants.CHAT_ROOM_ID, roomId);
             notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
+            notificationIntent.putExtra(Constants.VOX_USER_NAME,voxUsername);
             notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
 
             PendingIntent contentIntent = PendingIntent.getActivity(this, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);

@@ -383,7 +383,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setSent(0); // message sent 0, read 1
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
-
+        chatMessage.setVoxUserName(opponentNumber);
         if (type.equals(Constants.TEXT)) {
             chatMessage.setMessage(message);
         } else if (type.equals(Constants.IMAGE)) {
@@ -734,6 +734,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         } else if (chatMessage != null) {
 
                             chatMessage.setRoomId(room.getFirebaseRoomId());
+                            chatMessage.setVoxUserName(room.getVoxUserName());
                             sendChatMessage(chatMessage);
                         }
                         update(opponentNumber, room.getFirebaseRoomId());
@@ -756,7 +757,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     }
 
-    public void update(String phoneNumber, String roomId) {
+    public void update(String voxUsername, String roomId) {
         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
         String where = YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "=?";
         ContentValues contentValues = new ContentValues();
@@ -764,7 +765,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if (getActivity() != null) {
             getActivity().getContentResolver()
                     .update(uri, contentValues, where,
-                            new String[]{phoneNumber});
+                            new String[]{voxUsername});
         }
     }
 }

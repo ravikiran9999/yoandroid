@@ -9,12 +9,19 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.PhoneNumberUtils;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.calllogs.CallLog;
+import com.yo.android.calllogs.CallerInfo;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.InjectedService;
+import com.yo.android.model.Contact;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -72,6 +79,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
 
     @Override
     public void onCreate() {
@@ -481,12 +491,28 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
         String prefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
         int pstnorapp = 0;
-        if (sipCallState.getMobileNumber().startsWith(prefix)) {
-            pstnorapp = CallLog.Calls.APP_TO_PSTN_CALL;
-        } else {
+        Contact contact = mContactsSyncManager.getContactByVoxUserName(sipCallState.getMobileNumber());
+        CallerInfo info = new CallerInfo();
+        if (contact != null && contact.getName() != null) {
+            info.name = contact.getName();
             pstnorapp = CallLog.Calls.APP_TO_APP_CALL;
+        } else {
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+            try {
+                // phone must begin with '+'
+                Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + sipCallState.getMobileNumber(), "");
+                int countryCode = numberProto.getCountryCode();
+                String phoneNumber =  sipCallState.getMobileNumber().replace(countryCode+"","");
+                contact = mContactsSyncManager.getContactPSTN(countryCode,phoneNumber);
+            } catch (NumberParseException e) {
+                System.err.println("NumberParseException was thrown: " + e.toString());
+            }
+            if (contact != null && contact.getName() != null) {
+                info.name = contact.getName();
+            }
+            pstnorapp = CallLog.Calls.APP_TO_PSTN_CALL;
         }
-        CallLog.Calls.addCall(null, getBaseContext(), sipCallState.getMobileNumber(), callType, callStarted, callDuration, pstnorapp);
+        CallLog.Calls.addCall(info, getBaseContext(), sipCallState.getMobileNumber(), callType, callStarted, callDuration, pstnorapp);
     }
 
     public long getCallStartDuration() {

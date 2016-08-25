@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.Injector;
+import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.util.Constants;
@@ -33,7 +35,8 @@ import javax.inject.Named;
  * The CallLog provider contains information about placed and received calls.
  */
 public class CallLog {
-
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
 
     public static final String AUTHORITY = YoAppContactContract.CONTENT_AUTHORITY;
 
@@ -156,7 +159,7 @@ public class CallLog {
 
         public static final String CALLTYPE = "calltype";
 
-        public static final String APP_OR_PSTN = "calltype";
+        public static final String APP_OR_PSTN = "app_or_pstn";
 
 
         /**
@@ -383,7 +386,7 @@ public class CallLog {
                 c = resolver.query(
                         CONTENT_URI,
                         null,
-                        Calls.APP_OR_PSTN + " = " + APP_TO_PSTN_CALL,
+                        Calls.CALLTYPE + " = " + APP_TO_PSTN_CALL,
                         null,
                         DEFAULT_SORT_ORDER);
                 if (c == null || !c.moveToFirst()) {
@@ -394,6 +397,7 @@ public class CallLog {
                         info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
+                        info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         callerInfos.add(info);
                     } while (c.moveToNext());
                     return callerInfos;
@@ -414,7 +418,6 @@ public class CallLog {
         public static ArrayList<CallLogsResult> getAppToAppCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
             ArrayList<CallLogsResult> callerInfos = new ArrayList<CallLogsResult>();
-
             Cursor c = null;
             try {
                 c = resolver.query(
@@ -431,6 +434,8 @@ public class CallLog {
                         info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
+                        info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+
                         callerInfos.add(info);
                     } while (c.moveToNext());
                     return callerInfos;

@@ -8,12 +8,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yo.android.R;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
+
+import javax.inject.Inject;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -23,6 +26,9 @@ public class ChatActivity extends BaseActivity {
     private String opponent;
     private String opponentNumber;
     private String mOpponentImg;
+
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +59,14 @@ public class ChatActivity extends BaseActivity {
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
-            opponent = contact.getPhoneNo();
+            opponent = contact.getVoxUserName();
             args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
-            args.putString(Constants.OPPONENT_PHONE_NUMBER, contact.getPhoneNo());
+            args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
             args.putString(Constants.OPPONENT_ID, contact.getId());
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
-            opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+            opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
             args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
             args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
 
@@ -83,7 +89,12 @@ public class ChatActivity extends BaseActivity {
 
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
-            customTitle.setText(opponent);
+            Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(opponent));
+            if(contact !=null && contact.getName() !=null) {
+                customTitle.setText(contact.getName());
+            }else{
+                customTitle.setText(opponent);
+            }
 
             /*if (room.getGroupName() != null) {
                 Picasso.with(this).load(R.drawable.ic_group).into(imageView);
@@ -112,7 +123,7 @@ public class ChatActivity extends BaseActivity {
             /*if(!room.getFullName().isEmpty()) {
                 return room.getFullName();
             } else {*/
-                return room.getMobileNumber();
+                return room.getVoxUserName();
             //}
 
         } else if (room.getGroupName() != null) {

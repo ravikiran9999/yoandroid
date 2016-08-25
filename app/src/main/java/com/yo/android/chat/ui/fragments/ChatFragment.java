@@ -60,6 +60,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private ChatRoomListAdapter chatRoomListAdapter;
     private Menu menu;
     private Room room;
+    private String voxUserName;
 
     @Inject
     YoApi.YoService yoService;
@@ -349,6 +350,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 room = new Room();
                 room.setFirebaseRoomId(dataSnapshot.getKey());
                 room.setGroupName(roomInfo.getName());
+                room.setVoxUserName(voxUserName);
                 arrayOfUsers.add(room);
                 chatRoomListAdapter.addItems(arrayOfUsers);
                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
