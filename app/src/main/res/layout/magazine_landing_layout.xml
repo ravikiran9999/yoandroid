@@ -20,6 +20,12 @@
             android:background="@color/white"
             android:scaleType="fitCenter"></ImageView>
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/image_blankmask"
+            android:scaleType="fitXY"/>
+
         <TextView
             android:id="@+id/tv_article_title_top"
             android:layout_width="wrap_content"
@@ -114,7 +120,7 @@
             android:layout_height="200dp"
             android:layout_weight="1">
 
-            <RelativeLayout android:id="@+id/rl_photo"
+            <RelativeLayout android:id="@+id/rl_photo_left"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:layout_marginTop="10dp">
@@ -126,19 +132,22 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
                 android:background="@color/white"
-                android:scaleType="fitCenter"></ImageView>
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"></ImageView>
 
             <Button
                 android:id="@+id/imv_magazine_follow_left"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_width="80dp"
+                android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
                 android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="20dp"
                 android:background="@drawable/ic_magazine_follow"
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="Follow"
+                android:textSize="12sp"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:layout_alignParentBottom="true"/>
@@ -153,7 +162,9 @@
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:text="Article 2"
-                android:layout_below="@+id/rl_photo"/>
+                android:layout_below="@+id/rl_photo_left"
+                android:maxLines="2"
+                android:ellipsize="end"/>
 
 
 
@@ -207,12 +218,12 @@
             android:id="@+id/rl_right"
             android:layout_width="wrap_content"
             android:layout_height="200dp"
-            android:layout_weight="1"
-            android:layout_marginTop="10dp">
+            android:layout_weight="1">
 
             <RelativeLayout android:id="@+id/rl_photo_right"
                 android:layout_width="wrap_content"
-                android:layout_height="100dp">
+                android:layout_height="100dp"
+                android:layout_marginTop="10dp">
 
                 <ImageView
                     android:id="@+id/photo_right"
@@ -221,20 +232,23 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
                     android:background="@color/white"
-                    android:scaleType="fitCenter"></ImageView>
+                    android:scaleType="fitCenter"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"></ImageView>
 
                 <Button
                     android:id="@+id/imv_magazine_follow_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_width="80dp"
+                    android:layout_height="25dp"
                     android:layout_alignParentLeft="true"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/ic_magazine_follow"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Follow"
                     android:textAllCaps="false"
+                    android:textSize="12sp"
                     android:textColor="@android:color/white"
                     android:layout_alignParentBottom="true"/>
             </RelativeLayout>
@@ -248,7 +262,9 @@
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:text="Article 3"
-                android:layout_below="@+id/rl_photo_right"/>
+                android:layout_below="@+id/rl_photo_right"
+                android:maxLines="2"
+                android:ellipsize="end"/>
 
 
 

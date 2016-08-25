@@ -57,6 +57,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     PreferenceEndPoint preferenceEndPoint;
     YoApi.YoService yoService;
     ToastFactory mToastFactory;
+    private List<Articles> totalItems;
+    private Articles secondArticle;
+    private Articles thirdArticle;
+    private List<Articles> allArticles;
 
     public MagazineArticlesBaseAdapter(Context context,
                                        PreferenceEndPoint preferenceEndPoint,
@@ -69,6 +73,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         this.yoService = yoService;
         this.mToastFactory = mToastFactory;
         items = new ArrayList<>();
+        totalItems = new ArrayList<>();
+        allArticles = new ArrayList<>();
     }
 
     @Override
@@ -167,7 +173,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         } else {
             holder = (ViewHolder) layout.getTag();
         }
-
 
         final Articles data = getItem(position);
         if (data == null) {
@@ -354,19 +359,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         }
 
-        if(items.size()>=1) {
+        if(allArticles.size()>=1) {
             Articles firstData = getItem(0);
             populateTopArticle(layout, holder, firstData, position);
         }
 
-        if(items.size()>=2) {
-            Articles secondData = getItem(1);
+        if(allArticles.size()>=2) {
+            Articles secondData = secondArticle;
             populateLeftArticle(holder, secondData, position);
         }
+        else {
+            populateEmptyLeftArticle(holder);
+        }
 
-        if(items.size()>=3) {
-            Articles thirdData = getItem(2);
+        if(allArticles.size()>=3) {
+            Articles thirdData = thirdArticle;
             populateRightArticle(holder, thirdData, position);
+        }
+        else {
+            populateEmptyRightArticle(holder);
         }
         return layout;
     }
@@ -452,7 +463,21 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
 
     public void addItems(List<Articles> articlesList) {
-        items = new ArrayList<>(articlesList);
+        allArticles = new ArrayList<>(articlesList);
+        totalItems = new ArrayList<>(articlesList);
+        if(totalItems.size()>1) {
+            secondArticle = totalItems.get(1);
+        }
+        if(totalItems.size()>2) {
+            thirdArticle = totalItems.get(2);
+        }
+        if(totalItems.size()>1) {
+            totalItems.remove(1);
+        }
+        if(totalItems.size()>1) {
+            totalItems.remove(1);
+        }
+        items = new ArrayList<>(totalItems);
         notifyDataSetChanged();
     }
 
@@ -584,19 +609,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         }
 
-        /*UI
-                .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                        intent.putExtra("Title", data.getTitle());
-                        intent.putExtra("Image", data.getUrl());
-                        context.startActivity(intent);
-                    }
-                });*/
-
-
         if(holder.articlePhotoTop != null) {
             ImageView photoView = holder.articlePhotoTop;
 
@@ -686,12 +698,23 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     private void populateLeftArticle(ViewHolder holder, final Articles data, int position) {
         if(holder.magazineLikeLeft != null) {
+            holder.magazineLikeLeft.setVisibility(View.VISIBLE);
             holder.magazineLikeLeft.setTag(position);
         }
 
         if(holder.articleTitleLeft != null) {
+            holder.articleTitleLeft.setVisibility(View.VISIBLE);
             holder.articleTitleLeft
                     .setText(AphidLog.format("%s", data.getTitle()));
+            holder.articleTitleLeft.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                    intent.putExtra("Title", data.getTitle());
+                    intent.putExtra("Image", data.getUrl());
+                    context.startActivity(intent);
+                }
+            });
         }
 
         if(holder.magazineLikeLeft != null) {
@@ -761,27 +784,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         }
 
-        /*UI
-                .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                        intent.putExtra("Title", data.getTitle());
-                        intent.putExtra("Image", data.getUrl());
-                        context.startActivity(intent);
-                    }
-                });*/
-
-
         if(holder.articlePhotoLeft != null) {
             ImageView photoView = holder.articlePhotoLeft;
+            photoView.setVisibility(View.VISIBLE);
 
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
-                        .centerCrop()
-                                //Image size will be reduced 50%
+                        //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -793,6 +803,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(holder.magazineAddLeft != null) {
             ImageView add = holder.magazineAddLeft;
+            add.setVisibility(View.VISIBLE);
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -807,6 +818,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(holder.magazineShareLeft != null) {
             ImageView share = holder.magazineShareLeft;
+            share.setVisibility(View.VISIBLE);
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -820,6 +832,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
 
         if(holder.articleFollowLeft != null) {
+            holder.articleFollowLeft.setVisibility(View.VISIBLE);
             if ("true".equals(data.getIsFollowing())) {
                 holder.articleFollowLeft.setText("Following");
                 holder.articleFollowLeft.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
@@ -841,12 +854,23 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     private void populateRightArticle(ViewHolder holder, final Articles data, int position) {
         if(holder.magazineLikeRight != null) {
+            holder.magazineLikeRight.setVisibility(View.VISIBLE);
             holder.magazineLikeRight.setTag(position);
         }
 
         if(holder.articleTitleRight != null) {
+            holder.articleTitleRight.setVisibility(View.VISIBLE);
             holder.articleTitleRight
                     .setText(AphidLog.format("%s", data.getTitle()));
+            holder.articleTitleRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                    intent.putExtra("Title", data.getTitle());
+                    intent.putExtra("Image", data.getUrl());
+                    context.startActivity(intent);
+                }
+            });
         }
 
         if(holder.magazineLikeRight != null) {
@@ -916,27 +940,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         }
 
-        /*UI
-                .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                        intent.putExtra("Title", data.getTitle());
-                        intent.putExtra("Image", data.getUrl());
-                        context.startActivity(intent);
-                    }
-                });*/
-
-
         if(holder.articlePhotoRight != null) {
             ImageView photoView = holder.articlePhotoRight;
+            photoView.setVisibility(View.VISIBLE);
 
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
-                        .centerCrop()
-                                //Image size will be reduced 50%
+                        //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -948,6 +959,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(holder.magazineAddRight != null) {
             ImageView add = holder.magazineAddRight;
+            add.setVisibility(View.VISIBLE);
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -962,6 +974,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(holder.magazineShareRight != null) {
             ImageView share = holder.magazineShareRight;
+            share.setVisibility(View.VISIBLE);
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -975,6 +988,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
 
         if(holder.articleFollowRight != null) {
+            holder.articleFollowRight.setVisibility(View.VISIBLE);
             if ("true".equals(data.getIsFollowing())) {
                 holder.articleFollowRight.setText("Following");
                 holder.articleFollowRight.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
@@ -990,6 +1004,66 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     followArticle(data, finalHolder, finalHolder.articleFollowRight);
                 }
             });
+        }
+
+    }
+
+    private void populateEmptyLeftArticle(ViewHolder holder) {
+        if(holder.magazineLikeLeft != null) {
+            holder.magazineLikeLeft.setVisibility(View.GONE);
+        }
+
+        if(holder.articleTitleLeft != null) {
+            holder.articleTitleLeft.setVisibility(View.GONE);
+        }
+
+        if(holder.articlePhotoLeft != null) {
+            ImageView photoView = holder.articlePhotoLeft;
+            photoView.setVisibility(View.GONE);
+        }
+
+        if(holder.magazineAddLeft != null) {
+            ImageView add = holder.magazineAddLeft;
+           add.setVisibility(View.GONE);
+        }
+
+        if(holder.magazineShareLeft != null) {
+            ImageView share = holder.magazineShareLeft;
+            share.setVisibility(View.GONE);
+        }
+
+        if(holder.articleFollowLeft != null) {
+            holder.articleFollowLeft.setVisibility(View.GONE);
+        }
+
+    }
+
+    private void populateEmptyRightArticle(ViewHolder holder) {
+        if(holder.magazineLikeRight != null) {
+            holder.magazineLikeRight.setVisibility(View.GONE);
+        }
+
+        if(holder.articleTitleRight != null) {
+            holder.articleTitleRight.setVisibility(View.GONE);
+        }
+
+        if(holder.articlePhotoRight != null) {
+            ImageView photoView = holder.articlePhotoRight;
+            photoView.setVisibility(View.GONE);
+        }
+
+        if(holder.magazineAddRight != null) {
+            ImageView add = holder.magazineAddRight;
+            add.setVisibility(View.GONE);
+        }
+
+        if(holder.magazineShareRight != null) {
+            ImageView share = holder.magazineShareRight;
+            share.setVisibility(View.GONE);
+        }
+
+        if(holder.articleFollowRight != null) {
+            holder.articleFollowRight.setVisibility(View.GONE);
         }
 
     }
