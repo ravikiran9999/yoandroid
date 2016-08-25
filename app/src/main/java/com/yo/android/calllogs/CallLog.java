@@ -343,7 +343,6 @@ public class CallLog {
         public static ArrayList<CallLogsResult> getCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
             ArrayList<CallLogsResult> callerInfos = new ArrayList<CallLogsResult>();
-
             Cursor c = null;
             try {
                 c = resolver.query(
@@ -360,6 +359,7 @@ public class CallLog {
                         info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
+                        info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         callerInfos.add(info);
                     } while (c.moveToNext());
                     return callerInfos;
@@ -397,6 +397,7 @@ public class CallLog {
                         info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
+                        info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         callerInfos.add(info);
                     } while (c.moveToNext());
                     return callerInfos;
