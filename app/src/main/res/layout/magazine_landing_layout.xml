@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/magazine_image_height">
+
+        <ImageView
+            android:id="@+id/photo_top"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:scaleType="fitCenter"></ImageView>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/image_blankmask"
+            android:scaleType="fitXY"/>
+
+        <TextView
+            android:id="@+id/tv_article_title_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:text="Article 1"/>
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/imv_magazine_follow_top"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/ic_magazine_follow"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="Follow"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
+
+            <CheckBox
+                android:id="@+id/cb_magazine_like_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:button="@drawable/magazine_like_white_selector"
+                android:layout_below="@+id/imv_magazine_follow_top"/>
+
+            <ImageView
+                android:id="@+id/imv_magazine_add_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@+id/cb_magazine_like_top"
+                android:background="@drawable/ic_add_white"
+                android:layout_below="@+id/imv_magazine_follow_top"/>
+
+            <ImageView
+                android:id="@+id/imv_magazine_share_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@+id/imv_magazine_add_top"
+                android:background="@drawable/ic_magazine_share_white"
+                android:layout_below="@+id/imv_magazine_follow_top"/>
+
+            <Button
+                android:id="@+id/btn_magazine_follow_topics_top"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_border_white"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Follow More Topics"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:layout_below="@+id/imv_magazine_follow_top"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/rl_top"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rl_left"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_weight="1">
+
+            <RelativeLayout android:id="@+id/rl_photo_left"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/photo_left"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"></ImageView>
+
+            <Button
+                android:id="@+id/imv_magazine_follow_left"
+                android:layout_width="80dp"
+                android:layout_height="25dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/ic_magazine_follow"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="Follow"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_article_title_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:text="Article 2"
+                android:layout_below="@+id/rl_photo_left"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentBottom="true">
+
+
+
+                <CheckBox
+                    android:id="@+id/cb_magazine_like_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:button="@drawable/magazine_like_selector" />
+
+                <ImageView
+                    android:id="@+id/imv_magazine_add_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toRightOf="@+id/cb_magazine_like_left"
+                    android:background="@drawable/ic_new_chat_group_add_contact"
+                    />
+
+                <ImageView
+                    android:id="@+id/imv_magazine_share_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toRightOf="@+id/imv_magazine_add_left"
+                    android:background="@drawable/ic_magazine_share"
+                    />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_divider"/>
+
+        <RelativeLayout
+            android:id="@+id/rl_right"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_weight="1">
+
+            <RelativeLayout android:id="@+id/rl_photo_right"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:id="@+id/photo_right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:scaleType="fitCenter"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"></ImageView>
+
+                <Button
+                    android:id="@+id/imv_magazine_follow_right"
+                    android:layout_width="80dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/ic_magazine_follow"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Follow"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/white"
+                    android:layout_alignParentBottom="true"/>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_article_title_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:text="Article 3"
+                android:layout_below="@+id/rl_photo_right"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentBottom="true">
+
+
+
+                <CheckBox
+                    android:id="@+id/cb_magazine_like_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:button="@drawable/magazine_like_selector" />
+
+                <ImageView
+                    android:id="@+id/imv_magazine_add_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toRightOf="@+id/cb_magazine_like_right"
+                    android:background="@drawable/ic_new_chat_group_add_contact"
+                    />
+
+                <ImageView
+                    android:id="@+id/imv_magazine_share_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toRightOf="@+id/imv_magazine_add_right"
+                    android:background="@drawable/ic_magazine_share"
+                    />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</RelativeLayout>
