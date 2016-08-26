@@ -59,6 +59,11 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
         //By default set these properties
         holder.getHeader().setVisibility(View.GONE);
         holder.getRowContainer().setVisibility(View.VISIBLE);
+        if(item.getDestination_name() == null){
+            holder.getMessageIcon().setVisibility(View.GONE);
+        }else{
+            holder.getMessageIcon().setVisibility(View.VISIBLE);
+        }
         if (item.isHeader()) {
             holder.getHeader().setVisibility(View.VISIBLE);
             holder.getRowContainer().setVisibility(View.GONE);

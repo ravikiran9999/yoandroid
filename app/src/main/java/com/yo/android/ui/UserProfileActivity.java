@@ -14,10 +14,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.adapters.ProfileMembersAdapter;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.Contact;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -45,6 +48,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private String opponentImg;
     private boolean fromChatRooms;
 
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +74,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 }
                 contact = new Contact();
                 contact.setPhoneNo(opponentNo);
+                contact.setVoxUserName(opponentNo);
                 contact.setImage(opponentImg);
                 contact.setYoAppUser(true);
                 setDataFromPreferences();
@@ -107,7 +114,18 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                         .into(profileImage);
             }
             profileName.setText(contact.getName());
-            profileNumber.setText(contact.getPhoneNo());
+            Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
+            if(mContact!=null){
+                 if(mContact.getName()!=null){
+                     profileNumber.setText(mContact.getPhoneNo());
+
+                 }else if(mContact.getPhoneNo() !=null){
+                     profileNumber.setText(mContact.getPhoneNo());
+
+                 }
+            }else {
+                profileNumber.setText(contact.getPhoneNo());
+            }
             if (contact.getYoAppUser()) {
                 profileMsg.setImageResource(R.mipmap.ic_profile_chat);
             } else {
