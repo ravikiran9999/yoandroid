@@ -305,7 +305,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getMembersId(DataSnapshot dataSnapshot) {
-
+        if (!arrayOfUsers.isEmpty()) {
+            arrayOfUsers.clear();
+        }
         Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey());
         memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -322,9 +324,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void getMembersProfile(final DataSnapshot dataSnapshot) {
 
-        if (!arrayOfUsers.isEmpty()) {
-            arrayOfUsers.clear();
-        }
+
         final Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
@@ -355,7 +355,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         });
                     }
                 }
-            } else if (!roomInfo.getName().isEmpty()) {
+            } else  {
                 room = new Room();
                 room.setFirebaseRoomId(dataSnapshot.getKey());
                 room.setGroupName(roomInfo.getName());

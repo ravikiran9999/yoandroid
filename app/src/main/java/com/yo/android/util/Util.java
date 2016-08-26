@@ -33,7 +33,9 @@ import android.widget.TextView;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.calllogs.CallerInfo;
 import com.yo.android.model.Articles;
+import com.yo.android.model.Contact;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
@@ -68,6 +70,7 @@ public class Util {
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent, boolean onGoing) {
         //
+
         Intent destinationIntent = new Intent(context, clzz);
         destinationIntent.putExtra("from_notification", true);
         destinationIntent.putExtras(intent);
@@ -97,6 +100,10 @@ public class Util {
     public static void cancelNotification(Context context, int notificationId) {
         NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(notificationId);
+    }
+    public static void cancelAllNotification(Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     public static String toString(InputStream inputstream) throws IOException {

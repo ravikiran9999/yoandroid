@@ -1,5 +1,6 @@
 package com.yo.android.pjsip;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -173,8 +175,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
             try {
                 call.hangup(prm);
-                Util.createNotification(this,
-                        getPhoneNumber(call.getInfo().getRemoteUri()),
+               String source = getPhoneNumber(call.getInfo().getRemoteUri());
+                source = parseVoxUser(source);
+                Util.createNotification(this,source                        ,
                         "Missed call", BottomTabsActivity.class, new Intent(), false);
             } catch (Exception e) {
                 mLog.w(TAG, e);
@@ -213,7 +216,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             startActivity(intent);
             lastLaunchCallHandler = currentElapsedTime;
             mediaManager.playRingtone();
-            inComingCallNotificationId = Util.createNotification(this, getPhoneNumber(mycall.getInfo().getRemoteUri()), "Incoming call", InComingCallActivity.class, intent);
+            inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
         }
     }
 
@@ -306,7 +309,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (sipCallState.getCallState() == SipCallState.CALL_RINGING) {
                 mLog.e(TAG, "Missed call >>>>>" + sipCallState.getMobileNumber());
                 Util.createNotification(this,
-                        sipCallState.getMobileNumber(),
+                        parseVoxUser(sipCallState.getMobileNumber()),
                         "Missed call ", BottomTabsActivity.class, new Intent(), false);
 
             }
@@ -416,7 +419,21 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         intent.putExtra("data", options);
         intent.putExtra(OutGoingCallActivity.CALLER_NO, destination);
         startActivity(intent);
+        destination = parseVoxUser(destination);
         outGoingCallNotificationId = Util.createNotification(this, destination, "Outgoing call", OutGoingCallActivity.class, intent);
+    }
+
+    private String parseVoxUser(String destination) {
+        Contact contact = mContactsSyncManager.getContactByVoxUserName(destination);
+        CallerInfo info = new CallerInfo();
+        if (contact != null) {
+            if (contact.getName() != null) {
+                destination = contact.getName();
+            } else if (contact.getPhoneNo() != null) {
+                destination = contact.getPhoneNo();
+            }
+        }
+        return destination;
     }
 
     public String getDomain() {
@@ -470,6 +487,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private boolean isHangup;
 
     public void hangupCall(int callType) {
+        Util.cancelNotification(this, inComingCallNotificationId);
+        Util.cancelNotification(this, outGoingCallNotificationId);
+
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);

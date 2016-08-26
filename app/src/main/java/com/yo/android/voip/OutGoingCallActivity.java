@@ -75,10 +75,12 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private void updateState() {
         if (sipBinder != null) {
             CallInfo callInfo = sipBinder.getHandler().getInfo();
-            boolean isConnected = callInfo.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED;
-            if (isConnected) {
-                running = true;
-                mHandler.post(startTimer);
+            if(callInfo !=null) {
+                boolean isConnected = callInfo.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED;
+                if (isConnected) {
+                    running = true;
+                    mHandler.post(startTimer);
+                }
             }
         }
     }
