@@ -1,30 +1,60 @@
 package com.yo.android.ui.fragments;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yo.android.R;
+import com.yo.android.adapters.MoreListAdapter;
+import com.yo.android.api.YoApi;
+import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
+import com.yo.android.model.MoreData;
+import com.yo.android.pjsip.YoSipService;
+import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.ui.MoreSettingsActivity;
+import com.yo.android.ui.NotificationsActivity;
+import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.voip.VoipConstants;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Ramesh on 24/7/16.
  */
-public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, AdapterView.OnItemClickListener {
 
     @Bind(R.id.txt_balance)
     TextView txt_balance;
+
+    private MoreListAdapter menuAdapter;
+    @Inject
+    YoApi.YoService yoService;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +85,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         txt_balance.setText(String.format("%s%s", currencySymbol, balance));
+        prepareCreditAccountList();
     }
 
     @OnClick(R.id.btn1)
@@ -95,4 +126,123 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             txt_balance.setText(String.format("%s%s", currencySymbol, balance));
         }
     }
+
+    /**
+     * Prepares the Credit Account list
+     */
+    public void prepareCreditAccountList() {
+        menuAdapter = new MoreListAdapter(getActivity()) {
+            @Override
+            public int getLayoutId() {
+                return R.layout.item_with_options;
+            }
+        };
+        ListView menuListView = (ListView) getView().findViewById(R.id.lv_settings);
+        menuAdapter.addItems(getMenuList());
+
+        menuListView.setAdapter(menuAdapter);
+        menuListView.setOnItemClickListener(this);
+    }
+
+    /**
+     * Creates the Credit Account list
+     *
+     * @return
+     */
+    public List<MoreData> getMenuList() {
+
+        List<MoreData> menuDataList = new ArrayList<>();
+        menuDataList.add(new MoreData("Voucher Recharge", true));
+        return menuDataList;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
+
+        if (name.equalsIgnoreCase("Voucher Recharge")) {
+
+            showVoucherDialog();
+        }
+    }
+
+    public void showVoucherDialog() {
+
+        if (getActivity() != null) {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            final View view = layoutInflater.inflate(R.layout.custom_voucher, null);
+            builder.setView(view);
+
+            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+            Button noBtn = (Button) view.findViewById(R.id.no_btn);
+            TextView namePhoneText = (TextView) view.findViewById(R.id.dialog_content);
+            final EditText voucherNumberEdit = (EditText) view.findViewById(R.id.dialog_content_edit);
+
+            final String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+            String phonNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+
+            if(userName != null) {
+                namePhoneText.setText(userName);
+            }else if(phonNumber != null) {
+                namePhoneText.setText(phonNumber);
+            }else {
+                namePhoneText.setText("Unknown");
+            }
+
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String voucherNumber = voucherNumberEdit.getText().toString();
+
+                    if (!TextUtils.isEmpty(voucherNumber.trim())) {
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.voucherRechargeAPI(accessToken, voucherNumber).enqueue(new Callback<com.yo.android.model.Response>() {
+                            @Override
+                            public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
+
+                                if (response.isSuccessful()) {
+                                    if (response.code() == 200) {
+                                        mToastFactory.showToast("Voucher Recharge successfully");
+                                        alertDialog.dismiss();
+                                    }else {
+                                        mToastFactory.showToast("Voucher Recharge Failed");
+                                    }
+
+                                } else {
+                                    mToastFactory.showToast("Voucher Recharge Failed");
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
+
+                                mToastFactory.showToast("Voucher Recharge Failed");
+
+                            }
+                        });
+                    } else {
+                        mToastFactory.showToast("Please enter a Voucher Number");
+                    }
+
+                }
+            });
+
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+        }
+    }
+
 }

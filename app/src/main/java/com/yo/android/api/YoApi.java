@@ -247,6 +247,10 @@ public class YoApi {
         @GET("api/user/search.json")
         Call<List<FindPeople>> searchInFindPeople(@Query("access_token") String access_token, @Query("search_item") String search_item, @Query("page") int page, @Query("limit") int limit);
 
+        @FormUrlEncoded
+        @POST("/api/user/voucher_recharge.json")
+        Call<Response> voucherRechargeAPI(@Field("access_token") String access_token, @Field("voucher_number") String voucher_number);
+
     }
 
     public interface YoRefreshTokenService {
