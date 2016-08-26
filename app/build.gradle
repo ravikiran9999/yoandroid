@@ -24,14 +24,14 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "16.3.12.0"
+        versionName "16.3.12.1"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
         multiDexEnabled true
     }
     productFlavors {
         dev {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
-            //buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
 
             buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""
@@ -55,7 +55,7 @@ android {
     }
     buildTypes {
         release {
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
