@@ -449,7 +449,7 @@ public class CallLog {
         private static void removeExpiredEntries(Context context) {
             final ContentResolver resolver = context.getContentResolver();
             resolver.delete(CONTENT_URI, "_id IN " +
-                    "(SELECT _id FROM calls ORDER BY " + DEFAULT_SORT_ORDER
+                    "(SELECT _id FROM " + CallLogContract.TABLE_NAME + " ORDER BY " + DEFAULT_SORT_ORDER
                     + " LIMIT -1 OFFSET 500)", null);
         }
     }

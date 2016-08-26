@@ -243,6 +243,7 @@ public class YoAppContactProvider extends ContentProvider {
                         ")";
         private static final String SQL_CREATE_CALL_LOG =
                 "CREATE TABLE " + CallLogContract.TABLE_NAME + " (" +
+                        YoAppContactContract.YoAppContactsEntry._ID + " INTEGER PRIMARY KEY," +
                         CallLog.Calls.NUMBER + TYPE_TEXT + COMMA_SEP +
                         CallLog.Calls.TYPE + TYPE_TEXT + COMMA_SEP +
                         CallLog.Calls.DATE + TYPE_TEXT + COMMA_SEP +

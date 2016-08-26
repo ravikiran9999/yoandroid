@@ -275,9 +275,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         //503 Service Unavailable  - Buddy is not available
         //603 Allocated Channels Busy -Lines are busy
         // 487 missed call
-        if(sipCallState !=null && sipCallState.getMobileNumber() == null && statusCode == 603){
+        if (sipCallState != null && sipCallState.getMobileNumber() == null && statusCode == 603) {
             storeCallLog(CallLog.Calls.INCOMING_TYPE, sipCallstate.getMobileNumber());
-        }else if (!isHangup) {
+        } else if (!isHangup) {
             storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
             isHangup = false;
         }
@@ -391,7 +391,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
         MyCall call = new MyCall(myAccount, -1);
         CallOpParam prm = new CallOpParam(true);
-
         try {
             call.makeCall(finalUri, prm);
         } catch (Exception e) {
@@ -478,7 +477,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 currentCall.hangup(prm);
                 isHangup = true;
                 sipCallState.setCallState(SipCallState.CALL_FINISHED);
-                if(sipCallState.getMobileNumber() !=null) {
+                if (sipCallState.getMobileNumber() != null) {
                     storeCallLog(callType, sipCallState.getMobileNumber());
                 }
             } catch (Exception e) {
