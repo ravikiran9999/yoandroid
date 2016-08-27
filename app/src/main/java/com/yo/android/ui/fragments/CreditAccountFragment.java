@@ -210,8 +210,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
                                 if (response.isSuccessful()) {
                                     if (response.code() == 200) {
-                                        mToastFactory.showToast("Voucher Recharge successfully");
+                                        mToastFactory.showToast("Voucher Recharge Successful");
                                         alertDialog.dismiss();
+                                        mBalanceHelper.checkBalance();
                                     }else {
                                         mToastFactory.showToast("Voucher Recharge Failed");
                                     }
