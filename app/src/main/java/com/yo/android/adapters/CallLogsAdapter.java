@@ -3,8 +3,11 @@ package com.yo.android.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
@@ -54,6 +57,26 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
             holder.getOpponentName().setText(item.getDestination_name());
         }else{
             holder.getOpponentName().setText(item.getDialnumber());
+        }
+
+        if (!TextUtils.isEmpty(item.getImage())) {
+
+            Glide.with(mContext)
+                    .load(item.getImage())
+                    .fitCenter()
+                    .placeholder(R.drawable.ic_contacts)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.getContactPic());
+        } else {
+
+            Glide.with(mContext)
+                    .load(R.drawable.ic_contacts)
+                    .fitCenter()
+                    .placeholder(R.drawable.ic_contacts)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.getContactPic());
         }
         item.getDialedstatus();//NOT  ANSWER,ANSWER
         //By default set these properties

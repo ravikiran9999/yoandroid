@@ -26,6 +26,7 @@ public class CallLogsResult {
     private boolean header;
     private String headerTitle;
     private int callType;
+    private String image;
 
     public String getSalerate() {
         return salerate;
@@ -110,4 +111,13 @@ public class CallLogsResult {
     public void setHeaderTitle(String headerTitle) {
         this.headerTitle = headerTitle;
     }
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+
 }

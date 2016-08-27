@@ -356,10 +356,12 @@ public class CallLog {
                 } else {
                     do {
                         CallLogsResult info = new CallLogsResult();
-                        info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
+                        String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        info.setImage(getImagePath(context,voxuser));
                         callerInfos.add(info);
                     } while (c.moveToNext());
                     return callerInfos;
@@ -394,10 +396,12 @@ public class CallLog {
                 } else {
                     do {
                         CallLogsResult info = new CallLogsResult();
-                        info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
+                        String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        info.setImage(getImagePath(context,voxuser));
                         callerInfos.add(info);
                     } while (c.moveToNext());
                     return callerInfos;
@@ -430,12 +434,14 @@ public class CallLog {
                     return callerInfos;
                 } else {
                     do {
+
                         CallLogsResult info = new CallLogsResult();
-                        info.setDialnumber(c.getString(c.getColumnIndex(Calls.NUMBER)));
+                        String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
-
+                        info.setImage(getImagePath(context,voxuser));
                         callerInfos.add(info);
                     } while (c.moveToNext());
                     return callerInfos;
@@ -451,6 +457,19 @@ public class CallLog {
             resolver.delete(CONTENT_URI, "_id IN " +
                     "(SELECT _id FROM " + CallLogContract.TABLE_NAME + " ORDER BY " + DEFAULT_SORT_ORDER
                     + " LIMIT -1 OFFSET 500)", null);
+        }
+        public static String getImagePath(Context context,String voxUserName){
+            final ContentResolver resolver = context.getContentResolver();
+            Cursor imageCursor = resolver.query(
+                    YoAppContactContract.YoAppContactsEntry.CONTENT_URI,
+                    new String[]{YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE},
+                    YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME +" = '"+voxUserName+"'",
+                    null,
+                    null);
+            if (imageCursor != null && imageCursor.moveToFirst()) {
+                return imageCursor.getString(0);
+            }
+            return null;
         }
     }
 }
