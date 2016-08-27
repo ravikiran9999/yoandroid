@@ -66,6 +66,7 @@ import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
+import com.yo.android.util.ReCreateService;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.Receiver;
@@ -159,7 +160,8 @@ import dagger.Provides;
 
                 FirebaseService.class,
                 YoContactsSyncAdapter.class,
-                YoSipService.class
+                YoSipService.class,
+                ReCreateService.class
         },
         includes = {
                 AppModule.class,

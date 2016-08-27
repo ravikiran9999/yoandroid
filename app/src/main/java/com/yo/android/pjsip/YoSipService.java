@@ -25,6 +25,7 @@ import com.yo.android.di.InjectedService;
 import com.yo.android.model.Contact;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.ReCreateService;
 import com.yo.android.util.Util;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -537,6 +538,26 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             pstnorapp = CallLog.Calls.APP_TO_PSTN_CALL;
         }
         CallLog.Calls.addCall(info, getBaseContext(), mobileNumber, callType, callStarted, callDuration, pstnorapp);
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        Util.cancelNotification(this, inComingCallNotificationId);
+        Util.cancelNotification(this, outGoingCallNotificationId);
+        if (currentCall != null) {
+            CallOpParam prm = new CallOpParam();
+            prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+            try {
+                currentCall.hangup(prm);
+                isHangup = true;
+                sipCallState.setCallState(SipCallState.CALL_FINISHED);
+                ReCreateService.getInstance(this).start(this);
+            } catch (Exception e) {
+                mLog.w(TAG, e);
+            }
+        }
+
     }
 
     public long getCallStartDuration() {
