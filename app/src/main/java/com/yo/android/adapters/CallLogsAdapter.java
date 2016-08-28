@@ -59,25 +59,13 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
             holder.getOpponentName().setText(item.getDialnumber());
         }
 
-        if (!TextUtils.isEmpty(item.getImage())) {
+        Glide.with(mContext).load(item.getImage())
+                .placeholder(R.drawable.ic_contacts)
+                .dontAnimate()
+                .error(R.drawable.ic_contacts).
+                into(holder.getContactPic());
 
-            Glide.with(mContext)
-                    .load(item.getImage())
-                    .fitCenter()
-                    .placeholder(R.drawable.ic_contacts)
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.getContactPic());
-        } else {
 
-            Glide.with(mContext)
-                    .load(R.drawable.ic_contacts)
-                    .fitCenter()
-                    .placeholder(R.drawable.ic_contacts)
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.getContactPic());
-        }
         item.getDialedstatus();//NOT  ANSWER,ANSWER
         //By default set these properties
         holder.getHeader().setVisibility(View.GONE);
