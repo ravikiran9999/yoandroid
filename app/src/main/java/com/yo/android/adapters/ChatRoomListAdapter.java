@@ -58,23 +58,18 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
 
             holder.getOpponentName().setText(item.getFullName());
 
-            Glide.with(context)
-                    .load(R.drawable.ic_contactprofile)
-                    .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.getChatRoomPic());
-
-
+            Glide.with(mContext).load(item.getImage())
+                    .placeholder(R.drawable.ic_contactprofile)
+                    .dontAnimate()
+                    .error(R.drawable.ic_contactprofile).
+                    into(holder.getChatRoomPic());
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
-
-            Glide.with(context)
-                    .load(R.drawable.ic_group)
-                    .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.getChatRoomPic());
+            Glide.with(mContext).load(item.getImage())
+                    .placeholder(R.drawable.ic_group)
+                    .dontAnimate()
+                    .error(R.drawable.ic_group).
+                    into(holder.getChatRoomPic());
         } else {
             holder.getOpponentName().setText("");
 
