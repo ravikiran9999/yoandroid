@@ -18,6 +18,7 @@ import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.util.Constants;
 import com.yo.android.util.TimeZoneUtils;
+import com.yo.android.util.Util;
 
 import org.apache.http.ParseException;
 
@@ -25,7 +26,13 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.inject.Inject;
@@ -340,9 +347,10 @@ public class CallLog {
          * @return The last phone number dialed (outgoing) or an empty
          * string if none exist yet.
          */
-        public static ArrayList<CallLogsResult> getCallLog(Context context) {
+        public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
-            ArrayList<CallLogsResult> callerInfos = new ArrayList<CallLogsResult>();
+            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos =  new ArrayList<Map.Entry<String, List<CallLogsResult>>>();;
+            HashMap<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
             Cursor c = null;
             try {
                 c = resolver.query(
@@ -361,9 +369,16 @@ public class CallLog {
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
-                        info.setImage(getImagePath(context,voxuser));
-                        callerInfos.add(info);
+                        info.setImage(getImagePath(context, voxuser));
+                        if (!hashMap.containsKey(voxuser)) {
+                            List<CallLogsResult> list = new ArrayList<CallLogsResult>();
+                            list.add(info);
+                            hashMap.put(voxuser, list);
+                        } else {
+                            hashMap.get(voxuser).add(info);
+                        }
                     } while (c.moveToNext());
+                    callerInfos = new ArrayList(hashMap.entrySet());
                     return callerInfos;
 
                 }
@@ -379,9 +394,10 @@ public class CallLog {
          * @return The last phone number dialed (outgoing) or an empty
          * string if none exist yet.
          */
-        public static ArrayList<CallLogsResult> getPSTNCallLog(Context context) {
+        public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getPSTNCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
-            ArrayList<CallLogsResult> callerInfos = new ArrayList<CallLogsResult>();
+            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos =  new ArrayList<Map.Entry<String, List<CallLogsResult>>>();;
+            HashMap<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
 
             Cursor c = null;
             try {
@@ -401,9 +417,17 @@ public class CallLog {
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
-                        info.setImage(getImagePath(context,voxuser));
-                        callerInfos.add(info);
+                        info.setImage(getImagePath(context, voxuser));
+                        if (!hashMap.containsKey(voxuser)) {
+                            List<CallLogsResult> list = new ArrayList<CallLogsResult>();
+                            list.add(info);
+                            hashMap.put(voxuser, list);
+                        } else {
+                            hashMap.get(voxuser).add(info);
+                        }
                     } while (c.moveToNext());
+                    callerInfos = new ArrayList(hashMap.entrySet());
+
                     return callerInfos;
 
                 }
@@ -419,9 +443,11 @@ public class CallLog {
          * @return The last phone number dialed (outgoing) or an empty
          * string if none exist yet.
          */
-        public static ArrayList<CallLogsResult> getAppToAppCallLog(Context context) {
+        public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getAppToAppCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
-            ArrayList<CallLogsResult> callerInfos = new ArrayList<CallLogsResult>();
+            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
+            Map<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
+
             Cursor c = null;
             try {
                 c = resolver.query(
@@ -439,11 +465,22 @@ public class CallLog {
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
-                        info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
+                        String date = c.getString(c.getColumnIndex(Calls.DATE));
+                        info.setStime(date);
+                        String tempDate = Util.getDate(date);
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
-                        info.setImage(getImagePath(context,voxuser));
-                        callerInfos.add(info);
+                        info.setImage(getImagePath(context, voxuser));
+                        // callerInfos.add(info);
+                        if (!hashMap.containsKey(voxuser+tempDate)) {
+                            List<CallLogsResult> list = new ArrayList<CallLogsResult>();
+                            list.add(info);
+                            hashMap.put(voxuser+tempDate, list);
+                           // callerInfos.add(hashMap.entrySet().iterator().next());
+                        } else {
+                            hashMap.get(voxuser+tempDate).add(info);
+                        }
                     } while (c.moveToNext());
+                    callerInfos = new ArrayList(hashMap.entrySet());
                     return callerInfos;
 
                 }
@@ -458,12 +495,13 @@ public class CallLog {
                     "(SELECT _id FROM " + CallLogContract.TABLE_NAME + " ORDER BY " + DEFAULT_SORT_ORDER
                     + " LIMIT -1 OFFSET 500)", null);
         }
-        public static String getImagePath(Context context,String voxUserName){
+
+        public static String getImagePath(Context context, String voxUserName) {
             final ContentResolver resolver = context.getContentResolver();
             Cursor imageCursor = resolver.query(
                     YoAppContactContract.YoAppContactsEntry.CONTENT_URI,
                     new String[]{YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE},
-                    YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME +" = '"+voxUserName+"'",
+                    YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + " = '" + voxUserName + "'",
                     null,
                     null);
             if (imageCursor != null && imageCursor.moveToFirst()) {

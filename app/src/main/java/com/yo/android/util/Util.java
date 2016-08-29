@@ -438,7 +438,19 @@ public class Util {
         }
         return time;
     }
-
+    public static String getDate(String time) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setTimeZone(TimeZone.getDefault());
+           // Date gmtTime = sdf.parse(time);
+            return sdf.format(sdf.parse(time));
+           // String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+           // return timeStamp;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
     public static void saveUserDetails(Response<UserProfileInfo> response, PreferenceEndPoint preferenceEndPoint) {
 
         preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());

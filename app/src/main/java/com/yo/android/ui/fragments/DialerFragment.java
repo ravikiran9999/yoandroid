@@ -48,7 +48,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -109,8 +111,8 @@ public class DialerFragment extends BaseFragment {
     @Named("voip_support")
     boolean isVoipSupported;
     private Menu menu;
-    private List<CallLogsResult> appCalls = new ArrayList<>();
-    private List<CallLogsResult> paidCalls = new ArrayList<>();
+    private ArrayList<Map.Entry<String, List<CallLogsResult>>> appCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
+    private ArrayList<Map.Entry<String, List<CallLogsResult>>> paidCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
     private String sUserSimCountryCode;
 
     @Inject
@@ -334,27 +336,32 @@ public class DialerFragment extends BaseFragment {
 
     private void showDataOnFilter() {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
-        List<CallLogsResult> results = new ArrayList<>();
+        ArrayList<Map.Entry<String, List<CallLogsResult>>> results = new ArrayList<>();
         if (filter.equalsIgnoreCase("all calls")) {
 
-            prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
+            results = prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
         } else if (filter.equalsIgnoreCase("App Calls")) {
-            prepare("App Calls", results, appCalls);
+           results = prepare("App Calls", results, appCalls);
         } else {
-            prepare("Paid Calls", results, paidCalls);
+           results = prepare("Paid Calls", results, paidCalls);
         }
         adapter.addItems(results);
         showEmptyText();
     }
 
-    private void prepare(String type, List<CallLogsResult> results, List<CallLogsResult> checkList) {
+    private ArrayList<Map.Entry<String, List<CallLogsResult>>> prepare(String type, ArrayList<Map.Entry<String, List<CallLogsResult>>> results, ArrayList<Map.Entry<String, List<CallLogsResult>>> checkList) {
         if (!checkList.isEmpty()) {
+            List<CallLogsResult> resultList = new ArrayList<>();
+            HashMap<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
             CallLogsResult result = new CallLogsResult();
             result.setHeader(true);
             result.setHeaderTitle(type);
-            results.add(result);
+            resultList.add(result);
+            hashMap.put(type, resultList);
+            results = new ArrayList(hashMap.entrySet());
             results.addAll(checkList);
         }
+        return results;
     }
 
     private void showEmptyText() {
