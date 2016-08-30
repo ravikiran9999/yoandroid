@@ -240,5 +240,4 @@ public class UpdateProfileActivity extends BaseActivity {
         });
 
     }
-
 }
