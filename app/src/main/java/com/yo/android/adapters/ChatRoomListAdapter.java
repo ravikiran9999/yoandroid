@@ -1,11 +1,15 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 //import com.squareup.picasso.Picasso;
 import com.yo.android.R;
@@ -45,7 +49,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     }
 
     @Override
-    public void bindView(int position, ChatRoomViewHolder holder, final Room item) {
+    public void bindView(int position, final ChatRoomViewHolder holder, final Room item) {
 
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
@@ -59,10 +63,19 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             holder.getOpponentName().setText(item.getFullName());
 
             Glide.with(mContext).load(item.getImage())
+                    .asBitmap().centerCrop()
                     .placeholder(R.drawable.ic_contactprofile)
-                    .dontAnimate()
-                    .error(R.drawable.ic_contactprofile).
-                    into(holder.getChatRoomPic());
+                    .error(R.drawable.ic_contactprofile)
+                    .into(new BitmapImageViewTarget(holder.getChatRoomPic()) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                    RoundedBitmapDrawable circularBitmapDrawable =
+                            RoundedBitmapDrawableFactory.create(mContext.getResources(), resource);
+                    circularBitmapDrawable.setCircular(true);
+                    holder.getChatRoomPic().setImageDrawable(circularBitmapDrawable);
+                }
+            });
+
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
             Glide.with(mContext).load(item.getImage())

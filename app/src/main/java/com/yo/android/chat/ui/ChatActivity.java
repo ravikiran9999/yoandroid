@@ -1,12 +1,17 @@
 package com.yo.android.chat.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.yo.android.R;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
@@ -88,19 +93,27 @@ public class ChatActivity extends BaseActivity {
             View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
 
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
-            ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
+            final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
             Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
-            if(contact !=null && contact.getName() !=null) {
+            if (contact != null && contact.getName() != null) {
                 customTitle.setText(contact.getName());
-            }else{
+            } else {
                 customTitle.setText(opponent);
             }
 
-            /*if (room.getGroupName() != null) {
-                Picasso.with(this).load(R.drawable.ic_group).into(imageView);
-            } else {
-                Picasso.with(this).load(R.drawable.ic_contactprofile).into(imageView);
-            }*/
+            Glide.with(this).load(mOpponentImg)
+                    .asBitmap().centerCrop()
+                    .placeholder(R.drawable.ic_contactprofile)
+                    .error(R.drawable.ic_contactprofile)
+                    .into(new BitmapImageViewTarget(imageView) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            imageView.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
 
             customTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -120,11 +133,7 @@ public class ChatActivity extends BaseActivity {
 
         if (room.getGroupName() == null) {
 
-            /*if(!room.getFullName().isEmpty()) {
-                return room.getFullName();
-            } else {*/
-                return room.getVoxUserName();
-            //}
+            return room.getVoxUserName();
 
         } else if (room.getGroupName() != null) {
             return room.getGroupName();

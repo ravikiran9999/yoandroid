@@ -1,6 +1,5 @@
 package com.yo.android.pjsip;
 
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -176,9 +174,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
             try {
                 call.hangup(prm);
-               String source = getPhoneNumber(call.getInfo().getRemoteUri());
+                String source = getPhoneNumber(call.getInfo().getRemoteUri());
                 source = parseVoxUser(source);
-                Util.createNotification(this,source                        ,
+                Util.createNotification(this, source,
                         "Missed call", BottomTabsActivity.class, new Intent(), false);
             } catch (Exception e) {
                 mLog.w(TAG, e);
@@ -384,7 +382,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         accCfg.getRegConfig().setRegistrarUri(registrar);
         AuthCredInfoVector creds = accCfg.getSipConfig().getAuthCreds();
         creds.clear();
-        if (username.length() != 0) {
+        if (username != null && !username.isEmpty() && username.length() != 0) {
             creds.add(new AuthCredInfo("Digest", "*", username, 0, password));
         }
         StringVector proxies = accCfg.getSipConfig().getProxies();

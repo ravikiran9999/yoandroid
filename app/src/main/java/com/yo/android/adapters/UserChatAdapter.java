@@ -2,6 +2,7 @@ package com.yo.android.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -183,7 +185,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
     //private void addView(final LinearLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
-    private void addView(final RelativeLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
+    private void addView(final RelativeLayout relativeLayout, final ChatMessage item, final UserChatViewHolder holder) {
 
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
@@ -205,10 +207,10 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             textView.setTextColor(Color.BLACK);
             textView.setText(item.getMessage());
             linearLayout1.addView(textView);
-            linearLayout.addView(linearLayout1);
+            relativeLayout.addView(linearLayout1);
 
             holder.getLl().setTag(holder);
-            holder.getLl().addView(linearLayout);
+            holder.getLl().addView(relativeLayout);
 
 
         } else if (item.getType().equals(Constants.IMAGE)) {
@@ -219,7 +221,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 progressBar.setVisibility(View.VISIBLE);
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
                 params.addRule(RelativeLayout.CENTER_IN_PARENT);
-                linearLayout.addView(progressBar, params);
+                relativeLayout.addView(progressBar, params);
 
 
                 if (roomType != null) {
@@ -239,19 +241,20 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
                 StorageReference imageRef = storageRef.child(item.getImagePath());
                 linearLayout1.addView(imageView);
-                linearLayout.addView(linearLayout1);
+                relativeLayout.addView(linearLayout1);
                 if (item.getImageUrl() != null) {
-                    Picasso.with(context).load(Uri.parse(item.getImageUrl())).into(imageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
+                    Picasso.with(context).load(Uri.parse(item.getImageUrl()))
+                            .config(Bitmap.Config.RGB_565)
+                            .into(imageView, new Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                }
 
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
+                                @Override
+                                public void onError() {
+                                }
+                            });
                 } else {
                     imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
@@ -282,7 +285,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            holder.getLl().addView(linearLayout);
+            holder.getLl().addView(relativeLayout);
         } else {
             holder.getLl().addView(null);
         }
@@ -315,5 +318,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     private class HeaderViewHolder {
         TextView text;
+    }
+
+    private void loadImage() {
+
     }
 }

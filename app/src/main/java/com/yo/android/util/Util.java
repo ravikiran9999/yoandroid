@@ -8,12 +8,14 @@ import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -51,8 +53,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -382,15 +386,48 @@ public class Util {
     }
 
     public static void shareNewIntent(View view, String url, String title, String body, Uri bmpUri) {
+
         try {
-            Intent i = new Intent(Intent.ACTION_SEND);
-            i.setType("image/*");
-            i.putExtra(Intent.EXTRA_SUBJECT, title);
-            i.putExtra(Intent.EXTRA_TEXT, body + "\n\n" + url);
-            if(bmpUri != null) {
-                i.putExtra(Intent.EXTRA_STREAM, bmpUri);
+            // get available share intents
+            List<Intent> targets = new ArrayList<Intent>();
+            Intent template = new Intent(Intent.ACTION_SEND);
+            template.setType("image/*");
+            List<ResolveInfo> candidates = view.getContext().getPackageManager().
+                    queryIntentActivities(template, 0);
+
+            for (ResolveInfo candidate : candidates) {
+                String packageName = candidate.activityInfo.packageName;
+                if (packageName.equals("com.skype.raider")) {
+                    Intent target = new Intent(android.content.Intent.ACTION_SEND);
+                    target.setType("text/plain");
+                    target.putExtra(Intent.EXTRA_SUBJECT, title);
+                    target.putExtra(Intent.EXTRA_TEXT, body + "\n\n" + url);
+                    target.setPackage(packageName);
+                    targets.add(target);
+                } else if(packageName.toLowerCase().startsWith("com.facebook.katana")) {
+                    Intent target = new Intent(android.content.Intent.ACTION_SEND);
+                    target.setType("text/plain");
+                    target.putExtra(Intent.EXTRA_SUBJECT, title);
+                    target.putExtra(Intent.EXTRA_TEXT, body + "\n\n" + url);
+                    target.setPackage(candidate.activityInfo.packageName);
+                    targets.add(target);
+
+                } else {
+                    Intent target = new Intent(android.content.Intent.ACTION_SEND);
+                    target.setType("image/*");
+                    target.putExtra(Intent.EXTRA_SUBJECT, title);
+                    target.putExtra(Intent.EXTRA_TEXT, body + "\n\n" + url);
+                    if(bmpUri != null) {
+                        target.putExtra(Intent.EXTRA_STREAM, bmpUri);
+                    }
+                    target.setPackage(packageName);
+                    targets.add(target);
+                }
             }
-            view.getContext().startActivity(Intent.createChooser(i, "Sharing Article"));
+
+            Intent chooser = Intent.createChooser(targets.remove(0), "Sharing Article");
+            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, targets.toArray(new Parcelable[]{}));
+            view.getContext().startActivity(chooser);
         } catch (ActivityNotFoundException e) {
 
         }

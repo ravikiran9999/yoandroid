@@ -7,7 +7,6 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.api.YoApi;
-import com.yo.android.vox.VoxApi;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,13 +36,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 )
 public class NetWorkModule {
 
-    @Singleton
-    @Provides
-    VoxApi.VoxService provideVoxService(Context context, ConnectivityHelper connectivityHelper) {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        enableCache(context, builder);
-        return buildAdapter(VoxApi.BASE_URL, VoxApi.VoxService.class, builder, connectivityHelper);
-    }
 
     @Singleton
     @Provides
