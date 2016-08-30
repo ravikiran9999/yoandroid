@@ -222,6 +222,7 @@ public class FirebaseService extends InjectedService {
             NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
             notificationStyle.bigText(body);
             Intent notificationIntent = new Intent(this, ChatActivity.class);
+            notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             notificationIntent.putExtra(Constants.CHAT_ROOM_ID, roomId);
             notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
             notificationIntent.putExtra(Constants.VOX_USER_NAME,voxUsername);

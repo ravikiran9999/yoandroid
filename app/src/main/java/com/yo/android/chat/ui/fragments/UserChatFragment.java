@@ -197,7 +197,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         } catch (NoClassDefFoundError e) {
             mLog.w("UserChat", e);
         }
-
     }
 
     @Override
