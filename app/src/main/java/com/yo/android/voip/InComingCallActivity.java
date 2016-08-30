@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -16,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -52,6 +54,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private TextView callerNumber;
     private TextView callerNumber2;
     private TextView callDuration;
+    private ImageView callerImageView;
     int sec = 0, min = 0, hr = 0;
     private EventBus bus = EventBus.getDefault();
     private View mReceivedCallHeader;
@@ -101,7 +104,11 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
         //To display name of the user based on vox username
         Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER));
-
+        Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getVoxUserName()))
+                .placeholder(R.drawable.ic_contacts)
+                .dontAnimate()
+                .error(R.drawable.ic_contacts).
+                into(callerImageView);
         if (contact != null && contact.getName() != null) {
             callerName.setText(contact.getName());
             callerName2.setText(contact.getName());
@@ -142,6 +149,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         callerNumber = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
         callerNumber2 = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_number);
         callDuration = (TextView) mReceivedCallHeader.findViewById(R.id.tv_call_duration);
+        callerImageView = (ImageView) mReceivedCallHeader.findViewById(R.id.imv_caller_pic);
     }
 
     @Override

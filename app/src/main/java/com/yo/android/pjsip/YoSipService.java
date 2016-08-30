@@ -275,6 +275,20 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private void handlerErrorCodes(final CallInfo call, SipCallState sipCallstate) {
         int statusCode = call.getLastStatusCode().swigValue();
         mLog.e(TAG, sipCallState.getMobileNumber() + ",Call Object " + call.toString());
+        switch (statusCode){
+            case 603:
+                mToastFactory.showToast(R.string.call_ended);
+                break;
+            case 404:
+                mToastFactory.showToast(R.string.no_network);
+                break;
+            case 503:
+                mToastFactory.showToast(R.string.not_online);
+                break;
+            case 487:
+                //Missed call
+                break;
+            case
         // 603 Decline - when end call
         //503 Service Unavailable  - Buddy is not available
         //603 Allocated Channels Busy -Lines are busy
