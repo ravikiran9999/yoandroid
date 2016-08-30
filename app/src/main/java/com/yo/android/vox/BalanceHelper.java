@@ -14,8 +14,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,72 +35,44 @@ public class BalanceHelper {
     private static final String TAG = "BalanceHelper";
     private Set<String> sCountryCodes;
     VoxFactory voxFactory;
-    VoxApi.VoxService voxService;
     YoApi.YoService yoService;
     PreferenceEndPoint prefs;
     Log mLog;
 
     @Inject
-    public BalanceHelper(Log log, VoxFactory voxFactory, VoxApi.VoxService voxService, YoApi.YoService yoService, @Named("login") PreferenceEndPoint preferenceEndPoint) {
+    public BalanceHelper(Log log, VoxFactory voxFactory, YoApi.YoService yoService, @Named("login") PreferenceEndPoint preferenceEndPoint) {
         this.mLog = log;
         this.voxFactory = voxFactory;
-        this.voxService = voxService;
         this.yoService = yoService;
         this.prefs = preferenceEndPoint;
     }
 
 
     public void checkBalance() {
-        if (TextUtils.isEmpty(prefs.getStringPreference(Constants.SUBSCRIBER_ID))) {
-            loadSubscriberId(null);
-        } else {
-            loadBalance();
-        }
-
-    }
-
-    private void loadSubscriberId(final Callback<ResponseBody> callback) {
-        voxService.executeAction(voxFactory.getSubscriberIdBody(prefs.getStringPreference(Constants.PHONE_NUMBER))).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    String str = Util.toString(response.body().byteStream());
-                    JSONObject jsonObject = new JSONObject(str);
-                    String subscriberId = jsonObject.getJSONObject("DATA").getString("SUBSCRIBERID");
-                    prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);
-                    loadBalance();
-                    if (callback != null) {
-                        callback.onResponse(call, response);
-                    }
-                } catch (IOException | JSONException e) {
-                    mLog.w(TAG, "loadSubscriberId", e);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                mLog.w(TAG, "loadSubscriberId:onFailure called");
-                if (callback != null) {
-                    callback.onFailure(call, t);
-                }
-            }
-        });
+        loadBalance(null);
     }
 
 
-    private void loadBalance() {
-        voxService.executeAction(voxFactory.getBalanceBody(prefs.getStringPreference(Constants.SUBSCRIBER_ID))).enqueue(new Callback<ResponseBody>() {
+    private void loadBalance(final Callback<ResponseBody> callback) {
+        final String accessToken = prefs.getStringPreference("access_token");
+        yoService.executeBalanceAction(accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     try {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
-                        String balance = jsonObject.getJSONObject("DATA").getString("CREDIT");
+                        String balance = jsonObject.getString("CREDIT");
                         prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                        String subscriberId = jsonObject.getString("SUBSCRIBERID");
+                        prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);
                         mLog.i(TAG, "loadBalance: balance -  %s", balance);
+                        if (callback != null) {
+                            callback.onResponse(call, response);
+                        }
                     } catch (IOException | JSONException e) {
                         mLog.w(TAG, "loadBalance", e);
+
                     }
                 }
             }
@@ -110,6 +80,9 @@ public class BalanceHelper {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 mLog.i(TAG, "loadBalance: onFailure");
+                if (callback != null) {
+                    callback.onFailure(call, t);
+                }
             }
         });
     }
@@ -117,10 +90,10 @@ public class BalanceHelper {
     public void addBalance(final String credit, final Callback<ResponseBody> callback) {
         final String accessToken = prefs.getStringPreference("access_token");
         if (TextUtils.isEmpty(prefs.getStringPreference(Constants.SUBSCRIBER_ID))) {
-            loadSubscriberId(new Callback<ResponseBody>() {
+            loadBalance(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    reAddBalance(accessToken,credit,callback);
+                    reAddBalance(accessToken, credit, callback);
                 }
 
                 @Override
@@ -129,7 +102,7 @@ public class BalanceHelper {
                 }
             });
         } else {
-            reAddBalance(accessToken,credit,callback);
+            reAddBalance(accessToken, credit, callback);
         }
 
     }
@@ -416,32 +389,6 @@ public class BalanceHelper {
                 }
             }
         });
-
-    }
-
-    public void loadSpentDetailsHistory(final Callback<ResponseBody> callback) {
-        mLog.w(TAG, "loadSpentDetailsHistory:called");
-        String subscriberId = prefs.getStringPreference(Constants.SUBSCRIBER_ID);
-        String fromDate = "2016­06­01";
-        String toDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String limit = "100";
-        voxService.executeAction(voxFactory.getSpentDetailsHistoryBody(subscriberId, fromDate, toDate, limit))
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (callback != null) {
-                            callback.onResponse(call, response);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        mLog.i(TAG, "loadBalance: onFailure");
-                        if (callback != null) {
-                            callback.onFailure(call, t);
-                        }
-                    }
-                });
 
     }
 

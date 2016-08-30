@@ -277,5 +277,4 @@ public class ContactsSyncManager {
         contact.setVoxUserName(voxUserName);
         return contact;
     }
-
 }
