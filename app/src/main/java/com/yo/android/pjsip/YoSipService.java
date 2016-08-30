@@ -368,7 +368,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         accCfg.getRegConfig().setRegistrarUri(registrar);
         AuthCredInfoVector creds = accCfg.getSipConfig().getAuthCreds();
         creds.clear();
-        if (!username.isEmpty() && username.length() != 0) {
+        if (username != null && !username.isEmpty() && username.length() != 0) {
             creds.add(new AuthCredInfo("Digest", "*", username, 0, password));
         }
         StringVector proxies = accCfg.getSipConfig().getProxies();
