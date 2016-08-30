@@ -1,15 +1,26 @@
 package com.yo.android.model.dialer;
 
+import com.google.gson.annotations.SerializedName;
+
 public class CallRateDetail {
 
+    private String id;
+
+    private String updated;
+
+    @SerializedName("prefix")
     private String PREFIX;
 
+    @SerializedName("rate")
     private String RATE;
 
+    @SerializedName("destination")
     private String DESTINATION;
 
+    @SerializedName("pulse")
     private String PULSE;
 
+    @SerializedName("package_id")
     private String PACKAGEID;
 
     public String getPrefix() {
@@ -55,5 +66,21 @@ public class CallRateDetail {
     @Override
     public String toString() {
         return "ClassPojo [PREFIX = " + PREFIX + ", RATE = " + RATE + ", DESTINATION = " + DESTINATION + ", PULSE = " + PULSE + ", PACKAGEID = " + PACKAGEID + "]";
+    }
+
+    public String getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(String updated) {
+        this.updated = updated;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

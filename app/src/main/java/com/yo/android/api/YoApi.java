@@ -251,6 +251,16 @@ public class YoApi {
         @POST("/api/user/voucher_recharge.json")
         Call<Response> voucherRechargeAPI(@Field("access_token") String access_token, @Field("voucher_number") String voucher_number);
 
+
+        @GET("/api/user/get_balance.json")
+        Call<ResponseBody> executeBalanceAction(@Query("access_token") String access_token);
+
+        @GET("api/package_rates_lists.json")
+        Call<ResponseBody> getCallsRatesListAPI(@Query("access_token") String access_token);
+
+        @GET("/api/call_costs.json")
+        Call<ResponseBody> getSpentDetailsHistory(@Query("access_token") String access_token);
+
     }
 
     public interface YoRefreshTokenService {

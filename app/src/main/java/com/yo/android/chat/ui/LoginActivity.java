@@ -28,7 +28,6 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.CountryCodeHelper;
 import com.yo.android.util.Util;
 import com.yo.android.vox.UserDetails;
-import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
 
 import org.angmarch.views.NiceSpinner;
@@ -40,10 +39,8 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.http.Part;
 
 
 /**
@@ -65,8 +62,6 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    @Inject
-    VoxApi.VoxService voxService;
     @Inject
     VoxFactory voxFactory;
     @Inject
