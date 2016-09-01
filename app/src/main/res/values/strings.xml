@@ -168,4 +168,9 @@
     <string name="call_ended">Call Ended</string>
     <string name="no_network">Unable to make the call due to low network connectivity</string>
     <string name="not_online">Recipient not online.</string>
+    <string name="call_forwarded">Call is  being forwarded</string>
+    <string name="temporerly_unavailable">Destination was temporarily unavailable</string>
+    <string name="ringing">Ringing</string>
+    <string name="busy">Callee is busy</string>
+    <string name="all_busy">All possible destinations are busy</string>
 </resources>

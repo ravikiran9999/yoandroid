@@ -22,6 +22,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import butterknife.Bind;
@@ -57,16 +58,25 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
         showProgressDialog();
+        final Gson gson = new Gson();
         final String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        Type type = new TypeToken<List<CallRateDetail>>() {
+        }.getType();
+        List<CallRateDetail> callRateDetailList = gson.fromJson(preferenceEndPoint.getStringPreference(Constants.COUNTRY_LIST), type);
+        if (callRateDetailList != null) {
+            adapter.addItems(callRateDetailList);
+        }
 
         yoService.getCallsRatesListAPI(accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 dismissProgressDialog();
                 try {
-                    List<CallRateDetail> callRateDetailList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
+                    List<CallRateDetail> callRateDetailList = gson.fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
                     }.getType());
                     if (callRateDetailList != null && !callRateDetailList.isEmpty()) {
+                        String json = gson.toJson(callRateDetailList);
+                        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_LIST, json);
                         adapter.addItems(callRateDetailList);
                     }
                 } catch (Exception e) {

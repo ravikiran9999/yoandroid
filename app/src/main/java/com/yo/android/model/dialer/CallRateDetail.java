@@ -83,4 +83,24 @@ public class CallRateDetail {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public boolean equals(Object v) {
+        boolean retVal = false;
+
+        if (v instanceof CallRateDetail){
+            CallRateDetail ptr = (CallRateDetail) v;
+            retVal = ptr.getId() == this.id;
+        }
+
+        return retVal;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
+    }
+
 }

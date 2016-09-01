@@ -104,11 +104,13 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
         //To display name of the user based on vox username
         Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER));
-        Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getVoxUserName()))
-                .placeholder(R.drawable.ic_contacts)
-                .dontAnimate()
-                .error(R.drawable.ic_contacts).
-                into(callerImageView);
+        if(contact!=null) {
+            Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getVoxUserName()))
+                    .placeholder(R.drawable.ic_contacts)
+                    .dontAnimate()
+                    .error(R.drawable.ic_contacts).
+                    into(callerImageView);
+        }
         if (contact != null && contact.getName() != null) {
             callerName.setText(contact.getName());
             callerName2.setText(contact.getName());
@@ -264,12 +266,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     ) {
                 finish();
                 bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mToastFactory.showToast("Call ended.");
-                    }
-                });
+
 
             }
 
@@ -290,7 +287,6 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mToastFactory.showToast("Call ended.");
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
             });

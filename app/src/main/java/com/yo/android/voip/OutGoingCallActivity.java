@@ -77,7 +77,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private void updateState() {
         if (sipBinder != null) {
             CallInfo callInfo = sipBinder.getHandler().getInfo();
-            if(callInfo !=null) {
+            if (callInfo != null) {
                 boolean isConnected = callInfo.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED;
                 if (isConnected) {
                     running = true;
@@ -106,12 +106,13 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
         //To display name of the user based on vox username
         Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER_NO));
-
-        Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getVoxUserName()))
-                .placeholder(R.drawable.ic_contacts)
-                .dontAnimate()
-                .error(R.drawable.ic_contacts).
-                into(callerImageView);
+        if (contact != null) {
+            Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getVoxUserName()))
+                    .placeholder(R.drawable.ic_contacts)
+                    .dontAnimate()
+                    .error(R.drawable.ic_contacts).
+                    into(callerImageView);
+        }
 
         if (contact != null && contact.getName() != null) {
             callerName.setText(contact.getName());
@@ -210,12 +211,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                     || model.getEvent() == UserAgent.CALL_STATE_ERROR
                     || model.getEvent() == UserAgent.CALL_STATE_END
                     ) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mToastFactory.showToast("Call ended.");
-                    }
-                });
+
                 bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 finish();
             }
@@ -231,7 +227,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mToastFactory.showToast("Call ended.");
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
             });

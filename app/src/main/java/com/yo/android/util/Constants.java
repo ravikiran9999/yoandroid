@@ -92,8 +92,12 @@ public class Constants {
     public static String SESSION_EXPIRE = "SESSION_EXPIRE";
     public static String CHAT_ROOM_REFRESH = "CHAT_ROOM_REFRESH";
     public static String UPDATE_NOTIFICATIONS = "UPDATE_NOTIFICATIONS";
+    public static String COUNTRY_LIST = "COUNTRY_LIST";
+
 
     // Contacts
     public static final String NUMBER = "number";
     public static final String NAME = "name";
+
+
 }
