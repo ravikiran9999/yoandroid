@@ -26,14 +26,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
-import com.yo.android.model.dialer.CallLogsResponse;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.CountryListActivity;
@@ -41,13 +39,9 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.vox.BalanceHelper;
-import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
 
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -57,10 +51,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -68,8 +58,6 @@ import retrofit2.Response;
 public class DialerFragment extends BaseFragment {
 
     public static final String REFRESH_CALL_LOGS = "com.yo.android.ACTION_REFRESH_CALL_LOGS";
-    @Inject
-    VoxApi.VoxService service;
 
     @Inject
     VoxFactory voxFactory;
@@ -313,7 +301,7 @@ public class DialerFragment extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loadDefaultSimCountry();
-        adapter = new CallLogsAdapter(getActivity(), preferenceEndPoint,mContactsSyncManager);
+        adapter = new CallLogsAdapter(getActivity(), preferenceEndPoint, mContactsSyncManager);
         listView.setAdapter(adapter);
         loadCallLogs();
     }

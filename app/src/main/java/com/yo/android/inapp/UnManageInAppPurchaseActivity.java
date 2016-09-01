@@ -47,7 +47,7 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
         ITEM_SKU = getIntent().getStringExtra("sku");
         ITEM_PRICE = getIntent().getFloatExtra("price", 0f);
         ITEM_SKU = "android.test.purchased";
-        ITEM_SKU = ITEM_SKU.toLowerCase();
+//        ITEM_SKU = ITEM_SKU.toLowerCase();
         //developer payload
         emailAddress = getIntent().getStringExtra(Constants.USER_ID);
         mHelper = new IabHelper(this, BASE_64_KEY_FOR_IN_APP_PURCHASE);

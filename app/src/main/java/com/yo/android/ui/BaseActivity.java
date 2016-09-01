@@ -22,7 +22,6 @@ import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.di.AwsLogsCallBack;
 import com.yo.android.di.Injector;
 import com.yo.android.util.ProgressDialogFactory;
-import com.yo.android.vox.VoxApi;
 import com.yo.android.vox.VoxFactory;
 
 import javax.inject.Inject;
@@ -54,8 +53,6 @@ public class BaseActivity extends AppCompatActivity {
 
     @Inject
     protected VoxFactory voxFactory;
-    @Inject
-    protected VoxApi.VoxService voxService;
     @Inject
     protected YoApi.YoService yoService;
 

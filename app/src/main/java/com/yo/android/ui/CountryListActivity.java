@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,11 +13,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.helpers.CallRatesCountryViewHolder;
 import com.yo.android.model.dialer.CallRateDetail;
-import com.yo.android.model.dialer.CallRatesResponse;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -58,14 +57,18 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
         showProgressDialog();
-        voxService.executeAction(voxFactory.getCallRatesBody("1")).enqueue(new Callback<ResponseBody>() {
+        final String accessToken = preferenceEndPoint.getStringPreference("access_token");
+
+        yoService.getCallsRatesListAPI(accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 dismissProgressDialog();
                 try {
-                    CallRatesResponse response1 = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), CallRatesResponse.class);
-                    List<CallRateDetail> callRateDetailList = response1.getData().getCallRateDetailList();
-                    adapter.addItems(callRateDetailList);
+                    List<CallRateDetail> callRateDetailList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
+                    }.getType());
+                    if (callRateDetailList != null && !callRateDetailList.isEmpty()) {
+                        adapter.addItems(callRateDetailList);
+                    }
                 } catch (Exception e) {
                     mLog.w(TAG, e);
                 }
