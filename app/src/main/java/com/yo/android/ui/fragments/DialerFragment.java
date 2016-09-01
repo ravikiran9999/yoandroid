@@ -10,6 +10,7 @@ import android.support.v7.widget.SearchView;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,13 +27,17 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResult;
+import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.util.Constants;
@@ -41,6 +46,9 @@ import com.yo.android.voip.DialPadView;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.vox.VoxFactory;
 
+import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +61,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -102,9 +114,13 @@ public class DialerFragment extends BaseFragment {
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> appCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> paidCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
     private String sUserSimCountryCode;
+    private List<CallRateDetail> callRateDetailList;
+    @Inject
+    protected YoApi.YoService yoService;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
+
 
 
     @Override
@@ -117,6 +133,31 @@ public class DialerFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         bus.register(this);
+        yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                dismissProgressDialog();
+                try {
+                    List<CallRateDetail> callRateDetailList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
+                    }.getType());
+                    if (callRateDetailList != null && !callRateDetailList.isEmpty()) {
+                        String json = new Gson().toJson(callRateDetailList);
+                        dialPadView.setTag(callRateDetailList);
+                        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_LIST, json);
+                    }
+                } catch (Exception e) {
+                    mLog.w(TAG, e);
+                }
+                showEmptyText();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                dismissProgressDialog();
+                showEmptyText();
+            }
+        });
+
     }
 
 
@@ -161,6 +202,7 @@ public class DialerFragment extends BaseFragment {
 
         ButterKnife.bind(this, view);
         dialPadView = (DialPadView) view.findViewById(R.id.dialPadView);
+
         mDigits = dialPadView.getDigits();
         bottom_layout = view.findViewById(R.id.bottom_layout);
         txtBalance = (TextView) view.findViewById(R.id.txt_balance);
@@ -217,7 +259,8 @@ public class DialerFragment extends BaseFragment {
             }
         });
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        txtBalance.setText("Balance $" + balance);
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        txtBalance.setText("Balance $" + formatter.format(Double.valueOf(balance)));
         //
         setCallRateText();
         txtCallRate.setOnClickListener(new View.OnClickListener() {
@@ -227,6 +270,41 @@ public class DialerFragment extends BaseFragment {
             }
         });
         hideDialPad(false);
+        callRateDetailList = (List<CallRateDetail>) dialPadView.getTag();
+
+        dialPadView.getDigits().addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                if (s.length() != 0) {
+                    if (callRateDetailList != null) {
+                        for (CallRateDetail callRateDetail : callRateDetailList) {
+                            if (("+"+callRateDetail.getPrefix()).equals(s) ||("00"+callRateDetail.getPrefix()).equals(s) ) {
+                                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
+                                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());
+                                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_PULSE, callRateDetail.getPulse());
+                                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_PREFIX, "+" + callRateDetail.getPrefix());
+                                setCallRateText();
+                            }
+                        }
+                    }else{
+                        callRateDetailList = (List<CallRateDetail>) dialPadView.getTag();
+                    }
+
+                }
+            }
+        });
+
     }
 
     @NonNull
@@ -329,9 +407,9 @@ public class DialerFragment extends BaseFragment {
 
             results = prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
         } else if (filter.equalsIgnoreCase("App Calls")) {
-           results = prepare("App Calls", results, appCalls);
+            results = prepare("App Calls", results, appCalls);
         } else {
-           results = prepare("Paid Calls", results, paidCalls);
+            results = prepare("Paid Calls", results, paidCalls);
         }
         adapter.addItems(results);
         showEmptyText();

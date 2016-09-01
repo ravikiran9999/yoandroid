@@ -163,8 +163,9 @@ public class YoApi {
         @GET("api/user/info.json")
         Call<UserProfileInfo> getUserInfo(@Query("access_token") String access_token);
 
-        //        http://yoapp-dev.herokuapp.com/api/user/578090e7b45d200ebc3b8b99.json?
-// access_token=2538a604f78a24170b6b37db15e4e782c1d1c2c0b65e89a67ce4315c2ad61c4e&user[first_name]=bhumi&user[last_name]=parimi&user[email]=email@example.com&user[phone_no]=123456789&user[avatar]=image-file
+        // http://yoapp-dev.herokuapp.com/api/user/578090e7b45d200ebc3b8b99.json?
+        // access_token=2538a604f78a24170b6b37db15e4e782c1d1c2c0b65e89a67ce4315c2ad61c4e&user[first_name]=bhumi&user[last_name]=parimi&user[email]=email@example.com&user[phone_no]=123456789&user[avatar]=image-file
+
         @Multipart
         @PUT("/api/user/{user_id}.json")
         Call<UserProfileInfo> updateProfile(
@@ -186,9 +187,15 @@ public class YoApi {
         @GET("api/user/followings.json")
         Call<List<FindPeople>> getFollowingsAPI(@Query("access_token") String access_token);
 
-        @FormUrlEncoded
+        @Multipart
+        //@FormUrlEncoded
         @POST("api/rooms.json")
-        Call<Room> createGroupAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user, @Field("room[group_name]") String groupName);
+        Call<Room> createGroupAPI(
+                @Part("access_token") String access_token,
+                @Header("Authorization") String authorization,
+                @Part("room[user_ids][]") List<String> user,
+                @Part("room[group_name]") String groupName,
+                @Part MultipartBody.Part file );
 
         @GET("api/articles.json")
         Call<List<Articles>> getOtherProfilesLikedArticlesAPI(@Query("access_token") String access_token, @Query("user_id") String user_id);
@@ -274,5 +281,4 @@ public class YoApi {
         );
 
     }
-
 }

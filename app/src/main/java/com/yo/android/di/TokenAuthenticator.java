@@ -40,7 +40,7 @@ public class TokenAuthenticator implements Authenticator {
         String refreshToken = preferenceEndPoint.getStringPreference("refresh_token");
         boolean isRequestForTokens = response.request().url().toString().contains("oauth/token.json");
         boolean sessionExpire = preferenceEndPoint.getBooleanPreference(Constants.SESSION_EXPIRE, false);
-        if (TOKEN_EXPIRE && ((!isRequestForTokens && tokenExpireCount > 5) || sessionExpire)) {
+        if (((!isRequestForTokens && tokenExpireCount > 5) || sessionExpire)) {
             //Session Expire
             if (!sessionExpire) {
                 preferenceEndPoint.clearAll();

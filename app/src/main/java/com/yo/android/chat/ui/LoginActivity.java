@@ -216,6 +216,8 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
                     if (response1 != null) {
                         boolean isNewUser = (boolean) ((LinkedTreeMap) response1.getData()).get("isNewUser");
                         preferenceEndPoint.saveBooleanPreference("isNewUser", isNewUser);
+                        boolean balanceAdded = (boolean) ((LinkedTreeMap) response1.getData()).get("balanceAdded");
+                        preferenceEndPoint.saveBooleanPreference("balanceAdded", balanceAdded);
                     }
                     OTPFragment otpFragment = new OTPFragment();
                     Bundle bundle = new Bundle();

@@ -71,6 +71,8 @@
     <string name="dialpad_star_number">*</string>
     <!--  Do not translate. -->
     <string name="dialpad_pound_number">#</string>
+
+
     <!--  Do not translate. -->
     <string name="dialpad_0_letters">+</string>
     <!--  Do not translate. -->
@@ -173,4 +175,10 @@
     <string name="ringing">Ringing</string>
     <string name="busy">Callee is busy</string>
     <string name="all_busy">All possible destinations are busy</string>
+    <string name="invalid_voucher">Invalid Voucher.</string>
+    <string name="voucher_recharge_successful">Voucher Recharge Successful</string>
+    <string name="invalid_pin_request">Invalid pin Request.</string>
+    <string name="voucher_used">Voucher has been used.</string>
+    <string name="voucher_expired">Voucher has been expired.</string>
+    <string name="unsuccessful_recharge">Unsuccessfully recharge.</string>
 </resources>

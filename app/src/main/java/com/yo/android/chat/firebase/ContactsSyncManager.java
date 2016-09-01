@@ -110,10 +110,9 @@ public class ContactsSyncManager {
                 });
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
-
     }
 
-    public Response<List<Contact>> syncContactsAPI(List<Contact> contacts) throws IOException {
+    public void syncContactsAPI(List<Contact> contacts) throws IOException {
         String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         List<JSONObject> nameAndNumber = new ArrayList<>();
         for (int i = 0; i < contacts.size(); i++) {
@@ -127,8 +126,7 @@ public class ContactsSyncManager {
             }
         }
         Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute();
-        setContacts(response.body());
-        return response;
+        response.body();
     }
 
     private List<Contact> readContacts() {
@@ -188,9 +186,7 @@ public class ContactsSyncManager {
             Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
             Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + "= '" + voxUserName + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
             if (c != null && c.moveToFirst()) {
-                Contact contact = ContactsSyncManager.prepareContact(c);
-                return contact;
-
+                return ContactsSyncManager.prepareContact(c);
             }
         }
         return null;
@@ -244,7 +240,6 @@ public class ContactsSyncManager {
                 } catch (RemoteException | OperationApplicationException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
