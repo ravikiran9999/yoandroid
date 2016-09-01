@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.Contact;
 import com.yo.android.model.GroupMembers;
 import com.yo.android.model.RoomInfo;
+import com.yo.android.model.UserProfile;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
@@ -63,7 +65,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private Firebase authReference;
     private Firebase roomInfo;
     private List<GroupMembers> groupMembersList;
-    private GroupMembers groupMembers;
+    private String roomName;
+
     HashMap<String, GroupMembers> groupMembersHashMap;
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -87,6 +90,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 contact = getIntent().getParcelableExtra(Constants.CONTACT);
                 setDataFromPreferences();
             } else if (intent.hasExtra(Constants.FROM_CHAT_ROOMS)) {
+
                 fromChatRooms = true;
                 if (intent.hasExtra(Constants.OPPONENT_PHONE_NUMBER)) {
                     opponentNo = intent.getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
@@ -94,6 +98,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (intent.hasExtra(Constants.OPPONENT_CONTACT_IMAGE)) {
                     opponentImg = intent.getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
                 }
+                roomName = intent.getStringExtra(Constants.GROUP_NAME);
                 contact = new Contact();
                 contact.setPhoneNo(opponentNo);
                 contact.setVoxUserName(opponentNo);
@@ -104,7 +109,10 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (intent.hasExtra(Constants.CHAT_ROOM_ID)) {
                     String firebaseRoomId = intent.getStringExtra(Constants.CHAT_ROOM_ID);
                     roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
-                    roomInfo.addListenerForSingleValueEvent(this);
+                    if (roomName != null) {
+                        roomInfo.addListenerForSingleValueEvent(this);
+                        profileCall.setVisibility(View.INVISIBLE);
+                    }
                 }
             }
         }
@@ -228,12 +236,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot dataSnapshotUser : dataSnapshot.getChildren()) {
 
-                        groupMembers = new GroupMembers();
+                        GroupMembers groupMembers = new GroupMembers();
                         groupMembers.setAdmin(dataSnapshotUser.getValue().toString());
                         groupMembers.setUserId(dataSnapshotUser.getKey());
 
                         groupMembersHashMap.put(dataSnapshotUser.getKey(), groupMembers);
-
                         //groupMembersList.add(groupMembers);
 
                         Firebase membersProfileReference = dataSnapshot.getRef().getRoot().child(Constants.USERS).child(dataSnapshotUser.getKey()).child(Constants.PROFILE);
@@ -241,11 +248,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                         membersProfileReference.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                DataSnapshot dataSnapshot1 = dataSnapshot;
+                                UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
                                 for (Map.Entry m : groupMembersHashMap.entrySet()) {
                                     if (dataSnapshot.getRef().getParent().getKey().equals(m.getKey())) {
-                                        groupMembers = dataSnapshot1.getValue(GroupMembers.class);
-                                        groupMembersHashMap.put(dataSnapshot1.getKey(), groupMembers);
+                                        GroupMembers groupMembers = (GroupMembers) m.getValue();
+                                        groupMembers.setUserProfile(userProfile);
                                         groupMembersList.add(groupMembers);
                                     }
                                 }

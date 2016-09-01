@@ -124,6 +124,7 @@ public class ChatActivity extends BaseActivity {
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
                     intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
+                    intent.putExtra(Constants.GROUP_NAME, room.getGroupName());
                     startActivity(intent);
                 }
             });

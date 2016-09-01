@@ -122,6 +122,7 @@ public class ContactSyncHelper {
 
     private void performContactSync(HashMap<Integer, Contact> cachePhoneBookHashMap) {
         HashMap<Integer, Contact> contactPhoneBookMap = readContactsFromPhoneBook();
+
         if (contactsBook.isEmpty()) {
             contactsBook.putAll(contactPhoneBookMap);
         }
@@ -138,6 +139,7 @@ public class ContactSyncHelper {
             Integer id = pair.getKey();
             Contact value = pair.getValue();
             Contact existing = cachePhoneBookHashMap.get(id);
+
             boolean contactModify = false;
             if (existing == null) {
                 for (String s : value.shortPhones) {
@@ -161,9 +163,7 @@ public class ContactSyncHelper {
                 }
             }
 
-            boolean nameChanged = existing != null
-                    && (value.first_name != null
-                    && value.first_name.length() != 0
+            boolean nameChanged = existing != null && (value.first_name != null && value.first_name.length() != 0
                     && !existing.first_name.equals(value.first_name)
                     || value.last_name != null
                     && existing.last_name != null
@@ -476,6 +476,4 @@ public class ContactSyncHelper {
         }
         return null;
     }
-
-
 }

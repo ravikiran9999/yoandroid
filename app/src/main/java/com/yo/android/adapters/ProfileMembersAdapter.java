@@ -31,9 +31,14 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
     @Override
     public void bindView(int position, ProfileMembersViewHolder holder, GroupMembers item) {
         //if(item.getGroupName() != null) {
-            holder.getContactNumber().setText(item.getFullName());
-            //holder.getContactMail().setText(item.getEmailId());
+            holder.getContactNumber().setText(item.getUserProfile().getFullName());
+        if(item.getAdmin().equalsIgnoreCase("true")) {
+            holder.getPermission().setText("admin");
+        } else if(item.getAdmin().equalsIgnoreCase("false")) {
+            holder.getPermission().setText("");
+        }
 
+        //holder.getContactMail().setText(item.getEmailId());
         //}
     }
 }
