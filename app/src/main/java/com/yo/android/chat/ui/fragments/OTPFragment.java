@@ -31,6 +31,7 @@ import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
 
@@ -59,6 +60,10 @@ public class OTPFragment extends BaseFragment {
     ContactsSyncManager contactsSyncManager;
     @Inject
     ConnectivityHelper mHelper;
+    @Inject
+    ContactSyncHelper mContactSyncHelper;
+
+
     private TextView txtTimer;
     private Handler mHandler = new Handler();
     private final static int MAX_DURATION = 60;
@@ -191,7 +196,7 @@ public class OTPFragment extends BaseFragment {
                 //dismissProgressDialog();
                 if (response.isSuccessful()) {
                     preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, false);
-                    contactsSyncManager.syncContacts();
+                    //contactsSyncManager.syncContacts();
                     count++;
                     storeTokens(response, phoneNumber, password);
                     addSubscriber(response.body().getAccessToken());
@@ -239,7 +244,7 @@ public class OTPFragment extends BaseFragment {
     }
 
     private void finishAndNavigateToHome() {
-        contactsSyncManager.syncContacts();
+         //contactsSyncManager.syncContacts();
         //
         final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         if (isNewUser) {
@@ -360,6 +365,4 @@ public class OTPFragment extends BaseFragment {
         reSendTextBtn.setText("Resend");
         reSendTextBtn.setEnabled(true);
     }
-
-
 }

@@ -31,6 +31,7 @@ public class ChatActivity extends BaseActivity {
     private String opponent;
     private String opponentNumber;
     private String mOpponentImg;
+    private Room room;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -43,7 +44,7 @@ public class ChatActivity extends BaseActivity {
         Bundle args = new Bundle();
 
         if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.ROOM)) {
-            Room room = getIntent().getParcelableExtra(Constants.ROOM);
+            room = getIntent().getParcelableExtra(Constants.ROOM);
 
             args.putString(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
             opponent = getOppenent(room);
@@ -122,6 +123,8 @@ public class ChatActivity extends BaseActivity {
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+                    intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
+                    intent.putExtra(Constants.GROUP_NAME, room.getGroupName());
                     startActivity(intent);
                 }
             });

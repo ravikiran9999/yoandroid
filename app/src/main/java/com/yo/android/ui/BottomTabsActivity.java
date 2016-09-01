@@ -166,7 +166,7 @@ public class BottomTabsActivity extends BaseActivity {
         //
         loadUserProfileInfo();
         updateDeviceToken();
-        contactsSyncManager.syncContacts();
+        //contactsSyncManager.syncContacts();
         SyncUtils.createSyncAccount(this, preferenceEndPoint);
         mContactSyncHelper.checkContacts();
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);

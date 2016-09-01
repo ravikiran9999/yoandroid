@@ -238,6 +238,5 @@ public class UpdateProfileActivity extends BaseActivity {
                 toastFactory.showToast("Unable to update the profile");
             }
         });
-
     }
 }
