@@ -10,10 +10,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.squareup.picasso.Picasso;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -241,10 +239,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                         groupMembers.setUserId(dataSnapshotUser.getKey());
 
                         groupMembersHashMap.put(dataSnapshotUser.getKey(), groupMembers);
-                        //groupMembersList.add(groupMembers);
 
                         Firebase membersProfileReference = dataSnapshot.getRef().getRoot().child(Constants.USERS).child(dataSnapshotUser.getKey()).child(Constants.PROFILE);
-                        //membersProfileReference.addChildEventListener(childEventListener);
                         membersProfileReference.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
