@@ -165,4 +165,10 @@
     <string name="invite_link">Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com</string>
 
     <string name="service_started">%s started</string>
+    <string name="invalid_voucher">Invalid Voucher.</string>
+    <string name="voucher_recharge_successful">Voucher Recharge Successful</string>
+    <string name="invalid_pin_request">Invalid pin Request.</string>
+    <string name="voucher_used">Voucher has been used.</string>
+    <string name="voucher_expired">Voucher has been expired.</string>
+    <string name="unsuccessful_recharge">Unsuccessfully recharge.</string>
 </resources>
