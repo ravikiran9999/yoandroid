@@ -191,7 +191,7 @@ public class OTPFragment extends BaseFragment {
                 //dismissProgressDialog();
                 if (response.isSuccessful()) {
                     preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, false);
-                    contactsSyncManager.syncContacts();
+                    //contactsSyncManager.syncContacts();
                     count++;
                     storeTokens(response, phoneNumber, password);
                     addSubscriber(response.body().getAccessToken());
@@ -239,7 +239,7 @@ public class OTPFragment extends BaseFragment {
     }
 
     private void finishAndNavigateToHome() {
-        contactsSyncManager.syncContacts();
+        //contactsSyncManager.syncContacts();
         //
         final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         if (isNewUser) {

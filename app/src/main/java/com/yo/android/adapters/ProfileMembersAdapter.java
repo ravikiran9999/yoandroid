@@ -5,13 +5,14 @@ import android.view.View;
 
 import com.yo.android.R;
 import com.yo.android.helpers.ProfileMembersViewHolder;
+import com.yo.android.model.GroupMembers;
 import com.yo.android.model.Room;
 
 /**
  * Created by rdoddapaneni on 7/26/2016.
  */
 
-public class ProfileMembersAdapter extends AbstractBaseAdapter<Room, ProfileMembersViewHolder> {
+public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, ProfileMembersViewHolder> {
 
     public ProfileMembersAdapter(Context context) {
         super(context);
@@ -28,10 +29,11 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<Room, ProfileMemb
     }
 
     @Override
-    public void bindView(int position, ProfileMembersViewHolder holder, Room item) {
-        if(item.getGroupName() != null) {
-            holder.getContactNumber().setText(item.getMembers().get(position).getMobileNumber());
+    public void bindView(int position, ProfileMembersViewHolder holder, GroupMembers item) {
+        //if(item.getGroupName() != null) {
+            holder.getContactNumber().setText(item.getFullName());
             //holder.getContactMail().setText(item.getEmailId());
-        }
+
+        //}
     }
 }

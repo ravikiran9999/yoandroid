@@ -93,7 +93,6 @@ public class ContactSyncHelper {
                 checkContacts();
             }
         }
-
     }
 
     public void checkContacts() {
@@ -211,12 +210,12 @@ public class ContactSyncHelper {
 
     public static class Contact {
         public int id;
-        public ArrayList<String> phones = new ArrayList<>();
-        public ArrayList<String> phoneTypes = new ArrayList<>();
-        public ArrayList<String> shortPhones = new ArrayList<>();
-        public ArrayList<Integer> phoneDeleted = new ArrayList<>();
-        public String first_name;
-        public String last_name;
+        ArrayList<String> phones = new ArrayList<>();
+        ArrayList<String> phoneTypes = new ArrayList<>();
+        ArrayList<String> shortPhones = new ArrayList<>();
+        ArrayList<Integer> phoneDeleted = new ArrayList<>();
+        String first_name;
+        String last_name;
     }
 
     private String[] projectionPhones = {

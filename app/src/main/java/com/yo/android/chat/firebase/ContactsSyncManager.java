@@ -113,7 +113,7 @@ public class ContactsSyncManager {
 
     }
 
-    public Response<List<Contact>> syncContactsAPI(List<Contact> contacts) throws IOException {
+    public void syncContactsAPI(List<Contact> contacts) throws IOException {
         String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         List<JSONObject> nameAndNumber = new ArrayList<>();
         for (int i = 0; i < contacts.size(); i++) {
@@ -127,8 +127,8 @@ public class ContactsSyncManager {
             }
         }
         Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute();
-        setContacts(response.body());
-        return response;
+        //setContacts(response.body());
+        //return response;
     }
 
     private List<Contact> readContacts() {
@@ -190,7 +190,6 @@ public class ContactsSyncManager {
             if (c != null && c.moveToFirst()) {
                 Contact contact = ContactsSyncManager.prepareContact(c);
                 return contact;
-
             }
         }
         return null;
