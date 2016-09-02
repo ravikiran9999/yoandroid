@@ -26,7 +26,7 @@ public class BaseApp extends MultiDexApplication {
         /* Enable disk persistence  */
         Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
-        ReCreateService.getInstance(this).start(this);
+       // ReCreateService.getInstance(this).start(this);
     }
 
 

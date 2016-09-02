@@ -378,7 +378,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     }
 
-    private MyAccount buildAccount() {
+    private MyAccount buildAccount() throws UnsatisfiedLinkError {
         if (myAccount != null) {
             return myAccount;
         }
@@ -387,6 +387,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         accCfg.getNatConfig().setIceEnabled(true);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
         accCfg.getVideoConfig().setAutoShowIncoming(true);
+        if (myApp == null) {
+            startSipService();
+        }
         return myApp.addAcc(accCfg);
     }
 
@@ -404,7 +407,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
-        } catch (Exception e) {
+        } catch (Exception | UnsatisfiedLinkError e) {
             mLog.w(TAG, e);
         }
 
@@ -442,7 +445,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         MyCall call = new MyCall(myAccount, -1);
         CallOpParam prm = new CallOpParam(true);
         try {
-            call.isActive(finalUri,prm);
+            call.isActive(finalUri, prm);
             call.makeCall(finalUri, prm);
         } catch (Exception e) {
             mLog.w(TAG, e);
@@ -603,7 +606,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 currentCall.hangup(prm);
                 isHangup = true;
                 sipCallState.setCallState(SipCallState.CALL_FINISHED);
-                ReCreateService.getInstance(this).start(this);
+                //ReCreateService.getInstance(this).start(this);
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }

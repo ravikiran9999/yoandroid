@@ -183,4 +183,5 @@
     <string name="voucher_used">Voucher has been used.</string>
     <string name="voucher_expired">Voucher has been expired.</string>
     <string name="unsuccessful_recharge">Unsuccessfully recharge.</string>
+    <string name="need_to_implement">This funcationality not yet implemented</string>
 </resources>

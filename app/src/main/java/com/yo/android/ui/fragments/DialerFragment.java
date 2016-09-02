@@ -214,13 +214,16 @@ public class DialerFragment extends BaseFragment {
         view.findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), PhoneChatActivity.class));
+                mToastFactory.showToast(R.string.need_to_implement);
+                // startActivity(new Intent(getActivity(), PhoneChatActivity.class));
             }
         });
         view.findViewById(R.id.btnContacts).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), PhoneBookActivity.class));
+                mToastFactory.showToast(R.string.need_to_implement);
+
+                //  startActivity(new Intent(getActivity(), PhoneBookActivity.class));
             }
         });
         deleteButton = (ImageButton) view.findViewById(R.id.deleteButton);
@@ -293,7 +296,9 @@ public class DialerFragment extends BaseFragment {
                         for (CallRateDetail callRateDetail : callRateDetailList) {
                             String plus = "+" + callRateDetail.getPrefix();
                             String zero = "00" + callRateDetail.getPrefix();
-                            if (plus.equals(s.toString().trim()) || zero.equals(s.toString().trim())) {
+                            if ((s.length() >= plus.length() &&
+                                    s.toString().trim().subSequence(0, plus.length()).equals(plus)) ||
+                                    s.length() >= zero.length() && s.toString().trim().subSequence(0, zero.length()).equals(zero)) {
                                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
                                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());
                                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_PULSE, callRateDetail.getPulse());
