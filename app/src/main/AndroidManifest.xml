@@ -128,16 +128,19 @@
 
         <activity
             android:name=".ui.UserProfileActivity"
+            android:screenOrientation="portrait"
             android:label="@string/user_profile" />
         <activity
             android:name=".ui.MoreSettingsActivity"
             android:label="@string/settings_label"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Switch"
             android:windowSoftInputMode="stateHidden" />
 
        <!-- <service android:name=".voip.SipService" />-->
 
-        <activity android:name=".chat.ui.SignupActivity" />
+        <activity android:name=".chat.ui.SignupActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".flip.MagazineArticleDetailsActivity"
             android:screenOrientation="portrait" />
@@ -156,9 +159,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".chat.ui.CreateGroupActivity"
+            android:screenOrientation="portrait"
             android:label="@string/new_group" />
         <activity
             android:name=".chat.ui.GroupContactsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/new_group" />
         <activity
             android:name=".ui.CountryListActivity"
