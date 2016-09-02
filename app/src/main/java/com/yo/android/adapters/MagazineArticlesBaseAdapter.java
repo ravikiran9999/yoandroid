@@ -495,7 +495,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (data != null) {
 
             if (Constants.FOLLOW_EVENT.equals(type)) {
-                for (Articles article : items) {
+                for (Articles article : allArticles) {
                     if (data.getId() != null && data.getId().equals(article.getId())) {
                         article.setIsFollowing(data.getIsFollowing());
                         article.setIsFollow(data.isFollow());
@@ -504,7 +504,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }
                 }
             } else {
-                for (Articles article : items) {
+                for (Articles article : allArticles) {
                     if (data.getId() != null && data.getId().equals(article.getId())) {
                         article.setLiked(data.getLiked());
                         article.setIsChecked(data.isChecked());
