@@ -46,6 +46,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     private ArrayList<Contact> selectedContactsArrayList;
     private String mGroupName;
 
+
     private static final int REQUEST_SELECTED_CONTACTS = 3;
 
     public static List<Contact> ContactsArrayList;
@@ -167,25 +168,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 selectedUsers.add(userId);
             }
 
-            MultipartBody.Part body;
-            RequestBody des;
-            if (imgFile == null) {
-                body = null;
-            } else { // create RequestBody instance from file
-                RequestBody requestFile =
-                        RequestBody.create(MediaType.parse("multipart/form-data"), imgFile);
-
-                // MultipartBody.Part is used to send also the actual file name
-                body = MultipartBody.Part.createFormData("room[image]", imgFile.getName(), requestFile);
-
-                des = RequestBody.create(MediaType.parse("room[user_ids][]"), selectedUsers.toString());
-
-            }
-
-
-
-            String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-            yoService.createGroupAPI(access,null, selectedUsers, mGroupName, body).enqueue(new Callback<Room>() {
+            String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+            yoService.createGroupAPI(access, selectedUsers, mGroupName).enqueue(new Callback<Room>() {
                 @Override
                 public void onResponse(Call<Room> call, Response<Room> response) {
                     response.body();
