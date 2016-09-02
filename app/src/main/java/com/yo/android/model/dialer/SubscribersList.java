@@ -1,25 +1,26 @@
 package com.yo.android.model.dialer;
+
 import com.google.gson.annotations.SerializedName;
 
 public class SubscribersList {
-    @SerializedName("UAIP")
+    @SerializedName("uaip")
     private String uaip;
-    @SerializedName("SIPDESTINATION")
+    @SerializedName("sip_destination")
     private String sipdestination;
-    @SerializedName("DURATION")
+    @SerializedName("duration")
     private String duration;
     //    2014­10­09 10:05:15
-    @SerializedName("TIME")
+    @SerializedName("datetime")
     private String time;
     @SerializedName("USERNAME")
     private String username;
-    @SerializedName("CALLTYPE")
+    @SerializedName("call_type")
     private String calltype;
-    @SerializedName("CALLCOST")
+    @SerializedName("call_cost")
     private String callcost;
-    @SerializedName("COUNTRY")
+    @SerializedName("country")
     private String country;
-    @SerializedName("DESTINATION")
+    @SerializedName("destination")
     private String destination;
 
     private boolean arrowDown;

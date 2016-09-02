@@ -11,22 +11,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
-import com.yo.android.adapters.CallLogsAdapter;
-import com.yo.android.calllogs.CallLog;
-import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.SpendDetailsViewHolder;
-import com.yo.android.model.dialer.CallLogsResult;
-import com.yo.android.model.dialer.SpentDetailResponse;
 import com.yo.android.model.dialer.SubscribersList;
-import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -55,17 +50,12 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     @Inject
     BalanceHelper mBalanceHelper;
 
-    private CallLogsAdapter adapter;
-    @Inject
-    ContactsSyncManager mContactsSyncManager;
-
-    private List<CallLogsResult> appCalls = new ArrayList<>();
-    private List<CallLogsResult> paidCalls = new ArrayList<>();
-
+    private SpentDetailsAdapter adapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        adapter = new SpentDetailsAdapter(getActivity());
     }
 
     @Override
@@ -79,53 +69,12 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         ButterKnife.bind(this, view);
     }
 
-    private void loadCallLogs() {
-        appCalls.clear();
-        paidCalls.clear();
-        appCalls = CallLog.Calls.getAppToAppCallLog(getActivity());
-        paidCalls = CallLog.Calls.getPSTNCallLog(getActivity());
-        showEmptyText();
-        showDataOnFilter();
-    }
-
-    private void showDataOnFilter() {
-        final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
-        List<CallLogsResult> results = new ArrayList<>();
-        if (filter.equalsIgnoreCase("all calls")) {
-
-            prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
-        } else if (filter.equalsIgnoreCase("App Calls")) {
-            prepare("App Calls", results, appCalls);
-        } else {
-            prepare("Paid Calls", results, paidCalls);
-        }
-        adapter.addItems(results);
-        showEmptyText();
-
-        dismissProgressDialog();
-
-    }
-
-
-    private void prepare(String type, List<CallLogsResult> results, List<CallLogsResult> checkList) {
-        if (!checkList.isEmpty()) {
-            CallLogsResult result = new CallLogsResult();
-            result.setHeader(true);
-            result.setHeaderTitle(type);
-            results.add(result);
-            results.addAll(checkList);
-        }
-    }
-
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        adapter = new CallLogsAdapter(getActivity(), preferenceEndPoint, mContactsSyncManager);
         listView.setAdapter(adapter);
         showProgressDialog();
-        loadCallLogs();
-
+        mBalanceHelper.loadSpentDetailsHistory(this);
 
     }
 
@@ -135,9 +84,11 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             dismissProgressDialog();
             try {
                 String str = Util.toString(response.body().byteStream());
-                SpentDetailResponse detailResponse = new Gson().fromJson(str, SpentDetailResponse.class);
-                List<SubscribersList> lists = detailResponse.getData().getSubscriberslist();
-//                adapter.addItems(lists);
+                List<SubscribersList> detailResponseList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<SubscribersList>>() {
+                }.getType());
+                if (detailResponseList != null && !detailResponseList.isEmpty()) {
+                    adapter.addItems(detailResponseList);
+                }
             } catch (Exception e) {
                 mLog.w("SpendDetails", "onResponse", e);
             }
