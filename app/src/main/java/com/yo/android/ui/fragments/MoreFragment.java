@@ -41,6 +41,7 @@ import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
+import com.yo.android.util.Util;
 import com.yo.android.voip.VoipConstants;
 
 import java.io.File;
@@ -284,6 +285,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     alertDialog.dismiss();
                     //Clean contact sync
                     mContactSyncHelper.clean();
+                    if (getActivity() != null) {
+                        Util.cancelAllNotification(getActivity());
+                    }
                     Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
                     int deleteContacts = getActivity().getContentResolver().delete(uri, null, null);
                     mLog.i("MoreFragment", "Deleted contacts >>>>%d", deleteContacts);

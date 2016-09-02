@@ -60,12 +60,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import retrofit2.Response;
 
 /**
  * Created by Ramesh on 1/7/16.
  */
 public class Util {
+
+
     public static final int DEFAULT_BUFFER_SIZE = 1024;
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
@@ -74,7 +79,6 @@ public class Util {
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent, boolean onGoing) {
         //
-
         Intent destinationIntent = new Intent(context, clzz);
         destinationIntent.putExtra("from_notification", true);
         destinationIntent.putExtras(intent);
@@ -475,7 +479,19 @@ public class Util {
         }
         return time;
     }
-
+    public static String getDate(String time) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setTimeZone(TimeZone.getDefault());
+           // Date gmtTime = sdf.parse(time);
+            return sdf.format(sdf.parse(time));
+           // String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+           // return timeStamp;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
     public static void saveUserDetails(Response<UserProfileInfo> response, PreferenceEndPoint preferenceEndPoint) {
 
         preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());

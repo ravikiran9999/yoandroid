@@ -213,15 +213,42 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
                                 if (response.isSuccessful()) {
                                     if (response.code() == 200) {
-                                        mToastFactory.showToast("Voucher Recharge Successful");
-                                        alertDialog.dismiss();
-                                        mBalanceHelper.checkBalance();
-                                    }else {
-                                        mToastFactory.showToast("Voucher Recharge Failed");
+                                        try {
+                                            int statusCode = Integer.parseInt(response.body().getCode());
+                                            switch (statusCode) {
+                                                case 200:
+                                                    mToastFactory.showToast(R.string.voucher_recharge_successful);
+                                                    alertDialog.dismiss();
+                                                    mBalanceHelper.checkBalance();
+                                                    break;
+                                                case 600:
+                                                    mToastFactory.showToast(R.string.invalid_voucher);
+                                                    break;
+                                                case 601:
+                                                    mToastFactory.showToast(R.string.invalid_pin_request);
+                                                    break;
+                                                case 602:
+                                                    mToastFactory.showToast(R.string.voucher_used);
+                                                    break;
+                                                case 603:
+                                                    mToastFactory.showToast(R.string.voucher_expired);
+                                                    break;
+                                                case 604:
+                                                    mToastFactory.showToast(R.string.unsuccessful_recharge);
+                                                    break;
+                                                default:
+                                                    mToastFactory.showToast(R.string.invalid_voucher);
+                                                    break;
+                                            }
+                                        } catch (ClassCastException e) {
+                                            mLog.d("ClassCastException", e.getMessage());
+                                        }
+                                    } else {
+                                        mToastFactory.showToast(R.string.invalid_voucher);
                                     }
 
                                 } else {
-                                    mToastFactory.showToast("Voucher Recharge Failed");
+                                    mToastFactory.showToast(R.string.invalid_voucher);
                                 }
 
                             }
@@ -229,7 +256,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                             @Override
                             public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
 
-                                mToastFactory.showToast("Voucher Recharge Failed");
+                                mToastFactory.showToast(R.string.invalid_voucher);
 
                             }
                         });

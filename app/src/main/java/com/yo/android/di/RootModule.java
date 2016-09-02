@@ -50,6 +50,8 @@ import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.OthersMagazinesDetailActivity;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
+import com.yo.android.ui.PhoneBookActivity;
+import com.yo.android.ui.PhoneChatActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
@@ -67,6 +69,7 @@ import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.util.ReCreateService;
+import com.yo.android.voip.DialPadView;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.Receiver;
@@ -161,7 +164,10 @@ import dagger.Provides;
                 FirebaseService.class,
                 YoContactsSyncAdapter.class,
                 YoSipService.class,
-                ReCreateService.class
+                ReCreateService.class,
+                DialPadView.class,
+                PhoneBookActivity.class,
+                PhoneChatActivity.class
         },
         includes = {
                 AppModule.class,

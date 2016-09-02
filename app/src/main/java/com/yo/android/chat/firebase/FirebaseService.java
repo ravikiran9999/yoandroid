@@ -49,6 +49,7 @@ public class FirebaseService extends InjectedService {
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
+
     @Inject
     YoApi.YoService yoService;
 
@@ -150,7 +151,7 @@ public class FirebaseService extends InjectedService {
             }
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
-        if(!firebaseUserId.isEmpty()) {
+        if (!firebaseUserId.isEmpty()) {
             authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addChildEventListener(mChildEventListener);
         }
     }
@@ -166,7 +167,7 @@ public class FirebaseService extends InjectedService {
 
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
-                        if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0) {
+                        if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0 && loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
                             postNotification(chatMessage.getRoomId(), chatMessage);
                         }
 
@@ -210,41 +211,41 @@ public class FirebaseService extends InjectedService {
     }
 
     private void postNotification(String roomId, ChatMessage chatMessage) {
-        try {
+            try {
 
-            String body = chatMessage.getMessage();
-            String title = chatMessage.getSenderID();
-            String voxUsername = chatMessage.getVoxUserName();
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                String body = chatMessage.getMessage();
+                String title = chatMessage.getSenderID();
+                String voxUsername = chatMessage.getVoxUserName();
+                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            int notificationId = chatMessage.getMessage().hashCode();
+                int notificationId = chatMessage.getMessage().hashCode();
 
-            NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
-            notificationStyle.bigText(body);
-            Intent notificationIntent = new Intent(this, ChatActivity.class);
-            notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            notificationIntent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-            notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
-            notificationIntent.putExtra(Constants.VOX_USER_NAME,voxUsername);
-            notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
+                NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
+                notificationStyle.bigText(body);
+                Intent notificationIntent = new Intent(this, ChatActivity.class);
+                notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                notificationIntent.putExtra(Constants.CHAT_ROOM_ID, roomId);
+                notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
+                notificationIntent.putExtra(Constants.VOX_USER_NAME, voxUsername);
+                notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
 
-            PendingIntent contentIntent = PendingIntent.getActivity(this, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent contentIntent = PendingIntent.getActivity(this, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            android.app.Notification notification = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.ic_yo_notification)
-                    .setContentTitle(title == null ? "Yo App" : title)
-                    .setContentText(body)
-                    .setContentIntent(contentIntent)
-                    .setAutoCancel(true)
-                    .setStyle(notificationStyle)
-                    .build();
+                android.app.Notification notification = new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_yo_notification)
+                        .setContentTitle(title == null ? "Yo App" : title)
+                        .setContentText(body)
+                        .setContentIntent(contentIntent)
+                        .setAutoCancel(true)
+                        .setStyle(notificationStyle)
+                        .build();
 
-            mNotificationManager.notify(notificationId, notification);
+                mNotificationManager.notify(notificationId, notification);
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 
     @Override

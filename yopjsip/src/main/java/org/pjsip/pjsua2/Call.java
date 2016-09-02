@@ -65,9 +65,7 @@ public class Call {
 		return new CallInfo(pjsua2JNI.Call_getInfo(swigCPtr, this), true);
 	}
 
-	public boolean isActive() {
-		return pjsua2JNI.Call_isActive(swigCPtr, this);
-	}
+
 
 	public int getId() {
 		return pjsua2JNI.Call_getId(swigCPtr, this);
@@ -107,11 +105,18 @@ public class Call {
 		return pj_stun_nat_type.swigToEnum(pjsua2JNI.Call_getRemNatType(
 				swigCPtr, this));
 	}
-
+	public int getCountRegStatus(AccountInfo accountInfo)
+			throws Exception {
+		return pjsua2JNI.AccountInfo_regStatus_get(swigCPtr,accountInfo);
+	}
 	public void makeCall(String dst_uri, CallOpParam prm)
 			throws Exception {
 		pjsua2JNI.Call_makeCall(swigCPtr, this, dst_uri,
 				CallOpParam.getCPtr(prm), prm);
+	}
+	public void isActive(String dst_uri, CallOpParam prm)
+			throws Exception {
+		pjsua2JNI.Call_isActive(swigCPtr, this);
 	}
 
 	public void answer(CallOpParam prm) throws Exception {

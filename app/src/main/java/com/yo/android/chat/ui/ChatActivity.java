@@ -65,7 +65,9 @@ public class ChatActivity extends BaseActivity {
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
-            opponent = contact.getVoxUserName();
+            if (contact != null) {
+                opponent = contact.getVoxUserName();
+            }
             args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
             args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
@@ -134,7 +136,7 @@ public class ChatActivity extends BaseActivity {
 
     private String getOppenent(@NonNull Room room) {
 
-        if (room.getGroupName() == null) {
+        if (room != null && room.getGroupName() == null) {
 
             return room.getVoxUserName();
 
