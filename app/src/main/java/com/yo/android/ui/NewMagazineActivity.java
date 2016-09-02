@@ -137,6 +137,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
             startActivityForResult(intent, Constants.ADD_STORY_ACTION);
         } else {
             Util.hideKeyboard(this, v);
+            etTitle.requestFocus();
             mToastFactory.showToast("Please enter the Magazine Title");
         }
     }
