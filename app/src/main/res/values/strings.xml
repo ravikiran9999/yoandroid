@@ -6,6 +6,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="chat_fragment">Hello chat fragment</string>
+    <string name="chats">Chats</string>
+
     <string name="contacts_fragment">Hello contacts fragment</string>
     <string name="call_fragment">Hello call fragment</string>
     <string name="title_activity_login">Sign in</string>

@@ -40,6 +40,8 @@ import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.CountryListActivity;
+import com.yo.android.ui.PhoneBookActivity;
+import com.yo.android.ui.PhoneChatActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.DialPadView;
@@ -102,6 +104,7 @@ public class DialerFragment extends BaseFragment {
     private TextView txtBalance;
     private TextView txtCallRate;
     private View bottom_layout;
+
     private boolean show;
     @Inject
     ConnectivityHelper mConnectivityHelper;
@@ -120,7 +123,6 @@ public class DialerFragment extends BaseFragment {
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
-
 
 
     @Override
@@ -212,13 +214,13 @@ public class DialerFragment extends BaseFragment {
         view.findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mToastFactory.showToast("Message: Need to implement");
+                startActivity(new Intent(getActivity(), PhoneChatActivity.class));
             }
         });
         view.findViewById(R.id.btnContacts).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mToastFactory.showToast("Contacts: Need to implement");
+                startActivity(new Intent(getActivity(), PhoneBookActivity.class));
             }
         });
         deleteButton = (ImageButton) view.findViewById(R.id.deleteButton);
@@ -289,7 +291,9 @@ public class DialerFragment extends BaseFragment {
                 if (s.length() != 0) {
                     if (callRateDetailList != null) {
                         for (CallRateDetail callRateDetail : callRateDetailList) {
-                            if (("+"+callRateDetail.getPrefix()).equals(s) ||("00"+callRateDetail.getPrefix()).equals(s) ) {
+                            String plus = "+" + callRateDetail.getPrefix();
+                            String zero = "00" + callRateDetail.getPrefix();
+                            if (plus.equals(s.toString().trim()) || zero.equals(s.toString().trim())) {
                                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
                                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());
                                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_PULSE, callRateDetail.getPulse());
@@ -297,7 +301,7 @@ public class DialerFragment extends BaseFragment {
                                 setCallRateText();
                             }
                         }
-                    }else{
+                    } else {
                         callRateDetailList = (List<CallRateDetail>) dialPadView.getTag();
                     }
 
@@ -549,11 +553,16 @@ public class DialerFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-            setCallRateText();
+            String cPrefix = setCallRateText();
+            //TODO: Need to improve the logic
+            String str = dialPadView.getDigits().getText().toString();
+            str = str.substring(str.indexOf(" ") + 1);
+            dialPadView.getDigits().setText(cPrefix + " " + str);
+            dialPadView.getDigits().setSelection(cPrefix.length());
         }
     }
 
-    private void setCallRateText() {
+    private String setCallRateText() {
         String cName = preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME, null);
         String cRate = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_RATE, null);
         String cPulse = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_PULSE, null);
@@ -568,7 +577,7 @@ public class DialerFragment extends BaseFragment {
             }
 
             txtCallRate.setText(cName + "\n$" + cRate + "/" + pulse);
-            if (!TextUtils.isEmpty(cPrefix)) {
+            if (TextUtils.isEmpty(dialPadView.getDigits().getText().toString())) {
                 //TODO: Need to improve the logic
                 String str = dialPadView.getDigits().getText().toString();
                 str = str.substring(str.indexOf(" ") + 1);
@@ -576,6 +585,7 @@ public class DialerFragment extends BaseFragment {
                 dialPadView.getDigits().setSelection(cPrefix.length());
             }
         }
+        return cPrefix;
     }
 
     @Override

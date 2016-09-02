@@ -50,6 +50,8 @@ import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.OthersMagazinesDetailActivity;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
+import com.yo.android.ui.PhoneBookActivity;
+import com.yo.android.ui.PhoneChatActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
@@ -164,6 +166,8 @@ import dagger.Provides;
                 YoSipService.class,
                 ReCreateService.class,
                 DialPadView.class,
+                PhoneBookActivity.class,
+                PhoneChatActivity.class
         },
         includes = {
                 AppModule.class,
