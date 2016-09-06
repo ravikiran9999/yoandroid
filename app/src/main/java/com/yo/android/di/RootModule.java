@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.FindPeopleAdapter;
+import com.yo.android.adapters.SuggestionsAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.RetrieveContactsManager;
@@ -160,6 +161,7 @@ import dagger.Provides;
                 //Adapters
                 ChatRoomListAdapter.class,
                 FindPeopleAdapter.class,
+                SuggestionsAdapter.class,
 
                 FirebaseService.class,
                 YoContactsSyncAdapter.class,
