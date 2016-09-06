@@ -60,6 +60,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     private ArrayAdapter mAdapter;
     private Menu menu;
+    public static List<Topics> unSelectedTopics;
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
         return mMagazineFlipArticlesFragment;
@@ -125,6 +126,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         }
 
         topicsList = new ArrayList<Topics>();
+        unSelectedTopics = new ArrayList<>();
 
         callApiSearchTopics();
     }
@@ -160,6 +162,13 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 mAdapter.clear();
                 mAdapter.addAll(topicNamesList);
                 mAdapter.notifyDataSetChanged();
+                unSelectedTopics.clear();
+
+                for (int i = 0; i < topicsList.size(); i++) {
+                    if (!topicsList.get(i).isSelected()) {
+                        unSelectedTopics.add(topicsList.get(i));
+                    }
+                }
             }
 
             @Override
