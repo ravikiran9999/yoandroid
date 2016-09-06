@@ -1,11 +1,14 @@
 package com.yo.android.model.dialer;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class CallLogsResult implements Comparable<CallLogsResult> {
+public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
     //    {
 //        "stime": "2014­11­28  14:04:33",
 //            "billsec": "0",
@@ -16,22 +19,43 @@ public class CallLogsResult implements Comparable<CallLogsResult> {
 //            "dialedstatus": "NOT  ANSWER"
 //    }
     private String salerate;
-
     private String salecost;
-
     private String dialnumber;
-
     private String dialedstatus;
-
     private String stime;
-
     private String billsec;
-
     private String destination_name;
     private boolean header;
     private String headerTitle;
     private int callType;
     private String image;
+    public CallLogsResult(){
+
+    }
+    protected CallLogsResult(Parcel in) {
+        salerate = in.readString();
+        salecost = in.readString();
+        dialnumber = in.readString();
+        dialedstatus = in.readString();
+        stime = in.readString();
+        billsec = in.readString();
+        destination_name = in.readString();
+        headerTitle = in.readString();
+        callType = in.readInt();
+        image = in.readString();
+    }
+
+    public static final Creator<CallLogsResult> CREATOR = new Creator<CallLogsResult>() {
+        @Override
+        public CallLogsResult createFromParcel(Parcel in) {
+            return new CallLogsResult(in);
+        }
+
+        @Override
+        public CallLogsResult[] newArray(int size) {
+            return new CallLogsResult[size];
+        }
+    };
 
     public String getSalerate() {
         return salerate;
@@ -88,6 +112,7 @@ public class CallLogsResult implements Comparable<CallLogsResult> {
     public void setDestination_name(String destination_name) {
         this.destination_name = destination_name;
     }
+
     public int getCallType() {
         return callType;
     }
@@ -116,6 +141,7 @@ public class CallLogsResult implements Comparable<CallLogsResult> {
     public void setHeaderTitle(String headerTitle) {
         this.headerTitle = headerTitle;
     }
+
     public String getImage() {
         return image;
     }
@@ -129,13 +155,33 @@ public class CallLogsResult implements Comparable<CallLogsResult> {
     public int compareTo(CallLogsResult another) {
         DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         try {
-            Date startDate = (Date)formatter.parse(getStime());
-            Date endDate = (Date)formatter.parse(another.getStime());
+            Date startDate = (Date) formatter.parse(getStime());
+            Date endDate = (Date) formatter.parse(another.getStime());
             return startDate.compareTo(endDate);
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(salerate);
+        dest.writeString(salecost);
+        dest.writeString(dialnumber);
+        dest.writeString(dialedstatus);
+        dest.writeString(stime);
+        dest.writeString(billsec);
+        dest.writeString(destination_name);
+        dest.writeString(headerTitle);
+        dest.writeInt(callType);
+        dest.writeString(image);
+
     }
 }

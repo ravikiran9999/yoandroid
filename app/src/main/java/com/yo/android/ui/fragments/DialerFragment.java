@@ -401,8 +401,10 @@ public class DialerFragment extends BaseFragment {
     AdapterView.OnItemClickListener showCallLogDetailsListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-             startActivity(new Intent(getActivity(), CallLogDetailsActivity.class));
-
+            ArrayList<CallLogsResult> callLogDetails = (ArrayList<CallLogsResult>) adapter.getItem(position);
+            Intent intent = new Intent(getActivity(), CallLogDetailsActivity.class);
+            intent.putParcelableArrayListExtra(Constants.CALL_LOG_DETAILS, callLogDetails);
+            startActivity(intent);
         }
     };
 
