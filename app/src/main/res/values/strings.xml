@@ -6,6 +6,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="chat_fragment">Hello chat fragment</string>
+    <string name="chats">Chats</string>
+
     <string name="contacts_fragment">Hello contacts fragment</string>
     <string name="call_fragment">Hello call fragment</string>
     <string name="title_activity_login">Sign in</string>
@@ -71,6 +73,8 @@
     <string name="dialpad_star_number">*</string>
     <!--  Do not translate. -->
     <string name="dialpad_pound_number">#</string>
+
+
     <!--  Do not translate. -->
     <string name="dialpad_0_letters">+</string>
     <!--  Do not translate. -->
@@ -165,4 +169,18 @@
     <string name="invite_link">Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com</string>
 
     <string name="service_started">%s started</string>
+    <string name="call_ended">Call Ended</string>
+    <string name="no_network">Unable to make the call due to low network connectivity</string>
+    <string name="not_online">Recipient not online.</string>
+    <string name="call_forwarded">Call is  being forwarded</string>
+    <string name="temporerly_unavailable">Destination was temporarily unavailable</string>
+    <string name="ringing">Ringing</string>
+    <string name="busy">Callee is busy</string>
+    <string name="all_busy">All possible destinations are busy</string>
+    <string name="invalid_voucher">Invalid Voucher.</string>
+    <string name="voucher_recharge_successful">Voucher Recharge Successful</string>
+    <string name="invalid_pin_request">Invalid pin Request.</string>
+    <string name="voucher_used">Voucher has been used.</string>
+    <string name="voucher_expired">Voucher has been expired.</string>
+    <string name="unsuccessful_recharge">Unsuccessfully recharge.</string>
 </resources>

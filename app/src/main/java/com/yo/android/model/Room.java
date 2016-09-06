@@ -28,7 +28,7 @@ public class Room implements Parcelable {
     private String fullName;
     private String mobileNumber;
     private String voxUserName;
-
+    private List<GroupMembers> groupMembers = new ArrayList<>();
 
     public String getVoxUserName() {
         return voxUserName;
@@ -121,6 +121,14 @@ public class Room implements Parcelable {
 
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
+    }
+
+    public List<GroupMembers> getGroupMembers() {
+        return groupMembers;
+    }
+
+    public void setGroupMembers(List<GroupMembers> groupMembers) {
+        this.groupMembers = groupMembers;
     }
 
     @Override

@@ -20,7 +20,11 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.OutGoingCallActivity;
 
-public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLogsViewHolder> {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<CallLogsResult>>, CallLogsViewHolder> {
 
     private final PreferenceEndPoint mPrefs;
     private ContactsSyncManager contactsSyncManager;
@@ -44,74 +48,79 @@ public class CallLogsAdapter extends AbstractBaseAdapter<CallLogsResult, CallLog
     }
 
     @Override
-    protected boolean hasData(CallLogsResult event, String key) {
-        if (event.getDialnumber() != null && event.getDialnumber().contains(key)) {
-            return true;
-        }
-        return super.hasData(event, key);
-    }
-
-    @Override
-    public void bindView(int position, CallLogsViewHolder holder, final CallLogsResult item) {
-        if(item.getDestination_name()!=null) {
-            holder.getOpponentName().setText(item.getDestination_name());
+    public void bindView(int position, CallLogsViewHolder holder, Map.Entry<String, List<CallLogsResult>> item) {
+        if(item.getValue().get(0).getDestination_name()!=null) {
+            holder.getOpponentName().setText(item.getValue().get(0).getDestination_name());
         }else{
-            holder.getOpponentName().setText(item.getDialnumber());
+            holder.getOpponentName().setText(item.getValue().get(0).getDialnumber());
         }
 
-        Glide.with(mContext).load(item.getImage())
+        Glide.with(mContext).load(item.getValue().get(0).getImage())
                 .placeholder(R.drawable.ic_contacts)
                 .dontAnimate()
                 .error(R.drawable.ic_contacts).
                 into(holder.getContactPic());
 
 
-        item.getDialedstatus();//NOT  ANSWER,ANSWER
         //By default set these properties
         holder.getHeader().setVisibility(View.GONE);
         holder.getRowContainer().setVisibility(View.VISIBLE);
-        if(item.getDestination_name() == null){
+        if(item.getValue().get(0).getDestination_name() == null){
             holder.getMessageIcon().setVisibility(View.GONE);
         }else{
             holder.getMessageIcon().setVisibility(View.VISIBLE);
         }
-        if (item.isHeader()) {
+        int numberOfCallPerDay = item.getValue().size();
+        String numberOfCallsPerDay = "";
+        if(numberOfCallPerDay >1){
+            numberOfCallsPerDay = "("+item.getValue().size()+") ";
+        }
+        if (item.getValue().get(0).isHeader()) {
             holder.getHeader().setVisibility(View.VISIBLE);
             holder.getRowContainer().setVisibility(View.GONE);
-            holder.getHeader().setText(item.getHeaderTitle());
-        } else if (item.getCallType() == CallLog.Calls.MISSED_TYPE) {
+            holder.getHeader().setText(item.getValue().get(0).getHeaderTitle());
+        } else if (item.getValue().get(0).getCallType() == CallLog.Calls.MISSED_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_missed_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));
-        }else if(item.getCallType() == CallLog.Calls.INCOMING_TYPE){
+            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+        }else if(item.getValue().get(0).getCallType() == CallLog.Calls.INCOMING_TYPE){
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_incoming_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));        }
-        else if(item.getCallType() == CallLog.Calls.OUTGOING_TYPE){
+            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));        }
+        else if(item.getValue().get(0).getCallType() == CallLog.Calls.OUTGOING_TYPE){
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_outgoing_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));
-        }else if (item.getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
-            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));
+            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+        }else if (item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
+            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
         } else {
-            holder.getTimeStamp().setText(Util.parseConvertUtcToGmt(item.getStime()));
+            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_greenarrowup, 0, 0, 0);
         }
+        holder.getCallIcon().setTag(item);
+        holder.getMessageIcon().setTag(item);
         holder.getCallIcon().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SipHelper.makeCall(mContext, item.getDialnumber());
+                Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>)v.getTag();
+                SipHelper.makeCall(mContext, item.getValue().get(0).getDialnumber());
             }
         });
         holder.getMessageIcon().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>)v.getTag();
                 Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra(Constants.CONTACT,contactsSyncManager.getContactByVoxUserName(item.getDialnumber()) );
+                intent.putExtra(Constants.CONTACT,contactsSyncManager.getContactByVoxUserName(item.getValue().get(0).getDialnumber()) );
                 intent.putExtra(Constants.TYPE, Constants.CONTACT);
                 mContext.startActivity(intent);
             }
         });
-
     }
 
-
+    @Override
+    protected boolean hasData(Map.Entry<String, List<CallLogsResult>> event, String key) {
+        if (event.getKey() != null && event.getKey().contains(key)) {
+            return true;
+        }
+        return super.hasData(event, key);
+    }
 }

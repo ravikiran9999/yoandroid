@@ -1,6 +1,11 @@
 package com.yo.android.model.dialer;
 
-public class CallLogsResult {
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class CallLogsResult implements Comparable<CallLogsResult> {
     //    {
 //        "stime": "2014­11­28  14:04:33",
 //            "billsec": "0",
@@ -120,4 +125,17 @@ public class CallLogsResult {
     }
 
 
+    @Override
+    public int compareTo(CallLogsResult another) {
+        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        try {
+            Date startDate = (Date)formatter.parse(getStime());
+            Date endDate = (Date)formatter.parse(another.getStime());
+            return startDate.compareTo(endDate);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

@@ -1,11 +1,14 @@
 package com.yo.android.pjsip;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,6 +19,7 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
+import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.calllogs.CallerInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -82,6 +86,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
+
+    //New changes
+
+    private PowerManager.WakeLock ongoingCallLock;
+    private PowerManager.WakeLock eventLock;
 
     @Override
     public void onCreate() {
@@ -178,6 +187,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 source = parseVoxUser(source);
                 Util.createNotification(this, source,
                         "Missed call", BottomTabsActivity.class, new Intent(), false);
+                storeCallLog(CallLog.Calls.MISSED_TYPE, source);
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
@@ -215,7 +225,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             startActivity(intent);
             lastLaunchCallHandler = currentElapsedTime;
             mediaManager.playRingtone();
-            inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
+            if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
+                inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
+            }
         }
     }
 
@@ -250,7 +262,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             try {
                 int statusCode = call.getInfo().getLastStatusCode().swigValue();
                 //TODO:Handle more error codes to display proper messages to the user
-
                 handlerErrorCodes(call.getInfo(), sipCallState);
                 if (statusCode == 503) {
                     mLog.e(TAG, "503 >>> Buddy is not online at this moment");
@@ -259,8 +270,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
             callDisconnected();
         } else if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
@@ -271,8 +280,45 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     private void handlerErrorCodes(final CallInfo call, SipCallState sipCallstate) {
-        int statusCode = call.getLastStatusCode().swigValue();
+        final int statusCode = call.getLastStatusCode().swigValue();
         mLog.e(TAG, sipCallState.getMobileNumber() + ",Call Object " + call.toString());
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                switch (statusCode) {
+                    case 603:
+                        mToastFactory.showToast(R.string.call_ended);
+                        break;
+                    case 404:
+                        mToastFactory.showToast(R.string.no_network);
+                        break;
+                    case 503:
+                        mToastFactory.showToast(R.string.not_online);
+                        break;
+                    case 487:
+                        //Missed call
+                        break;
+                    case 181:
+                        mToastFactory.showToast(R.string.call_forwarded);
+                        break;
+                    case 182:
+                    case 480:
+                        mToastFactory.showToast(R.string.temporerly_unavailable);
+                        break;
+                    case 180:
+                        mToastFactory.showToast(R.string.ringing);
+                        break;
+                    case 486:
+                        mToastFactory.showToast(R.string.busy);
+                        break;
+                    case 600:
+                        mToastFactory.showToast(R.string.all_busy);
+                        break;
+
+                }
+            }
+        });
+
         // 603 Decline - when end call
         //503 Service Unavailable  - Buddy is not available
         //603 Allocated Channels Busy -Lines are busy
@@ -282,6 +328,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         } else if (!isHangup) {
             storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
             isHangup = false;
+        } else {
+            storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
         }
     }
 
@@ -394,6 +442,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         MyCall call = new MyCall(myAccount, -1);
         CallOpParam prm = new CallOpParam(true);
         try {
+            call.isActive(finalUri,prm);
             call.makeCall(finalUri, prm);
         } catch (Exception e) {
             mLog.w(TAG, e);
@@ -419,7 +468,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         intent.putExtra(OutGoingCallActivity.CALLER_NO, destination);
         startActivity(intent);
         destination = parseVoxUser(destination);
-        outGoingCallNotificationId = Util.createNotification(this, destination, "Outgoing call", OutGoingCallActivity.class, intent);
+        if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
+            outGoingCallNotificationId = Util.createNotification(this, destination, "Outgoing call", OutGoingCallActivity.class, intent);
+        }
     }
 
     private String parseVoxUser(String destination) {
@@ -472,6 +523,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         return null;
     }
 
+
     public void acceptCall() {
         CallOpParam prm = new CallOpParam();
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
@@ -502,6 +554,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
+            callDisconnected();
         }
     }
 
@@ -570,6 +623,55 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Override
     public String getRegistrationStatus() {
         return registrationStatus;
+    }
+
+
+    //New changes
+
+    public void initService(YoSipService srv) {
+        //  pjService = srv;
+        // notificationManager = pjService.service.notificationManager;
+
+        /*if (handlerThread == null) {
+            handlerThread = new HandlerThread("UAStateAsyncWorker");
+            handlerThread.start();
+        }
+        if (msgHandler == null) {
+            msgHandler = new WorkerHandler(handlerThread.getLooper(), this);
+        }*/
+
+        if (eventLock == null) {
+            PowerManager pman = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            eventLock = pman.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                    "com.csipsimple.inEventLock");
+            eventLock.setReferenceCounted(true);
+
+        }
+        if (ongoingCallLock == null) {
+            PowerManager pman = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            ongoingCallLock = pman.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                    "com.csipsimple.ongoingCallLock");
+            ongoingCallLock.setReferenceCounted(false);
+        }
+    }
+
+    public void stopService() {
+
+      /*  Threading.stopHandlerThread(handlerThread, true);
+        handlerThread = null;
+        msgHandler = null;
+*/
+        // Ensure lock is released since this lock is a ref counted one.
+        if (eventLock != null) {
+            while (eventLock.isHeld()) {
+                eventLock.release();
+            }
+        }
+        if (ongoingCallLock != null) {
+            if (ongoingCallLock.isHeld()) {
+                ongoingCallLock.release();
+            }
+        }
     }
 
 

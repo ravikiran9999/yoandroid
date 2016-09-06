@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -90,6 +91,18 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
         statusEdt.setText(mStatus + "");
         syncContactsSwitch.setEnabled(preferenceEndPoint.getBooleanPreference(Constants.SYNCE_CONTACTS));
         notificationSwitch.setEnabled(preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS));
+        syncContactsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                preferenceEndPoint.saveBooleanPreference(Constants.SYNCE_CONTACTS, isChecked);
+            }
+        });
+        notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                preferenceEndPoint.saveBooleanPreference(Constants.NOTIFICATION_ALERTS, isChecked);
+            }
+        });
     }
 
     @Override

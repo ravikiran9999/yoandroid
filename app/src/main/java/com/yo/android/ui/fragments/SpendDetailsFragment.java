@@ -52,6 +52,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
     private SpentDetailsAdapter adapter;
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +69,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
