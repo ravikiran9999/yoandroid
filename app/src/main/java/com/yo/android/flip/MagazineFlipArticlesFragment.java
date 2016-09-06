@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.aphidmobile.flip.FlipViewController;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
@@ -29,8 +28,8 @@ import com.yo.android.ui.fragments.MagazinesFragment;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -59,6 +58,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private TextView networkFailureText;
     @Inject
     protected LruCacheHelper lruCacheHelper;
+
+    public static int suggestionsPosition;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -108,8 +109,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
         } else {
             mProgress.setVisibility(View.GONE);
-            flipContainer.setVisibility(View.GONE);
-            llNoArticles.setVisibility(View.VISIBLE);
+            /*flipContainer.setVisibility(View.GONE);
+            llNoArticles.setVisibility(View.VISIBLE);*/
+            flipContainer.setVisibility(View.VISIBLE);
+            llNoArticles.setVisibility(View.GONE);
+            loadArticles(null);
         }
 
         followMoreTopics.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +156,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (tagIds != null) {
             yoService.getArticlesAPI(accessToken, tagIds).enqueue(callback);
         } else {
-            yoService.getUserArticlesAPI(accessToken).enqueue(callback);
+            //yoService.getUserArticlesAPI(accessToken).enqueue(callback);
+            yoService.getAllArticlesAPI(accessToken).enqueue(callback);
         }
     }
 
@@ -173,12 +178,19 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 if (llNoArticles != null) {
                     llNoArticles.setVisibility(View.GONE);
                     flipContainer.setVisibility(View.VISIBLE);
+                    if(myBaseAdapter.getCount()>0) {
+                        Random r = new Random();
+                        suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                    }
                 }
             } else {
-                if (llNoArticles != null) {
+                /*if (llNoArticles != null) {
                     flipContainer.setVisibility(View.GONE);
                     llNoArticles.setVisibility(View.VISIBLE);
-                }
+                }*/
+                flipContainer.setVisibility(View.VISIBLE);
+                llNoArticles.setVisibility(View.GONE);
+                loadArticles(null);
             }
 
         }
@@ -203,8 +215,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     } else {
                     if (llNoArticles != null) {
                         networkFailureText.setVisibility(View.GONE);
-                        llNoArticles.setVisibility(View.VISIBLE);
-                        flipContainer.setVisibility(View.GONE);
+                        /*llNoArticles.setVisibility(View.VISIBLE);
+                        flipContainer.setVisibility(View.GONE);*/
+                        flipContainer.setVisibility(View.VISIBLE);
+                        llNoArticles.setVisibility(View.GONE);
+                        loadArticles(null);
                     }
                     }
 
@@ -246,8 +261,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             } else {
                 myBaseAdapter.addItems(new ArrayList<Articles>());
                 if (llNoArticles != null) {
-                    llNoArticles.setVisibility(View.VISIBLE);
-                    flipContainer.setVisibility(View.GONE);
+                    /*llNoArticles.setVisibility(View.VISIBLE);
+                    flipContainer.setVisibility(View.GONE);*/
+                    flipContainer.setVisibility(View.VISIBLE);
+                    llNoArticles.setVisibility(View.GONE);
+                    loadArticles(null);
                 }
             }
             if (getParentFragment() instanceof MagazinesFragment) {
