@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -39,6 +40,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.PhoneBookActivity;
 import com.yo.android.ui.PhoneChatActivity;
@@ -393,7 +395,17 @@ public class DialerFragment extends BaseFragment {
         adapter = new CallLogsAdapter(getActivity(), preferenceEndPoint, mContactsSyncManager);
         listView.setAdapter(adapter);
         loadCallLogs();
+        listView.setOnItemClickListener(showCallLogDetailsListener);
     }
+
+    AdapterView.OnItemClickListener showCallLogDetailsListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+             startActivity(new Intent(getActivity(), CallLogDetailsActivity.class));
+
+        }
+    };
+
 
     @OnClick(R.id.floatingDialer)
     public void onDialerClick() {

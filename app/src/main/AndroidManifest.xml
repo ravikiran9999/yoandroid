@@ -128,8 +128,8 @@
 
         <activity
             android:name=".ui.UserProfileActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/user_profile" />
+            android:label="@string/user_profile"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.MoreSettingsActivity"
             android:label="@string/settings_label"
@@ -139,8 +139,9 @@
 
         <!-- <service android:name=".voip.SipService" />-->
 
-        <activity android:name=".chat.ui.SignupActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".chat.ui.SignupActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".flip.MagazineArticleDetailsActivity"
             android:screenOrientation="portrait" />
@@ -159,12 +160,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".chat.ui.CreateGroupActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/new_group" />
+            android:label="@string/new_group"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".chat.ui.GroupContactsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/new_group" />
+            android:label="@string/new_group"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.CountryListActivity"
             android:screenOrientation="portrait" />
@@ -202,7 +203,13 @@
         <activity
             android:name=".ui.PhoneChatActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.fragments.InviteActivity" />
+        <activity
+            android:name=".ui.CallLogDetailsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.fragments.InviteActivity"
+            android:screenOrientation="portrait" />
 
         <!-- SMS Receiver -->
         <receiver android:name=".voip.IncomingSmsReceiver">
