@@ -64,7 +64,12 @@ public class EditMagazineActivity extends BaseActivity {
 
         etTitle.setText(magazineTitle);
         etDesc.setText(magazineDesc);
-
+        if(!TextUtils.isEmpty(magazineTitle.trim())) {
+            etTitle.setSelection(etTitle.getText().length());
+        }
+        if(!TextUtils.isEmpty(magazineDesc.trim())) {
+            etDesc.setSelection(etDesc.getText().length());
+        }
         tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
