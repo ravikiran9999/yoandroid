@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
@@ -79,10 +78,19 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
             Glide.with(mContext).load(item.getImage())
+                    .asBitmap().centerCrop()
                     .placeholder(R.drawable.ic_group)
                     .dontAnimate()
                     .error(R.drawable.ic_group).
-                    into(holder.getChatRoomPic());
+                    into(new BitmapImageViewTarget(holder.getChatRoomPic()) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(mContext.getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            holder.getChatRoomPic().setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
         } else {
             holder.getOpponentName().setText("");
 
