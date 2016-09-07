@@ -49,7 +49,6 @@ import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.Clipboard;
-import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
@@ -83,6 +82,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
     private EditText chatText;
+    private TextView noChatAvailable;
     private ListView listView;
     private String opponentNumber;
     private String opponentId;
@@ -107,7 +107,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     YoApi.YoService yoService;
 
     private String opponentImg;
-
 
 
     public UserChatFragment() {
@@ -163,11 +162,19 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setOnItemClickListener(this);
         View send = view.findViewById(R.id.send);
         chatText = (EditText) view.findViewById(R.id.chat_text);
+        noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
         chatMessageArray = new ArrayList<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType);
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
+        if (userChatAdapter.getCount() <= 0) {
+            noChatAvailable.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            noChatAvailable.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
         send.setOnClickListener(this);
 
         return view;
