@@ -187,15 +187,18 @@ public class YoApi {
         @GET("api/user/followings.json")
         Call<List<FindPeople>> getFollowingsAPI(@Query("access_token") String access_token);
 
-        @Multipart
+        /*@Multipart
         //@FormUrlEncoded
         @POST("api/rooms.json")
         Call<Room> createGroupAPI(
-                @Part("access_token") String access_token,
                 @Header("Authorization") String authorization,
                 @Part("room[user_ids][]") List<String> user,
-                @Part("room[group_name]") String groupName,
-                @Part MultipartBody.Part file );
+                @Part("room[group_name]") RequestBody groupName,
+                @Part MultipartBody.Part file );*/
+
+        @FormUrlEncoded
+        @POST("api/rooms.json")
+        Call<Room> createGroupAPI(@Field("access_token") String access_token, @Field("room[user_ids][]") List<String> user, @Field("room[group_name]") String groupName);
 
         @GET("api/articles.json")
         Call<List<Articles>> getOtherProfilesLikedArticlesAPI(@Query("access_token") String access_token, @Query("user_id") String user_id);

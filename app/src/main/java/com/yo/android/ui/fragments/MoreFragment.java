@@ -28,6 +28,7 @@ import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.MoreData;
@@ -305,6 +306,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         });
                     }
                     preferenceEndPoint.clearAll();
+
+                    //stop firebase service
+                    //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
+
                     //Stop SIP service
                     Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
                     getActivity().startService(intent);
