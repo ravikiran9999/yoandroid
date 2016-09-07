@@ -84,7 +84,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

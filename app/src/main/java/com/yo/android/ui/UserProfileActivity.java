@@ -130,9 +130,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     }
 
     private void setDataFromPreferences() {
-        //String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        //String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
-        //String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (contact != null) {
             if (fromChatRooms) {
                 getSupportActionBar().setTitle(getResources().getString(R.string.profile));
@@ -140,22 +137,28 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 getSupportActionBar().setTitle(contact.getName());
             }
             if (!TextUtils.isEmpty(contact.getImage())) {
-
-                Glide.with(this)
-                        .load(contact.getImage())
-                        .placeholder(R.drawable.img_placeholder_profile)
-                        .fitCenter()
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(profileImage);
+                if (roomName != null) {
+                    Glide.with(this)
+                            .load(contact.getImage())
+                            .placeholder(R.drawable.img_group_placeholder)
+                            .fitCenter()
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(profileImage);
+                } else {
+                    Glide.with(this)
+                            .load(contact.getImage())
+                            .placeholder(R.drawable.img_placeholder_profile)
+                            .fitCenter()
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(profileImage);
+                }
             }
             profileName.setText(contact.getName());
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
             if (mContact != null) {
                 if (mContact.getName() != null) {
-                    profileNumber.setText(mContact.getPhoneNo());
-
-                } else if (mContact.getPhoneNo() != null) {
                     profileNumber.setText(mContact.getPhoneNo());
 
                 }
