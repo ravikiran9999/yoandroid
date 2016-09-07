@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +28,14 @@ import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
+import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.model.Articles;
+import com.yo.android.model.Topics;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.OtherProfilesLikedArticles;
+import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
@@ -106,8 +110,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if (type == 0) {
             // Inflate the layout with multiple articles
                 layout = inflater.inflate(R.layout.magazine_landing_layout, null);
-            }
-            else {
+            } else if(type == 2) {
+                layout = inflater.inflate(R.layout.landing_suggestions_page, null);
+            } else {
                 layout = inflater.inflate(R.layout.magazine_flip_layout, null);
             }
 
@@ -168,6 +173,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.articleFollowRight = UI.<Button>findViewById(layout, R.id.imv_magazine_follow_right);
 
+            holder.lvSuggestions = UI.<ListView>findViewById(layout, R.id.lv_suggestions);
+
+            holder.tvFollowMoreTopics = UI.<TextView>findViewById(layout, R.id.tv_follow_more_topics);
 
             layout.setTag(holder);
         } else {
@@ -379,6 +387,27 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         else {
             populateEmptyRightArticle(holder);
         }
+
+        if(allArticles.size()>=5 && MagazinesFragment.unSelectedTopics.size()>0) {
+            if(holder.lvSuggestions != null) {
+                SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context);
+                holder.lvSuggestions.setAdapter(suggestionsAdapter);
+                int n = 5;
+                List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0,n));
+                suggestionsAdapter.addItems(subList);
+
+                if(holder.tvFollowMoreTopics != null) {
+                    holder.tvFollowMoreTopics.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, FollowMoreTopicsActivity.class);
+                            intent.putExtra("From", "Magazines");
+                            context.startActivity(intent);
+                        }
+                    });
+                }
+            }
+        }
         return layout;
     }
 
@@ -495,7 +524,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (data != null) {
 
             if (Constants.FOLLOW_EVENT.equals(type)) {
-                for (Articles article : items) {
+                for (Articles article : allArticles) {
                     if (data.getId() != null && data.getId().equals(article.getId())) {
                         article.setIsFollowing(data.getIsFollowing());
                         article.setIsFollow(data.isFollow());
@@ -504,7 +533,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }
                 }
             } else {
-                for (Articles article : items) {
+                for (Articles article : allArticles) {
                     if (data.getId() != null && data.getId().equals(article.getId())) {
                         article.setLiked(data.getLiked());
                         article.setIsChecked(data.isChecked());
@@ -524,12 +553,19 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 3;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? 0 : 1;
+        //return (position == 0) ? 0 : 1;
+        if(position == 0) {
+            return  0;
+        } else if(position == MagazineFlipArticlesFragment.suggestionsPosition) {
+            return 2;
+        } else {
+            return 1;
+        }
     }
 
     private void populateTopArticle(View layout, ViewHolder holder, final Articles data, int position) {
@@ -1119,6 +1155,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private ImageView magazineShareRight;
 
         private Button articleFollowRight;
+
+        private ListView lvSuggestions;
+
+        private TextView tvFollowMoreTopics;
     }
 
 }
