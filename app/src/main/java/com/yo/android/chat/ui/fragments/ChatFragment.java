@@ -112,12 +112,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
-        listView.setAdapter(chatRoomListAdapter);
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -147,6 +141,21 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
         }
         return super.onOptionsItemSelected(item);
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
+        listView.setAdapter(chatRoomListAdapter);
+        if (chatRoomListAdapter.getCount() <= 0) {
+            emptyImageView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            emptyImageView.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -190,7 +199,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         ChildEventListener mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot == null) {
+                if (dataSnapshot == null) {
                     emptyImageView.setVisibility(View.VISIBLE);
                     listView.setVisibility(View.INVISIBLE);
                 } else {
@@ -230,7 +239,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @NonNull
     private ChildEventListener createChildEventListener(final Room room) {
 
-        ChildEventListener childEventListener =  new ChildEventListener() {
+        ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 try {
@@ -342,10 +351,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             public void onDataChange(DataSnapshot profileDataSnapshot) {
                                 room = profileDataSnapshot.getValue(Room.class);
                                 room.setFirebaseRoomId(dataSnapshot.getKey());
-                               Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getVoxUserName());
-                               if(contact !=null && contact.getName() !=null) {
-                                   room.setFullName(contact.getName());
-                               }
+                                Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getVoxUserName());
+                                if (contact != null && contact.getName() != null) {
+                                    room.setFullName(contact.getName());
+                                }
                                 arrayOfUsers.add(room);
 
                                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
@@ -359,7 +368,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         });
                     }
                 }
-            } else  {
+            } else {
                 room = new Room();
                 room.setFirebaseRoomId(dataSnapshot.getKey());
                 room.setGroupName(roomInfo.getName());

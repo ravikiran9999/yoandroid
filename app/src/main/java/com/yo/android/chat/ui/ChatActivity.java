@@ -72,14 +72,13 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.OPPONENT_ID, contact.getId());
             }
 
-
-
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
             opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
             args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
             args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
 
         }
+
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
             args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
         }
@@ -100,10 +99,14 @@ public class ChatActivity extends BaseActivity {
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
             Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
             if (contact != null && contact.getName() != null) {
-                customTitle.setText(contact.getName());
-            } else {
-                customTitle.setText(opponent);
+                //customTitle.setText(contact.getName());
+                opponent = contact.getName();
+            } else if(room.getFullName() != null){
+                //customTitle.setText(room.getFullName());
+                opponent = room.getFullName();
             }
+
+            customTitle.setText(opponent);
 
             if (room != null && room.getGroupName() != null) {
                 Glide.with(this).load(mOpponentImg)
