@@ -99,10 +99,8 @@ public class ChatActivity extends BaseActivity {
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
             Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
             if (contact != null && contact.getName() != null) {
-                //customTitle.setText(contact.getName());
                 opponent = contact.getName();
             } else if(room.getFullName() != null){
-                //customTitle.setText(room.getFullName());
                 opponent = room.getFullName();
             }
 
