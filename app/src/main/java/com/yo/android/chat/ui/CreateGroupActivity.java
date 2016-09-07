@@ -17,7 +17,6 @@ import com.yo.android.api.YoApi;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.ui.BaseActivity;
-import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.ui.uploadphoto.ImageLoader;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
@@ -106,14 +105,14 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        if (!groupName.getText().toString().equalsIgnoreCase("")) {
+        if (!"".equalsIgnoreCase(groupName.getText().toString())) {
 
             mGroupName = groupName.getText().toString();
             Intent intent = new Intent(this, GroupContactsActivity.class);
             intent.putExtra(Constants.GROUP_NAME, mGroupName);
             startActivityForResult(intent, REQUEST_SELECTED_CONTACTS);
         } else {
-            Toast.makeText(this, "Please enter group name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.enter_group_name), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -159,7 +158,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
     private void createGroup() {
 
-        if (selectedContactsArrayList.size() > 0) {
+        if (!selectedContactsArrayList.isEmpty()) {
             showProgressDialog();
 
             List<String> selectedUsers = new ArrayList<>();
@@ -168,16 +167,36 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 selectedUsers.add(userId);
             }
 
-            String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-            yoService.createGroupAPI(access, selectedUsers, mGroupName).enqueue(new Callback<Room>() {
+            MultipartBody.Part body;
+
+            if (imgFile == null) {
+                body = null;
+            } else { // create RequestBody instance from file
+                RequestBody requestFile =
+                        RequestBody.create(MediaType.parse("multipart/form-data"), imgFile);
+
+                // MultipartBody.Part is used to send also the actual file name
+                body = MultipartBody.Part.createFormData("room[image]", imgFile.getName(), requestFile);
+
+            }
+
+            RequestBody groupDescription = RequestBody.create(MediaType.parse("room[group_name]"), mGroupName);
+
+            String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+            yoService.createGroupAPI(access, selectedUsers, groupDescription, body).enqueue(new Callback<Room>() {
+
                 @Override
                 public void onResponse(Call<Room> call, Response<Room> response) {
-                    response.body();
-                    if (!ContactsArrayList.isEmpty()) {
-                        ContactsArrayList.clear();
+                    if(response.isSuccessful()) {
+                        if (!ContactsArrayList.isEmpty()) {
+                            ContactsArrayList.clear();
+                        }
+
+                        finish();
+                    } else {
+                        Toast.makeText(CreateGroupActivity.this, getResources().getString(R.string.group_creation_error), Toast.LENGTH_SHORT).show();
                     }
                     dismissProgressDialog();
-                    finish();
                 }
 
                 @Override

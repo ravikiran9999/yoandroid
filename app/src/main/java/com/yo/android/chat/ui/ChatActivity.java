@@ -29,7 +29,6 @@ import javax.inject.Inject;
 public class ChatActivity extends BaseActivity {
 
     private String opponent;
-    private String opponentNumber;
     private String mOpponentImg;
     private Room room;
 
@@ -67,11 +66,13 @@ public class ChatActivity extends BaseActivity {
             Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
             if (contact != null) {
                 opponent = contact.getVoxUserName();
+                args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
+                args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
+                args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
+                args.putString(Constants.OPPONENT_ID, contact.getId());
             }
-            args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
-            args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
-            args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
-            args.putString(Constants.OPPONENT_ID, contact.getId());
+
+
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
             opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
@@ -104,19 +105,35 @@ public class ChatActivity extends BaseActivity {
                 customTitle.setText(opponent);
             }
 
-            Glide.with(this).load(mOpponentImg)
-                    .asBitmap().centerCrop()
-                    .placeholder(R.drawable.ic_contactprofile)
-                    .error(R.drawable.ic_contactprofile)
-                    .into(new BitmapImageViewTarget(imageView) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            imageView.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
+            if (room != null && room.getGroupName() != null) {
+                Glide.with(this).load(mOpponentImg)
+                        .asBitmap().centerCrop()
+                        .placeholder(R.drawable.ic_group)
+                        .error(R.drawable.ic_group)
+                        .into(new BitmapImageViewTarget(imageView) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                imageView.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            } else {
+                Glide.with(this).load(mOpponentImg)
+                        .asBitmap().centerCrop()
+                        .placeholder(R.drawable.ic_contactprofile)
+                        .error(R.drawable.ic_contactprofile)
+                        .into(new BitmapImageViewTarget(imageView) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                imageView.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            }
 
             customTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -136,7 +153,7 @@ public class ChatActivity extends BaseActivity {
 
     private String getOppenent(@NonNull Room room) {
 
-        if (room != null && room.getGroupName() == null) {
+        if (room.getGroupName() == null) {
 
             return room.getVoxUserName();
 
