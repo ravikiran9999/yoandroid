@@ -184,7 +184,7 @@ public class ContactsSyncManager {
     public Contact getContactByVoxUserName(String voxUserName) {
         if (voxUserName != null) {
             Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
-            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + "= '" + voxUserName + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
+            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + "= '" + voxUserName + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc" );
             if (c != null && c.moveToFirst()) {
                 return ContactsSyncManager.prepareContact(c);
             }
