@@ -525,8 +525,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         StorageReference imagesRef = storageReference.child("images/" + file.getLastPathSegment());
         UploadTask uploadTask = imagesRef.putFile(file, metadata);
 
-        //new UploadImageTask(uploadTask).execute(path);
-
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -556,65 +554,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         });
 
-    }
-
-    protected class UploadImageTask extends AsyncTask<String, Double, String> {
-        UploadTask uploadTask;
-
-        public UploadImageTask(UploadTask uploadTask) {
-            this.uploadTask = uploadTask;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(Double... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected String doInBackground(final String... params) {
-
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    // Handle unsuccessful uploads
-                    uploadImage(params[0]);
-                    e.printStackTrace();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    if (downloadUrl != null) {
-                        sendImage(downloadUrl.getLastPathSegment());
-                    }
-                }
-            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double progress = 100.0 * (taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                    Log.i(TAG, "Upload is " + progress + "% done");
-                }
-            }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getActivity(), "Upload is paused", Toast.LENGTH_LONG).show();
-                }
-            });
-
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
     }
 
     private void sendImage(@NonNull String imagePathName) {

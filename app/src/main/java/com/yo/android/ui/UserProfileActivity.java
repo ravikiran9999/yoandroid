@@ -136,7 +136,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             } else {
                 getSupportActionBar().setTitle(contact.getName());
             }
-            if (!TextUtils.isEmpty(contact.getImage())) {
+            //if (!TextUtils.isEmpty(contact.getImage())) {
                 if (roomName != null) {
                     Glide.with(this)
                             .load(contact.getImage())
@@ -154,7 +154,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .into(profileImage);
                 }
-            }
+            //}
             profileName.setText(contact.getName());
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
             if (mContact != null) {
