@@ -845,6 +845,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             } else {
                 photoView.setImageDrawable(null);
             }
+
+            photoView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                    intent.putExtra("Title", data.getTitle());
+                    intent.putExtra("Image", data.getUrl());
+                    context.startActivity(intent);
+                }
+            });
         }
 
         if(holder.magazineAddLeft != null) {
@@ -1001,6 +1011,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             } else {
                 photoView.setImageDrawable(null);
             }
+
+            photoView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                    intent.putExtra("Title", data.getTitle());
+                    intent.putExtra("Image", data.getUrl());
+                    context.startActivity(intent);
+                }
+            });
         }
 
         if(holder.magazineAddRight != null) {
