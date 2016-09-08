@@ -274,10 +274,10 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         protected void onPostExecute(final ArrayList<Tag> tagSelected) {
             super.onPostExecute(tagSelected);
             tagGroup.addTags(tagSelected);
-            dismissProgressDialog();
             if (tagGroup != null) {
                 tagGroup.setVisibility(View.VISIBLE);
             }
+            dismissProgressDialog();
         }
 
     }

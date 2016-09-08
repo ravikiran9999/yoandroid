@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -168,8 +167,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
-
-        send.setOnClickListener(this);
+        sends.setOnClickListener(this);
         return view;
     }
 
@@ -351,7 +349,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-
         String message = chatText.getText().toString().trim();
         sendChatMessage(message, Constants.TEXT);
         if (chatText.getText() != null) {
