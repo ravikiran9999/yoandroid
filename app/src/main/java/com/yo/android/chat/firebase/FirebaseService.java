@@ -1,7 +1,9 @@
 package com.yo.android.chat.firebase;
 
+import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
@@ -28,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,6 +49,8 @@ public class FirebaseService extends InjectedService {
     private Firebase authReference;
     private Firebase roomReference;
     private int messageCount;
+    private Context context;
+
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
@@ -63,9 +68,11 @@ public class FirebaseService extends InjectedService {
     public void onCreate() {
         super.onCreate();
 
+        context = this;
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
         //roomReference = authReference.child()
         isRunning = true;
+
     }
 
     @Override
@@ -167,7 +174,13 @@ public class FirebaseService extends InjectedService {
 
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
-                        if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0 && loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
+
+                        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+                        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+                        String[] strings = cn.getShortClassName().split(Pattern.quote("."));
+                        int i = strings.length - 1;
+
+                        if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0 && loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS) && (!strings[i].equalsIgnoreCase("ChatActivity"))) {
                             postNotification(chatMessage.getRoomId(), chatMessage);
                         }
 
@@ -218,8 +231,6 @@ public class FirebaseService extends InjectedService {
                 String voxUsername = chatMessage.getVoxUserName();
 
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-                //int notificationId = chatMessage.getMessage().hashCode();
 
                 long num= Long.parseLong(title);
                 int notificationId = (int)num;

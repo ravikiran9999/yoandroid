@@ -184,7 +184,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     }
 
-    //private void addView(final LinearLayout linearLayout, final ChatMessage item, final UserChatViewHolder holder) {
     private void addView(final RelativeLayout relativeLayout, final ChatMessage item, final UserChatViewHolder holder) {
 
         holder.getLl().removeAllViews();
@@ -199,7 +198,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 senderId.setText(item.getSenderID());
                 senderId.setTextColor(Color.RED);
                 linearLayout1.addView(senderId);
-                //linearLayout.addView(senderId);
 
             }
 
