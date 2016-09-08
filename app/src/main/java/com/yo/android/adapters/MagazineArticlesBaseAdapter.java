@@ -108,11 +108,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             //layout = inflater.inflate(R.layout.magazine_flip_layout, null);
 
             if (type == 0) {
-            // Inflate the layout with multiple articles
+                 // Inflate the layout with multiple articles
                 layout = inflater.inflate(R.layout.magazine_landing_layout, null);
             } else if(type == 2) {
+                // Inflate the layout with suggestions page
                 layout = inflater.inflate(R.layout.landing_suggestions_page, null);
             } else {
+                // Inflate the layout with single article
                 layout = inflater.inflate(R.layout.magazine_flip_layout, null);
             }
 
@@ -388,25 +390,33 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             populateEmptyRightArticle(holder);
         }
 
-        if(allArticles.size()>=5 && MagazinesFragment.unSelectedTopics.size()>0) {
+        if(allArticles.size()>=4 && MagazinesFragment.unSelectedTopics.size()>0) {
             if(holder.lvSuggestions != null) {
                 SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context);
                 holder.lvSuggestions.setAdapter(suggestionsAdapter);
                 int n = 5;
-                List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0,n));
-                suggestionsAdapter.addItems(subList);
-
-                if(holder.tvFollowMoreTopics != null) {
-                    holder.tvFollowMoreTopics.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(context, FollowMoreTopicsActivity.class);
-                            intent.putExtra("From", "Magazines");
-                            context.startActivity(intent);
-                        }
-                    });
+                if(MagazinesFragment.unSelectedTopics.size()>=n) {
+                    List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, n));
+                    suggestionsAdapter.addItems(subList);
+                } else {
+                    int count = MagazinesFragment.unSelectedTopics.size();
+                    if(count>0) {
+                        List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, count));
+                        suggestionsAdapter.addItems(subList);
+                    }
                 }
             }
+        }
+
+        if(holder.tvFollowMoreTopics != null) {
+            holder.tvFollowMoreTopics.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, FollowMoreTopicsActivity.class);
+                    intent.putExtra("From", "Magazines");
+                    context.startActivity(intent);
+                }
+            });
         }
         return layout;
     }
