@@ -149,13 +149,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onActivityCreated(savedInstanceState);
         chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(chatRoomListAdapter);
-        if (chatRoomListAdapter.getCount() <= 0) {
+        /*if (chatRoomListAdapter.getCount() <= 0) {
             emptyImageView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {
             emptyImageView.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
-        }
+        }*/
 
     }
 

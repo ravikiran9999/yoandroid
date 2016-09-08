@@ -216,9 +216,17 @@ public class FirebaseService extends InjectedService {
                 String body = chatMessage.getMessage();
                 String title = chatMessage.getSenderID();
                 String voxUsername = chatMessage.getVoxUserName();
+
+                /*voxUsername = voxUsername.replaceAll("[^\\d.]", "");
+                voxUsername = voxUsername.substring(2,12);*/
+
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-                int notificationId = chatMessage.getMessage().hashCode();
+                //int notificationId = chatMessage.getMessage().hashCode();
+
+                long num= Long.parseLong(title);
+                int notificationId = (int)num;
+
 
                 NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
                 notificationStyle.bigText(body);

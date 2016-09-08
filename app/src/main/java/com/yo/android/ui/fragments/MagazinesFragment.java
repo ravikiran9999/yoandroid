@@ -155,9 +155,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }
                 List<String> topicNamesList = new ArrayList<String>();
                 for (int i = 0; i < topicsList.size(); i++) {
-                    if (topicsList.get(i).isSelected()) {
+                    //if (topicsList.get(i).isSelected()) {
                         topicNamesList.add(topicsList.get(i).getName());
-                    }
+                    //}
                 }
                 mAdapter.clear();
                 mAdapter.addAll(topicNamesList);
