@@ -45,7 +45,7 @@ public class FirebaseService extends InjectedService {
     private IBinder mBinder = new MyBinder();
     private Firebase authReference;
     private Firebase roomReference;
-
+    private int messageCount;
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
@@ -217,9 +217,6 @@ public class FirebaseService extends InjectedService {
                 String title = chatMessage.getSenderID();
                 String voxUsername = chatMessage.getVoxUserName();
 
-                /*voxUsername = voxUsername.replaceAll("[^\\d.]", "");
-                voxUsername = voxUsername.substring(2,12);*/
-
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
                 //int notificationId = chatMessage.getMessage().hashCode();
@@ -242,9 +239,12 @@ public class FirebaseService extends InjectedService {
                 android.app.Notification notification = new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_yo_notification)
                         .setContentTitle(title == null ? "Yo App" : title)
+
                         .setContentText(body)
+                        .setNumber(++messageCount)
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true)
+
                         .setStyle(notificationStyle)
                         .build();
 

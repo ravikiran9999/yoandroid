@@ -140,7 +140,6 @@ public class YoApi {
         @POST("api/user/firebase_token.json")
         Call<ResponseBody> firebaseAuthToken(@Field("access_token") String access_token);
 
-        //@GET("/api/user/contacts.json")
         @GET("api/user/contacts_with_name.json")
         Call<List<Contact>> getContacts(@Query("access_token") String access_token);
 
