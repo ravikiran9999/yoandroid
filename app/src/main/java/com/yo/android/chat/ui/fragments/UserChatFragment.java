@@ -168,13 +168,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
-        if (userChatAdapter.getCount() <= 0) {
+
+        /*if (userChatAdapter.getCount() <= 0) {
             noChatAvailable.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {
             noChatAvailable.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
-        }
+        }*/
+
         send.setOnClickListener(this);
 
         return view;

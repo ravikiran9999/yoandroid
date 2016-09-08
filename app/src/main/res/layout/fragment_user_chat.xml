@@ -38,11 +38,10 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:padding="8dp"
-            android:text="@string/empty_chat"
             android:textColor="@color/tab_grey"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <ListView
             android:id="@+id/listView"
@@ -50,7 +49,7 @@
             android:layout_height="match_parent"
             android:divider="@null"
             android:listSelector="@null"
-            android:visibility="gone" />
+            />
     </FrameLayout>
     <!--android:transcriptMode="alwaysScroll"-->
     <LinearLayout
@@ -90,13 +89,13 @@
             android:scaleType="fitXY"
             android:src="@drawable/ic_send" />
 
-        <!--<ImageView
+        <ImageView
             android:id="@+id/mic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:src="@drawable/ic_mic"
             android:visibility="invisible"
-            />-->
+            />
     </LinearLayout>
 </LinearLayout>
