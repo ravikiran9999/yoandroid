@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,9 +62,8 @@ public class ChatActivity extends BaseActivity {
             if (room.getGroupName() != null) {
                 args.putString(Constants.TYPE, room.getGroupName());
             }
-            /*long opp = Long.parseLong(opponent);
-            int opponentInt = (int)opp;
-            Util.cancelReadNotification(this, opponentInt);*/
+
+            clearNotification(opponent);
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
@@ -75,20 +73,12 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                 args.putString(Constants.OPPONENT_ID, contact.getId());
-            /*    long opp = Long.parseLong(opponent);
-                int opponentInt = (int)opp;
-                Util.cancelReadNotification(this, opponentInt);*/
+
+                clearNotification(opponent);
             }
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
             opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME).trim();
-
-            /*try {
-                int cc = Integer.parseInt(opponent);
-                Util.cancelReadNotification(this, cc);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }*/
 
             args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
             args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
@@ -178,6 +168,13 @@ public class ChatActivity extends BaseActivity {
         }
 
         return null;
+    }
+
+    private void clearNotification(String opponent) {
+
+        long opp = Long.parseLong(opponent.replaceAll("[^\\d.]", "").substring(2, 12));
+        int opponentInt = (int) opp;
+        Util.cancelReadNotification(this, opponentInt);
     }
 
 }
