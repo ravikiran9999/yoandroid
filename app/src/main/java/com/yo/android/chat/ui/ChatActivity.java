@@ -63,7 +63,9 @@ public class ChatActivity extends BaseActivity {
             if (room.getGroupName() != null) {
                 args.putString(Constants.TYPE, room.getGroupName());
             }
-            //Util.cancelReadNotification(this, Integer.parseInt(room.getFirebaseRoomId()));
+            /*long opp = Long.parseLong(opponent);
+            int opponentInt = (int)opp;
+            Util.cancelReadNotification(this, opponentInt);*/
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
@@ -73,24 +75,23 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                 args.putString(Constants.OPPONENT_ID, contact.getId());
-                //Util.cancelReadNotification(this, Integer.parseInt(contact.getFirebaseRoomId()));
+            /*    long opp = Long.parseLong(opponent);
+                int opponentInt = (int)opp;
+                Util.cancelReadNotification(this, opponentInt);*/
             }
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
             opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME).trim();
 
-            try {
+            /*try {
                 int cc = Integer.parseInt(opponent);
                 Util.cancelReadNotification(this, cc);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
             args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
-
-
-
         }
 
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
