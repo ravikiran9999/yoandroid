@@ -184,4 +184,8 @@
     <string name="voucher_expired">Voucher has been expired.</string>
     <string name="unsuccessful_recharge">Unsuccessfully recharge.</string>
     <string name="need_to_implement">This funcationality not yet implemented</string>
+    <string name="call_info">Call Info</string>
+    <string name="outgoing_call">Outgoing call</string>
+    <string name="incoming_call">Incoming call</string>
+    <string name="missed_call">Missed call</string>
 </resources>

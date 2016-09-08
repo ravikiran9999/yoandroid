@@ -29,9 +29,14 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
     private String headerTitle;
     private int callType;
     private String image;
-    public CallLogsResult(){
+
+
+    private String duration;
+
+    public CallLogsResult() {
 
     }
+
     protected CallLogsResult(Parcel in) {
         salerate = in.readString();
         salecost = in.readString();
@@ -43,6 +48,7 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
         headerTitle = in.readString();
         callType = in.readInt();
         image = in.readString();
+        duration = in.readString();
     }
 
     public static final Creator<CallLogsResult> CREATOR = new Creator<CallLogsResult>() {
@@ -56,6 +62,15 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
             return new CallLogsResult[size];
         }
     };
+
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
 
     public String getSalerate() {
         return salerate;
@@ -182,6 +197,7 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
         dest.writeString(headerTitle);
         dest.writeInt(callType);
         dest.writeString(image);
+        dest.writeString(duration);
 
     }
 }

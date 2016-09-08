@@ -29,6 +29,7 @@ import com.yo.android.inapp.UnManageInAppPurchaseActivity;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.sync.YoContactsSyncAdapter;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.CreatedMagazineDetailActivity;
@@ -169,7 +170,8 @@ import dagger.Provides;
                 ReCreateService.class,
                 DialPadView.class,
                 PhoneBookActivity.class,
-                PhoneChatActivity.class
+                PhoneChatActivity.class,
+                CallLogDetailsActivity.class
         },
         includes = {
                 AppModule.class,

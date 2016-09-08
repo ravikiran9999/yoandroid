@@ -459,8 +459,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void showCallActivity(String destination, Bundle options) {
         //Always set default speaker off
-        mediaManager.setSpeakerOn(false);
-
+        mediaManager.setSpeakerOn(true);
         sipCallState.setCallDir(SipCallState.OUTGOING);
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
@@ -563,7 +562,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void storeCallLog(int callType, String mobileNumber) {
         long currentTime = System.currentTimeMillis();
-        int callDuration = (int) TimeUnit.MILLISECONDS.toSeconds(currentTime);
+        long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
         if (callType == CallLog.Calls.MISSED_TYPE || callType == -1) {
             callDuration = 0;
         }

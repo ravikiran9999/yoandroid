@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
@@ -401,9 +402,9 @@ public class DialerFragment extends BaseFragment {
     AdapterView.OnItemClickListener showCallLogDetailsListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ArrayList<CallLogsResult> callLogDetails = (ArrayList<CallLogsResult>) adapter.getItem(position);
+            Map.Entry<String, List<CallLogsResult>> callLogDetails = adapter.getItem(position);
             Intent intent = new Intent(getActivity(), CallLogDetailsActivity.class);
-            intent.putParcelableArrayListExtra(Constants.CALL_LOG_DETAILS, callLogDetails);
+            intent.putParcelableArrayListExtra(Constants.CALL_LOG_DETAILS, (ArrayList<? extends Parcelable>) callLogDetails.getValue());
             startActivity(intent);
         }
     };

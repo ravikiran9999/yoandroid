@@ -31,15 +31,42 @@
             android:layout_marginLeft="30dp"
             android:drawablePadding="5dp"
             android:gravity="center"
-            android:text="Change Picture"
-            android:textColor="@color/white" />
+            android:text="@string/delete"
+            android:textColor="@color/black" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/call"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/ic_receiver" />
+        </RelativeLayout>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/call_info_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:padding="10dp"
+        android:textColor="@color/black" />
+
     <ListView
         android:id="@+id/lv_call_log_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_margin="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
         android:background="@color/white"
         android:divider="@android:color/transparent" />
 

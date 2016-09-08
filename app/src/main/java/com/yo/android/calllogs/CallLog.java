@@ -286,7 +286,7 @@ public class CallLog {
          *                 {@hide}
          */
         public static Uri addCall(CallerInfo ci, Context context, String number,
-                                  int callType, long start, int duration, int pstnorapp) {
+                                  int callType, long start, long duration, int pstnorapp) {
             final ContentResolver resolver = context.getContentResolver();
 
 
@@ -297,7 +297,7 @@ public class CallLog {
             values.put(NUMBER, number);
             values.put(TYPE, Integer.valueOf(callType));
             values.put(DATE, dateFormat.format(currentDate));
-            values.put(DURATION, Long.valueOf(duration));
+            values.put(DURATION, duration + "");
             values.put(NEW, Integer.valueOf(1));
             values.put(CALLTYPE, callType);
             values.put(APP_OR_PSTN, pstnorapp);
@@ -349,7 +349,8 @@ public class CallLog {
          */
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
-            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos =  new ArrayList<Map.Entry<String, List<CallLogsResult>>>();;
+            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
+            ;
             HashMap<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
             Cursor c = null;
             try {
@@ -369,6 +370,8 @@ public class CallLog {
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        String duration = c.getString(c.getColumnIndex(Calls.DURATION));
+                        info.setDuration(duration);
                         info.setImage(getImagePath(context, voxuser));
                         if (!hashMap.containsKey(voxuser)) {
                             List<CallLogsResult> list = new ArrayList<CallLogsResult>();
@@ -396,7 +399,8 @@ public class CallLog {
          */
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getPSTNCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
-            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos =  new ArrayList<Map.Entry<String, List<CallLogsResult>>>();;
+            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
+            ;
             HashMap<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
 
             Cursor c = null;
@@ -417,6 +421,8 @@ public class CallLog {
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        String duration = c.getString(c.getColumnIndex(Calls.DURATION));
+                        info.setDuration(duration);
                         info.setImage(getImagePath(context, voxuser));
                         if (!hashMap.containsKey(voxuser)) {
                             List<CallLogsResult> list = new ArrayList<CallLogsResult>();
@@ -467,17 +473,19 @@ public class CallLog {
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         String date = c.getString(c.getColumnIndex(Calls.DATE));
                         info.setStime(date);
+                        String duration = c.getString(c.getColumnIndex(Calls.DURATION));
+                        info.setDuration(duration);
                         String tempDate = Util.getDate(date);
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setImage(getImagePath(context, voxuser));
                         // callerInfos.add(info);
-                        if (!hashMap.containsKey(voxuser+tempDate)) {
+                        if (!hashMap.containsKey(voxuser + tempDate)) {
                             List<CallLogsResult> list = new ArrayList<CallLogsResult>();
                             list.add(info);
-                            hashMap.put(voxuser+tempDate, list);
-                           // callerInfos.add(hashMap.entrySet().iterator().next());
+                            hashMap.put(voxuser + tempDate, list);
+                            // callerInfos.add(hashMap.entrySet().iterator().next());
                         } else {
-                            hashMap.get(voxuser+tempDate).add(info);
+                            hashMap.get(voxuser + tempDate).add(info);
                         }
                     } while (c.moveToNext());
                     callerInfos = new ArrayList(hashMap.entrySet());
@@ -494,6 +502,11 @@ public class CallLog {
             resolver.delete(CONTENT_URI, "_id IN " +
                     "(SELECT _id FROM " + CallLogContract.TABLE_NAME + " ORDER BY " + DEFAULT_SORT_ORDER
                     + " LIMIT -1 OFFSET 500)", null);
+        }
+
+        public static void deleteCallLogByDate(Context context, String date) {
+            final ContentResolver resolver = context.getContentResolver();
+            resolver.delete(CONTENT_URI, DATE + " = '" + date + "'", null);
         }
 
         public static String getImagePath(Context context, String voxUserName) {
