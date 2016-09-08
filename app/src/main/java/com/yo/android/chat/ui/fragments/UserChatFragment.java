@@ -169,16 +169,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
 
-        /*if (userChatAdapter.getCount() <= 0) {
-            noChatAvailable.setVisibility(View.VISIBLE);
-            listView.setVisibility(View.GONE);
-        } else {
-            noChatAvailable.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-        }*/
-
         send.setOnClickListener(this);
-
         return view;
     }
 
@@ -682,7 +673,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             receiveForward(chatForwards);
                         } else if (chatMessage != null) {
                             chatMessage.setRoomId(room.getFirebaseRoomId());
-                            chatMessage.setVoxUserName("youser919490570722");
+                            chatMessage.setVoxUserName(room.getVoxUserName());
                             sendChatMessage(chatMessage);
                         }
                         update(opponentNumber, room.getFirebaseRoomId());
