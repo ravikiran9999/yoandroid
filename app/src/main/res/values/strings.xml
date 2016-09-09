@@ -185,5 +185,14 @@
     <string name="voucher_used">Voucher has been used.</string>
     <string name="voucher_expired">Voucher has been expired.</string>
     <string name="unsuccessful_recharge">Unsuccessfully recharge.</string>
+    <string name="need_to_implement">This funcationality not yet implemented</string>
+    <string name="call_info">Call Info</string>
+    <string name="outgoing_call">Outgoing call</string>
+    <string name="incoming_call">Incoming call</string>
+    <string name="missed_call">Missed call</string>
     <string name="empty_chat">No chat history found.</string>
+    <string name="clear_history_dec">This will delete all calls from your history</string>
+    <string name="clear_call_history">Clear call history?</string>
+    <string name="ok">OK</string>
+    <string name="cancle">Cancle</string>
 </resources>

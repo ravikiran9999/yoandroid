@@ -203,7 +203,7 @@ class MyApp {
     }
 
     private void buildAccConfigs() {
-		/* Sync accCfgs from accList */
+        /* Sync accCfgs from accList */
         accCfgs.clear();
         for (int i = 0; i < accList.size(); i++) {
             MyAccount acc = accList.get(i);

@@ -323,12 +323,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         //503 Service Unavailable  - Buddy is not available
         //603 Allocated Channels Busy -Lines are busy
         // 487 missed call
-        if (sipCallState != null && sipCallState.getMobileNumber() == null && statusCode == 603) {
+        if (sipCallstate != null && sipCallstate.getMobileNumber() != null && statusCode == 603) {
             storeCallLog(CallLog.Calls.INCOMING_TYPE, sipCallstate.getMobileNumber());
         } else if (!isHangup) {
             storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
             isHangup = false;
-        } else {
+        } else if (sipCallstate.getMobileNumber() != null) {
             storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
         }
     }
@@ -378,7 +378,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     }
 
-    private MyAccount buildAccount() {
+    private MyAccount buildAccount() throws UnsatisfiedLinkError {
         if (myAccount != null) {
             return myAccount;
         }
@@ -387,6 +387,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         accCfg.getNatConfig().setIceEnabled(true);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
         accCfg.getVideoConfig().setAutoShowIncoming(true);
+        if (myApp == null) {
+            startSipService();
+        }
         return myApp.addAcc(accCfg);
     }
 
@@ -404,7 +407,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
-        } catch (Exception e) {
+        } catch (Exception | UnsatisfiedLinkError e) {
             mLog.w(TAG, e);
         }
 
@@ -442,7 +445,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         MyCall call = new MyCall(myAccount, -1);
         CallOpParam prm = new CallOpParam(true);
         try {
-            call.isActive(finalUri,prm);
+            call.isActive(finalUri, prm);
             call.makeCall(finalUri, prm);
         } catch (Exception e) {
             mLog.w(TAG, e);
@@ -456,8 +459,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void showCallActivity(String destination, Bundle options) {
         //Always set default speaker off
-        mediaManager.setSpeakerOn(false);
-
+        mediaManager.setSpeakerOn(true);
         sipCallState.setCallDir(SipCallState.OUTGOING);
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
@@ -560,7 +562,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void storeCallLog(int callType, String mobileNumber) {
         long currentTime = System.currentTimeMillis();
-        int callDuration = (int) TimeUnit.MILLISECONDS.toSeconds(currentTime);
+        long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
         if (callType == CallLog.Calls.MISSED_TYPE || callType == -1) {
             callDuration = 0;
         }
@@ -603,7 +605,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 currentCall.hangup(prm);
                 isHangup = true;
                 sipCallState.setCallState(SipCallState.CALL_FINISHED);
-                ReCreateService.getInstance(this).start(this);
+                //ReCreateService.getInstance(this).start(this);
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }

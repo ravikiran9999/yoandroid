@@ -29,11 +29,13 @@ import javax.inject.Named;
 public class ReCreateService {
     protected static PreferenceEndPoint preferenceEndPoint;
     private static ReCreateService reCreateServiceIns;
+    private Context context;
 
     public static ReCreateService getInstance(Context context){
         if(reCreateServiceIns == null){
             reCreateServiceIns = new ReCreateService();
             preferenceEndPoint =new PreferenceEndPointImpl(context, "login");
+           reCreateServiceIns.context = context;
         }
         return reCreateServiceIns;
     }
@@ -46,7 +48,7 @@ public class ReCreateService {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
-            addAccount();
+            addAccount(reCreateServiceIns.context);
         }
 
         @Override
@@ -57,7 +59,7 @@ public class ReCreateService {
     public void start(Context context){
         context.bindService(new Intent(context, YoSipService.class), connection, context.BIND_AUTO_CREATE);
     }
-    private static void addAccount() {
+    private static void addAccount(Context context) {
         Log.e("YOService-Recreate",preferenceEndPoint+"");
         if(preferenceEndPoint!=null) {
             String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
@@ -69,6 +71,5 @@ public class ReCreateService {
                     .build();
             sipBinder.getHandler().addAccount(sipProfile);
         }
-
     }
 }

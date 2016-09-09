@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -39,11 +41,13 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.PhoneBookActivity;
 import com.yo.android.ui.PhoneChatActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.util.YODialogs;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.vox.VoxFactory;
@@ -124,6 +128,10 @@ public class DialerFragment extends BaseFragment {
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
+    public interface CallLogClearListener {
+        public void clear();
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -189,7 +197,12 @@ public class DialerFragment extends BaseFragment {
         } else if (item.getItemId() == R.id.menu_app_calls) {
             str = "app calls";
         } else if (item.getItemId() == R.id.menu_clear_history) {
-            mToastFactory.showToast("Clear call history is not yet implemented.");
+            YODialogs.clearHistory(getActivity(), new CallLogClearListener() {
+                @Override
+                public void clear() {
+                    loadCallLogs();
+                }
+            });
         }
         if (str != null) {
             preferenceEndPoint.saveStringPreference(Constants.DIALER_FILTER, str);
@@ -214,13 +227,16 @@ public class DialerFragment extends BaseFragment {
         view.findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), PhoneChatActivity.class));
+                mToastFactory.showToast(R.string.need_to_implement);
+                // startActivity(new Intent(getActivity(), PhoneChatActivity.class));
             }
         });
         view.findViewById(R.id.btnContacts).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), PhoneBookActivity.class));
+                mToastFactory.showToast(R.string.need_to_implement);
+
+                //  startActivity(new Intent(getActivity(), PhoneBookActivity.class));
             }
         });
         deleteButton = (ImageButton) view.findViewById(R.id.deleteButton);
@@ -293,7 +309,9 @@ public class DialerFragment extends BaseFragment {
                         for (CallRateDetail callRateDetail : callRateDetailList) {
                             String plus = "+" + callRateDetail.getPrefix();
                             String zero = "00" + callRateDetail.getPrefix();
-                            if (plus.equals(s.toString().trim()) || zero.equals(s.toString().trim())) {
+                            if ((s.length() >= plus.length() &&
+                                    s.toString().trim().subSequence(0, plus.length()).equals(plus)) ||
+                                    s.length() >= zero.length() && s.toString().trim().subSequence(0, zero.length()).equals(zero)) {
                                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
                                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());
                                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_PULSE, callRateDetail.getPulse());
@@ -387,8 +405,25 @@ public class DialerFragment extends BaseFragment {
         loadDefaultSimCountry();
         adapter = new CallLogsAdapter(getActivity(), preferenceEndPoint, mContactsSyncManager);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(showCallLogDetailsListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         loadCallLogs();
     }
+
+    AdapterView.OnItemClickListener showCallLogDetailsListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Map.Entry<String, List<CallLogsResult>> callLogDetails = adapter.getItem(position);
+            Intent intent = new Intent(getActivity(), CallLogDetailsActivity.class);
+            intent.putParcelableArrayListExtra(Constants.CALL_LOG_DETAILS, (ArrayList<? extends Parcelable>) callLogDetails.getValue());
+            startActivity(intent);
+        }
+    };
+
 
     @OnClick(R.id.floatingDialer)
     public void onDialerClick() {
