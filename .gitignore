@@ -58,3 +58,4 @@ gradle.properties
 checkapks.cmd
 *.ipr
 /apks/
+/FETCH_HEAD

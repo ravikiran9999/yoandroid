@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -333,10 +334,9 @@ public class MyCollectionDetails extends BaseActivity {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(data.getImage_filename() !=null) {
+                    if (data.getImage_filename() != null) {
                         new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    }
-                    else {
+                    } else {
                         Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
                     }
                 }
@@ -394,53 +394,66 @@ public class MyCollectionDetails extends BaseActivity {
         }
 
         private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
-            final Dialog dialog = new Dialog(context);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.unfollow_alert_dialog);
-            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
-            Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
-            btnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            btnUnfollow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    ((BaseActivity) context).showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            finalHolder.articleFollow.setText("Follow");
-                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                            data.setIsFollowing("false");
-                            if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                            }
-                            if (MagazineArticlesBaseAdapter.mListener != null) {
-                                MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                            }
-                            notifyDataSetChanged();
-                        }
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            finalHolder.articleFollow.setText("Following");
-                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                            data.setIsFollowing("true");
-                            notifyDataSetChanged();
-                        }
-                    });
-                }
-            });
 
-            dialog.show();
+            if (context != null) {
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+                builder.setView(view);
+
+                Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+                Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+                final AlertDialog alertDialog = builder.create();
+                alertDialog.setCancelable(false);
+                alertDialog.show();
+
+                yesBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        ((BaseActivity) context).showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                finalHolder.articleFollow.setText("Follow");
+                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                data.setIsFollowing("false");
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                }
+                                if (MagazineArticlesBaseAdapter.mListener != null) {
+                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
+                                }
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                finalHolder.articleFollow.setText("Following");
+                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                data.setIsFollowing("true");
+                                notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
+
+
+                noBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+            }
         }
 
 
@@ -482,27 +495,25 @@ public class MyCollectionDetails extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.menu_follow_magazine:
                 if ("Tag".equals(type)) {
-                    final Dialog dialog = new Dialog(MyCollectionDetails.this);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.unfollow_alert_dialog);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(MyCollectionDetails.this);
 
-                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    LayoutInflater layoutInflater = LayoutInflater.from(MyCollectionDetails.this);
+                    final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+                    builder.setView(view);
 
-                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+                    Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+                    Button noBtn = (Button) view.findViewById(R.id.no_btn);
 
-                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
 
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                    final AlertDialog alertDialog = builder.create();
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
+
+                    yesBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
+                            alertDialog.dismiss();
+                            showProgressDialog();
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
                             List<String> topicIds = new ArrayList<String>();
                             topicIds.add(topicId);
@@ -523,29 +534,34 @@ public class MyCollectionDetails extends BaseActivity {
                         }
                     });
 
-                    dialog.show();
-                } else {
-                    final Dialog dialog = new Dialog(MyCollectionDetails.this);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.unfollow_alert_dialog);
 
-                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
-
-                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
-
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                    noBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            dialog.dismiss();
+                            alertDialog.dismiss();
                         }
                     });
 
-                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
+                } else {
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(MyCollectionDetails.this);
+
+                    LayoutInflater layoutInflater = LayoutInflater.from(MyCollectionDetails.this);
+                    final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+                    builder.setView(view);
+
+                    Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+                    Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+                    final AlertDialog alertDialog = builder.create();
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
+
+                    yesBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            dialog.dismiss();
+                            alertDialog.dismiss();
                             showProgressDialog();
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
                             yoService.unfollowMagazineAPI(topicId, accessToken).enqueue(new Callback<ResponseBody>() {
@@ -567,7 +583,13 @@ public class MyCollectionDetails extends BaseActivity {
                         }
                     });
 
-                    dialog.show();
+
+                    noBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alertDialog.dismiss();
+                        }
+                    });
                 }
                 break;
             default:

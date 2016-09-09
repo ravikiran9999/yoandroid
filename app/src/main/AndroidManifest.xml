@@ -94,7 +94,6 @@
         <activity
             android:name=".ui.BottomTabsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".chat.ui.ChatActivity"
