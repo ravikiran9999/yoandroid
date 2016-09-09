@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -365,10 +366,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(data.getImage_filename() !=null) {
+                    if (data.getImage_filename() != null) {
                         new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    }
-                    else {
+                    } else {
                         Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
                     }
                 }
@@ -420,29 +420,28 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         });
                     } else {
 
-                        final Dialog dialog = new Dialog(getActivity());
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog.setContentView(R.layout.unfollow_alert_dialog);
 
-                        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                        Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+                        LayoutInflater layoutInflater = LayoutInflater.from(context);
+                        final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+                        builder.setView(view);
 
-                        Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+                        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+                        Button noBtn = (Button) view.findViewById(R.id.no_btn);
 
-                        btnCancel.setOnClickListener(new View.OnClickListener() {
+
+                        final AlertDialog alertDialog = builder.create();
+                        alertDialog.setCancelable(false);
+                        alertDialog.show();
+
+                        yesBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                        btnUnfollow.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                ((BaseActivity) context).showProgressDialog();
+                                alertDialog.dismiss();
+                                showProgressDialog();
                                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                                ((BaseActivity) context).showProgressDialog();
                                 yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -475,7 +474,13 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                             }
                         });
 
-                        dialog.show();
+
+                        noBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                alertDialog.dismiss();
+                            }
+                        });
                     }
                 }
             });

@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
+import com.yo.android.calllogs.CallLog;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.model.Articles;
@@ -454,50 +456,63 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
     private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder, final Button follow) {
-        final Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.unfollow_alert_dialog);
-        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
-        Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        btnUnfollow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                ((BaseActivity) context).showProgressDialog();
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        ((BaseActivity) context).dismissProgressDialog();
-                        follow.setText("Follow");
-                        follow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                        data.setIsFollowing("false");
-                        if (OtherProfilesLikedArticles.getListener() != null) {
-                            OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
+
+
+        if (context != null) {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+            final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+            builder.setView(view);
+
+            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+            Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    ((BaseActivity) context).showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            follow.setText("Follow");
+                            follow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                            data.setIsFollowing("false");
+                            if (OtherProfilesLikedArticles.getListener() != null) {
+                                OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
+                            }
+                            notifyDataSetChanged();
                         }
-                        notifyDataSetChanged();
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        ((BaseActivity) context).dismissProgressDialog();
-                        follow.setText("Following");
-                        follow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                        data.setIsFollowing("true");
-                        notifyDataSetChanged();
-                    }
-                });
-            }
-        });
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            ((BaseActivity) context).dismissProgressDialog();
+                            follow.setText("Following");
+                            follow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            data.setIsFollowing("true");
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
+            });
 
-        dialog.show();
+
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+        }
     }
 
 

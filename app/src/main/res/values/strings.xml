@@ -194,5 +194,8 @@
     <string name="clear_history_dec">This will delete all calls from your history</string>
     <string name="clear_call_history">Clear call history?</string>
     <string name="ok">OK</string>
-    <string name="cancle">Cancle</string>
+    <string name="cancle">Cancel</string>
+    <string name="are_you_sure_you_want_to_unfollow">Are you sure you want to Unfollow?</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -109,7 +110,7 @@ public class OthersProfileActivity extends BaseActivity {
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(picture);
         } else {
-           
+
             Glide.with(this)
                     .load(R.drawable.ic_contacts)
                     .fitCenter()
@@ -144,8 +145,9 @@ public class OthersProfileActivity extends BaseActivity {
                             btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                             followersCount = followersCount + 1;
                             dataList.get(1).setCount(followersCount);
-                            ((TextView)tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));;
-                            if(mAdapter.getCount()>=2) {
+                            ((TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));
+                            ;
+                            if (mAdapter.getCount() >= 2) {
                                 if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
                                     ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
                                 }
@@ -163,27 +165,25 @@ public class OthersProfileActivity extends BaseActivity {
                     });
                 } else {
 
-                    final Dialog dialog = new Dialog(OthersProfileActivity.this);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.unfollow_alert_dialog);
 
-                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(OthersProfileActivity.this);
 
-                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+                    LayoutInflater layoutInflater = LayoutInflater.from(OthersProfileActivity.this);
+                    final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+                    builder.setView(view);
 
-                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+                    Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+                    Button noBtn = (Button) view.findViewById(R.id.no_btn);
 
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
+
+                    final AlertDialog alertDialog = builder.create();
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
+
+                    yesBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
+                            alertDialog.dismiss();
                             showProgressDialog();
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
                             yoService.unfollowUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
@@ -194,8 +194,9 @@ public class OthersProfileActivity extends BaseActivity {
                                     btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                     followersCount = followersCount - 1;
                                     dataList.get(1).setCount(followersCount);
-                                    ((TextView)tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));;
-                                    if(mAdapter.getCount()>=2) {
+                                    ((TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));
+                                    ;
+                                    if (mAdapter.getCount() >= 2) {
                                         if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
                                             ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
                                         }
@@ -214,7 +215,13 @@ public class OthersProfileActivity extends BaseActivity {
                         }
                     });
 
-                    dialog.show();
+
+                    noBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alertDialog.dismiss();
+                        }
+                    });
                 }
             }
         });

@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -105,7 +106,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
                 final String id = response.body().getId();
-                if (response.body().getArticlesList()!= null && response.body().getArticlesList().size() > 0) {
+                if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
                     for (int i = 0; i < response.body().getArticlesList().size(); i++) {
                         flipContainer.setVisibility(View.VISIBLE);
                         if (noArticals != null) {
@@ -169,7 +170,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         private MyBaseAdapter(Context context) {
             inflater = LayoutInflater.from(context);
             this.context = context;
-            MagazineArticlesBaseAdapter.reflectListener=this;
+            MagazineArticlesBaseAdapter.reflectListener = this;
 
             //Use a system resource as the placeholder
             placeholderBitmap =
@@ -184,7 +185,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
         @Override
         public Articles getItem(int position) {
-            if (position>=0 && getCount() > position) {
+            if (position >= 0 && getCount() > position) {
                 return items.get(position);
             }
             return null;
@@ -341,16 +342,15 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(data.getImage_filename() !=null) {
+                    if (data.getImage_filename() != null) {
                         new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    }
-                    else {
+                    } else {
                         Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
                     }
                 }
             });
 
-            if(data.getIsFollowing().equals("true")) {
+            if (data.getIsFollowing().equals("true")) {
                 holder.articleFollow.setText("Following");
                 holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                 isFollowing = true;
@@ -389,54 +389,61 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         });
                     } else {
 
-                        final Dialog dialog = new Dialog(OthersMagazinesDetailActivity.this);
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog.setContentView(R.layout.unfollow_alert_dialog);
 
-                        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        if (context != null) {
 
-                        Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                        Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
+                            LayoutInflater layoutInflater = LayoutInflater.from(context);
+                            final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+                            builder.setView(view);
 
-                        btnCancel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
+                            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+                            Button noBtn = (Button) view.findViewById(R.id.no_btn);
 
-                        btnUnfollow.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                                ((BaseActivity) context).showProgressDialog();
-                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                                yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        ((BaseActivity) context).dismissProgressDialog();
-                                        finalHolder.articleFollow.setText("Follow");
-                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                        data.setIsFollowing("false");
-                                        isFollowing = false;
 
-                                    }
+                            final AlertDialog alertDialog = builder.create();
+                            alertDialog.setCancelable(false);
+                            alertDialog.show();
 
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        ((BaseActivity) context).dismissProgressDialog();
-                                        finalHolder.articleFollow.setText("Following");
-                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                        data.setIsFollowing("true");
-                                        isFollowing = true;
+                            yesBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alertDialog.dismiss();
+                                    ((BaseActivity) context).showProgressDialog();
+                                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                                    yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                                        @Override
+                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                            ((BaseActivity) context).dismissProgressDialog();
+                                            finalHolder.articleFollow.setText("Follow");
+                                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                            data.setIsFollowing("false");
+                                            isFollowing = false;
 
-                                    }
-                                });
-                            }
-                        });
+                                        }
 
-                        dialog.show();
+                                        @Override
+                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                            ((BaseActivity) context).dismissProgressDialog();
+                                            finalHolder.articleFollow.setText("Following");
+                                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                            data.setIsFollowing("true");
+                                            isFollowing = true;
+
+                                        }
+                                    });
+                                }
+                            });
+
+
+                            noBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                        }
                     }
                 }
             });
@@ -501,7 +508,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_collections_detail, menu);
 
-        if("true".equals(magazineIsFollowing)) {
+        if ("true".equals(magazineIsFollowing)) {
             menu.getItem(0).setTitle("");
             menu.getItem(0).setIcon(R.drawable.ic_mycollections_tick);
             isFollowingMagazine = true;
@@ -521,49 +528,47 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.menu_follow_magazine:
                 if (!isFollowingMagazine) {
-                showProgressDialog();
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.followMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        dismissProgressDialog();
-                        menuItem.setTitle("");
-                        menuItem.setIcon(R.drawable.ic_mycollections_tick);
-                        isFollowingMagazine = true;
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        dismissProgressDialog();
-                        menuItem.setIcon(null);
-                        menuItem.setTitle("Follow");
-                        isFollowingMagazine = false;
-                    }
-                });
-                } else {
-
-                    final Dialog dialog = new Dialog(OthersMagazinesDetailActivity.this);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.unfollow_alert_dialog);
-
-                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                    Button btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
-
-                    Button btnUnfollow = (Button) dialog.findViewById(R.id.btn_unfollow);
-
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                    showProgressDialog();
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.followMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
                         @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            dismissProgressDialog();
+                            menuItem.setTitle("");
+                            menuItem.setIcon(R.drawable.ic_mycollections_tick);
+                            isFollowingMagazine = true;
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            dismissProgressDialog();
+                            menuItem.setIcon(null);
+                            menuItem.setTitle("Follow");
+                            isFollowingMagazine = false;
                         }
                     });
+                } else {
 
-                    btnUnfollow.setOnClickListener(new View.OnClickListener() {
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    LayoutInflater layoutInflater = LayoutInflater.from(this);
+                    final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+                    builder.setView(view);
+
+                    Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+                    Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+                    final AlertDialog alertDialog = builder.create();
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
+
+                    yesBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            dialog.dismiss();
+                            alertDialog.dismiss();
                             showProgressDialog();
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
                             yoService.unfollowMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
@@ -587,7 +592,14 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         }
                     });
 
-                    dialog.show();
+
+                    noBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alertDialog.dismiss();
+                        }
+                    });
+
                 }
 
                 break;
@@ -613,7 +625,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 3 && resultCode == RESULT_OK) {
-            if(data!= null) {
+            if (data != null) {
                 String editedTitle = data.getStringExtra("EditedTitle");
                 String editedDesc = data.getStringExtra("EditedDesc");
 
