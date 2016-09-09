@@ -247,6 +247,10 @@ public class WishListActivity extends BaseActivity {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
 
+                                if(OthersMagazinesDetailActivity.myBaseAdapter.reflectListener != null) {
+                                    OthersMagazinesDetailActivity.myBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
+
                                 notifyDataSetChanged();
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
 
@@ -290,12 +294,16 @@ public class WishListActivity extends BaseActivity {
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
+                        .placeholder(R.drawable.img_placeholder)
                         .centerCrop()
-                        //Image size will be reduced 50%
+                                //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(photoView);
+            } else {
+                photoView.setImageResource(R.drawable.img_placeholder);
             }
 
             Button followMoreTopics = (Button) layout.findViewById(R.id.btn_magazine_follow_topics);
