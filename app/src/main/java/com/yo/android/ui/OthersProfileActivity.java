@@ -80,16 +80,7 @@ public class OthersProfileActivity extends BaseActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         dataList = createTabsList();
-        int index = 0;
-        for (ProfileTabsData data : dataList) {
-            final TabLayout.Tab tab = tabLayout.getTabAt(index);
-            if (index == 2) {
-                tab.setCustomView(setTabs(data.getTitle(), data.getCount(), true));
-            } else {
-                tab.setCustomView(setTabs(data.getTitle(), data.getCount(), false));
-            }
-            index++;
-        }
+        updateTitles();
 
 
         backbtn.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +142,14 @@ public class OthersProfileActivity extends BaseActivity {
                             dismissProgressDialog();
                             btnFolow.setText("Following");
                             btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                            followersCount = followersCount + 1;
+                            dataList.get(1).setCount(followersCount);
+                            ((TextView)tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));;
+                            if(mAdapter.getCount()>=2) {
+                                if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
+                                    ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
+                                }
+                            }
                             isFollowingUser = true;
                         }
 
@@ -193,6 +192,14 @@ public class OthersProfileActivity extends BaseActivity {
                                     dismissProgressDialog();
                                     btnFolow.setText("Follow");
                                     btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                    followersCount = followersCount - 1;
+                                    dataList.get(1).setCount(followersCount);
+                                    ((TextView)tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));;
+                                    if(mAdapter.getCount()>=2) {
+                                        if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
+                                            ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
+                                        }
+                                    }
                                     isFollowingUser = false;
                                 }
 
@@ -212,6 +219,19 @@ public class OthersProfileActivity extends BaseActivity {
             }
         });
 
+    }
+
+    private void updateTitles() {
+        int index = 0;
+        for (ProfileTabsData data : dataList) {
+            final TabLayout.Tab tab = tabLayout.getTabAt(index);
+            if (index == 2) {
+                tab.setCustomView(setTabs(data.getTitle(), data.getCount(), true));
+            } else {
+                tab.setCustomView(setTabs(data.getTitle(), data.getCount(), false));
+            }
+            index++;
+        }
     }
 
     public View setTabs(final String title, final int count, final boolean isLast) {
@@ -253,6 +273,10 @@ public class OthersProfileActivity extends BaseActivity {
 
         public int getCount() {
             return count;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
         }
     }
 

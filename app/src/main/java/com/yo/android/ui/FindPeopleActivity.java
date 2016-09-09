@@ -67,6 +67,30 @@ public class FindPeopleActivity extends BaseActivity {
         lvFindPeople.setOnScrollListener(onScrollListener());
         originalList = new ArrayList<>();
 
+        lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pos = position;
+                Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
+                otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
+                otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
+                otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
+                otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
+                otherProfileIntent.putExtra("MagazinesCount", findPeopleAdapter.getItem(position).getMagzinesCount());
+                otherProfileIntent.putExtra("FollowersCount", findPeopleAdapter.getItem(position).getFollowersCount());
+                otherProfileIntent.putExtra("LikedArticlesCount", findPeopleAdapter.getItem(position).getLikedArticlesCount());
+                startActivityForResult(otherProfileIntent, 8);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        callFindPeopleService();
+    }
+
+    private void callFindPeopleService() {
         showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
@@ -75,6 +99,7 @@ public class FindPeopleActivity extends BaseActivity {
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     List<FindPeople> findPeopleList = response.body();
+                    findPeopleAdapter.clearAll();
                     findPeopleAdapter.addItemsAll(findPeopleList);
                     lvFindPeople.setVisibility(View.VISIBLE);
                     noData.setVisibility(View.GONE);
@@ -94,22 +119,6 @@ public class FindPeopleActivity extends BaseActivity {
                 noData.setVisibility(View.VISIBLE);
                 llNoPeople.setVisibility(View.VISIBLE);
                 lvFindPeople.setVisibility(View.GONE);
-            }
-        });
-
-        lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                pos = position;
-                Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
-                otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
-                otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
-                otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
-                otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
-                otherProfileIntent.putExtra("MagazinesCount", findPeopleAdapter.getItem(position).getMagzinesCount());
-                otherProfileIntent.putExtra("FollowersCount", findPeopleAdapter.getItem(position).getFollowersCount());
-                otherProfileIntent.putExtra("LikedArticlesCount", findPeopleAdapter.getItem(position).getLikedArticlesCount());
-                startActivityForResult(otherProfileIntent, 8);
             }
         });
     }

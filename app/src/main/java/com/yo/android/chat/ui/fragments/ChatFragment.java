@@ -149,15 +149,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onActivityCreated(savedInstanceState);
         chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(chatRoomListAdapter);
-        /*if (chatRoomListAdapter.getCount() <= 0) {
-            emptyImageView.setVisibility(View.VISIBLE);
-            listView.setVisibility(View.GONE);
-        } else {
-            emptyImageView.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
-        }*/
+
 
     }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -189,9 +184,39 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onResume() {
         super.onResume();
-        getAllRooms();
+        isRoomsExist();
+        //getAllRooms();
+
     }
 
+    private void isRoomsExist() {
+        showProgressDialog();
+        Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
+        if (!firebaseUserId.isEmpty()) {
+            authReference.child(Constants.USERS).child(firebaseUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.child(Constants.MY_ROOMS).exists()) {
+                        getAllRooms();
+                    } else {
+                        emptyImageView.setVisibility(View.VISIBLE);
+                        listView.setVisibility(View.GONE);
+                    }
+                    dismissProgressDialog();
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    dismissProgressDialog();
+                    firebaseError.getMessage();
+                    Toast.makeText(getActivity(), "Please try again", Toast.LENGTH_SHORT).show();
+                }
+            });
+            authReference.keepSynced(true);
+        }
+    }
 
     private void getAllRooms() {
         Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
@@ -199,12 +224,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         ChildEventListener mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot == null) {
-                    emptyImageView.setVisibility(View.VISIBLE);
-                    listView.setVisibility(View.INVISIBLE);
-                } else {
-                    getMembersId(dataSnapshot);
-                }
+
+                getMembersId(dataSnapshot);
 
             }
 
@@ -231,6 +252,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (!firebaseUserId.isEmpty()) {
+            //authReference.child(Constants.USERS).child(firebaseUserId).
             authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addChildEventListener(mChildEventListener);
             authReference.keepSynced(true);
         }
