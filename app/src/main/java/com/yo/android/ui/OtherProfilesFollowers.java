@@ -53,23 +53,7 @@ public class OtherProfilesFollowers extends BaseFragment {
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
         showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getOtherProfilesFollowersAPI(accessToken, userID).enqueue(new Callback<List<FindPeople>>() {
-            @Override
-            public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                dismissProgressDialog();
-                if (response.body() != null && !response.body().isEmpty()) {
-                    noData.setVisibility(View.GONE);
-                    lvFindPeople.setVisibility(View.VISIBLE);
-                    List<FindPeople> findPeopleList = response.body();
-                    findPeopleAdapter.addItemsAll(findPeopleList);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FindPeople>> call, Throwable t) {
-                dismissProgressDialog();
-            }
-        });
+        callService(accessToken);
 
         lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -87,6 +71,31 @@ public class OtherProfilesFollowers extends BaseFragment {
         });
     }
 
+    private void callService(String accessToken) {
+        yoService.getOtherProfilesFollowersAPI(accessToken, userID).enqueue(new Callback<List<FindPeople>>() {
+            @Override
+            public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
+                dismissProgressDialog();
+                if (response.body() != null) {
+                    noData.setVisibility(View.GONE);
+                    lvFindPeople.setVisibility(View.VISIBLE);
+                    List<FindPeople> findPeopleList = response.body();
+                    findPeopleAdapter.clearAll();
+                    findPeopleAdapter.addItemsAll(findPeopleList);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FindPeople>> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
+    }
+
+    public void update(){
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        callService(accessToken);
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
