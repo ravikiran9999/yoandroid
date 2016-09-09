@@ -80,6 +80,9 @@ public class ChatActivity extends BaseActivity {
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
             opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME).trim();
 
+            /*long opp = Long.parseLong(opponent.replaceAll("[^\\d.]", "").substring(2, 12));
+            int opponentInt = (int) opp;*/
+
             args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
             args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
         }
@@ -107,6 +110,8 @@ public class ChatActivity extends BaseActivity {
                 opponent = contact.getName();
             } else if (room != null && room.getFullName() != null) {
                 opponent = room.getFullName();
+            } else if(opponent!= null && opponent.contains("youser")) {
+                opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
             }
 
             customTitle.setText(opponent);
@@ -144,12 +149,20 @@ public class ChatActivity extends BaseActivity {
             customTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    if (opponent.length() > 10) {
+                        opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
+                    }
+
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
-                    intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
-                    intent.putExtra(Constants.GROUP_NAME, room.getGroupName());
+
+                    if (room != null) {
+                        intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
+                        intent.putExtra(Constants.GROUP_NAME, room.getGroupName());
+                    }
                     startActivity(intent);
                 }
             });
@@ -172,9 +185,10 @@ public class ChatActivity extends BaseActivity {
 
     private void clearNotification(String opponent) {
 
-        long opp = Long.parseLong(opponent.replaceAll("[^\\d.]", "").substring(2, 12));
-        int opponentInt = (int) opp;
-        Util.cancelReadNotification(this, opponentInt);
+        //long opp = Long.parseLong(opponent.replaceAll("[^\\d.]", "").substring(2, 12));
+        //int opponentInt = (int) opp;
+        //Util.cancelReadNotification(this, opponentInt);
+        Util.cancelAllNotification(this);
     }
 
 }

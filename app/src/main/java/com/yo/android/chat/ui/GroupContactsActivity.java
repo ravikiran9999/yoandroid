@@ -18,6 +18,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.Contact;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,8 @@ public class GroupContactsActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_multiple_contacts, menu);
+        Util.prepareContactsSearch(this, menu, groupContactsListAdapter, Constants.Yo_CONT_FRAG);
+        Util.changeSearchProperties(menu);
         return true;
     }
 

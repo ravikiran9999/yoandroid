@@ -219,6 +219,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getAllRooms() {
+
         Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
 
         ChildEventListener mChildEventListener = new ChildEventListener() {
@@ -226,7 +227,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 getMembersId(dataSnapshot);
-
             }
 
             @Override
@@ -252,7 +252,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (!firebaseUserId.isEmpty()) {
-            //authReference.child(Constants.USERS).child(firebaseUserId).
             authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addChildEventListener(mChildEventListener);
             authReference.keepSynced(true);
         }

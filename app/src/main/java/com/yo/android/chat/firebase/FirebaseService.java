@@ -261,7 +261,6 @@ public class FirebaseService extends InjectedService {
 
                 mNotificationManager.notify(notificationId, notification);
 
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
