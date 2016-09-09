@@ -300,14 +300,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
+                        .placeholder(R.drawable.img_placeholder)
                         .centerCrop()
                                 //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(photoView);
             } else {
-                photoView.setImageDrawable(null);
+                photoView.setImageResource(R.drawable.img_placeholder);
             }
         }
 
@@ -661,14 +663,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
+                        .placeholder(R.drawable.img_placeholder)
                         .centerCrop()
                                 //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(photoView);
             } else {
-                photoView.setImageDrawable(null);
+                photoView.setImageResource(R.drawable.img_placeholder);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -837,13 +841,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
-                        //Image size will be reduced 50%
+                        .placeholder(R.drawable.img_placeholder)
+                        .centerCrop()
+                                //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(photoView);
             } else {
-                photoView.setImageDrawable(null);
+                photoView.setImageResource(R.drawable.img_placeholder);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -1003,13 +1010,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
-                        //Image size will be reduced 50%
+                        .placeholder(R.drawable.img_placeholder)
+                        .centerCrop()
+                                //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(photoView);
             } else {
-                photoView.setImageDrawable(null);
+                photoView.setImageResource(R.drawable.img_placeholder);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

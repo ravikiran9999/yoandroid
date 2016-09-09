@@ -311,12 +311,16 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
+                        .placeholder(R.drawable.img_placeholder)
                         .centerCrop()
-                        //Image size will be reduced 50%
+                                //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(photoView);
+            } else {
+                photoView.setImageResource(R.drawable.img_placeholder);
             }
 
 
