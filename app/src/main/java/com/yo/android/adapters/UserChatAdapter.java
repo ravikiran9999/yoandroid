@@ -251,6 +251,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                                 @Override
                                 public void onError() {
+
                                 }
                             });
                 } else {
