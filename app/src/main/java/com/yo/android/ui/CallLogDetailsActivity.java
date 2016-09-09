@@ -55,7 +55,7 @@ public class CallLogDetailsActivity extends BaseActivity {
     @Bind(R.id.lv_call_log_details)
     ListView callLogHistoryListview;
     protected DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a");
-    protected SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+    protected SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     private ArrayList<CallLogsResult> callLogsDetails;
 
