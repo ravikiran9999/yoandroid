@@ -110,9 +110,15 @@ public class Util {
         notificationManager.cancel(notificationId);
     }
 
+    public static void isNotificationAvailable(Context context, int notificationId) {
+        NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+    }
+
     public static void cancelReadNotification(Context context, int roomId) {
         NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(roomId);
+
     }
 
     public static void cancelAllNotification(Context context) {
