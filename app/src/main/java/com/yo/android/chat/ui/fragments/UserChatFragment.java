@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -49,7 +48,6 @@ import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.Clipboard;
-import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
@@ -83,6 +81,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
     private EditText chatText;
+    private TextView noChatAvailable;
     private ListView listView;
     private String opponentNumber;
     private String opponentId;
@@ -107,7 +106,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     YoApi.YoService yoService;
 
     private String opponentImg;
-
 
 
     public UserChatFragment() {
@@ -163,6 +161,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setOnItemClickListener(this);
         View send = view.findViewById(R.id.send);
         chatText = (EditText) view.findViewById(R.id.chat_text);
+        noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
         chatMessageArray = new ArrayList<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType);
         listView.setAdapter(userChatAdapter);
@@ -351,7 +350,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-
         String message = chatText.getText().toString().trim();
         sendChatMessage(message, Constants.TEXT);
         if (chatText.getText() != null) {
@@ -518,8 +516,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         StorageReference imagesRef = storageReference.child("images/" + file.getLastPathSegment());
         UploadTask uploadTask = imagesRef.putFile(file, metadata);
 
-        //new UploadImageTask(uploadTask).execute(path);
-
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -549,65 +545,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         });
 
-    }
-
-    protected class UploadImageTask extends AsyncTask<String, Double, String> {
-        UploadTask uploadTask;
-
-        public UploadImageTask(UploadTask uploadTask) {
-            this.uploadTask = uploadTask;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(Double... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected String doInBackground(final String... params) {
-
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    // Handle unsuccessful uploads
-                    uploadImage(params[0]);
-                    e.printStackTrace();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    if (downloadUrl != null) {
-                        sendImage(downloadUrl.getLastPathSegment());
-                    }
-                }
-            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double progress = 100.0 * (taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                    Log.i(TAG, "Upload is " + progress + "% done");
-                }
-            }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getActivity(), "Upload is paused", Toast.LENGTH_LONG).show();
-                }
-            });
-
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
     }
 
     private void sendImage(@NonNull String imagePathName) {

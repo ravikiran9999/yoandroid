@@ -504,9 +504,14 @@ public class CallLog {
                     + " LIMIT -1 OFFSET 500)", null);
         }
 
-        public static void deleteCallLogByDate(Context context, String date) {
+        public static void deleteCallLogByDate(Context context, String date, String number) {
             final ContentResolver resolver = context.getContentResolver();
-            resolver.delete(CONTENT_URI, DATE + " = '" + date + "'", null);
+            String selection = "DATE(date) = DATE('" + date + "') and " + NUMBER + " = '" + number + "'";
+            resolver.delete(CONTENT_URI, selection, null);
+        }
+        public static void clearCallHistory(Context context) {
+            final ContentResolver resolver = context.getContentResolver();
+            resolver.delete(CONTENT_URI, null, null);
         }
 
         public static String getImagePath(Context context, String voxUserName) {

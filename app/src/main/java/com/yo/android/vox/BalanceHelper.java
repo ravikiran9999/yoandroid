@@ -14,6 +14,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -137,6 +139,33 @@ public class BalanceHelper {
 
             }
         });
+    }
+
+    public void loadSpentDetailsHistory(final Callback<ResponseBody> callback) {
+        mLog.w(TAG, "loadSpentDetailsHistory:called");
+        String subscriberId = prefs.getStringPreference(Constants.SUBSCRIBER_ID);
+        String fromDate = "2016­06­01";
+        String toDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String limit = "100";
+        final String accessToken = prefs.getStringPreference("access_token");
+        yoService.getSpentDetailsHistory(accessToken)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (callback != null) {
+                            callback.onResponse(call, response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        mLog.i(TAG, "loadBalance: onFailure");
+                        if (callback != null) {
+                            callback.onFailure(call, t);
+                        }
+                    }
+                });
+
     }
 
 

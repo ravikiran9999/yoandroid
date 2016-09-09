@@ -121,6 +121,8 @@
 
     <string name="title_activity_load_magazine">LoadMagazineActivity</string>
 
+    <string name="group_creation_error">Group not created. Please try again</string>
+    <string name="enter_group_name">Please enter group name</string>
     <string name="create_group">Create group</string>
     <string name="clear_chat_history">Clear chat history</string>
     <string name="delete">Delete</string>
@@ -188,4 +190,9 @@
     <string name="outgoing_call">Outgoing call</string>
     <string name="incoming_call">Incoming call</string>
     <string name="missed_call">Missed call</string>
+    <string name="empty_chat">No chat history found.</string>
+    <string name="clear_history_dec">This will delete all calls from your history</string>
+    <string name="clear_call_history">Clear call history?</string>
+    <string name="ok">OK</string>
+    <string name="cancle">Cancle</string>
 </resources>

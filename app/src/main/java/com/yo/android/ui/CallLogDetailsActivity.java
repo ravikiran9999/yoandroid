@@ -56,6 +56,7 @@ public class CallLogDetailsActivity extends BaseActivity {
     ListView callLogHistoryListview;
     protected DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
     protected SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:MM:SS");
+
     private ArrayList<CallLogsResult> callLogsDetails;
 
     @Override
@@ -102,7 +103,7 @@ public class CallLogDetailsActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        CallLog.Calls.deleteCallLogByDate(this, callLogsDetails.get(0).getStime());
+        CallLog.Calls.deleteCallLogByDate(this, callLogsDetails.get(0).getStime(),callLogsDetails.get(0).getDialnumber());
         finish();
         return super.onOptionsItemSelected(item);
     }

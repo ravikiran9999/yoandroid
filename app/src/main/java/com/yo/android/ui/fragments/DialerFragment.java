@@ -47,6 +47,7 @@ import com.yo.android.ui.PhoneBookActivity;
 import com.yo.android.ui.PhoneChatActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.util.YODialogs;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.vox.VoxFactory;
@@ -127,6 +128,10 @@ public class DialerFragment extends BaseFragment {
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
+    public interface CallLogClearListener {
+        public void clear();
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -192,7 +197,12 @@ public class DialerFragment extends BaseFragment {
         } else if (item.getItemId() == R.id.menu_app_calls) {
             str = "app calls";
         } else if (item.getItemId() == R.id.menu_clear_history) {
-            mToastFactory.showToast("Clear call history is not yet implemented.");
+            YODialogs.clearHistory(getActivity(), new CallLogClearListener() {
+                @Override
+                public void clear() {
+                    loadCallLogs();
+                }
+            });
         }
         if (str != null) {
             preferenceEndPoint.saveStringPreference(Constants.DIALER_FILTER, str);
@@ -395,8 +405,13 @@ public class DialerFragment extends BaseFragment {
         loadDefaultSimCountry();
         adapter = new CallLogsAdapter(getActivity(), preferenceEndPoint, mContactsSyncManager);
         listView.setAdapter(adapter);
-        loadCallLogs();
         listView.setOnItemClickListener(showCallLogDetailsListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadCallLogs();
     }
 
     AdapterView.OnItemClickListener showCallLogDetailsListener = new AdapterView.OnItemClickListener() {

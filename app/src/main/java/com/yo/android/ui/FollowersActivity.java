@@ -56,7 +56,6 @@ public class FollowersActivity extends BaseActivity {
         yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.GONE);
@@ -68,14 +67,15 @@ public class FollowersActivity extends BaseActivity {
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
                 }
+                dismissProgressDialog();
             }
 
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                 dismissProgressDialog();
-                    noData.setVisibility(View.VISIBLE);
-                    llNoPeople.setVisibility(View.VISIBLE);
-                    lvFindPeople.setVisibility(View.GONE);
+                noData.setVisibility(View.VISIBLE);
+                llNoPeople.setVisibility(View.VISIBLE);
+                lvFindPeople.setVisibility(View.GONE);
             }
         });
 
@@ -108,13 +108,12 @@ public class FollowersActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed  here it is 2
         if (requestCode == 9 && resultCode == RESULT_OK) {
-            if(data!= null) {
+            if (data != null) {
                 showProgressDialog();
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
                     @Override
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                        dismissProgressDialog();
                         if (response.body().size() > 0) {
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.GONE);
@@ -127,14 +126,16 @@ public class FollowersActivity extends BaseActivity {
                             llNoPeople.setVisibility(View.VISIBLE);
                             lvFindPeople.setVisibility(View.GONE);
                         }
+                        dismissProgressDialog();
+
                     }
 
                     @Override
                     public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                         dismissProgressDialog();
-                            noData.setVisibility(View.VISIBLE);
-                            llNoPeople.setVisibility(View.VISIBLE);
-                            lvFindPeople.setVisibility(View.GONE);
+                        noData.setVisibility(View.VISIBLE);
+                        llNoPeople.setVisibility(View.VISIBLE);
+                        lvFindPeople.setVisibility(View.GONE);
                     }
                 });
             }

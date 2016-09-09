@@ -109,6 +109,12 @@ public class Util {
         NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(notificationId);
     }
+
+    public static void cancelReadNotification(Context context, int roomId) {
+        NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(roomId);
+    }
+
     public static void cancelAllNotification(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
@@ -269,11 +275,9 @@ public class Util {
     }
 
     public static void prepareContactsSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final String roomType) {
-        final SearchManager searchManager =
-                (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchMenuItem;
+
+        final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView;
-        searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
@@ -340,6 +344,7 @@ public class Util {
                 if (activity instanceof BottomTabsActivity) {
                     ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
                     ((BottomTabsActivity) activity).refresh();
+
                 } else if (activity instanceof FindPeopleActivity) {
                     ((FindPeopleActivity) activity).refresh();
                 }
