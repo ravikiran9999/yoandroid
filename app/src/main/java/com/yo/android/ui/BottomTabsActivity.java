@@ -61,7 +61,7 @@ import retrofit2.Response;
  */
 public class BottomTabsActivity extends BaseActivity {
 
-    private Toolbar toolbar;
+    //private Toolbar toolbar;
     private TabLayout tabLayout;
     private List<TabsData> dataList;
     @Inject
@@ -105,8 +105,9 @@ public class BottomTabsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_tabs);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+       // toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+
         viewPager = (CustomViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);
@@ -131,9 +132,11 @@ public class BottomTabsActivity extends BaseActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                setToolBarColor(getResources().getColor(R.color.colorPrimary));
+                getSupportActionBar().setTitle((dataList.get(position)).getTitle());
+
+                //setToolBarColor(getResources().getColor(R.color.colorPrimary));
                 try {
-                    setToolBarTitle((dataList.get(position)).getTitle());
+                   // setToolBarTitle((dataList.get(position)).getTitle());
                 } catch (Exception e) {
                     mLog.w("onPageSelected", e);
                 }
@@ -194,10 +197,10 @@ public class BottomTabsActivity extends BaseActivity {
         return mAdapter.getItem(position);
     }
 
-    public void setToolBarTitle(String title) {
+    /*public void setToolBarTitle(String title) {
         final TextView titleView = (TextView) toolbar.findViewById(R.id.title);
         titleView.setText(title);
-    }
+    }*/
 
     public void showOrHideTabs(boolean show) {
         viewPager.setPagingEnabled(show);
@@ -242,14 +245,14 @@ public class BottomTabsActivity extends BaseActivity {
         return states;
     }
 
-    public void setToolBarColor(int toolBarColor) {
+    /*public void setToolBarColor(int toolBarColor) {
         this.toolbar.setBackgroundColor(toolBarColor);
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (R.id.menu_search == item.getItemId()) {
-            setToolBarColor(getResources().getColor(R.color.colorPrimary));
+            //setToolBarColor(getResources().getColor(R.color.colorPrimary));
             Menu menu = null;
             if (getFragment() instanceof ChatFragment) {
                 menu = ((ChatFragment) getFragment()).getMenu();

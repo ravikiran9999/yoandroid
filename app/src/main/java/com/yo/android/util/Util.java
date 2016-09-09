@@ -342,7 +342,7 @@ public class Util {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 if (activity instanceof BottomTabsActivity) {
-                    ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
+                   // ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
                     ((BottomTabsActivity) activity).refresh();
 
                 } else if (activity instanceof FindPeopleActivity) {
