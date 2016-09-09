@@ -323,12 +323,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         //503 Service Unavailable  - Buddy is not available
         //603 Allocated Channels Busy -Lines are busy
         // 487 missed call
-        if (sipCallState != null && sipCallState.getMobileNumber() == null && statusCode == 603) {
+        if (sipCallstate != null && sipCallstate.getMobileNumber() != null && statusCode == 603) {
             storeCallLog(CallLog.Calls.INCOMING_TYPE, sipCallstate.getMobileNumber());
         } else if (!isHangup) {
             storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
             isHangup = false;
-        } else {
+        } else if (sipCallstate.getMobileNumber() != null) {
             storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
         }
     }

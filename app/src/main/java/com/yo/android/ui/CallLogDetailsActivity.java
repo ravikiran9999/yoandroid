@@ -54,8 +54,8 @@ public class CallLogDetailsActivity extends BaseActivity {
 
     @Bind(R.id.lv_call_log_details)
     ListView callLogHistoryListview;
-    protected DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
-    protected SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:MM:SS");
+    protected DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a");
+    protected SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
     private ArrayList<CallLogsResult> callLogsDetails;
 
@@ -68,31 +68,33 @@ public class CallLogDetailsActivity extends BaseActivity {
         getSupportActionBar().setTitle(R.string.call_info);
         callLogsDetails = getIntent().getParcelableArrayListExtra(Constants.CALL_LOG_DETAILS);
         Log.e("", callLogsDetails + "");
-        Glide.with(this).load(callLogsDetails.get(0).getImage())
-                .placeholder(R.drawable.ic_contacts)
-                .dontAnimate()
-                .error(R.drawable.ic_contacts).
-                into(imageView);
-        if (callLogsDetails.get(0).getDestination_name() != null) {
-            opponentName.setText(callLogsDetails.get(0).getDestination_name());
-        } else {
-            opponentName.setText(callLogsDetails.get(0).getDialnumber());
-        }
-        CallLogDetailsAdapter adapter = new CallLogDetailsAdapter(this, callLogsDetails);
-        callLogHistoryListview.setAdapter(adapter);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM");
-        String s = "";
-        try {
-            s = formatter.format(formatterDate.parse(callLogsDetails.get(0).getStime()));
-        } catch (ParseException e) {
-        }
-        callInfoDate.setText(s);
-        callImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SipHelper.makeCall(CallLogDetailsActivity.this, callLogsDetails.get(0).getDialnumber());
+        if (callLogsDetails.size() >= 1) {
+            Glide.with(this).load(callLogsDetails.get(0).getImage())
+                    .placeholder(R.drawable.ic_contacts)
+                    .dontAnimate()
+                    .error(R.drawable.ic_contacts).
+                    into(imageView);
+            if (callLogsDetails.get(0).getDestination_name() != null) {
+                opponentName.setText(callLogsDetails.get(0).getDestination_name());
+            } else {
+                opponentName.setText(callLogsDetails.get(0).getDialnumber());
             }
-        });
+            CallLogDetailsAdapter adapter = new CallLogDetailsAdapter(this, callLogsDetails);
+            callLogHistoryListview.setAdapter(adapter);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM");
+            String s = "";
+            try {
+                s = formatter.format(formatterDate.parse(callLogsDetails.get(0).getStime()));
+            } catch (ParseException e) {
+            }
+            callInfoDate.setText(s);
+            callImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SipHelper.makeCall(CallLogDetailsActivity.this, callLogsDetails.get(0).getDialnumber());
+                }
+            });
+        }
     }
 
     @Override
@@ -103,8 +105,10 @@ public class CallLogDetailsActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        CallLog.Calls.deleteCallLogByDate(this, callLogsDetails.get(0).getStime(),callLogsDetails.get(0).getDialnumber());
-        finish();
+        if (callLogsDetails.size() >= 1 && item.getItemId() == R.id.menu_delete) {
+            CallLog.Calls.deleteCallLogByDate(this, callLogsDetails.get(0).getStime(), callLogsDetails.get(0).getDialnumber());
+            finish();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -150,7 +154,7 @@ public class CallLogDetailsActivity extends BaseActivity {
             CallLogsResult item = getItem(position);
             try {
                 holder.time.setText(dateFormat.format(formatterDate.parse(item.getStime())));
-                holder.duration.setText(convertMillisToHMmSs(Long.valueOf(item.getDuration())));
+              //  holder.duration.setText(convertMillisToHMmSs(Long.valueOf(item.getDuration())));
             } catch (ParseException e) {
                 mLog.w("", e);
             }
@@ -168,28 +172,7 @@ public class CallLogDetailsActivity extends BaseActivity {
 
         }
 
-        public String convertMillisToHMmSs(long ms) {
-            final int MINUTE = 60;
-            final int HOUR = 60 * MINUTE;
-            final int DAY = 24 * HOUR;
 
-            StringBuffer text = new StringBuffer("");
-            if (ms > DAY) {
-                text.append(ms / DAY).append(" days ");
-                ms %= DAY;
-            }
-            if (ms > HOUR) {
-                text.append(ms / HOUR).append(" h ");
-                ms %= HOUR;
-            }
-            if (ms > MINUTE) {
-                text.append(ms / MINUTE).append(" min ");
-                ms %= MINUTE;
-            }
-            text.append(ms).append(" sec ");
-
-            return text.toString();
-        }
 
         public class CallHolder {
             public TextView callTypeText;

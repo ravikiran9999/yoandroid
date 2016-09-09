@@ -309,7 +309,7 @@ public class CallLog {
             }
             Uri result = resolver.insert(CONTENT_URI, values);
 
-            removeExpiredEntries(context);
+            //removeExpiredEntries(context);
 
             return result;
         }
