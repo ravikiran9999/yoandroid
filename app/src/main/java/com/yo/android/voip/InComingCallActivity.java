@@ -44,6 +44,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     public static final String CALLER_NO = "callerNo";
     public static final String CALLER = "caller";
     public static final String CALLER_NAME = "callerName";
+    private static final String TAG = InComingCallActivity.class.getSimpleName();
     private SipCallModel callModel;
     private CallLogsModel log;
     private boolean isMute;
@@ -104,7 +105,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
         //To display name of the user based on vox username
         Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER));
-        if(contact!=null) {
+        if (contact != null) {
             Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getVoxUserName()))
                     .placeholder(R.drawable.ic_contacts)
                     .dontAnimate()
@@ -118,9 +119,20 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             callerName.setText(getIntent().getStringExtra(CALLER_NO));
             callerName2.setText(getIntent().getStringExtra(CALLER_NO));
         } else if (getIntent().getStringExtra(CALLER) != null) {
-            callerName.setText(getIntent().getStringExtra(CALLER));
-            callerName2.setText(getIntent().getStringExtra(CALLER));
 
+            String stringExtra = getIntent().getStringExtra(CALLER);
+            if (stringExtra != null && stringExtra.contains("youser")) {
+                try {
+                    stringExtra = stringExtra.substring(stringExtra.indexOf("youser") + 6, stringExtra.length() - 1);
+                    callerName.setText(stringExtra);
+                    callerName2.setText(stringExtra);
+                } catch (StringIndexOutOfBoundsException e) {
+                    mLog.e(TAG, "" + e);
+                }
+            } else if (stringExtra != null) {
+                callerName.setText(stringExtra);
+                callerName2.setText(stringExtra);
+            }
         }
         callDuration.setText("Connecting...");
         callModel.setOnCall(true);

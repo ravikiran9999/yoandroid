@@ -42,6 +42,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     public static final int CALL_ACCEPTED_START_TIMER = 10;
     public static final String CALLER_NO = "callerNo";
     public static final String CALLER_NAME = "callerName";
+    private static final String TAG = OutGoingCallActivity.class.getSimpleName();
     private SipCallModel callModel;
     private CallLogsModel log;
     private boolean isMute;
@@ -118,6 +119,17 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             callerName.setText(contact.getName());
         } else if (getIntent().getStringExtra(CALLER_NO) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NO));
+            String stringExtra = getIntent().getStringExtra(CALLER_NO);
+            if (stringExtra != null && stringExtra.contains("youser")) {
+                try {
+                    stringExtra = stringExtra.substring(stringExtra.indexOf("youser") + 6, stringExtra.length() - 1);
+                    callerName.setText(stringExtra);
+                } catch (StringIndexOutOfBoundsException e) {
+                    mLog.e(TAG, "" + e);
+                }
+            } else if (stringExtra != null) {
+                callerName.setText(stringExtra);
+            }
         } else if (getIntent().getStringExtra(CALLER_NAME) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NAME));
         }

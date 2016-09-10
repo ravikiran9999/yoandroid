@@ -295,15 +295,33 @@ public class CallLog {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date currentDate = new Date(TimeZoneUtils.getTime(dateFormat));
             values.put(NUMBER, number);
+
+
             values.put(TYPE, Integer.valueOf(callType));
             values.put(DATE, dateFormat.format(currentDate));
             values.put(DURATION, duration + "");
             values.put(NEW, Integer.valueOf(1));
             values.put(CALLTYPE, callType);
             values.put(APP_OR_PSTN, pstnorapp);
+            if (number != null && number.contains("youser")) {
+                try {
+                    number = number.substring(number.indexOf("youser") + 6, number.length() - 1);
+                    if (ci != null && ci.name == null) {
+                        values.put(CACHED_NAME, number);
+                    }
+                    values.put(APP_OR_PSTN, Calls.APP_TO_APP_CALL);
 
+                } catch (StringIndexOutOfBoundsException e) {
+                    if (ci != null && ci.name == null) {
+                        values.put(CACHED_NAME, number);
+                    }
+                    values.put(APP_OR_PSTN, Calls.APP_TO_APP_CALL);
+                }
+            }
             if (ci != null) {
-                values.put(CACHED_NAME, ci.name);
+                if (ci.name != null) {
+                    values.put(CACHED_NAME, ci.name);
+                }
                 values.put(CACHED_NUMBER_TYPE, ci.numberType);
                 values.put(CACHED_NUMBER_LABEL, ci.numberLabel);
             }
@@ -509,6 +527,7 @@ public class CallLog {
             String selection = "DATE(date) = DATE('" + date + "') and " + NUMBER + " = '" + number + "'";
             resolver.delete(CONTENT_URI, selection, null);
         }
+
         public static void clearCallHistory(Context context) {
             final ContentResolver resolver = context.getContentResolver();
             resolver.delete(CONTENT_URI, null, null);
