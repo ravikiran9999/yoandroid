@@ -53,13 +53,6 @@
                 android:textColor="@color/tab_grey" />
         </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="visible" />
-
         <FrameLayout
             android:id="@+id/flipView_container"
             android:layout_width="match_parent"
@@ -73,6 +66,13 @@
                 flipview:orientation="vertical"
                 flipview:overFlipMode="glow" />
             </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible" />
     </FrameLayout>
 
 </FrameLayout>

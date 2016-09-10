@@ -63,7 +63,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
     private List<Articles> articlesList = new ArrayList<Articles>();
-    private MyBaseAdapter myBaseAdapter;
+    public static MyBaseAdapter myBaseAdapter;
     private TextView noArticals;
     private FrameLayout flipContainer;
     private String magazineTitle;
@@ -158,7 +158,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         super.onPause();
     }
 
-    private class MyBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener {
+    public class MyBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener {
 
         private Context context;
 
@@ -167,10 +167,13 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         private Bitmap placeholderBitmap;
         private List<Articles> items;
 
+        public AutoReflectWishListActionsListener reflectListener;
+
         private MyBaseAdapter(Context context) {
             inflater = LayoutInflater.from(context);
             this.context = context;
-            MagazineArticlesBaseAdapter.reflectListener = this;
+            //MagazineArticlesBaseAdapter.reflectListener = this;
+            reflectListener = this;
 
             //Use a system resource as the placeholder
             placeholderBitmap =
@@ -476,7 +479,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         if (data.getId() != null && data.getId().equals(article.getId())) {
                             article.setLiked(data.getLiked());
                             article.setIsChecked(data.isChecked());
-                            notifyDataSetChanged();
+                            if (!hasDestroyed()) {
+                                notifyDataSetChanged();
+                            }
                             break;
                         }
 
