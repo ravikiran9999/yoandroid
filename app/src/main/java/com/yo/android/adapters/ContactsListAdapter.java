@@ -45,9 +45,11 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
     public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
 
         holder.getContactNumber().setText(item.getName());
-        if (!item.getName().replaceAll("\\s+","").equalsIgnoreCase(item.getPhoneNo().trim())) {
+
+        if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo().trim())))
+        {
             holder.getContactMail().setText(item.getPhoneNo());
-        } else {
+        }else{
             holder.getContactMail().setText("");
         }
 
@@ -105,10 +107,10 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
                 if (opponentPhoneNumber != null) {
                     SipHelper.makeCall(mContext, opponentPhoneNumber);
-                }else{
-                    if(item.getCountryCode() !=null && item.getPhoneNo() !=null) {
+                } else {
+                    if (item.getCountryCode() != null && item.getPhoneNo() != null) {
                         SipHelper.makeCall(mContext, item.getCountryCode() + item.getPhoneNo());
-                    }else{
+                    } else {
                         //TODO: Think about it
                     }
                 }

@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -254,6 +255,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                                 }
                             });
+
                 } else {
                     imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
@@ -269,6 +271,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                                 }
                             });
+
+
+
                             item.setImageUrl(uri.toString());
                         }
                     }).addOnFailureListener(new OnFailureListener() {

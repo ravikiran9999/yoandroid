@@ -104,11 +104,11 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
         listView.setOnItemClickListener(this);
-        if (CONTACT_SYNC) {
+        /*if (CONTACT_SYNC) {
             getLoaderManager().initLoader(0, null, this);
             //Manual refresh
             SyncUtils.triggerRefresh();
-        } else {
+        } else {*/
             if (!mSyncManager.getContacts().isEmpty()) {
                 contactsListAdapter.addItems(mSyncManager.getContacts());
             }
@@ -128,7 +128,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                 }
             });
 
-        }
+        //}
     }
 
     private void loadContacts(Cursor c) {
@@ -142,7 +142,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         contactsListAdapter.addItems(list);
 
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -193,7 +192,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             intent.putExtra(Constants.CONTACT, contact);
             startActivity(intent);
         }
-
     }
 
     @Override

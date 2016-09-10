@@ -41,6 +41,7 @@ import com.yo.android.util.Util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -59,6 +60,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private ImageView emptyImageView;
     private List<ChildEventListener> childEventListenersList;
     private List<Room> arrayOfUsers;
+    private List<HashMap<Long, Room>> hashMapList;
     private ChatRoomListAdapter chatRoomListAdapter;
     private Menu menu;
     private Room room;
@@ -91,6 +93,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         setHasOptionsMenu(true);
         childEventListenersList = new ArrayList<>();
         arrayOfUsers = new ArrayList<>();
+        hashMapList = new ArrayList<>();
         EventBus.getDefault().register(this);
     }
 
@@ -264,6 +267,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 try {
+                    HashMap<Long, Room> roomHashMap = new HashMap<>();
                     ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
 
                     if (dataSnapshot.hasChildren()) {
@@ -275,13 +279,27 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         }
                         room.setTime(chatMessage.getTime());
                         room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+
+                        /*if(arrayOfUsers.contains(room)) {
+                            int index = arrayOfUsers.indexOf(room);
+                            arrayOfUsers.add(index, room);
+                        }*/
+
+                        /*roomHashMap.put(chatMessage.getTime(), room);
+                        hashMapList.add(roomHashMap);*/
+
+                        arrayOfUsers.add(room);
                     }
-                    Collections.sort(arrayOfUsers, new Comparator<Room>() {
+
+                    /*Collections.sort(arrayOfUsers, new Comparator<Room>() {
                         @Override
                         public int compare(Room lhs, Room rhs) {
                             return (int) (rhs.getTime() - lhs.getTime());
                         }
-                    });
+                    });*/
+
+
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -340,9 +358,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getMembersId(DataSnapshot dataSnapshot) {
+
         if (!arrayOfUsers.isEmpty()) {
             arrayOfUsers.clear();
         }
+
+
         Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey());
         memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -376,8 +397,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                 if (contact != null && contact.getName() != null) {
                                     room.setFullName(contact.getName());
                                 }
-                                arrayOfUsers.add(room);
 
+
+                                arrayOfUsers.add(room);
+                                chatRoomListAdapter.addItems(arrayOfUsers);
                                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
                             }
@@ -396,10 +419,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 room.setImage(roomInfo.getImage());
                 room.setVoxUserName(voxUserName);
                 arrayOfUsers.add(room);
+                chatRoomListAdapter.addItems(arrayOfUsers);
                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
             }
         }
-        chatRoomListAdapter.addItems(arrayOfUsers);
+
     }
 }
