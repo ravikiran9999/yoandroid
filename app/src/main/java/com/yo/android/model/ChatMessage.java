@@ -17,7 +17,7 @@ import com.yo.android.util.Util;
 public class ChatMessage implements Parcelable {
 
     @DatabaseField(id = true)
-    private String msgID;
+    private int msgID;
     @DatabaseField(columnName = Constants.MESSAGE)
     private String message;
     @DatabaseField
@@ -30,7 +30,6 @@ public class ChatMessage implements Parcelable {
     private long time;
     @DatabaseField
     private boolean readUnreadStatus;
-
     private int delivered;
     private int sent;
     private long deliveredTime;
@@ -57,7 +56,7 @@ public class ChatMessage implements Parcelable {
     }
 
     private ChatMessage(Parcel in) {
-        this.msgID = in.readString();
+        this.msgID = in.readInt();
         this.message = in.readString();
         this.senderID = in.readString();
         this.status = in.readInt();
@@ -71,11 +70,11 @@ public class ChatMessage implements Parcelable {
         this.voxUserName = in.readString();
     }
 
-    public String getMsgID() {
+    public int getMsgID() {
         return msgID;
     }
 
-    public void setMsgID(String msgID) {
+    public void setMsgID(int msgID) {
         this.msgID = msgID;
     }
 
@@ -188,7 +187,7 @@ public class ChatMessage implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(msgID);
+        dest.writeInt(msgID);
         dest.writeString(message);
         dest.writeString(senderID);
         dest.writeInt(status);

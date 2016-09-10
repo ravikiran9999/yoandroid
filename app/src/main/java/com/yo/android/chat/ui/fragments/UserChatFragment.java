@@ -60,6 +60,7 @@ import com.yo.android.util.FireBaseHelper;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +81,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
+    private HashMap<Integer, ArrayList<ChatMessage>> chatMessageHashMap;
     private EditText chatText;
     private TextView noChatAvailable;
     private ListView listView;
@@ -126,6 +128,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
+
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
@@ -163,6 +166,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatText = (EditText) view.findViewById(R.id.chat_text);
         noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
         chatMessageArray = new ArrayList<>();
+        chatMessageHashMap = new HashMap<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType);
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
@@ -383,6 +387,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
         chatMessage.setVoxUserName(opponentNumber);
+        chatMessage.setMsgID(message.hashCode());
         if (type.equals(Constants.TEXT)) {
             chatMessage.setMessage(message);
         } else if (type.equals(Constants.IMAGE)) {
@@ -402,6 +407,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         try {
             String timeStp = Long.toString(chatMessage.getTime());
             chatMessage.setSent(1);
+
+            chatMessageArray.add(chatMessage);
+            userChatAdapter.addItems(chatMessageArray);
+            chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
 
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
 
@@ -583,18 +592,20 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         try {
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-            chatMessageArray.add(chatMessage);
-            userChatAdapter.addItems(chatMessageArray);
-            listView.smoothScrollToPosition(userChatAdapter.getCount());
+            if(!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
+                chatMessageArray.add(chatMessage);
+                userChatAdapter.addItems(chatMessageArray);
+                listView.smoothScrollToPosition(userChatAdapter.getCount());
 
-            if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0)) {
-                if (getActivity() instanceof ChatActivity) {
-                    long timestamp = System.currentTimeMillis();
+                if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0)) {
+                    if (getActivity() instanceof ChatActivity) {
+                        long timestamp = System.currentTimeMillis();
 
-                    chatMessage.setDelivered(1);
-                    chatMessage.setDeliveredTime(timestamp);
-                    Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
-                    dataSnapshot.getRef().updateChildren(hashtaghMap);
+                        chatMessage.setDelivered(1);
+                        chatMessage.setDeliveredTime(timestamp);
+                        Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
+                        dataSnapshot.getRef().updateChildren(hashtaghMap);
+                    }
                 }
             }
         } catch (Exception e) {

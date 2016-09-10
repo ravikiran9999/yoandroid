@@ -63,7 +63,7 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.TYPE, room.getGroupName());
             }
 
-            clearNotification(opponent);
+            Util.cancelAllNotification(this);
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
@@ -74,17 +74,21 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                 args.putString(Constants.OPPONENT_ID, contact.getId());
 
-                clearNotification(opponent);
+                Util.cancelAllNotification(this);
             }
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
-            opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME).trim();
+            if (getIntent().hasExtra(Constants.VOX_USER_NAME)) {
+                //opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
 
             /*long opp = Long.parseLong(opponent.replaceAll("[^\\d.]", "").substring(2, 12));
             int opponentInt = (int) opp;*/
 
-            args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
-            args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
+                opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+
+                args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
+                args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
+            }
         }
 
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
@@ -106,11 +110,11 @@ public class ChatActivity extends BaseActivity {
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
             Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
-            if (contact != null && contact.getName() != null) {
+            if (contact != null && !"".equalsIgnoreCase(contact.getName())) {
                 opponent = contact.getName();
-            } else if (room != null && room.getFullName() != null) {
+            } else if (room != null && !"".equalsIgnoreCase(room.getFullName())) {
                 opponent = room.getFullName();
-            } else if(opponent!= null && opponent.contains("youser")) {
+            } else if (opponent != null && opponent.contains("youser")) {
                 opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
             }
 
