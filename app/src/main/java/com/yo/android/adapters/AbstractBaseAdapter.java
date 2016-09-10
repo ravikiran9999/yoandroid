@@ -45,7 +45,9 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     public void addItems(List<T> list) {
         mList = new ArrayList<>(list);
         //if (mOriginalList.isEmpty()) {
-        mOriginalList = new ArrayList<>(list);
+        if(mOriginalList.size()==0) {
+            mOriginalList = new ArrayList<>(list);
+        }
         //}
         notifyDataSetChanged();
     }
@@ -140,7 +142,6 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                         }
                     }
                 }*/
-
                 if (((Room) event).getMobileNumber() != null && ((Room) event).getMobileNumber().contains(searchKey)) {
                     temp.add(event);
                 }
