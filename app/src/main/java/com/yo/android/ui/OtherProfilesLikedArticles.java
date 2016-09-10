@@ -521,7 +521,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         if (data.getId() != null && data.getId().equals(article.getId())) {
                             article.setLiked(data.getLiked());
                             article.setIsChecked(data.isChecked());
-                            notifyDataSetChanged();
+                            if (!((BaseActivity)context).hasDestroyed()) {
+                                notifyDataSetChanged();
+                            }
                             break;
                         }
                     }

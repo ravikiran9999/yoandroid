@@ -233,7 +233,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         menuDataList.add(new MoreData("Invite Friends", true));
         menuDataList.add(new MoreData("Notifications", true));
         menuDataList.add(new MoreData("Settings", true));
-        menuDataList.add(new MoreData("Sign out", false));
+        menuDataList.add(new MoreData("Sign Out", false));
         return menuDataList;
     }
 
@@ -242,7 +242,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
 
-        if (name.equalsIgnoreCase("sign out")) {
+        if (name.equalsIgnoreCase("Sign Out")) {
             showLogoutDialog();
         } else if (name.equalsIgnoreCase("Invite Friends")) {
 

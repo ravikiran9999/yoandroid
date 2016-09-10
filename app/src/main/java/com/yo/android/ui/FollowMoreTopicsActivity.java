@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,7 +81,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(backBtn);
 
         tagGroup = (TagView) findViewById(R.id.tag_group);
-        Button done = (Button) findViewById(R.id.btn_done);
+        final Button done = (Button) findViewById(R.id.btn_done);
         noSearchResults = (TextView) findViewById(R.id.no_search_results);
 
         initialTags = new ArrayList<>();
@@ -115,16 +116,28 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     tag.toggleSelection();
                     if (!tag.getSelected()) {
                         addedTopics.remove(tag);
+                        String tagId = tag.getTagId();
+                        for(int i=0; i<topicsList.size(); i++) {
+                            if(topicsList.get(i).getId().equals(tagId)) {
+                                topicsList.get(i).setSelected(false);
+                            }
+                        }
                         tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.tab_grey);
                         tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.white);
                         tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.tab_grey);
-                        tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
+                        //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
                     } else {
                         addedTopics.add(tag.text);
+                        String tagId = tag.getTagId();
+                        for(int i=0; i<topicsList.size(); i++) {
+                            if(topicsList.get(i).getId().equals(tagId)) {
+                                topicsList.get(i).setSelected(true);
+                            }
+                        }
                         tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.white);
                         tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.colorPrimary);
                         tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.white);
-                        tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
+                        //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
                     }
 
 
@@ -134,7 +147,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     tagDummy.layoutBorderSize = 1f;
                     tagDummy.layoutColor = getResources().getColor(android.R.color.white);
                     tagDummy.tagTextColor = getResources().getColor(R.color.tab_grey);
-                    tagDummy.layoutColorPress = getResources().getColor(R.color.colorPrimary);
+                    //tagDummy.layoutColorPress = getResources().getColor(R.color.colorPrimary);
 
                     tagGroup.addTag(tagDummy);
                     tagGroup.remove(tagGroup.getTags().size() - 1);
@@ -150,6 +163,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 performDoneAction(followedTopicsIdsList);
+                done.setEnabled(false);
             }
         });
 
@@ -291,19 +305,19 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tag.layoutBorderSize = 1f;
         tag.layoutColor = getResources().getColor(android.R.color.white);
         tag.tagTextColor = getResources().getColor(R.color.tab_grey);
-        tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
+        //tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
 
         if (topics.isSelected()) {
             tag.setSelected(true);
             tag.layoutColor = getResources().getColor(R.color.colorPrimary);
             tag.tagTextColor = getResources().getColor(android.R.color.white);
-            tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
+            //tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
             tag.setSelected(true);
             addedTopics.add(tag.text);
         } else {
             tag.layoutColor = getResources().getColor(android.R.color.white);
             tag.tagTextColor = getResources().getColor(R.color.tab_grey);
-            tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
+            //tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
             tag.setSelected(false);
         }
         return tag;
@@ -393,7 +407,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tagGroup.removeAllViews();
 
         if (TextUtils.isEmpty(cs.toString().trim())) {
-            Util.hideKeyboard(this, getCurrentFocus());
+            //Util.hideKeyboard(this, getCurrentFocus());
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             noSearchResults.setVisibility(View.GONE);
             new TagLoader(topicsList, tagGroup).execute();
             return;

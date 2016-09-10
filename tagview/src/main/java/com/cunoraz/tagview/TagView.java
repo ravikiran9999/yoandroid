@@ -3,6 +3,7 @@ package com.cunoraz.tagview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -272,7 +273,8 @@ public class TagView extends RelativeLayout {
             gdNormal.setStroke(Utils.dipToPx(getContext(), tag.layoutBorderSize), tag.layoutBorderColor);
         }
         GradientDrawable gdPress = new GradientDrawable();
-        gdPress.setColor(tag.layoutColorPress);
+        //gdPress.setColor(tag.layoutColorPress);
+        gdPress.setColor(Color.parseColor("#E12828"));
         gdPress.setCornerRadius(tag.radius);
         states.addState(new int[]{android.R.attr.state_pressed}, gdPress);
         //must add state_pressed first，or state_pressed will not take effect
