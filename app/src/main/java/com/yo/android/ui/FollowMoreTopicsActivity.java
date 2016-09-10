@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -405,7 +406,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tagGroup.removeAllViews();
 
         if (TextUtils.isEmpty(cs.toString().trim())) {
-            Util.hideKeyboard(this, getCurrentFocus());
+            //Util.hideKeyboard(this, getCurrentFocus());
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             noSearchResults.setVisibility(View.GONE);
             new TagLoader(topicsList, tagGroup).execute();
             return;
