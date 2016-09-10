@@ -81,7 +81,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(backBtn);
 
         tagGroup = (TagView) findViewById(R.id.tag_group);
-        Button done = (Button) findViewById(R.id.btn_done);
+        final Button done = (Button) findViewById(R.id.btn_done);
         noSearchResults = (TextView) findViewById(R.id.no_search_results);
 
         initialTags = new ArrayList<>();
@@ -163,6 +163,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 performDoneAction(followedTopicsIdsList);
+                done.setEnabled(false);
             }
         });
 
