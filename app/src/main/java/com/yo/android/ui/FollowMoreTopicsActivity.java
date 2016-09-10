@@ -115,12 +115,24 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     tag.toggleSelection();
                     if (!tag.getSelected()) {
                         addedTopics.remove(tag);
+                        String tagId = tag.getTagId();
+                        for(int i=0; i<topicsList.size(); i++) {
+                            if(topicsList.get(i).getId().equals(tagId)) {
+                                topicsList.get(i).setSelected(false);
+                            }
+                        }
                         tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.tab_grey);
                         tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.white);
                         tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.tab_grey);
                         tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
                     } else {
                         addedTopics.add(tag.text);
+                        String tagId = tag.getTagId();
+                        for(int i=0; i<topicsList.size(); i++) {
+                            if(topicsList.get(i).getId().equals(tagId)) {
+                                topicsList.get(i).setSelected(true);
+                            }
+                        }
                         tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.white);
                         tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.colorPrimary);
                         tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.white);
