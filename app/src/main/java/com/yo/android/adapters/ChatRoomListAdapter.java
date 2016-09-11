@@ -58,8 +58,12 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                     holder.getOpponentName().setText(item.getMembers().get(i).getMobileNumber());
                 }
             }*/
+            if(item.getFullName().equalsIgnoreCase("") ) {
+                holder.getOpponentName().setText(item.getMobileNumber());
+            } else {
+                holder.getOpponentName().setText(item.getFullName());
+            }
 
-            holder.getOpponentName().setText(item.getFullName());
 
             Glide.with(mContext).load(item.getImage())
                     .asBitmap().centerCrop()
