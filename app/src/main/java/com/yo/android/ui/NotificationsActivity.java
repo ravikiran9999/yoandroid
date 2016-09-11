@@ -64,7 +64,7 @@ public class NotificationsActivity extends BaseActivity {
             @Override
             public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
                 dismissProgressDialog();
-                if (response == null || response.body() == null) {
+                if (response == null || response.body() == null || response.body().isEmpty()) {
                     lvNotifications.setVisibility(View.GONE);
                     noData.setVisibility(View.GONE);
                     llNoNotifications.setVisibility(View.VISIBLE);

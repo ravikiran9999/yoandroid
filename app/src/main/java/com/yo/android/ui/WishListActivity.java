@@ -247,8 +247,10 @@ public class WishListActivity extends BaseActivity {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
 
-                                if(OthersMagazinesDetailActivity.myBaseAdapter.reflectListener != null) {
-                                    OthersMagazinesDetailActivity.myBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                if(OthersMagazinesDetailActivity.myBaseAdapter != null) {
+                                    if (OthersMagazinesDetailActivity.myBaseAdapter.reflectListener != null) {
+                                        OthersMagazinesDetailActivity.myBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                    }
                                 }
 
                                 notifyDataSetChanged();
