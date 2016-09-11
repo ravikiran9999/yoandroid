@@ -2,12 +2,10 @@ package com.yo.android.chat.ui.fragments;
 
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pools;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,7 +41,6 @@ import com.yo.android.util.Util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -289,6 +286,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         }
                     });
 
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -309,9 +307,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         room.setImages(false);
                         room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
                     }
-                    /*if (chatRoomListAdapter != null) {
+                    if (chatRoomListAdapter != null) {
                         chatRoomListAdapter.notifyDataSetChanged();
-                    }*/
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -332,7 +330,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return childEventListener;
     }
 
-
     private void unregisterAllEventListeners() {
         for (ChildEventListener childEventListener : childEventListenersList) {
             //
@@ -348,20 +345,16 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void getMembersId(DataSnapshot dataSnapshot) {
 
-        /*if (!arrayOfUsers.isEmpty()) {
+        if (!arrayOfUsers.isEmpty()) {
             arrayOfUsers.clear();
-        }*/
+        }
 
 
         Firebase memberReference = dataSnapshot.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot.getKey());
         memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                //getMembersProfile(dataSnapshot);
-
-                synchronized (this) {
-                    new MembersProfile().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataSnapshot);
-                }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                getMembersProfile(dataSnapshot);
             }
 
             @Override
@@ -371,76 +364,52 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         });
     }
 
-    public class MembersProfile extends AsyncTask<DataSnapshot, Void, List<Room>> {
-        @Override
-        protected List<Room> doInBackground(final DataSnapshot... params) {
+    private void getMembersProfile(final DataSnapshot dataSnapshot) {
 
-            final Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-            final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
-            if (params[0].hasChild(Constants.ROOM_INFO)) {
-                RoomInfo roomInfo = params[0].child(Constants.ROOM_INFO).getValue(RoomInfo.class);
+        final Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
+        if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
+            RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
 
-                if (roomInfo.getName().isEmpty()) {
-                    for (DataSnapshot snapshot : params[0].child(Constants.MEMBERS).getChildren()) {
-                        if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
-                            authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot profileDataSnapshot) {
-                                    room = profileDataSnapshot.getValue(Room.class);
-                                    room.setFirebaseRoomId(params[0].getKey());
-                                    Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getVoxUserName());
-                                    if (contact != null && contact.getName() != null) {
-                                        room.setFullName(contact.getName());
-                                    }
-
-                                    for (int i = 0; i < arrayOfUsers.size(); i++) {
-                                        if ((arrayOfUsers.get(i).getFirebaseRoomId().contains(room.getFirebaseRoomId()))) {
-                                            if (retVal(arrayOfUsers.get(i).getTime(), room.getTime()) > 0) {
-                                                arrayOfUsers.add(i, room);
-
-                                            }
-                                        } else {
-                                            arrayOfUsers.add(room);
-                                        }
-                                    }
-
-                                    Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(params[0].getKey()).child(Constants.CHATS);
-                                    firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+            if (roomInfo.getName().isEmpty()) {
+                for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
+                    if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
+                        authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot profileDataSnapshot) {
+                                room = profileDataSnapshot.getValue(Room.class);
+                                room.setFirebaseRoomId(dataSnapshot.getKey());
+                                Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getVoxUserName());
+                                if (contact != null && contact.getName() != null) {
+                                    room.setFullName(contact.getName());
                                 }
 
-                                @Override
-                                public void onCancelled(FirebaseError firebaseError) {
-                                    firebaseError.getMessage();
-                                }
-                            });
-                        }
+
+                                arrayOfUsers.add(room);
+                                chatRoomListAdapter.addItems(arrayOfUsers);
+                                Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
+                                firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+                            }
+
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+                                firebaseError.getMessage();
+                            }
+                        });
                     }
-                } else {
-                    room = new Room();
-                    room.setFirebaseRoomId(params[0].getKey());
-                    room.setGroupName(roomInfo.getName());
-                    room.setImage(roomInfo.getImage());
-                    room.setVoxUserName(voxUserName);
-                    arrayOfUsers.add(room);
-                    Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(params[0].getKey()).child(Constants.CHATS);
-                    firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
                 }
+            } else {
+                room = new Room();
+                room.setFirebaseRoomId(dataSnapshot.getKey());
+                room.setGroupName(roomInfo.getName());
+                room.setImage(roomInfo.getImage());
+                room.setVoxUserName(voxUserName);
+                arrayOfUsers.add(room);
+                chatRoomListAdapter.addItems(arrayOfUsers);
+                Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
+                firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
             }
-            return arrayOfUsers;
         }
 
-        @Override
-        protected void onPostExecute(List<Room> rooms) {
-            super.onPostExecute(rooms);
-            try {
-                chatRoomListAdapter.addItems(rooms);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        private int retVal(Long time1, Long time2) {
-            return time1.compareTo(time2);
-        }
     }
 }
