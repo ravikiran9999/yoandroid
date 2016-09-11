@@ -473,7 +473,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         if (data.getId() != null && data.getId().equals(article.getId())) {
                             article.setIsFollowing(data.getIsFollowing());
                             article.setIsFollow(data.isFollow());
-                            notifyDataSetChanged();
+                            if (!hasDestroyed()) {
+                                notifyDataSetChanged();
+                            }
                             break;
                         }
                     }
