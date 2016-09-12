@@ -196,6 +196,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
             final AlertDialog alertDialog = builder.create();
             alertDialog.setCancelable(true);
+            alertDialog.setCanceledOnTouchOutside(true);
             alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             alertDialog.show();
 

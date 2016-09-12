@@ -579,8 +579,12 @@ public class Util {
 
             Bitmap immutableBpm = BitmapFactory.decodeStream(input);
 
-            Bitmap mutableBitmap = immutableBpm.copy(Bitmap.Config.ARGB_8888, true);
-            return mutableBitmap;
+            if(immutableBpm != null) {
+                Bitmap mutableBitmap = immutableBpm.copy(Bitmap.Config.ARGB_8888, true);
+                return mutableBitmap;
+            }
+
+            return null;
 
         }
 
@@ -588,15 +592,19 @@ public class Util {
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
 
-            View view  = new View(v.getContext());
+            if(bitmap != null) {
+                View view = new View(v.getContext());
 
-            view.draw(new Canvas(bitmap));
+                view.draw(new Canvas(bitmap));
 
-            String path = MediaStore.Images.Media.insertImage(v.getContext().getContentResolver(), bitmap, "Yo", null);
+                String path = MediaStore.Images.Media.insertImage(v.getContext().getContentResolver(), bitmap, "Yo", null);
 
-            if(path!=null) {
-                Uri uri = Uri.parse(path);
-                shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), uri);
+                if (path != null) {
+                    Uri uri = Uri.parse(path);
+                    shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), uri);
+                }
+            } else {
+                shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
             }
 
         }
