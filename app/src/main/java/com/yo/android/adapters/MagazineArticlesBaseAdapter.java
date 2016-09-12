@@ -534,7 +534,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             totalItems.remove(1);
         }
         items = new ArrayList<>(totalItems);
-        notifyDataSetChanged();
+        if (!((BaseActivity)context).hasDestroyed()) {
+            notifyDataSetChanged();
+        }
     }
 
     public void clear() {
@@ -555,7 +557,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     if (data.getId() != null && data.getId().equals(article.getId())) {
                         article.setIsFollowing(data.getIsFollowing());
                         article.setIsFollow(data.isFollow());
-                        notifyDataSetChanged();
+                        if (!((BaseActivity)context).hasDestroyed()) {
+                            notifyDataSetChanged();
+                        }
                         break;
                     }
                 }
@@ -564,7 +568,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     if (data.getId() != null && data.getId().equals(article.getId())) {
                         article.setLiked(data.getLiked());
                         article.setIsChecked(data.isChecked());
-                        notifyDataSetChanged();
+                        if (!((BaseActivity)context).hasDestroyed()) {
+                            notifyDataSetChanged();
+                        }
                         break;
                     }
 
