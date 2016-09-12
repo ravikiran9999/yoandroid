@@ -168,7 +168,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             if (chatForwards != null) {
                 forwardInt = chatForwards.size() + 1;
                 receiveForward(chatForwards);
-
             }
         }
 
@@ -397,8 +396,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         } else if (type.equals(Constants.IMAGE)) {
             chatMessage.setImagePath(message);
         }
-
-        if (roomExist == 0) {
+        if ((roomExist == 0) && (TextUtils.isEmpty(childRoomId)) && (childRoomId == null)) {
             createRoom(message, chatMessage);
 
         } else {
