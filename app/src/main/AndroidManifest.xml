@@ -19,7 +19,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <!-- Required to register a SyncStatusObserver to display a "syncing..." progress indicator. -->
     <uses-permission android:name="android.permission.READ_SYNC_STATS" />
     <!-- Required to enable our SyncAdapter after it's created. -->
@@ -145,7 +145,9 @@
         <activity
             android:name=".flip.MagazineArticleDetailsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".chat.ui.fragments.AppContactsActivity" />
+        <activity
+            android:name=".chat.ui.fragments.AppContactsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.FollowMoreTopicsActivity"
             android:screenOrientation="portrait"

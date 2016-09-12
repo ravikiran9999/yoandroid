@@ -387,6 +387,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
         chatMessage.setVoxUserName(opponentNumber);
+        chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(message.hashCode());
         if (type.equals(Constants.TEXT)) {
             chatMessage.setMessage(message);
@@ -394,7 +395,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             chatMessage.setImagePath(message);
         }
 
-        if (roomExist == 0) {
+        if (roomExist == 0 && TextUtils.isEmpty(childRoomId)) {
             createRoom(message, chatMessage);
 
         } else {
@@ -407,7 +408,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         try {
             String timeStp = Long.toString(chatMessage.getTime());
             chatMessage.setSent(1);
-
             chatMessageArray.add(chatMessage);
             userChatAdapter.addItems(chatMessageArray);
             chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
@@ -592,7 +592,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         try {
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-            if(!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
+            if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
                 listView.smoothScrollToPosition(userChatAdapter.getCount());
@@ -600,7 +600,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0)) {
                     if (getActivity() instanceof ChatActivity) {
                         long timestamp = System.currentTimeMillis();
-
                         chatMessage.setDelivered(1);
                         chatMessage.setDeliveredTime(timestamp);
                         Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);

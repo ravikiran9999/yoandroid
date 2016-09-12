@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
 import com.firebase.client.Firebase;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yo.android.di.Injector;
 import com.yo.android.di.RootModule;
 import com.yo.android.util.ReCreateService;
@@ -24,6 +25,7 @@ public class BaseApp extends MultiDexApplication {
         injectDependencies();
 
         /* Enable disk persistence  */
+       // FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
        // ReCreateService.getInstance(this).start(this);

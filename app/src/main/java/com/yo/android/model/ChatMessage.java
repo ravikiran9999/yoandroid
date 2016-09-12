@@ -25,7 +25,7 @@ public class ChatMessage implements Parcelable {
     @DatabaseField
     private int status;
     @DatabaseField
-    private String imagePath;
+    private String imagePath = " ";
     @DatabaseField
     private long time;
     @DatabaseField
@@ -40,7 +40,7 @@ public class ChatMessage implements Parcelable {
     private String roomId;
     private boolean selected;
     //For caching the image
-    private String imageUrl;
+    private String imageUrl = " ";
 
     public String getVoxUserName() {
         return voxUserName;
@@ -50,7 +50,10 @@ public class ChatMessage implements Parcelable {
         this.voxUserName = voxUserName;
     }
 
-    private String voxUserName;
+    private String voxUserName = " ";
+
+    private String youserId;
+
 
     public ChatMessage() {
     }
@@ -68,6 +71,7 @@ public class ChatMessage implements Parcelable {
         this.sent = in.readInt();
         this.delivered = in.readInt();
         this.voxUserName = in.readString();
+        this.youserId = in.readString();
     }
 
     public int getMsgID() {
@@ -185,6 +189,14 @@ public class ChatMessage implements Parcelable {
         return 0;
     }
 
+    public String getYouserId() {
+        return youserId;
+    }
+
+    public void setYouserId(String youserId) {
+        this.youserId = youserId;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(msgID);
@@ -199,6 +211,7 @@ public class ChatMessage implements Parcelable {
         dest.writeInt(sent);
         dest.writeInt(delivered);
         dest.writeString(voxUserName);
+        dest.writeString(youserId);
     }
 
 

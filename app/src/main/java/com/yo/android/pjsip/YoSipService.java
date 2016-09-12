@@ -281,7 +281,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void handlerErrorCodes(final CallInfo call, SipCallState sipCallstate) {
         final int statusCode = call.getLastStatusCode().swigValue();
-        mLog.e(TAG, sipCallState.getMobileNumber() + ",Call Object " + call.toString());
+        mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
         mHandler.post(new Runnable() {
             @Override
             public void run() {

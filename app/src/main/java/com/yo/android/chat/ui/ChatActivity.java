@@ -78,6 +78,10 @@ public class ChatActivity extends BaseActivity {
             }
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
+            if (getIntent().hasExtra(Constants.OPPONENT_ID)) {
+                args.putString(Constants.OPPONENT_ID, getIntent().getStringExtra(Constants.OPPONENT_ID));
+            }
+
             if (getIntent().hasExtra(Constants.VOX_USER_NAME)) {
                 //opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
 
