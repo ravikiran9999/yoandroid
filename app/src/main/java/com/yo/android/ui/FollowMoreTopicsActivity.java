@@ -117,8 +117,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     if (!tag.getSelected()) {
                         addedTopics.remove(tag);
                         String tagId = tag.getTagId();
-                        for(int i=0; i<topicsList.size(); i++) {
-                            if(topicsList.get(i).getId().equals(tagId)) {
+                        for (int i = 0; i < topicsList.size(); i++) {
+                            if (topicsList.get(i).getId().equals(tagId)) {
                                 topicsList.get(i).setSelected(false);
                             }
                         }
@@ -129,8 +129,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     } else {
                         addedTopics.add(tag.text);
                         String tagId = tag.getTagId();
-                        for(int i=0; i<topicsList.size(); i++) {
-                            if(topicsList.get(i).getId().equals(tagId)) {
+                        for (int i = 0; i < topicsList.size(); i++) {
+                            if (topicsList.get(i).getId().equals(tagId)) {
                                 topicsList.get(i).setSelected(true);
                             }
                         }
@@ -387,7 +387,13 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
-                setTags(newText);
+                try {
+                    //Crash Happened ::    File: ArrayList.java   Class:java.util.ArrayList$ArrayListIterator   Method:next   Line:573
+                    // File: FollowMoreTopicsActivity.java   Class:com.yo.android.ui.FollowMoreTopicsActivity   Method:setTags   Line:419
+                    setTags(newText);
+                } catch (Exception e) {
+
+                }
                 return true;
             }
         });

@@ -444,6 +444,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (currentCall != null) {
             return;
         }
+        if(myAccount ==null){
+            myAccount = buildAccount();
+        }
         if (myAccount != null) {
             MyCall call = new MyCall(myAccount, -1);
             CallOpParam prm = new CallOpParam(true);
@@ -459,7 +462,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             currentCall = call;
             showCallActivity(phone, options);
         } else {
-
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
