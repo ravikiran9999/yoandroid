@@ -53,17 +53,12 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getGroupName() == null) {
-            /*for (int i = 0; item.getMembers() != null && i < item.getMembers().size(); i++) {
-                if (!item.getMembers().get(i).getMobileNumber().equalsIgnoreCase(yourPhoneNumber)) {
-                    holder.getOpponentName().setText(item.getMembers().get(i).getMobileNumber());
-                }
-            }*/
-            if(item.getFullName().equalsIgnoreCase("") ) {
+
+            if(TextUtils.isEmpty(item.getFullName())) {
                 holder.getOpponentName().setText(item.getMobileNumber());
             } else {
                 holder.getOpponentName().setText(item.getFullName());
             }
-
 
             Glide.with(mContext).load(item.getImage())
                     .asBitmap().centerCrop()
