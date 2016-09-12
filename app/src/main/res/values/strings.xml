@@ -173,6 +173,8 @@
     <string name="service_started">%s started</string>
     <string name="call_ended">Call Ended</string>
     <string name="no_network">Unable to make the call due to low network connectivity</string>
+    <string name="call_account_null">Unable to make the call, please try again</string>
+
     <string name="not_online">Recipient not online.</string>
     <string name="call_forwarded">Call is  being forwarded</string>
     <string name="temporerly_unavailable">Destination was temporarily unavailable</string>

@@ -497,7 +497,9 @@ public class DialerFragment extends BaseFragment {
 
     @Override
     public void dismissProgressDialog() {
-        progress.setVisibility(View.GONE);
+        if(progress!=null) {
+            progress.setVisibility(View.GONE);
+        }
     }
 
     public Menu getMenu() {
