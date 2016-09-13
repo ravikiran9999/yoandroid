@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.firebase.client.AuthData;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -48,6 +50,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.Clipboard;
+import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
@@ -100,13 +103,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String childRoomId;
     List<ChatMessage> chatForwards;
     private int forwardInt = 0;
+    private String timeStp;
+    private String mobilenumber;
 
-    String mobilenumber;
     @Inject
     FireBaseHelper fireBaseHelper;
 
     @Inject
     YoApi.YoService yoService;
+    @Inject
+    FirebaseService firebaseService;
 
     private String opponentImg;
 
@@ -391,6 +397,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setDeliveredTime(0);
         chatMessage.setVoxUserName(opponentNumber);
         chatMessage.setMsgID(message.hashCode());
+
         if (type.equals(Constants.TEXT)) {
             chatMessage.setMessage(message);
         } else if (type.equals(Constants.IMAGE)) {
@@ -406,31 +413,36 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void sendChatMessage(final ChatMessage chatMessage) {
+
         try {
             if (chatMessageArray == null) {
                 chatMessageArray = new ArrayList<>();
             }
 
-            String timeStp = Long.toString(chatMessage.getTime());
+            timeStp = Long.toString(chatMessage.getTime());
             chatMessage.setSent(1);
             chatMessageArray.add(chatMessage);
             userChatAdapter.addItems(chatMessageArray);
-            if(forwardInt == 0) {
+            if (forwardInt == 0) {
                 chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
-            } /*else {
-                if(forwardInt)
-                forwardInt = 0;
-            }*/
+            }
 
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
-
             final Firebase roomChildReference = roomReference.child(timeStp);
-            roomChildReference.updateChildren(updateMessageMap);
+            roomChildReference.updateChildren(updateMessageMap, new Firebase.CompletionListener() {
+                @Override
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
+                        Toast.makeText(getActivity(), "Message not sent", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
         } catch (FirebaseException | NullPointerException e) {
             e.printStackTrace();
         }
     }
+
 
     private void registerChildEventListener(Firebase roomReference) {
         if (!isChildEventListenerAdd) {
