@@ -244,7 +244,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         if (name.equalsIgnoreCase("Sign Out")) {
             mToastFactory.showToast(R.string.disable_signout);
-           // showLogoutDialog();
+           showLogoutDialog();
         } else if (name.equalsIgnoreCase("Invite Friends")) {
 
             startActivity(new Intent(getActivity(), InviteActivity.class));

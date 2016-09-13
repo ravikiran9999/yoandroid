@@ -401,7 +401,7 @@ public class BalanceHelper {
 
     public void loadPaymentHistory(final Callback<List<PaymentHistoryItem>> callback) {
         mLog.w(TAG, "loadPaymentHistory:called");
-        yoService.getPaymentHistory(prefs.getStringPreference(Constants.SUBSCRIBER_ID)).enqueue(new Callback<List<PaymentHistoryItem>>() {
+        yoService.getPaymentHistory(prefs.getStringPreference(YoApi.ACCESS_TOKEN)).enqueue(new Callback<List<PaymentHistoryItem>>() {
             @Override
             public void onResponse(Call<List<PaymentHistoryItem>> call, Response<List<PaymentHistoryItem>> response) {
                 mLog.i(TAG, "loadPaymentHistory: onResponse - %b", response.isSuccessful());
