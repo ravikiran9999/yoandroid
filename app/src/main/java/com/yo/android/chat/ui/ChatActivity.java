@@ -48,7 +48,6 @@ public class ChatActivity extends BaseActivity {
             room = getIntent().getParcelableExtra(Constants.ROOM);
 
             args.putString(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
-            //opponent = room.getVoxUserName();
             opponent = getOppenent(room);
 
             String opponentImg = room.getImage();
@@ -88,7 +87,6 @@ public class ChatActivity extends BaseActivity {
             if (getIntent().hasExtra(Constants.VOX_USER_NAME)) {
 
                 opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
-
                 args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             }
@@ -113,7 +111,7 @@ public class ChatActivity extends BaseActivity {
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
             Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
-            if (contact != null && !"".equalsIgnoreCase(contact.getName())) {
+            if (contact != null && !TextUtils.isEmpty(contact.getName())) {
                 opponent = contact.getName();
             } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
                 opponent = room.getFullName();
