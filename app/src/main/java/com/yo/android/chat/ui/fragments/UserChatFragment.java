@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.firebase.client.AuthData;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -50,7 +48,6 @@ import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.Clipboard;
-import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
@@ -69,6 +66,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -111,8 +109,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Inject
     YoApi.YoService yoService;
-    @Inject
-    FirebaseService firebaseService;
+
 
     private String opponentImg;
 
@@ -136,7 +133,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
-        authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+        mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+        authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
         setHasOptionsMenu(true);
     }

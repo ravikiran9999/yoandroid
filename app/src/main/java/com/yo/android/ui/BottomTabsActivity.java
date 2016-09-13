@@ -93,7 +93,7 @@ public class BottomTabsActivity extends BaseActivity {
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
-                .withUserName(username == null?"":username)
+                .withUserName(username == null ? "" : username)
                 .withPassword(password)
                 .withServer("209.239.120.239")
                 .build();
@@ -105,7 +105,7 @@ public class BottomTabsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_tabs);
-       // toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
         viewPager = (CustomViewPager) findViewById(R.id.pager);
@@ -136,7 +136,7 @@ public class BottomTabsActivity extends BaseActivity {
 
                 //setToolBarColor(getResources().getColor(R.color.colorPrimary));
                 try {
-                   // setToolBarTitle((dataList.get(position)).getTitle());
+                    // setToolBarTitle((dataList.get(position)).getTitle());
                 } catch (Exception e) {
                     mLog.w("onPageSelected", e);
                 }
@@ -155,10 +155,9 @@ public class BottomTabsActivity extends BaseActivity {
 
         // firebase service
 
-        if (!myServiceConnection.isServiceConnection()) {
+        if (myServiceConnection != null && !myServiceConnection.isServiceConnection()) {
             Intent intent = new Intent(this, FirebaseService.class);
             startService(intent);
-
             bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
         }
 

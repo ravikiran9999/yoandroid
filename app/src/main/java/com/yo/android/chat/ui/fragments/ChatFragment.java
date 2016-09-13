@@ -191,7 +191,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void isRoomsExist() {
         showProgressDialog();
-        Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(),loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (!firebaseUserId.isEmpty()) {
             authReference.child(Constants.USERS).child(firebaseUserId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -220,7 +220,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void getAllRooms() {
 
-        Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(),loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
 
         ChildEventListener mChildEventListener = new ChildEventListener() {
             @Override
@@ -366,7 +366,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void getMembersProfile(final DataSnapshot dataSnapshot) {
 
-        final Firebase authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        final Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(),loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);

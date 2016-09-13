@@ -37,7 +37,7 @@ public class TokenAuthenticator implements Authenticator {
 
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
-        String refreshToken = preferenceEndPoint.getStringPreference("refresh_token");
+        String refreshToken = preferenceEndPoint.getStringPreference(YoApi.REFRESH_TOKEN);
         boolean isRequestForTokens = response.request().url().toString().contains("oauth/token.json");
         boolean sessionExpire = preferenceEndPoint.getBooleanPreference(Constants.SESSION_EXPIRE, false);
         if (((!isRequestForTokens && tokenExpireCount > 5) || sessionExpire)) {

@@ -1,12 +1,16 @@
 package com.yo.android.util;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
+import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.model.ChatMessage;
 
@@ -14,7 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
+
+import butterknife.ButterKnife;
 
 /**
  * Created by Ramesh on 13/7/16.
@@ -29,13 +36,23 @@ public class FireBaseHelper {
     @Inject
     MyServiceConnection myServiceConnection;
 
+
     /*@Inject
     FirebaseService firebaseService;*/
+
+    final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
+
+
+    @Inject
+    @Named("login")
+    PreferenceEndPoint loginPrefs;
 
     @Inject
     public FireBaseHelper() {
 
     }
+
+    private Context mContext;
 
     public ChatMessage getLastMessage(String roomId) {
         if (!map.containsKey(roomId)) {
@@ -45,12 +62,17 @@ public class FireBaseHelper {
         return map.get(roomId);
     }
 
-    public Firebase authWithCustomToken(final String authToken) {
+    public void unauth() {
+        if (ref != null) {
+            ref.unauth();
+        }
+    }
+
+    public Firebase authWithCustomToken(final Context context, final String authToken) {
+        mContext = context;
         //Url from Firebase dashboard
-        Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
         AuthData authData = ref.getAuth();
         if (authData == null) {
-
             ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
@@ -58,6 +80,18 @@ public class FireBaseHelper {
                         Log.i(TAG, "Login Succeeded!");
 
                     } else {
+                        FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
+                            @Override
+                            public void onSuccess() {
+                                String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
+                                authWithCustomToken(context, newAuthToken);
+                            }
+
+                            @Override
+                            public void onFailed() {
+
+                            }
+                        });
                         Log.i(TAG, "Login un Succeeded!");
                     }
                 }
@@ -65,11 +99,30 @@ public class FireBaseHelper {
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     Log.e(TAG, "Login Failed! Auth token expired" + firebaseError.getMessage());
+                    /*if (myServiceConnection.isServiceConnection()) {
+                        firebaseService.getFirebaseAuth();
+                    }*/
+                    FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
+                        @Override
+                        public void onSuccess() {
+                            String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
+                            authWithCustomToken(context, newAuthToken);
+                        }
+
+                        @Override
+                        public void onFailed() {
+
+                        }
+                    });
                 }
             });
         } else {
             return ref;
         }
         return ref;
+    }
+
+    public void unbind() {
+        ButterKnife.bind((Activity) mContext);
     }
 }

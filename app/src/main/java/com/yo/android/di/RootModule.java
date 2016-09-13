@@ -6,6 +6,7 @@ import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.adapters.SuggestionsAdapter;
 import com.yo.android.app.BaseApp;
+import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
@@ -163,7 +164,6 @@ import dagger.Provides;
                 ChatRoomListAdapter.class,
                 FindPeopleAdapter.class,
                 SuggestionsAdapter.class,
-
                 FirebaseService.class,
                 YoContactsSyncAdapter.class,
                 YoSipService.class,
@@ -171,7 +171,8 @@ import dagger.Provides;
                 DialPadView.class,
                 PhoneBookActivity.class,
                 PhoneChatActivity.class,
-                CallLogDetailsActivity.class
+                CallLogDetailsActivity.class,
+                FireBaseAuthToken.class
         },
         includes = {
                 AppModule.class,
