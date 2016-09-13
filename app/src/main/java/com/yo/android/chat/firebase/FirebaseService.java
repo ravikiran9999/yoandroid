@@ -111,7 +111,7 @@ public class FirebaseService extends InjectedService {
 
 
     private void getAllRooms() {
-        authReference = fireBaseHelper.authWithCustomToken(loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        authReference = fireBaseHelper.authWithCustomToken(this,loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
 
         ChildEventListener mChildEventListener = new ChildEventListener() {
             @Override

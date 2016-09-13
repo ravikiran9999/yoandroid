@@ -1,6 +1,8 @@
 package com.yo.android.chat.firebase;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
@@ -32,47 +34,67 @@ public class FireBaseAuthToken {
     @Inject
     YoApi.YoService yoService;
 
+    private static boolean waitingForReply = false;
+
     private static FireBaseAuthToken fireBaseAuthToken;
 
     public interface FireBaseAuthListener {
         public void onSuccess();
+
         public void onFailed();
+    }
+
+    public FireBaseAuthToken(Context context) {
+        Injector.obtain(context.getApplicationContext()).inject(this);
     }
 
     public static FireBaseAuthToken getInstance(Context context) {
         if (fireBaseAuthToken == null) {
-            Injector.obtain(context).inject(context);
-            fireBaseAuthToken = new FireBaseAuthToken();
+            fireBaseAuthToken = new FireBaseAuthToken(context);
         }
         return fireBaseAuthToken;
     }
 
     public void getFirebaseAuth(final FireBaseAuthListener listener) {
         String firebackToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
-        if (firebackToken == null) {
+        if (TextUtils.isEmpty(firebackToken) & !waitingForReply) {
+            waitingForReply = true;
             String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+
             yoService.firebaseAuthToken(access).enqueue(new Callback<ResponseBody>() {
+                public final String TAG = FireBaseAuthToken.class.getSimpleName();
+
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     JSONObject jsonObject = null;
+
                     try {
                         if (response.body() != null) {
                             jsonObject = new JSONObject(response.body().string());
                             String firebaseToken = jsonObject.getString("firebase_token");
                             loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, firebaseToken);
                             listener.onSuccess();
+                            waitingForReply = false;
+                            Log.i(TAG, "Login Succeeded! " + firebaseToken);
+
                         }
                     } catch (JSONException e) {
+                        Log.i(TAG, "Login Failed!");
                         e.printStackTrace();
+                        waitingForReply = false;
                         listener.onFailed();
                     } catch (IOException e) {
+                        Log.i(TAG, "Login Failed!");
                         e.printStackTrace();
+                        waitingForReply = false;
                         listener.onFailed();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "Login Failed!");
+                    waitingForReply = false;
                     listener.onFailed();
                 }
             });

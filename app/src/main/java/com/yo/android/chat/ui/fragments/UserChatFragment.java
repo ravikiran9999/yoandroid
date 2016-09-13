@@ -66,6 +66,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -132,7 +133,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
-        authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+        mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+        authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
         setHasOptionsMenu(true);
     }

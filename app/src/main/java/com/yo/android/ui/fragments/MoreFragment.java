@@ -39,6 +39,7 @@ import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
+import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
 import com.yo.android.voip.VoipConstants;
 
@@ -84,6 +85,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     ConnectivityHelper mHelper;
     @Bind(R.id.add_change_photo_text)
     TextView addOrChangePhotoText;
+
+    @Inject
+    FireBaseHelper fireBaseHelper;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -243,8 +247,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
 
         if (name.equalsIgnoreCase("Sign Out")) {
-            mToastFactory.showToast(R.string.disable_signout);
-           showLogoutDialog();
+            // mToastFactory.showToast(R.string.disable_signout);
+            showLogoutDialog();
         } else if (name.equalsIgnoreCase("Invite Friends")) {
 
             startActivity(new Intent(getActivity(), InviteActivity.class));
@@ -286,6 +290,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     alertDialog.dismiss();
                     //Clean contact sync
                     mContactSyncHelper.clean();
+
                     if (getActivity() != null) {
                         Util.cancelAllNotification(getActivity());
                     }
@@ -294,6 +299,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     mLog.i("MoreFragment", "Deleted contacts >>>>%d", deleteContacts);
                     if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        fireBaseHelper.unauth();
                         yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

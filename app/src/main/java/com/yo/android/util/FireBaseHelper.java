@@ -1,6 +1,7 @@
 package com.yo.android.util;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -20,6 +21,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by Ramesh on 13/7/16.
  */
@@ -33,8 +36,12 @@ public class FireBaseHelper {
     @Inject
     MyServiceConnection myServiceConnection;
 
+
     /*@Inject
     FirebaseService firebaseService;*/
+
+    final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
+
 
     @Inject
     @Named("login")
@@ -45,6 +52,8 @@ public class FireBaseHelper {
 
     }
 
+    private Context mContext;
+
     public ChatMessage getLastMessage(String roomId) {
         if (!map.containsKey(roomId)) {
             return null;
@@ -53,12 +62,17 @@ public class FireBaseHelper {
         return map.get(roomId);
     }
 
-    public Firebase authWithCustomToken(final String authToken) {
+    public void unauth() {
+        if (ref != null) {
+            ref.unauth();
+        }
+    }
+
+    public Firebase authWithCustomToken(final Context context, final String authToken) {
+        mContext = context;
         //Url from Firebase dashboard
-        final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
         AuthData authData = ref.getAuth();
         if (authData == null) {
-
             ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
@@ -70,7 +84,7 @@ public class FireBaseHelper {
                             @Override
                             public void onSuccess() {
                                 String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
-                                authWithCustomToken(newAuthToken);
+                                authWithCustomToken(context, newAuthToken);
                             }
 
                             @Override
@@ -92,7 +106,7 @@ public class FireBaseHelper {
                         @Override
                         public void onSuccess() {
                             String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
-                            authWithCustomToken(newAuthToken);
+                            authWithCustomToken(context, newAuthToken);
                         }
 
                         @Override
@@ -106,5 +120,9 @@ public class FireBaseHelper {
             return ref;
         }
         return ref;
+    }
+
+    public void unbind() {
+        ButterKnife.bind((Activity) mContext);
     }
 }
