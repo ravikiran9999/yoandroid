@@ -51,17 +51,15 @@ public class FirebaseService extends InjectedService {
     private int messageCount;
     private Context context;
 
-    @Inject
-    @Named("login")
-    PreferenceEndPoint loginPrefs;
-
-    @Inject
-    YoApi.YoService yoService;
 
     @Inject
     FireBaseHelper fireBaseHelper;
 
     private boolean isRunning = false;
+
+    @Inject
+    @Named("login")
+    PreferenceEndPoint loginPrefs;
 
 
     @Override
@@ -80,7 +78,17 @@ public class FirebaseService extends InjectedService {
 
         if (isRunning) {
             Log.i(TAG, "Service running");
-            getFirebaseAuth();
+            FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
+                @Override
+                public void onSuccess() {
+                    getAllRooms();
+                }
+
+                @Override
+                public void onFailed() {
+
+                }
+            });
         }
 
         return START_STICKY;
@@ -99,32 +107,6 @@ public class FirebaseService extends InjectedService {
     @Override
     public boolean onUnbind(Intent intent) {
         return true;
-    }
-
-    public void getFirebaseAuth() {
-        String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-        yoService.firebaseAuthToken(access).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                JSONObject jsonObject = null;
-                try {
-                    if (response.body() != null) {
-                        jsonObject = new JSONObject(response.body().string());
-                        String firebaseToken = jsonObject.getString("firebase_token");
-                        loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, firebaseToken);
-                        getAllRooms();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-            }
-        });
     }
 
 

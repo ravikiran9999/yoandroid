@@ -3,6 +3,7 @@ package com.yo.android.chat.ui;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -16,7 +17,10 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.internal.LinkedTreeMap;
+import com.orion.android.common.logger.Log;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
+import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -35,6 +39,7 @@ import org.angmarch.views.NiceSpinner;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,7 +51,7 @@ import retrofit2.Callback;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
+public class LoginActivity extends ParentActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_READ_CONTACTS = 0;
@@ -66,11 +71,16 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
     VoxFactory voxFactory;
     @Inject
     YoApi.YoService yoService;
+
     @Inject
     CountryCodeHelper mCountryCodeHelper;
+
     private List<CountryCode> mList;
     @Inject
     ConnectivityHelper mHelper;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
