@@ -247,8 +247,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
 
         if (name.equalsIgnoreCase("Sign Out")) {
-            // mToastFactory.showToast(R.string.disable_signout);
             showLogoutDialog();
+
         } else if (name.equalsIgnoreCase("Invite Friends")) {
 
             startActivity(new Intent(getActivity(), InviteActivity.class));
@@ -288,41 +288,47 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
-                    //Clean contact sync
-                    mContactSyncHelper.clean();
+                    if (new ConnectivityHelper(getActivity()).isConnected()) {
 
-                    if (getActivity() != null) {
-                        Util.cancelAllNotification(getActivity());
+                        //Clean contact sync
+                        mContactSyncHelper.clean();
+
+                        if (getActivity() != null) {
+                            Util.cancelAllNotification(getActivity());
+                        }
+                        Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
+                        int deleteContacts = getActivity().getContentResolver().delete(uri, null, null);
+                        mLog.i("MoreFragment", "Deleted contacts >>>>%d", deleteContacts);
+                        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            fireBaseHelper.unauth();
+                            yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
+                        }
+                        preferenceEndPoint.clearAll();
+
+                        //stop firebase service
+                        //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
+
+                        //Stop SIP service
+                        Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
+                        getActivity().startService(intent);
+                        //Start login activity
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
+                        getActivity().finish();
+
+                    } else {
+                        mToastFactory.showToast(R.string.connectivity_network_settings);
                     }
-                    Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
-                    int deleteContacts = getActivity().getContentResolver().delete(uri, null, null);
-                    mLog.i("MoreFragment", "Deleted contacts >>>>%d", deleteContacts);
-                    if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        fireBaseHelper.unauth();
-                        yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                            }
-                        });
-                    }
-                    preferenceEndPoint.clearAll();
-
-                    //stop firebase service
-                    //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
-
-                    //Stop SIP service
-                    Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
-                    getActivity().startService(intent);
-                    //Start login activity
-                    startActivity(new Intent(getActivity(), LoginActivity.class));
-                    getActivity().finish();
                 }
             });
 
