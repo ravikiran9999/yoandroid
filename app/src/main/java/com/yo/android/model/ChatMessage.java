@@ -25,7 +25,7 @@ public class ChatMessage implements Parcelable {
     @DatabaseField
     private int status;
     @DatabaseField
-    private String imagePath = " ";
+    private String imagePath;
     @DatabaseField
     private long time;
     @DatabaseField
@@ -40,18 +40,8 @@ public class ChatMessage implements Parcelable {
     private String roomId;
     private boolean selected;
     //For caching the image
-    private String imageUrl = " ";
-
-    public String getVoxUserName() {
-        return voxUserName;
-    }
-
-    public void setVoxUserName(String voxUserName) {
-        this.voxUserName = voxUserName;
-    }
-
-    private String voxUserName = " ";
-
+    private String imageUrl;
+    private String voxUserName;
     private String youserId;
 
 
@@ -182,6 +172,14 @@ public class ChatMessage implements Parcelable {
 
     public void setDeliveredTime(long deliveredTime) {
         this.deliveredTime = deliveredTime;
+    }
+
+    public String getVoxUserName() {
+        return voxUserName;
+    }
+
+    public void setVoxUserName(String voxUserName) {
+        this.voxUserName = voxUserName;
     }
 
     @Override

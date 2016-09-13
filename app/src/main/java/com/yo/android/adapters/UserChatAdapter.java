@@ -17,9 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -199,7 +197,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 senderId.setText(item.getSenderID());
                 senderId.setTextColor(Color.RED);
                 linearLayout1.addView(senderId);
-
             }
 
             TextView textView = new TextView(context);
@@ -300,9 +297,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     public View getHeaderView(int position, View convertView, ViewGroup parent) {
         HeaderViewHolder holder;
         if (convertView == null) {
-            holder = new HeaderViewHolder();
+
             convertView = inflater.inflate(R.layout.stickey_timestamp_header, parent, false);
-            holder.text = (TextView) convertView.findViewById(R.id.time_stamp_text);
+            holder = new HeaderViewHolder(convertView);
             convertView.setTag(holder);
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
@@ -322,9 +319,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     private class HeaderViewHolder {
         TextView text;
+
+        HeaderViewHolder(View v) {
+            text = (TextView) v.findViewById(R.id.time_stamp_text);
+        }
     }
 
-    private void loadImage() {
 
-    }
 }
