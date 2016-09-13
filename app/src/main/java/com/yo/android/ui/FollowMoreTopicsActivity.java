@@ -60,6 +60,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private boolean isInvalidSearch;
     private TextView noSearchResults;
     private List<String> followedTopicsIdsList;
+    private Button done;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +82,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(backBtn);
 
         tagGroup = (TagView) findViewById(R.id.tag_group);
-        final Button done = (Button) findViewById(R.id.btn_done);
+        done = (Button) findViewById(R.id.btn_done);
         noSearchResults = (TextView) findViewById(R.id.no_search_results);
 
         initialTags = new ArrayList<>();
@@ -496,6 +497,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 }
             });
 
+        } else if (requestCode == 14 && resultCode == RESULT_CANCELED) {
+            done.setEnabled(true);
         }
     }
 
