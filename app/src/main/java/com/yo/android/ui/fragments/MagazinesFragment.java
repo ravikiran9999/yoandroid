@@ -282,6 +282,42 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }
             });
 
+            search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                public static final String TAG = "Search in Magazines";
+
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    Log.i(TAG, "onQueryTextSubmit: " + query);
+                    Log.d("Search", "The selected item is " + mAdapter.getItem(0));
+                    String topicName = (String) mAdapter.getItem(0);
+                    searchTextView.setText(topicName);
+                    searchTextView.setSelection(topicName.trim().length());
+                    String topicId = "";
+                    for (int i = 0; i < topicsList.size(); i++) {
+                        if (topicsList.get(i).getName().equals(topicName)) {
+                            topicId = topicsList.get(i).getId();
+                            break;
+                        }
+                    }
+                    if (getActivity() != null) {
+                        Util.hideKeyboard(getActivity(), searchTextView);
+                    }
+                    searchTextView.dismissDropDown();
+                    List<String> tagIds = new ArrayList<String>();
+                    tagIds.add(topicId);
+                    if (mMagazineFlipArticlesFragment != null) {
+                        mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                    }
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    Log.i(TAG, "onQueryTextChange: " + newText);
+                    return true;
+                }
+            });
+
         } catch (Exception e) {
             // do nothing
         }

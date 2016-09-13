@@ -47,7 +47,7 @@ public class ChatActivity extends BaseActivity {
             room = getIntent().getParcelableExtra(Constants.ROOM);
 
             args.putString(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
-            opponent = getOppenent(room);
+            opponent = room.getVoxUserName();
 
             String opponentImg = room.getImage();
             if (opponentImg != null) {
@@ -62,6 +62,7 @@ public class ChatActivity extends BaseActivity {
             if (room.getGroupName() != null) {
                 args.putString(Constants.TYPE, room.getGroupName());
             }
+            args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
             Util.cancelAllNotification(this);
 
@@ -78,13 +79,17 @@ public class ChatActivity extends BaseActivity {
             }
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
+            if (getIntent().hasExtra(Constants.OPPONENT_ID)) {
+                args.putString(Constants.OPPONENT_ID, getIntent().getStringExtra(Constants.OPPONENT_ID));
+            }
+
             if (getIntent().hasExtra(Constants.VOX_USER_NAME)) {
                 //opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
 
             /*long opp = Long.parseLong(opponent.replaceAll("[^\\d.]", "").substring(2, 12));
             int opponentInt = (int) opp;*/
 
-                opponent = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+                opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
 
                 args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);

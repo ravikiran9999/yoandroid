@@ -175,7 +175,7 @@ public class FirebaseService extends InjectedService {
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
 
-                        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+                        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
                         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
                         String[] strings = cn.getShortClassName().split(Pattern.quote("."));
                         int i = strings.length - 1;
@@ -224,47 +224,48 @@ public class FirebaseService extends InjectedService {
     }
 
     private void postNotification(String roomId, ChatMessage chatMessage) {
-            try {
+        try {
 
-                String body = chatMessage.getMessage();
-                String title = chatMessage.getSenderID();
-                String voxUsername = chatMessage.getVoxUserName();
-
-
-                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-                long num= Long.parseLong(title);
-                int notificationId = (int)num;
+            String body = chatMessage.getMessage();
+            String title = chatMessage.getSenderID();
+            String voxUsername = chatMessage.getVoxUserName();
 
 
-                NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
-                notificationStyle.bigText(body);
-                Intent notificationIntent = new Intent(this, ChatActivity.class);
-                notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                notificationIntent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-                notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
-                notificationIntent.putExtra(Constants.VOX_USER_NAME, voxUsername);
-                notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-                PendingIntent contentIntent = PendingIntent.getActivity(this, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            long num = Long.parseLong(title);
+            int notificationId = (int) num;
 
-                android.app.Notification notification = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_yo_notification)
-                        .setContentTitle(title == null ? "Yo App" : title)
 
-                        .setContentText(body)
-                        .setNumber(++messageCount)
-                        .setContentIntent(contentIntent)
-                        .setAutoCancel(true)
+            NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
+            notificationStyle.bigText(body);
+            Intent notificationIntent = new Intent(this, ChatActivity.class);
+            notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            notificationIntent.putExtra(Constants.CHAT_ROOM_ID, roomId);
+            notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
+            notificationIntent.putExtra(Constants.VOX_USER_NAME, voxUsername);
+            notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
+            notificationIntent.putExtra(Constants.OPPONENT_ID, chatMessage.getYouserId());
 
-                        .setStyle(notificationStyle)
-                        .build();
+            PendingIntent contentIntent = PendingIntent.getActivity(this, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                mNotificationManager.notify(notificationId, notification);
+            android.app.Notification notification = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_yo_notification)
+                    .setContentTitle(title == null ? "Yo App" : title)
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                    .setContentText(body)
+                    .setNumber(++messageCount)
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true)
+
+                    .setStyle(notificationStyle)
+                    .build();
+
+            mNotificationManager.notify(notificationId, notification);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

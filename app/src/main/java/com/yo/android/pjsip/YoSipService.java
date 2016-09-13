@@ -281,7 +281,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void handlerErrorCodes(final CallInfo call, SipCallState sipCallstate) {
         final int statusCode = call.getLastStatusCode().swigValue();
-        mLog.e(TAG, sipCallState.getMobileNumber() + ",Call Object " + call.toString());
+        mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -401,11 +401,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             String proxy = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
             String username = sipProfile.getUsername();
             String password = sipProfile.getPassword();
-            configAccount(myAccount.cfg, id, registrar, proxy, username, password);
-            try {
-                myAccount.modify(myAccount.cfg);
-            } catch (Exception e) {
-                mLog.w(TAG, e);
+            if (myAccount != null) {
+                configAccount(myAccount.cfg, id, registrar, proxy, username, password);
+                try {
+                    myAccount.modify(myAccount.cfg);
+                } catch (Exception e) {
+                    mLog.w(TAG, e);
+                }
             }
         } catch (Exception | UnsatisfiedLinkError e) {
             mLog.w(TAG, e);
@@ -442,19 +444,31 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (currentCall != null) {
             return;
         }
-        MyCall call = new MyCall(myAccount, -1);
-        CallOpParam prm = new CallOpParam(true);
-        try {
-            call.isActive(finalUri, prm);
-            call.makeCall(finalUri, prm);
-        } catch (Exception e) {
-            mLog.w(TAG, e);
-            call.delete();
-            return;
+        if(myAccount ==null){
+            myAccount = buildAccount();
         }
+        if (myAccount != null) {
+            MyCall call = new MyCall(myAccount, -1);
+            CallOpParam prm = new CallOpParam(true);
+            try {
+                call.isActive(finalUri, prm);
+                call.makeCall(finalUri, prm);
+            } catch (Exception e) {
+                mLog.w(TAG, e);
+                call.delete();
+                return;
+            }
 
-        currentCall = call;
-        showCallActivity(phone, options);
+            currentCall = call;
+            showCallActivity(phone, options);
+        } else {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mToastFactory.showToast(R.string.call_account_null);
+                }
+            });
+        }
     }
 
     private void showCallActivity(String destination, Bundle options) {

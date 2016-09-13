@@ -265,7 +265,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 try {
                     ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-
+                    room.setYouserId(chatMessage.getYouserId());
                     if (dataSnapshot.hasChildren()) {
                         room.setLastChat(chatMessage.getMessage());
                         if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {

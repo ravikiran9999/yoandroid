@@ -165,7 +165,7 @@
     <string name="no">NO</string>
     <string name="yes">YES</string>
     <string name="sign_out">Sign Out</string>
-    <string name="signout_text">Are you sure you want to sign out ?</string>
+    <string name="signout_text">Are you sure you want to Sign Out ?</string>
     <string name="empty_fields">Please do not leave fields empty</string>
     <string name="delete_topic_message">Are you sure you want to delete ?</string>
     <string name="invite_link">Checkout YoApp for your smart phone. Download it today from https://www.yoapp.com</string>
@@ -173,6 +173,8 @@
     <string name="service_started">%s started</string>
     <string name="call_ended">Call Ended</string>
     <string name="no_network">Unable to make the call due to low network connectivity</string>
+    <string name="call_account_null">Unable to make the call, please try again</string>
+
     <string name="not_online">Recipient not online.</string>
     <string name="call_forwarded">Call is  being forwarded</string>
     <string name="temporerly_unavailable">Destination was temporarily unavailable</string>
@@ -198,4 +200,5 @@
     <string name="are_you_sure_you_want_to_unfollow">Are you sure you want to Unfollow?</string>
     <string name="unfollow">Unfollow</string>
     <string name="cancel">Cancel</string>
+    <string name="disable_signout">Signout is disabled, will be enabled soon!</string>
 </resources>

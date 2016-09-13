@@ -396,6 +396,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
         chatMessage.setVoxUserName(opponentNumber);
+        chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(message.hashCode());
 
         if (type.equals(Constants.TEXT)) {
@@ -403,7 +404,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         } else if (type.equals(Constants.IMAGE)) {
             chatMessage.setImagePath(message);
         }
-        if ((roomExist == 0) && (TextUtils.isEmpty(childRoomId)) && (childRoomId == null)) {
+
+        if (roomExist == 0 && TextUtils.isEmpty(childRoomId)) {
             createRoom(message, chatMessage);
 
         } else {
@@ -622,7 +624,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0)) {
                     if (getActivity() instanceof ChatActivity) {
                         long timestamp = System.currentTimeMillis();
-
                         chatMessage.setDelivered(1);
                         chatMessage.setDeliveredTime(timestamp);
                         Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
