@@ -158,14 +158,17 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                         .into(profileImage);
             }
             //}
-            profileName.setText(contact.getName());
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
+
             if (mContact != null) {
                 if (mContact.getName() != null) {
+                    profileName.setText(mContact.getName());
+                }
+                if(mContact.getPhoneNo()!=null){
                     profileNumber.setText(mContact.getPhoneNo());
-
                 }
             } else {
+                profileName.setText(contact.getName());
                 profileNumber.setText(contact.getPhoneNo());
             }
             if (contact.getYoAppUser()) {
