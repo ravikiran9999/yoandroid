@@ -204,6 +204,16 @@ public class ContactsSyncManager {
         return null;
     }
 
+    public Contact getContactByPhoneNumber(String phoneNumber) {
+        if (phoneNumber != null) {
+            Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
+            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "= '" + phoneNumber + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc" );
+            if (c != null && c.moveToFirst()) {
+                return ContactsSyncManager.prepareContact(c);
+            }
+        }
+        return null;
+    }
     public Map<String, Contact> getCachedContacts() {
         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
         Cursor c = context.getContentResolver().query(uri, PROJECTION, null, null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
