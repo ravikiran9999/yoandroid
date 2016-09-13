@@ -17,11 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.adapters.FilterWithSpaceAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
@@ -58,9 +58,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     private List<Topics> topicsList;
 
-    private ArrayAdapter mAdapter;
     private Menu menu;
     public static List<Topics> unSelectedTopics;
+    FilterWithSpaceAdapter<String> mAdapter;
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
         return mMagazineFlipArticlesFragment;
@@ -109,8 +109,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mAdapter = new ArrayAdapter<String>
-                (getActivity(), R.layout.textviewitem, new ArrayList<String>());
+        mAdapter = new FilterWithSpaceAdapter<String>(getActivity(),
+                R.layout.textviewitem, new ArrayList<String>());
         if ((mMagazineFlipArticlesFragment = (MagazineFlipArticlesFragment) getChildFragmentManager().findFragmentById(R.id.bottom)) != null) {
             getChildFragmentManager()
                     .beginTransaction()
@@ -156,7 +156,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 List<String> topicNamesList = new ArrayList<String>();
                 for (int i = 0; i < topicsList.size(); i++) {
                     //if (topicsList.get(i).isSelected()) {
-                        topicNamesList.add(topicsList.get(i).getName());
+                    topicNamesList.add(topicsList.get(i).getName());
                     //}
                 }
                 mAdapter.clear();
@@ -288,25 +288,27 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     Log.i(TAG, "onQueryTextSubmit: " + query);
-                    Log.d("Search", "The selected item is " + mAdapter.getItem(0));
-                    String topicName = (String) mAdapter.getItem(0);
-                    searchTextView.setText(topicName);
-                    searchTextView.setSelection(topicName.trim().length());
-                    String topicId = "";
-                    for (int i = 0; i < topicsList.size(); i++) {
-                        if (topicsList.get(i).getName().equals(topicName)) {
-                            topicId = topicsList.get(i).getId();
-                            break;
+                    if(mAdapter.getCount() >0) {
+                        Log.d("Search", "The selected item is " + mAdapter.getItem(0));
+                        String topicName = (String) mAdapter.getItem(0);
+                        searchTextView.setText(topicName);
+                        searchTextView.setSelection(topicName.trim().length());
+                        String topicId = "";
+                        for (int i = 0; i < topicsList.size(); i++) {
+                            if (topicsList.get(i).getName().equals(topicName)) {
+                                topicId = topicsList.get(i).getId();
+                                break;
+                            }
                         }
-                    }
-                    if (getActivity() != null) {
-                        Util.hideKeyboard(getActivity(), searchTextView);
-                    }
-                    searchTextView.dismissDropDown();
-                    List<String> tagIds = new ArrayList<String>();
-                    tagIds.add(topicId);
-                    if (mMagazineFlipArticlesFragment != null) {
-                        mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                        if (getActivity() != null) {
+                            Util.hideKeyboard(getActivity(), searchTextView);
+                        }
+                        searchTextView.dismissDropDown();
+                        List<String> tagIds = new ArrayList<String>();
+                        tagIds.add(topicId);
+                        if (mMagazineFlipArticlesFragment != null) {
+                            mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                        }
                     }
                     return true;
                 }

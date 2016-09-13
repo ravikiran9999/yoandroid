@@ -244,7 +244,7 @@ public class FindPeopleActivity extends BaseActivity {
             findPeopleAdapter.addItemsAll(originalList);
         } else {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.searchInFindPeople(accessToken, newText, 1, 100).enqueue(new Callback<List<FindPeople>>() {
+            yoService.searchInFindPeople(accessToken, searchKey, 1, 100).enqueue(new Callback<List<FindPeople>>() {
                 @Override
                 public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                     if (response.body() != null && response.body().size() > 0) {

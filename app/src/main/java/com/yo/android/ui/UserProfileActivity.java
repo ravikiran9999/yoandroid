@@ -44,6 +44,7 @@ import butterknife.OnClick;
  */
 public class UserProfileActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, ValueEventListener {
 
+    private static final String TAG = UserProfileActivity.class.getSimpleName();
     @Bind(R.id.profile_image)
     ImageView profileImage;
     @Bind(R.id.profile_call)
@@ -80,7 +81,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         enableBack();
         groupMembersList = new ArrayList<>();
         groupMembersHashMap = new HashMap<>();
-        authReference = fireBaseHelper.authWithCustomToken(preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+        mLog.e(TAG,"Firebase token reading from pref "+preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+
+        authReference = fireBaseHelper.authWithCustomToken(this, preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         Intent intent = getIntent();
         if (intent != null) {
@@ -137,23 +140,23 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 getSupportActionBar().setTitle(contact.getName());
             }
             //if (!TextUtils.isEmpty(contact.getImage())) {
-                if (roomName != null) {
-                    Glide.with(this)
-                            .load(contact.getImage())
-                            .placeholder(R.drawable.img_group_placeholder)
-                            .fitCenter()
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(profileImage);
-                } else {
-                    Glide.with(this)
-                            .load(contact.getImage())
-                            .placeholder(R.drawable.img_placeholder_profile)
-                            .fitCenter()
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(profileImage);
-                }
+            if (roomName != null) {
+                Glide.with(this)
+                        .load(contact.getImage())
+                        .placeholder(R.drawable.img_group_placeholder)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(profileImage);
+            } else {
+                Glide.with(this)
+                        .load(contact.getImage())
+                        .placeholder(R.drawable.img_placeholder_profile)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(profileImage);
+            }
             //}
             profileName.setText(contact.getName());
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
