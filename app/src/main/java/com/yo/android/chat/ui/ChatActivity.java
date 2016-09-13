@@ -110,16 +110,20 @@ public class ChatActivity extends BaseActivity {
 
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
+            String title = null;
             Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
             if (contact != null && !TextUtils.isEmpty(contact.getName())) {
-                opponent = contact.getName();
+                title = contact.getName();
             } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
-                opponent = room.getFullName();
+                title = room.getFullName();
             } else if (opponent != null && opponent.contains("youser")) {
-                opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
+                title = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
             }
-
-            customTitle.setText(opponent);
+            if (title != null) {
+                customTitle.setText(title);
+            } else {
+                customTitle.setText(opponent);
+            }
 
             if (room != null && room.getGroupName() != null) {
                 Glide.with(this).load(mOpponentImg)
