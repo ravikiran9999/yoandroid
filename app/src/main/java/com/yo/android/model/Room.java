@@ -27,7 +27,7 @@ public class Room implements Parcelable {
     private long time;
     private String fullName;
     private String mobileNumber;
-    private String voxUserName;
+    private String voxUserName ="";
     private String youserId;
     private List<GroupMembers> groupMembers = new ArrayList<>();
 
