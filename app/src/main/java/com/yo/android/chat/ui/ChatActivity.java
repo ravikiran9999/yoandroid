@@ -155,7 +155,7 @@ public class ChatActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
 
-                    if (opponent.length() > 10) {
+                    if (opponent != null && opponent.contains("youser")) {
                         opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
                     }
 
