@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,7 +48,8 @@ public class ChatActivity extends BaseActivity {
             room = getIntent().getParcelableExtra(Constants.ROOM);
 
             args.putString(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
-            opponent = room.getVoxUserName();
+            //opponent = room.getVoxUserName();
+            opponent = getOppenent(room);
 
             String opponentImg = room.getImage();
             if (opponentImg != null) {
@@ -84,10 +86,6 @@ public class ChatActivity extends BaseActivity {
             }
 
             if (getIntent().hasExtra(Constants.VOX_USER_NAME)) {
-                //opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
-
-            /*long opp = Long.parseLong(opponent.replaceAll("[^\\d.]", "").substring(2, 12));
-            int opponentInt = (int) opp;*/
 
                 opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
 
@@ -117,7 +115,7 @@ public class ChatActivity extends BaseActivity {
             Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
             if (contact != null && !"".equalsIgnoreCase(contact.getName())) {
                 opponent = contact.getName();
-            } else if (room != null && !"".equalsIgnoreCase(room.getFullName())) {
+            } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
                 opponent = room.getFullName();
             } else if (opponent != null && opponent.contains("youser")) {
                 opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
