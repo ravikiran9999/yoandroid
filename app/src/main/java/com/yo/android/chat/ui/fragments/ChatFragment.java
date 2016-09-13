@@ -384,7 +384,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                     room.setFullName(contact.getName());
                                 }
 
-
                                 arrayOfUsers.add(room);
                                 chatRoomListAdapter.addItems(arrayOfUsers);
                                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
