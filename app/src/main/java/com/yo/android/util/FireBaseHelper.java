@@ -47,7 +47,7 @@ public class FireBaseHelper {
 
     public Firebase authWithCustomToken(final String authToken) {
         //Url from Firebase dashboard
-        final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
+        Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
         AuthData authData = ref.getAuth();
         if (authData == null) {
 
@@ -65,9 +65,6 @@ public class FireBaseHelper {
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     Log.e(TAG, "Login Failed! Auth token expired" + firebaseError.getMessage());
-                    /*if (myServiceConnection.isServiceConnection()) {
-                        firebaseService.getFirebaseAuth();
-                    }*/
                 }
             });
         } else {
