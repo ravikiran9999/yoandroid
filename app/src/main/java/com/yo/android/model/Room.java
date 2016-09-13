@@ -190,4 +190,19 @@ public class Room implements Parcelable {
     public void setTime(long time) {
         this.time = time;
     }
+
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Room)) {
+            return false;
+        }
+        Room other = (Room) obj;
+        return this.voxUserName.equals(other.voxUserName);
+    }
+
+    public int hashCode() {
+        return voxUserName.hashCode();
+    }
 }

@@ -285,8 +285,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             return (int) (rhs.getTime() - lhs.getTime());
                         }
                     });
-
-
+                    chatRoomListAdapter.addItems(arrayOfUsers);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
