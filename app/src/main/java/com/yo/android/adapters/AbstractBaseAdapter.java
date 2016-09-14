@@ -145,6 +145,11 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                 if (((Room) event).getMobileNumber() != null && ((Room) event).getMobileNumber().contains(searchKey)) {
                     temp.add(event);
                 }
+
+                if (((Room) event).getFullName() != null && ((Room) event).getFullName().toLowerCase().contains(searchKey.toLowerCase())
+                        || ((Room)event).getGroupName() != null && ((Room)event).getGroupName().toLowerCase().contains(searchKey.toLowerCase())) {
+                    temp.add(event);
+                }
             }
 
             addItems(temp);
