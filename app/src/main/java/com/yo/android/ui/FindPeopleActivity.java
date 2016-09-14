@@ -46,6 +46,7 @@ public class FindPeopleActivity extends BaseActivity {
     private Menu menu1;
     private int pos;
     private SearchView searchView;
+    private Call<List<FindPeople>> call;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,7 +245,11 @@ public class FindPeopleActivity extends BaseActivity {
             findPeopleAdapter.addItemsAll(originalList);
         } else {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.searchInFindPeople(accessToken, searchKey, 1, 100).enqueue(new Callback<List<FindPeople>>() {
+            if(call != null) {
+                call.cancel();
+            }
+            call = yoService.searchInFindPeople(accessToken, searchKey, 1, 100);
+            call.enqueue(new Callback<List<FindPeople>>() {
                 @Override
                 public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                     if (response.body() != null && response.body().size() > 0) {
