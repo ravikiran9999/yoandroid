@@ -24,6 +24,8 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
@@ -43,6 +45,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
 import com.yo.android.util.Util;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -233,6 +236,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("true");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
 
                             }
 
@@ -242,6 +255,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 notifyDataSetChanged();
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("false");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                             }
                         });
                     } else {
@@ -257,6 +280,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 notifyDataSetChanged();
 
                                 mToastFactory.showToast("You have un-liked the article " + data.getTitle());
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("false");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
 
                             }
 
@@ -266,6 +299,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("true");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                             }
                         });
                     }
@@ -440,6 +483,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
                     }
                     notifyDataSetChanged();
+                    Type type = new TypeToken<List<Articles>>() {
+                    }.getType();
+                    String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                    List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                    for(int i=0; i<cachedMagazinesList.size(); i++) {
+                        if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                            cachedMagazinesList.get(i).setIsFollowing("true");
+                        }
+                    }
+                    preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                 }
 
                 @Override
@@ -449,6 +502,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     follow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     data.setIsFollowing("false");
                     notifyDataSetChanged();
+                    Type type = new TypeToken<List<Articles>>() {
+                    }.getType();
+                    String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                    List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                    for(int i=0; i<cachedMagazinesList.size(); i++) {
+                        if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                            cachedMagazinesList.get(i).setIsFollowing("false");
+                        }
+                    }
+                    preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
 
                 }
             });
@@ -493,6 +556,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
                             }
                             notifyDataSetChanged();
+                            Type type = new TypeToken<List<Articles>>() {
+                            }.getType();
+                            String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                            for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                    cachedMagazinesList.get(i).setIsFollowing("false");
+                                }
+                            }
+                            preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                         }
 
                         @Override
@@ -502,6 +575,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             follow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                             data.setIsFollowing("true");
                             notifyDataSetChanged();
+                            Type type = new TypeToken<List<Articles>>() {
+                            }.getType();
+                            String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                            for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                    cachedMagazinesList.get(i).setIsFollowing("true");
+                                }
+                            }
+                            preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                         }
                     });
                 }
@@ -638,6 +721,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("true");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
 
                             }
 
@@ -647,6 +740,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 notifyDataSetChanged();
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("false");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                             }
                         });
                     } else {
@@ -662,6 +765,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 notifyDataSetChanged();
 
                                 mToastFactory.showToast("You have un-liked the article " + data.getTitle());
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("false");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
 
                             }
 
@@ -671,6 +784,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("true");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                             }
                         });
                     }
@@ -815,6 +938,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("true");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
 
                             }
 
@@ -824,6 +957,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 notifyDataSetChanged();
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("false");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                             }
                         });
                     } else {
@@ -839,6 +982,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 notifyDataSetChanged();
 
                                 mToastFactory.showToast("You have un-liked the article " + data.getTitle());
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("false");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
 
                             }
 
@@ -848,6 +1001,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("true");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                             }
                         });
                     }
@@ -984,6 +1147,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("true");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
 
                             }
 
@@ -993,6 +1166,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 notifyDataSetChanged();
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("false");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                             }
                         });
                     } else {
@@ -1008,6 +1191,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 notifyDataSetChanged();
 
                                 mToastFactory.showToast("You have un-liked the article " + data.getTitle());
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("false");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
 
                             }
 
@@ -1017,6 +1210,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 notifyDataSetChanged();
+                                Type type = new TypeToken<List<Articles>>() {
+                                }.getType();
+                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                for(int i=0; i<cachedMagazinesList.size(); i++) {
+                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                        cachedMagazinesList.get(i).setLiked("true");
+                                    }
+                                }
+                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                             }
                         });
                     }
