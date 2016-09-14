@@ -26,7 +26,6 @@ import com.firebase.client.ValueEventListener;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
-import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
@@ -65,8 +64,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private String voxUserName;
     private List<Room> listRoom;
     private List<String> roomId;
-    @Inject
-    YoApi.YoService yoService;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -198,7 +195,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     if (dataSnapshot.child(Constants.MY_ROOMS).exists()) {
-                        getAllRooms1();
+                        getAllRooms();
                     } else {
                         emptyImageView.setVisibility(View.VISIBLE);
                         listView.setVisibility(View.GONE);
@@ -218,45 +215,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getAllRooms() {
-
-        Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(), loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-
-        ChildEventListener mChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                getMembersId(dataSnapshot);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //getChatMessageList(dataSnapshot.getKey());
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                firebaseError.getMessage();
-            }
-
-        };
-        String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
-        if (!firebaseUserId.isEmpty()) {
-            authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addChildEventListener(mChildEventListener);
-            authReference.keepSynced(true);
-        }
-    }
-
-    private void getAllRooms1() {
         Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(), loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -279,7 +237,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @NonNull
     private ChildEventListener createChildEventListener(final Room room) {
 
-        //ChildEventListener childEventListener = new ChildEventListener() {
         return new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -357,8 +314,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         };
 
-        //chatRoomListAdapter.addItems(arrayOfUsers);
-        //return childEventListener;
     }
 
     private void unregisterAllEventListeners() {
@@ -375,10 +330,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getMembersId(DataSnapshot dataSnapshot) {
-
-/*        if (!arrayOfUsers.isEmpty()) {
-            arrayOfUsers.clear();
-        }*/
 
         for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
             if (!roomId.contains(dataSnapshot1.getKey())) {
