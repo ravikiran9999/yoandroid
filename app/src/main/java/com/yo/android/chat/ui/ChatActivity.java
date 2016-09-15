@@ -9,6 +9,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -107,7 +108,7 @@ public class ChatActivity extends BaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayShowCustomEnabled(true);
             View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
-
+            LinearLayout titleView = (LinearLayout)customView.findViewById(R.id.title_view);
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
             String title = null;
@@ -155,9 +156,14 @@ public class ChatActivity extends BaseActivity {
                         });
             }
 
-            customTitle.setOnClickListener(new View.OnClickListener() {
+            titleView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    if (opponent != null && opponent.contains("youser")) {
+                        opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
+                    }
+
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);

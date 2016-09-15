@@ -128,21 +128,13 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
             }
 
             for (T event : mOriginalList) {
-                //List<Members> memberses = ((Room) event).getMembers();
 
-             /*   for (int j = 0; j < memberses.size(); j++) {
-                    String number = memberses.get(j).getMobileNumber();
-                    if (number != null && !number.contentEquals(myNumber)) {
-                        String mKey = memberses.get(j).getMobileNumber();
-                        if (mKey.contains(searchKey)) {
-                            temp.add(event);
-                        } else if (mKey.contains(searchKey)) {
-                            temp.clear();
-                            temp.add(event);
-                        }
-                    }
-                }*/
                 if (((Room) event).getMobileNumber() != null && ((Room) event).getMobileNumber().contains(searchKey)) {
+                    temp.add(event);
+                }
+
+                if (((Room) event).getFullName() != null && ((Room) event).getFullName().toLowerCase().contains(searchKey.toLowerCase())
+                        || ((Room)event).getGroupName() != null && ((Room)event).getGroupName().toLowerCase().contains(searchKey.toLowerCase())) {
                     temp.add(event);
                 }
             }
