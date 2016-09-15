@@ -355,7 +355,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            notifyDataSetChanged();
+            if (!((BaseActivity)context).hasDestroyed()) {
+                notifyDataSetChanged();
+            }
         }
     }
 

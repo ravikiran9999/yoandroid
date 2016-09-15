@@ -459,7 +459,9 @@ public class MyCollectionDetails extends BaseActivity {
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            notifyDataSetChanged();
+            if (!((BaseActivity)context).hasDestroyed()) {
+                notifyDataSetChanged();
+            }
         }
     }
 
