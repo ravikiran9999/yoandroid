@@ -470,19 +470,23 @@ public class DialerFragment extends BaseFragment {
     }
 
     private void showEmptyText() {
-        final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
-        if (filter.equalsIgnoreCase("all calls")) {
+        try {
+            final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
+            if (filter.equalsIgnoreCase("all calls")) {
+                txtEmptyCallLogs.setVisibility(View.GONE);
+                txtEmptyCallLogs.setText("No call logs history available.");
+                llNoCalls.setVisibility(View.VISIBLE);
+            } else {
+                txtEmptyCallLogs.setVisibility(View.GONE);
+                txtEmptyCallLogs.setText(String.format("No %s history available.", filter));
+                llNoCalls.setVisibility(View.VISIBLE);
+            }
+            boolean nonEmpty = show || (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
             txtEmptyCallLogs.setVisibility(View.GONE);
-            txtEmptyCallLogs.setText("No call logs history available.");
-            llNoCalls.setVisibility(View.VISIBLE);
-        } else {
-            txtEmptyCallLogs.setVisibility(View.GONE);
-            txtEmptyCallLogs.setText(String.format("No %s history available.", filter));
-            llNoCalls.setVisibility(View.VISIBLE);
+            llNoCalls.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
+        }catch (Exception e){
+            mLog.w(TAG, e);
         }
-        boolean nonEmpty = show || (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
-        txtEmptyCallLogs.setVisibility(View.GONE);
-        llNoCalls.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
     }
 
     @Override

@@ -135,7 +135,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
 
 
-        callDuration.setText("Calling...");
+        callDuration.setText(getResources().getString(R.string.dialing));
         callModel.setOnCall(true);
         //CallLogs Model
         mobile = getIntent().getStringExtra(CALLER_NO);
