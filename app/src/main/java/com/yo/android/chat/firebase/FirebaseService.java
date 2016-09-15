@@ -239,7 +239,6 @@ public class FirebaseService extends InjectedService {
                     .setNumber(++messageCount)
                     .setContentIntent(contentIntent)
                     .setAutoCancel(true)
-
                     .setStyle(notificationStyle)
                     .build();
 
