@@ -36,6 +36,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.calllogs.CallerInfo;
+import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Contact;
 import com.yo.android.model.UserProfileInfo;
@@ -284,8 +285,7 @@ public class Util {
 
         final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView;
-        searchView =
-                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));

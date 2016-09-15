@@ -103,6 +103,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private int forwardInt = 0;
     private String timeStp;
     private String mobilenumber;
+    private String roomType;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -145,7 +146,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
 
-        String roomType = getArguments().getString(Constants.TYPE);
+        roomType = getArguments().getString(Constants.TYPE);
 
         listView = (ListView) view.findViewById(R.id.listView);
         listStickeyHeader = (TextView) view.findViewById(R.id.time_stamp_header);
@@ -372,6 +373,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
         intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
         intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+
+        if (roomType != null) {
+            intent.putExtra(Constants.CHAT_ROOM_ID, childRoomId);
+            intent.putExtra(Constants.GROUP_NAME, roomType);
+        }
+
         startActivity(intent);
     }
 

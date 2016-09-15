@@ -62,7 +62,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private String opponentImg;
     private boolean fromChatRooms;
     private Firebase authReference;
-    private Firebase roomInfo;
     private List<GroupMembers> groupMembersList;
     private String roomName;
 
@@ -81,7 +80,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         enableBack();
         groupMembersList = new ArrayList<>();
         groupMembersHashMap = new HashMap<>();
-        mLog.e(TAG,"Firebase token reading from pref "+preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+        mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
         authReference = fireBaseHelper.authWithCustomToken(this, preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
@@ -109,9 +108,10 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
                 if (intent.hasExtra(Constants.CHAT_ROOM_ID)) {
                     String firebaseRoomId = intent.getStringExtra(Constants.CHAT_ROOM_ID);
-                    roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
+                    Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
                     if (roomName != null) {
                         roomInfo.addListenerForSingleValueEvent(this);
+                        roomInfo.keepSynced(true);
                         profileCall.setVisibility(View.INVISIBLE);
                     }
                 }
@@ -121,7 +121,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         membersList = (ListView) findViewById(R.id.members);
         profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
         membersList.setAdapter(profileMembersAdapter);
-
 
     }
 
@@ -139,7 +138,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             } else {
                 getSupportActionBar().setTitle(contact.getName());
             }
-            //if (!TextUtils.isEmpty(contact.getImage())) {
+
             if (roomName != null) {
                 Glide.with(this)
                         .load(contact.getImage())
@@ -157,19 +156,25 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
             }
-            //}
+
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
 
             if (mContact != null) {
                 if (mContact.getName() != null) {
                     profileName.setText(mContact.getName());
                 }
-                if(mContact.getPhoneNo()!=null){
+                if (mContact.getPhoneNo() != null && (!mContact.getName().replaceAll("\\s+","").equalsIgnoreCase(mContact.getPhoneNo()))) {
                     profileNumber.setText(mContact.getPhoneNo());
                 }
             } else {
-                profileName.setText(contact.getName());
-                profileNumber.setText(contact.getPhoneNo());
+                if (TextUtils.isEmpty(contact.getName()) || contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
+                    profileName.setText(contact.getPhoneNo());
+
+                } else {
+                    profileName.setText(contact.getName());
+                    profileNumber.setText(contact.getPhoneNo());
+                }
+
             }
             if (contact.getYoAppUser()) {
                 profileMsg.setImageResource(R.mipmap.ic_profile_chat);
