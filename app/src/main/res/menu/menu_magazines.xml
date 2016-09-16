@@ -17,13 +17,13 @@
     <item android:id="@+id/menu_find_people"
         android:title="Find People"
         app:showAsAction="never" />
-    <item android:id="@+id/menu_create_magazines"
-        android:title="Create Magazines"
+    <item android:id="@+id/menu_wish_list"
+        android:title="Liked Articles"
         app:showAsAction="never" />
     <item android:id="@+id/menu_my_collections"
         android:title="My Collections"
         app:showAsAction="never" />
-    <item android:id="@+id/menu_wish_list"
-        android:title="Wish List"
+    <item android:id="@+id/menu_create_magazines"
+        android:title="My Magazines"
         app:showAsAction="never" />
 </menu>
