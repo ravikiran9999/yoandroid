@@ -101,7 +101,8 @@
                 android:text="Follow More Topics"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:layout_below="@+id/imv_magazine_follow_top"/>
+                android:layout_below="@+id/imv_magazine_follow_top"
+                android:visibility="gone"/>
         </RelativeLayout>
 
     </RelativeLayout>

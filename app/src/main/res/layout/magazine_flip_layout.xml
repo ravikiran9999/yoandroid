@@ -124,7 +124,8 @@
                 android:paddingRight="5dp"
                 android:text="Follow More Topics"
                 android:textAllCaps="false"
-                android:textColor="@color/tab_grey" />
+                android:textColor="@color/tab_grey"
+                android:visibility="gone"/>
         </RelativeLayout>
 
         <TextView
