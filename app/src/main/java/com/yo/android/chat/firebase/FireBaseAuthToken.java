@@ -42,6 +42,7 @@ public class FireBaseAuthToken {
         public void onSuccess();
 
         public void onFailed();
+
     }
 
     public FireBaseAuthToken(Context context) {
@@ -98,6 +99,8 @@ public class FireBaseAuthToken {
                     listener.onFailed();
                 }
             });
+        } else {
+            listener.onSuccess();
         }
     }
 }
