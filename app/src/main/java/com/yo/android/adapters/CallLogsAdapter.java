@@ -15,6 +15,8 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.CallLogsViewHolder;
 import com.yo.android.model.dialer.CallLogsResult;
+import com.yo.android.photo.TextDrawable;
+import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -28,11 +30,15 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
 
     private final PreferenceEndPoint mPrefs;
     private ContactsSyncManager contactsSyncManager;
+    private TextDrawable.IBuilder mDrawableBuilder;
+    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
 
     public CallLogsAdapter(Context context, PreferenceEndPoint prefs,ContactsSyncManager contactsSyncManager) {
         super(context);
         this.mPrefs = prefs;
         this.contactsSyncManager = contactsSyncManager;
+        mDrawableBuilder = TextDrawable.builder()
+                .round();
     }
 
 
@@ -49,16 +55,23 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
 
     @Override
     public void bindView(int position, CallLogsViewHolder holder, Map.Entry<String, List<CallLogsResult>> item) {
-        if(item.getValue().get(0).getDestination_name()!=null) {
-            holder.getOpponentName().setText(item.getValue().get(0).getDestination_name());
+        TextDrawable drawable;
+        String destination_name = item.getValue().get(0).getDestination_name();
+        if(destination_name !=null) {
+            holder.getOpponentName().setText(destination_name);
+            drawable = mDrawableBuilder.build(String.valueOf(destination_name.charAt(0)), mColorGenerator.getColor(destination_name));
+
         }else{
-            holder.getOpponentName().setText(item.getValue().get(0).getDialnumber());
+            String phoneNumber =item.getValue().get(0).getDialnumber();
+            holder.getOpponentName().setText(phoneNumber);
+            drawable = mDrawableBuilder.build(String.valueOf(phoneNumber.charAt(0)), mColorGenerator.getColor(phoneNumber));
+
         }
 
         Glide.with(mContext).load(item.getValue().get(0).getImage())
-                .placeholder(R.drawable.ic_contacts)
+                .placeholder(drawable)
                 .dontAnimate()
-                .error(R.drawable.ic_contacts).
+                .error(drawable).
                 into(holder.getContactPic());
 
 
