@@ -46,6 +46,7 @@ import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
+import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.NewMagazineActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.OtherProfilesFollowers;
@@ -172,7 +173,8 @@ import dagger.Provides;
                 PhoneBookActivity.class,
                 PhoneChatActivity.class,
                 CallLogDetailsActivity.class,
-                FireBaseAuthToken.class
+                FireBaseAuthToken.class,
+                NewDailerActivity.class
         },
         includes = {
                 AppModule.class,

@@ -38,7 +38,7 @@ public class GroupContactsActivity extends BaseActivity {
     private GroupContactsListAdapter groupContactsListAdapter;
     private ListView listView;
     private String groupName;
-
+    private Menu mMenu;
     @Inject
     YoApi.YoService yoService;
     @Inject
@@ -75,17 +75,23 @@ public class GroupContactsActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_multiple_contacts, menu);
-        Util.prepareContactsSearch(this, menu, groupContactsListAdapter, Constants.Yo_CONT_FRAG);
-        Util.changeSearchProperties(menu);
-        return true;
+        mMenu = menu;
+        Util.prepareContactsSearch(this, mMenu, groupContactsListAdapter, Constants.Yo_CONT_FRAG);
+        Util.changeSearchProperties(mMenu);
+        return super.onCreateOptionsMenu(mMenu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.done) {
             done();
+        } else {
+            if (mMenu != null) {
+                Util.changeMenuItemsVisibility(mMenu, R.id.menu_search, false);
+                Util.registerSearchLister(this, mMenu);
+            }
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     private void getYoAppUsers() {
@@ -137,4 +143,14 @@ public class GroupContactsActivity extends BaseActivity {
         setResult(RESULT_OK, intent);
         finish();
     }
+
+    /*public void refresh() {
+        groupContactsListAdapter.clearAll();
+        groupContactsListAdapter.addItemsAll(originalList);
+        lvFindPeople.setVisibility(View.VISIBLE);
+        if(originalList.size()> 0) {
+            noData.setVisibility(View.GONE);
+            llNoPeople.setVisibility(View.GONE);
+        }
+    }*/
 }

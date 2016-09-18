@@ -1,79 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@android:color/holo_red_dark"
     android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/no_search_results"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/tab_grey"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="@string/no_result_found"
-        android:textColor="@color/white"
-        android:visibility="gone" />
 
     <com.yo.android.voip.DialPadView
         android:id="@+id/dialPadView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:background="#FAFAFA"
-        android:orientation="vertical"
-        android:paddingBottom="10dp">
+        android:background="@color/dialer_background"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:padding="5dp">
-
-            <TextView
-                android:id="@+id/txt_balance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="Balance $0"
-                android:textColor="@color/colorPrimary" />
 
             <ImageButton
                 android:id="@+id/deleteButton"
-                android:layout_width="50dp"
-                android:layout_height="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/txt_balance"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="8dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/on_clear2" />
 
-            <TextView
-                android:id="@+id/txt_call_rate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txt_balance"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="10dp"
-                android:drawableLeft="@drawable/ic_country_list"
-                android:drawablePadding="10dp"
-                android:maxLines="2"
-                android:maxWidth="100dp"
-                android:text="Select \nCountry"
-                android:textColor="@color/colorPrimary" />
-
             <com.yo.android.voip.DigitsEditText xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/digits"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
                 android:layout_toLeftOf="@+id/deleteButton"
-                android:layout_toRightOf="@+id/txt_call_rate"
                 android:background="@android:color/transparent"
                 android:focusableInTouchMode="true"
                 android:fontFamily="sans-serif-light"
                 android:freezesText="true"
-                android:gravity="left"
+                android:gravity="left|bottom"
                 android:inputType="number"
                 android:maxLines="1"
                 android:singleLine="true"
@@ -83,60 +49,55 @@
                 app:resizing_text_min_size="22sp" />
         </RelativeLayout>
 
-        <View
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/grey_divider"></View>
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+            <TextView
+                android:id="@+id/country_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@+id/txt_call_rate"
+                android:drawableLeft="@drawable/ic_arrow_drop_down_black_24dp"
+                android:drawablePadding="10dp"
+                android:gravity="left"
+                android:maxLines="1"
+                android:maxWidth="150dp"
+                android:text="Select \nCountry"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_call_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:drawablePadding="10dp"
+                android:gravity="right"
+                android:maxLines="1"
+                android:maxWidth="150dp"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/txt_balance"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:paddingLeft="15dp"
+            android:gravity="center_vertical"
+            android:layout_below="@+id/dialPadView"
+            android:background="@color/white"
+            android:text="Balance $0"
+            android:textSize="18sp"
+            android:textColor="@color/black" />
 
         <include layout="@layout/dialpad" />
     </com.yo.android.voip.DialPadView>
-
-    <LinearLayout
-        android:id="@+id/bottom_layout"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:gravity="center_vertical">
-
-        <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/btnMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_message"
-            android:text="Dial" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal">
-
-            <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/btnCall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_call"
-                android:text="Dial" />
-        </LinearLayout>
-
-        <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/btnContacts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_phonebook" />
-
-    </LinearLayout>
-
-    <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/btnDialer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="10dp"
-        android:src="@drawable/ic_red_dialer"
-        android:text="Dial" />
-
-
-</FrameLayout>
+</RelativeLayout>
