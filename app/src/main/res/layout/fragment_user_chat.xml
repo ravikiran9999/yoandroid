@@ -48,11 +48,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null"
-            android:listSelector="@null"
-            />
+            android:listSelector="@null" />
     </FrameLayout>
-    <!--android:transcriptMode="alwaysScroll"-->
-    <LinearLayout
+
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -97,5 +96,39 @@
             android:src="@drawable/ic_mic"
             android:visibility="invisible"
             />
+    </LinearLayout>-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <EditText
+            android:id="@+id/chat_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/grey_divider"
+            android:drawableLeft="@drawable/ic_emoji"
+            android:drawableStart="@drawable/ic_emoji"
+            android:drawablePadding="10dp"
+            android:ems="10"
+            android:hint="@string/type_a_message"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxHeight="100dp"
+            android:minHeight="35dp"
+            android:padding="10dp"
+            android:layout_weight="1"
+            android:scrollbars="vertical"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="bottom"
+            android:src="@drawable/ic_send" />
     </LinearLayout>
 </LinearLayout>
