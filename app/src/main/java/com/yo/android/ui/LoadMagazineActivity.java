@@ -145,8 +145,12 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         yoService.addStoryMagazineAPI(accessToken, url, magazineId).enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
+                if(response.body() != null) {
                 setResult(RESULT_OK);
                 finish();
+                } else if(response.errorBody() != null){
+                    mToastFactory.showToast("Article already added into current magazine");
+                }
             }
 
             @Override
