@@ -6,10 +6,6 @@ import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 
-/**
- * @author amulya
- * @datetime 14 Oct 2014, 3:53 PM
- */
 public class TextDrawable extends ShapeDrawable {
 
     private final Paint textPaint;
@@ -62,9 +58,9 @@ public class TextDrawable extends ShapeDrawable {
     }
 
     private int getDarkerShade(int color) {
-        return Color.rgb((int)(SHADE_FACTOR * Color.red(color)),
-                (int)(SHADE_FACTOR * Color.green(color)),
-                (int)(SHADE_FACTOR * Color.blue(color)));
+        return Color.rgb((int) (SHADE_FACTOR * Color.red(color)),
+                (int) (SHADE_FACTOR * Color.green(color)),
+                (int) (SHADE_FACTOR * Color.blue(color)));
     }
 
     @Override
@@ -94,15 +90,13 @@ public class TextDrawable extends ShapeDrawable {
 
     private void drawBorder(Canvas canvas) {
         RectF rect = new RectF(getBounds());
-        rect.inset(borderThickness/2, borderThickness/2);
+        rect.inset(borderThickness / 2, borderThickness / 2);
 
         if (shape instanceof OvalShape) {
             canvas.drawOval(rect, borderPaint);
-        }
-        else if (shape instanceof RoundRectShape) {
+        } else if (shape instanceof RoundRectShape) {
             canvas.drawRoundRect(rect, radius, radius, borderPaint);
-        }
-        else {
+        } else {
             canvas.drawRect(rect, borderPaint);
         }
     }
@@ -164,11 +158,11 @@ public class TextDrawable extends ShapeDrawable {
 
         private Builder() {
             text = "";
-            color = Color.GRAY;
+            color = Color.WHITE;
             textColor = Color.WHITE;
             borderThickness = 0;
-            width = -1;
-            height = -1;
+            width = 90;
+            height = 90;
             shape = new RectShape();
             font = Typeface.create("sans-serif-light", Typeface.NORMAL);
             fontSize = -1;
