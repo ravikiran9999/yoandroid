@@ -118,7 +118,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy, magazineId).enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
-                if (response != null) {
+                if (response != null && response.body() != null) {
                     setResult(RESULT_OK);
                     finish();
                     Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
@@ -129,6 +129,8 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     intent.putExtra("MagazineDesc", magazineDesc);
                     intent.putExtra("MagazinePrivacy", magazinePrivacy);
                     startActivity(intent);
+                } else if(response != null && response.errorBody() != null){
+                    mToastFactory.showToast("Magazine Title is already taken");
                 }
             }
 
