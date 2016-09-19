@@ -316,6 +316,16 @@ public class MyCollectionDetails extends BaseActivity {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
 
+            photoView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                    intent.putExtra("Title", data.getTitle());
+                    intent.putExtra("Image", data.getUrl());
+                    context.startActivity(intent);
+                }
+            });
+
             Button followMoreTopics = (Button) layout.findViewById(R.id.btn_magazine_follow_topics);
             followMoreTopics.setVisibility(View.GONE);
 
@@ -388,6 +398,19 @@ public class MyCollectionDetails extends BaseActivity {
                     }
                 }
             });
+
+            LinearLayout llArticleInfo = (LinearLayout)layout.findViewById(R.id.ll_article_info);
+            if(llArticleInfo != null) {
+                llArticleInfo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                        intent.putExtra("Title", data.getTitle());
+                        intent.putExtra("Image", data.getUrl());
+                        context.startActivity(intent);
+                    }
+                });
+            }
 
 
             return layout;

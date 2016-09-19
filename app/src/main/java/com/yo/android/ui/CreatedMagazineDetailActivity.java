@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -323,6 +324,16 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
 
+            photoView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                    intent.putExtra("Title", data.getTitle());
+                    intent.putExtra("Image", data.getUrl());
+                    context.startActivity(intent);
+                }
+            });
+
 
             ImageView add = holder.magazineAdd;
             add.setOnClickListener(new View.OnClickListener() {
@@ -348,6 +359,16 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 }
             });
 
+            LinearLayout llArticleInfo = (LinearLayout)layout.findViewById(R.id.ll_article_info);
+                llArticleInfo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                        intent.putExtra("Title", data.getTitle());
+                        intent.putExtra("Image", data.getUrl());
+                        context.startActivity(intent);
+                    }
+                });
 
             return layout;
         }
