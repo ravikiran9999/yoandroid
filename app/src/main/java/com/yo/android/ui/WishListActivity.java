@@ -58,7 +58,7 @@ public class WishListActivity extends BaseActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = "Wish List";
+        String title = "Liked Articles";
 
         getSupportActionBar().setTitle(title);
 

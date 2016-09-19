@@ -47,7 +47,6 @@ public class FirebaseService extends InjectedService {
     private static String TAG = "BoundService";
     private IBinder mBinder = new MyBinder();
     private Firebase authReference;
-    private Firebase roomReference;
     private int messageCount;
     private Context context;
 
@@ -68,7 +67,6 @@ public class FirebaseService extends InjectedService {
 
         context = this;
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
-        //roomReference = authReference.child()
         isRunning = true;
 
     }
@@ -86,11 +84,10 @@ public class FirebaseService extends InjectedService {
 
                 @Override
                 public void onFailed() {
-
+                  Log.i(TAG, "Failed FirebaseAuthToken");
                 }
             });
         }
-
         return START_STICKY;
     }
 
@@ -111,7 +108,7 @@ public class FirebaseService extends InjectedService {
 
 
     private void getAllRooms() {
-        authReference = fireBaseHelper.authWithCustomToken(this,loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
 
         ChildEventListener mChildEventListener = new ChildEventListener() {
             @Override
@@ -136,7 +133,7 @@ public class FirebaseService extends InjectedService {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
+                firebaseError.getMessage();
             }
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
@@ -147,7 +144,8 @@ public class FirebaseService extends InjectedService {
 
     public void getChatMessageList(String roomId) {
         try {
-            roomReference = authReference.child(Constants.ROOMS).child(roomId).child(Constants.CHATS);
+            authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+            Firebase roomReference = authReference.child(Constants.ROOMS).child(roomId).child(Constants.CHATS);
 
             ChildEventListener childEventListener = new ChildEventListener() {
                 @Override

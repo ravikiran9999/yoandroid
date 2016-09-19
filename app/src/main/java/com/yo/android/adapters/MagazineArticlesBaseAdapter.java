@@ -725,8 +725,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                for(int i=0; i<cachedMagazinesList.size(); i++) {
-                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                    if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                         cachedMagazinesList.get(i).setLiked("true");
                                     }
                                 }
@@ -744,8 +744,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                for(int i=0; i<cachedMagazinesList.size(); i++) {
-                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                    if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                         cachedMagazinesList.get(i).setLiked("false");
                                     }
                                 }
@@ -769,8 +769,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                for(int i=0; i<cachedMagazinesList.size(); i++) {
-                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                    if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                         cachedMagazinesList.get(i).setLiked("false");
                                     }
                                 }
@@ -788,8 +788,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                for(int i=0; i<cachedMagazinesList.size(); i++) {
-                                    if(data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                    if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                         cachedMagazinesList.get(i).setLiked("true");
                                     }
                                 }
@@ -1026,12 +1026,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        .centerCrop()
-                                //Image size will be reduced 50%
-                        .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
+                        .error(R.drawable.img_placeholder)
                         .into(photoView);
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
@@ -1235,12 +1233,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        .centerCrop()
-                                //Image size will be reduced 50%
-                        .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
+                        .error(R.drawable.img_placeholder)
                         .into(photoView);
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
