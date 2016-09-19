@@ -16,12 +16,12 @@
     <dimen name="dialpad_bottom_key_height">65dp</dimen>
     <dimen name="dialpad_key_plus_size">18sp</dimen>
     <dimen name="dialpad_horizontal_padding">5dp</dimen>
-    <dimen name="dialpad_digits_text_size">34sp</dimen>
-    <dimen name="dialpad_digits_text_min_size">24sp</dimen>
+    <dimen name="dialpad_digits_text_size">44sp</dimen>
+    <dimen name="dialpad_digits_text_min_size">34sp</dimen>
     <dimen name="dialpad_digits_height">64dp</dimen>
     <dimen name="dialpad_digits_padding">16dp</dimen>
-    <dimen name="dialpad_digits_menu_left_padding">8dp</dimen>
-    <dimen name="dialpad_digits_menu_right_padding">10dp</dimen>
+    <dimen name="dialpad_digits_menu_left_padding">2dp</dimen>
+    <dimen name="dialpad_digits_menu_right_padding">8dp</dimen>
     <dimen name="dialpad_center_margin">3dp</dimen>
     <dimen name="dialpad_button_margin">2dp</dimen>
     <dimen name="dialpad_voicemail_icon_padding_top">2dp</dimen>

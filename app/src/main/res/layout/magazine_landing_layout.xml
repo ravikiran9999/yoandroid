@@ -52,7 +52,6 @@
                 android:layout_height="35dp"
                 android:layout_alignParentLeft="true"
                 android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
                 android:background="@drawable/ic_magazine_follow"
                 android:gravity="center"
                 android:padding="5dp"
@@ -102,7 +101,8 @@
                 android:text="Follow More Topics"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:layout_below="@+id/imv_magazine_follow_top"/>
+                android:layout_below="@+id/imv_magazine_follow_top"
+                android:visibility="gone"/>
         </RelativeLayout>
 
     </RelativeLayout>
@@ -141,8 +141,8 @@
                 android:layout_width="80dp"
                 android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
                 android:background="@drawable/ic_magazine_follow"
                 android:gravity="center"
                 android:padding="5dp"
@@ -241,8 +241,8 @@
                     android:layout_width="80dp"
                     android:layout_height="25dp"
                     android:layout_alignParentLeft="true"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@drawable/ic_magazine_follow"
                     android:gravity="center"
                     android:padding="5dp"

@@ -2,6 +2,7 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -12,6 +13,8 @@ import com.yo.android.R;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.model.Contact;
+import com.yo.android.photo.TextDrawable;
+import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -24,11 +27,15 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
     private Context context;
     private String userId;
-
+    private TextDrawable.IBuilder mDrawableBuilder;
+    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     public ContactsListAdapter(Context context, String userId) {
         super(context);
         this.context = context;
         this.userId = userId;
+        mDrawableBuilder = TextDrawable.builder()
+                .round();
+
     }
 
     @Override
@@ -62,14 +69,16 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getContactPic());
         } else {
+           Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
+            holder.getContactPic().setImageDrawable(drawable);
 
-            Glide.with(mContext)
+           /* Glide.with(mContext)
                     .load(R.drawable.ic_contacts)
                     .fitCenter()
                     .placeholder(R.drawable.ic_contacts)
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.getContactPic());
+                    .into(holder.getContactPic());*/
         }
 
         //holder.getContactMail().setText(item.getEmailId());

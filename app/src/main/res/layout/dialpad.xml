@@ -12,7 +12,8 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <Space style="@style/DialpadSpaceStyle" />
+        <Space style="@style/DialpadSpaceStyle"
+            android:background="@color/resend_bcgrnd"/>
 
         <include
             layout="@layout/dialpad_key_one"
@@ -114,7 +115,33 @@
         <Space style="@style/DialpadSpaceStyle" />
     </LinearLayout>
 
-    <Space
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dialpad_bottom_key_height" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Space style="@style/DialpadSpaceStyle" />
+
+        <include
+            layout="@layout/dialpad_key_chat"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5" />
+
+        <include
+            layout="@layout/dial_key_call"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5" />
+
+        <include
+            layout="@layout/dial_key_phonebook"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5" />
+
+        <Space style="@style/DialpadSpaceStyle" />
+    </LinearLayout>
+
 </LinearLayout>
