@@ -5,16 +5,18 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="15dp">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imv_chat_room_pic"
-        android:layout_width="40dp"
-        android:layout_height="30dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_centerInParent="true"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:src="@drawable/ic_contacts" />
+        android:src="@drawable/ic_contactprofile" />
+
+
+
 
     <TextView
         android:id="@+id/tv_opponent_name"

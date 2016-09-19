@@ -64,15 +64,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                     .asBitmap().centerCrop()
                     .placeholder(R.drawable.ic_contactprofile)
                     .error(R.drawable.ic_contactprofile)
-                    .into(new BitmapImageViewTarget(holder.getChatRoomPic()) {
-                @Override
-                protected void setResource(Bitmap resource) {
-                    RoundedBitmapDrawable circularBitmapDrawable =
-                            RoundedBitmapDrawableFactory.create(mContext.getResources(), resource);
-                    circularBitmapDrawable.setCircular(true);
-                    holder.getChatRoomPic().setImageDrawable(circularBitmapDrawable);
-                }
-            });
+                    .into(holder.getChatRoomPic());
 
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
@@ -81,15 +73,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                     .placeholder(R.drawable.ic_group)
                     .dontAnimate()
                     .error(R.drawable.ic_group).
-                    into(new BitmapImageViewTarget(holder.getChatRoomPic()) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(mContext.getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            holder.getChatRoomPic().setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
+                    into(holder.getChatRoomPic());
         } else {
             holder.getOpponentName().setText("");
 

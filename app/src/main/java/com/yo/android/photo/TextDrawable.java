@@ -167,7 +167,7 @@ public class TextDrawable extends ShapeDrawable {
             font = Typeface.create("sans-serif-light", Typeface.NORMAL);
             fontSize = -1;
             isBold = false;
-            toUpperCase = false;
+            toUpperCase = true;
         }
 
         public IConfigBuilder width(int width) {
