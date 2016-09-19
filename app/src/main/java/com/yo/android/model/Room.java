@@ -27,7 +27,7 @@ public class Room implements Parcelable {
     private long time;
     private String fullName;
     private String mobileNumber;
-    private String voxUserName ="";
+    private String voxUserName = "";
     private String youserId;
     private List<GroupMembers> groupMembers = new ArrayList<>();
 
@@ -199,7 +199,11 @@ public class Room implements Parcelable {
             return false;
         }
         Room other = (Room) obj;
-        return this.voxUserName.equals(other.voxUserName);
+        if (this.voxUserName != null) {
+            return this.voxUserName.equals(other.voxUserName);
+        } else {
+            return false;
+        }
     }
 
     public int hashCode() {

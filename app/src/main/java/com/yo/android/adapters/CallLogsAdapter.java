@@ -2,6 +2,11 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,6 +20,8 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.CallLogsViewHolder;
 import com.yo.android.model.dialer.CallLogsResult;
+import com.yo.android.photo.TextDrawable;
+import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -28,13 +35,17 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
 
     private final PreferenceEndPoint mPrefs;
     private ContactsSyncManager contactsSyncManager;
+    private TextDrawable.IBuilder mDrawableBuilder;
+    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
 
-    public CallLogsAdapter(Context context, PreferenceEndPoint prefs,ContactsSyncManager contactsSyncManager) {
+    public CallLogsAdapter(Context context, PreferenceEndPoint prefs, ContactsSyncManager contactsSyncManager) {
         super(context);
         this.mPrefs = prefs;
         this.contactsSyncManager = contactsSyncManager;
+        // mDrawableBuilder = TextDrawable.builder().rect();
+        mDrawableBuilder = TextDrawable.builder()
+                .round();
     }
-
 
 
     @Override
@@ -49,31 +60,39 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
 
     @Override
     public void bindView(int position, CallLogsViewHolder holder, Map.Entry<String, List<CallLogsResult>> item) {
-        if(item.getValue().get(0).getDestination_name()!=null) {
-            holder.getOpponentName().setText(item.getValue().get(0).getDestination_name());
-        }else{
-            holder.getOpponentName().setText(item.getValue().get(0).getDialnumber());
+        Drawable drawable = null;
+        String destination_name = item.getValue().get(0).getDestination_name();
+        if (destination_name != null) {
+            holder.getOpponentName().setText(destination_name);
+            drawable = mDrawableBuilder.build(String.valueOf(destination_name.charAt(0)), mColorGenerator.getRandomColor());
+        } else {
+            String phoneNumber = item.getValue().get(0).getDialnumber();
+            drawable = mContext.getResources().getDrawable(R.drawable.ic_contactprofile);
+            drawable.setColorFilter(mColorGenerator.getRandomColor(), PorterDuff.Mode.MULTIPLY);
+            holder.getOpponentName().setText(phoneNumber);
         }
-
-        Glide.with(mContext).load(item.getValue().get(0).getImage())
-                .placeholder(R.drawable.ic_contacts)
-                .dontAnimate()
-                .error(R.drawable.ic_contacts).
-                into(holder.getContactPic());
-
+        if (item.getValue().get(0).getImage() != null) {
+            Glide.with(mContext).load(item.getValue().get(0).getImage())
+                    .placeholder(drawable)
+                    .dontAnimate()
+                    .error(drawable).
+                    into(holder.getContactPic());
+        } else {
+            holder.getContactPic().setImageDrawable(drawable);
+        }
 
         //By default set these properties
         holder.getHeader().setVisibility(View.GONE);
         holder.getRowContainer().setVisibility(View.VISIBLE);
-        if(item.getValue().get(0).getDestination_name() == null){
+        if (item.getValue().get(0).getDestination_name() == null) {
             holder.getMessageIcon().setVisibility(View.GONE);
-        }else{
+        } else {
             holder.getMessageIcon().setVisibility(View.VISIBLE);
         }
         int numberOfCallPerDay = item.getValue().size();
         String numberOfCallsPerDay = "";
-        if(numberOfCallPerDay >1){
-            numberOfCallsPerDay = "("+item.getValue().size()+") ";
+        if (numberOfCallPerDay > 1) {
+            numberOfCallsPerDay = "(" + item.getValue().size() + ") ";
         }
         if (item.getValue().get(0).isHeader()) {
             holder.getHeader().setVisibility(View.VISIBLE);
@@ -81,18 +100,18 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getHeader().setText(item.getValue().get(0).getHeaderTitle());
         } else if (item.getValue().get(0).getCallType() == CallLog.Calls.MISSED_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_missed_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
-        }else if(item.getValue().get(0).getCallType() == CallLog.Calls.INCOMING_TYPE){
+            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+        } else if (item.getValue().get(0).getCallType() == CallLog.Calls.INCOMING_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_incoming_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));        }
-        else if(item.getValue().get(0).getCallType() == CallLog.Calls.OUTGOING_TYPE){
+            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+        } else if (item.getValue().get(0).getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_outgoing_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
-        }else if (item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
-            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+        } else if (item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
+            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
         } else {
-            holder.getTimeStamp().setText(numberOfCallsPerDay+Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_greenarrowup, 0, 0, 0);
         }
         holder.getCallIcon().setTag(item);
@@ -100,16 +119,16 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         holder.getCallIcon().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>)v.getTag();
+                Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
                 SipHelper.makeCall(mContext, item.getValue().get(0).getDialnumber());
             }
         });
         holder.getMessageIcon().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>)v.getTag();
+                Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
                 Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra(Constants.CONTACT,contactsSyncManager.getContactByVoxUserName(item.getValue().get(0).getDialnumber()) );
+                intent.putExtra(Constants.CONTACT, contactsSyncManager.getContactByVoxUserName(item.getValue().get(0).getDialnumber()));
                 intent.putExtra(Constants.TYPE, Constants.CONTACT);
                 mContext.startActivity(intent);
             }

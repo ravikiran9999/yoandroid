@@ -37,7 +37,6 @@ public class DialerActivity extends BaseActivity {
     private ImageView btnDialer;
     private TextView txtBalance;
     private TextView txtCallRate;
-    private View bottom_layout;
     private boolean show;
     @Inject
     ConnectivityHelper mConnectivityHelper;
@@ -57,7 +56,6 @@ public class DialerActivity extends BaseActivity {
         startService(in);
 
         dialPadView = (DialPadView) findViewById(R.id.dialPadView);
-        bottom_layout = findViewById(R.id.bottom_layout);
         txtBalance = (TextView) findViewById(R.id.txt_balance);
         txtCallRate = (TextView) findViewById(R.id.txt_call_rate);
         btnCallGreen = (ImageView) findViewById(R.id.btnCall);
@@ -164,7 +162,6 @@ public class DialerActivity extends BaseActivity {
             public void onAnimationEnd(Animation animation) {
                 dialPadView.setVisibility(View.VISIBLE);
                 btnCallGreen.setVisibility(View.VISIBLE);
-                bottom_layout.setVisibility(View.VISIBLE);
                 btnDialer.setVisibility(View.GONE);
             }
 
@@ -189,7 +186,6 @@ public class DialerActivity extends BaseActivity {
             public void onAnimationEnd(Animation animation) {
                 dialPadView.setVisibility(View.GONE);
                 btnCallGreen.setVisibility(View.GONE);
-                bottom_layout.setVisibility(View.GONE);
                 btnDialer.setVisibility(View.VISIBLE);
             }
 
