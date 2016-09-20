@@ -3,7 +3,12 @@ package com.yo.android.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -19,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
@@ -40,6 +46,10 @@ import butterknife.ButterKnife;
  * Created by rajesh on 16/9/16.
  */
 public class NewDailerActivity extends BaseActivity {
+
+    private static final int OPEN_ADD_BALANCE_RESULT = 1000;
+    private static final int PICK_CONTACT_REQUEST = 10001;
+
 
     private static final String TAG = NewDailerActivity.class.getSimpleName();
     @Inject
@@ -67,6 +77,9 @@ public class NewDailerActivity extends BaseActivity {
     @Bind(R.id.dialPadView)
     protected DialPadView dialPadView;
 
+    @Bind(R.id.add_person)
+    protected ImageView addPerson;
+
     protected EditText mDigits;
 
     @Bind(R.id.deleteButton)
@@ -84,7 +97,10 @@ public class NewDailerActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.activity_title_dialer);
         ButterKnife.bind(this);
+        String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+
         mDigits = dialPadView.getDigits();
+
         registerChatOrPhoneBookClickListeners();
         for (int id : mButtonIds) {
             dialPadView.findViewById(id).setOnClickListener(keyPadButtonsClickListener());
@@ -117,9 +133,24 @@ public class NewDailerActivity extends BaseActivity {
                 return true;
             }
         });
-        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        NumberFormat formatter = new DecimalFormat("#0.00");
-        txtBalance.setText("Balance $" + formatter.format(Double.valueOf(balance)));
+        loadCurrentBalance();
+        //Add Balance while tapping on balance.
+        txtBalance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NewDailerActivity.this, TabsHeaderActivity.class);
+                intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
+                startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+            }
+        });
+        Drawable drawable = getResources().getDrawable(R.drawable.ic_add_new_contact);
+        drawable.setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.MULTIPLY);
+        addPerson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Helper.createNewContactWithPhoneNumber(NewDailerActivity.this, mDigits.getText().toString());
+            }
+        });
         //
         setCallRateText();
         countryName.setOnClickListener(new View.OnClickListener() {
@@ -169,6 +200,21 @@ public class NewDailerActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void loadCurrentBalance() {
+        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
+        if (mBalanceHelper != null) {
+            if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
+                txtBalance.setText(String.format("%s %s%s", getString(R.string.balance), mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
+            } else {
+                txtBalance.setVisibility(View.GONE);
+            }
+        } else if (balance != null) {
+            txtBalance.setText(String.format("%s %s", getString(R.string.balance), balance));
+        } else {
+            txtBalance.setVisibility(View.GONE);
+        }
     }
 
     @NonNull
@@ -316,6 +362,19 @@ public class NewDailerActivity extends BaseActivity {
         String cRate = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_RATE, null);
         String cPulse = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_PULSE, null);
         String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
+        if (cName == null) {
+            String prefixWhileLogin = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+            for (CallRateDetail details : callRateDetailList) {
+                if (details.getPrefix().equalsIgnoreCase(prefixWhileLogin)) {
+                    cName = details.getDestination();
+                    cRate = details.getRate();
+                    cPulse = details.getPulse();
+                    cPrefix = "+" + details.getPrefix();
+                    break;
+                }
+            }
+        }
+
 
         if (!TextUtils.isEmpty(cName)) {
             String pulse;
@@ -349,6 +408,10 @@ public class NewDailerActivity extends BaseActivity {
             str = str.substring(str.indexOf(" ") + 1);
             dialPadView.getDigits().setText(cPrefix + " " + str);
             dialPadView.getDigits().setSelection(cPrefix.length());
+        } else if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == Activity.RESULT_OK) {
+            loadCurrentBalance();
         }
     }
+
+
 }

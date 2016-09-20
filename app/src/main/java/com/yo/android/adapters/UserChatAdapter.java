@@ -195,7 +195,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             if (roomType != null) {
                 TextView senderId = new TextView(context);
                 senderId.setText(item.getSenderID());
-                senderId.setTextColor(Color.RED);
+                senderId.setTextColor(Color.BLACK);
                 linearLayout1.addView(senderId);
             }
 
@@ -223,7 +223,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 if (roomType != null) {
                     TextView senderId = new TextView(context);
                     senderId.setText(item.getSenderID());
-                    senderId.setTextColor(Color.RED);
+                    senderId.setTextColor(Color.BLACK);
 
                     linearLayout1.addView(senderId);
                 }

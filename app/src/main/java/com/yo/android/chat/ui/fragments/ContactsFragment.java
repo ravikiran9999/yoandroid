@@ -58,7 +58,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE,
 
-
     };
     // Constants representing column positions from PROJECTION.
     public static final int COLUMN_ID = 0;

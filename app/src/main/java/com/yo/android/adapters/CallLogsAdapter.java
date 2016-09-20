@@ -1,5 +1,6 @@
 package com.yo.android.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -7,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,10 +21,13 @@ import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.CallLogsViewHolder;
+import com.yo.android.helpers.Helper;
+import com.yo.android.helpers.Settings;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -37,6 +42,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     private ContactsSyncManager contactsSyncManager;
     private TextDrawable.IBuilder mDrawableBuilder;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+    private static int updateViewPosition = -1;
 
     public CallLogsAdapter(Context context, PreferenceEndPoint prefs, ContactsSyncManager contactsSyncManager) {
         super(context);
@@ -62,14 +68,20 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     public void bindView(int position, CallLogsViewHolder holder, Map.Entry<String, List<CallLogsResult>> item) {
         Drawable drawable = null;
         String destination_name = item.getValue().get(0).getDestination_name();
-        if (destination_name != null) {
+        holder.getInfo().setVisibility(View.VISIBLE);
+        holder.getMessageIcon().setVisibility(View.VISIBLE);
+        if (destination_name != null && destination_name.length() >= 1) {
             holder.getOpponentName().setText(destination_name);
             drawable = mDrawableBuilder.build(String.valueOf(destination_name.charAt(0)), mColorGenerator.getRandomColor());
+            holder.getCreatNewContact().setVisibility(View.GONE);
+            holder.getAddToContact().setVisibility(View.GONE);
         } else {
             String phoneNumber = item.getValue().get(0).getDialnumber();
             drawable = mContext.getResources().getDrawable(R.drawable.ic_contactprofile);
             drawable.setColorFilter(mColorGenerator.getRandomColor(), PorterDuff.Mode.MULTIPLY);
             holder.getOpponentName().setText(phoneNumber);
+            holder.getCreatNewContact().setVisibility(View.VISIBLE);
+            holder.getAddToContact().setVisibility(View.VISIBLE);
         }
         if (item.getValue().get(0).getImage() != null) {
             Glide.with(mContext).load(item.getValue().get(0).getImage())
@@ -77,13 +89,22 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                     .dontAnimate()
                     .error(drawable).
                     into(holder.getContactPic());
-        } else {
-            holder.getContactPic().setImageDrawable(drawable);
+        } else if (Settings.isTitlePicEnabled) {
+            if (holder.getContactPic().getTag() == null) {
+                holder.getContactPic().setTag(drawable);
+            }
+            holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag());
         }
 
         //By default set these properties
         holder.getHeader().setVisibility(View.GONE);
+        holder.getRowContainerdetails().setVisibility(View.GONE);
         holder.getRowContainer().setVisibility(View.VISIBLE);
+        if (position == updateViewPosition) {
+            holder.getRowContainerdetails().setVisibility(View.VISIBLE);
+        } else {
+            holder.getRowContainerdetails().setVisibility(View.GONE);
+        }
         if (item.getValue().get(0).getDestination_name() == null) {
             holder.getMessageIcon().setVisibility(View.GONE);
         } else {
@@ -96,6 +117,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         }
         if (item.getValue().get(0).isHeader()) {
             holder.getHeader().setVisibility(View.VISIBLE);
+            holder.getRowContainerdetails().setVisibility(View.GONE);
             holder.getRowContainer().setVisibility(View.GONE);
             holder.getHeader().setText(item.getValue().get(0).getHeaderTitle());
         } else if (item.getValue().get(0).getCallType() == CallLog.Calls.MISSED_TYPE) {
@@ -133,6 +155,32 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                 mContext.startActivity(intent);
             }
         });
+        holder.getInfo().setTag(item);
+        holder.getInfo().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map.Entry<String, List<CallLogsResult>> callLogDetails = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
+                Intent intent = new Intent(mContext, CallLogDetailsActivity.class);
+                intent.putParcelableArrayListExtra(Constants.CALL_LOG_DETAILS, (ArrayList<? extends Parcelable>) callLogDetails.getValue());
+                mContext.startActivity(intent);
+            }
+        });
+        holder.getCreatNewContact().setTag(item);
+        holder.getCreatNewContact().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map.Entry<String, List<CallLogsResult>> callLogDetails = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
+                Helper.createNewContactWithPhoneNumber((Activity) mContext, callLogDetails.getValue().get(0).getDialnumber());
+            }
+        });
+        holder.getAddToContact().setTag(item);
+        holder.getAddToContact().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map.Entry<String, List<CallLogsResult>> callLogDetails = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
+                Helper.addContactWithPhoneNumber((Activity) mContext, callLogDetails.getValue().get(0).getDialnumber());
+            }
+        });
     }
 
     @Override
@@ -141,5 +189,10 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             return true;
         }
         return super.hasData(event, key);
+    }
+
+    public void showView(int position) {
+        updateViewPosition = position;
+        notifyDataSetChanged();
     }
 }
