@@ -131,9 +131,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             case R.id.create_group:
                 startActivity(new Intent(getActivity(), CreateGroupActivity.class));
                 break;
-            case R.id.clear_chat_history:
+            /*case R.id.clear_chat_history:
                 Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
-                break;
+                break;*/
 
             default:
                 break;
@@ -255,7 +255,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         if (!arrayOfUsers.contains(room)) {
                             arrayOfUsers.add(room);
                         } else {
-                            listRoom = new ArrayList<Room>();
+                            listRoom = new ArrayList<>();
                             listRoom.addAll(arrayOfUsers);
                             for (Room customer : listRoom) {
                                 if (arrayOfUsers.contains(customer) && customer.getFirebaseRoomId().equalsIgnoreCase(room.getFirebaseRoomId()) && !customer.getId().equalsIgnoreCase(room.getId())) {

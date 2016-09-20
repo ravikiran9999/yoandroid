@@ -150,6 +150,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".chat.ui.fragments.AppContactsActivity"
+            android:label="@string/select_contact"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.FollowMoreTopicsActivity"

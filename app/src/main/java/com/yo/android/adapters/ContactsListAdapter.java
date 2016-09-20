@@ -74,14 +74,6 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
                 holder.getContactPic().setImageDrawable(drawable);
             }
-
-           /* Glide.with(mContext)
-                    .load(R.drawable.ic_contacts)
-                    .fitCenter()
-                    .placeholder(R.drawable.ic_contacts)
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.getContactPic());*/
         }
 
         //holder.getContactMail().setText(item.getEmailId());
