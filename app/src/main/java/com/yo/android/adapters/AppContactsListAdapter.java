@@ -49,22 +49,25 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
         }
 
         try {
-        if (!TextUtils.isEmpty(item.getImage())) {
+            if (!TextUtils.isEmpty(item.getImage())) {
 
-            Glide.with(mContext)
-                    .load(item.getImage())
-                    .fitCenter()
-                    .placeholder(R.drawable.ic_contacts)
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.getContactPic());
-        } else if(item.getName() != null && item.getName().length() >= 1) {
-            Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
-            holder.getContactPic().setImageDrawable(drawable);
-        }
-        }catch (Exception e) {
+                Glide.with(mContext)
+                        .load(item.getImage())
+                        .fitCenter()
+                        .placeholder(R.drawable.ic_contactprofile)
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(holder.getContactPic());
+            } else {
+                if (item.getName() != null && item.getName().length() >= 1 && !TextUtils.isDigitsOnly(item.getName())) {
+                    Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
+                    holder.getContactPic().setImageDrawable(drawable);
+                } else {
+                    holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_contactprofile));
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
