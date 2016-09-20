@@ -184,7 +184,17 @@ public class NewDailerActivity extends BaseActivity {
 
     private void loadCurrentBalance() {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        txtBalance.setText(String.format("%s%s", getString(R.string.balance), balance));
+        if (mBalanceHelper != null) {
+            if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
+                txtBalance.setText(String.format("%s%s%s", getString(R.string.balance), mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
+            } else {
+                txtBalance.setVisibility(View.GONE);
+            }
+        } else if (balance != null) {
+            txtBalance.setText(String.format("%s%s", getString(R.string.balance), balance));
+        } else {
+            txtBalance.setVisibility(View.GONE);
+        }
     }
 
     @NonNull
