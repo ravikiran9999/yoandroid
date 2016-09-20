@@ -29,6 +29,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
     private String userId;
     private TextDrawable.IBuilder mDrawableBuilder;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+
     public ContactsListAdapter(Context context, String userId) {
         super(context);
         this.context = context;
@@ -69,16 +70,10 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getContactPic());
         } else {
-           Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
+
+            Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
             holder.getContactPic().setImageDrawable(drawable);
 
-           /* Glide.with(mContext)
-                    .load(R.drawable.ic_contacts)
-                    .fitCenter()
-                    .placeholder(R.drawable.ic_contacts)
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.getContactPic());*/
         }
 
         //holder.getContactMail().setText(item.getEmailId());

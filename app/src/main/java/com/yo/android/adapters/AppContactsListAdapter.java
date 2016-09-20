@@ -1,11 +1,17 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.AppRegisteredContactsViewHolder;
 import com.yo.android.model.Contact;
+import com.yo.android.photo.TextDrawable;
+import com.yo.android.photo.util.ColorGenerator;
 
 /**
  * Created by rdoddapaneni on 7/5/2016.
@@ -13,8 +19,13 @@ import com.yo.android.model.Contact;
 
 public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegisteredContactsViewHolder> {
 
+    private TextDrawable.IBuilder mDrawableBuilder;
+    private ColorGenerator mColorGenerator;
+
     public AppContactsListAdapter(Context context) {
         super(context);
+        mDrawableBuilder = TextDrawable.builder().round();
+        mColorGenerator = ColorGenerator.MATERIAL;
     }
 
 
@@ -36,5 +47,24 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
         } else {
             holder.getContactMail().setText("");
         }
+
+        try {
+        if (!TextUtils.isEmpty(item.getImage())) {
+
+            Glide.with(mContext)
+                    .load(item.getImage())
+                    .fitCenter()
+                    .placeholder(R.drawable.ic_contacts)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.getContactPic());
+        } else if(!item.getName().matches("[0-9]+")) {
+            //Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
+            //holder.getContactPic().setImageDrawable(drawable);
+        }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -15,10 +15,10 @@
         android:icon="@drawable/ic_newchat"
         />
 
-    <item
+    <!--<item
         android:id="@+id/clear_chat_history"
         android:title="@string/clear_chat_history"
-        app:showAsAction="never" />
+        app:showAsAction="never" />-->
     <item
         android:id="@+id/create_group"
         android:title="@string/create_group"
