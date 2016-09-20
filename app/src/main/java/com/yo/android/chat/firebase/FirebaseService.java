@@ -159,7 +159,7 @@ public class FirebaseService extends InjectedService {
                         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
                         String[] strings = cn.getShortClassName().split(Pattern.quote("."));
                         int i = strings.length - 1;
-
+                        boolean cc = loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS);
                         if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0 && loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS) && (!strings[i].equalsIgnoreCase("ChatActivity"))) {
                             postNotification(chatMessage.getRoomId(), chatMessage);
                         }
