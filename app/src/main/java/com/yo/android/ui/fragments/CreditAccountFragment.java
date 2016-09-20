@@ -113,9 +113,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
      *
      * @param data
      */
-    private void closeActivityAddBalance(Intent data) {
+    private void closeActivityAddBalance(int resultcode, Intent data) {
         if (getArguments() != null && getArguments().getBoolean(Constants.OPEN_ADD_BALANCE, false)) {
-            getActivity().setResult(Activity.RESULT_OK, data);
+            getActivity().setResult(resultcode);
             getActivity().finish();
         }
     }
@@ -154,7 +154,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         } else {
             mToastFactory.showToast(getString(R.string.failed_add_balance));
         }
-        closeActivityAddBalance(data);
+        closeActivityAddBalance(resultCode, data);
     }
 
     @Override
@@ -257,36 +257,46 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                                                 case 200:
                                                     mToastFactory.showToast(R.string.voucher_recharge_successful);
                                                     alertDialog.dismiss();
-                                                    mBalanceHelper.checkBalance();
+                                                    mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+                                                        @Override
+                                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                            closeActivityAddBalance(Activity.RESULT_OK, null);
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                                            closeActivityAddBalance(Activity.RESULT_CANCELED, null);
+                                                        }
+                                                    });
                                                     break;
                                                 case 600:
-                                                    mToastFactory.showToast(R.string.invalid_voucher);
+                                                    showMessage(R.string.invalid_voucher);
                                                     break;
                                                 case 601:
-                                                    mToastFactory.showToast(R.string.invalid_pin_request);
+                                                    showMessage(R.string.invalid_pin_request);
                                                     break;
                                                 case 602:
-                                                    mToastFactory.showToast(R.string.voucher_used);
+                                                    showMessage(R.string.voucher_used);
                                                     break;
                                                 case 603:
-                                                    mToastFactory.showToast(R.string.voucher_expired);
+                                                    showMessage(R.string.voucher_expired);
                                                     break;
                                                 case 604:
-                                                    mToastFactory.showToast(R.string.unsuccessful_recharge);
+                                                    showMessage(R.string.unsuccessful_recharge);
                                                     break;
                                                 default:
-                                                    mToastFactory.showToast(R.string.invalid_voucher);
+                                                    showMessage(R.string.invalid_voucher);
                                                     break;
                                             }
                                         } catch (ClassCastException e) {
                                             mLog.d("ClassCastException", e.getMessage());
                                         }
                                     } else {
-                                        mToastFactory.showToast(R.string.invalid_voucher);
+                                        showMessage(R.string.invalid_voucher);
                                     }
 
                                 } else {
-                                    mToastFactory.showToast(R.string.invalid_voucher);
+                                    showMessage(R.string.invalid_voucher);
                                 }
 
                             }
@@ -312,6 +322,11 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 }
             });
         }
+    }
+
+    private void showMessage(int resoureId) {
+        mToastFactory.showToast(resoureId);
+        closeActivityAddBalance(Activity.RESULT_CANCELED, null);
     }
 
 }

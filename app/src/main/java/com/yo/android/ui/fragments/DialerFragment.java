@@ -315,7 +315,7 @@ public class DialerFragment extends BaseFragment {
     public void onEventMainThread(String action) {
         if (action.equals(REFRESH_CALL_LOGS)) {
             loadCallLogs();
-            mBalanceHelper.checkBalance();
+            mBalanceHelper.checkBalance(null);
         }
     }
 }

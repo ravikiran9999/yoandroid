@@ -204,4 +204,6 @@
     <string name="dialing">Dialing...</string>
     <string name="balance">Balance $</string>
     <string name="failed_add_balance">Failed to add balance.</string>
+    <string name="yo_credit">Yo Credit</string>
+    <string name="add_balance_title">Add Balance</string>
 </resources>
