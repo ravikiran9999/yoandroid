@@ -1,5 +1,6 @@
 package com.yo.android.ui.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +34,8 @@ import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.VoipConstants;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,12 +54,16 @@ import retrofit2.Response;
  */
 public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, AdapterView.OnItemClickListener {
 
+    private static final String TAG = CreditAccountFragment.class.getSimpleName();
     @Bind(R.id.txt_balance)
     TextView txt_balance;
 
     private MoreListAdapter menuAdapter;
     @Inject
     YoApi.YoService yoService;
+
+    private static final int OPEN_ADD_BALANCE_RESULT = 1000;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +93,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         super.onActivityCreated(savedInstanceState);
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
+        NumberFormat formatter = new DecimalFormat("#0.00");
         txt_balance.setText(String.format("%s%s", currencySymbol, balance));
         prepareCreditAccountList();
     }
@@ -97,7 +105,19 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         intent.putExtra("price", 5f);
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
-        startActivity(intent);
+        startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+    }
+
+    /**
+     * Close current activity becasuse once balance is added it should navitate to calling activity.
+     *
+     * @param data
+     */
+    private void closeActivityAddBalance(Intent data) {
+        if (getArguments() != null && getArguments().getBoolean(Constants.OPEN_ADD_BALANCE, false)) {
+            getActivity().setResult(Activity.RESULT_OK, data);
+            getActivity().finish();
+        }
     }
 
     @OnClick(R.id.btn2)
@@ -107,7 +127,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
         intent.putExtra("price", 10f);
-        startActivity(intent);
+        startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
     }
 
     @OnClick(R.id.btn3)
@@ -117,7 +137,24 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         intent.putExtra("price", 15f);
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
-        startActivity(intent);
+        startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (mBalanceHelper != null && resultCode == Activity.RESULT_OK) {
+            try {
+                DecimalFormat df = new DecimalFormat("0.000");
+                String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
+                preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
+            } catch (IllegalArgumentException e) {
+                mLog.w(TAG, "getCurrentBalance", e);
+            }
+        } else {
+            mToastFactory.showToast(getString(R.string.failed_add_balance));
+        }
+        closeActivityAddBalance(data);
     }
 
     @Override
@@ -186,11 +223,11 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             final String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
             String phonNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
-            if(userName != null) {
+            if (userName != null) {
                 namePhoneText.setText(userName);
-            }else if(phonNumber != null) {
+            } else if (phonNumber != null) {
                 namePhoneText.setText(phonNumber);
-            }else {
+            } else {
                 namePhoneText.setText("Unknown");
             }
 

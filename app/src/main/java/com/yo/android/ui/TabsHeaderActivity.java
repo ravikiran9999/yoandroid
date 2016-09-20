@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -12,9 +13,11 @@ import android.widget.Toast;
 
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.model.Contacts;
 import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
+import com.yo.android.util.Constants;
 
 public class TabsHeaderActivity extends BaseActivity {
 
@@ -76,9 +79,18 @@ public class TabsHeaderActivity extends BaseActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         TabsPagerAdapter adapter = new TabsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new CreditAccountFragment(), "Credit Account");
-        adapter.addFragment(new RechargeDetailsFragment(), "Recharge Details");
-        adapter.addFragment(new SpendDetailsFragment(), "Spend Details");
+        Fragment fragment = new CreditAccountFragment();
+        if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constants.OPEN_ADD_BALANCE, true);
+            fragment.setArguments(bundle);
+        }
+        adapter.addFragment(fragment, "Credit Account");
+        if (!getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
+            adapter.addFragment(new RechargeDetailsFragment(), "Recharge Details");
+            adapter.addFragment(new SpendDetailsFragment(), "Spend Details");
+        }
+
         viewPager.setAdapter(adapter);
     }
 

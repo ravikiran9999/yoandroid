@@ -3,7 +3,8 @@
     android:id="@+id/star"
     style="@style/DialpadKeyButtonStyle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout style="@style/DialpadKeyInternalLayoutStyle">
 
@@ -11,10 +12,6 @@
             android:id="@+id/dialpad_key_number"
             style="@style/DialpadKeyStarStyle"
             android:text="*" />
-
-        <TextView
-            android:id="@+id/dialpad_key_letters"
-            style="@style/DialpadKeyLettersStyle" />
 
     </LinearLayout>
 </FrameLayout>
