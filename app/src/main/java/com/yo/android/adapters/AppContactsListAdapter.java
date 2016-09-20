@@ -58,9 +58,9 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getContactPic());
-        } else if(!item.getName().matches("[0-9]+")) {
-            //Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
-            //holder.getContactPic().setImageDrawable(drawable);
+        } else if(item.getName() != null && item.getName().length() >= 1) {
+            Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
+            holder.getContactPic().setImageDrawable(drawable);
         }
         }catch (Exception e) {
             e.printStackTrace();

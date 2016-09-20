@@ -62,7 +62,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     public void bindView(int position, CallLogsViewHolder holder, Map.Entry<String, List<CallLogsResult>> item) {
         Drawable drawable = null;
         String destination_name = item.getValue().get(0).getDestination_name();
-        if (destination_name != null) {
+        if (destination_name != null && destination_name.length() >= 1) {
             holder.getOpponentName().setText(destination_name);
             drawable = mDrawableBuilder.build(String.valueOf(destination_name.charAt(0)), mColorGenerator.getRandomColor());
         } else {

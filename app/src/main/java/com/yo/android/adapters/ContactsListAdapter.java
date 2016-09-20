@@ -70,9 +70,10 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getContactPic());
         } else {
-
-            Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
-            holder.getContactPic().setImageDrawable(drawable);
+            if (item.getName() != null && item.getName().length() >= 1) {
+                Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
+                holder.getContactPic().setImageDrawable(drawable);
+            }
 
         }
 

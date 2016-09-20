@@ -65,7 +65,13 @@ public class BalanceHelper {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
                         String balance = jsonObject.getString("CREDIT");
-                        prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                        try {
+                            DecimalFormat df = new DecimalFormat("0.000");
+                            String format = df.format(Double.valueOf(balance));
+                            prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                        } catch (IllegalArgumentException e) {
+                            mLog.w(TAG, "getCurrentBalance", e);
+                        }
                         String subscriberId = jsonObject.getString("SUBSCRIBERID");
                         prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);
                         mLog.i(TAG, "loadBalance: balance -  %s", balance);
@@ -118,7 +124,13 @@ public class BalanceHelper {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
                         String balance = jsonObject.getJSONObject("DATA").getString("CURRENTCREDIT");
-                        prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                        try {
+                            DecimalFormat df = new DecimalFormat("0.000");
+                            String format = df.format(Double.valueOf(balance));
+                            prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                        } catch (IllegalArgumentException e) {
+                            mLog.w(TAG, "getCurrentBalance", e);
+                        }
                         mLog.i(TAG, "loadBalance: balance -  %s", balance);
                     } catch (IOException e) {
                         mLog.w(TAG, "loadBalance", e);

@@ -203,4 +203,6 @@
     <string name="cancel">Cancel</string>
     <string name="disable_signout">Signout is disabled, will be enabled soon!</string>
     <string name="dialing">Dialing...</string>
+    <string name="balance">Balance $</string>
+    <string name="failed_add_balance">Failed to add balance.</string>
 </resources>
