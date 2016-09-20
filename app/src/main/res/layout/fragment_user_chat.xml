@@ -6,15 +6,6 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
-
-    <!-- <se.emilsjolander.stickylistheaders.StickyListHeadersListView
-         android:id="@+id/listView"
-         android:layout_width="match_parent"
-         android:layout_height="0dp"
-         android:layout_weight="100"
-         android:divider="@null"/>
- -->
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -50,51 +41,40 @@
             android:divider="@null"
             android:listSelector="@null" />
     </FrameLayout>
-    <!--android:transcriptMode="alwaysScroll"-->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey_divider"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+
         android:layout_margin="2dp"
+        android:orientation="horizontal"
         android:padding="10dp">
-
-        <ImageView
-            android:id="@+id/emoji"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:background="@color/resend_bcgrnd"
-            android:src="@drawable/ic_emoji" />
-
 
         <EditText
             android:id="@+id/chat_text"
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_marginLeft="10dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@color/grey_divider"
+            android:drawableLeft="@drawable/ic_emoji"
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_emoji"
             android:ems="10"
             android:hint="@string/type_a_message"
             android:inputType="textCapSentences|textMultiLine"
+            android:maxHeight="100dp"
+            android:minHeight="35dp"
             android:padding="10dp"
-            android:scrollHorizontally="false"
+            android:scrollbars="vertical"
             android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/send"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
             android:scaleType="fitXY"
             android:src="@drawable/ic_send" />
 
-        <ImageView
-            android:id="@+id/mic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:src="@drawable/ic_mic"
-            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

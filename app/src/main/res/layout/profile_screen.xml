@@ -73,10 +73,12 @@
                     android:drawablePadding="16dp"
                     android:hint="@string/user_name"
                     android:padding="15dp"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:imeOptions="actionDone"
                     android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    />
 
                 <TextView
                     android:id="@+id/mobile_number"
