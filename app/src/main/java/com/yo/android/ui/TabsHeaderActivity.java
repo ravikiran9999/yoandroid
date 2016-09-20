@@ -28,7 +28,11 @@ public class TabsHeaderActivity extends BaseActivity {
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Yo Credit");
+        if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
+            getSupportActionBar().setTitle(R.string.add_balance_title);
+        } else {
+            getSupportActionBar().setTitle(R.string.yo_credit);
+        }
         enableBack();
         final ViewPager viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
         setupViewPager(viewPager);

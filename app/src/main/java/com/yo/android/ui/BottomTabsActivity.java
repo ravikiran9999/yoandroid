@@ -164,7 +164,7 @@ public class BottomTabsActivity extends BaseActivity {
         //
         Intent in = new Intent(getApplicationContext(), SipService.class);
         startService(in);
-        balanceHelper.checkBalance();
+        balanceHelper.checkBalance(null);
         //
         loadUserProfileInfo();
         updateDeviceToken();

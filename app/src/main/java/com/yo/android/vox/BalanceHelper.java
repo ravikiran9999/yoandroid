@@ -50,8 +50,8 @@ public class BalanceHelper {
     }
 
 
-    public void checkBalance() {
-        loadBalance(null);
+    public void checkBalance(Callback<ResponseBody> callback) {
+        loadBalance(callback);
     }
 
 
