@@ -128,6 +128,11 @@
                 android:visibility="gone"/>
         </RelativeLayout>
 
+        <LinearLayout android:id="@+id/ll_article_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
         <TextView
             android:id="@+id/tv_article_title"
             android:layout_width="wrap_content"
@@ -153,7 +158,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -170,6 +176,7 @@
                 android:maxLines="2"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
+        </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

@@ -20,7 +20,7 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <LinearLayout android:id="@+id/ll_article_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -52,7 +52,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -104,6 +105,5 @@
                 android:background="@drawable/ic_magazine_share" />
 
         </RelativeLayout>
-
     </LinearLayout>
 </RelativeLayout>

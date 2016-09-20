@@ -91,10 +91,14 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                     yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
                         @Override
                         public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
+                            if(response.body() != null) {
                             Intent intent = new Intent();
                             setResult(2, intent);
                             //finishing activity
                             finish();
+                            } else if(response.errorBody() != null){
+                                mToastFactory.showToast("Magazine Title is already taken");
+                            }
                         }
 
                         @Override
