@@ -3,6 +3,7 @@ package com.yo.android.chat.ui.fragments;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,16 +18,20 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +73,9 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import github.ankushsachdeva.emojicon.EmojiconGridView;
+import github.ankushsachdeva.emojicon.EmojiconsPopup;
+import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -104,7 +112,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String timeStp;
     private String mobilenumber;
     private String roomType;
-
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -122,7 +129,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle bundle = this.getArguments();
         childRoomId = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
@@ -154,6 +160,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setDividerHeight(0);
         listView.setOnItemClickListener(this);
         View send = view.findViewById(R.id.send);
+        final ImageView emoji = (ImageView) view.findViewById(R.id.emojiView);
         chatText = (EditText) view.findViewById(R.id.chat_text);
         noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
         chatMessageArray = new ArrayList<>();
@@ -162,7 +169,102 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
+        final View rootView = view.findViewById(R.id.root_view);
+        final EmojiconsPopup popup = new EmojiconsPopup(rootView, getActivity());
         send.setOnClickListener(this);
+        emoji.setOnClickListener(this);
+        popup.setSizeForSoftKeyboard();
+
+        //If the emoji popup is dismissed, change emojiButton to smiley icon
+        popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+            @Override
+            public void onDismiss() {
+                changeEmojiKeyboardIcon(emoji, R.drawable.ic_emoji);
+            }
+        });
+
+        //If the text keyboard closes, also dismiss the emoji popup
+        popup.setOnSoftKeyboardOpenCloseListener(new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
+
+            @Override
+            public void onKeyboardOpen(int keyBoardHeight) {
+
+            }
+
+            @Override
+            public void onKeyboardClose() {
+                if(popup.isShowing())
+                    popup.dismiss();
+            }
+        });
+
+        //On emoji clicked, add it to edittext
+        popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
+
+            @Override
+            public void onEmojiconClicked(Emojicon emojicon) {
+                if (chatText == null || emojicon == null) {
+                    return;
+                }
+
+                int start = chatText.getSelectionStart();
+                int end = chatText.getSelectionEnd();
+                if (start < 0) {
+                    chatText.append(emojicon.getEmoji());
+                } else {
+                    chatText.getText().replace(Math.min(start, end),
+                            Math.max(start, end), emojicon.getEmoji(), 0,
+                            emojicon.getEmoji().length());
+                }
+            }
+        });
+
+        //On backspace clicked, emulate the KEYCODE_DEL key event
+        popup.setOnEmojiconBackspaceClickedListener(new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
+
+            @Override
+            public void onEmojiconBackspaceClicked(View v) {
+                KeyEvent event = new KeyEvent(
+                        0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+                chatText.dispatchKeyEvent(event);
+            }
+        });
+
+
+        // To toggle between text keyboard and emoji keyboard keyboard(Popup)
+        emoji.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                //If popup is not showing => emoji keyboard is not visible, we need to show it
+                if(!popup.isShowing()){
+
+                    //If keyboard is visible, simply show the emoji popup
+                    if(popup.isKeyBoardOpen()){
+                        popup.showAtBottom();
+                        changeEmojiKeyboardIcon(emoji, R.drawable.ic_action_keyboard);
+                    }
+
+                    //else, open the text keyboard first and immediately after that show the emoji popup
+                    else{
+                        chatText.setFocusableInTouchMode(true);
+                        chatText.requestFocus();
+                        popup.showAtBottomPending();
+                        final InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.showSoftInput(chatText, InputMethodManager.SHOW_IMPLICIT);
+                        changeEmojiKeyboardIcon(emoji, R.drawable.ic_action_keyboard);
+                    }
+                }
+
+                //If popup is showing, simply dismiss it to show the undelying text keyboard
+                else{
+                    popup.dismiss();
+                }
+            }
+        });
+
 
         if (!TextUtils.isEmpty(childRoomId)) {
             roomExist = 1;
@@ -339,7 +441,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if(!TextUtils.isEmpty(roomType)) {
+        if (!TextUtils.isEmpty(roomType)) {
             menu.findItem(R.id.call).setVisible(false);
         }
     }
@@ -370,10 +472,20 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        String message = chatText.getText().toString().trim();
-        sendChatMessage(message, Constants.TEXT);
-        if (chatText.getText() != null) {
-            chatText.setText("");
+        if (v.getId() == R.id.send) {
+            String message = chatText.getText().toString().trim();
+            sendChatMessage(message, Constants.TEXT);
+            if (chatText.getText() != null) {
+                chatText.setText("");
+            }
+
+            String newText = chatText.getText().toString();
+            chatText.getText().clear();
+            //mAdapter.add(newText);
+            //mAdapter.notifyDataSetChanged();
+
+        } else if (v.getId() == R.id.emojiView) {
+
         }
     }
 
@@ -755,5 +867,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             new String[]{voxUsername});
         }
     }
+
+    private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
+        iconToBeChanged.setImageResource(drawableResourceId);
+    }
+
 }
 
