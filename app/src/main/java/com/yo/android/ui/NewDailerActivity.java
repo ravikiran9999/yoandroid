@@ -89,6 +89,7 @@ public class NewDailerActivity extends BaseActivity {
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
 
         mDigits = dialPadView.getDigits();
+
         registerChatOrPhoneBookClickListeners();
         for (int id : mButtonIds) {
             dialPadView.findViewById(id).setOnClickListener(keyPadButtonsClickListener());
@@ -186,12 +187,12 @@ public class NewDailerActivity extends BaseActivity {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
-                txtBalance.setText(String.format("%s%s%s", getString(R.string.balance), mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
+                txtBalance.setText(String.format("%s %s%s", getString(R.string.balance), mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
             } else {
                 txtBalance.setVisibility(View.GONE);
             }
         } else if (balance != null) {
-            txtBalance.setText(String.format("%s%s", getString(R.string.balance), balance));
+            txtBalance.setText(String.format("%s %s", getString(R.string.balance), balance));
         } else {
             txtBalance.setVisibility(View.GONE);
         }
@@ -349,7 +350,7 @@ public class NewDailerActivity extends BaseActivity {
                     cName = details.getDestination();
                     cRate = details.getRate();
                     cPulse = details.getPulse();
-                    cPrefix = details.getPrefix();
+                    cPrefix = "+" + details.getPrefix();
                     break;
                 }
             }
