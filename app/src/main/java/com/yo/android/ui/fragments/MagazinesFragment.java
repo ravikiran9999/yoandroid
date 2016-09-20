@@ -226,11 +226,15 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
                 @Override
                 public boolean onMenuItemActionExpand(MenuItem item) {
+                    mMagazineFlipArticlesFragment.lastReadArticle = 0;
+
                     return false;
                 }
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
+
+                    mMagazineFlipArticlesFragment.lastReadArticle = 0;
 
                     return false;
                 }
@@ -264,6 +268,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     List<String> tagIds = new ArrayList<String>();
                     tagIds.add(topicId);
                     if (mMagazineFlipArticlesFragment != null) {
+                        mMagazineFlipArticlesFragment.lastReadArticle = 0;
                         mMagazineFlipArticlesFragment.loadArticles(tagIds);
                     }
 
@@ -275,6 +280,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
+                        mMagazineFlipArticlesFragment.lastReadArticle = 0;
                         mMagazineFlipArticlesFragment.loadArticles(null);
 
                     }
@@ -307,6 +313,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         List<String> tagIds = new ArrayList<String>();
                         tagIds.add(topicId);
                         if (mMagazineFlipArticlesFragment != null) {
+                            mMagazineFlipArticlesFragment.lastReadArticle = 0;
                             mMagazineFlipArticlesFragment.loadArticles(tagIds);
                         }
                     }
