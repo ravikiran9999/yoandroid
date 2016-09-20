@@ -18,16 +18,54 @@ public class CallLogsViewHolder extends AbstractViewHolder {
     private TextView header;
     private TextView timeStamp;
 
-    private ImageView messageIcon;
+    private TextView messageIcon;
 
     private ImageView callIcon;
     private ImageView contactPic;
+    private View rowContainer;
+    private View rowContainerdetails;
+    private TextView creatNewContact;
+    private TextView addToContact;
+    private TextView info;
+
+    public TextView getCreatNewContact() {
+        return creatNewContact;
+    }
+
+    public void setCreatNewContact(TextView creatNewContact) {
+        this.creatNewContact = creatNewContact;
+    }
+
+    public TextView getAddToContact() {
+        return addToContact;
+    }
+
+    public void setAddToContact(TextView addToContact) {
+        this.addToContact = addToContact;
+    }
+
+    public TextView getInfo() {
+        return info;
+    }
+
+    public void setInfo(TextView info) {
+        this.info = info;
+    }
+
+
+    public View getRowContainerdetails() {
+        return rowContainerdetails;
+    }
+
+    public void setRowContainerdetails(View rowContainerdetails) {
+        this.rowContainerdetails = rowContainerdetails;
+    }
+
 
     public View getRowContainer() {
         return rowContainer;
     }
 
-    private View rowContainer;
 
     public CallLogsViewHolder(View view) {
         super(view);
@@ -35,12 +73,17 @@ public class CallLogsViewHolder extends AbstractViewHolder {
         header = (TextView) view.findViewById(R.id.header);
         rowContainer = view.findViewById(R.id.row_container);
         timeStamp = (TextView) view.findViewById(R.id.tv_time_stamp);
-        messageIcon = (ImageView) view.findViewById(R.id.iv_message_type);
+        messageIcon = (TextView) view.findViewById(R.id.iv_message_type);
         callIcon = (ImageView) view.findViewById(R.id.iv_contact_type);
-        contactPic = (ImageView)view.findViewById(R.id.imv_contact_pic);
+        contactPic = (ImageView) view.findViewById(R.id.imv_contact_pic);
+        rowContainerdetails = view.findViewById(R.id.row_container_details);
+        info = (TextView) view.findViewById(R.id.info);
+        addToContact = (TextView) view.findViewById(R.id.add_to_contact);
+        creatNewContact = (TextView) view.findViewById(R.id.create_new_contact);
+
     }
 
-    public ImageView getMessageIcon() {
+    public TextView getMessageIcon() {
         return messageIcon;
     }
 
@@ -55,6 +98,7 @@ public class CallLogsViewHolder extends AbstractViewHolder {
     public ImageView getCallIcon() {
         return callIcon;
     }
+
     public ImageView getContactPic() {
         return contactPic;
     }

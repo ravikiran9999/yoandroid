@@ -12,6 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
+import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
@@ -65,15 +66,18 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             Glide.with(mContext)
                     .load(item.getImage())
                     .fitCenter()
-                    .placeholder(R.drawable.ic_contacts)
+                    .placeholder(R.drawable.ic_contactprofile)
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.ic_contactprofile)
                     .into(holder.getContactPic());
-        } else {
+        } else if (Settings.isTitlePicEnabled) {
             if (item.getName() != null && item.getName().length() >= 1) {
                 Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
                 holder.getContactPic().setImageDrawable(drawable);
             }
+        } else {
+            holder.getContactPic().setImageResource(R.drawable.ic_contactprofile);
         }
 
         //holder.getContactMail().setText(item.getEmailId());
