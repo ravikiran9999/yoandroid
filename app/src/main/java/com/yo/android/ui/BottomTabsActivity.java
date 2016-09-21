@@ -229,11 +229,11 @@ public class BottomTabsActivity extends BaseActivity {
 
     protected List<TabsData> createTabsList() {
         List<TabsData> list = new ArrayList<>();
-        list.add(new TabsData("Magazines", getResources().getDrawable(R.drawable.tab_magazines)));
-        list.add(new TabsData("Chats", getResources().getDrawable(R.drawable.tab_chats)));
-        list.add(new TabsData("Dialer", getResources().getDrawable(R.drawable.tab_dialer)));
-        list.add(new TabsData("Contacts", getResources().getDrawable(R.drawable.tab_contacts)));
-        list.add(new TabsData("More", getResources().getDrawable(R.drawable.tab_more)));
+        list.add(new TabsData(getString(R.string.magazines), getResources().getDrawable(R.drawable.tab_magazines)));
+        list.add(new TabsData(getString(R.string.chats), getResources().getDrawable(R.drawable.tab_chats)));
+        list.add(new TabsData(getString(R.string.dialer), getResources().getDrawable(R.drawable.tab_dialer)));
+        list.add(new TabsData(getString(R.string.contacts), getResources().getDrawable(R.drawable.tab_contacts)));
+        list.add(new TabsData(getResources().getString(R.string.profile), getResources().getDrawable(R.drawable.tab_more)));
         return list;
     }
 

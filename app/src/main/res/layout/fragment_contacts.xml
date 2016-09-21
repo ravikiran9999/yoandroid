@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -29,16 +29,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:layout_toLeftOf="@+id/side_index"
         android:divider="@android:color/transparent" />
-    <LinearLayout
+
+    <ListView
         android:id="@+id/side_index"
         android:layout_width="50dp"
-        android:layout_height="fill_parent"
-        android:background="#c3c3c3"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/white"
         android:gravity="center_horizontal"
-        android:orientation="vertical" >
-    </LinearLayout>
+        android:divider="@android:color/transparent"
+        android:orientation="vertical" />
 
 
-</FrameLayout>
+</RelativeLayout>
 

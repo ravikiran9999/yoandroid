@@ -82,7 +82,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     private static final int PICK_CONTACT_REQUEST = 100;
 
     private boolean CONTACT_SYNC = true;
-    private LinearLayout layout;
+    private ListView layout;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -99,7 +99,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         listView = (ListView) view.findViewById(R.id.lv_contacts);
-        layout = (LinearLayout) view.findViewById(R.id.side_index);
+        layout = (ListView) view.findViewById(R.id.side_index);
         return view;
     }
 

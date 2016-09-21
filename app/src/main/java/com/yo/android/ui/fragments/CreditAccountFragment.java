@@ -11,11 +11,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,6 +26,7 @@ import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.helpers.MenuViewHolder;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
 import com.yo.android.model.MoreData;
 import com.yo.android.pjsip.YoSipService;
@@ -98,15 +101,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         prepareCreditAccountList();
     }
 
-    @OnClick(R.id.btn1)
-    public void onBtnClick() {
-        final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
-        intent.putExtra("sku", "com.yo.products.credit.FIVE");
-        intent.putExtra("price", 5f);
-        final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        intent.putExtra(Constants.USER_ID, userId);
-        startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
-    }
 
     /**
      * Close current activity becasuse once balance is added it should navitate to calling activity.
@@ -120,17 +114,32 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         }
     }
 
-    @OnClick(R.id.btn2)
-    public void onBtnClick2() {
+    /*@OnClick(R.id.btn1)
+    public void onBtnClick() {
         final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
-        intent.putExtra("sku", "com.yo.products.credit.TEN");
+        intent.putExtra("sku", "com.yo.products.credit.FIVE");
+        intent.putExtra("price", 5f);
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
-        intent.putExtra("price", 10f);
+        startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+    }*/
+
+    private void addGooglePlayBalance(String sku, float price) {
+        final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
+        intent.putExtra("sku", sku);// "com.yo.products.credit.TEN"
+        intent.putExtra("price", price);//10f
+        final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        intent.putExtra(Constants.USER_ID, userId);
         startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
     }
 
-    @OnClick(R.id.btn3)
+    /*@OnClick(R.id.btn2)
+    public void onBtnClick2() {
+
+
+    }*/
+
+    /*@OnClick(R.id.btn3)
     public void onBtnClick3() {
         final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
         intent.putExtra("sku", "com.yo.products.credit.FIFTEEN");
@@ -138,7 +147,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
         startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
-    }
+    }*/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -175,6 +184,20 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             public int getLayoutId() {
                 return R.layout.item_with_options;
             }
+
+            @Override
+            public void bindView(int position, MenuViewHolder holder, MoreData item) {
+                View viewById = holder.getRootView().findViewById(R.id.add_google_play_items);
+                viewById.findViewById(R.id.btn1).setOnClickListener(payBtnListener);
+                viewById.findViewById(R.id.btn2).setOnClickListener(payBtnListener);
+                viewById.findViewById(R.id.btn3).setOnClickListener(payBtnListener);
+                if (position == 0) {
+                    viewById.setVisibility(View.VISIBLE);
+                } else {
+                    viewById.setVisibility(View.GONE);
+                }
+                super.bindView(position, holder, item);
+            }
         };
         ListView menuListView = (ListView) getView().findViewById(R.id.lv_settings);
         menuAdapter.addItems(getMenuList());
@@ -191,7 +214,10 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     public List<MoreData> getMenuList() {
 
         List<MoreData> menuDataList = new ArrayList<>();
-        menuDataList.add(new MoreData("Voucher Recharge", true));
+        menuDataList.add(new MoreData(getString(R.string.add_balance_from_google_play), false));
+        menuDataList.add(new MoreData(getString(R.string.add_balance_from_voucher), true));
+        menuDataList.add(new MoreData(getString(R.string.transfer_balance), true));
+
         return menuDataList;
     }
 
@@ -199,11 +225,28 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
 
-        if (name.equalsIgnoreCase("Voucher Recharge")) {
-
+        if (name.equalsIgnoreCase(getString(R.string.add_balance_from_voucher))) {
             showVoucherDialog();
+        } else if (name.equalsIgnoreCase(getString(R.string.transfer_balance))) {
+            mToastFactory.showToast("Need to implement");
         }
     }
+
+    private OnClickListener payBtnListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.btn1) {
+                addGooglePlayBalance("com.yo.products.credit.FIVE", 5f);
+
+            } else if (v.getId() == R.id.btn2) {
+                addGooglePlayBalance("com.yo.products.credit.TEN", 10f);
+
+            } else if (v.getId() == R.id.btn3) {
+                addGooglePlayBalance("com.yo.products.credit.FIFTEEN", 15f);
+            }
+        }
+    };
 
     public void showVoucherDialog() {
 
@@ -237,7 +280,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             alertDialog.show();
 
-            yesBtn.setOnClickListener(new View.OnClickListener() {
+            yesBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -315,7 +358,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 }
             });
 
-            noBtn.setOnClickListener(new View.OnClickListener() {
+            noBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();

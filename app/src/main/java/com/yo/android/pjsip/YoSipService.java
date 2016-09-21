@@ -198,6 +198,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
 			/* Answer with ringing */
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);
+        if (mediaManager.isSilentMode()) {
+            mediaManager.setVibrate();
+        }
         try {
             call.answer(prm);
         } catch (Exception e) {
@@ -444,7 +447,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (currentCall != null) {
             return;
         }
-        if(myAccount ==null){
+        if (myAccount == null) {
             myAccount = buildAccount();
         }
         if (myAccount != null) {

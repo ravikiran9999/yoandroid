@@ -26,10 +26,10 @@
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/share_lint_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:id="@+id/share_lint_btn"
                 android:layout_marginTop="5dp"
                 android:padding="10dp"
                 android:text="Share Link"
@@ -122,30 +122,30 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="20dp"
                 android:padding="10dp"
-                android:text="Account Settings"
+                android:text="@string/terms_and_conditions"
                 android:textColor="#111111" />
 
             <EditText
+                android:id="@+id/user_name_edt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:hint="@string/user_name"
                 android:imeOptions="actionNext"
-                android:id="@+id/user_name_edt"
                 android:paddingBottom="10dp"
-                android:singleLine="true"
                 android:paddingLeft="5dp"
                 android:paddingRight="10dp"
+                android:singleLine="true"
                 android:textColor="#797474"
                 android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/mobile_number_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:paddingBottom="10dp"
                 android:paddingLeft="5dp"
-                android:id="@+id/mobile_number_txt"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
                 android:text="@string/mobile_number_title"
@@ -156,27 +156,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:imeOptions="actionDone"
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
                 android:text="@string/status_title"
-                android:imeOptions="actionDone"
                 android:textColor="#797474"
                 android:textSize="17sp" />
 
             <EditText
+                android:id="@+id/status_edt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
+                android:imeOptions="actionDone"
                 android:maxLength="136"
+                android:maxLines="3"
                 android:paddingBottom="10dp"
                 android:paddingLeft="5dp"
-                android:imeOptions="actionDone"
-                android:maxLines="3"
-                android:id="@+id/status_edt"
                 android:paddingRight="10dp"
                 android:textColor="#797474"
                 android:textSize="18sp" />
@@ -199,12 +199,11 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="15dp"
-                android:visibility="gone"
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingBottom="15dp"
                 android:paddingTop="5dp"
-                >
+                android:visibility="gone">
 
 
                 <TextView

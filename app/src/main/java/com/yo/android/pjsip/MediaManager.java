@@ -1,6 +1,7 @@
 package com.yo.android.pjsip;
 
 import android.content.Context;
+import android.database.ContentObserver;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -10,7 +11,7 @@ import android.provider.Settings;
 /**
  * Created by Ramesh on 14/8/16.
  */
-public class MediaManager {
+public class MediaManager{
 
     private final AudioManager audioManager;
     private Context context;
@@ -44,7 +45,7 @@ public class MediaManager {
     public void playRingtone() {
         if (ringtone == null) {
             ringtone = RingtoneManager.getRingtone(context, Uri.parse(getRingtone()));
-            audioManager.setMode(AudioManager.MODE_RINGTONE);
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
             if (!ringtone.isPlaying()) {
                 ringtone.play();
             }
@@ -56,6 +57,16 @@ public class MediaManager {
             ringtone.stop();
             ringtone = null;
         }
+    }
+
+    public void setVibrate() {
+        if (audioManager != null) {
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+        }
+    }
+
+    public boolean isSilentMode() {
+        return audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT ? true : false;
     }
 
     public void setAudioMode(int mode) {
