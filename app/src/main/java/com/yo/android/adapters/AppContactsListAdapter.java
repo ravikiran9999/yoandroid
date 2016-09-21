@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.AppRegisteredContactsViewHolder;
+import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
@@ -61,8 +62,12 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
                         .into(holder.getContactPic());
             } else {
                 if (item.getName() != null && item.getName().length() >= 1 && !TextUtils.isDigitsOnly(item.getName())) {
-                    Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
-                    holder.getContactPic().setImageDrawable(drawable);
+                    if (Settings.isTitlePicEnabled) {
+                        Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
+                        holder.getContactPic().setImageDrawable(drawable);
+                    } else {
+                        holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_contactprofile));
+                    }
                 } else {
                     holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_contactprofile));
 
