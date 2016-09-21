@@ -18,11 +18,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.sync.SyncUtils;
@@ -31,6 +33,8 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -78,6 +82,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     private static final int PICK_CONTACT_REQUEST = 100;
 
     private boolean CONTACT_SYNC = true;
+    private LinearLayout layout;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -94,6 +99,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         listView = (ListView) view.findViewById(R.id.lv_contacts);
+        layout = (LinearLayout) view.findViewById(R.id.side_index);
         return view;
     }
 
@@ -108,24 +114,25 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             //Manual refresh
             SyncUtils.triggerRefresh();
         } else {*/
-            if (!mSyncManager.getContacts().isEmpty()) {
-                contactsListAdapter.addItems(mSyncManager.getContacts());
-            }
-            if (mSyncManager.getContacts().isEmpty()) {
-                showProgressDialog();
-            }
-            mSyncManager.loadContacts(new Callback<List<Contact>>() {
-                @Override
-                public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                    contactsListAdapter.addItems(mSyncManager.getContacts());
-                    dismissProgressDialog();
-                }
+        if (!mSyncManager.getContacts().isEmpty()) {
+            loadAlphabetOrder(mSyncManager.getContacts());
+        }
+        if (mSyncManager.getContacts().isEmpty()) {
+            showProgressDialog();
+        }
+        mSyncManager.loadContacts(new Callback<List<Contact>>() {
+            @Override
+            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                loadAlphabetOrder(mSyncManager.getContacts());
 
-                @Override
-                public void onFailure(Call<List<Contact>> call, Throwable t) {
-                    dismissProgressDialog();
-                }
-            });
+                dismissProgressDialog();
+            }
+
+            @Override
+            public void onFailure(Call<List<Contact>> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
 
         //}
     }
@@ -138,8 +145,21 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                 list.add(contact);
             } while (c.moveToNext());
         }
-        contactsListAdapter.addItems(list);
+        loadAlphabetOrder(list);
 
+    }
+
+    private void loadAlphabetOrder(List<Contact> list) {
+        Collections.sort(list, new Comparator() {
+            @Override
+            public int compare(Object contact, Object otherContact) {
+                return ((Contact) contact).getName().toLowerCase()
+                        .compareTo(((Contact) otherContact).getName().toLowerCase());
+            }
+        });
+
+        contactsListAdapter.addItems(list);
+        Helper.displayIndex(getActivity(), layout, list, listView);
     }
 
     @Override
