@@ -18,6 +18,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Articles;
+import com.yo.android.util.Util;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,6 +39,8 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     private String magazineTitle;
     private String magazineDesc;
     private String magazinePrivacy;
+    private boolean isInvalidUrl;
+    private EditText etUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +53,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         magazineDesc = intent.getStringExtra("MagazineDesc");
         magazinePrivacy = intent.getStringExtra("MagazinePrivacy");
 
-        final EditText etUrl = (EditText) findViewById(R.id.et_enter_url);
+        etUrl = (EditText) findViewById(R.id.et_enter_url);
         final WebView webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
 
@@ -66,7 +69,18 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
         webview.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-             // do nothing
+                Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
+                mToastFactory.showToast("Please enter a valid url");
+                btnPost.setVisibility(View.INVISIBLE);
+                isInvalidUrl = true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if(!isInvalidUrl) {
+                    btnPost.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -76,24 +90,30 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     url = etUrl.getText().toString();
                     if (!TextUtils.isEmpty(url.trim())) {
 
+                        isInvalidUrl = false;
+
                         if (!url.contains("http://")) {
                             url = "http://" + url;
                             if (Patterns.WEB_URL.matcher(url).matches()) {
                                 webview.loadUrl(url);
-                                btnPost.setVisibility(View.VISIBLE);
                             } else {
+                                Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                                 mToastFactory.showToast("Please enter a valid url");
+                                btnPost.setVisibility(View.INVISIBLE);
                             }
                         } else {
                             if (Patterns.WEB_URL.matcher(url).matches()) {
                                 webview.loadUrl(url);
-                                btnPost.setVisibility(View.VISIBLE);
                             } else {
+                                Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                                 mToastFactory.showToast("Please enter a valid url");
+                                btnPost.setVisibility(View.INVISIBLE);
                             }
                         }
                     } else {
+                        Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                         mToastFactory.showToast("Please enter a url");
+                        btnPost.setVisibility(View.INVISIBLE);
                     }
                 }
                 return false;
@@ -130,6 +150,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     intent.putExtra("MagazinePrivacy", magazinePrivacy);
                     startActivity(intent);
                 } else if(response != null && response.errorBody() != null){
+                    Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                     mToastFactory.showToast("Magazine Title is already taken");
                 }
             }
@@ -145,17 +166,18 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         yoService.addStoryMagazineAPI(accessToken, url, magazineId).enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
-                if(response.body() != null) {
-                setResult(RESULT_OK);
-                finish();
-                } else if(response.errorBody() != null){
+                if (response.body() != null) {
+                    setResult(RESULT_OK);
+                    finish();
+                } else if (response.errorBody() != null) {
+                    Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                     mToastFactory.showToast("Article already added into current magazine");
                 }
             }
 
             @Override
             public void onFailure(Call<Articles> call, Throwable t) {
-              // do nothing
+                // do nothing
             }
         });
     }
