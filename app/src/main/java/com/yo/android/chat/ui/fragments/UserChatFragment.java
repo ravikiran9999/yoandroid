@@ -83,7 +83,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, ChildEventListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, ChildEventListener, EmojiconsPopup.OnSoftKeyboardOpenCloseListener, EmojiconGridView.OnEmojiconClickedListener {
 
 
     private static final String TAG = "UserChatFragment";
@@ -112,6 +112,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String timeStp;
     private String mobilenumber;
     private String roomType;
+    private EmojiconsPopup popup;
+    private ImageView emoji;
+
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -160,7 +163,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setDividerHeight(0);
         listView.setOnItemClickListener(this);
         View send = view.findViewById(R.id.send);
-        final ImageView emoji = (ImageView) view.findViewById(R.id.emojiView);
+        emoji = (ImageView) view.findViewById(R.id.emojiView);
         chatText = (EditText) view.findViewById(R.id.chat_text);
         noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
         chatMessageArray = new ArrayList<>();
@@ -170,9 +173,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
         final View rootView = view.findViewById(R.id.root_view);
-        final EmojiconsPopup popup = new EmojiconsPopup(rootView, getActivity());
+        popup = new EmojiconsPopup(rootView, getActivity());
         send.setOnClickListener(this);
-        emoji.setOnClickListener(this);
         popup.setSizeForSoftKeyboard();
 
         //If the emoji popup is dismissed, change emojiButton to smiley icon
@@ -185,40 +187,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         });
 
         //If the text keyboard closes, also dismiss the emoji popup
-        popup.setOnSoftKeyboardOpenCloseListener(new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
-
-            @Override
-            public void onKeyboardOpen(int keyBoardHeight) {
-
-            }
-
-            @Override
-            public void onKeyboardClose() {
-                if(popup.isShowing())
-                    popup.dismiss();
-            }
-        });
+        popup.setOnSoftKeyboardOpenCloseListener(this);
 
         //On emoji clicked, add it to edittext
-        popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
-
-            @Override
-            public void onEmojiconClicked(Emojicon emojicon) {
-                if (chatText == null || emojicon == null) {
-                    return;
-                }
-
-                int start = chatText.getSelectionStart();
-                int end = chatText.getSelectionEnd();
-                if (start < 0) {
-                    chatText.append(emojicon.getEmoji());
-                } else {
-                    chatText.getText().replace(Math.min(start, end),
-                            Math.max(start, end), emojicon.getEmoji(), 0,
-                            emojicon.getEmoji().length());
-                }
-            }
-        });
+        popup.setOnEmojiconClickedListener(this);
 
         //On backspace clicked, emulate the KEYCODE_DEL key event
         popup.setOnEmojiconBackspaceClickedListener(new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
@@ -231,39 +203,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         });
 
-
         // To toggle between text keyboard and emoji keyboard keyboard(Popup)
-        emoji.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                //If popup is not showing => emoji keyboard is not visible, we need to show it
-                if(!popup.isShowing()){
-
-                    //If keyboard is visible, simply show the emoji popup
-                    if(popup.isKeyBoardOpen()){
-                        popup.showAtBottom();
-                        changeEmojiKeyboardIcon(emoji, R.drawable.ic_action_keyboard);
-                    }
-
-                    //else, open the text keyboard first and immediately after that show the emoji popup
-                    else{
-                        chatText.setFocusableInTouchMode(true);
-                        chatText.requestFocus();
-                        popup.showAtBottomPending();
-                        final InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.showSoftInput(chatText, InputMethodManager.SHOW_IMPLICIT);
-                        changeEmojiKeyboardIcon(emoji, R.drawable.ic_action_keyboard);
-                    }
-                }
-
-                //If popup is showing, simply dismiss it to show the undelying text keyboard
-                else{
-                    popup.dismiss();
-                }
-            }
-        });
+        emoji.setOnClickListener(this);
 
 
         if (!TextUtils.isEmpty(childRoomId)) {
@@ -479,13 +420,32 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 chatText.setText("");
             }
 
-            String newText = chatText.getText().toString();
-            chatText.getText().clear();
-            //mAdapter.add(newText);
-            //mAdapter.notifyDataSetChanged();
-
         } else if (v.getId() == R.id.emojiView) {
 
+            //If popup is not showing => emoji keyboard is not visible, we need to show it
+            if (!popup.isShowing()) {
+
+                //If keyboard is visible, simply show the emoji popup
+                if (popup.isKeyBoardOpen()) {
+                    popup.showAtBottom();
+                    changeEmojiKeyboardIcon(emoji, R.drawable.ic_action_keyboard);
+                }
+
+                //else, open the text keyboard first and immediately after that show the emoji popup
+                else {
+                    chatText.setFocusableInTouchMode(true);
+                    chatText.requestFocus();
+                    popup.showAtBottomPending();
+                    final InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(chatText, InputMethodManager.SHOW_IMPLICIT);
+                    changeEmojiKeyboardIcon(emoji, R.drawable.ic_action_keyboard);
+                }
+            }
+
+            //If popup is showing, simply dismiss it to show the undelying text keyboard
+            else {
+                popup.dismiss();
+            }
         }
     }
 
@@ -868,7 +828,37 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
+    @Override
+    public void onKeyboardOpen(int keyBoardHeight) {
+
+    }
+
+    @Override
+    public void onKeyboardClose() {
+        if (popup.isShowing())
+            popup.dismiss();
+
+    }
+
+    @Override
+    public void onEmojiconClicked(Emojicon emojicon) {
+        if (chatText == null || emojicon == null) {
+            return;
+        }
+
+        int start = chatText.getSelectionStart();
+        int end = chatText.getSelectionEnd();
+        if (start < 0) {
+            chatText.append(emojicon.getEmoji());
+        } else {
+            chatText.getText().replace(Math.min(start, end),
+                    Math.max(start, end), emojicon.getEmoji(), 0,
+                    emojicon.getEmoji().length());
+        }
+    }
+
+
+    private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId) {
         iconToBeChanged.setImageResource(drawableResourceId);
     }
 
