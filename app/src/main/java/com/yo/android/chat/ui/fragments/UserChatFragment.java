@@ -5,7 +5,9 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -568,6 +570,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             intent.putExtra("return-data", true);
+            //intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
             startActivityForResult(intent, ADD_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
             mLog.w(TAG, e);
