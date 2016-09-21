@@ -207,4 +207,11 @@
     <string name="failed_add_balance">Failed to add balance.</string>
     <string name="yo_credit">Yo Credit</string>
     <string name="add_balance_title">Add Balance</string>
+    <string name="send_a_message">Send a message</string>
+    <string name="call_details">Call details</string>
+    <string name="add_to_a_contact">Add to a contact</string>
+    <string name="create_new_contact">Create new contact</string>
+    <string name="free_calls">Free calls</string>
+    <string name="all_calls">All calls</string>
+    <string name="paid_calls">Paid calls</string>
 </resources>
