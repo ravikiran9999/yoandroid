@@ -2,6 +2,7 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -64,6 +65,7 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
                     holder.getContactPic().setImageDrawable(drawable);
                 } else {
                     holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_contactprofile));
+
                 }
             }
         } catch (Exception e) {

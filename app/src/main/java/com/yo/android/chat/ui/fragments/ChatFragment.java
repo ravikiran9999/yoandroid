@@ -200,7 +200,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         emptyImageView.setVisibility(View.VISIBLE);
                         listView.setVisibility(View.GONE);
                     }
-                    dismissProgressDialog();
+                    //dismissProgressDialog();
                 }
 
                 @Override
@@ -353,6 +353,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         }
         chatRoomListAdapter.addItems(arrayOfUsers);
+        try {
+            if (!arrayOfUsers.isEmpty()) {
+                dismissProgressDialog();
+            }
+        }catch (Exception e) { }
     }
 
     private List<Room> getMembersProfile(final DataSnapshot dataSnapshot) {
