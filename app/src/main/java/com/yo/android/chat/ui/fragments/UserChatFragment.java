@@ -116,6 +116,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String roomType;
     private EmojiconsPopup popup;
     private ImageView emoji;
+    private ImageView cameraView;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -166,6 +167,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setOnItemClickListener(this);
         View send = view.findViewById(R.id.send);
         emoji = (ImageView) view.findViewById(R.id.emojiView);
+        cameraView = (ImageView) view.findViewById(R.id.cameraView);
         chatText = (EditText) view.findViewById(R.id.chat_text);
         noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
         chatMessageArray = new ArrayList<>();
@@ -178,7 +180,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         popup = new EmojiconsPopup(rootView, getActivity());
         send.setOnClickListener(this);
         popup.setSizeForSoftKeyboard();
-
+        cameraView.setOnClickListener(this);
         //If the emoji popup is dismissed, change emojiButton to smiley icon
         popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
 
@@ -448,6 +450,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             else {
                 popup.dismiss();
             }
+        } else if (v.getId() == R.id.cameraView) {
+            takePicture();
         }
     }
 
@@ -570,7 +574,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             intent.putExtra("return-data", true);
-            //intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
             startActivityForResult(intent, ADD_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
             mLog.w(TAG, e);

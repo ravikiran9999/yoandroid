@@ -67,6 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/emojiView"
+                    android:layout_toStartOf="@+id/cameraView"
                     android:background="@color/grey_divider"
                     android:ems="10"
                     android:hint="@string/type_a_message"
@@ -79,11 +80,24 @@
 
                 <ImageView
                     android:id="@+id/emojiView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_alignBottom="@+id/chat_text"
                     android:layout_alignTop="@+id/chat_text"
                     android:padding="10dp"
+                    android:scaleType="fitEnd"
+                    android:src="@drawable/ic_emoji" />
+
+                <ImageView
+                    android:id="@+id/cameraView"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:scaleType="fitEnd"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignBottom="@+id/chat_text"
+                    android:layout_alignTop="@+id/chat_text"
                     android:src="@drawable/ic_emoji" />
             </RelativeLayout>
 

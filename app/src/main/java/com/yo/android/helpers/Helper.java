@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yo.android.R;
+import com.yo.android.adapters.AlphabetAdapter;
 import com.yo.android.model.Contact;
 
 import java.util.ArrayList;
@@ -45,25 +47,17 @@ public class Helper {
         activity.startActivity(intentInsertEdit);
     }
 
-    public static void displayIndex(Activity context, LinearLayout indexLayout, final List<Contact> contactList, final ListView listview) {
+    public static void displayIndex(Activity context, final ListView indexLayout, final List<Contact> contactList, final ListView listview) {
         final LinkedHashMap mapIndex = getIndexList(contactList);
-
-        TextView textView;
-        List<String> indexList = new ArrayList<String>(mapIndex.keySet());
-        for (String index : indexList) {
-            textView = (TextView) context.getLayoutInflater().inflate(
-                    R.layout.side_index_item, null);
-            textView.setText(index.substring(0, 1));
-            final TextView finalTextView = textView;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView selectedIndex = (TextView) finalTextView;
-                    listview.setSelection((Integer) mapIndex.get(selectedIndex.getText().toString().substring(0, 1)));
-                }
-            });
-            indexLayout.addView(textView);
-        }
+        final List<String> indexList = new ArrayList<String>(mapIndex.keySet());
+        AlphabetAdapter adapter = new AlphabetAdapter(context, indexList);
+        indexLayout.setAdapter(adapter);
+        indexLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listview.setSelection((Integer) mapIndex.get(indexList.get(position).substring(0, 1)));
+            }
+        });
     }
 
     public static LinkedHashMap getIndexList(List<Contact> list) {
@@ -72,15 +66,15 @@ public class Helper {
         for (Contact contact : list) {
             String fruit = contact.getName();
             String index = fruit.substring(0, 1).toUpperCase();
-            Pattern p = Pattern.compile("^[a-zA-Z]");
-            Matcher m = p.matcher(index);
-            boolean b = m.matches();
+            // Pattern p = Pattern.compile("^[a-zA-Z]");
+            // Matcher m = p.matcher(index);
+            // boolean b = m.matches();
             i = i + 1;
-            if (b) {
-                if (mapIndex.get(index) == null) {
-                    mapIndex.put(index, i);
-                }
+            // if (b) {
+            if (mapIndex.get(index) == null) {
+                mapIndex.put(index, i);
             }
+            // }
         }
         return mapIndex;
 
