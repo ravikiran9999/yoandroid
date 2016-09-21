@@ -68,6 +68,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     private FlipView flipView;
 
+    private boolean isSearch;
+
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
         // Required empty public constructor
@@ -176,9 +178,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         if (tagIds != null) {
+            isSearch = true;
             yoService.getArticlesAPI(accessToken, tagIds).enqueue(callback);
         } else {
             //yoService.getUserArticlesAPI(accessToken).enqueue(callback);
+            isSearch = false;
             yoService.getAllArticlesAPI(accessToken).enqueue(callback);
         }
     }
@@ -315,6 +319,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     @Override
     public void onFlippedToPage(FlipView v, int position, long id) {
-        lastReadArticle = position;
+        if(!isSearch) {
+            lastReadArticle = position;
+        } else {
+            lastReadArticle = 0;
+        }
     }
 }
