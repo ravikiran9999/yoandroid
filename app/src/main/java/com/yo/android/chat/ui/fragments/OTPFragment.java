@@ -19,12 +19,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.model.Articles;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Subscriber;
 import com.yo.android.pjsip.YoSipService;
@@ -36,6 +38,8 @@ import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
 
+import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -218,7 +222,7 @@ public class OTPFragment extends BaseFragment {
         yoService.subscribe(accessToken).enqueue(new Callback<Subscriber>() {
             @Override
             public void onResponse(Call<Subscriber> call, Response<Subscriber> response) {
-                dismissProgressDialog();
+                //dismissProgressDialog();
                 if (response.isSuccessful()) {
                     preferenceEndPoint.saveStringPreference(Constants.SUBSCRIBER_ID, response.body().getDATA().getSUBSCRIBERID());
                     preferenceEndPoint.saveStringPreference(Constants.CALLINGCARDNUMBER, response.body().getDATA().getCALLINGCARDNUMBER());
@@ -247,6 +251,72 @@ public class OTPFragment extends BaseFragment {
     private void finishAndNavigateToHome() {
          //contactsSyncManager.syncContacts();
         //
+
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getAllArticlesAPI(accessToken).enqueue(callback);
+
+        /*final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
+        final boolean balanceAdded = preferenceEndPoint.getBooleanPreference("balanceAdded");
+        if (isNewUser) {
+            //TODO:Enable flag for Profile
+            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, true);
+            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
+            Intent intent = new Intent(getActivity(), UpdateProfileActivity.class);
+            intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
+            dismissProgressDialog();
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        } else if(!balanceAdded) {
+            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, false);
+            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
+            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
+            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
+            Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("From", "UpdateProfileActivity");
+            startActivity(intent);
+        } else {
+            startActivity(new Intent(getActivity(), BottomTabsActivity.class));
+        }
+        //Start Sip service
+        getActivity().startService(new Intent(getActivity(), YoSipService.class));
+
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(VoipConstants.NEW_ACCOUNT_REGISTRATION);
+        getActivity().sendBroadcast(broadcastIntent);
+
+        getActivity().finish();
+*/
+    }
+
+    private Callback<List<Articles>> callback = new Callback<List<Articles>>() {
+        @Override
+        public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+            dismissProgressDialog();
+
+            if (response.body() != null && !response.body().isEmpty()) {
+                if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
+                    preferenceEndPoint.removePreference("cached_magazines");
+                }
+                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
+                navigation();
+
+            } else {
+                navigation();
+            }
+
+        }
+
+        @Override
+        public void onFailure(Call<List<Articles>> call, Throwable t) {
+            if (t instanceof UnknownHostException) {
+                mLog.e("Magazine", "Please check network settings");
+            }
+        }
+
+    };
+
+    private void navigation() {
         final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         final boolean balanceAdded = preferenceEndPoint.getBooleanPreference("balanceAdded");
         if (isNewUser) {
@@ -276,8 +346,8 @@ public class OTPFragment extends BaseFragment {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(VoipConstants.NEW_ACCOUNT_REGISTRATION);
         getActivity().sendBroadcast(broadcastIntent);
-        getActivity().finish();
 
+        getActivity().finish();
     }
 
     public void onEventMainThread(Bundle bundle) {
