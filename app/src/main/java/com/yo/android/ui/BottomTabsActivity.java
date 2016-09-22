@@ -132,11 +132,6 @@ public class BottomTabsActivity extends BaseActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if(getFragment() instanceof MoreFragment) {
-                    getSupportActionBar().hide();
-                }else{
-                    getSupportActionBar().show();
-                }
                 getSupportActionBar().setTitle((dataList.get(position)).getTitle());
 
                 //setToolBarColor(getResources().getColor(R.color.colorPrimary));
