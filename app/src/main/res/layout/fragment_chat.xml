@@ -1,8 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@android:color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_gray"
     android:orientation="vertical"
     tools:context="com.yo.android.chat.ui.fragments.ContactsFragment">
 
@@ -29,8 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:divider="@android:color/transparent"
-        />
+        android:divider="@android:color/transparent" />
 
     <ImageView
         android:id="@+id/empty_chat"
