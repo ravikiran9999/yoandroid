@@ -101,23 +101,13 @@ public class OthersProfileActivity extends BaseActivity {
         String pic = getIntent().getStringExtra("PersonPic");
         String isFollowing = getIntent().getStringExtra("PersonIsFollowing");
 
-        if (!TextUtils.isEmpty(pic)) {
-
-            Glide.with(this)
-                    .load(pic)
-                    .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(picture);
-        } else {
-
-            Glide.with(this)
-                    .load(R.drawable.ic_contacts)
-                    .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(picture);
-        }
+        Glide.with(this)
+                .load(pic)
+                .placeholder(R.drawable.dynamic_profile)
+                .error(R.drawable.dynamic_profile)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(picture);
 
         tvName.setText(name);
 
