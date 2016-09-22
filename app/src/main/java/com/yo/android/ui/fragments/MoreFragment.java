@@ -89,6 +89,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Bind(R.id.add_change_photo_text)
     TextView addOrChangePhotoText;
 
+    @Bind(R.id.name)
+    protected TextView name;
+
+    @Bind(R.id.phone_number)
+    protected TextView phoneNumber;
+
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -122,7 +128,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
         profilePic = (CircleImageView) view.findViewById(R.id.profile_pic);
         cameraIntent.setActivity(getActivity());
-
+        name.setText(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
+        phoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         changePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -232,9 +239,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public List<MoreData> getMenuList() {
 
         List<MoreData> menuDataList = new ArrayList<>();
-        menuDataList.add(new MoreData(preferenceEndPoint.getStringPreference(Constants.USER_NAME), false));
+        // menuDataList.add(new MoreData(preferenceEndPoint.getStringPreference(Constants.USER_NAME), false));
         String phone = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        menuDataList.add(new MoreData(phone, false));
+        // menuDataList.add(new MoreData(phone, false));
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         menuDataList.add(new MoreData(String.format("Yo Credit (%s%s)", currencySymbol, balance), true));

@@ -19,21 +19,37 @@
             android:layout_marginTop="10dp"
             android:src="@drawable/dynamic_profile" />
 
-        <TextView
-            android:id="@+id/follower_name"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="5dp"
-            android:gravity="center"
-            android:paddingBottom="20dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:text="Zuch Bukkingham"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/phone_number"
+                android:gravity="left"
+                android:maxLines="1"
+                android:padding="10dp"
+                android:text="Yo!"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="5dp"
+                android:gravity="right"
+                android:maxLines="1"
+                android:padding="10dp"
+                android:text="Yo!dsfsdfdsfdsfdsf"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
         <FrameLayout
             android:id="@+id/change_layout"
