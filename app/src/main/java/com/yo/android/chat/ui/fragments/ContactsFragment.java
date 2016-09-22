@@ -150,11 +150,11 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     }
 
     private void loadAlphabetOrder(List<Contact> list) {
-        Collections.sort(list, new Comparator() {
+
+        Collections.sort(list, new Comparator<Contact>() {
             @Override
-            public int compare(Object contact, Object otherContact) {
-                return ((Contact) contact).getName().toLowerCase()
-                        .compareTo(((Contact) otherContact).getName().toLowerCase());
+            public int compare(Contact lhs, Contact rhs) {
+                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
             }
         });
 
