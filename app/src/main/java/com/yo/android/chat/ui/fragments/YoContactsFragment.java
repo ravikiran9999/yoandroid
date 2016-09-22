@@ -26,6 +26,7 @@ import com.yo.android.adapters.AppContactsListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
@@ -34,6 +35,8 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -153,26 +156,22 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         if (mContactsSyncManager.getContacts().isEmpty()) {
             showProgressDialog();
         }
-        List < Contact > contactList = new ArrayList<>();
-         for (int i = 0; i < mContactsSyncManager.getContacts().size(); i++) {
-             if (mContactsSyncManager.getContacts().get(i).getYoAppUser()) {
-                contactList.add(mContactsSyncManager.getContacts().get(i));
 
-            }
-
-        }
-        appContactsListAdapter.addItems(contactList);
+        appContactsListAdapter.addItems(mContactsSyncManager.getContacts());
 
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                 List<Contact> contactList = new ArrayList<>();
                 if (response.body() != null) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        if (response.body().get(i).getYoAppUser()) {
-                            contactList.add(response.body().get(i));
+                    contactList.addAll(response.body());
+                    Collections.sort(contactList, new Comparator<Contact>() {
+                        @Override
+                        public int compare(Contact lhs, Contact rhs) {
+                            return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
                         }
-                    }
+                    });
+
                     appContactsListAdapter.addItems(contactList);
                 }
                 dismissProgressDialog();
@@ -185,6 +184,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         });
 
     }
+
 
     @Override
     public void showProgressDialog() {

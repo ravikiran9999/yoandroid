@@ -142,9 +142,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 
-                    holder.getLl().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_yellow));
+                    holder.getLl().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_white));
                 } else {
-                    holder.getLl().setBackgroundResource(R.drawable.bg_sms_yellow);
+                    holder.getLl().setBackgroundResource(R.drawable.bg_sms_white);
                 }
 
                 addView(layout, item, holder);
