@@ -45,10 +45,9 @@
 
                 <TextView
                     android:id="@+id/tv_find_people_name"
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="Chris Jung"
@@ -66,6 +65,7 @@
                     android:layout_marginTop="5dp"
                     android:ellipsize="end"
                     android:maxLines="5"
+                    android:visibility="gone"
                     android:text="Chris Jung Desc"
                     android:textSize="12sp" />
             </LinearLayout>
