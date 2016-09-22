@@ -287,6 +287,8 @@
         </service>
 
         <service android:name=".pjsip.YoSipService"></service>
+
+
     </application>
 
 </manifest>

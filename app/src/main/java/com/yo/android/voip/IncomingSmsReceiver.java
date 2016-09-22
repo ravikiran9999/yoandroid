@@ -33,8 +33,8 @@ public class IncomingSmsReceiver extends BroadcastReceiver {
                     Log.e(TAG, "Received SMS: " + message + ", Sender: " + senderAddress);
 
                     // if the SMS is not from our gateway, ignore the message
-                    if (senderAddress.toLowerCase().contains("020001")
-                            || "MD-Beepse".equalsIgnoreCase(senderAddress)
+                    if (senderAddress != null && (senderAddress.toLowerCase().contains("020001")
+                            || senderAddress.contains("Beepse"))
                             ) {
                         // verification code from sms
                         String verificationCode = getVerificationCode(message);

@@ -65,14 +65,16 @@ public class Helper {
         int i = -1;
         for (Contact contact : list) {
             String fruit = contact.getName();
-            String index = fruit.substring(0, 1).toUpperCase();
-            // Pattern p = Pattern.compile("^[a-zA-Z]");
-            // Matcher m = p.matcher(index);
-            // boolean b = m.matches();
-            i = i + 1;
-            // if (b) {
-            if (mapIndex.get(index) == null) {
-                mapIndex.put(index, i);
+            if (fruit != null && fruit.length() >= 1) {
+                String index = fruit.substring(0, 1).toUpperCase();
+                // Pattern p = Pattern.compile("^[a-zA-Z]");
+                // Matcher m = p.matcher(index);
+                // boolean b = m.matches();
+                i = i + 1;
+                // if (b) {
+                if (mapIndex.get(index) == null) {
+                    mapIndex.put(index, i);
+                }
             }
             // }
         }

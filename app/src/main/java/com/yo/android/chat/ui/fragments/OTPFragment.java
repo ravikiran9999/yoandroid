@@ -364,10 +364,8 @@ public class OTPFragment extends BaseFragment {
         String otp = IncomingSmsReceiver.extractOTP(bundle);
         this.etOtp.setText(otp);
         if (otp != null) {
-            try {
-                showOTPConfirmationDialog(otp);
-            } catch (Exception e) {
-            }
+            etOtp.setText(otp);
+            verifyButton.performClick();
         }
     }
 
