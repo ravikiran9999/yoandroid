@@ -25,14 +25,17 @@ import android.widget.Toast;
 
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
+import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
+import com.yo.android.model.Articles;
 import com.yo.android.model.Topics;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -246,12 +249,14 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
                         //TODO:Disalbe flag for Follow more
                         preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
-                        Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.getAllArticlesAPI(accessToken).enqueue(callback);
+                        /*Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
                         myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
                         myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
                         startActivity(myCollectionsIntent);
-                        finish();
+                        finish();*/
                     } else {
                         Intent intent = new Intent();
                         setResult(2, intent);
@@ -501,12 +506,15 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
                         //TODO:Disalbe flag for Follow more
                         preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
-                        Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.getAllArticlesAPI(accessToken).enqueue(callback);
+
+                        /*Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
                         myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
                         myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
                         startActivity(myCollectionsIntent);
-                        finish();
+                        finish();*/
                     } else {
                         Intent intent = new Intent();
                         setResult(2, intent);
@@ -527,6 +535,40 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         }
     }
 
+    private Callback<List<Articles>> callback = new Callback<List<Articles>>() {
+        @Override
+        public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+
+            if (response.body() != null && !response.body().isEmpty()) {
+                if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
+                    preferenceEndPoint.removePreference("cached_magazines");
+                }
+                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
+                navigation();
+
+            } else {
+                navigation();
+            }
+
+        }
+
+        @Override
+        public void onFailure(Call<List<Articles>> call, Throwable t) {
+            if (t instanceof UnknownHostException) {
+                mLog.e("Magazine", "Please check network settings");
+            }
+        }
+
+    };
+
+    private void navigation() {
+        Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
+        myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
+        myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
+        startActivity(myCollectionsIntent);
+        finish();
+    }
 
     //==
     private void newOpenCamera() {

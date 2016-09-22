@@ -281,7 +281,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
                         mMagazineFlipArticlesFragment.lastReadArticle = 0;
-                        mMagazineFlipArticlesFragment.loadArticles(null);
+                        //mMagazineFlipArticlesFragment.loadArticles(null);
+                        mMagazineFlipArticlesFragment.getCachedArticles();
 
                     }
                     return true;
