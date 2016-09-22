@@ -54,6 +54,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     private ArrayList<ChatMessage> forwardChatMessages;
     private AppContactsListAdapter appContactsListAdapter;
     private ListView listView;
+    private ListView layout;
     private Menu menu;
 
     @Inject
@@ -82,6 +83,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_yo_contacts, container, false);
         listView = (ListView) view.findViewById(R.id.lv_app_contacts);
+        layout = (ListView) view.findViewById(R.id.side_index);
         listView.setOnItemClickListener(this);
 
         return view;
@@ -165,14 +167,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 List<Contact> contactList = new ArrayList<>();
                 if (response.body() != null) {
                     contactList.addAll(response.body());
-                    Collections.sort(contactList, new Comparator<Contact>() {
-                        @Override
-                        public int compare(Contact lhs, Contact rhs) {
-                            return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
-                        }
-                    });
+                    loadInAlphabeticalOrder(contactList);
 
-                    appContactsListAdapter.addItems(contactList);
                 }
                 dismissProgressDialog();
             }
@@ -183,6 +179,18 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             }
         });
 
+    }
+
+    private void loadInAlphabeticalOrder(List<Contact> contactList) {
+        Collections.sort(contactList, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact lhs, Contact rhs) {
+                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
+            }
+        });
+
+        appContactsListAdapter.addItems(contactList);
+        Helper.displayIndex(getActivity(), layout, appContactsListAdapter.getAllItems(), listView);
     }
 
 

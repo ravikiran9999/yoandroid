@@ -83,6 +83,8 @@ public class Constants {
     public static final String FOLLOW_EVENT = "follow_event";
     public static final String CALL_LOG_DETAILS = "call_log_details";
     public static final String OPEN_ADD_BALANCE = "Open_add_balance";
+    public static final String FROM = "from";
+    public static final String DAILER = "Dialer";
     public static int SUCCESS_CODE = 200;
 
     public static final int ADD_IMAGE_CAPTURE = 1;

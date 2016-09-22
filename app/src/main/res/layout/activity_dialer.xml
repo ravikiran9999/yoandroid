@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_red_dark"
+    android:background="@color/light_gray"
     android:orientation="vertical">
 
     <com.yo.android.voip.DialPadView
@@ -95,23 +95,11 @@
                 android:id="@+id/txt_balance"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_toLeftOf="@+id/add_person"
                 android:background="@color/white"
                 android:gravity="center_vertical"
                 android:paddingLeft="15dp"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
-
-            <ImageView
-                android:id="@+id/add_person"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@color/white"
-                android:paddingRight="10dp"
-                android:src="@drawable/ic_add_new_contact" />
-
         </RelativeLayout>
 
 

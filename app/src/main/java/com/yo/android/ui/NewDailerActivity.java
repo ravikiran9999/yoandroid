@@ -5,15 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,9 +31,6 @@ import com.yo.android.util.Util;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.vox.BalanceHelper;
 
-import java.io.InputStreamReader;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -77,8 +73,6 @@ public class NewDailerActivity extends BaseActivity {
     @Bind(R.id.dialPadView)
     protected DialPadView dialPadView;
 
-    @Bind(R.id.add_person)
-    protected ImageView addPerson;
 
     protected EditText mDigits;
 
@@ -145,12 +139,7 @@ public class NewDailerActivity extends BaseActivity {
         });
         Drawable drawable = getResources().getDrawable(R.drawable.ic_add_new_contact);
         drawable.setColorFilter(getResources().getColor(R.color.black), PorterDuff.Mode.MULTIPLY);
-        addPerson.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Helper.createNewContactWithPhoneNumber(NewDailerActivity.this, mDigits.getText().toString());
-            }
-        });
+
         //
         setCallRateText();
         countryName.setOnClickListener(new View.OnClickListener() {
@@ -227,6 +216,20 @@ public class NewDailerActivity extends BaseActivity {
                 updateDialString(keyPadText.charAt(0));
             }
         };
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dailer_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.add_person_menu) {
+            Helper.createNewContactWithPhoneNumber(NewDailerActivity.this, mDigits.getText().toString());
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @NonNull
@@ -352,7 +355,9 @@ public class NewDailerActivity extends BaseActivity {
         findViewById(R.id.btnContacts).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(NewDailerActivity.this, PhoneBookActivity.class));
+                Intent intent = new Intent(NewDailerActivity.this, PhoneBookActivity.class);
+                intent.putExtra(Constants.FROM,Constants.DAILER);
+                startActivity(intent);
             }
         });
     }

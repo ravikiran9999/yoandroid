@@ -70,10 +70,10 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             Glide.with(mContext)
                     .load(item.getImage())
                     .fitCenter()
-                    .placeholder(R.drawable.ic_contactprofile)
+                    .placeholder(R.drawable.dynamic_profile)
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.ic_contactprofile)
+                    .error(R.drawable.dynamic_profile)
                     .into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
             if (item.getName() != null && item.getName().length() >= 1) {
@@ -137,8 +137,10 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
         if (item.getYoAppUser()) {
             holder.getMessageView().setImageResource(R.drawable.ic_message);
+            holder.getCallView().setImageResource(R.drawable.yo_call_free);
         } else {
             holder.getMessageView().setImageResource(R.drawable.ic_invitefriends);
+            holder.getCallView().setImageResource(R.drawable.ic_receiver);
         }
 
     }

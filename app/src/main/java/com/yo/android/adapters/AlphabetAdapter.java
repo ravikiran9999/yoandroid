@@ -22,7 +22,9 @@ public class AlphabetAdapter extends BaseAdapter {
     public AlphabetAdapter(Context context, List<String> list) {
         this.mContext = context;
         this.mList = list;
-        inflater = LayoutInflater.from(mContext);
+        if (mContext != null) {
+            inflater = LayoutInflater.from(mContext);
+        }
     }
 
     @Override
@@ -43,17 +45,21 @@ public class AlphabetAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.side_index_item, null);
-            holder = new ViewHolder();
-            holder.textView = (TextView) convertView.findViewById(R.id.side_list_item);
-            convertView.setTag(holder);
+        if (inflater != null) {
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.side_index_item, null);
+                holder = new ViewHolder();
+                holder.textView = (TextView) convertView.findViewById(R.id.side_list_item);
+                convertView.setTag(holder);
 
-        } else {
-            holder = (ViewHolder) convertView.getTag();
+
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.textView.setText(getItem(position).substring(0, 1));
+            return convertView;
         }
-        holder.textView.setText(getItem(position).substring(0, 1));
-        return convertView;
+        return null;
     }
 
     public static class ViewHolder {
