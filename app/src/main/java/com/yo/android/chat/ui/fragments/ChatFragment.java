@@ -107,10 +107,16 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         listView = (ListView) view.findViewById(R.id.lv_chat_room);
         emptyImageView = (ImageView) view.findViewById(R.id.empty_chat);
         listView.setOnItemClickListener(this);
-
         return view;
     }
 
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        if (menuVisible) {
+            isRoomsExist();
+        }
+        super.setMenuVisibility(menuVisible);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -148,6 +154,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onActivityCreated(savedInstanceState);
         chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(chatRoomListAdapter);
+
     }
 
 
@@ -196,6 +203,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                     if (dataSnapshot.child(Constants.MY_ROOMS).exists()) {
                         getAllRooms();
+                        emptyImageView.setVisibility(View.INVISIBLE);
+                        listView.setVisibility(View.VISIBLE);
                     } else {
                         emptyImageView.setVisibility(View.VISIBLE);
                         listView.setVisibility(View.GONE);
@@ -224,7 +233,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-
+                dismissProgressDialog();
             }
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
@@ -260,10 +269,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             for (Room customer : listRoom) {
                                 if (arrayOfUsers.contains(customer) && customer.getFirebaseRoomId().equalsIgnoreCase(room.getFirebaseRoomId()) && !customer.getId().equalsIgnoreCase(room.getId())) {
                                     int i = listRoom.indexOf(customer);
-                                    arrayOfUsers.set(i,room);
+                                    arrayOfUsers.set(i, room);
                                 }
                             }
-                            if(!listRoom.isEmpty()) {
+                            if (!listRoom.isEmpty()) {
                                 listRoom.clear();
                             }
                         }
@@ -348,16 +357,26 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     @Override
                     public void onCancelled(FirebaseError firebaseError) {
                         firebaseError.getMessage();
+                        dismissProgressDialog();
                     }
                 });
             }
         }
+
+        Collections.sort(arrayOfUsers, new Comparator<Room>() {
+            @Override
+            public int compare(Room lhs, Room rhs) {
+                return (int) (rhs.getTime() - lhs.getTime());
+            }
+        });
+
         chatRoomListAdapter.addItems(arrayOfUsers);
         try {
-            if (!arrayOfUsers.isEmpty()) {
+            if (!chatRoomListAdapter.isEmpty()) {
                 dismissProgressDialog();
             }
-        }catch (Exception e) { }
+        } catch (Exception e) {
+        }
     }
 
     private List<Room> getMembersProfile(final DataSnapshot dataSnapshot) {
