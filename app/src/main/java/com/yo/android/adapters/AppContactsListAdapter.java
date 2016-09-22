@@ -2,7 +2,6 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -43,11 +42,19 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
 
     @Override
     public void bindView(int position, AppRegisteredContactsViewHolder holder, Contact item) {
-        holder.getContactNumber().setText(item.getName());
-        if (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo().trim())) {
-            holder.getContactMail().setText(item.getPhoneNo());
+        holder.getContactName().setText(item.getName());
+        if (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo())) {
+            holder.getContactNumber().setText(item.getPhoneNo());
+
         } else {
-            holder.getContactMail().setText("");
+            holder.getContactNumber().setText("");
+        }
+
+        if(!item.getYoAppUser()) {
+            holder.getInviteContact().setVisibility(View.VISIBLE);
+            holder.getInviteContact().setImageResource(R.drawable.ic_invitefriends);
+        } else {
+            holder.getInviteContact().setVisibility(View.GONE);
         }
 
         try {
