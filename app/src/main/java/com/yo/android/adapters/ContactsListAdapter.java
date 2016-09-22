@@ -3,6 +3,8 @@ package com.yo.android.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -57,8 +59,10 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
         if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo().trim()))) {
             holder.getContactMail().setText(item.getPhoneNo());
+            holder.getContactMail().setVisibility(View.VISIBLE);
+
         } else {
-            holder.getContactMail().setText("");
+            holder.getContactMail().setVisibility(View.GONE);
         }
 
         if (!TextUtils.isEmpty(item.getImage())) {
@@ -77,7 +81,14 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 holder.getContactPic().setImageDrawable(drawable);
             }
         } else {
-            holder.getContactPic().setImageResource(R.drawable.ic_contactprofile);
+            Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+            LayerDrawable bgDrawable = (LayerDrawable) tempImage;
+            final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
+            if (Settings.isTitlePicEnabled) {
+                shape.setColor(mColorGenerator.getRandomColor());
+            }
+            holder.getContactPic().setImageDrawable(tempImage);
+
         }
 
         //holder.getContactMail().setText(item.getEmailId());

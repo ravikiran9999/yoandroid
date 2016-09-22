@@ -70,9 +70,9 @@ public class CallLogDetailsActivity extends BaseActivity {
         Log.e("", callLogsDetails + "");
         if (callLogsDetails.size() >= 1) {
             Glide.with(this).load(callLogsDetails.get(0).getImage())
-                    .placeholder(R.drawable.ic_contacts)
+                    .placeholder(R.drawable.dynamic_profile)
                     .dontAnimate()
-                    .error(R.drawable.ic_contacts).
+                    .error(R.drawable.dynamic_profile).
                     into(imageView);
             if (callLogsDetails.get(0).getDestination_name() != null) {
                 opponentName.setText(callLogsDetails.get(0).getDestination_name());

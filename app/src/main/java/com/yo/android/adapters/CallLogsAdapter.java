@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
@@ -77,8 +79,14 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getAddToContact().setVisibility(View.GONE);
         } else {
             String phoneNumber = item.getValue().get(0).getDialnumber();
-            drawable = mContext.getResources().getDrawable(R.drawable.ic_contactprofile);
-            drawable.setColorFilter(mColorGenerator.getRandomColor(), PorterDuff.Mode.MULTIPLY);
+
+            Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+            LayerDrawable bgDrawable = (LayerDrawable) tempImage;
+            final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
+            if (Settings.isTitlePicEnabled) {
+                shape.setColor(mColorGenerator.getRandomColor());
+            }
+            drawable = tempImage;
             holder.getOpponentName().setText(phoneNumber);
             holder.getCreatNewContact().setVisibility(View.VISIBLE);
             holder.getAddToContact().setVisibility(View.VISIBLE);

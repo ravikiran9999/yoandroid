@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/light_gray"
     android:orientation="vertical"
     tools:context="com.yo.android.chat.ui.fragments.ContactsFragment">
 
@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/tab_grey"
         android:gravity="center"
+        android:layout_centerInParent="true"
         android:padding="10dp"
         android:text="@string/no_result_found"
         android:textColor="@color/white"
@@ -22,6 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_centerInParent="true"
         android:visibility="gone" />
 
     <ListView
@@ -34,7 +36,7 @@
 
     <ListView
         android:id="@+id/side_index"
-        android:layout_width="50dp"
+        android:layout_width="30dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:background="@android:color/white"

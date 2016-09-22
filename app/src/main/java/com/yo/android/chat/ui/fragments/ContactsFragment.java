@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -168,6 +169,22 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         this.menu = menu;
         Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG);
         Util.changeSearchProperties(menu);
+        MenuItem view = menu.findItem(R.id.menu_search);
+        // Hide right side alphabets when search is opened.
+        MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                layout.setVisibility(View.GONE);
+                return false;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                layout.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
         super.onCreateOptionsMenu(menu, inflater);
     }
 
