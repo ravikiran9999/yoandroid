@@ -112,11 +112,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        if (getActivity() instanceof BottomTabsActivity) {
-            BottomTabsActivity activity = (BottomTabsActivity) getActivity();
-            activity.getSupportActionBar().hide();
-        }
-
         return inflater.inflate(R.layout.more_fragment, container, false);
     }
 
