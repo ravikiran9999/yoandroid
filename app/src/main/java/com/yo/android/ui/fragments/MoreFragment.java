@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -117,6 +118,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.more_fragment, container, false);
     }
@@ -145,18 +147,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         if (!TextUtils.isEmpty(avatar)) {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
-            // setup Glide request without the into() method
-            DrawableRequestBuilder<String> thumbnailRequest = Glide
-                    .with(getActivity())
-                    .load(avatar);
-
-
-            Glide.with(getActivity())
-                    .load(avatar)
+            Glide.with(getActivity()).load(avatar)
                     .placeholder(R.drawable.dynamic_profile)
-                    .error(R.drawable.dynamic_profile)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(profilePic);
+                    .dontAnimate()
+                    .error(R.drawable.dynamic_profile).
+                    into(profilePic);
+
         } else {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
         }
@@ -170,13 +166,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
         }
-
-        Glide.with(getActivity())
-                .load(file)
-                .fitCenter()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(profilePic);
 
 
         showProgressDialog();

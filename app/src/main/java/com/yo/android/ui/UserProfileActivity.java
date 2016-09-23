@@ -38,6 +38,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by kalyani on 25/7/16.
@@ -46,7 +47,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     @Bind(R.id.profile_image)
-    ImageView profileImage;
+    CircleImageView profileImage;
     @Bind(R.id.profile_call)
     ImageView profileCall;
     @Bind(R.id.profile_message)
@@ -142,16 +143,14 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (roomName != null) {
                 Glide.with(this)
                         .load(contact.getImage())
-                        .placeholder(R.drawable.img_group_placeholder)
-                        .fitCenter()
+                        .placeholder(R.drawable.dynamic_profile)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
             } else {
                 Glide.with(this)
                         .load(contact.getImage())
-                        .placeholder(R.drawable.img_placeholder_profile)
-                        .fitCenter()
+                        .placeholder(R.drawable.dynamic_profile)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
@@ -198,7 +197,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
                 Glide.with(this)
                         .load(image)
-                        .fitCenter()
+                        .placeholder(R.drawable.dynamic_profile)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);

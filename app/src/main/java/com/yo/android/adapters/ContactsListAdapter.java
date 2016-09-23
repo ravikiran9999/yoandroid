@@ -22,6 +22,9 @@ import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by rdoddapaneni on 6/29/2016.
  */
@@ -77,18 +80,19 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                     .into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
             if (item.getName() != null && item.getName().length() >= 1) {
-                Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
-                holder.getContactPic().setImageDrawable(drawable);
+                String title = String.valueOf(item.getName().charAt(0)).toUpperCase();
+                Pattern p = Pattern.compile("^[a-zA-Z]");
+                Matcher m = p.matcher(title);
+                boolean b = m.matches();
+                if (b) {
+                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
+                    holder.getContactPic().setImageDrawable(drawable);
+                } else {
+                    loadAvatarImage(holder);
+                }
             }
         } else {
-            Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
-            LayerDrawable bgDrawable = (LayerDrawable) tempImage;
-            final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
-            if (Settings.isTitlePicEnabled) {
-                shape.setColor(mColorGenerator.getRandomColor());
-            }
-            holder.getContactPic().setImageDrawable(tempImage);
-
+            loadAvatarImage(holder);
         }
 
         //holder.getContactMail().setText(item.getEmailId());
@@ -143,6 +147,16 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             holder.getCallView().setImageResource(R.drawable.ic_receiver);
         }
 
+    }
+
+    private void loadAvatarImage(RegisteredContactsViewHolder holder) {
+        Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+        LayerDrawable bgDrawable = (LayerDrawable) tempImage;
+        final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
+        if (Settings.isTitlePicEnabled) {
+            shape.setColor(mColorGenerator.getRandomColor());
+        }
+        holder.getContactPic().setImageDrawable(tempImage);
     }
 
     private static void navigateToChatScreen(Context context, String roomId, String opponentPhoneNumber, String yourPhoneNumber, String opponentId) {

@@ -3,27 +3,30 @@
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/profile_background"
         android:orientation="vertical">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="?android:selectableItemBackground"
-            android:scaleType="centerCrop"
-            android:src="@drawable/img_placeholder" />
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/dynamic_profile" />
 
         <RelativeLayout
             android:id="@+id/rl_transparent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/profile_image"
+            android:gravity="bottom"
+            android:layout_marginTop="16dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_gravity="bottom"
@@ -76,7 +79,7 @@
                 android:src="@mipmap/ic_profile_call" />
 
         </RelativeLayout>
-    </RelativeLayout>
+    </LinearLayout>
 
     <ListView
         android:id="@+id/members"
