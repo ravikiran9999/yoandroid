@@ -8,6 +8,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -64,7 +65,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getGroupName() == null) {
-
             if (TextUtils.isEmpty(item.getFullName())) {
                 holder.getOpponentName().setText(item.getMobileNumber());
             } else {
