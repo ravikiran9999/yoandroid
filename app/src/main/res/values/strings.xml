@@ -195,7 +195,7 @@
     <string name="missed_call">Missed call</string>
     <string name="empty_chat">No chat history found.</string>
     <string name="clear_history_dec">This will delete all calls from your history</string>
-    <string name="clear_call_history">Clear call history?</string>
+    <string name="clear_call_history">Clear Call History</string>
     <string name="ok">OK</string>
     <string name="cancle">Cancel</string>
     <string name="are_you_sure_you_want_to_unfollow">Are you sure you want to Unfollow?</string>
@@ -211,9 +211,9 @@
     <string name="call_details">Call details</string>
     <string name="add_to_a_contact">Add to a contact</string>
     <string name="create_new_contact">Create new contact</string>
-    <string name="free_calls">Free calls</string>
-    <string name="all_calls">All calls</string>
-    <string name="paid_calls">Paid calls</string>
+    <string name="free_calls">Free Calls</string>
+    <string name="all_calls">All Calls</string>
+    <string name="paid_calls">Paid Calls</string>
     <string name="contacts">Contacts</string>
     <string name="dialer">Dialer</string>
     <string name="magazines">Magazines</string>
@@ -230,4 +230,9 @@
     <string name="move_and_scale">Move and Scale</string>
     <string name="exceed_message">Message exceeds maximum limit</string>
     <string name="crop_image">Crop Image</string>
+    <string name="enter_mobile_number_error">please enter a valid number </string>
+    <string name="Dialog_text">Are you sure to register with %s?</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Ok">ok</string>
+    <string name="Dialog_title">Confirm</string>
 </resources>

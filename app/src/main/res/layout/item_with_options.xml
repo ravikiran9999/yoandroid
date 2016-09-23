@@ -15,6 +15,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         card_view:cardCornerRadius="3dp"
+        card_view:cardPreventCornerOverlap="false"
         card_view:cardElevation="1sp">
 
         <RelativeLayout

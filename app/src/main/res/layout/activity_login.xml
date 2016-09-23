@@ -37,23 +37,11 @@
         android:background="@android:color/white"
         android:ems="10"
         android:hint="Enter mobile number"
-        android:imeOptions="actionNext"
-        android:inputType="number"
-        android:padding="13dp"
-        android:singleLine="true" />
-
-    <EditText
-        android:id="@+id/et_re_enter_phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:background="@android:color/white"
-        android:ems="10"
-        android:hint="Re-enter mobile number"
         android:imeOptions="actionDone"
         android:inputType="number"
         android:padding="13dp"
         android:singleLine="true" />
+
 
     <Button
         android:id="@+id/email_sign_in_button"

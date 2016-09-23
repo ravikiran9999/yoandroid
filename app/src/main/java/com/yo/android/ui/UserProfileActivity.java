@@ -143,7 +143,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (roomName != null) {
                 Glide.with(this)
                         .load(contact.getImage())
-                        .placeholder(R.drawable.dynamic_profile)
+                        .placeholder(R.drawable.chat_group)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);

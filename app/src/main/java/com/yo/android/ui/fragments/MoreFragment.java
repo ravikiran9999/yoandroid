@@ -1,6 +1,7 @@
 package com.yo.android.ui.fragments;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -149,11 +150,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         if (!TextUtils.isEmpty(avatar)) {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
             Glide.with(getActivity()).load(avatar)
-                    .placeholder(R.drawable.dynamic_profile)
                     .dontAnimate()
                     .fitCenter()
-                    .error(R.drawable.dynamic_profile).
-                    into(profilePic);
+                    .into(profilePic);
         } else {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
         }
@@ -346,7 +345,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        if (resultCode == Activity.RESULT_CANCELED) {
+            return;
+        }
         switch (requestCode) {
             case Helper.CROP_ACTIVITY:
                 if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
@@ -359,7 +360,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             case Constants.ADD_IMAGE_CAPTURE:
                 try {
                     String imagePath = cameraIntent.mFileTemp.getPath();
-                    Helper.setSelectedImage(getActivity(), imagePath, true);
+                    if (imagePath != null) {
+                        Helper.setSelectedImage(getActivity(), imagePath, true);
+                    }
                     //uploadFile(new File(imagePath));
 
                 } catch (Exception e) {

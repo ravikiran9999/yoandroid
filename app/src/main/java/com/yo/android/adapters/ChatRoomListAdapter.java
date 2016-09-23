@@ -8,6 +8,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -64,7 +65,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getGroupName() == null) {
-
             if (TextUtils.isEmpty(item.getFullName())) {
                 holder.getOpponentName().setText(item.getMobileNumber());
             } else {
@@ -74,6 +74,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             Glide.with(mContext).load(item.getImage())
                     .placeholder(loadAvatarImage(holder, false))
                     .error(loadAvatarImage(holder, false))
+                    .dontAnimate()
                     .into(holder.getChatRoomPic());
 
         } else if (item.getGroupName() != null) {
@@ -86,6 +87,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         } else {
             holder.getOpponentName().setText("");
             Glide.with(context).load(loadAvatarImage(holder, false))
+                    .dontAnimate()
                     .placeholder(loadAvatarImage(holder, false))
                     .error(loadAvatarImage(holder, false))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

@@ -58,6 +58,12 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
     @Override
     public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
 
+        if (!TextUtils.isEmpty(item.getName())) {
+            holder.getContactNumber().setText(item.getName());
+            holder.getContactNumber().setVisibility(View.VISIBLE);
+        } else {
+            holder.getContactNumber().setVisibility(View.GONE);
+        }
         holder.getContactNumber().setText(item.getName());
 
         if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo().trim()))) {

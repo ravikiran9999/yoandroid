@@ -2,6 +2,9 @@ package com.yo.android.chat.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -17,8 +20,11 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.yo.android.R;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
+import com.yo.android.helpers.ChatRoomViewHolder;
+import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
+import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
@@ -34,7 +40,7 @@ public class ChatActivity extends BaseActivity {
     private String opponent;
     private String mOpponentImg;
     private Room room;
-
+    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
@@ -129,8 +135,8 @@ public class ChatActivity extends BaseActivity {
             if (room != null && room.getGroupName() != null) {
                 Glide.with(this).load(mOpponentImg)
                         .asBitmap().centerCrop()
-                        .placeholder(R.drawable.ic_group)
-                        .error(R.drawable.ic_group)
+                        .placeholder(loadAvatarImage(true))
+                        .error(loadAvatarImage(true))
                         .into(new BitmapImageViewTarget(imageView) {
                             @Override
                             protected void setResource(Bitmap resource) {
@@ -143,8 +149,8 @@ public class ChatActivity extends BaseActivity {
             } else {
                 Glide.with(this).load(mOpponentImg)
                         .asBitmap().centerCrop()
-                        .placeholder(R.drawable.ic_contactprofile)
-                        .error(R.drawable.ic_contactprofile)
+                        .placeholder(loadAvatarImage(false))
+                        .error(loadAvatarImage(false))
                         .into(new BitmapImageViewTarget(imageView) {
                             @Override
                             protected void setResource(Bitmap resource) {
@@ -201,4 +207,21 @@ public class ChatActivity extends BaseActivity {
         Util.cancelAllNotification(this);
     }
 
+    private Drawable loadAvatarImage(boolean isgroup) {
+        Drawable tempImage;
+        if (isgroup) {
+            tempImage = getResources().getDrawable(R.drawable.chat_group);
+        } else {
+            tempImage = getResources().getDrawable(R.drawable.dynamic_profile);
+        }
+        if (!Settings.isTitlePicEnabled) {
+            return tempImage;
+        }
+        LayerDrawable bgDrawable = (LayerDrawable) tempImage;
+        final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
+        if (Settings.isTitlePicEnabled) {
+            shape.setColor(mColorGenerator.getRandomColor());
+        }
+        return tempImage;
+    }
 }
