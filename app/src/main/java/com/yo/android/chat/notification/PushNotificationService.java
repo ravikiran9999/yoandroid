@@ -51,6 +51,11 @@ public class PushNotificationService extends FirebaseMessagingService {
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
         mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
         EventBus.getDefault().post(Constants.UPDATE_NOTIFICATIONS);
+
+        if(data.get("tag").equals("Topic")) {
+            EventBus.getDefault().post(Constants.TOPIC_NOTIFICATION_ACTION);
+        }
+
         if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
         mLog.i(TAG, "In Notifications screen");
         } else {

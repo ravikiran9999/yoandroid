@@ -97,6 +97,8 @@ public class Constants {
     public static String CHAT_ROOM_REFRESH = "CHAT_ROOM_REFRESH";
     public static String UPDATE_NOTIFICATIONS = "UPDATE_NOTIFICATIONS";
     public static String COUNTRY_LIST = "COUNTRY_LIST";
+    public static String OTHERS_MAGAZINE_ACTION = "com.others.magazine.OTHERS";
+    public static String TOPIC_NOTIFICATION_ACTION = "com.notification.magazine.TOPIC";
 
 
     // Contacts
