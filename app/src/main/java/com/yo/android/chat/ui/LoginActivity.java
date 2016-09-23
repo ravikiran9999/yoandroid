@@ -1,15 +1,18 @@
 package com.yo.android.chat.ui;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,8 +62,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
 
     @Bind(R.id.et_enter_phone)
     protected EditText mPhoneNumberView;
-    @Bind(R.id.et_re_enter_phone)
-    protected EditText mReEnterPhoneNumberView;
+
     @Bind(R.id.spCountrySpinner)
     protected NiceSpinner spCountrySpinner;
 
@@ -127,17 +129,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             }
         });
 
-        mReEnterPhoneNumberView.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    //do here
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
+
     }
 
     /**
@@ -151,50 +143,52 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         mPhoneNumberView.setError(null);
         // Store values at the time of the login attempt.
         String phoneNumber = mPhoneNumberView.getText().toString().trim();
-        String reEnterPhone = mReEnterPhoneNumberView.getText().toString().trim();
+
 
         boolean cancel = false;
         View focusView = null;
 
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(phoneNumber) && TextUtils.isEmpty(reEnterPhone)) {
-            Util.hideKeyboard(this,getCurrentFocus());
+        if (TextUtils.isEmpty(phoneNumber)) {
+            Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
             cancel = true;
             mToastFactory.showToast(getResources().getString(R.string.empty_fields));
         } else if (TextUtils.isEmpty(phoneNumber)) {
-            Util.hideKeyboard(this,getCurrentFocus());
+            Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number));
             cancel = true;
-        } else if (TextUtils.isEmpty(reEnterPhone)) {
-            Util.hideKeyboard(this,getCurrentFocus());
-            mToastFactory.showToast(getResources().getString(R.string.re_enter_mobile_number));
-            focusView = mReEnterPhoneNumberView;
-            cancel = true;
-        } else if (!phoneNumber.equals(reEnterPhone)) {
-            Util.hideKeyboard(this,getCurrentFocus());
-            mToastFactory.showToast("Phone numbers should match");
+        } else if (phoneNumber.length() != 10) {
+            Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
+            mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number_error));
             cancel = true;
         }
         if (cancel) {
             focusView.requestFocus();
         } else {
 
-            if (!mHelper.isConnected()) {
-                mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
-                return;
-            }
+            showMessageDialog(phoneNumber);
 
-            //Add subscriber
-            String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
-            String yoUser = phoneNumber;
-            UserDetails userDetails = voxFactory.newAddSubscriber(yoUser, yoUser);
-            //Debug
-            String action = voxFactory.addSubscriber(yoUser, phoneNumber, countryCode);
-            mLog.e(TAG, "Request for adding vox api: %s", action);
+        }
+    }
+
+
+            private void performLogin (String phoneNumber){
+                if (!mHelper.isConnected()) {
+                    mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+                    return;
+                }
+
+                //Add subscriber
+                String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+                String yoUser = phoneNumber;
+                UserDetails userDetails = voxFactory.newAddSubscriber(yoUser, yoUser);
+                //Debug
+                String action = voxFactory.addSubscriber(yoUser, phoneNumber, countryCode);
+                mLog.e(TAG, "Request for adding vox api: %s", action);
             /*voxService.getData(userDetails).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -207,10 +201,10 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                 }
             });
 */
-            callLoginService(phoneNumber);
+                callLoginService(phoneNumber);
 
-        }
-    }
+            }
+
 
     public void callLoginService(final String phoneNumber) {
         showProgressDialog();
@@ -250,6 +244,49 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         });
 
     }
+
+    public void showMessageDialog(final String phoneNumber) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View view = layoutInflater.inflate(R.layout.custom_dialog, null);
+        builder.setView(view);
+
+        TextView textView = (TextView)view.findViewById(R.id.dialog_content);
+        textView.setText(getResources().getString(R.string.Dialog_text)+phoneNumber);
+
+
+
+        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+        Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+
+
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                alertDialog.dismiss();
+                performLogin(phoneNumber);
+            }
+
+        });
+
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                alertDialog.dismiss();
+
+            }
+        });
+    }
+
 
     @Override
     protected void onStart() {

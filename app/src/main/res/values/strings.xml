@@ -221,4 +221,9 @@
     <string name="add_balance_from_google_play">Add balance from Google Play</string>
     <string name="add_balance_from_voucher">Add balance from Voucher</string>
     <string name="transfer_balance">Transfer balance</string>
+    <string name="enter_mobile_number_error">please enter a valid number </string>
+    <string name="Dialog_text">Are you sure to register with</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Ok">ok</string>
+    <string name="Dialog_title">Confirm</string>
 </resources>
