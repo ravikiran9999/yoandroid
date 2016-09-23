@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -250,6 +251,12 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             myCollectionsAdapter.addItems(collectionsList);
                             gridView.setAdapter(myCollectionsAdapter);
 
+                            List<String> followedTopicsIdsList = new ArrayList<String>();
+                            for(int i=0; i<collectionsList.size(); i++) {
+                               followedTopicsIdsList.add(collectionsList.get(i).getId());
+                            }
+                            preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+
                         }
 
                         @Override
@@ -288,6 +295,12 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             myCollectionsAdapter.clearAll();
                             myCollectionsAdapter.addItems(collectionsList);
                             gridView.setAdapter(myCollectionsAdapter);
+
+                            List<String> followedTopicsIdsList = new ArrayList<String>();
+                            for(int i=0; i<collectionsList.size(); i++) {
+                                followedTopicsIdsList.add(collectionsList.get(i).getId());
+                            }
+                            preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
 
                         }
 

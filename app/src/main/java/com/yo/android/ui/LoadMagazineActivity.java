@@ -1,6 +1,7 @@
 package com.yo.android.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -68,6 +69,14 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         });
 
         webview.setWebViewClient(new WebViewClient() {
+
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                showProgressDialog();
+            }
+
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                 mToastFactory.showToast("Please enter a valid url");
@@ -78,6 +87,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                dismissProgressDialog();
                 if(!isInvalidUrl) {
                     btnPost.setVisibility(View.VISIBLE);
                 }
