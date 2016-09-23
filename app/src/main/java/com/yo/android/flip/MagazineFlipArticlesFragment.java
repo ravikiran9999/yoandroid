@@ -27,6 +27,7 @@ import com.yo.android.helpers.LruCacheHelper;
 import com.yo.android.model.Articles;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
+import com.yo.android.util.Constants;
 
 import java.lang.reflect.Type;
 import java.net.UnknownHostException;
@@ -36,6 +37,7 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -84,6 +86,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -302,6 +305,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void onDestroy() {
         super.onDestroy();
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -361,6 +365,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             lastReadArticle = position;
         } else {
             lastReadArticle = 0;
+        }
+    }
+
+    public void onEventMainThread(String action) {
+        if (Constants.OTHERS_MAGAZINE_ACTION.equals(action) || Constants.TOPIC_NOTIFICATION_ACTION.equals(action)) {
+            loadArticles(null);
         }
     }
 }

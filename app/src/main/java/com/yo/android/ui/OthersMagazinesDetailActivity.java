@@ -568,6 +568,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                             menuItem.setTitle("");
                             menuItem.setIcon(R.drawable.ic_mycollections_tick);
                             isFollowingMagazine = true;
+                            EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
 
                         }
 
@@ -609,6 +610,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     menuItem.setIcon(null);
                                     menuItem.setTitle("Follow");
                                     isFollowingMagazine = false;
+                                    EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
                                 }
 
                                 @Override
