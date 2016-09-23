@@ -231,7 +231,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
                 flipView.flipTo(lastReadArticle);
                 //lruCacheHelper.put("magazines_cache", response.body());
-                //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
+                if(!isSearch) {
+                    if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
+                        preferenceEndPoint.removePreference("cached_magazines");
+                    }
+                    preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
+                }
                 if (llNoArticles != null) {
                     llNoArticles.setVisibility(View.GONE);
                     flipContainer.setVisibility(View.VISIBLE);
@@ -315,8 +320,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
                 String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
                 if (prefTags != null) {
-                    //loadArticles(null);
-                    getCachedArticles();
+                    loadArticles(null);
+                    //getCachedArticles();
                 }
             } else {
                 myBaseAdapter.addItems(new ArrayList<Articles>());
