@@ -72,7 +72,7 @@
                     tools:text="9490590000" />
             </LinearLayout>
 
-            <ImageView
+            <TextView
                 android:id="@+id/tv_contact_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

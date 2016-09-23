@@ -34,6 +34,7 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
             holder.getContactNumber().setText(item.getUserProfile().getFullName());
         if(item.getAdmin().equalsIgnoreCase("true")) {
             holder.getPermission().setText("admin");
+            holder.getPermission().setTextColor(mContext.getResources().getColor(R.color.black));
         } else if(item.getAdmin().equalsIgnoreCase("false")) {
             holder.getPermission().setText("");
         }
