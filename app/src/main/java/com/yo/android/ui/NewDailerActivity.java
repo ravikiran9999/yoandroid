@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.pjsip.SipHelper;
@@ -349,14 +350,14 @@ public class NewDailerActivity extends BaseActivity {
         findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(NewDailerActivity.this, PhoneChatActivity.class));
+                startActivity(new Intent(NewDailerActivity.this, AppContactsActivity.class));
             }
         });
         findViewById(R.id.btnContacts).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(NewDailerActivity.this, PhoneBookActivity.class);
-                intent.putExtra(Constants.FROM,Constants.DAILER);
+                intent.putExtra(Constants.FROM, Constants.DAILER);
                 startActivity(intent);
             }
         });
