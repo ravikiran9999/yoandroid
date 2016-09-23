@@ -3,7 +3,6 @@ package com.yo.android.chat.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,14 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 import com.yo.android.R;
 import com.yo.android.adapters.AppContactsListAdapter;
 import com.yo.android.api.YoApi;
@@ -30,7 +21,6 @@ import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
-import com.yo.android.model.Room;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -158,26 +148,11 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         if (mContactsSyncManager.getContacts().isEmpty()) {
             showProgressDialog();
         }
-
-        appContactsListAdapter.addItems(mContactsSyncManager.getContacts());
-
-        mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
-            @Override
-            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                List<Contact> contactList = new ArrayList<>();
-                if (response.body() != null) {
-                    contactList.addAll(response.body());
-                    loadInAlphabeticalOrder(contactList);
-
-                }
-                dismissProgressDialog();
-            }
-
-            @Override
-            public void onFailure(Call<List<Contact>> call, Throwable t) {
-                dismissProgressDialog();
-            }
-        });
+        List<Contact> contactList = new ArrayList<>();
+        contactList.addAll(mContactsSyncManager.getContacts());
+        appContactsListAdapter.addItems(contactList);
+        loadInAlphabeticalOrder(contactList);
+        dismissProgressDialog();
 
     }
 
