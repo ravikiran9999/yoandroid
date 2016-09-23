@@ -221,4 +221,13 @@
     <string name="add_balance_from_google_play">Add balance from Google Play</string>
     <string name="add_balance_from_voucher">Add balance from Voucher</string>
     <string name="transfer_balance">Transfer balance</string>
+    <string name="button_allow">Allow</string>
+    <string name="button_deny">Deny</string>
+    <string name="permission_pick_rationale">READ_EXTERNAL_STORAGE permission is needed to pick image.</string>
+    <string name="permission_crop_rationale">WRITE_EXTERNAL_STORAGE permission is needed to save cropped image.</string>
+    <string name="permission_denied">Permission was denied. Please consider granting it in order to use all features.</string>
+    <string name="permission_denied_never_ask_again">Permission was denied with never ask again.</string>
+    <string name="move_and_scale">Move and Scale</string>
+    <string name="exceed_message">Message exceeds maximum limit</string>
+    <string name="crop_image">Crop Image</string>
 </resources>

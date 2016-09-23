@@ -42,4 +42,7 @@
     <dimen name="photo_width">110dp</dimen>
     <dimen name="photo_height">110dp</dimen>
     <dimen name="magazine_image_height">150dp</dimen>
+    <dimen name="text_size_m">20sp</dimen>
+    <dimen name="text_size_s">16sp</dimen>
+    <dimen name="button_height">48dp</dimen>
 </resources>

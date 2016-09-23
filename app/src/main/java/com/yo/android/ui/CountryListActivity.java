@@ -40,8 +40,13 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     private final static String TAG = "CountryListActivity";
     @Bind(R.id.lv_app_contacts)
     ListView listView;
-    @Bind(R.id.txtEmpty)
+
+    @Bind(R.id.no_search_results)
     TextView txtEmptyView;
+
+    @Bind(R.id.side_index)
+    ListView layout;
+
     private CountryCallRatesAdapter adapter;
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -54,6 +59,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         ButterKnife.bind(this);
         enableBack();
         getSupportActionBar().setTitle(R.string.activity_contry_selection_title);
+        layout.setVisibility(View.GONE);
         adapter = new CountryCallRatesAdapter(this);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);

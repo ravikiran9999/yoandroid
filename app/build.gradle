@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'android-apt'
 android {
     signingConfigs {
         devconfig {
@@ -74,6 +74,9 @@ repositories {
         url "https://jitpack.io"
     }
 }
+ext {
+    permissionsDispatcherVersion = '2.1.2'
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -119,6 +122,9 @@ dependencies {
     compile 'se.emilsjolander:android-flipview:1.1.0'
     compile 'com.android.support:multidex:1.0.0'
     compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '7.0.3'
+    compile 'com.isseiaoki:simplecropview:1.1.4'
+    compile "com.github.hotchemi:permissionsdispatcher:${permissionsDispatcherVersion}"
+    apt "com.github.hotchemi:permissionsdispatcher-processor:${permissionsDispatcherVersion}"
 }
 apply plugin: 'com.google.gms.google-services'
 

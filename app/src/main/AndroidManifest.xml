@@ -232,7 +232,7 @@
             android:name=".chat.firebase.FirebaseService"
             android:enabled="true"
             android:exported="false" />
-
+        <activity android:name=".crop.MainImageCropActivity" />
         <activity
             android:name=".ui.OthersMagazinesDetailActivity"
             android:screenOrientation="portrait" />

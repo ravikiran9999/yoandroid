@@ -23,6 +23,7 @@ import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.chat.ui.fragments.YoContactsFragment;
+import com.yo.android.crop.MainImageCropActivity;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
@@ -174,7 +175,8 @@ import dagger.Provides;
                 PhoneChatActivity.class,
                 CallLogDetailsActivity.class,
                 FireBaseAuthToken.class,
-                NewDailerActivity.class
+                NewDailerActivity.class,
+                MainImageCropActivity.class
         },
         includes = {
                 AppModule.class,

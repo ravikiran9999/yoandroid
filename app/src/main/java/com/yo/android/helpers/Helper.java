@@ -3,18 +3,26 @@ package com.yo.android.helpers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.AlphabetAdapter;
+import com.yo.android.crop.MainImageCropActivity;
 import com.yo.android.model.Contact;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,6 +33,11 @@ import java.util.regex.Pattern;
  * Created by rajesh on 20/9/16.
  */
 public class Helper {
+    public static final String GALLERY_IMAGE_ITEM = "gallery_image_item";
+    public static final String IS_FROM_CAMERA = "is_from_camera";
+    public static final String IMAGE_PATH = "image_path";
+    public static final int CROP_ACTIVITY = 1001;
+
     public static void createNewContactWithPhoneNumber(Activity activity, String phoneNumber) {
         Intent i = new Intent(Intent.ACTION_INSERT);
         i.putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber);
@@ -79,6 +92,44 @@ public class Helper {
             // }
         }
         return mapIndex;
+    }
 
+    public void loadDirectly(final Activity activity, final ImageView imageView, final File file) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(file);
+                    final Bitmap bitmap = BitmapFactory.decodeStream(fis);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            imageView.setImageBitmap(bitmap);
+                        }
+                    });
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (fis != null) {
+                        try {
+                            fis.close();
+                        } catch (IOException e) {
+                            //e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+
+    }
+
+    public static void setSelectedImage(Activity activity, String path, boolean isFromCam) {
+        Intent intent = new Intent(activity, MainImageCropActivity.class);
+        intent.putExtra(GALLERY_IMAGE_ITEM, path);
+        if (isFromCam) {
+            intent.putExtra(IS_FROM_CAMERA, IS_FROM_CAMERA);
+        }
+        activity.startActivityForResult(intent, CROP_ACTIVITY);
     }
 }

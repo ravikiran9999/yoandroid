@@ -32,6 +32,9 @@ public class InviteFriendsAdapter extends AbstractBaseAdapter<Contact, InviteFri
     @Override
     public void bindView(int position, InviteFriendsViewHolder holder, Contact item) {
         holder.getContactNumber().setText(item.getPhoneNo());
+        if (item.getName() != null) {
+            holder.getContactMail().setText(item.getName());
+        }
 
     }
 }

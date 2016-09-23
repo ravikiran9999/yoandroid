@@ -31,6 +31,7 @@ import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.YoSipService;
@@ -150,9 +151,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             Glide.with(getActivity()).load(avatar)
                     .placeholder(R.drawable.dynamic_profile)
                     .dontAnimate()
+                    .fitCenter()
                     .error(R.drawable.dynamic_profile).
                     into(profilePic);
-
         } else {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
         }
@@ -347,11 +348,19 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-
+            case Helper.CROP_ACTIVITY:
+                if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
+                    Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
+                    if (imagePath != null) {
+                        uploadFile(new File(imagePath.getPath()));
+                    }
+                }
+                break;
             case Constants.ADD_IMAGE_CAPTURE:
                 try {
                     String imagePath = cameraIntent.mFileTemp.getPath();
-                    uploadFile(new File(imagePath));
+                    Helper.setSelectedImage(getActivity(), imagePath, true);
+                    //uploadFile(new File(imagePath));
 
                 } catch (Exception e) {
                     mLog.w("MoreFragment", e);
@@ -362,7 +371,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 if (data != null) {
                     try {
                         String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(), data);
-                        uploadFile(new File(imagePath));
+                        Helper.setSelectedImage(getActivity(), imagePath, true);
+
+                        //uploadFile(new File(imagePath));
                     } catch (Exception e) {
                         mLog.w("MoreFragment", e);
                     }
