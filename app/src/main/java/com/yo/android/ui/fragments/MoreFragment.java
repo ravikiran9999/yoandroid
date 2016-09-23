@@ -266,6 +266,13 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
 
+
+
+
+
+
+
+
     public void showLogoutDialog() {
 
         if (getActivity() != null) {
