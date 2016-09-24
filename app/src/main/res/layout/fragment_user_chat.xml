@@ -99,7 +99,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignBottom="@+id/chat_text"
                     android:layout_alignTop="@+id/chat_text"
-                    android:src="@drawable/ic_photo" />
+                    android:src="@drawable/camera" />
             </RelativeLayout>
 
             <ImageView

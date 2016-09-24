@@ -114,31 +114,45 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
             RelativeLayout layout = new RelativeLayout(context);
-
+            View layout2 = null;
             if (userId.equals(item.getSenderID())) {
 
                 if (item.getSent() != 0) {
-                    holder.getChatTimeStamp().setText(Constants.SENT + " " + Util.getTimeFormat(mContext, item.getTime()));
+                    //holder.getChatTimeStamp().setImageResource(R.drawable.sent);
+                    //holder.getSeenTimeStamp().setText(Util.getTimeFormat(mContext, item.getTime()));
                 } else {
-                    holder.getChatTimeStamp().setText("");
+                    //holder.getChatTimeStamp().setImageResource(android.R.color.transparent);
+                    //holder.getSeenTimeStamp().setText("");
                 }
                 if (item.getDeliveredTime() != 0) {
-                    holder.getSeenTimeStamp().setText(Constants.SEEN + " " + Util.getTimeFormat(mContext, item.getDeliveredTime()));
-                } else {
-                    holder.getSeenTimeStamp().setText("");
+                    holder.getChatTimeStamp().setImageResource(R.drawable.seen);
                 }
 
-                holder.getLinearLayout().setGravity(Gravity.END);
+                //holder.getLinearLayout().setGravity(Gravity.END);
 
                 if (item.getType().equals(Constants.TEXT)) {
-                    layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    //layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    layout2 = LayoutInflater.from(context).inflate(R.layout.layout_text_view, holder.getLl(), false);
+                    TextView textView = (TextView)layout2.findViewById(R.id.textView);
+                    TextView timeView = (TextView)layout2.findViewById(R.id.time_stamp);
+
+                    textView.setText(item.getMessage());
+                    timeView.setText(Util.getTimeFormat(mContext, item.getTime()));
 
                 } else if (item.getType().equals(Constants.IMAGE)) {
-                    layoutParams = new LinearLayout.LayoutParams(300, 300);
+                    //layoutParams = new LinearLayout.LayoutParams(300, 300);
+
+                    layout2 = LayoutInflater.from(context).inflate(R.layout.layout_image_view, holder.getLl(), false);
+                    TextView textView = (TextView)layout2.findViewById(R.id.textView);
+                    TextView timeView = (TextView)layout2.findViewById(R.id.time_stamp);
 
                 }
 
-                layout.setLayoutParams(layoutParams);
+                //layout.setLayoutParams(layoutParams);
+
+                holder.getLl().addView(layout2);
+
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 
@@ -147,18 +161,18 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     holder.getLl().setBackgroundResource(R.drawable.bg_sms_white);
                 }
 
-                addView(layout, item, holder);
+                //addView(layout, item, holder);
+                addView(holder.getLinearLayout(), item, holder);
 
             } else {
 
                 if (item.getDeliveredTime() != 0) {
-                    holder.getChatTimeStamp().setText("");
-                    holder.getSeenTimeStamp().setText(Constants.RECEIVED + " " + Util.getTimeFormat(mContext, item.getDeliveredTime()));
+                    holder.getSeenTimeStamp().setText(Util.getTimeFormat(mContext, item.getTime()));
                 } else {
                     holder.getSeenTimeStamp().setText("");
                 }
 
-                holder.getLinearLayout().setGravity(Gravity.START);
+                //holder.getLinearLayout().setGravity(Gravity.START);
 
                 if (item.getType().equals(Constants.TEXT)) {
                     layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -199,14 +213,17 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 linearLayout1.addView(senderId);
             }
 
-            TextView textView = new TextView(context);
-            textView.setTextColor(Color.BLACK);
-            textView.setText(item.getMessage());
-            linearLayout1.addView(textView);
-            relativeLayout.addView(linearLayout1);
+            /*TextView textView = new TextView(context);
+            textView.setTextColor(Color.BLACK);*/
+            //textView.setText(item.getMessage());
+            //timeView.setText(Util.getTimeFormat(mContext, item.getTime()));
+            /*linearLayout1.addView(textView);
+            relativeLayout.addView(linearLayout1); */
 
             holder.getLl().setTag(holder);
             holder.getLl().addView(relativeLayout);
+
+
 
 
         } else if (item.getType().equals(Constants.IMAGE)) {
@@ -269,8 +286,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                                 }
                             });
 
-
-
                             item.setImageUrl(uri.toString());
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -290,7 +305,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         } else {
             holder.getLl().addView(null);
         }
-
     }
 
     @Override

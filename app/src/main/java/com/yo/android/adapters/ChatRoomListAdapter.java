@@ -18,7 +18,6 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
-import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Room;
 import com.yo.android.photo.TextDrawable;
@@ -72,22 +71,26 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             }
 
             Glide.with(mContext).load(item.getImage())
-                    .placeholder(loadAvatarImage(holder, false))
-                    .error(loadAvatarImage(holder, false))
+                    .asBitmap().centerCrop()
+                    .placeholder(R.drawable.ic_contactprofile)
+                    .error(R.drawable.ic_contactprofile)
                     .into(holder.getChatRoomPic());
 
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
             Glide.with(mContext).load(item.getImage())
-                    .placeholder(loadAvatarImage(holder, true))
+                    .asBitmap().centerCrop()
+                    .placeholder(R.drawable.ic_group)
                     .dontAnimate()
-                    .error(loadAvatarImage(holder, true)).
+                    .error(R.drawable.ic_group).
                     into(holder.getChatRoomPic());
         } else {
             holder.getOpponentName().setText("");
-            Glide.with(context).load(loadAvatarImage(holder, false))
-                    .placeholder(loadAvatarImage(holder, false))
-                    .error(loadAvatarImage(holder, false))
+
+            Glide.with(context)
+                    .load(R.drawable.ic_contactprofile)
+                    .fitCenter()
+                    .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getChatRoomPic());
         }
