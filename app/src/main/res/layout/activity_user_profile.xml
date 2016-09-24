@@ -15,77 +15,78 @@
             android:id="@+id/profile_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true"
             android:src="@drawable/dynamic_profile" />
 
-        <RelativeLayout
-            android:id="@+id/rl_transparent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/profile_image"
-            android:gravity="bottom"
-            android:layout_marginTop="16dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_gravity="bottom"
-            android:background="#44000000">
 
-            <TextView
-                android:id="@+id/profile_name"
-                android:layout_width="wrap_content"
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/profile_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/phone_number"
+                    android:gravity="left"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    android:text="Yo!"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/profile_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="right"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    android:text="Yo!"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/change_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="15dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                tool:text="@string/user_name" />
+                android:background="#44000000"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp">
 
-            <TextView
-                android:id="@+id/profile_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/profile_name"
-                android:layout_marginLeft="15dp"
-                android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="10dp"
-                android:paddingTop="5dp"
-                tool:text="@string/mobile_number_title"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                <ImageView
+                    android:id="@+id/profile_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="15dp"
+                    android:src="@mipmap/ic_profile_chat" />
 
-            <ImageView
-                android:id="@+id/profile_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/profile_call"
-                android:padding="15dp"
-                android:src="@mipmap/ic_profile_chat"/>
-
-            <ImageView
-                android:id="@+id/profile_call"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:padding="15dp"
-                android:src="@mipmap/ic_profile_call" />
-
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/profile_call"
+                    android:layout_gravity="right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="5dp"
+                    android:layout_alignParentRight="true"
+                    android:padding="15dp"
+                    android:visibility="visible"
+                    android:src="@mipmap/ic_profile_call" />
+            </RelativeLayout>
     </LinearLayout>
 
     <ListView
         android:id="@+id/members"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        />
+        android:layout_marginTop="10dp" />
 
 </LinearLayout>

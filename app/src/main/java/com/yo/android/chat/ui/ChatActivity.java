@@ -114,7 +114,7 @@ public class ChatActivity extends BaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayShowCustomEnabled(true);
             View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
-            LinearLayout titleView = (LinearLayout)customView.findViewById(R.id.title_view);
+            LinearLayout titleView = (LinearLayout) customView.findViewById(R.id.title_view);
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
             String title = null;
@@ -137,6 +137,7 @@ public class ChatActivity extends BaseActivity {
                         .asBitmap().centerCrop()
                         .placeholder(loadAvatarImage(true))
                         .error(loadAvatarImage(true))
+                        .dontAnimate()
                         .into(new BitmapImageViewTarget(imageView) {
                             @Override
                             protected void setResource(Bitmap resource) {
@@ -149,6 +150,7 @@ public class ChatActivity extends BaseActivity {
             } else {
                 Glide.with(this).load(mOpponentImg)
                         .asBitmap().centerCrop()
+                        .dontAnimate()
                         .placeholder(loadAvatarImage(false))
                         .error(loadAvatarImage(false))
                         .into(new BitmapImageViewTarget(imageView) {
