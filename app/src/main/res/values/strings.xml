@@ -133,7 +133,7 @@
     <string name="contact">Contacts</string>
     <string name="empty_country_list_message">No country list available.</string>
     <string name="activity_contry_selection_title">Select Country</string>
-    <string name="no_article_added">There is no article added yet.\nAdd any article to create your own magazine</string>
+    <string name="no_article_added">There is no article added yet.\nClick here to add an article</string>
     <string name="yesterday">"Yesterday "</string>
     <string name="otp_empty">Please enter valid PIN</string>
     <string name="otp_failure">Please enter valid PIN</string>
@@ -235,4 +235,5 @@
     <string name="Cancel">Cancel</string>
     <string name="Ok">ok</string>
     <string name="Dialog_title">Confirm</string>
+    <string name="others_no_article_added">There is no article added yet to the magazine.</string>
 </resources>
