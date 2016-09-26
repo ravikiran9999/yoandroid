@@ -5,6 +5,7 @@ import android.content.Context;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.adapters.SuggestionsAdapter;
+import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.firebase.FirebaseService;
@@ -176,7 +177,8 @@ import dagger.Provides;
                 CallLogDetailsActivity.class,
                 FireBaseAuthToken.class,
                 NewDailerActivity.class,
-                MainImageCropActivity.class
+                MainImageCropActivity.class,
+                UserChatAdapter.class
         },
         includes = {
                 AppModule.class,

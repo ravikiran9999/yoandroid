@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -56,6 +57,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.Clipboard;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
@@ -128,6 +130,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     FireBaseHelper fireBaseHelper;
 
     @Inject
+    ContactsSyncManager mContactsSyncManager;
+
+
+
+    @Inject
     YoApi.YoService yoService;
 
 
@@ -178,7 +185,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
         chatMessageArray = new ArrayList<>();
         chatMessageHashMap = new HashMap<>();
-        userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType);
+        userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType,mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
@@ -493,6 +500,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setSent(0); // message sent 0, read 1
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
+        chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(message.hashCode());
@@ -642,11 +650,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                     mFileTemp = new File(getActivity().getFilesDir(), tempPhotoFileName);
                                 }
                                 copyFile(filePath, mFileTemp.getAbsolutePath());
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        updateChatWithLocalImage(mFileTemp.getAbsolutePath());
+                                    }
+                                });
                             }
                         }).start();
 
 
-                        updateChatWithLocalImage(filePath);
                         cursor.close();
 
                     } catch (Exception e) {
@@ -659,7 +672,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    private void copyFile(String inputPath, String outputPath) {
+    public static void copyFile(String inputPath, String outputPath) {
 
         FileInputStream in = null;
         FileOutputStream out = null;
@@ -694,9 +707,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         message.setType(Constants.IMAGE);
         message.setSenderID(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         message.setImagePath(mPartyPicUri);
-        List<ChatMessage> newMessage = new ArrayList<>();
-        newMessage.add(message);
-        userChatAdapter.addItems(newMessage);
+        userChatAdapter.UpdateItem(message);
         if (mPartyPicUri != null) {
             uploadImage(mPartyPicUri);
         }

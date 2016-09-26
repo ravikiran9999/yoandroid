@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Members;
 import com.yo.android.model.Room;
@@ -210,5 +211,6 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     public abstract V getViewHolder(View convertView);
 
     public abstract void bindView(int position, V holder, T item);
+
 
 }

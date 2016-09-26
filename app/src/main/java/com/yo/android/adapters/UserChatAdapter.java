@@ -3,6 +3,7 @@ package com.yo.android.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.SparseBooleanArray;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,16 +31,26 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.Contact;
+import com.yo.android.photo.TextDrawable;
+import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -57,11 +69,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private String roomType;
     private Context context;
     private SparseBooleanArray mSelectedItemsIds;
-    private LinearLayout.LayoutParams layoutParams;
-
-    @Inject
-    @Named("login")
-    protected PreferenceEndPoint preferenceEndPoint;
+    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+    ContactsSyncManager mContactsSyncManager;
 
     public UserChatAdapter(Activity context) {
         super(context);
@@ -69,13 +78,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     }
 
-    public UserChatAdapter(Activity context, String userId, String type) {
+    public UserChatAdapter(Activity context, String userId, String type,
+                           ContactsSyncManager mContactsSyncManager) {
         super(context);
         inflater = LayoutInflater.from(context);
         this.context = context.getBaseContext();
         this.userId = userId;
         this.mSelectedItemsIds = new SparseBooleanArray();
         this.roomType = type;
+        this.mContactsSyncManager = mContactsSyncManager;
     }
 
 
@@ -121,10 +132,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     @Override
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
-            //  RelativeLayout layout = new RelativeLayout(context);
 
             if (userId.equals(item.getSenderID())) {
-
                 if (item.getSent() != 0) {
                     holder.getChatTimeStamp().setText(Constants.SENT + " " + Util.getTimeFormat(mContext, item.getTime()));
                 } else {
@@ -135,58 +144,25 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 } else {
                     holder.getSeenTimeStamp().setText("");
                 }
-
                 holder.getLinearLayout().setGravity(Gravity.END);
-
                 if (item.getType().equals(Constants.TEXT)) {
-                    layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
+                    newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
                     newAddView(item, holder);
-
-                    layoutParams = new LinearLayout.LayoutParams(300, 300);
-
                 }
-
-                // layout.setLayoutParams(layoutParams);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-
-                    holder.getLl().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_white));
-                } else {
-                    holder.getLl().setBackgroundResource(R.drawable.bg_sms_white);
-                }
-                //addView(layout, item, holder);
-
             } else {
-
                 if (item.getDeliveredTime() != 0) {
                     holder.getChatTimeStamp().setText("");
                     holder.getSeenTimeStamp().setText(Constants.RECEIVED + " " + Util.getTimeFormat(mContext, item.getDeliveredTime()));
                 } else {
                     holder.getSeenTimeStamp().setText("");
                 }
-
                 holder.getLinearLayout().setGravity(Gravity.START);
-
                 if (item.getType().equals(Constants.TEXT)) {
-                    layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
+                    newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
                     newAddView(item, holder);
-
-                    layoutParams = new LinearLayout.LayoutParams(300, 300);
                 }
-
-                // layout.setLayoutParams(layoutParams);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    holder.getLl().setBackground(mContext.getResources().getDrawable(R.drawable.bg_sms_grey));
-                } else {
-                    holder.getLl().setBackgroundResource(R.drawable.bg_sms_grey);
-                }
-                //newAddView(item);
-                // addView(layout, item, holder);
             }
 
         } catch (Exception e) {
@@ -194,7 +170,100 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     }
 
-    private LinearLayout newAddView(final ChatMessage item, final UserChatViewHolder holder) {
+    private void newAddView(final ChatMessage item, final UserChatViewHolder holder) {
+        holder.getLl().removeAllViews();
+        holder.getLl().setTag(holder);
+        PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        final LinearLayout secretChatPlaceholder = new LinearLayout(context);
+        boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
+        secretChatPlaceholder.setBackgroundResource(R.drawable.system);
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(30, 0, 30, 5);
+        secretChatPlaceholder.setLayoutParams(lp);
+        secretChatPlaceholder.getBackground().setColorFilter(colorFilter);
+        secretChatPlaceholder.setPadding(Helper.dp(context, 2), Helper.dp(context, 2), Helper.dp(context, 2), Helper.dp(context, 2));
+        secretChatPlaceholder.setOrientation(LinearLayout.VERTICAL);
+
+        final ImageView imageView1 = new ImageView(context);
+
+        secretChatPlaceholder.addView(imageView1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 0, 0));
+
+        if (item.getImagePath() != null) {
+            updateImage(item, holder, secretChatPlaceholder, imageView1);
+        }
+    }
+
+    private LinearLayout updateImage(ChatMessage item, UserChatViewHolder holder, LinearLayout secretChatPlaceholder, final ImageView imageView1) {
+        File file = new File(item.getImagePath());
+        if (file != null && !file.exists()) {
+            file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
+        }
+        if (file.exists()) {
+            getImageHeightAndWidth(file, imageView1);
+        } else {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
+            StorageReference imageRef = storageRef.child(item.getImagePath());
+            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(final Uri uri) {
+                    Picasso.with(context).load(uri).transform(transformation).into(imageView1);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        holder.getLl().addView(secretChatPlaceholder);
+        return secretChatPlaceholder;
+    }
+
+    Transformation transformation = new Transformation() {
+
+        @Override
+        public Bitmap transform(Bitmap source) {
+            storeImage(source, "");
+            int targetWidth = 800;
+            double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
+            int targetHeight = (int) (targetWidth * aspectRatio);
+            Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+            if (result != source) {
+                source.recycle();
+            }
+            return result;
+        }
+
+        @Override
+        public String key() {
+            return "transformation" + " desiredWidth";
+        }
+    };
+
+    private void storeImage(Bitmap bmp, String filename) {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(filename);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    private LinearLayout newTextAddView(final ChatMessage item, final UserChatViewHolder holder) {
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
         PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
@@ -205,35 +274,60 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         secretChatPlaceholder.setOrientation(LinearLayout.VERTICAL);
         boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
 
-       // LinearLayout linearLayout = new LinearLayout(context);
-        ImageView imageView1 = new ImageView(context);
-       // linearLayout.setBackgroundResource(R.drawable.profile_background);
-
-        //linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        secretChatPlaceholder.addView(imageView1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 0, 0));
-
-       /* ImageView imageView = new ImageView(context);
-        if (isRTL) {
-            imageView1.addView(imageView, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, 8, 3, 0, 0));
-        } else {
-            linearLayout.addView(imageView, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, 0, 4, 8, 0));
-        }*/
-        File file = new File(item.getImagePath());
-        if (file != null && !file.exists()) {
-            file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
+        LinearLayout linearLayout1 = new LinearLayout(context);
+        linearLayout1.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(30, 0, 30, 5);
+        if (roomType != null && !isRTL) {
+            TextView senderId = new TextView(context);
+            senderId.setLayoutParams(lp);
+            Contact contact = mContactsSyncManager.getContactByVoxUserName(item.getVoxUserName());
+            if (contact != null && contact.getName() != null) {
+                senderId.setText(contact.getName());
+            } else {
+                String profileName = item.getChatProfileUserName() == null ? "" : " ~" + item.getChatProfileUserName();
+                senderId.setText(item.getSenderID() + profileName);
+            }
+            senderId.setTextColor(mColorGenerator.getRandomColor());
+            linearLayout1.addView(senderId);
         }
+
+        TextView textView = new TextView(context);
+        textView.setLayoutParams(lp);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+        textView.setGravity(Gravity.LEFT);
+        textView.setMaxWidth(Helper.dp(context, 260));
+        textView.setTextColor(Color.BLACK);
+        textView.setText(item.getMessage());
+        linearLayout1.addView(textView);
+
+        // linearLayout.setBackgroundResource(R.drawable.profile_background);
+        //linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 0, 0));
+
+
+        holder.getLl().addView(secretChatPlaceholder);
+        return secretChatPlaceholder;
+    }
+
+    private void getImageHeightAndWidth(final File file, ImageView imageView) {
+        int maxWidth = 800;
+        int maxHeight = 500;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        int height = options.outHeight;
+        int width = options.outWidth;
+        float ratio = (float) width / maxWidth;
+        width = maxWidth;
+        height = (int) (height / ratio);
         Glide.with(context)
                 .load(file)
-                .override(1280, 720)
-                .placeholder(R.drawable.dynamic_profile)
+                .override(width, height)
                 .dontAnimate()
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageView1);
-
-        //Helper.loadDirectly(mContext, imageView, );
-        holder.getLl().addView(secretChatPlaceholder);
-        return secretChatPlaceholder;
+                .into(imageView);
     }
 
     private void addView(final RelativeLayout relativeLayout, final ChatMessage item, final UserChatViewHolder holder) {
@@ -317,6 +411,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
+
                             Picasso.with(context).load(uri).into(imageView, new Callback() {
                                 @Override
                                 public void onSuccess() {
@@ -374,6 +469,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     public long getHeaderId(int position) {
         String timeStamp = getItem(position).getStickeyHeader();
         return timeStamp.subSequence(0, timeStamp.length()).hashCode();
+    }
+
+    public void UpdateItem(ChatMessage message) {
+        getAllItems().add(message);
+        notifyDataSetChanged();
     }
 
     private class HeaderViewHolder {
