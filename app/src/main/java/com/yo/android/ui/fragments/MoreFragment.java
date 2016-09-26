@@ -32,6 +32,7 @@ import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
@@ -317,6 +318,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                             });
                         }
                         preferenceEndPoint.clearAll();
+                        MagazineFlipArticlesFragment.lastReadArticle = 0;
 
                         //stop firebase service
                         //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
