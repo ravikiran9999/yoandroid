@@ -96,7 +96,6 @@ public class FireBaseHelper {
                             }
                         });
                         Log.i(TAG, "Login un Succeeded!");
-                        Toast.makeText(context, "Login un Succeeded!", Toast.LENGTH_SHORT).show();
                     }
                 }
 
