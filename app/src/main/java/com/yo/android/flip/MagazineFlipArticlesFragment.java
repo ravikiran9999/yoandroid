@@ -163,6 +163,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             flipView.flipTo(lastReadArticle);
             articlesRootLayout.setVisibility(View.VISIBLE);
             networkFailureText.setVisibility(View.GONE);
+            if (llNoArticles != null) {
+                llNoArticles.setVisibility(View.GONE);
+                flipContainer.setVisibility(View.VISIBLE);
+                if(myBaseAdapter.getCount()>0) {
+                    Random r = new Random();
+                    suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                }
+            }
             return;
         } else {
          loadArticles(null);
@@ -214,7 +222,53 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         } else {
             //yoService.getUserArticlesAPI(accessToken).enqueue(callback);
             isSearch = false;
-            yoService.getAllArticlesAPI(accessToken).enqueue(callback);
+            yoService.getAllArticlesAPI(accessToken).enqueue(new Callback<List<Articles>>() {
+                @Override
+                public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                    if (!isAdded()) {
+                        return;
+                    }
+                    myBaseAdapter.clear();
+                    if (mProgress != null) {
+                        mProgress.setVisibility(View.GONE);
+                    }
+
+                    if (response.body() != null && !response.body().isEmpty()) {
+                        myBaseAdapter.addItems(response.body());
+                        mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
+                        flipView.flipTo(lastReadArticle);
+                        //lruCacheHelper.put("magazines_cache", response.body());
+                        if(!isSearch) {
+                            if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
+                                preferenceEndPoint.removePreference("cached_magazines");
+                            }
+                            preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
+                        }
+                        if (llNoArticles != null) {
+                            llNoArticles.setVisibility(View.GONE);
+                            flipContainer.setVisibility(View.VISIBLE);
+                            if(myBaseAdapter.getCount()>0) {
+                                Random r = new Random();
+                                suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                            }
+                        }
+                    } else {
+                /*if (llNoArticles != null) {
+                    flipContainer.setVisibility(View.GONE);
+                    llNoArticles.setVisibility(View.VISIBLE);
+                }*/
+                        flipContainer.setVisibility(View.VISIBLE);
+                        llNoArticles.setVisibility(View.GONE);
+                        //loadArticles(null);
+                        getCachedArticles();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Articles>> call, Throwable t) {
+
+                }
+            });
         }
     }
 
@@ -240,12 +294,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     }
                     preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
                 }
-                if (llNoArticles != null) {
-                    llNoArticles.setVisibility(View.GONE);
-                    flipContainer.setVisibility(View.VISIBLE);
-                    if(myBaseAdapter.getCount()>0) {
-                        Random r = new Random();
-                        suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                if(!isSearch) {
+                    if (llNoArticles != null) {
+                        llNoArticles.setVisibility(View.GONE);
+                        flipContainer.setVisibility(View.VISIBLE);
+                        if (myBaseAdapter.getCount() > 0) {
+                            Random r = new Random();
+                            suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                        }
                     }
                 }
             } else {

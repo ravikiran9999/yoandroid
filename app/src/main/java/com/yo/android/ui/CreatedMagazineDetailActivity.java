@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -214,6 +215,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                 holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
 
+                holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -370,6 +373,15 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                     }
                 });
 
+            if(holder.tvTopicName != null) {
+                if(!TextUtils.isEmpty(data.getTopicName())) {
+                    holder.tvTopicName.setVisibility(View.VISIBLE);
+                    holder.tvTopicName.setText(data.getTopicName());
+                } else {
+                    holder.tvTopicName.setVisibility(View.GONE);
+                }
+            }
+
             return layout;
         }
 
@@ -395,6 +407,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         private ImageView magazineAdd;
 
         private ImageView magazineShare;
+
+        private TextView tvTopicName;
     }
 
     @Override

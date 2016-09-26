@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -196,6 +197,8 @@ public class MyCollectionDetails extends BaseActivity {
                 holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
 
                 holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
+
+                holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
 
                 layout.setTag(holder);
             } else {
@@ -412,6 +415,15 @@ public class MyCollectionDetails extends BaseActivity {
                 });
             }
 
+            if(holder.tvTopicName != null) {
+                if(!TextUtils.isEmpty(data.getTopicName())) {
+                    holder.tvTopicName.setVisibility(View.VISIBLE);
+                    holder.tvTopicName.setText(data.getTopicName());
+                } else {
+                    holder.tvTopicName.setVisibility(View.GONE);
+                }
+            }
+
 
             return layout;
         }
@@ -503,6 +515,8 @@ public class MyCollectionDetails extends BaseActivity {
         private ImageView magazineShare;
 
         private Button articleFollow;
+
+        private TextView tvTopicName;
     }
 
     @Override

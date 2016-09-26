@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -229,6 +230,8 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
 
                 holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
+
+                holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
 
                 layout.setTag(holder);
             } else {
@@ -512,6 +515,15 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 });
             }
 
+            if(holder.tvTopicName != null) {
+                if(!TextUtils.isEmpty(data.getTopicName())) {
+                    holder.tvTopicName.setVisibility(View.VISIBLE);
+                    holder.tvTopicName.setText(data.getTopicName());
+                } else {
+                    holder.tvTopicName.setVisibility(View.GONE);
+                }
+            }
+
 
             return layout;
         }
@@ -572,5 +584,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         private ImageView magazineShare;
 
         private Button articleFollow;
+
+        private TextView tvTopicName;
     }
 }
