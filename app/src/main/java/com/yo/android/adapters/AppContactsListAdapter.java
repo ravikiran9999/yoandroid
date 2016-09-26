@@ -13,6 +13,7 @@ import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
+import com.yo.android.util.Util;
 
 /**
  * Created by rdoddapaneni on 7/5/2016.
@@ -41,7 +42,7 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
     }
 
     @Override
-    public void bindView(int position, AppRegisteredContactsViewHolder holder, Contact item) {
+    public void bindView(int position, AppRegisteredContactsViewHolder holder, final Contact item) {
         holder.getContactName().setText(item.getName());
         if (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo())) {
             holder.getContactNumber().setText(item.getPhoneNo());
@@ -56,6 +57,13 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
         } else {
             holder.getInviteContact().setVisibility(View.GONE);
         }
+
+        holder.getInviteContact().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.inviteFriend(mContext, item.getPhoneNo());
+            }
+        });
 
         try {
             if (!TextUtils.isEmpty(item.getImage())) {

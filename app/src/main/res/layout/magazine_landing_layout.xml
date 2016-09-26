@@ -57,6 +57,22 @@
                 android:padding="5dp"
                 android:text="Follow"
                 android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/imv_magazine_topic_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white" />
 
             <CheckBox
@@ -65,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:button="@drawable/magazine_like_white_selector"
-                android:layout_below="@+id/imv_magazine_follow_top"/>
+                android:layout_below="@+id/imv_magazine_topic_top"/>
 
             <ImageView
                 android:id="@+id/imv_magazine_add_top"
@@ -75,7 +91,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_toRightOf="@+id/cb_magazine_like_top"
                 android:background="@drawable/ic_add_white"
-                android:layout_below="@+id/imv_magazine_follow_top"/>
+                android:layout_below="@+id/imv_magazine_topic_top"/>
 
             <ImageView
                 android:id="@+id/imv_magazine_share_top"
@@ -85,7 +101,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_toRightOf="@+id/imv_magazine_add_top"
                 android:background="@drawable/ic_magazine_share_white"
-                android:layout_below="@+id/imv_magazine_follow_top"/>
+                android:layout_below="@+id/imv_magazine_topic_top"/>
 
             <Button
                 android:id="@+id/btn_magazine_follow_topics_top"
@@ -150,7 +166,26 @@
                 android:textSize="12sp"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
-                android:layout_alignParentBottom="true"/>
+                android:layout_alignParentBottom="true"
+                android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/imv_magazine_topic_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:layout_alignParentBottom="true"/>
+
             </RelativeLayout>
 
             <TextView
@@ -250,7 +285,26 @@
                     android:textAllCaps="false"
                     android:textSize="12sp"
                     android:textColor="@android:color/white"
+                    android:layout_alignParentBottom="true"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/imv_magazine_topic_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
                     android:layout_alignParentBottom="true"/>
+
             </RelativeLayout>
 
             <TextView

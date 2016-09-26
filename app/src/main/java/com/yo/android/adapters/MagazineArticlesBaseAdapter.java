@@ -2,14 +2,13 @@ package com.yo.android.adapters;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -30,7 +29,6 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
-import com.yo.android.calllogs.CallLog;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.model.Articles;
@@ -183,6 +181,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder.lvSuggestions = UI.<ListView>findViewById(layout, R.id.lv_suggestions);
 
             holder.tvFollowMoreTopics = UI.<TextView>findViewById(layout, R.id.tv_follow_more_topics);
+
+            holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
+
+            holder.tvTopicNameTop = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic_top);
+
+            holder.tvTopicNameLeft = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic_left);
+
+            holder.tvTopicNameRight = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic_right);
 
             layout.setTag(holder);
         } else {
@@ -449,6 +455,15 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     context.startActivity(intent);
                 }
             });
+        }
+
+        if(holder.tvTopicName != null) {
+            if(!TextUtils.isEmpty(data.getTopicName())) {
+                holder.tvTopicName.setVisibility(View.VISIBLE);
+                holder.tvTopicName.setText(data.getTopicName());
+            } else {
+                holder.tvTopicName.setVisibility(View.GONE);
+            }
         }
 
         if(allArticles.size()>=1) {
@@ -947,6 +962,15 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         }
 
+        if(holder.tvTopicNameTop != null) {
+            if(!TextUtils.isEmpty(data.getTopicName())) {
+                holder.tvTopicNameTop.setVisibility(View.VISIBLE);
+                holder.tvTopicNameTop.setText(data.getTopicName());
+            } else {
+                holder.tvTopicNameTop.setVisibility(View.GONE);
+            }
+        }
+
     }
 
     private void populateLeftArticle(ViewHolder holder, final Articles data, int position) {
@@ -1148,7 +1172,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
 
         if(holder.articleFollowLeft != null) {
-            holder.articleFollowLeft.setVisibility(View.VISIBLE);
+            //holder.articleFollowLeft.setVisibility(View.VISIBLE);
             if ("true".equals(data.getIsFollowing())) {
                 holder.articleFollowLeft.setText("Following");
                 holder.articleFollowLeft.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
@@ -1164,6 +1188,15 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     followArticle(data, finalHolder, finalHolder.articleFollowLeft);
                 }
             });
+        }
+
+        if(holder.tvTopicNameLeft != null) {
+            if(!TextUtils.isEmpty(data.getTopicName())) {
+                holder.tvTopicNameLeft.setVisibility(View.VISIBLE);
+                holder.tvTopicNameLeft.setText(data.getTopicName());
+            } else {
+                holder.tvTopicNameLeft.setVisibility(View.GONE);
+            }
         }
 
     }
@@ -1367,7 +1400,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
 
         if(holder.articleFollowRight != null) {
-            holder.articleFollowRight.setVisibility(View.VISIBLE);
+            //holder.articleFollowRight.setVisibility(View.VISIBLE);
             if ("true".equals(data.getIsFollowing())) {
                 holder.articleFollowRight.setText("Following");
                 holder.articleFollowRight.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
@@ -1383,6 +1416,15 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     followArticle(data, finalHolder, finalHolder.articleFollowRight);
                 }
             });
+        }
+
+        if(holder.tvTopicNameRight != null) {
+            if(!TextUtils.isEmpty(data.getTopicName())) {
+                holder.tvTopicNameRight.setVisibility(View.VISIBLE);
+                holder.tvTopicNameRight.setText(data.getTopicName());
+            } else {
+                holder.tvTopicNameRight.setVisibility(View.GONE);
+            }
         }
 
     }
@@ -1415,6 +1457,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder.articleFollowLeft.setVisibility(View.GONE);
         }
 
+        if(holder.tvTopicNameLeft != null) {
+            holder.tvTopicNameLeft.setVisibility(View.GONE);
+        }
+
     }
 
     private void populateEmptyRightArticle(ViewHolder holder) {
@@ -1443,6 +1489,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(holder.articleFollowRight != null) {
             holder.articleFollowRight.setVisibility(View.GONE);
+        }
+
+        if(holder.tvTopicNameRight != null) {
+            holder.tvTopicNameRight.setVisibility(View.GONE);
         }
 
     }
@@ -1502,6 +1552,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private ListView lvSuggestions;
 
         private TextView tvFollowMoreTopics;
+
+        private TextView tvTopicName;
+
+        private TextView tvTopicNameTop;
+
+        private TextView tvTopicNameLeft;
+
+        private TextView tvTopicNameRight;
     }
 
 }
