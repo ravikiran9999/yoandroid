@@ -145,14 +145,33 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     private void getYoAppUsers() {
 
-        if (mContactsSyncManager.getContacts().isEmpty()) {
+        if (!mContactsSyncManager.getContacts().isEmpty()) {
+            loadInAlphabeticalOrder(mContactsSyncManager.getContacts());
+        } else if (mContactsSyncManager.getContacts().isEmpty()) {
             showProgressDialog();
+
+            mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
+                @Override
+                public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                    loadInAlphabeticalOrder(mContactsSyncManager.getContacts());
+
+                    dismissProgressDialog();
+                }
+
+                @Override
+                public void onFailure(Call<List<Contact>> call, Throwable t) {
+                    dismissProgressDialog();
+                }
+            });
         }
-        List<Contact> contactList = new ArrayList<>();
+
+
+        /*List<Contact> contactList = new ArrayList<>();
         contactList.addAll(mContactsSyncManager.getContacts());
         appContactsListAdapter.addItems(contactList);
         loadInAlphabeticalOrder(contactList);
-        dismissProgressDialog();
+        dismissProgressDialog();*/
+
 
     }
 

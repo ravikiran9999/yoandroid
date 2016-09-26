@@ -120,6 +120,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_chat, menu);
         this.menu = menu;
         Util.prepareContactsSearch(getActivity(), menu, chatRoomListAdapter, Constants.CHAT_FRAG);
@@ -216,7 +217,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 public void onCancelled(FirebaseError firebaseError) {
                     dismissProgressDialog();
                     firebaseError.getMessage();
-                    Toast.makeText(getActivity(), "Please try again", Toast.LENGTH_SHORT).show();
                 }
             });
             authReference.keepSynced(true);

@@ -176,13 +176,13 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 layout.setVisibility(View.GONE);
-                return false;
+                return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 layout.setVisibility(View.VISIBLE);
-                return false;
+                return true;
             }
         });
         super.onCreateOptionsMenu(menu, inflater);
