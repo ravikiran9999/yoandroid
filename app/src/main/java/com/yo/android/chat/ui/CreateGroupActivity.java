@@ -137,6 +137,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         new ImageLoader(groupImage, imgFile, this).execute();
 
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
                 break;
