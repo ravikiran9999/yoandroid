@@ -134,7 +134,11 @@ public class BottomTabsActivity extends BaseActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                if (getFragment() instanceof MoreFragment) {
+                    getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
+                } else {
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+                }
                 getSupportActionBar().setTitle((dataList.get(position)).getTitle());
 
                 //setToolBarColor(getResources().getColor(R.color.colorPrimary));

@@ -2,12 +2,15 @@ package com.yo.android.ui;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -16,7 +19,10 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.helpers.Helper;
 import com.yo.android.util.Constants;
+
+import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -58,6 +64,14 @@ public class ShowPhotoActivity extends BaseActivity {
     }
 
     public void prepareImage(String imagePath, final ImageView imageOpen) {
+        File file = new File(imagePath);
+        File newFile = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
+        Glide.with(this)
+                .load(newFile)
+                .dontAnimate()
+                .into(imageOpen);
+        // Helper.loadDirectly(this, imageOpen, new File(imagePath));
+        /*
         try {
             // Create a storage reference from our app
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -99,7 +113,7 @@ public class ShowPhotoActivity extends BaseActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override

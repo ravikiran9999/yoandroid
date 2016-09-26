@@ -249,47 +249,49 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                try {
-                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                    room.setYouserId(chatMessage.getYouserId());
-                    if (dataSnapshot.hasChildren()) {
-                        room.setLastChat(chatMessage.getMessage());
-                        if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
-                            room.setImages(true);
-                        } else {
-                            room.setImages(false);
-                        }
-                        room.setTime(chatMessage.getTime());
-                        room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
-                        if (!arrayOfUsers.contains(room)) {
-                            arrayOfUsers.add(room);
-                        } else {
-                            listRoom = new ArrayList<>();
-                            listRoom.addAll(arrayOfUsers);
-                            for (Room customer : listRoom) {
+
+                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                room.setYouserId(chatMessage.getYouserId());
+                if (dataSnapshot.hasChildren()) {
+                    room.setLastChat(chatMessage.getMessage());
+                    if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
+                        room.setImages(true);
+                    } else {
+                        room.setImages(false);
+                    }
+                    room.setTime(chatMessage.getTime());
+                    room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+                    if (!arrayOfUsers.contains(room)) {
+                        arrayOfUsers.add(room);
+                    } else {
+                        listRoom = new ArrayList<>();
+                        listRoom.addAll(arrayOfUsers);
+                        for (Room customer : listRoom) {
+                            try {
                                 if (arrayOfUsers.contains(customer) && customer.getFirebaseRoomId().equalsIgnoreCase(room.getFirebaseRoomId()) && !customer.getId().equalsIgnoreCase(room.getId())) {
                                     int i = listRoom.indexOf(customer);
                                     arrayOfUsers.set(i, room);
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            if (!listRoom.isEmpty()) {
-                                listRoom.clear();
-                            }
+                        }
+                        if (!listRoom.isEmpty()) {
+                            listRoom.clear();
                         }
                     }
-
-                    Collections.sort(arrayOfUsers, new Comparator<Room>() {
-                        @Override
-                        public int compare(Room lhs, Room rhs) {
-                            return (int) (rhs.getTime() - lhs.getTime());
-                        }
-                    });
-
-                    chatRoomListAdapter.addItems(arrayOfUsers);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+
+                Collections.sort(arrayOfUsers, new Comparator<Room>() {
+                    @Override
+                    public int compare(Room lhs, Room rhs) {
+                        return (int) (rhs.getTime() - lhs.getTime());
+                    }
+                });
+
+                chatRoomListAdapter.addItems(arrayOfUsers);
+
+
             }
 
             @Override

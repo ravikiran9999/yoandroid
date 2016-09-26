@@ -3,10 +3,14 @@ package com.yo.android.helpers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.ContactsContract;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -23,9 +27,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +45,15 @@ public class Helper {
     public static final String IS_FROM_CAMERA = "is_from_camera";
     public static final String IMAGE_PATH = "image_path";
     public static final int CROP_ACTIVITY = 1001;
+    private static float density = 1;
+    public static final int MATCH_PARENT = -1;
+    public static final int WRAP_CONTENT = -2;
+    public static final int MEDIA_DIR_IMAGE = 0;
+    public static final int MEDIA_DIR_AUDIO = 1;
+    public static final int MEDIA_DIR_VIDEO = 2;
+    public static final int MEDIA_DIR_DOCUMENT = 3;
+    public static final int MEDIA_DIR_CACHE = 4;
+    private static HashMap<Integer, File> mediaDirs = null;
 
     public static void createNewContactWithPhoneNumber(Activity activity, String phoneNumber) {
         Intent i = new Intent(Intent.ACTION_INSERT);
@@ -94,20 +111,28 @@ public class Helper {
         return mapIndex;
     }
 
-    public static void loadDirectly(final Activity activity, final ImageView imageView, final File file) {
+
+    public static void loadDirectly(final Context activity, final ImageView imageView, final File file) {
+        File newFile = file;
+        if (file != null && !file.exists()) {
+            newFile = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
+        }
+        final File finalNewFile = newFile;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 FileInputStream fis = null;
                 try {
-                    fis = new FileInputStream(file);
+                    fis = new FileInputStream(finalNewFile);
                     final Bitmap bitmap = BitmapFactory.decodeStream(fis);
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageView.setImageBitmap(bitmap);
-                        }
-                    });
+                    if (activity instanceof Activity) {
+                        ((Activity) activity).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                imageView.setImageBitmap(bitmap);
+                            }
+                        });
+                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } finally {
@@ -131,5 +156,128 @@ public class Helper {
             intent.putExtra(IS_FROM_CAMERA, IS_FROM_CAMERA);
         }
         activity.startActivityForResult(intent, CROP_ACTIVITY);
+    }
+
+    public static void setSelectedImage(Fragment activity, String path, boolean isFromCam) {
+        Intent intent = new Intent(activity.getActivity(), MainImageCropActivity.class);
+        intent.putExtra(GALLERY_IMAGE_ITEM, path);
+        if (isFromCam) {
+            intent.putExtra(IS_FROM_CAMERA, IS_FROM_CAMERA);
+        }
+        activity.startActivityForResult(intent, CROP_ACTIVITY);
+    }
+
+    public static int dp(Context context, float value) {
+        density = context.getResources().getDisplayMetrics().density;
+        if (value == 0) {
+            return 0;
+        }
+        return (int) Math.ceil(density * value);
+    }
+
+    private static int getSize(Context context, float size) {
+        return (int) (size < 0 ? size : dp(context, size));
+    }
+
+    public static LinearLayout.LayoutParams createLinear(Context context, int width, int height, float weight, int gravity, int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(getSize(context, width), getSize(context, height), weight);
+        layoutParams.setMargins(dp(context, leftMargin), dp(context, topMargin), dp(context, rightMargin), dp(context, bottomMargin));
+        layoutParams.gravity = gravity;
+        return layoutParams;
+    }
+
+    public static LinearLayout.LayoutParams createLinear(Context context, int width, int height, float weight, int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(getSize(context, width), getSize(context, height), weight);
+        layoutParams.setMargins(dp(context, leftMargin), dp(context, topMargin), dp(context, rightMargin), dp(context, bottomMargin));
+        return layoutParams;
+    }
+
+    public static LinearLayout.LayoutParams createLinear(Context context, int width, int height, int gravity, int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(getSize(context, width), getSize(context, height));
+        layoutParams.setMargins(dp(context, leftMargin), dp(context, topMargin), dp(context, rightMargin), dp(context, bottomMargin));
+        layoutParams.gravity = gravity;
+        return layoutParams;
+    }
+
+    public static LinearLayout.LayoutParams createLinear(Context context, int width, int height, float leftMargin, float topMargin, float rightMargin, float bottomMargin) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(getSize(context, width), getSize(context, height));
+        layoutParams.setMargins(dp(context, leftMargin), dp(context, topMargin), dp(context, rightMargin), dp(context, bottomMargin));
+        return layoutParams;
+    }
+
+    public static LinearLayout.LayoutParams createLinear(Context context, int width, int height, float weight, int gravity) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(getSize(context, width), getSize(context, height), weight);
+        layoutParams.gravity = gravity;
+        return layoutParams;
+    }
+
+    public static LinearLayout.LayoutParams createLinear(Context context, int width, int height, int gravity) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(getSize(context, width), getSize(context, height));
+        layoutParams.gravity = gravity;
+        return layoutParams;
+    }
+
+    public static LinearLayout.LayoutParams createLinear(Context context, int width, int height, float weight) {
+        return new LinearLayout.LayoutParams(getSize(context, width), getSize(context, height), weight);
+    }
+
+    public static LinearLayout.LayoutParams createLinear(Context context, int width, int height) {
+        return new LinearLayout.LayoutParams(getSize(context, width), getSize(context, height));
+    }
+
+    public static File generatePicturePath(Context context) {
+        try {
+            File storageDir = getAlbumDir(context);
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            if (storageDir != null) {
+                return new File(storageDir, "IMG_" + timeStamp + ".jpg");
+            }
+        } catch (Exception e) {
+            Log.w("tmessages", e);
+        }
+        return null;
+    }
+
+    public void setMediaDirs(HashMap<Integer, File> dirs) {
+        mediaDirs = dirs;
+    }
+
+    public static File getDirectory(int type) {
+        if (mediaDirs != null) {
+            File dir = mediaDirs.get(type);
+            if (dir == null && type != MEDIA_DIR_CACHE) {
+                dir = mediaDirs.get(MEDIA_DIR_CACHE);
+            }
+            try {
+                if (!dir.isDirectory()) {
+                    dir.mkdirs();
+                }
+            } catch (Exception e) {
+                //don't promt
+            }
+            return dir;
+        }
+        return null;
+
+    }
+
+    private static File getAlbumDir(Context context) {
+        if (Build.VERSION.SDK_INT >= 23 && context.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            return getDirectory(MEDIA_DIR_CACHE);
+        }
+        File storageDir = null;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YO");
+            if (!storageDir.mkdirs()) {
+                if (!storageDir.exists()) {
+                    Log.d("Yo", "failed to create directory");
+                    return null;
+                }
+            }
+        } else {
+            Log.d("Yo", "External storage is not mounted READ/WRITE.");
+        }
+
+        return storageDir;
     }
 }

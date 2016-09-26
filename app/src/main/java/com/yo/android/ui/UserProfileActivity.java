@@ -77,6 +77,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+        getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
         ButterKnife.bind(this);
         enableBack();
         groupMembersList = new ArrayList<>();

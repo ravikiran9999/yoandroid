@@ -1,6 +1,7 @@
 package com.yo.android.chat.ui.fragments;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
@@ -56,16 +57,21 @@ import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.UserProfileActivity;
+import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -555,16 +561,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private void takePicture() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
         try {
 
             String state = Environment.getExternalStorageState();
             String tempPhotoFileName = Long.toString(System.currentTimeMillis()) + ".jpg";
             if (Environment.MEDIA_MOUNTED.equals(state)) {
-
-                mFileTemp = new File(Environment
-                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                        + "/Camera", tempPhotoFileName);
+                File newFolder = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages");
+                if (!newFolder.exists()) {
+                    newFolder.mkdirs();
+                }
+                mFileTemp = new File(newFolder.getAbsolutePath(), tempPhotoFileName);
             } else {
                 mFileTemp = new File(getActivity().getFilesDir(), tempPhotoFileName);
             }
@@ -590,13 +596,22 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        if (resultCode == Activity.RESULT_CANCELED) {
+            return;
+        }
         switch (requestCode) {
 
+            case Helper.CROP_ACTIVITY:
+                if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
+                    Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
+                    updateChatWithLocalImage(imagePath.getPath());
+
+                }
+                break;
             case ADD_IMAGE_CAPTURE:
                 try {
                     String mPartyPicUri = mFileTemp.getPath();
-                    uploadImage(mPartyPicUri);
+                    updateChatWithLocalImage(mPartyPicUri);
                 } catch (Exception e) {
                 }
                 break;
@@ -610,8 +625,28 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                 filePathColumn, null, null, null);
                         cursor.moveToFirst();
                         int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
-                        String filePath = cursor.getString(columnIndex);
-                        uploadImage(filePath);
+                        final String filePath = cursor.getString(columnIndex);
+                        new Thread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                String state = Environment.getExternalStorageState();
+                                String tempPhotoFileName = Long.toString(System.currentTimeMillis()) + ".jpg";
+                                if (Environment.MEDIA_MOUNTED.equals(state)) {
+                                    File newFolder = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages");
+                                    if (!newFolder.exists()) {
+                                        newFolder.mkdirs();
+                                    }
+                                    mFileTemp = new File(newFolder.getAbsolutePath(), tempPhotoFileName);
+                                } else {
+                                    mFileTemp = new File(getActivity().getFilesDir(), tempPhotoFileName);
+                                }
+                                copyFile(filePath, mFileTemp.getAbsolutePath());
+                            }
+                        }).start();
+
+
+                        updateChatWithLocalImage(filePath);
                         cursor.close();
 
                     } catch (Exception e) {
@@ -621,6 +656,49 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
             default:
                 break;
+        }
+    }
+
+    private void copyFile(String inputPath, String outputPath) {
+
+        FileInputStream in = null;
+        FileOutputStream out = null;
+        try {
+            in = new FileInputStream(inputPath);
+            out = new FileOutputStream(outputPath);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            in = null;
+
+            // write the output file (You have now copied the file)
+            out.flush();
+            out.close();
+            out = null;
+
+        } catch (FileNotFoundException fnfe1) {
+            Log.e("tag", fnfe1.getMessage());
+        } catch (Exception e) {
+            Log.e("tag", e.getMessage());
+        }
+
+    }
+
+    @NonNull
+    private void updateChatWithLocalImage(String mPartyPicUri) {
+        ChatMessage message = new ChatMessage();
+        message.setType(Constants.IMAGE);
+        message.setSenderID(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
+        message.setImagePath(mPartyPicUri);
+        List<ChatMessage> newMessage = new ArrayList<>();
+        newMessage.add(message);
+        userChatAdapter.addItems(newMessage);
+        if (mPartyPicUri != null) {
+            uploadImage(mPartyPicUri);
         }
     }
 
@@ -685,7 +763,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
 
     private void forwardMessage(ArrayList<ChatMessage> message) {
-
         Intent intent = new Intent(getActivity(), AppContactsActivity.class);
         intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, message);
         startActivity(intent);

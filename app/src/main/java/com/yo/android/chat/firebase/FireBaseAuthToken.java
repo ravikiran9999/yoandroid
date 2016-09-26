@@ -73,6 +73,7 @@ public class FireBaseAuthToken {
                         if (response.body() != null) {
                             jsonObject = new JSONObject(response.body().string());
                             String firebaseToken = jsonObject.getString("firebase_token");
+                            Log.i(TAG, "New token generated " + firebaseToken);
                             loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, firebaseToken);
                             listener.onSuccess();
                             waitingForReply = false;
