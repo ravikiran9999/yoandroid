@@ -1,11 +1,7 @@
 package com.yo.android.helpers;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yo.android.R;
@@ -18,8 +14,8 @@ import com.yo.android.adapters.AbstractViewHolder;
 public class UserChatViewHolder extends AbstractViewHolder {
 
     private TextView name;
-    private ImageView chatTimeStamp;
-    private RelativeLayout linearLayout;
+    private TextView chatTimeStamp;
+    private LinearLayout linearLayout;
     private LinearLayout linearLayoutText;
     private LinearLayout ll;
     private TextView seenTimeStamp;
@@ -27,7 +23,9 @@ public class UserChatViewHolder extends AbstractViewHolder {
     public UserChatViewHolder(View view) {
         super(view);
         //name = (TextView) view.findViewById(R.id.name);
-        linearLayout = (RelativeLayout) view.findViewById(R.id.linear);
+        chatTimeStamp = (TextView) view.findViewById(R.id.time_stamp);
+        seenTimeStamp = (TextView) view.findViewById(R.id.delivered_time_stamp);
+        linearLayout = (LinearLayout) view.findViewById(R.id.linear);
         ll = (LinearLayout) view.findViewById(R.id.linear_layout);
         //contactNumber = (TextView) view.findViewById(R.id.tv_phone_number);
 
@@ -36,8 +34,7 @@ public class UserChatViewHolder extends AbstractViewHolder {
     public TextView getName() {
         return name;
     }
-
-    public ImageView getChatTimeStamp() {
+    public TextView getChatTimeStamp() {
         return chatTimeStamp;
     }
 
@@ -45,7 +42,7 @@ public class UserChatViewHolder extends AbstractViewHolder {
         return seenTimeStamp;
     }
 
-    public RelativeLayout getLinearLayout() {
+    public LinearLayout getLinearLayout() {
         return linearLayout;
     }
 
