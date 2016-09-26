@@ -151,6 +151,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
             Glide.with(getActivity()).load(avatar)
                     .dontAnimate()
+                    .placeholder(profilePic.getDrawable())
+                    .error(profilePic.getDrawable())
                     .fitCenter()
                     .into(profilePic);
         } else {

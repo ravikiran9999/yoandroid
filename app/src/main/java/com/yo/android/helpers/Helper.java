@@ -94,7 +94,7 @@ public class Helper {
         return mapIndex;
     }
 
-    public void loadDirectly(final Activity activity, final ImageView imageView, final File file) {
+    public static void loadDirectly(final Activity activity, final ImageView imageView, final File file) {
         new Thread(new Runnable() {
             @Override
             public void run() {
