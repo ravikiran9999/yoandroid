@@ -378,8 +378,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_user_chat, menu);
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
