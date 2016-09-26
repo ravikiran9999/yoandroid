@@ -101,6 +101,8 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(magazineTitle);
 
+        noArticals.setText(getString(R.string.others_no_article_added));
+
         articlesList.clear();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
@@ -121,7 +123,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     if (noArticals != null) {
                         noArticals.setVisibility(View.VISIBLE);
 
-                        noArticals.setOnClickListener(new View.OnClickListener() {
+                        /*noArticals.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(OthersMagazinesDetailActivity.this, LoadMagazineActivity.class);
@@ -132,7 +134,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 startActivity(intent);
                                 finish();
                             }
-                        });
+                        });*/
                     }
 
                 }
