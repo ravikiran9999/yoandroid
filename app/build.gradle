@@ -91,9 +91,9 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     // firebase
     compile 'com.google.firebase:firebase-messaging:9.0.2'
-    compile 'com.google.firebase:firebase-auth:9.0.2'
-    compile 'com.google.firebase:firebase-database:9.0.2'
-    compile 'com.google.firebase:firebase-storage:9.0.2'
+    compile 'com.google.firebase:firebase-auth:9.4.0'
+    compile 'com.google.firebase:firebase-database:9.4.0'
+    compile 'com.google.firebase:firebase-storage:9.4.0'
     compile 'com.firebase:firebase-client-android:2.5.2'
     compile project(':flip')
     compile project(':tagview')
@@ -121,6 +121,7 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'se.emilsjolander:android-flipview:1.1.0'
     compile 'com.android.support:multidex:1.0.0'
+    compile 'me.grantland:autofittextview:0.2.1'
     compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '7.0.3'
     compile 'com.isseiaoki:simplecropview:1.1.4'
     compile "com.github.hotchemi:permissionsdispatcher:${permissionsDispatcherVersion}"

@@ -25,6 +25,8 @@ import android.widget.TextView;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.firebase.client.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
@@ -305,6 +307,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
                             fireBaseHelper.unauth();
+                            FirebaseAuth.getInstance().signOut();
                             yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
