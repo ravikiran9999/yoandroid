@@ -502,7 +502,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setSent(0); // message sent 0, read 1
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
-        chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
+        //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(message.hashCode());
@@ -533,9 +533,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             chatMessage.setSent(1);
             chatMessageArray.add(chatMessage);
             userChatAdapter.addItems(chatMessageArray);
-            //if (forwardInt == 0) {
+            if (forwardInt == 0) {
                 chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
-            //}
+            }
 
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
             final Firebase roomChildReference = roomReference.child(timeStp);
