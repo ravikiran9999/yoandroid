@@ -35,11 +35,12 @@
             android:layout_toLeftOf="@+id/imv_magazine_post"
             android:hint="Enter magazine tag"
             android:paddingLeft="10dp"
-            android:drawablePadding="10dp"
+            android:drawablePadding="8dp"
             android:layout_marginTop="5dp"
             android:layout_below="@+id/et_enter_url"
             android:singleLine="true"
-            android:background="@android:color/white"/>android:layout_toLeftOf="@+id/imv_magazine_post"
+            android:background="@android:color/white"
+            android:drawableLeft="@drawable/ic_magazine_tag"/>android:layout_toLeftOf="@+id/imv_magazine_post"
 
         <ImageView
             android:id="@+id/imv_close"

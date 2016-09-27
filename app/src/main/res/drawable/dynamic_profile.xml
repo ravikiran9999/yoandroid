@@ -7,6 +7,6 @@
     <item>
         <bitmap
             android:src="@drawable/default_avatar_40"
-            android:tileMode="repeat" />
+            />
     </item>
 </layer-list>

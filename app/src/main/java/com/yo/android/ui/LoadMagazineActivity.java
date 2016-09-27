@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +21,11 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Articles;
+import com.yo.android.model.Topics;
 import com.yo.android.util.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -44,6 +49,8 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     private boolean isInvalidUrl;
     private EditText etUrl;
     private AutoCompleteTextView atvMagazineTag;
+    private String tag;
+    private Button btnPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +68,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         final WebView webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
 
-        final Button btnPost = (Button) findViewById(R.id.imv_magazine_post);
+        btnPost = (Button) findViewById(R.id.imv_magazine_post);
         ImageView imvClose = (ImageView) findViewById(R.id.imv_close);
 
         imvClose.setOnClickListener(new View.OnClickListener() {
@@ -70,6 +77,8 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                 finish();
             }
         });
+
+        getAllTopics();
 
         webview.setWebViewClient(new WebViewClient() {
 
@@ -101,7 +110,8 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_GO) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
                     url = etUrl.getText().toString();
-                    if (!TextUtils.isEmpty(url.trim())) {
+                    tag = atvMagazineTag.getText().toString();
+                    if (!TextUtils.isEmpty(url.trim())  && !TextUtils.isEmpty(tag.trim())) {
 
                         isInvalidUrl = false;
 
@@ -123,9 +133,13 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                                 btnPost.setVisibility(View.INVISIBLE);
                             }
                         }
-                    } else {
+                    } else if(TextUtils.isEmpty(url.trim())) {
                         Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                         mToastFactory.showToast("Please enter a url");
+                        btnPost.setVisibility(View.INVISIBLE);
+                    } else {
+                        Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
+                        mToastFactory.showToast("Please enter a tag");
                         btnPost.setVisibility(View.INVISIBLE);
                     }
                 }
@@ -140,15 +154,25 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View v) {
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        if (magazineId != null) {
-            addStoryToExistingMagazine(accessToken);
+        if(!TextUtils.isEmpty(url.trim()) && !TextUtils.isEmpty(tag.trim())) {
+            if (magazineId != null) {
+                addStoryToExistingMagazine(accessToken);
+            } else {
+                createMagazineWithStory(accessToken);
+            }
+        } else if(TextUtils.isEmpty(url.trim())) {
+            Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
+            mToastFactory.showToast("Please enter a url");
+            btnPost.setVisibility(View.INVISIBLE);
         } else {
-            createMagazineWithStory(accessToken);
+            Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
+            mToastFactory.showToast("Please enter a tag");
+            btnPost.setVisibility(View.INVISIBLE);
         }
     }
 
     private void createMagazineWithStory(String accessToken) {
-        yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy, magazineId).enqueue(new Callback<Articles>() {
+        yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy, magazineId, tag).enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 if (response != null && response.body() != null) {
@@ -176,7 +200,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void addStoryToExistingMagazine(String accessToken) {
-        yoService.addStoryMagazineAPI(accessToken, url, magazineId).enqueue(new Callback<Articles>() {
+        yoService.addStoryMagazineAPI(accessToken, url, magazineId, tag).enqueue(new Callback<Articles>() {
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 if (response.body() != null) {
@@ -194,4 +218,36 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             }
         });
     }
+
+    private void getAllTopics() {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+
+        yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
+            @Override
+            public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
+                dismissProgressDialog();
+                if (this == null || response == null || response.body() == null) {
+                    return;
+                }
+
+                List<String> topicNamesList = new ArrayList<String>();
+
+                for (int i = 0; i < response.body().size(); i++) {
+                    topicNamesList.add(response.body().get(i).getName());
+                }
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                        (LoadMagazineActivity.this, R.layout.textviewitem, topicNamesList);
+                atvMagazineTag.setThreshold(1);//will start working from first character
+                atvMagazineTag.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
+
+            }
+
+        @Override
+            public void onFailure(Call<List<Topics>> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
+    }
+
 }
