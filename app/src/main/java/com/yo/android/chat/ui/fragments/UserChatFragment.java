@@ -162,6 +162,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
+        chatMessageArray = new ArrayList<>();
+
         setHasOptionsMenu(true);
     }
 
@@ -183,7 +185,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         cameraView = (ImageView) view.findViewById(R.id.cameraView);
         chatText = (EditText) view.findViewById(R.id.chat_text);
         noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
-        chatMessageArray = new ArrayList<>();
+
         chatMessageHashMap = new HashMap<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType,mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
@@ -546,6 +548,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 }
             });
 
+
         } catch (FirebaseException | NullPointerException e) {
             e.printStackTrace();
         }
@@ -797,6 +800,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
             if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
+
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
                 listView.smoothScrollToPosition(userChatAdapter.getCount());
@@ -950,7 +954,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     emojicon.getEmoji().length());
         }
     }
-
 
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId) {
         iconToBeChanged.setImageResource(drawableResourceId);

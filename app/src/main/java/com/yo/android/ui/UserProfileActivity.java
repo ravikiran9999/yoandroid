@@ -60,6 +60,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private ListView membersList;
     private Contact contact;
     private String opponentNo;
+    private String opponentName;
     private String opponentImg;
     private boolean fromChatRooms;
     private Firebase authReference;
@@ -100,9 +101,14 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (intent.hasExtra(Constants.OPPONENT_CONTACT_IMAGE)) {
                     opponentImg = intent.getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
                 }
+                if (intent.hasExtra(Constants.OPPONENT_NAME)) {
+                    opponentName = intent.getStringExtra(Constants.OPPONENT_NAME);
+                }
+
                 roomName = intent.getStringExtra(Constants.GROUP_NAME);
                 contact = new Contact();
                 contact.setPhoneNo(opponentNo);
+                contact.setName(opponentName);
                 contact.setVoxUserName(opponentNo);
                 contact.setImage(opponentImg);
                 contact.setYoAppUser(true);
@@ -162,7 +168,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
 
             if (mContact != null) {
-                if (mContact.getName() != null) {
+
+                if (mContact.getName() != null && !contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
                     profileName.setText(mContact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
@@ -173,7 +180,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     profileNumber.setVisibility(View.GONE);
                 }
             } else if (contact != null) {
-                if (contact.getName() != null) {
+
+                if (contact.getName() != null && !contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
                     profileName.setText(contact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);

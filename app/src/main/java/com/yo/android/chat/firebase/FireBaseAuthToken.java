@@ -57,6 +57,7 @@ public class FireBaseAuthToken {
     }
 
     public void getFirebaseAuth(final FireBaseAuthListener listener) {
+        //if(!loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN).isEmpty()) {
         String firebackToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
         if (TextUtils.isEmpty(firebackToken) & !waitingForReply) {
             waitingForReply = true;

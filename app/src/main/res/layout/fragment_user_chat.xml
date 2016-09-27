@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -61,7 +62,7 @@
                 android:layout_weight="1"
                 android:background="@color/grey_divider">
 
-                <EditText
+                <github.ankushsachdeva.emojicon.EmojiconEditText
                     android:id="@+id/chat_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -75,7 +76,8 @@
                     android:minHeight="50dp"
                     android:padding="10dp"
                     android:scrollbars="vertical"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    emojicon:emojiconSize="28sp" />
 
                 <ImageView
                     android:id="@+id/emojiView"
