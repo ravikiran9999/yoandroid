@@ -39,6 +39,7 @@ public class ChatActivity extends BaseActivity {
 
     private String opponent;
     private String mOpponentImg;
+    private String title;
     private Room room;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     @Inject
@@ -117,7 +118,7 @@ public class ChatActivity extends BaseActivity {
             LinearLayout titleView = (LinearLayout) customView.findViewById(R.id.title_view);
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
-            String title = null;
+
             Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
             if (contact != null && !TextUtils.isEmpty(contact.getName())) {
                 title = contact.getName();
@@ -174,6 +175,7 @@ public class ChatActivity extends BaseActivity {
 
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
+                    intent.putExtra(Constants.OPPONENT_NAME, title);
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
 
