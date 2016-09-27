@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
@@ -20,12 +21,15 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.AlphabetAdapter;
+import com.yo.android.crop.Bitmaps;
 import com.yo.android.crop.MainImageCropActivity;
 import com.yo.android.model.Contact;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -279,5 +283,46 @@ public class Helper {
         }
 
         return storageDir;
+    }
+
+    public void startPhotoSelectActivity(Activity activity) {
+        try {
+            Intent videoPickerIntent = new Intent();
+            videoPickerIntent.setType("video/*");
+            videoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+            videoPickerIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, (long) (1024 * 1024 * 1536));
+
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            Intent chooserIntent = Intent.createChooser(photoPickerIntent, null);
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{videoPickerIntent});
+
+            activity.startActivityForResult(chooserIntent, 1);
+        } catch (Exception e) {
+            Log.w("tmessages", e);
+        }
+    }
+
+    private static void scaleAndSaveImageInternal(Bitmap bitmap, int w, int h, float photoW, float photoH, float scaleFactor, int quality, boolean cache, boolean scaleAnyway) throws Exception {
+        Bitmap scaledBitmap;
+        String type;
+        if (scaleFactor > 1 || scaleAnyway) {
+            scaledBitmap = Bitmaps.createScaledBitmap(bitmap, w, h, true);
+        } else {
+            scaledBitmap = bitmap;
+        }
+        int width = scaledBitmap.getWidth();
+        int height = scaledBitmap.getHeight();
+        if (width <= 100 && height <= 100) {
+            type = "s";
+        } else if (width <= 320 && height <= 320) {
+            type = "m";
+        } else if (width <= 800 && height <= 800) {
+            type = "x";
+        } else if (width <= 1280 && height <= 1280) {
+            type = "y";
+        } else {
+            type = "w";
+        }
     }
 }
