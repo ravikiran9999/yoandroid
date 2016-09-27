@@ -55,6 +55,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import github.ankushsachdeva.emojicon.EmojiconTextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 
@@ -188,14 +189,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         LinearLayout linearLayout1 = new LinearLayout(context);
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
         if (!isRTL) {
+
             TextView senderId = new TextView(context);
             senderId.setLayoutParams(lp);
             Contact contact = mContactsSyncManager.getContactByVoxUserName(item.getVoxUserName());
             if (contact != null && contact.getName() != null) {
                 senderId.setText(contact.getName());
             } else {
-              //  boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
-               // String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
+                //  boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
+                // String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
                 senderId.setText(item.getSenderID() + "");
             }
             senderId.setTextColor(mColorGenerator.getRandomColor());
@@ -302,15 +304,16 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             if (contact != null && contact.getName() != null) {
                 senderId.setText(contact.getName());
             } else {
-               // boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
-               // String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
+                // boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
+                // String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
                 senderId.setText(item.getSenderID() + "");
             }
             senderId.setTextColor(mColorGenerator.getRandomColor());
             linearLayout1.addView(senderId);
         }
 
-        TextView textView = new TextView(context);
+        EmojiconTextView textView = new EmojiconTextView(context);
+        textView.setEmojiconSize(28);
         textView.setLayoutParams(lp);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         textView.setGravity(Gravity.LEFT);
