@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -42,6 +43,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     private String magazinePrivacy;
     private boolean isInvalidUrl;
     private EditText etUrl;
+    private AutoCompleteTextView atvMagazineTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         magazinePrivacy = intent.getStringExtra("MagazinePrivacy");
 
         etUrl = (EditText) findViewById(R.id.et_enter_url);
+        atvMagazineTag = (AutoCompleteTextView) findViewById(R.id.atv_enter_tag);
         final WebView webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
 
@@ -94,7 +97,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             }
         });
 
-        etUrl.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        atvMagazineTag.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_GO) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
                     url = etUrl.getText().toString();

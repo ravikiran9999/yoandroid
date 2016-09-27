@@ -3,22 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/colorPrimary">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp">
-
-        <ImageView
-            android:id="@+id/imv_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_magazine_close"
-            android:padding="10dp"
-            android:layout_centerVertical="true"/>
 
         <EditText
             android:id="@+id/et_enter_url"
@@ -29,11 +20,36 @@
             android:layout_toLeftOf="@+id/imv_magazine_post"
             android:hint="Enter url"
             android:inputType="textUri"
-            android:background="@color/magazine_search_box"
-            android:layout_toRightOf="@+id/imv_close"
             android:paddingLeft="10dp"
             android:drawableLeft="@drawable/ic_magazine_search_url"
-            android:drawablePadding="10dp"/>
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:background="@android:color/white"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/atv_enter_tag"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@+id/imv_magazine_post"
+            android:hint="Enter magazine tag"
+            android:paddingLeft="10dp"
+            android:drawablePadding="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/et_enter_url"
+            android:singleLine="true"
+            android:background="@android:color/white"/>android:layout_toLeftOf="@+id/imv_magazine_post"
+
+        <ImageView
+            android:id="@+id/imv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_magazine_close"
+            android:paddingLeft="10dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="10dp"/>
 
         <Button
             android:id="@+id/imv_magazine_post"
@@ -47,9 +63,10 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            android:layout_centerVertical="true"
+            android:layout_below="@+id/imv_close"
             android:layout_marginRight="10dp"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            android:layout_alignBaseline="@+id/atv_enter_tag"/>
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
