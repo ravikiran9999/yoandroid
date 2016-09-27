@@ -184,10 +184,27 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         secretChatPlaceholder.getBackground().setColorFilter(colorFilter);
         secretChatPlaceholder.setPadding(Helper.dp(context, 2), Helper.dp(context, 2), Helper.dp(context, 2), Helper.dp(context, 2));
         secretChatPlaceholder.setOrientation(LinearLayout.VERTICAL);
-
+        //Adding person name or phone number
+        LinearLayout linearLayout1 = new LinearLayout(context);
+        linearLayout1.setOrientation(LinearLayout.VERTICAL);
+        if (!isRTL) {
+            TextView senderId = new TextView(context);
+            senderId.setLayoutParams(lp);
+            Contact contact = mContactsSyncManager.getContactByVoxUserName(item.getVoxUserName());
+            if (contact != null && contact.getName() != null) {
+                senderId.setText(contact.getName());
+            } else {
+                boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
+                String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
+                senderId.setText(item.getSenderID() + profileName);
+            }
+            senderId.setTextColor(mColorGenerator.getRandomColor());
+            linearLayout1.addView(senderId);
+        }
+        // Add image
         final ImageView imageView1 = new ImageView(context);
-
-        secretChatPlaceholder.addView(imageView1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 0, 0));
+        linearLayout1.addView(imageView1);
+        secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 0, 0));
 
         if (item.getImagePath() != null) {
             updateImage(item, holder, secretChatPlaceholder, imageView1);
@@ -225,7 +242,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         @Override
         public Bitmap transform(Bitmap source) {
-            storeImage(source, "");
+            //storeImage(source, "");
             int targetWidth = 800;
             double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
             int targetHeight = (int) (targetWidth * aspectRatio);
@@ -278,14 +295,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(30, 0, 30, 5);
-        if (roomType != null && !isRTL) {
+        if (!isRTL) {
             TextView senderId = new TextView(context);
             senderId.setLayoutParams(lp);
             Contact contact = mContactsSyncManager.getContactByVoxUserName(item.getVoxUserName());
             if (contact != null && contact.getName() != null) {
                 senderId.setText(contact.getName());
             } else {
-                String profileName = item.getChatProfileUserName() == null ? "" : " ~" + item.getChatProfileUserName();
+                boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
+                String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
                 senderId.setText(item.getSenderID() + profileName);
             }
             senderId.setTextColor(mColorGenerator.getRandomColor());
@@ -328,6 +346,14 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageView);
+    }
+
+    private boolean isValidMobile(String phone) {
+        try {
+            return android.util.Patterns.PHONE.matcher(phone).matches();
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 
     private void addView(final RelativeLayout relativeLayout, final ChatMessage item, final UserChatViewHolder holder) {
