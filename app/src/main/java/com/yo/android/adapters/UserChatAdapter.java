@@ -194,9 +194,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             if (contact != null && contact.getName() != null) {
                 senderId.setText(contact.getName());
             } else {
-                boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
-                String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
-                senderId.setText(item.getSenderID() + profileName);
+              //  boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
+               // String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
+                senderId.setText(item.getSenderID() + "");
             }
             senderId.setTextColor(mColorGenerator.getRandomColor());
             linearLayout1.addView(senderId);
@@ -302,9 +302,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             if (contact != null && contact.getName() != null) {
                 senderId.setText(contact.getName());
             } else {
-                boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
-                String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
-                senderId.setText(item.getSenderID() + profileName);
+               // boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
+               // String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
+                senderId.setText(item.getSenderID() + "");
             }
             senderId.setTextColor(mColorGenerator.getRandomColor());
             linearLayout1.addView(senderId);
