@@ -8,6 +8,7 @@
     <color name="dial_green">#09D261</color>
     <color name="dial_out_going">#E9DC53</color>
     <color name="tab_grey">#737373</color>
+    <color name="chat_image_background">#E1FFC7</color>
 
     <!-- Background color of dialer -->
     <color name="background_dialer_light">#fafafa</color>

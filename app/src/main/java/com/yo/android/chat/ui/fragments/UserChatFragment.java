@@ -133,7 +133,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     ContactsSyncManager mContactsSyncManager;
 
 
-
     @Inject
     YoApi.YoService yoService;
 
@@ -161,7 +160,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
-
+        mToastFactory.showToast(getResources().getDisplayMetrics().density + "");
         setHasOptionsMenu(true);
     }
 
@@ -185,7 +184,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
         chatMessageArray = new ArrayList<>();
         chatMessageHashMap = new HashMap<>();
-        userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType,mContactsSyncManager);
+        userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
@@ -500,7 +499,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setSent(0); // message sent 0, read 1
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
-        //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
+        chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(message.hashCode());
