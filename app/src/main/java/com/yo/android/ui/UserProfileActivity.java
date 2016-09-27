@@ -168,24 +168,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
 
             if (mContact != null) {
-                if (mContact.getName() != null) {
-                    profileName.setText(mContact.getName());
-                }
-                if (mContact.getPhoneNo() != null && (!mContact.getName().replaceAll("\\s+","").equalsIgnoreCase(mContact.getPhoneNo()))) {
-                    profileNumber.setText(mContact.getPhoneNo());
-                }
-            } else {
-                if (TextUtils.isEmpty(contact.getName()) || contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
-                    profileName.setText(contact.getPhoneNo());
-
-                } else {
-                    profileName.setText(contact.getName());
-                    profileNumber.setText(contact.getPhoneNo());
-                }
-
-            }
-
-            if (mContact != null) {
 
                 if (mContact.getName() != null && !contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
                     profileName.setText(mContact.getName());
