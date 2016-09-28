@@ -126,6 +126,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private EmojiconsPopup popup;
     private ImageView emoji;
     private ImageView cameraView;
+    private int roomCreationProgress = 0;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -446,7 +447,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View v) {
         if (v.getId() == R.id.send) {
             String message = chatText.getText().toString().trim();
-
             sendChatMessage(message, Constants.TEXT);
             if (chatText.getText() != null) {
                 chatText.setText("");
@@ -529,8 +529,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
 
         if (roomExist == 0 && TextUtils.isEmpty(childRoomId)) {
-            createRoom(message, chatMessage);
+            if (roomCreationProgress == 0) {
+                roomCreationProgress = 1;
+                createRoom(message, chatMessage);
 
+            }
         } else {
             chatMessage.setRoomId(childRoomId);
             sendChatMessage(chatMessage);
@@ -917,6 +920,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     Room room = response.body();
                     if (room.getFirebaseRoomId() != null) {
                         roomExist = 1;
+                        roomCreationProgress = 0;
                         roomReference = authReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
                         registerChildEventListener(roomReference);
 
@@ -934,6 +938,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     if (chatText != null) {
                         //Restore the message if room fails
                         chatText.setText(message);
+                        roomCreationProgress = 0;
+                        roomExist = 0;
                         mToastFactory.showToast("Chat initiation failed! Please try again.");
                     }
                 }

@@ -62,6 +62,7 @@ import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.TabsHeaderActivity;
+import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.UserProfileActivity;
@@ -141,6 +142,7 @@ import dagger.Provides;
                 OthersMagazinesDetailActivity.class,
                 UnManageInAppPurchaseActivity.class,
                 NotificationsActivity.class,
+                TopicsDetailActivity.class,
 
                 //Fragments
                 ContactsFragment.class,

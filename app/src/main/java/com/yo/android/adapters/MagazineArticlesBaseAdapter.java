@@ -37,6 +37,7 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.OtherProfilesLikedArticles;
+import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
@@ -461,6 +462,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if(!TextUtils.isEmpty(data.getTopicName())) {
                 holder.tvTopicName.setVisibility(View.VISIBLE);
                 holder.tvTopicName.setText(data.getTopicName());
+                holder.tvTopicName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, TopicsDetailActivity.class);
+                        intent.putExtra("TopicId", data.getTopicId());
+                        intent.putExtra("TopicName", data.getTopicName());
+                        intent.putExtra("TopicFollowing", data.getTopicFollowing());
+                        context.startActivity(intent);
+                    }
+                });
             } else {
                 holder.tvTopicName.setVisibility(View.GONE);
             }
@@ -966,6 +977,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if(!TextUtils.isEmpty(data.getTopicName())) {
                 holder.tvTopicNameTop.setVisibility(View.VISIBLE);
                 holder.tvTopicNameTop.setText(data.getTopicName());
+                holder.tvTopicNameTop.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, TopicsDetailActivity.class);
+                        intent.putExtra("TopicId", data.getTopicId());
+                        intent.putExtra("TopicName", data.getTopicName());
+                        intent.putExtra("TopicFollowing", data.getTopicFollowing());
+                        context.startActivity(intent);
+                    }
+                });
             } else {
                 holder.tvTopicNameTop.setVisibility(View.GONE);
             }
@@ -1025,7 +1046,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                if(cachedMagazinesList != null) {
+                                if (cachedMagazinesList != null) {
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
                                         if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                             cachedMagazinesList.get(i).setLiked("true");
@@ -1047,7 +1068,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                if(cachedMagazinesList != null) {
+                                if (cachedMagazinesList != null) {
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
                                         if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                             cachedMagazinesList.get(i).setLiked("false");
@@ -1075,7 +1096,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                if(cachedMagazinesList != null) {
+                                if (cachedMagazinesList != null) {
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
                                         if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                             cachedMagazinesList.get(i).setLiked("false");
@@ -1097,7 +1118,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                if(cachedMagazinesList != null) {
+                                if (cachedMagazinesList != null) {
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
                                         if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                             cachedMagazinesList.get(i).setLiked("true");
@@ -1194,6 +1215,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if(!TextUtils.isEmpty(data.getTopicName())) {
                 holder.tvTopicNameLeft.setVisibility(View.VISIBLE);
                 holder.tvTopicNameLeft.setText(data.getTopicName());
+                holder.tvTopicNameLeft.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, TopicsDetailActivity.class);
+                        intent.putExtra("TopicId", data.getTopicId());
+                        intent.putExtra("TopicName", data.getTopicName());
+                        intent.putExtra("TopicFollowing", data.getTopicFollowing());
+                        context.startActivity(intent);
+                    }
+                });
             } else {
                 holder.tvTopicNameLeft.setVisibility(View.GONE);
             }
@@ -1253,7 +1284,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                if(cachedMagazinesList != null) {
+                                if (cachedMagazinesList != null) {
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
                                         if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                             cachedMagazinesList.get(i).setLiked("true");
@@ -1275,7 +1306,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                if(cachedMagazinesList != null) {
+                                if (cachedMagazinesList != null) {
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
                                         if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                             cachedMagazinesList.get(i).setLiked("false");
@@ -1303,7 +1334,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                if(cachedMagazinesList != null) {
+                                if (cachedMagazinesList != null) {
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
                                         if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                             cachedMagazinesList.get(i).setLiked("false");
@@ -1325,7 +1356,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }.getType();
                                 String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                if(cachedMagazinesList != null) {
+                                if (cachedMagazinesList != null) {
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
                                         if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
                                             cachedMagazinesList.get(i).setLiked("true");
@@ -1422,6 +1453,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if(!TextUtils.isEmpty(data.getTopicName())) {
                 holder.tvTopicNameRight.setVisibility(View.VISIBLE);
                 holder.tvTopicNameRight.setText(data.getTopicName());
+                holder.tvTopicNameRight.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, TopicsDetailActivity.class);
+                        intent.putExtra("TopicId", data.getTopicId());
+                        intent.putExtra("TopicName", data.getTopicName());
+                        intent.putExtra("TopicFollowing", data.getTopicFollowing());
+                        context.startActivity(intent);
+                    }
+                });
             } else {
                 holder.tvTopicNameRight.setVisibility(View.GONE);
             }

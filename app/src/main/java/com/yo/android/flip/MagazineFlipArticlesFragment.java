@@ -425,7 +425,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
     public void onEventMainThread(String action) {
-        if (Constants.OTHERS_MAGAZINE_ACTION.equals(action) || Constants.TOPIC_NOTIFICATION_ACTION.equals(action)) {
+        if (Constants.OTHERS_MAGAZINE_ACTION.equals(action) || Constants.TOPIC_NOTIFICATION_ACTION.equals(action) || Constants.TOPIC_FOLLOWING_ACTION.equals(action)) {
             loadArticles(null);
         }
     }

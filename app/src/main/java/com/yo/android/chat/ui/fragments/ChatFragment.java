@@ -64,6 +64,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private String voxUserName;
     private List<Room> listRoom;
     private List<String> roomId;
+    private List<String> checkRoomIdExist;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -90,6 +91,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         childEventListenersList = new ArrayList<>();
         arrayOfUsers = new ArrayList<>();
         roomId = new ArrayList<>();
+        checkRoomIdExist = new ArrayList<>();
         EventBus.getDefault().register(this);
     }
 
@@ -420,6 +422,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 arrayOfUsers.add(room);
                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+
             }
         }
         return arrayOfUsers;
