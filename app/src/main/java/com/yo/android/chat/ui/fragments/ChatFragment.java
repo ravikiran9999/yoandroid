@@ -345,15 +345,14 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void getMembersId(DataSnapshot dataSnapshot) {
 
-        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+        for (final DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
             if (!roomId.contains(dataSnapshot1.getKey())) {
                 roomId.add(dataSnapshot1.getKey());
                 Firebase memberReference = dataSnapshot1.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot1.getKey());
-
                 memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        getMembersProfile(dataSnapshot);
+                        getMembersProfile(dataSnapshot, dataSnapshot1.getKey());
                     }
 
                     @Override
@@ -381,13 +380,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
-    private List<Room> getMembersProfile(final DataSnapshot dataSnapshot) {
+    private List<Room> getMembersProfile(final DataSnapshot dataSnapshot, String roomKey) {
 
         final Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(), loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
-
+            roomId.add(roomKey);
             if (roomInfo.getName().isEmpty()) {
                 for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
                     if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {

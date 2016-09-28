@@ -161,7 +161,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
-        mToastFactory.showToast(getResources().getDisplayMetrics().density + "");
         chatMessageArray = new ArrayList<>();
         setHasOptionsMenu(true);
     }
