@@ -352,7 +352,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        getMembersProfile(dataSnapshot, dataSnapshot1.getKey());
+                        getMembersProfile(dataSnapshot);
                     }
 
                     @Override
@@ -380,13 +380,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
-    private List<Room> getMembersProfile(final DataSnapshot dataSnapshot, String roomKey) {
+    private List<Room> getMembersProfile(final DataSnapshot dataSnapshot) {
 
         final Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(), loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
-            roomId.add(roomKey);
             if (roomInfo.getName().isEmpty()) {
                 for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
                     if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
