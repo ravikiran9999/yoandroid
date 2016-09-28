@@ -59,6 +59,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import github.ankushsachdeva.emojicon.EmojiconTextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 
@@ -177,6 +178,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         LinearLayout linearLayout1 = new LinearLayout(context);
         linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
         if (!isRTL) {
+
             TextView senderId = new TextView(context);
             senderId.setLayoutParams(lp);
             Contact contact = mContactsSyncManager.getContactByVoxUserName(item.getVoxUserName());
@@ -217,8 +219,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         TextView seenTxt = (TextView) view.findViewById(R.id.seen_txt);
         TextView time = (TextView) view.findViewById(R.id.time);
         extraText.setVisibility(View.GONE);
-        loadImage.setAdjustViewBounds(true);
-        loadImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
         if (!isRTL) {
             profileNameLayout.setVisibility(View.VISIBLE);
             gravityLayout.setGravity(Gravity.LEFT);
@@ -269,7 +269,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
         }
         if (file.exists()) {
-
             getImageHeightAndWidth(file, imageView1);
         } else {
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -343,11 +342,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
 
         LinearLayout linearLayout1 = new LinearLayout(context);
-        linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout1.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(30, 0, 50, 5);
-
-        TextView textView = new TextView(context);
+        EmojiconTextView textView = new EmojiconTextView(context);
+        textView.setEmojiconSize(28);
         textView.setLayoutParams(lp);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         textView.setGravity(Gravity.LEFT);
@@ -394,21 +393,37 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             if (item.getDeliveredTime() != 0) {
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
+                time.setLayoutParams(lp);
+                time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+                time.setGravity(Gravity.LEFT);
+                time.setMaxWidth(Helper.dp(context, 260));
             }
             seenLayout.setVisibility(View.GONE);
         } else {
             seenLayout.setVisibility(View.VISIBLE);
-
+            time.setLayoutParams(lp);
+            time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+            time.setGravity(Gravity.LEFT);
+            time.setMaxWidth(Helper.dp(context, 260));
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             if (item.getSent() != 0) {
                 String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
                 time.setText(sentText);
-                seen.setVisibility(View.GONE);
+                sent.setVisibility(View.GONE);
+                sent.setLayoutParams(lp);
+                sent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+                sent.setGravity(Gravity.LEFT);
+                sent.setMaxWidth(Helper.dp(context, 260));
             }
             if (item.getDeliveredTime() != 0) {
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
                 seen.setVisibility(View.VISIBLE);
+                seen.setVisibility(View.GONE);
+                seen.setLayoutParams(lp);
+                seen.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+                seen.setGravity(Gravity.LEFT);
+                seen.setMaxWidth(Helper.dp(context, 260));
             }
         }
         linearLayout1.addView(textView);

@@ -99,7 +99,11 @@ public class FireBaseHelper {
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     Log.e(TAG, "Login Failed! Auth token expired" + firebaseError.getMessage());
-                    unauth();                    /*if (myServiceConnection.isServiceConnection()) {
+                    unauth();
+                    loginPrefs.removePreference(Constants.FIREBASE_TOKEN);
+
+
+                    /*if (myServiceConnection.isServiceConnection()) {
                         firebaseService.getFirebaseAuth();
                     }*/
                     FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {

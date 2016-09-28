@@ -116,7 +116,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("/api/articles.json")
-        Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id);
+        Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id, @Field("tag") String tag);
 
         @GET("api/magzines/{magzine_id}.json")
         Call<MagazineArticles> getArticlesOfMagazineAPI(@Path("magzine_id") String magzine_id, @Query("access_token") String access_token);
@@ -243,7 +243,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/articles.json")
-        Call<Articles> postStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("name") String name, @Field("description") String description, @Field("privacy") String privacy, @Field("magzine_id") String magzine_id);
+        Call<Articles> postStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("name") String name, @Field("description") String description, @Field("privacy") String privacy, @Field("magzine_id") String magzine_id, @Field("tag") String tag);
 
         @FormUrlEncoded
         @POST("api/magzines/remove_magzines.json")

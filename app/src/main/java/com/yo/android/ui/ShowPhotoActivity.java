@@ -82,22 +82,17 @@ public class ShowPhotoActivity extends BaseActivity {
                 .into(imageView);
     }
     public void prepareImage(String imagePath, final ImageView imageOpen) {
-        File file = new File(imagePath);
+        /*File file = new File(imagePath);
         File newFile = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
         if (newFile.exists()) {
-            imageOpen.setVisibility(View.VISIBLE);
             Glide.with(this)
                     .load(file)
                     .dontAnimate()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageOpen);
-           // getImageHeightAndWidth(file,imageOpen);
-            if (mProgress != null) {
-                mProgress.setVisibility(View.GONE);
-            }
-
-        } else {
+            imageOpen.setVisibility(View.VISIBLE);
+        } else {*/
             try {
                 // Create a storage reference from our app
                 FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -140,7 +135,7 @@ public class ShowPhotoActivity extends BaseActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        //}
     }
 
     @Override
