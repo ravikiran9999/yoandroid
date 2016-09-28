@@ -56,6 +56,7 @@ import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.CompressImage;
 import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
@@ -133,7 +134,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     ContactsSyncManager mContactsSyncManager;
 
 
-
     @Inject
     YoApi.YoService yoService;
 
@@ -161,9 +161,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
-
+        mToastFactory.showToast(getResources().getDisplayMetrics().density + "");
         chatMessageArray = new ArrayList<>();
-
         setHasOptionsMenu(true);
     }
 
@@ -187,7 +186,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
 
         chatMessageHashMap = new HashMap<>();
-        userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType,mContactsSyncManager);
+        userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
         listView.setOnItemClickListener(this);
@@ -253,7 +252,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
             listView.setStackFromBottom(false);
 
-            listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            /*listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     try {
@@ -265,7 +264,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         mLog.w("UserChat", e);
                     }
                 }
-            });
+            });*/
         } catch (NoClassDefFoundError e) {
             mLog.w("UserChat", e);
         }
@@ -503,7 +502,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setSent(0); // message sent 0, read 1
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
-        //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
+        chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(message.hashCode());
@@ -622,9 +621,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 break;
             case ADD_IMAGE_CAPTURE:
                 try {
+                    if (data != null) {
+                        Uri targetUri = data.getData();
+                    }
                     String mPartyPicUri = mFileTemp.getPath();
-                    updateChatWithLocalImage(mPartyPicUri);
+                    String path = new CompressImage(getActivity()).compressImage(mPartyPicUri);
+                    mFileTemp.delete();
+                    updateChatWithLocalImage(path);
                 } catch (Exception e) {
+
                 }
                 break;
 
@@ -657,7 +662,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        updateChatWithLocalImage(mFileTemp.getAbsolutePath());
+                                        if (mFileTemp != null && !isKb(mFileTemp.length())) {
+                                            String path = new CompressImage(getActivity()).compressImage(mFileTemp.getAbsolutePath());
+                                            mFileTemp.delete();
+                                            updateChatWithLocalImage(path);
+                                        } else {
+                                            updateChatWithLocalImage(mFileTemp.getAbsolutePath());
+                                        }
+
                                     }
                                 });
                             }
@@ -674,6 +686,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             default:
                 break;
         }
+    }
+
+    private boolean isKb(long length) {
+        double size = length / 1024.0;
+        return size > 1 ? false : true;
     }
 
     public static void copyFile(String inputPath, String outputPath) {

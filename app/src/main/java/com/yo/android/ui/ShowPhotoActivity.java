@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -50,7 +51,7 @@ public class ShowPhotoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_layout);
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle("Image");
+        getSupportActionBar().setTitle("Photo Preview ");
         enableBack();
         mAttacher = new PhotoViewAttacher(imageOpen);
         imageOpen.setVisibility(View.GONE);
@@ -62,58 +63,79 @@ public class ShowPhotoActivity extends BaseActivity {
 
 
     }
-
-    public void prepareImage(String imagePath, final ImageView imageOpen) {
-        File file = new File(imagePath);
-        File newFile = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
+    private void getImageHeightAndWidth(final File file, ImageView imageView) {
+        int maxWidth = 800;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        int height = options.outHeight;
+        int width = options.outWidth;
+        float ratio = (float) width / maxWidth;
+        width = maxWidth;
+        height = (int) (height / ratio);
         Glide.with(this)
-                .load(newFile)
+                .load(file)
+                .override(width, height)
                 .dontAnimate()
-                .into(imageOpen);
-        // Helper.loadDirectly(this, imageOpen, new File(imagePath));
-        /*
-        try {
-            // Create a storage reference from our app
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
-            StorageReference imageRef = storageRef.child(imagePath);
-            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Picasso.with(ShowPhotoActivity.this)
-                            .load(uri)
-                            .into(imageOpen, new Callback() {
-                                @Override
-                                public void onSuccess() {
-                                    imageOpen.setVisibility(View.VISIBLE);
-                                    mAttacher.update();
-                                }
-
-                                @Override
-                                public void onError() {
-                                    // Handle any errors
-                                    if (mProgress != null) {
-                                        mProgress.setVisibility(View.GONE);
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageView);
+    }
+    public void prepareImage(String imagePath, final ImageView imageOpen) {
+        /*File file = new File(imagePath);
+        File newFile = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
+        if (newFile.exists()) {
+            Glide.with(this)
+                    .load(file)
+                    .dontAnimate()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imageOpen);
+            imageOpen.setVisibility(View.VISIBLE);
+        } else {*/
+            try {
+                // Create a storage reference from our app
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
+                StorageReference imageRef = storageRef.child(imagePath);
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.with(ShowPhotoActivity.this)
+                                .load(uri)
+                                .into(imageOpen, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        imageOpen.setVisibility(View.VISIBLE);
+                                        mAttacher.update();
                                     }
-                                    if (loadingFailed != null) {
-                                        loadingFailed.setVisibility(View.VISIBLE);
+
+                                    @Override
+                                    public void onError() {
+                                        // Handle any errors
+                                        if (mProgress != null) {
+                                            mProgress.setVisibility(View.GONE);
+                                        }
+                                        if (loadingFailed != null) {
+                                            loadingFailed.setVisibility(View.VISIBLE);
+                                        }
+
                                     }
-
-                                }
-                            });
+                                });
 
 
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    e.printStackTrace();
-                }
-            });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        e.printStackTrace();
+                    }
+                });
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        //}
     }
 
     @Override

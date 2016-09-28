@@ -237,6 +237,20 @@ public class Util {
         return new SimpleDateFormat("hh:mm a").format(new Date(time));
     }
 
+    public static String getTimeFormatForChat(@NonNull final Context context, long time) {
+        SimpleDateFormat sFormat;
+        String currentTime;
+        try {
+            sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            currentTime = sFormat.format(new Date(time));
+            return currentTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new SimpleDateFormat("hh:mm").format(new Date(time));
+    }
+
     public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
@@ -349,7 +363,7 @@ public class Util {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 if (activity instanceof BottomTabsActivity) {
-                   // ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
+                    // ((BottomTabsActivity) activity).setToolBarColor(activity.getResources().getColor(R.color.colorPrimary));
                     ((BottomTabsActivity) activity).refresh();
 
                 } else if (activity instanceof FindPeopleActivity) {
@@ -420,7 +434,7 @@ public class Util {
                     target.putExtra(Intent.EXTRA_TEXT, body + "\n\n" + url);
                     target.setPackage(packageName);
                     targets.add(target);
-                } else if(packageName.toLowerCase().startsWith("com.facebook.katana")) {
+                } else if (packageName.toLowerCase().startsWith("com.facebook.katana")) {
                     Intent target = new Intent(android.content.Intent.ACTION_SEND);
                     target.setType("text/plain");
                     target.putExtra(Intent.EXTRA_SUBJECT, title);
@@ -433,7 +447,7 @@ public class Util {
                     target.setType("image/*");
                     target.putExtra(Intent.EXTRA_SUBJECT, title);
                     target.putExtra(Intent.EXTRA_TEXT, body + "\n\n" + url);
-                    if(bmpUri != null) {
+                    if (bmpUri != null) {
                         target.putExtra(Intent.EXTRA_STREAM, bmpUri);
                     }
                     target.setPackage(packageName);
@@ -491,19 +505,21 @@ public class Util {
         }
         return time;
     }
+
     public static String getDate(String time) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             sdf.setTimeZone(TimeZone.getDefault());
-           // Date gmtTime = sdf.parse(time);
+            // Date gmtTime = sdf.parse(time);
             return sdf.format(sdf.parse(time));
-           // String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-           // return timeStamp;
+            // String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+            // return timeStamp;
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return time;
     }
+
     public static void saveUserDetails(Response<UserProfileInfo> response, PreferenceEndPoint preferenceEndPoint) {
 
         preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
@@ -533,6 +549,7 @@ public class Util {
 
         private View v;
         private Articles data;
+
         public ImageLoaderTask(View v, Articles data) {
             this.v = v;
             this.data = data;
@@ -580,7 +597,7 @@ public class Util {
 
             Bitmap immutableBpm = BitmapFactory.decodeStream(input);
 
-            if(immutableBpm != null) {
+            if (immutableBpm != null) {
                 Bitmap mutableBitmap = immutableBpm.copy(Bitmap.Config.ARGB_8888, true);
                 return mutableBitmap;
             }
@@ -593,7 +610,7 @@ public class Util {
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
 
-            if(bitmap != null) {
+            if (bitmap != null) {
                 View view = new View(v.getContext());
 
                 view.draw(new Canvas(bitmap));
