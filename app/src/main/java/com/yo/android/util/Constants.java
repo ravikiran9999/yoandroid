@@ -100,6 +100,7 @@ public class Constants {
     public static String COUNTRY_LIST = "COUNTRY_LIST";
     public static String OTHERS_MAGAZINE_ACTION = "com.others.magazine.OTHERS";
     public static String TOPIC_NOTIFICATION_ACTION = "com.notification.magazine.TOPIC";
+    public static String TOPIC_FOLLOWING_ACTION = "com.topic.detail.FOLLOW";
 
 
     // Contacts

@@ -485,6 +485,16 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 if(!TextUtils.isEmpty(data.getTopicName())) {
                     holder.tvTopicName.setVisibility(View.VISIBLE);
                     holder.tvTopicName.setText(data.getTopicName());
+                    holder.tvTopicName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, TopicsDetailActivity.class);
+                            intent.putExtra("TopicId", data.getTopicId());
+                            intent.putExtra("TopicName", data.getTopicName());
+                            intent.putExtra("TopicFollowing", data.getTopicFollowing());
+                            context.startActivity(intent);
+                        }
+                    });
                 } else {
                     holder.tvTopicName.setVisibility(View.GONE);
                 }
