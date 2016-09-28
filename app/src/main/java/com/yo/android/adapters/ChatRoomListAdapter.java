@@ -45,8 +45,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         super(context);
         Injector.obtain(context.getApplicationContext()).inject(this);
         this.context = context;
-        mDrawableBuilder = TextDrawable.builder()
-                .round();
+        mDrawableBuilder = TextDrawable.builder().round();
     }
 
     @Override
@@ -61,8 +60,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
 
     @Override
     public void bindView(int position, final ChatRoomViewHolder holder, final Room item) {
-
-        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
 
         if (item.getGroupName() == null) {
             if (TextUtils.isEmpty(item.getFullName())) {
