@@ -101,26 +101,26 @@
                 android:id="@+id/cb_magazine_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
                 android:button="@drawable/magazine_like_selector" />
 
             <ImageView
                 android:id="@+id/imv_magazine_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
+                android:padding="10dp"
                 android:layout_toRightOf="@+id/cb_magazine_like"
-                android:background="@drawable/ic_new_chat_group_add_contact" />
+                android:src="@drawable/ic_new_chat_group_add_contact" />
 
             <ImageView
                 android:id="@+id/imv_magazine_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
+                android:padding="10dp"
                 android:layout_toRightOf="@+id/imv_magazine_add"
-                android:background="@drawable/ic_magazine_share" />
+                android:src="@drawable/ic_magazine_share" />
 
         </RelativeLayout>
     </LinearLayout>
