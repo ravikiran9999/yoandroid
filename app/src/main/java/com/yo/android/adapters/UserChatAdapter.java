@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -26,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,9 +38,12 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.chat.CompressImage;
+import com.yo.android.chat.CustomTransformation;
 import com.yo.android.chat.MaxWidthLinearLayout;
 import com.yo.android.chat.SquareImageView;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -53,8 +58,10 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -268,6 +275,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         if (file != null && !file.exists()) {
             file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
         }
+        item.setImagePath(file.getAbsolutePath());
         if (file.exists()) {
             getImageHeightAndWidth(file, imageView1);
         } else {
@@ -277,7 +285,32 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(final Uri uri) {
-                    Picasso.with(context).load(uri).transform(transformation).into(imageView1);
+                    transformation.setFileName(uri.getPath());
+                    imageView1.setTag(uri.getPath());
+                    final RequestCreator creator = Picasso.with(context).load(uri).transform(transformation);
+                    creator.into(imageView1, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Bitmap bitmap = creator.get();
+                                        Log.w("", "Image got downloaded" + imageView1.getTag().toString());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).start();
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
+                    // Picasso.with(context).load(uri).transform(transformation).into(imageView1);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -290,18 +323,35 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         //return secretChatPlaceholder;
     }
 
-    Transformation transformation = new Transformation() {
+
+    CustomTransformation transformation = new CustomTransformation() {
+        private String fileName;
+
+        @Override
+        public void setFileName(String file) {
+            this.fileName = file;
+        }
 
         @Override
         public Bitmap transform(Bitmap source) {
-            //storeImage(source, "");
             int targetWidth = 800;
             double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
             int targetHeight = (int) (targetWidth * aspectRatio);
             Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+
+            String filepath = CompressImage.getFilename(new File(fileName).getName());
+            try {
+                FileOutputStream out = new FileOutputStream(filepath);
+                result.compress(Bitmap.CompressFormat.JPEG, 80, out);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
             if (result != source) {
                 source.recycle();
             }
+
             return result;
         }
 
@@ -311,26 +361,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     };
 
-    private void storeImage(Bitmap bmp, String filename) {
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(filename);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-            // PNG is a lossless format, the compression factor (100) is ignored
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-    }
 
     private LinearLayout newTextAddView(final ChatMessage item, final UserChatViewHolder holder) {
         holder.getLl().removeAllViews();
@@ -371,10 +401,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         seenLayout.addView(seen);
         seenLayout.addView(sent);
+        seenDetailsLayout.addView(seenLayout);
+        seenDetailsLayout.setGravity(Gravity.RIGHT);
+        seenDetailsLayout.setBackgroundColor(context.getResources().getColor(R.color.resend_bcgrnd));
         mainLayout.addView(seenDetailsLayout);
 
-
-        seenDetailsLayout.addView(seenLayout);
 
         if (!isRTL) {
             TextView senderId = new TextView(context);
@@ -394,36 +425,31 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
                 time.setLayoutParams(lp);
-                time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+                time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
                 time.setGravity(Gravity.LEFT);
-                time.setMaxWidth(Helper.dp(context, 260));
             }
             seenLayout.setVisibility(View.GONE);
         } else {
             seenLayout.setVisibility(View.VISIBLE);
             time.setLayoutParams(lp);
-            time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+            time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
             time.setGravity(Gravity.LEFT);
-            time.setMaxWidth(Helper.dp(context, 260));
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             if (item.getSent() != 0) {
+                sent.setVisibility(View.VISIBLE);
                 String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
                 time.setText(sentText);
-                sent.setVisibility(View.GONE);
                 sent.setLayoutParams(lp);
                 sent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
                 sent.setGravity(Gravity.LEFT);
-                sent.setMaxWidth(Helper.dp(context, 260));
             }
             if (item.getDeliveredTime() != 0) {
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
                 seen.setVisibility(View.VISIBLE);
-                seen.setVisibility(View.GONE);
                 seen.setLayoutParams(lp);
                 seen.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
                 seen.setGravity(Gravity.LEFT);
-                seen.setMaxWidth(Helper.dp(context, 260));
             }
         }
         linearLayout1.addView(textView);
@@ -456,10 +482,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         height = (int) (height / ratio);
         Glide.with(context)
                 .load(file)
+                .priority(Priority.IMMEDIATE)
                 .override(width, height)
                 .dontAnimate()
                 .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(imageView);
     }
 

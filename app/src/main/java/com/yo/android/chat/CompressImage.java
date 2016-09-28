@@ -112,7 +112,7 @@ public class CompressImage {
             e.printStackTrace();
         }
         FileOutputStream out = null;
-        String filepath = getFilename();
+        String filepath = getFilename(null);
         try {
             out = new FileOutputStream(filepath);
 
@@ -146,7 +146,7 @@ public class CompressImage {
         return inSampleSize;
     }
 
-    public String getFilename() {
+    public static String getFilename(String name) {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
                 + "/YO/YOImages/");
 
@@ -154,8 +154,13 @@ public class CompressImage {
         if (!mediaStorageDir.exists()) {
             mediaStorageDir.mkdirs();
         }
+        String mImageName;
+        if (name == null) {
 
-        String mImageName = "IMG_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+            mImageName = "IMG_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        } else {
+            mImageName = name;
+        }
         String uriString = (mediaStorageDir.getAbsolutePath() + "/" + mImageName);
 
         return uriString;

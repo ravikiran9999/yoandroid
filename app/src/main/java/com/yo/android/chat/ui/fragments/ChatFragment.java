@@ -267,13 +267,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         listRoom = new ArrayList<>();
                         listRoom.addAll(arrayOfUsers);
                         for (Room customer : listRoom) {
-                            try {
-                                if (arrayOfUsers.contains(customer) && customer.getFirebaseRoomId().equalsIgnoreCase(room.getFirebaseRoomId()) && !customer.getId().equalsIgnoreCase(room.getId())) {
+                            if (customer.getFirebaseRoomId() != null && customer.getId() != null) {
+                                if (arrayOfUsers.contains(customer) && customer.getFirebaseRoomId().equalsIgnoreCase(room.getFirebaseRoomId()) && !(customer.getId().equalsIgnoreCase(room.getId()))) {
                                     int i = listRoom.indexOf(customer);
                                     arrayOfUsers.set(i, room);
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
                         }
                         if (!listRoom.isEmpty()) {
