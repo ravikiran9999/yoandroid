@@ -18,6 +18,7 @@ public class Articles {
     private String generated_url;
     private String topicName;
     private String topicId;
+    private String topicFollowing;
 
     public String getId() {
         return id;
@@ -121,5 +122,13 @@ public class Articles {
 
     public void setTopicId(String topicId) {
         this.topicId = topicId;
+    }
+
+    public String getTopicFollowing() {
+        return topicFollowing;
+    }
+
+    public void setTopicFollowing(String topicFollowing) {
+        this.topicFollowing = topicFollowing;
     }
 }
