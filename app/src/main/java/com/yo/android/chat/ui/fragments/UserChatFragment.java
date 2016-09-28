@@ -161,7 +161,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
-        mToastFactory.showToast(getResources().getDisplayMetrics().density + "");
         chatMessageArray = new ArrayList<>();
         setHasOptionsMenu(true);
     }
@@ -249,22 +248,35 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         try {
-            listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-            listView.setStackFromBottom(false);
 
-            /*listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    try {
-                        if (userChatAdapter != null && userChatAdapter.getCount() > 0 && (listStickeyHeader != null)) {
-                            String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-                            listStickeyHeader.setText(headerText);
-                        }
-                    } catch (Exception e) {
-                        mLog.w("UserChat", e);
-                    }
-                }
-            });*/
+            listView.setStackFromBottom(false);
+            listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+                                             @Override
+                                             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                                                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                                                     listStickeyHeader.setVisibility(View.GONE);
+
+                                                 } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                                                     listStickeyHeader.setVisibility(View.VISIBLE);
+                                                 }
+                                             }
+
+                                             @Override
+                                             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                                                 try {
+                                                     if (userChatAdapter != null && userChatAdapter.getCount() > 0 && (listStickeyHeader != null)) {
+                                                         String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
+                                                         listStickeyHeader.setText(headerText);
+
+                                                     }
+                                                 } catch (Exception e) {
+                                                     mLog.w("UserChat", e);
+                                                 }
+                                             }
+                                         }
+
+            );
+
         } catch (NoClassDefFoundError e) {
             mLog.w("UserChat", e);
         }
@@ -278,6 +290,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
                 ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
                 final int checkedCount = listView.getCheckedItemCount();
                 mode.setTitle(Integer.toString(checkedCount));
@@ -433,6 +446,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View v) {
         if (v.getId() == R.id.send) {
             String message = chatText.getText().toString().trim();
+
             sendChatMessage(message, Constants.TEXT);
             if (chatText.getText() != null) {
                 chatText.setText("");
@@ -454,6 +468,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     chatText.setFocusableInTouchMode(true);
                     chatText.requestFocus();
                     popup.showAtBottomPending();
+
                     final InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.showSoftInput(chatText, InputMethodManager.SHOW_IMPLICIT);
                     changeEmojiKeyboardIcon(emoji, R.drawable.ic_action_keyboard);
@@ -485,6 +500,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private void sendChatMessage(String chatMessage, String type) {
 
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         if (chatMessage != null && !TextUtils.isEmpty(chatMessage.trim())) {
             sendChatMessage(chatMessage, userId, type);
@@ -501,7 +517,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setSent(0); // message sent 0, read 1
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
-        chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
+        //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(message.hashCode());
@@ -928,7 +944,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 dismissProgressDialog();
             }
         });
-
     }
 
     public void update(String voxUsername, String roomId) {
