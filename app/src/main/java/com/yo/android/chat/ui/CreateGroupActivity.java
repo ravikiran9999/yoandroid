@@ -190,7 +190,6 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 @Override
                 public void onResponse(Call<Room> call, Response<Room> response) {
                     if(response.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Room created", Toast.LENGTH_SHORT).show();
                         if (!ContactsArrayList.isEmpty()) {
                             ContactsArrayList.clear();
                         }
@@ -215,7 +214,6 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Toast.makeText(getApplicationContext(), "CreateGroupActivityDestroyed", Toast.LENGTH_SHORT).show();
         if (!ContactsArrayList.isEmpty()) {
             ContactsArrayList.clear();
         }

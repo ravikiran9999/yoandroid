@@ -169,7 +169,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
             if (mContact != null) {
 
-                if (mContact.getName() != null && !contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
+                if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+","").equalsIgnoreCase(mContact.getPhoneNo())) {
                     profileName.setText(mContact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
