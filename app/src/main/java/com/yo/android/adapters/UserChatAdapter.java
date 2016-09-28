@@ -40,6 +40,7 @@ import com.squareup.picasso.Transformation;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.chat.MaxWidthLinearLayout;
+import com.yo.android.chat.SquareImageView;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Helper;
@@ -209,14 +210,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         RelativeLayout profileNameLayout = (RelativeLayout) view.findViewById(R.id.chat_profilename_layout);
         LinearLayout gravityLayout = (LinearLayout) view.findViewById(R.id.chat_gravity_decide_layout);
         TextView profileName = (TextView) view.findViewById(R.id.profile_name);
-        ImageView loadImage = (ImageView) view.findViewById(R.id.chat_image);
+        SquareImageView loadImage = (SquareImageView) view.findViewById(R.id.chat_image);
         TextView extraText = (TextView) view.findViewById(R.id.extra_chat_message);
         RelativeLayout seenLayout = (RelativeLayout) view.findViewById(R.id.seen_layout);
         TextView sentTxt = (TextView) view.findViewById(R.id.sent_txt);
         TextView seenTxt = (TextView) view.findViewById(R.id.seen_txt);
         TextView time = (TextView) view.findViewById(R.id.time);
         extraText.setVisibility(View.GONE);
-
+        loadImage.setAdjustViewBounds(true);
+        loadImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
         if (!isRTL) {
             profileNameLayout.setVisibility(View.VISIBLE);
             gravityLayout.setGravity(Gravity.LEFT);
@@ -267,6 +269,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
         }
         if (file.exists()) {
+
             getImageHeightAndWidth(file, imageView1);
         } else {
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -355,7 +358,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         MaxWidthLinearLayout seenDetailsLayout = new MaxWidthLinearLayout(context, Helper.dp(context, 260));
         seenDetailsLayout.setOrientation(LinearLayout.HORIZONTAL);
         TextView time = new TextView(context);
-        time.setText("16:30");
         time.setGravity(Gravity.BOTTOM);
         time.setTextColor(context.getResources().getColor(R.color.black));
         seenDetailsLayout.addView(time);
@@ -393,8 +395,21 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
             }
+            seenLayout.setVisibility(View.GONE);
         } else {
+            seenLayout.setVisibility(View.VISIBLE);
+
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
+            if (item.getSent() != 0) {
+                String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
+                time.setText(sentText);
+                seen.setVisibility(View.GONE);
+            }
+            if (item.getDeliveredTime() != 0) {
+                String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
+                time.setText(seenText);
+                seen.setVisibility(View.VISIBLE);
+            }
         }
         linearLayout1.addView(textView);
         linearLayout1.addView(mainLayout);
@@ -416,7 +431,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     private void getImageHeightAndWidth(final File file, ImageView imageView) {
         int maxWidth = 800;
-        int maxHeight = 500;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);

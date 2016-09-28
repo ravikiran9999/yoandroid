@@ -56,6 +56,7 @@ import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.CompressImage;
 import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
@@ -618,7 +619,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             case ADD_IMAGE_CAPTURE:
                 try {
                     String mPartyPicUri = mFileTemp.getPath();
-                    updateChatWithLocalImage(mPartyPicUri);
+                    String path = new CompressImage(getActivity()).compressImage(mPartyPicUri);
+                    mFileTemp.delete();
+                    updateChatWithLocalImage(path);
                 } catch (Exception e) {
                 }
                 break;
@@ -652,7 +655,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        updateChatWithLocalImage(mFileTemp.getAbsolutePath());
+                                        String path = new CompressImage(getActivity()).compressImage(mFileTemp.getAbsolutePath());
+                                        mFileTemp.delete();
+                                        updateChatWithLocalImage(path);
                                     }
                                 });
                             }
