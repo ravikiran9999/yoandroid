@@ -513,5 +513,4 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     }
 
-
 }

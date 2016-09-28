@@ -455,6 +455,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     chatText.setFocusableInTouchMode(true);
                     chatText.requestFocus();
                     popup.showAtBottomPending();
+
                     final InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.showSoftInput(chatText, InputMethodManager.SHOW_IMPLICIT);
                     changeEmojiKeyboardIcon(emoji, R.drawable.ic_action_keyboard);
