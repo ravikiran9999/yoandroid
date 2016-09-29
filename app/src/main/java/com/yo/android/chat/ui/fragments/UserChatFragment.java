@@ -267,8 +267,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                                  try {
                                                      if (userChatAdapter != null && userChatAdapter.getCount() > 0 && (listStickeyHeader != null)) {
                                                          String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-                                                         listStickeyHeader.setText(headerText);
-
+                                                         if(headerText!=null) {
+                                                             listStickeyHeader.setText(headerText.toUpperCase());
+                                                         }
                                                      }
                                                  } catch (Exception e) {
                                                      mLog.w("UserChat", e);

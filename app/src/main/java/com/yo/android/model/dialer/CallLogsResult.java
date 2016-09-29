@@ -30,6 +30,16 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
     private int callType;
     private String image;
 
+    public int getAppOrPstn() {
+        return appOrPstn;
+    }
+
+    public void setAppOrPstn(int appOrPstn) {
+        this.appOrPstn = appOrPstn;
+    }
+
+    private int appOrPstn;
+
 
     private String duration;
 
@@ -49,6 +59,7 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
         callType = in.readInt();
         image = in.readString();
         duration = in.readString();
+        appOrPstn = in.readInt();
     }
 
     public static final Creator<CallLogsResult> CREATOR = new Creator<CallLogsResult>() {
@@ -198,6 +209,7 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
         dest.writeInt(callType);
         dest.writeString(image);
         dest.writeString(duration);
+        dest.writeInt(appOrPstn);
 
     }
 }

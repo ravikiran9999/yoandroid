@@ -13,6 +13,7 @@ import android.provider.BaseColumns;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.Injector;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.provider.YoAppContactContract;
@@ -387,10 +388,16 @@ public class CallLog {
                     do {
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        String phoneName = Helper.getContactName(context,voxuser);
+
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
+                        if(phoneName !=null){
+                            info.setDestination_name(phoneName);
+                        }
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
                         info.setDuration(duration);
                         info.setImage(getImagePath(context, voxuser));
@@ -438,10 +445,16 @@ public class CallLog {
                     do {
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        String phoneName = Helper.getContactName(context,voxuser);
+
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
+                        if(phoneName !=null){
+                            info.setDestination_name(phoneName);
+                        }
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
                         info.setDuration(duration);
                         info.setImage(getImagePath(context, voxuser));
@@ -498,6 +511,7 @@ public class CallLog {
                         info.setDuration(duration);
                         String tempDate = Util.getDate(date);
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
                         info.setImage(getImagePath(context, voxuser));
                         // callerInfos.add(info);
                         if (!hashMap.containsKey(voxuser + tempDate)) {

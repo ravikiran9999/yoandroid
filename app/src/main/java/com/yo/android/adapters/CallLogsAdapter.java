@@ -113,7 +113,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         } else {
             holder.getRowContainerdetails().setVisibility(View.GONE);
         }
-        if (item.getValue().get(0).getDestination_name() == null) {
+        if (item.getValue().get(0).getAppOrPstn()== CallLog.Calls.APP_TO_PSTN_CALL) {
             holder.getMessageIcon().setVisibility(View.GONE);
         } else {
             holder.getMessageIcon().setVisibility(View.VISIBLE);
