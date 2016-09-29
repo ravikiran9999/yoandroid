@@ -1,5 +1,6 @@
 package com.yo.android.chat.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -189,11 +190,11 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
                 @Override
                 public void onResponse(Call<Room> call, Response<Room> response) {
-                    if(response.isSuccessful()) {
+                    if (response.isSuccessful()) {
                         if (!ContactsArrayList.isEmpty()) {
                             ContactsArrayList.clear();
                         }
-
+                        setResult(Activity.RESULT_OK);
                         finish();
                     } else {
                         Toast.makeText(CreateGroupActivity.this, getResources().getString(R.string.group_creation_error), Toast.LENGTH_SHORT).show();

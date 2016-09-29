@@ -96,9 +96,10 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
         } else if (!TextUtils.isEmpty(item.getLastChat())) {
             holder.getChat().setText(item.getLastChat());
+            holder.getChat().setVisibility(View.VISIBLE);
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
         } else {
-            holder.getChat().setText("");
+            holder.getChat().setVisibility(View.GONE);
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
         }
         holder.getTimeStamp().setText(item.getTimeStamp());
