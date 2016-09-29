@@ -565,6 +565,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         Toast.makeText(getActivity(), "Message not sent", Toast.LENGTH_SHORT).show();
                     }
                 }
+
             });
 
 
@@ -837,7 +838,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
             if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
-
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
                 listView.smoothScrollToPosition(userChatAdapter.getCount());
