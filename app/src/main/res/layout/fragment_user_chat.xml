@@ -47,7 +47,7 @@
                 android:textSize="14sp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/msg_out_photo"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </FrameLayout>
 
         <LinearLayout
