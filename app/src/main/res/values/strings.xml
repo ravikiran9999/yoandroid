@@ -231,7 +231,7 @@
     <string name="exceed_message">Message exceeds maximum limit</string>
     <string name="crop_image">Crop Image</string>
     <string name="enter_mobile_number_error">please enter a valid number </string>
-    <string name="Dialog_text">Are you sure to register with %s?</string>
+    <string name="Dialog_text">Please confirm if %s number is correct.</string>
     <string name="Cancel">Cancel</string>
     <string name="Ok">ok</string>
     <string name="Dialog_title">Confirm</string>

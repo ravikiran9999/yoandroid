@@ -6,13 +6,12 @@
     android:clickable="true"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="15dp"
     tools:context="com.yo.android.chat.ui.fragments.OTPFragment">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
         android:src="@drawable/app_logo" />
 
     <TextView
@@ -42,7 +41,6 @@
             android:id="@+id/otp"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginBottom="10dp"
             android:layout_weight="0.1"
             android:background="@android:color/white"
             android:ems="10"
@@ -52,15 +50,16 @@
             android:padding="8dp"
             android:singleLine="true" />
 
-        <TextView
-            android:id="@+id/resend"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+        <Button
+            android:id="@+id/verify"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="0.5"
             android:background="@color/resend_bcgrnd"
             android:gravity="center"
-            android:text="Resend (00:25)"
+            android:text="@string/otp_button_submit"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:textStyle="normal" />
@@ -80,15 +79,18 @@
         android:textSize="20sp"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/verify"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/resend"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
         android:background="@color/resend_bcgrnd"
-        android:text="@string/otp_button_submit"
-        android:textAllCaps="false"
+        android:gravity="left"
+        android:padding="10dp"
+        android:text="Resend (00:25)"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:textSize="14sp"
+        android:textStyle="normal" />
+
 
 </LinearLayout>

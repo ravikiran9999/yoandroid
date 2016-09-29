@@ -65,6 +65,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private TextView noSearchResults;
     private List<String> followedTopicsIdsList;
     private Button done;
+    private static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,12 +209,16 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private void performDoneAction(final List<String> followedTopicsIdsList) {
 
         if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
-            final Intent intent = new Intent(this, UnManageInAppPurchaseActivity.class);
+            Intent intent = new Intent(FollowMoreTopicsActivity.this, TabsHeaderActivity.class);
+            intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
+            startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+
+            /*final Intent intent = new Intent(this, UnManageInAppPurchaseActivity.class);
             intent.putExtra("sku", "com.yo.products.credit.FIVE");
             intent.putExtra("price", 5f);
             final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
             intent.putExtra(Constants.USER_ID, userId);
-            startActivityForResult(intent, 14);
+            startActivityForResult(intent, 14);*/
         } else {
             if (searchTags != null && !searchTags.isEmpty()) {
                 for (int i = 0; i < initialTags.size(); i++) {
@@ -471,7 +476,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 14 && resultCode == RESULT_OK) {
+        if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == RESULT_OK) {
             if (searchTags != null && !searchTags.isEmpty()) {
                 for (int i = 0; i < initialTags.size(); i++) {
                     for (int j = 0; j < searchTags.size(); j++) {
@@ -530,7 +535,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 }
             });
 
-        } else if (requestCode == 14 && resultCode == RESULT_CANCELED) {
+        } else if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == RESULT_CANCELED) {
             done.setEnabled(true);
         }
     }

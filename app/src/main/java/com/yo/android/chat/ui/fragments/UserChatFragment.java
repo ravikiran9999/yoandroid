@@ -107,7 +107,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ListView listView;
     private String opponentNumber;
     private String opponentId;
-    private File mFileTemp;
+    private static File mFileTemp;
     private static final int ADD_IMAGE_CAPTURE = 1;
     private static final int ADD_SELECT_PICTURE = 2;
     private Uri mImageCaptureUri = null;
@@ -267,7 +267,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                                  try {
                                                      if (userChatAdapter != null && userChatAdapter.getCount() > 0 && (listStickeyHeader != null)) {
                                                          String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-                                                         if(headerText!=null) {
+                                                         if (headerText != null) {
                                                              listStickeyHeader.setText(headerText.toUpperCase());
                                                          }
                                                      }
