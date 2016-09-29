@@ -22,6 +22,7 @@
             android:id="@+id/seen_layout"
             android:layout_width="wrap_content"
             android:visibility="visible"
+            android:layout_marginRight="5dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 

@@ -541,7 +541,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            notifyDataSetChanged();
+            if (!((BaseActivity)context).hasDestroyed()) {
+                notifyDataSetChanged();
+            }
         }
 
         @Override
