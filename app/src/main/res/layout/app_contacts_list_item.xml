@@ -3,7 +3,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="?android:attr/listPreferredItemHeight"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
@@ -72,6 +72,17 @@
                     android:visibility="visible"
                     tools:text="9490590000" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/isadmin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:text="admin"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="5dp" />
 
             <TextView
                 android:id="@+id/tv_contact_type"

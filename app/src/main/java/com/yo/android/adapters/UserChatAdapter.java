@@ -374,41 +374,52 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         LinearLayout linearLayout1 = new LinearLayout(context);
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(30, 0, 50, 5);
+        lp.setMargins(30, 0, 50, 0);
         EmojiconTextView textView = new EmojiconTextView(context);
         textView.setEmojiconSize(28);
         textView.setLayoutParams(lp);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
         textView.setGravity(Gravity.LEFT);
         textView.setMaxWidth(Helper.dp(context, 260));
         textView.setTextColor(Color.BLACK);
         textView.setText(item.getMessage());
-        RelativeLayout mainLayout = new RelativeLayout(context);
-        MaxWidthLinearLayout seenDetailsLayout = new MaxWidthLinearLayout(context, Helper.dp(context, 230));
-        seenDetailsLayout.setOrientation(LinearLayout.HORIZONTAL);
-        TextView time = new TextView(context);
+
+        RelativeLayout mainLayout = (RelativeLayout) inflater.inflate(R.layout.chat_message, null);
+       /* MaxWidthLinearLayout seenDetailsRelativeLayout = new MaxWidthLinearLayout(context, Helper.dp(context, 230));
+        LinearLayout.LayoutParams lps = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.setMargins(30, 0, 50, 5);*/
+        //RelativeLayout mainLayout = new RelativeLayout(context);
+        // MaxWidthLinearLayout seenDetailsLayout = new MaxWidthLinearLayout(context, Helper.dp(context, 230));
+
+        //seenDetailsLayout.setOrientation(LinearLayout.HORIZONTAL);
+        //TextView time = new TextView(context);
+        TextView time = (TextView) mainLayout.findViewById(R.id.time);
         time.setGravity(Gravity.BOTTOM);
         time.setTextColor(context.getResources().getColor(R.color.black));
-        seenDetailsLayout.addView(time);
-        RelativeLayout seenLayout = new RelativeLayout(context);
-        TextView seen = new TextView(context);
-        seen.setGravity(Gravity.BOTTOM);
-        seen.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.msg_check), null, null, null);
-        TextView sent = new TextView(context);
-        sent.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.msg_halfcheck), null, null, null);
-        sent.setGravity(Gravity.BOTTOM);
-        seenLayout.addView(seen);
+        //seenDetailsLayout.addView(time);
+        RelativeLayout seenLayout = (RelativeLayout)mainLayout.findViewById(R.id.seen_layout);
+        //TextView seen = new TextView(context);
+        TextView seen = (TextView) mainLayout.findViewById(R.id.seen_txt);
 
-        LinearLayout.LayoutParams head_params = (LinearLayout.LayoutParams) holder.getLl().getLayoutParams();
+        //seen.setGravity(Gravity.BOTTOM);
+        //seen.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.msg_check), null, null, null);
+        // TextView sent = new TextView(context);
+        TextView sent = (TextView) mainLayout.findViewById(R.id.sent_txt);
+
+        // sent.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.msg_halfcheck), null, null, null);
+        // sent.setGravity(Gravity.BOTTOM);
+        // seenLayout.addView(seen);
+
+       /* LinearLayout.LayoutParams head_params = (LinearLayout.LayoutParams) holder.getLl().getLayoutParams();
         head_params.setMargins(getPx(50), 0, 0, 0);
-        sent.setLayoutParams(head_params);
-        seenLayout.addView(sent);
-        seenLayout.setGravity(Gravity.RIGHT);
-        seenDetailsLayout.addView(seenLayout);
-        head_params.setMargins(getPx(50), 0, 0, 0);
-        seenDetailsLayout.setLayoutParams(head_params);
-        seenDetailsLayout.setGravity(Gravity.RIGHT);
-        mainLayout.addView(seenDetailsLayout);
+        sent.setLayoutParams(head_params);*/
+        /// seenLayout.addView(sent);
+        // seenLayout.setGravity(Gravity.RIGHT);
+        // seenDetailsLayout.addView(seenLayout);
+        //head_params.setMargins(getPx(50), 0, 0, 0);
+        // seenDetailsLayout.setLayoutParams(head_params);
+        // seenDetailsLayout.setGravity(Gravity.RIGHT);
+        //mainLayout.addView(seenDetailsLayout);
 
 
         if (!isRTL) {
@@ -425,37 +436,39 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 senderId.setTextColor(mColorGenerator.getRandomColor());
                 linearLayout1.addView(senderId);
             }
+            seenLayout.setVisibility(View.GONE);
             if (item.getDeliveredTime() != 0) {
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
-                time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+                time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                 time.setGravity(Gravity.RIGHT);
             }
-            seenLayout.setVisibility(View.GONE);
         } else {
-            seenLayout.setVisibility(View.VISIBLE);
-            time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+            sent.setVisibility(View.VISIBLE);
+            time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
             time.setGravity(Gravity.RIGHT);
+            sent.setVisibility(View.VISIBLE);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             if (item.getSent() != 0) {
-                sent.setVisibility(View.VISIBLE);
                 String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
                 time.setText(sentText);
-                sent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+                sent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                 sent.setGravity(Gravity.RIGHT);
             }
             if (item.getDeliveredTime() != 0) {
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
                 seen.setVisibility(View.VISIBLE);
-                seen.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+                seen.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                 seen.setGravity(Gravity.RIGHT);
+            }else{
+                seen.setVisibility(View.GONE);
             }
         }
         linearLayout1.addView(textView);
-        linearLayout1.addView(mainLayout);
-
         secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 0, 0));
+        secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.dp(context, 20), Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.RIGHT, 0, 8, 0, 0));
+
         holder.getLl().addView(secretChatPlaceholder);
         return secretChatPlaceholder;
     }
