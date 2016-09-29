@@ -79,7 +79,9 @@
                 android:id="@+id/cb_magazine_like_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
                 android:button="@drawable/magazine_like_white_selector"
                 android:layout_below="@+id/imv_magazine_topic_top"/>
 
@@ -87,20 +89,18 @@
                 android:id="@+id/imv_magazine_add_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
+                android:padding="10dp"
                 android:layout_toRightOf="@+id/cb_magazine_like_top"
-                android:background="@drawable/ic_add_white"
+                android:src="@drawable/ic_add_white"
                 android:layout_below="@+id/imv_magazine_topic_top"/>
 
             <ImageView
                 android:id="@+id/imv_magazine_share_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
+                android:padding="10dp"
                 android:layout_toRightOf="@+id/imv_magazine_add_top"
-                android:background="@drawable/ic_magazine_share_white"
+                android:src="@drawable/ic_magazine_share_white"
                 android:layout_below="@+id/imv_magazine_topic_top"/>
 
             <Button
