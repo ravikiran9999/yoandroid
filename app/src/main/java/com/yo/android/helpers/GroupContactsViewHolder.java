@@ -15,13 +15,14 @@ public class GroupContactsViewHolder extends AbstractViewHolder {
 
     private TextView contactNumber;
     private CheckBox checkBox;
-    private TextView contactMail;
+    private TextView contactName;
 
 
     public GroupContactsViewHolder(View view) {
         super(view);
 
         contactNumber = (TextView) view.findViewById(R.id.tv_phone_number);
+        contactName = (TextView) view.findViewById(R.id.tv_name);
         checkBox = (CheckBox) view.findViewById(R.id.checkBox);
     }
 
@@ -33,4 +34,7 @@ public class GroupContactsViewHolder extends AbstractViewHolder {
         return checkBox;
     }
 
+    public TextView getContactName() {
+        return contactName;
+    }
 }
