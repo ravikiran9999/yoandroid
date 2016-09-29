@@ -170,7 +170,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".chat.ui.GroupContactsActivity"
-            android:label="@string/new_group"
+            android:label="@string/select_contact"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.CountryListActivity"
