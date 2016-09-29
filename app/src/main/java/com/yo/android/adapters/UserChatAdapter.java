@@ -270,22 +270,23 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         holder.getLl().addView(view);
     }
 
-    private void updateImage(ChatMessage item, final ImageView imageView1) {
+    private void updateImage(final ChatMessage item, final ImageView imageView1) {
         File file = new File(item.getImagePath());
         if (file != null && !file.exists()) {
             file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
         }
-        item.setImagePath(file.getAbsolutePath());
         if (file.exists()) {
             getImageHeightAndWidth(file, imageView1);
         } else {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
             StorageReference imageRef = storageRef.child(item.getImagePath());
+            final File finalFile = file;
             imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(final Uri uri) {
                     transformation.setFileName(uri.getPath());
+                    item.setImagePath(finalFile.getAbsolutePath());
                     imageView1.setTag(uri.getPath());
                     final RequestCreator creator = Picasso.with(context).load(uri).transform(transformation);
                     creator.into(imageView1, new Callback() {
