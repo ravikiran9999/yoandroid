@@ -103,37 +103,39 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
-                final String id = response.body().getId();
-                if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
-                    for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                        flipContainer.setVisibility(View.VISIBLE);
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
-                        }
-                        articlesList.add(response.body().getArticlesList().get(i));
-                    }
-                    myBaseAdapter.addItems(articlesList);
-                } else {
-                    flipContainer.setVisibility(View.GONE);
-                    if (noArticals != null) {
-                        noArticals.setVisibility(View.VISIBLE);
-
-                        noArticals.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(CreatedMagazineDetailActivity.this, LoadMagazineActivity.class);
-                                intent.putExtra("MagazineId", id);
-                                intent.putExtra("MagazineTitle", magazineTitle);
-                                intent.putExtra("MagazineDesc", magazineDesc);
-                                intent.putExtra("MagazinePrivacy", magazinePrivacy);
-                                startActivity(intent);
-                                finish();
+                if (response.body() != null) {
+                    final String id = response.body().getId();
+                    if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
+                        for (int i = 0; i < response.body().getArticlesList().size(); i++) {
+                            flipContainer.setVisibility(View.VISIBLE);
+                            if (noArticals != null) {
+                                noArticals.setVisibility(View.GONE);
                             }
-                        });
+                            articlesList.add(response.body().getArticlesList().get(i));
+                        }
+                        myBaseAdapter.addItems(articlesList);
+                    } else {
+                        flipContainer.setVisibility(View.GONE);
+                        if (noArticals != null) {
+                            noArticals.setVisibility(View.VISIBLE);
+
+                            noArticals.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(CreatedMagazineDetailActivity.this, LoadMagazineActivity.class);
+                                    intent.putExtra("MagazineId", id);
+                                    intent.putExtra("MagazineTitle", magazineTitle);
+                                    intent.putExtra("MagazineDesc", magazineDesc);
+                                    intent.putExtra("MagazinePrivacy", magazinePrivacy);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            });
+                        }
+
                     }
 
                 }
-
             }
 
             @Override
