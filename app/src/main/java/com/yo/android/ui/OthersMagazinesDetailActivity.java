@@ -513,7 +513,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            notifyDataSetChanged();
+            if (!hasDestroyed()) {
+                notifyDataSetChanged();
+            }
         }
 
         @Override
