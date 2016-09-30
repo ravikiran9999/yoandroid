@@ -65,8 +65,11 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             holder.getContactNumber().setVisibility(View.GONE);
         }
         holder.getContactNumber().setText(item.getName());
+        if(item.getPhoneNo()!=null){
+            item.setPhoneNo(item.getPhoneNo().trim());
+        }
 
-        if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo().trim()))) {
+        if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo()))) {
             holder.getContactMail().setText(item.getPhoneNo());
             holder.getContactMail().setVisibility(View.VISIBLE);
 

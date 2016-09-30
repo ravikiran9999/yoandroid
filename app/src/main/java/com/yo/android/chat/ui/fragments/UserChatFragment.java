@@ -817,6 +817,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void forwardMessage(ArrayList<ChatMessage> message) {
         Intent intent = new Intent(getActivity(), AppContactsActivity.class);
         intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, message);
+        intent.putExtra(Constants.IS_CHAT_FORWARD, true);
+
         startActivity(intent);
         getActivity().finish();
     }

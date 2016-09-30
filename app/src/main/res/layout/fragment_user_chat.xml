@@ -36,6 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:divider="@null"
+                android:layout_marginTop="10dp"
                 android:listSelector="@null" />
             <TextView
                 android:id="@+id/time_stamp_header"

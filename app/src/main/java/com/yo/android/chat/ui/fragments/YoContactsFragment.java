@@ -111,7 +111,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Contact contact = (Contact) listView.getItemAtPosition(position);
         if (position == 0) {
-            startActivityForResult(new Intent(getActivity(), CreateGroupActivity.class),CREATE_GROUP_RESULT);
+            startActivityForResult(new Intent(getActivity(), CreateGroupActivity.class), CREATE_GROUP_RESULT);
         } else {
             if (forwardChatMessages != null) {
                 navigateToChatScreen(contact, forwardChatMessages);
@@ -188,9 +188,11 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
             }
         });
-        Contact createGroup = new Contact();
-        createGroup.setName(getResources().getString(R.string.new_group));
-        contactList.add(0,createGroup);
+        if (getArguments() != null && !getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
+            Contact createGroup = new Contact();
+            createGroup.setName(getResources().getString(R.string.new_group));
+            contactList.add(0, createGroup);
+        }
         appContactsListAdapter.addItems(contactList);
         Helper.displayIndex(getActivity(), layout, appContactsListAdapter.getAllItems(), listView);
     }
@@ -206,7 +208,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK){
+        if (resultCode == Activity.RESULT_OK) {
             getActivity().finish();
         }
     }
