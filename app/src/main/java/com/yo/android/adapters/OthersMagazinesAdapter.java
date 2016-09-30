@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.model.OwnMagazine;
+import com.yo.android.ui.BaseActivity;
 import com.yo.android.widgets.SquareItemLinearLayout;
 
 import java.util.ArrayList;
@@ -36,7 +37,9 @@ public class OthersMagazinesAdapter extends BaseAdapter {
     public void addItems(final List<OwnMagazine> ownMagazineList) {
         this.ownMagazineList.clear();
         this.ownMagazineList.addAll(ownMagazineList);
-        notifyDataSetChanged();
+        if (!((BaseActivity)mContext).hasDestroyed()) {
+            notifyDataSetChanged();
+        }
     }
 
     public int getCount() {
