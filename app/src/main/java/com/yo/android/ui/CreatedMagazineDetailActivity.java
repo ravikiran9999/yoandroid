@@ -259,7 +259,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
@@ -268,8 +270,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     } else {
@@ -279,8 +282,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
                             }
 
@@ -289,7 +293,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     }
