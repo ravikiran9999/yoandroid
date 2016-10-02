@@ -96,6 +96,13 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                 mToastFactory.showToast("Please enter a valid url");
                 btnPost.setVisibility(View.INVISIBLE);
                 isInvalidUrl = true;
+                etUrl.post(new Runnable()
+                {
+                    public void run()
+                    {
+                        etUrl .requestFocus();
+                    }
+                });
             }
 
             @Override
@@ -125,6 +132,13 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                                 Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                                 mToastFactory.showToast("Please enter a valid url");
                                 btnPost.setVisibility(View.INVISIBLE);
+                                etUrl.post(new Runnable()
+                                {
+                                    public void run()
+                                    {
+                                        etUrl .requestFocus();
+                                    }
+                                });
                             }
                         } else {
                             if (Patterns.WEB_URL.matcher(url).matches()) {
@@ -133,16 +147,37 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                                 Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                                 mToastFactory.showToast("Please enter a valid url");
                                 btnPost.setVisibility(View.INVISIBLE);
+                                etUrl.post(new Runnable()
+                                {
+                                    public void run()
+                                    {
+                                        etUrl .requestFocus();
+                                    }
+                                });
                             }
                         }
                     } else if(TextUtils.isEmpty(url.trim())) {
                         Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                         mToastFactory.showToast("Please enter a url");
                         btnPost.setVisibility(View.INVISIBLE);
+                        etUrl.post(new Runnable()
+                        {
+                            public void run()
+                            {
+                                etUrl .requestFocus();
+                            }
+                        });
                     } else {
                         Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
                         mToastFactory.showToast("Please enter a tag");
                         btnPost.setVisibility(View.INVISIBLE);
+                        atvMagazineTag.post(new Runnable()
+                        {
+                            public void run()
+                            {
+                                atvMagazineTag .requestFocus();
+                            }
+                        });
                     }
                 }
                 return false;
@@ -166,10 +201,24 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
             mToastFactory.showToast("Please enter a url");
             btnPost.setVisibility(View.INVISIBLE);
+            etUrl.post(new Runnable()
+            {
+                public void run()
+                {
+                    etUrl .requestFocus();
+                }
+            });
         } else {
             Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
             mToastFactory.showToast("Please enter a tag");
             btnPost.setVisibility(View.INVISIBLE);
+            atvMagazineTag.post(new Runnable()
+            {
+                public void run()
+                {
+                    atvMagazineTag .requestFocus();
+                }
+            });
         }
     }
 
