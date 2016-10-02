@@ -224,7 +224,9 @@ public class WishListActivity extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
@@ -233,8 +235,9 @@ public class WishListActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     } else {
@@ -255,8 +258,9 @@ public class WishListActivity extends BaseActivity {
                                         OthersMagazinesDetailActivity.myBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                     }
                                 }
-
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
 
                                 articlesList.clear();
@@ -271,7 +275,9 @@ public class WishListActivity extends BaseActivity {
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 dismissProgressDialog();
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     }
@@ -373,7 +379,9 @@ public class WishListActivity extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
                                 }
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
 
                             @Override
@@ -382,7 +390,9 @@ public class WishListActivity extends BaseActivity {
                                 finalHolder.articleFollow.setText("Follow");
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                 data.setIsFollowing("false");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
 
                             }
                         });
@@ -420,7 +430,9 @@ public class WishListActivity extends BaseActivity {
                                         if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                             MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
                                         }
-                                        notifyDataSetChanged();
+                                        if (!((BaseActivity)context).hasDestroyed()) {
+                                            notifyDataSetChanged();
+                                        }
 
                                         articlesList.clear();
                                         myBaseAdapter.addItems(articlesList);
@@ -434,7 +446,9 @@ public class WishListActivity extends BaseActivity {
                                         finalHolder.articleFollow.setText("Following");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                         data.setIsFollowing("true");
-                                        notifyDataSetChanged();
+                                        if (!((BaseActivity)context).hasDestroyed()) {
+                                            notifyDataSetChanged();
+                                        }
 
                                     }
                                 });
@@ -491,7 +505,9 @@ public class WishListActivity extends BaseActivity {
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            notifyDataSetChanged();
+            if (!((BaseActivity)context).hasDestroyed()) {
+                notifyDataSetChanged();
+            }
         }
     }
 
