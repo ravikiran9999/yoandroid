@@ -61,6 +61,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
+    private MenuItem collapseView;
+
     public Menu getMenu() {
         return menu;
     }
@@ -122,8 +124,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_app_contacts, menu);
         this.menu = menu;
-        MenuItem view = menu.findItem(R.id.menu_search);
-        MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
+        collapseView = menu.findItem(R.id.menu_search);
+        MenuItemCompat.setOnActionExpandListener(collapseView, new MenuItemCompat.OnActionExpandListener() {
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -144,6 +146,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (collapseView != null) {
+            collapseView.collapseActionView();
+        }
         Contact contact = (Contact) listView.getItemAtPosition(position);
         if (position == 0 && contact.getVoxUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null) {
             startActivityForResult(new Intent(getActivity(), CreateGroupActivity.class), CREATE_GROUP_RESULT);
@@ -223,6 +228,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
             }
         });
+        Helper.displayIndex(getActivity(), layout, contactList, listView);
         if (getArguments() != null && !getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
             Contact createGroup = new Contact();
             createGroup.setName(getResources().getString(R.string.new_group));
@@ -231,9 +237,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             createGroup.setFirebaseRoomId(null);
             contactList.add(0, createGroup);
         }
-        appContactsListAdapter.addItems(contactList);
         tempList = contactList;
-        Helper.displayIndex(getActivity(), layout, appContactsListAdapter.getAllItems(), listView);
+        appContactsListAdapter.addItems(contactList);
+
     }
 
 
