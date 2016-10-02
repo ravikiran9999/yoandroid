@@ -203,6 +203,10 @@ public class Util {
     }
 
     public static String getChatListTimeFormat(@NonNull final Context context, long time) {
+        if(context == null){
+            return null;
+
+        }
         Calendar smsTime = Calendar.getInstance();
         smsTime.setTimeInMillis(time);
         Calendar now = Calendar.getInstance();
@@ -313,7 +317,6 @@ public class Util {
                     Util.hideKeyboard(activity, activity.getCurrentFocus());
                 return true;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);

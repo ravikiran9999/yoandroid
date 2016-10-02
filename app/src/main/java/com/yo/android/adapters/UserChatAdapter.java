@@ -44,6 +44,7 @@ import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.chat.CompressImage;
 import com.yo.android.chat.CustomTransformation;
+import com.yo.android.chat.ImageLoader;
 import com.yo.android.chat.MaxWidthLinearLayout;
 import com.yo.android.chat.SquareImageView;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -266,101 +267,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 seenTxt.setVisibility(View.VISIBLE);
             }
         }
-        updateImage(item, loadImage);
+        ImageLoader.updateImage(context,item, loadImage);
         holder.getLl().addView(view);
     }
 
-    private void updateImage(final ChatMessage item, final ImageView imageView1) {
-        File file = new File(item.getImagePath());
-        if (file != null && !file.exists()) {
-            file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
-        }
-        if (file.exists()) {
-            getImageHeightAndWidth(file, imageView1);
-        } else {
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
-            StorageReference imageRef = storageRef.child(item.getImagePath());
-            final File finalFile = file;
-            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(final Uri uri) {
-                    transformation.setFileName(uri.getPath());
-                    item.setImagePath(finalFile.getAbsolutePath());
-                    imageView1.setTag(uri.getPath());
-                    final RequestCreator creator = Picasso.with(context).load(uri).transform(transformation);
-                    creator.into(imageView1, new Callback() {
-                        @Override
-                        public void onSuccess() {
 
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        Bitmap bitmap = creator.get();
-                                        Log.w("", "Image got downloaded" + imageView1.getTag().toString());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }).start();
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
-                    // Picasso.with(context).load(uri).transform(transformation).into(imageView1);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-        //holder.getLl().addView(secretChatPlaceholder);
-        //return secretChatPlaceholder;
-    }
-
-
-    CustomTransformation transformation = new CustomTransformation() {
-        private String fileName;
-
-        @Override
-        public void setFileName(String file) {
-            this.fileName = file;
-        }
-
-        @Override
-        public Bitmap transform(Bitmap source) {
-            int targetWidth = 800;
-            double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
-            int targetHeight = (int) (targetWidth * aspectRatio);
-            Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
-
-            String filepath = CompressImage.getFilename(new File(fileName).getName());
-            try {
-                FileOutputStream out = new FileOutputStream(filepath);
-                result.compress(Bitmap.CompressFormat.JPEG, 80, out);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            if (result != source) {
-                source.recycle();
-            }
-
-            return result;
-        }
-
-        @Override
-        public String key() {
-            return "transformation" + " desiredWidth";
-        }
-    };
 
 
     private LinearLayout newTextAddView(final ChatMessage item, final UserChatViewHolder holder) {
@@ -484,25 +395,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         return px;
     }
 
-    private void getImageHeightAndWidth(final File file, ImageView imageView) {
-        int maxWidth = 800;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        int height = options.outHeight;
-        int width = options.outWidth;
-        float ratio = (float) width / maxWidth;
-        width = maxWidth;
-        height = (int) (height / ratio);
-        Glide.with(context)
-                .load(file)
-                .priority(Priority.IMMEDIATE)
-                .override(width, height)
-                .dontAnimate()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(imageView);
-    }
+
 
     private boolean isValidMobile(String phone) {
         try {

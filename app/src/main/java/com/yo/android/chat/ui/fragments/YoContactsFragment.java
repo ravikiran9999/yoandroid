@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,6 +26,8 @@ import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Registration;
+import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -49,6 +53,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     private AppContactsListAdapter appContactsListAdapter;
     private ListView listView;
     private ListView layout;
+    private List<Contact> tempList = new ArrayList<>();
     private Menu menu;
 
     @Inject
@@ -99,9 +104,39 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                break;
+            default:
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_app_contacts, menu);
         this.menu = menu;
+        MenuItem view = menu.findItem(R.id.menu_search);
+        MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                appContactsListAdapter.addItems(tempList);
+                return true;
+            }
+        });
         Util.prepareContactsSearch(getActivity(), menu, appContactsListAdapter, Constants.Yo_CONT_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -110,7 +145,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Contact contact = (Contact) listView.getItemAtPosition(position);
-        if (position == 0) {
+        if (position == 0 && contact.getVoxUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null) {
             startActivityForResult(new Intent(getActivity(), CreateGroupActivity.class), CREATE_GROUP_RESULT);
         } else {
             if (forwardChatMessages != null) {
@@ -191,9 +226,13 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         if (getArguments() != null && !getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
             Contact createGroup = new Contact();
             createGroup.setName(getResources().getString(R.string.new_group));
+            createGroup.setVoxUserName(null);
+            createGroup.setPhoneNo(null);
+            createGroup.setFirebaseRoomId(null);
             contactList.add(0, createGroup);
         }
         appContactsListAdapter.addItems(contactList);
+        tempList = contactList;
         Helper.displayIndex(getActivity(), layout, appContactsListAdapter.getAllItems(), listView);
     }
 

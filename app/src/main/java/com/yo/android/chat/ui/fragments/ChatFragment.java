@@ -262,7 +262,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         room.setImages(false);
                     }
                     room.setTime(chatMessage.getTime());
-                    room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+                    room.setTimeStamp(Util.getChatListTimeFormat(getActivity(), chatMessage.getTime()));
                     if (!arrayOfUsers.contains(room)) {
                         arrayOfUsers.add(room);
                     } else {
@@ -307,7 +307,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     if (dataSnapshot.hasChildren()) {
                         room.setLastChat("");
                         room.setImages(false);
-                        room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+                        room.setTimeStamp(Util.getChatListTimeFormat(getActivity(), chatMessage.getTime()));
                     }
                     if (chatRoomListAdapter != null) {
                         chatRoomListAdapter.notifyDataSetChanged();

@@ -189,6 +189,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
+        listView.setVerticalScrollBarEnabled(true);
+        listView.setClipToPadding(false);
+        listView.setPadding(0, Helper.dp(getActivity(), 4), 0, Helper.dp(getActivity(), 3));
+        listView.setLayoutAnimation(null);
+
+
         listView.setOnItemClickListener(this);
         final View rootView = view.findViewById(R.id.root_view);
         popup = new EmojiconsPopup(rootView, getActivity());

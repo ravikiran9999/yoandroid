@@ -30,10 +30,11 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
         mColorGenerator = ColorGenerator.MATERIAL;
     }
 
-    public  void addItem(Contact contact){
+    public void addItem(Contact contact) {
         getAllItems().add(contact);
         notifyDataSetChanged();
     }
+
     @Override
     public int getLayoutId() {
         return R.layout.app_contacts_list_item;
@@ -46,7 +47,7 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
 
     @Override
     public void bindView(int position, AppRegisteredContactsViewHolder holder, final Contact item) {
-        if (position == 0) {
+        if (position == 0 && item.getVoxUserName() == null && item.getPhoneNo() == null && item.getFirebaseRoomId() == null) {
             holder.getContactName().setVisibility(View.VISIBLE);
             holder.getContactName().setText(item.getName());
             holder.getContactNumber().setVisibility(View.GONE);

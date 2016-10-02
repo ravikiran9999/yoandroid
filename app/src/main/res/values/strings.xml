@@ -238,4 +238,8 @@
     <string name="Dialog_title">Confirm</string>
     <string name="others_no_article_added">There is no article added yet to the magazine.</string>
     <string name="admin">Admin</string>
+    <string name="notification_new_message">new message</string>
+    <string name="notification_new_messages">new messages</string>
+    <string name="more_notification">more notification</string>
+    <string name="more_notifications">more notifications</string>
 </resources>
