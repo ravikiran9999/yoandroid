@@ -22,6 +22,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Topics;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -176,6 +178,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 if (response != null && response.body() != null) {
+                    EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
                     setResult(RESULT_OK);
                     finish();
                     Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
@@ -204,6 +207,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 if (response.body() != null) {
+                    EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
                     setResult(RESULT_OK);
                     finish();
                 } else if (response.errorBody() != null) {
