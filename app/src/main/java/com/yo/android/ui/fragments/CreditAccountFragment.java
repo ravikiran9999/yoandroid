@@ -34,6 +34,7 @@ import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
+import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.VoipConstants;
 
@@ -230,7 +231,13 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         if (name.equalsIgnoreCase(getString(R.string.add_balance_from_voucher))) {
             showVoucherDialog();
         } else if (name.equalsIgnoreCase(getString(R.string.transfer_balance))) {
-            mToastFactory.showToast("Need to implement");
+            //mToastFactory.showToast("Need to implement");
+            String balance = mBalanceHelper.getCurrentBalance();
+            String currencySymbol = mBalanceHelper.getCurrencySymbol();
+            Intent intent = new Intent(getActivity(), TransferBalanceSelectContactActivity.class);
+            intent.putExtra("balance", balance);
+            intent.putExtra("currencySymbol", currencySymbol);
+            startActivity(intent);
         }
     }
 

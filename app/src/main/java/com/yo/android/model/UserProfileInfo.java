@@ -21,6 +21,8 @@ public class UserProfileInfo {
     @SerializedName("notification_alert")
     private boolean notificationAlert;
 
+    private boolean representative;
+
     public boolean isSyncContacts() {
         return syncContacts;
     }
@@ -77,5 +79,13 @@ public class UserProfileInfo {
 
     public void setFirebaseUserId(String firebaseUserId) {
         this.firebaseUserId = firebaseUserId;
+    }
+
+    public boolean isRepresentative() {
+        return representative;
+    }
+
+    public void setRepresentative(boolean representative) {
+        this.representative = representative;
     }
 }
