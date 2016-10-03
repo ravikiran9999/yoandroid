@@ -102,6 +102,9 @@ public class DialerFragment extends BaseFragment {
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
+    public static boolean isFromDailer = false;
+
+
     public interface CallLogClearListener {
         public void clear();
     }
@@ -161,7 +164,7 @@ public class DialerFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-       // hideDialPad(true);
+        // hideDialPad(true);
         String str = null;
         if (item.getItemId() == R.id.menu_all_calls) {
             str = "all calls";
@@ -189,8 +192,6 @@ public class DialerFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         ButterKnife.bind(this, view);
-
-
 
 
     }
@@ -225,7 +226,7 @@ public class DialerFragment extends BaseFragment {
         // showDialPad();
     }
 
-    private void loadCallLogs() {
+    public void loadCallLogs() {
         appCalls.clear();
         paidCalls.clear();
         appCalls = CallLog.Calls.getAppToAppCallLog(getActivity());
@@ -238,15 +239,24 @@ public class DialerFragment extends BaseFragment {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
         ArrayList<Map.Entry<String, List<CallLogsResult>>> results = new ArrayList<>();
         if (filter.equalsIgnoreCase("all calls")) {
-
             results = prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
         } else if (filter.equalsIgnoreCase("App Calls")) {
             results = prepare("App Calls", results, appCalls);
         } else {
             results = prepare("Paid Calls", results, paidCalls);
         }
-        adapter.addItems(results);
-        showEmptyText();
+        if (results != null && results.size() == 0 && !isFromDailer) {
+            startActivityForResult(new Intent(getActivity(), NewDailerActivity.class), 100);
+        } else {
+            adapter.addItems(results);
+            showEmptyText();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        isFromDailer = true;
     }
 
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> prepare(String type, ArrayList<Map.Entry<String, List<CallLogsResult>>> results, ArrayList<Map.Entry<String, List<CallLogsResult>>> checkList) {
@@ -279,6 +289,7 @@ public class DialerFragment extends BaseFragment {
             boolean nonEmpty = show || (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
             txtEmptyCallLogs.setVisibility(View.GONE);
             llNoCalls.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
+            listView.setVisibility(nonEmpty ? View.VISIBLE : View.GONE);
         } catch (Exception e) {
             mLog.w(TAG, e);
         }

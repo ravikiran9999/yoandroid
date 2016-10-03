@@ -239,7 +239,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         }
         tempList = contactList;
         appContactsListAdapter.addItems(contactList);
-
     }
 
 

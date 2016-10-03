@@ -284,7 +284,7 @@ public class FirebaseService extends InjectedService {
 
     private int getNotificationIcon() {
         boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
-        return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
+        return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_notification;
     }
 
     private void sendTrayNotifications(int mode, String roomId, ChatMessage chatMessage) {

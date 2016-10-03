@@ -32,6 +32,7 @@ import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.WishListActivity;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.lang.reflect.Field;
@@ -41,6 +42,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -81,12 +83,14 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -340,5 +344,11 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                  // do nothing
+    }
+
+    public void onEventMainThread(String action) {
+        if (Constants.REFRESH_TOPICS_ACTION.equals(action)) {
+         callApiSearchTopics();
+        }
     }
 }

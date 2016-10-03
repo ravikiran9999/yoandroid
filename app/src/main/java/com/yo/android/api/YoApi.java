@@ -266,6 +266,13 @@ public class YoApi {
         @GET("/api/call_costs.json")
         Call<ResponseBody> getSpentDetailsHistory(@Query("access_token") String access_token);
 
+        @GET("/api/user/app_users.json")
+        Call<List<FindPeople>> getAppUsersAPI(@Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/user/balance_transfer.json")
+        Call<ResponseBody> balanceTransferAPI(@Field("access_token") String access_token, @Field("receiver_id") String receiver_id, @Field("credit") String credit);
+
     }
 
     public interface YoRefreshTokenService {

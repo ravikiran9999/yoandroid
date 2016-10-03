@@ -22,6 +22,7 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Topics;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -94,6 +96,13 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                 mToastFactory.showToast("Please enter a valid url");
                 btnPost.setVisibility(View.INVISIBLE);
                 isInvalidUrl = true;
+                etUrl.post(new Runnable()
+                {
+                    public void run()
+                    {
+                        etUrl .requestFocus();
+                    }
+                });
             }
 
             @Override
@@ -123,6 +132,13 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                                 Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                                 mToastFactory.showToast("Please enter a valid url");
                                 btnPost.setVisibility(View.INVISIBLE);
+                                etUrl.post(new Runnable()
+                                {
+                                    public void run()
+                                    {
+                                        etUrl .requestFocus();
+                                    }
+                                });
                             }
                         } else {
                             if (Patterns.WEB_URL.matcher(url).matches()) {
@@ -131,16 +147,37 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                                 Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                                 mToastFactory.showToast("Please enter a valid url");
                                 btnPost.setVisibility(View.INVISIBLE);
+                                etUrl.post(new Runnable()
+                                {
+                                    public void run()
+                                    {
+                                        etUrl .requestFocus();
+                                    }
+                                });
                             }
                         }
                     } else if(TextUtils.isEmpty(url.trim())) {
                         Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                         mToastFactory.showToast("Please enter a url");
                         btnPost.setVisibility(View.INVISIBLE);
+                        etUrl.post(new Runnable()
+                        {
+                            public void run()
+                            {
+                                etUrl .requestFocus();
+                            }
+                        });
                     } else {
                         Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
                         mToastFactory.showToast("Please enter a tag");
                         btnPost.setVisibility(View.INVISIBLE);
+                        atvMagazineTag.post(new Runnable()
+                        {
+                            public void run()
+                            {
+                                atvMagazineTag .requestFocus();
+                            }
+                        });
                     }
                 }
                 return false;
@@ -164,10 +201,24 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
             mToastFactory.showToast("Please enter a url");
             btnPost.setVisibility(View.INVISIBLE);
+            etUrl.post(new Runnable()
+            {
+                public void run()
+                {
+                    etUrl .requestFocus();
+                }
+            });
         } else {
             Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
             mToastFactory.showToast("Please enter a tag");
             btnPost.setVisibility(View.INVISIBLE);
+            atvMagazineTag.post(new Runnable()
+            {
+                public void run()
+                {
+                    atvMagazineTag .requestFocus();
+                }
+            });
         }
     }
 
@@ -176,6 +227,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 if (response != null && response.body() != null) {
+                    EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
                     setResult(RESULT_OK);
                     finish();
                     Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
@@ -204,6 +256,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 if (response.body() != null) {
+                    EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
                     setResult(RESULT_OK);
                     finish();
                 } else if (response.errorBody() != null) {
