@@ -137,7 +137,6 @@ public class BottomTabsActivity extends BaseActivity {
                 if (getFragment() instanceof MoreFragment) {
                     getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
                 } else if (getFragment() instanceof DialerFragment) {
-                    ((DialerFragment) getFragment()).isFirstTimeDailer = false;
                     ((DialerFragment) getFragment()).loadCallLogs();
                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                 } else {
