@@ -15,6 +15,7 @@ public class FindPeople {
     private int likedArticlesCount;
     private int followersCount;
     private String self;
+    private String phone_no;
 
     public String getId() {
         return id;
@@ -94,5 +95,13 @@ public class FindPeople {
 
     public void setSelf(String self) {
         this.self = self;
+    }
+
+    public String getPhone_no() {
+        return phone_no;
+    }
+
+    public void setPhone_no(String phone_no) {
+        this.phone_no = phone_no;
     }
 }
