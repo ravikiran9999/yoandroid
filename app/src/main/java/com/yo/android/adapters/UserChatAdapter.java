@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
@@ -340,10 +341,10 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             senderId.setLayoutParams(lp);
             if (roomType != null) {
                 Contact contact = mContactsSyncManager.getContactByVoxUserName(item.getVoxUserName());
-                if (contact != null && contact.getName() != null) {
+                if (contact != null && !TextUtils.isEmpty(contact.getName())) {
                     senderId.setText(contact.getName());
                 } else {
-                    senderId.setText(item.getSenderID() + "");
+                    senderId.setText(item.getSenderID());
                 }
                 senderId.setTextColor(mColorGenerator.getRandomColor());
                 linearLayout1.addView(senderId);
