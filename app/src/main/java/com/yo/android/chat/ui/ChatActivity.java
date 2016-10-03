@@ -85,6 +85,7 @@ public class ChatActivity extends BaseActivity {
             if (room.getGroupName() != null) {
                 args.putString(Constants.TYPE, room.getGroupName());
             }
+
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
             Util.cancelAllNotification(this);
@@ -111,6 +112,10 @@ public class ChatActivity extends BaseActivity {
                 opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
                 args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
+            }
+
+            if (getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER) != null) {
+                args.putString(Constants.TYPE, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
             }
         }
 
