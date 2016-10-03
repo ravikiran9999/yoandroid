@@ -208,7 +208,6 @@ public class DialerFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         loadCallLogs();
-        isFirstTimeDailer = true;
     }
 
     AdapterView.OnItemClickListener showCallLogDetailsListener = new AdapterView.OnItemClickListener() {
@@ -226,7 +225,7 @@ public class DialerFragment extends BaseFragment {
         // showDialPad();
     }
 
-    private void loadCallLogs() {
+    public void loadCallLogs() {
         appCalls.clear();
         paidCalls.clear();
         appCalls = CallLog.Calls.getAppToAppCallLog(getActivity());
@@ -239,7 +238,6 @@ public class DialerFragment extends BaseFragment {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
         ArrayList<Map.Entry<String, List<CallLogsResult>>> results = new ArrayList<>();
         if (filter.equalsIgnoreCase("all calls")) {
-
             results = prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
         } else if (filter.equalsIgnoreCase("App Calls")) {
             results = prepare("App Calls", results, appCalls);
@@ -290,6 +288,7 @@ public class DialerFragment extends BaseFragment {
             boolean nonEmpty = show || (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
             txtEmptyCallLogs.setVisibility(View.GONE);
             llNoCalls.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
+            listView.setVisibility(nonEmpty ? View.VISIBLE : View.GONE);
         } catch (Exception e) {
             mLog.w(TAG, e);
         }
