@@ -44,6 +44,7 @@ public class ChatMessage implements Parcelable {
     private String voxUserName;
     private String youserId;
     private String chatProfileUserName;
+    private String roomName;
 
 
     public ChatMessage() {
@@ -65,6 +66,7 @@ public class ChatMessage implements Parcelable {
         this.voxUserName = in.readString();
         this.youserId = in.readString();
         this.chatProfileUserName = in.readString();
+        this.roomName = in.readString();
     }
 
     public int getMsgID() {
@@ -193,6 +195,14 @@ public class ChatMessage implements Parcelable {
         this.voxUserName = voxUserName;
     }
 
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -222,6 +232,7 @@ public class ChatMessage implements Parcelable {
         dest.writeString(voxUserName);
         dest.writeString(youserId);
         dest.writeString(chatProfileUserName);
+        dest.writeString(roomName);
     }
 
 
