@@ -102,7 +102,7 @@ public class DialerFragment extends BaseFragment {
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
-    public static boolean isFirstTimeDailer = true;
+    public static boolean isFirstTimeDailer = false;
 
     public interface CallLogClearListener {
         public void clear();
@@ -232,6 +232,7 @@ public class DialerFragment extends BaseFragment {
         paidCalls = CallLog.Calls.getPSTNCallLog(getActivity());
         showEmptyText();
         showDataOnFilter();
+        isFirstTimeDailer = true;
     }
 
     private void showDataOnFilter() {
@@ -244,7 +245,7 @@ public class DialerFragment extends BaseFragment {
         } else {
             results = prepare("Paid Calls", results, paidCalls);
         }
-        if (results != null && results.size() == 0 && isFirstTimeDailer) {
+        if (results != null && results.size() == 0 && !isFirstTimeDailer) {
             startActivityForResult(new Intent(getActivity(), NewDailerActivity.class), 100);
         } else {
             adapter.addItems(results);
@@ -255,7 +256,7 @@ public class DialerFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        isFirstTimeDailer = false;
+        isFirstTimeDailer = true;
     }
 
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> prepare(String type, ArrayList<Map.Entry<String, List<CallLogsResult>>> results, ArrayList<Map.Entry<String, List<CallLogsResult>>> checkList) {
