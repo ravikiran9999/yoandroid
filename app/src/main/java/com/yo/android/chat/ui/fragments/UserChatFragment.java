@@ -107,7 +107,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ListView listView;
     private String opponentNumber;
     private String opponentId;
-    private File mFileTemp;
+    private static File mFileTemp;
     private static final int ADD_IMAGE_CAPTURE = 1;
     private static final int ADD_SELECT_PICTURE = 2;
     private Uri mImageCaptureUri = null;
@@ -189,6 +189,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
         listView.smoothScrollToPosition(userChatAdapter.getCount());
+        listView.setVerticalScrollBarEnabled(true);
+        listView.setClipToPadding(false);
+        listView.setPadding(0, Helper.dp(getActivity(), 4), 0, Helper.dp(getActivity(), 3));
+        listView.setLayoutAnimation(null);
+
+
         listView.setOnItemClickListener(this);
         final View rootView = view.findViewById(R.id.root_view);
         popup = new EmojiconsPopup(rootView, getActivity());
@@ -267,7 +273,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                                  try {
                                                      if (userChatAdapter != null && userChatAdapter.getCount() > 0 && (listStickeyHeader != null)) {
                                                          String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-                                                         if(headerText!=null) {
+                                                         if (headerText != null) {
                                                              listStickeyHeader.setText(headerText.toUpperCase());
                                                          }
                                                      }
@@ -565,6 +571,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         Toast.makeText(getActivity(), "Message not sent", Toast.LENGTH_SHORT).show();
                     }
                 }
+
             });
 
 
@@ -816,6 +823,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void forwardMessage(ArrayList<ChatMessage> message) {
         Intent intent = new Intent(getActivity(), AppContactsActivity.class);
         intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, message);
+        intent.putExtra(Constants.IS_CHAT_FORWARD, true);
+
         startActivity(intent);
         getActivity().finish();
     }
@@ -837,7 +846,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
             if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
-
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
                 listView.smoothScrollToPosition(userChatAdapter.getCount());

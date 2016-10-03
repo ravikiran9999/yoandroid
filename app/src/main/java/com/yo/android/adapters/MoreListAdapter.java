@@ -38,7 +38,7 @@ public class MoreListAdapter extends AbstractBaseAdapter<MoreData, MenuViewHolde
             holder.getImageView().setVisibility(View.GONE);
         }
 
-        if (item.getName().trim().contains("Yo Credit")) {
+        if (item.getName()!=null && item.getName().trim().contains("Yo Credit")) {
             final SpannableString text = new SpannableString(item.getName());
             text.setSpan(new ForegroundColorSpan(Color.RED), 10, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.getTitleView().setText(text);

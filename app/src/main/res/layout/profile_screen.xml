@@ -74,10 +74,11 @@
                     android:hint="@string/user_name"
                     android:padding="15dp"
                     android:maxLines="1"
+                    android:singleLine="true"
                     android:imeOptions="actionDone"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:inputType=""
                     />
 
                 <TextView

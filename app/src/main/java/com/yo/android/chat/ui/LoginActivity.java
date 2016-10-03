@@ -266,6 +266,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
 
 
         Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+        yesBtn.setText(getResources().getString(R.string.yes));
         Button noBtn = (Button) view.findViewById(R.id.no_btn);
 
 

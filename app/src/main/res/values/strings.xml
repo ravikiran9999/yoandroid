@@ -38,6 +38,7 @@
     <string name="add_contact">Add Contact</string>
     <string name="new_group">New Group</string>
 
+
     <string name="not_sender">You dont have permission to delete message </string>
 
     <string name="enter_mobile_number">Enter your mobile number to get started!</string>
@@ -231,10 +232,14 @@
     <string name="exceed_message">Message exceeds maximum limit</string>
     <string name="crop_image">Crop Image</string>
     <string name="enter_mobile_number_error">please enter a valid number </string>
-    <string name="Dialog_text">Are you sure to register with %s?</string>
+    <string name="Dialog_text">Please confirm if %s number is correct.</string>
     <string name="Cancel">Cancel</string>
     <string name="Ok">ok</string>
     <string name="Dialog_title">Confirm</string>
     <string name="others_no_article_added">There is no article added yet to the magazine.</string>
     <string name="admin">Admin</string>
+    <string name="notification_new_message">new message</string>
+    <string name="notification_new_messages">new messages</string>
+    <string name="more_notification">more notification</string>
+    <string name="more_notifications">more notifications</string>
 </resources>

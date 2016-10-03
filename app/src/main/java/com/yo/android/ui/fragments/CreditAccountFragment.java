@@ -216,7 +216,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         List<MoreData> menuDataList = new ArrayList<>();
         menuDataList.add(new MoreData(getString(R.string.add_balance_from_google_play), false));
         menuDataList.add(new MoreData(getString(R.string.add_balance_from_voucher), true));
-        menuDataList.add(new MoreData(getString(R.string.transfer_balance), true));
+        if (getArguments() == null) {
+            menuDataList.add(new MoreData(getString(R.string.transfer_balance), true));
+        }
 
         return menuDataList;
     }

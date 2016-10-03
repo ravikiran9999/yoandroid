@@ -93,7 +93,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             invalidateOptionsMenu();
             myCollectionsAdapter.setContextualMenuEnable(contextualMenu);
             myCollectionsAdapter.getItem(position).setSelect(true);
-            myCollectionsAdapter.notifyDataSetChanged();
+            if (!hasDestroyed()) {
+                myCollectionsAdapter.notifyDataSetChanged();
+            }
         }
         return true;
     }
@@ -104,7 +106,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             invalidateOptionsMenu();
             List<Collections> collections = myCollectionsAdapter.getSelectedItems();
             collections.clear();
-            myCollectionsAdapter.notifyDataSetChanged();
+            if (!hasDestroyed()) {
+                myCollectionsAdapter.notifyDataSetChanged();
+            }
         } else {
             super.onBackPressed();
         }
@@ -127,7 +131,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         if (contextualMenu) {
             if (position != 0) {
                 collections.toggleSelection();
-                myCollectionsAdapter.notifyDataSetChanged();
+                if (!hasDestroyed()) {
+                    myCollectionsAdapter.notifyDataSetChanged();
+                }
                 //
                 if (myCollectionsAdapter.getSelectedItems().size() == 0) {
                     dismissContextualMenu();

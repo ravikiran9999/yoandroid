@@ -1,5 +1,7 @@
 package com.yo.android.chat.ui;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -19,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.yo.android.R;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.ChatRoomViewHolder;
 import com.yo.android.helpers.Settings;
@@ -48,6 +51,17 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancelAll();
+
+
+        Intent notificationIntent = getIntent();
+       // if (notificationIntent != null && notificationIntent.hasExtra(com.yo.android.chat.notification.helper.Constants.NOTIFICATIONS_LIST)) {
+            //Clear all Notifications
+            NotificationCache.clearNotifications();
+        //}
+
 
         UserChatFragment userChatFragment = new UserChatFragment();
         Bundle args = new Bundle();

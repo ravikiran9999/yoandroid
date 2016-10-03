@@ -37,6 +37,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
     private EditText etTitle;
     private EditText etDesc;
     private SwitchCompat togglePrivacy;
+    private boolean isSaveClicked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,26 +87,29 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                 }
 
                 if (!TextUtils.isEmpty(magazineTitle.trim())) {
-
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
-                        @Override
-                        public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
-                            if(response.body() != null) {
-                            Intent intent = new Intent();
-                            setResult(2, intent);
-                            //finishing activity
-                            finish();
-                            } else if(response.errorBody() != null){
-                                mToastFactory.showToast("Magazine Title is already taken");
+                    if(!isSaveClicked) {
+                        isSaveClicked = true;
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
+                            @Override
+                            public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
+                                if (response.body() != null) {
+                                    Intent intent = new Intent();
+                                    setResult(2, intent);
+                                    //finishing activity
+                                    finish();
+                                } else if (response.errorBody() != null) {
+                                    isSaveClicked = false;
+                                    mToastFactory.showToast("Magazine Title is already taken");
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onFailure(Call<OwnMagazine> call, Throwable t) {
-                          // do nothing
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<OwnMagazine> call, Throwable t) {
+                                isSaveClicked = false;
+                            }
+                        });
+                    }
                 } else {
                     Util.hideKeyboard(this, etTitle);
                     etTitle.requestFocus();
