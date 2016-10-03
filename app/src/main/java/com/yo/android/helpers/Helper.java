@@ -27,6 +27,7 @@ import com.yo.android.adapters.AlphabetAdapter;
 import com.yo.android.crop.Bitmaps;
 import com.yo.android.crop.MainImageCropActivity;
 import com.yo.android.model.Contact;
+import com.yo.android.model.FindPeople;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -97,11 +98,46 @@ public class Helper {
         });
     }
 
+    public static void displayIndexTransferBalance(Activity context, final ListView indexLayout, final List<FindPeople> contactList, final ListView listview) {
+        final LinkedHashMap mapIndex = getIndexListTransferBalance(contactList);
+        final List<String> indexList = new ArrayList<String>(mapIndex.keySet());
+        AlphabetAdapter adapter = new AlphabetAdapter(context, indexList);
+        indexLayout.setAdapter(adapter);
+        indexLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listview.setSelection((Integer) mapIndex.get(indexList.get(position).substring(0, 1)));
+            }
+        });
+    }
+
+
     public static LinkedHashMap getIndexList(List<Contact> list) {
         LinkedHashMap mapIndex = new LinkedHashMap<String, Integer>();
         int i = -1;
         for (Contact contact : list) {
             String fruit = contact.getName();
+            if (fruit != null && fruit.length() >= 1) {
+                String index = fruit.substring(0, 1).toUpperCase();
+                // Pattern p = Pattern.compile("^[a-zA-Z]");
+                // Matcher m = p.matcher(index);
+                // boolean b = m.matches();
+                i = i + 1;
+                // if (b) {
+                if (mapIndex.get(index) == null) {
+                    mapIndex.put(index, i);
+                }
+            }
+            // }
+        }
+        return mapIndex;
+    }
+
+    public static LinkedHashMap getIndexListTransferBalance(List<FindPeople> list) {
+        LinkedHashMap mapIndex = new LinkedHashMap<String, Integer>();
+        int i = -1;
+        for (FindPeople contact : list) {
+            String fruit = contact.getFirst_name();
             if (fruit != null && fruit.length() >= 1) {
                 String index = fruit.substring(0, 1).toUpperCase();
                 // Pattern p = Pattern.compile("^[a-zA-Z]");

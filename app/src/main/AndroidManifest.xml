@@ -295,8 +295,15 @@
         </service>
         <service android:name=".pjsip.YoSipService" />
 
-        <activity android:name=".ui.TopicsDetailActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.TopicsDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TransferBalanceSelectContactActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.TransferBalanceActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible"></activity>
     </application>
 
 </manifest>

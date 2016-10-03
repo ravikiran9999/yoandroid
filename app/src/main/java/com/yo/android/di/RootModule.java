@@ -63,6 +63,8 @@ import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.TopicsDetailActivity;
+import com.yo.android.ui.TransferBalanceActivity;
+import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.UserProfileActivity;
@@ -143,6 +145,8 @@ import dagger.Provides;
                 UnManageInAppPurchaseActivity.class,
                 NotificationsActivity.class,
                 TopicsDetailActivity.class,
+                TransferBalanceSelectContactActivity.class,
+                TransferBalanceActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
