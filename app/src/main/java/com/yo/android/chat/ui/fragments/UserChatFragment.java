@@ -528,6 +528,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(message.hashCode());
+        if(!TextUtils.isEmpty(roomType)) {
+            chatMessage.setRoomName(roomType);
+        }
 
         if (type.equals(Constants.TEXT)) {
             chatMessage.setMessage(message);

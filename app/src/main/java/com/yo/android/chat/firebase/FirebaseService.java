@@ -10,6 +10,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -177,7 +178,6 @@ public class FirebaseService extends InjectedService {
                         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
                         String[] strings = cn.getShortClassName().split(Pattern.quote("."));
                         int i = strings.length - 1;
-                        boolean cc = loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS);
                         if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0 && loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS) && (!strings[i].equalsIgnoreCase("ChatActivity"))) {
                             // postNotification(chatMessage.getRoomId(), chatMessage);
                             newPushNotification(chatMessage.getRoomId(), chatMessage);
@@ -291,14 +291,16 @@ public class FirebaseService extends InjectedService {
         Notifications notification = new Notifications();
         String title = chatMessage.getSenderID();
         String voxUsername = chatMessage.getVoxUserName();
+
         Intent notificationIntent = new Intent(this, ChatActivity.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         notificationIntent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
         notificationIntent.putExtra(Constants.VOX_USER_NAME, voxUsername);
         notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
         notificationIntent.putExtra(Constants.OPPONENT_ID, chatMessage.getYouserId());
-
+        if(!TextUtils.isEmpty(chatMessage.getRoomName())) {
+            notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
+        }
         switch (mode) {
             case STYLE_TEXT:
                 NotificationBuilderObject notificationTextData = prepareNotificationData(chatMessage);
