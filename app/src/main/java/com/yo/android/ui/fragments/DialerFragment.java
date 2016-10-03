@@ -102,6 +102,8 @@ public class DialerFragment extends BaseFragment {
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
+    public static boolean isFirstTimeDailer = true;
+
     public interface CallLogClearListener {
         public void clear();
     }
@@ -161,7 +163,7 @@ public class DialerFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-       // hideDialPad(true);
+        // hideDialPad(true);
         String str = null;
         if (item.getItemId() == R.id.menu_all_calls) {
             str = "all calls";
@@ -191,8 +193,6 @@ public class DialerFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
 
-
-
     }
 
 
@@ -208,6 +208,7 @@ public class DialerFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         loadCallLogs();
+        isFirstTimeDailer = true;
     }
 
     AdapterView.OnItemClickListener showCallLogDetailsListener = new AdapterView.OnItemClickListener() {
@@ -245,8 +246,18 @@ public class DialerFragment extends BaseFragment {
         } else {
             results = prepare("Paid Calls", results, paidCalls);
         }
-        adapter.addItems(results);
-        showEmptyText();
+        if (results != null && results.size() == 0 && isFirstTimeDailer) {
+            startActivityForResult(new Intent(getActivity(), NewDailerActivity.class), 100);
+        } else {
+            adapter.addItems(results);
+            showEmptyText();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        isFirstTimeDailer = false;
     }
 
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> prepare(String type, ArrayList<Map.Entry<String, List<CallLogsResult>>> results, ArrayList<Map.Entry<String, List<CallLogsResult>>> checkList) {
