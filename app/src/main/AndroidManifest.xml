@@ -301,9 +301,11 @@
         <activity
             android:name=".ui.TransferBalanceSelectContactActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.TransferBalanceActivity"
+        <activity
+            android:name=".ui.TransferBalanceActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible"></activity>
+            android:windowSoftInputMode="stateVisible" />
+        <activity android:name=".chat.ui.CustomWindow"></activity>
     </application>
 
 </manifest>
