@@ -13,6 +13,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,12 +56,8 @@ public class ChatActivity extends BaseActivity {
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancelAll();
 
-
-        Intent notificationIntent = getIntent();
-       // if (notificationIntent != null && notificationIntent.hasExtra(com.yo.android.chat.notification.helper.Constants.NOTIFICATIONS_LIST)) {
-            //Clear all Notifications
-            NotificationCache.clearNotifications();
-        //}
+        //Clear all Notifications
+        NotificationCache.clearNotifications();
 
 
         UserChatFragment userChatFragment = new UserChatFragment();
