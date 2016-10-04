@@ -304,7 +304,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     }
                 }
 
-
                 linearLayout1.addView(senderId);
             }
             seenLayout.setVisibility(View.GONE);
