@@ -28,6 +28,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.util.Constants;
@@ -102,7 +103,7 @@ public class DialerFragment extends BaseFragment {
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
-    public  boolean isFromDailer = false;
+    public boolean isFromDailer = false;
 
 
     public interface CallLogClearListener {

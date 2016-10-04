@@ -303,10 +303,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 final int checkedCount = listView.getCheckedItemCount();
                 mode.setTitle(Integer.toString(checkedCount));
                 userChatAdapter.toggleSelection(position);
-                chatMessage.setSelected(true);
                 boolean imageSelected = false;
                 SparseBooleanArray selected = userChatAdapter.getSelectedIds();
                 boolean canDelete = true;
+
                 for (int i = selected.size() - 1; i >= 0; i--) {
                     if (selected.valueAt(i)) {
 
@@ -319,6 +319,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         }
                     }
                 }
+
                 Menu menu = mode.getMenu();
                 menu.findItem(R.id.copy).setVisible(!imageSelected);
                 menu.findItem(R.id.delete).setVisible(canDelete);

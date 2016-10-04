@@ -44,6 +44,8 @@
     <color name="dialer_background">#E5E5E5</color>
     <color name="image_placeholder">#DDDDDD</color>
     <color name="gray">#A9A9A9</color>
+    <color name="dark_gray">#808080</color>
+
     <color name="windowBackground">#1C1C1C</color>
     <color name="colorButtonNormal">#FFFFFB</color>
     <color name="textColorPrimary">#FFFFFB</color>

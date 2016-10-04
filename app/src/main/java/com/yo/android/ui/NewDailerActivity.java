@@ -370,13 +370,15 @@ public class NewDailerActivity extends BaseActivity {
         String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
         if (cName == null) {
             String prefixWhileLogin = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
-            for (CallRateDetail details : callRateDetailList) {
-                if (details.getPrefix().equalsIgnoreCase(prefixWhileLogin)) {
-                    cName = details.getDestination();
-                    cRate = details.getRate();
-                    cPulse = details.getPulse();
-                    cPrefix = "+" + details.getPrefix();
-                    break;
+            if (callRateDetailList != null) {
+                for (CallRateDetail details : callRateDetailList) {
+                    if (details.getPrefix().equalsIgnoreCase(prefixWhileLogin)) {
+                        cName = details.getDestination();
+                        cRate = details.getRate();
+                        cPulse = details.getPulse();
+                        cPrefix = "+" + details.getPrefix();
+                        break;
+                    }
                 }
             }
         }

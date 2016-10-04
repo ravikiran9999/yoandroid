@@ -1,5 +1,7 @@
 package com.yo.android.pjsip;
 
+import android.util.Log;
+
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.BuddyConfig;
 import org.pjsip.pjsua2.ContainerNode;
@@ -17,6 +19,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 class MyApp {
+
+
     static {
         try {
             System.loadLibrary("openh264");
@@ -45,7 +49,7 @@ class MyApp {
 
     private final String configName = "pjsua2.json";
     private final int SIP_PORT = 6000;
-    private final int LOG_LEVEL = 4;
+    private final int LOG_LEVEL = 5;
 
     public void init(MyAppObserver obs, String app_dir) {
         init(obs, app_dir, false);
@@ -69,6 +73,7 @@ class MyApp {
 
 		/* Load config */
         String configPath = appDir + "/" + configName;
+        Log.i("", "Configuration path" + configPath);
         File f = new File(configPath);
         if (f.exists()) {
             loadConfig(configPath);
@@ -224,7 +229,7 @@ class MyApp {
         JsonDocument json = new JsonDocument();
 
         try {
-			/* Write endpoint config */
+            /* Write endpoint config */
             json.writeObject(epConfig);
 
 			/* Write transport config */
@@ -244,7 +249,7 @@ class MyApp {
         }
 
 		/*
-		 * Force delete json now, as I found that Java somehow destroys it after
+         * Force delete json now, as I found that Java somehow destroys it after
 		 * lib has been destroyed and from non-registered thread.
 		 */
         json.delete();
@@ -255,7 +260,7 @@ class MyApp {
         saveConfig(configPath);
 
 		/*
-		 * Try force GC to avoid late destroy of PJ objects as they should be
+         * Try force GC to avoid late destroy of PJ objects as they should be
 		 * deleted before lib is destroyed.
 		 */
         Runtime.getRuntime().gc();

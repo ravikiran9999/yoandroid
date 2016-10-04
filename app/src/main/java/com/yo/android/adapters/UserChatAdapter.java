@@ -4,17 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -27,46 +22,26 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
-import com.squareup.picasso.Transformation;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
-import com.yo.android.chat.CompressImage;
-import com.yo.android.chat.CustomTransformation;
 import com.yo.android.chat.ImageLoader;
-import com.yo.android.chat.MaxWidthLinearLayout;
 import com.yo.android.chat.SquareImageView;
 import com.yo.android.chat.firebase.ContactsSyncManager;
-import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
-import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
@@ -106,7 +81,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
 
     public boolean toggleSelection(int position) {
-        selectView(position, !mSelectedItemsIds.get(position));
+        selectedView(position, !mSelectedItemsIds.get(position));
         return !mSelectedItemsIds.get(position);
     }
 
@@ -117,8 +92,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
     // Item checked on selection
-    public void selectView(int position, boolean value) {
+    public void selectedView(int position, boolean value) {
         if (value)
+
             mSelectedItemsIds.put(position, value);
         else
             mSelectedItemsIds.delete(position);
@@ -268,11 +244,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 seenTxt.setVisibility(View.VISIBLE);
             }
         }
-        ImageLoader.updateImage(context,item, loadImage);
+        ImageLoader.updateImage(context, item, loadImage);
         holder.getLl().addView(view);
     }
-
-
 
 
     private LinearLayout newTextAddView(final ChatMessage item, final UserChatViewHolder holder) {
@@ -310,7 +284,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         time.setGravity(Gravity.BOTTOM);
         time.setTextColor(context.getResources().getColor(R.color.black));
         //seenDetailsLayout.addView(time);
-        RelativeLayout seenLayout = (RelativeLayout)mainLayout.findViewById(R.id.seen_layout);
+        RelativeLayout seenLayout = (RelativeLayout) mainLayout.findViewById(R.id.seen_layout);
         //TextView seen = new TextView(context);
         TextView seen = (TextView) mainLayout.findViewById(R.id.seen_txt);
 
@@ -374,7 +348,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 seen.setVisibility(View.VISIBLE);
                 seen.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                 seen.setGravity(Gravity.RIGHT);
-            }else{
+            } else {
                 seen.setVisibility(View.GONE);
             }
         }
@@ -395,7 +369,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         );
         return px;
     }
-
 
 
     private boolean isValidMobile(String phone) {

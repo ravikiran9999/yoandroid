@@ -69,7 +69,7 @@ public class BottomTabsActivity extends BaseActivity {
     @Inject
     BalanceHelper balanceHelper;
     TabsPagerAdapter mAdapter;
-    CustomViewPager viewPager;
+    public CustomViewPager viewPager;
     @Inject
     ContactsSyncManager contactsSyncManager;
     @Inject
@@ -136,9 +136,6 @@ public class BottomTabsActivity extends BaseActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (getFragment() instanceof MoreFragment) {
                     getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
-                } else if (getFragment() instanceof DialerFragment) {
-                    ((DialerFragment) getFragment()).loadCallLogs();
-                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                 } else {
                     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                 }
