@@ -1,11 +1,16 @@
 package com.yo.android.ui;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -22,6 +27,7 @@ import com.yo.android.model.UserProfileInfo;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -39,6 +45,10 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     private boolean isRepresentative;
     private String balance;
     private String currencySymbol;
+    private Menu menu1;
+    private SearchView searchView;
+    private List<FindPeople> originalList;
+    private Call<List<FindPeople>> call;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +72,8 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         listView.setAdapter(contactsListAdapter);
         listView.setOnScrollListener(onScrollListener());
         listView.setOnItemClickListener(this);
+
+        originalList = new ArrayList<>();
 
         loadUserProfileInfo();
     }
@@ -170,13 +182,17 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         });
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        /*menu1 = menu;
-        searchPeople(menu);*/
+        menu1 = menu;
+        if(isRepresentative) {
+            searchPeople(menu);
+        } else {
+            Util.prepareSearch(TransferBalanceSelectContactActivity.this, menu, contactsListAdapter);
+        }
         return super.onCreateOptionsMenu(menu);
-    }
+    }*/
 
     private void loadAlphabetOrder(List<FindPeople> list) {
 
@@ -187,7 +203,8 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
             }
         });
 
-        contactsListAdapter.addItems(list);
+        contactsListAdapter.addItemsAll(list);
+        originalList = list;
         Helper.displayIndexTransferBalance(this, layout, list, listView);
     }
     private boolean isMoreLoading=false;
@@ -199,7 +216,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                 int count = listView.getCount();
                 if (scrollState == SCROLL_STATE_IDLE) {
                     //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
-                    if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && isRepresentative) {
+                    if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery()) && isRepresentative) {
                         doPagination();
                     }
                 }
@@ -245,7 +262,120 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
             intent.putExtra("name", contact.getFirst_name() + " " + contact.getLast_name());
             intent.putExtra("phoneNo", contact.getPhone_no());
             intent.putExtra("profilePic", contact.getAvatar());
-            startActivity(intent);
+            intent.putExtra("id", contact.getId());
+            startActivityForResult(intent, 22);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 22 && resultCode == RESULT_OK) {
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
+
+    private void searchPeople(Menu menu) {
+        final SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem;
+
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            public static final String TAG = "Search in TransferBal";
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "onQueryTextChange: " + query);
+                Util.hideKeyboard(TransferBalanceSelectContactActivity.this, TransferBalanceSelectContactActivity.this.getCurrentFocus());
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG, "onQueryTextChange: " + newText);
+                callSearchingService(newText);
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Util.hideKeyboard(TransferBalanceSelectContactActivity.this, TransferBalanceSelectContactActivity.this.getCurrentFocus());
+                contactsListAdapter.clearAll();
+                contactsListAdapter.addItemsAll(originalList);
+                listView.setVisibility(View.VISIBLE);
+                /*noData.setVisibility(View.GONE);
+                llNoPeople.setVisibility(View.GONE);*/
+                return true;
+            }
+        });
+    }
+
+    private void callSearchingService(String newText) {
+
+        String searchKey = newText.trim();
+        if (searchKey.isEmpty()) {
+            contactsListAdapter.clearAll();
+            contactsListAdapter.addItemsAll(originalList);
+        } else {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            if(call != null) {
+                call.cancel();
+            }
+            call = yoService.searchInBalanceTransferContacts(accessToken, searchKey, 1, 100);
+            call.enqueue(new Callback<List<FindPeople>>() {
+                @Override
+                public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
+                    if (response.body() != null && response.body().size() > 0) {
+                        List<FindPeople> findPeopleList = response.body();
+                        contactsListAdapter.clearAll();
+                        contactsListAdapter.addItemsAll(findPeopleList);
+                        listView.setVisibility(View.VISIBLE);
+                        /*noData.setVisibility(View.GONE);
+                        llNoPeople.setVisibility(View.GONE);*/
+
+                    } else {
+                        /*noData.setVisibility(View.VISIBLE);
+                        llNoPeople.setVisibility(View.VISIBLE);*/
+                        listView.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<FindPeople>> call, Throwable t) {
+                    /*noData.setVisibility(View.VISIBLE);
+                    llNoPeople.setVisibility(View.VISIBLE);*/
+                    listView.setVisibility(View.GONE);
+                }
+            });
+        }
+
+    }
+
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (menu1 != null) {
+            Util.changeMenuItemsVisibility(menu1, R.id.menu_search, false);
+            Util.registerSearchLister(this, menu1);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void refresh() {
+        contactsListAdapter.clearAll();
+        contactsListAdapter.addItemsAll(originalList);
+        listView.setVisibility(View.VISIBLE);
+        if(originalList.size()> 0) {
+            *//*noData.setVisibility(View.GONE);
+            llNoPeople.setVisibility(View.GONE);*//*
+        }
+    }*/
 
 }
