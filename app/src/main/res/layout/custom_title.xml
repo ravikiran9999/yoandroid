@@ -8,7 +8,7 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imv_contact_pic"
-        android:layout_width="40dp"
+        android:layout_width="30dp"
         android:layout_height="30dp"
         android:gravity="center_vertical"
         android:layout_alignParentLeft="true"
@@ -19,7 +19,6 @@
         android:id="@+id/title_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black"
         android:orientation="horizontal">
 
         <me.grantland.widget.AutofitTextView

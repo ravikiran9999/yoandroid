@@ -18,7 +18,9 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -29,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -94,7 +97,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, ChildEventListener, EmojiconsPopup.OnSoftKeyboardOpenCloseListener, EmojiconGridView.OnEmojiconClickedListener {
+public class UserChatFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener, ChildEventListener, EmojiconsPopup.OnSoftKeyboardOpenCloseListener, EmojiconGridView.OnEmojiconClickedListener, TextWatcher {
 
 
     private static final String TAG = "UserChatFragment";
@@ -194,7 +197,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setPadding(0, Helper.dp(getActivity(), 4), 0, Helper.dp(getActivity(), 3));
         listView.setLayoutAnimation(null);
 
-
+        chatText.addTextChangedListener(this);
         listView.setOnItemClickListener(this);
         final View rootView = view.findViewById(R.id.root_view);
         popup = new EmojiconsPopup(rootView, getActivity());
@@ -529,7 +532,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(message.hashCode());
-        if(!TextUtils.isEmpty(roomType)) {
+        if (!TextUtils.isEmpty(roomType)) {
             chatMessage.setRoomName(roomType);
         }
 
@@ -1009,6 +1012,24 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId) {
         iconToBeChanged.setImageResource(drawableResourceId);
     }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if (count > 0 && !TextUtils.isEmpty(s.toString().trim())) {
+            cameraView.setVisibility(View.GONE);
+        } else if (count == 0 || TextUtils.isEmpty(s.toString().trim())) {
+            cameraView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+    }
+
 
 }
 
