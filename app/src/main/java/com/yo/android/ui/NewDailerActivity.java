@@ -64,6 +64,9 @@ public class NewDailerActivity extends BaseActivity {
     @Bind(R.id.txt_balance)
     protected TextView txtBalance;
 
+    @Bind(R.id.add_balance)
+    protected TextView addBalance;
+
     @Bind(R.id.txt_call_rate)
     protected TextView txtCallRate;
 
@@ -130,7 +133,7 @@ public class NewDailerActivity extends BaseActivity {
         });
         loadCurrentBalance();
         //Add Balance while tapping on balance.
-        txtBalance.setOnClickListener(new View.OnClickListener() {
+        addBalance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(NewDailerActivity.this, TabsHeaderActivity.class);
@@ -196,12 +199,12 @@ public class NewDailerActivity extends BaseActivity {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
-                txtBalance.setText(String.format("%s %s%s", getString(R.string.balance), mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
+                txtBalance.setText(String.format("%s%s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
             } else {
                 txtBalance.setVisibility(View.GONE);
             }
         } else if (balance != null) {
-            txtBalance.setText(String.format("%s %s", getString(R.string.balance), balance));
+            txtBalance.setText(String.format("%s", balance));
         } else {
             txtBalance.setVisibility(View.GONE);
         }
@@ -392,7 +395,7 @@ public class NewDailerActivity extends BaseActivity {
                 pulse = "sec";
             }
             if (cName != null) {
-                countryName.setText(cName.toUpperCase());
+                countryName.setText(cName);
             }
             txtCallRate.setText("$" + cRate + "/" + pulse);
             if (TextUtils.isEmpty(dialPadView.getDigits().getText().toString())) {
