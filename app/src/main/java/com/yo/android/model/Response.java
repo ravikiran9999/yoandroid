@@ -10,6 +10,8 @@ public class Response {
 
     private String code;
 
+    private String balance;
+
     public String getResponse ()
     {
         return response;
@@ -40,9 +42,17 @@ public class Response {
         this.code = code;
     }
 
+    public String getBalance() {
+        return balance;
+    }
+
+    public void setBalance(String balance) {
+        this.balance = balance;
+    }
+
     @Override
     public String toString()
     {
-        return "ClassPojo [response = "+response+", data = "+data+", code = "+code+"]";
+        return "ClassPojo [response = "+response+", data = "+data+", code = "+code+", balance = "+balance+"]";
     }
 }

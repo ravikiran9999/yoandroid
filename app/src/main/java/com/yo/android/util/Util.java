@@ -42,6 +42,7 @@ import com.yo.android.model.Contact;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
+import com.yo.android.ui.TransferBalanceSelectContactActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -371,7 +372,9 @@ public class Util {
 
                 } else if (activity instanceof FindPeopleActivity) {
                     ((FindPeopleActivity) activity).refresh();
-                }
+                } /*else if (activity instanceof TransferBalanceSelectContactActivity) {
+                    ((TransferBalanceSelectContactActivity) activity).refresh();
+                }*/
                 Util.changeMenuItemsVisibility(menu, -1, true);
                 return true;
             }

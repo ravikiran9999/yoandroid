@@ -1,17 +1,26 @@
 package com.yo.android.ui;
 
+import android.app.AlertDialog;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
+import com.yo.android.calllogs.CallLog;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
@@ -23,6 +32,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TransferBalanceActivity extends BaseActivity {
 
@@ -43,9 +56,10 @@ public class TransferBalanceActivity extends BaseActivity {
 
         String balance = getIntent().getStringExtra("balance");
         String currencySymbol = getIntent().getStringExtra("currencySymbol");
-        String name = getIntent().getStringExtra("name");
+        final String name = getIntent().getStringExtra("name");
         String phoneNo = getIntent().getStringExtra("phoneNo");
         String profilePic = getIntent().getStringExtra("profilePic");
+        final String id = getIntent().getStringExtra("id");
 
         TextView tvBalance = (TextView) findViewById(R.id.txt_balance);
         tvBalance.setText(String.format("%s%s", currencySymbol, balance));
@@ -55,6 +69,10 @@ public class TransferBalanceActivity extends BaseActivity {
         TextView tvContactMail = (TextView) findViewById(R.id.tv_contact_email);
 
         CircleImageView imvProfilePic = (CircleImageView) findViewById(R.id.imv_contact_pic);
+
+        Button btnTransfer = (Button) findViewById(R.id.btn_transfer);
+
+        final EditText etAmount = (EditText) findViewById(R.id.et_amount);
 
         if (!TextUtils.isEmpty(name)) {
             tvPhoneNumber.setText(name);
@@ -98,6 +116,98 @@ public class TransferBalanceActivity extends BaseActivity {
         } else {
             loadAvatarImage(imvProfilePic);
         }
+
+        btnTransfer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String amount = etAmount.getText().toString();
+                if(!TextUtils.isEmpty(amount.trim())) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    showProgressDialog();
+                    yoService.balanceTransferAPI(accessToken, id, amount).enqueue(new Callback<com.yo.android.model.Response>() {
+                        @Override
+                        public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
+                            dismissProgressDialog();
+
+                            if (response.isSuccessful()) {
+
+                                if (response.code() == 200) {
+                                    try {
+                                        int statusCode = Integer.parseInt(response.body().getCode());
+                                        switch (statusCode) {
+                                            case 200:
+                                                final AlertDialog.Builder builder = new AlertDialog.Builder(TransferBalanceActivity.this);
+
+                                                LayoutInflater layoutInflater = LayoutInflater.from(TransferBalanceActivity.this);
+                                                final View view = layoutInflater.inflate(R.layout.transfer_balance_dialog, null);
+                                                builder.setView(view);
+
+                                                Button okBtn = (Button) view.findViewById(R.id.yes_btn);
+                                                TextView tvTitle = (TextView) view.findViewById(R.id.dialog_title);
+                                                TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
+
+                                                tvTitle.setText("Balance has been transferred successfully to " + "\"" + name + "\".");
+                                                DecimalFormat df = new DecimalFormat("0.000");
+                                                String format = df.format(Double.valueOf(response.body().getBalance()));
+                                                String remainingBalance = "\"Your Remaining Balance is $" + format + "\"";
+                                                final SpannableString text = new SpannableString(remainingBalance);
+                                                text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length()-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                                tvDesc.setText(text);
+
+                                                final AlertDialog alertDialog = builder.create();
+                                                alertDialog.setCancelable(false);
+                                                alertDialog.show();
+
+                                                okBtn.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        alertDialog.dismiss();
+                                                        setResult(RESULT_OK);
+                                                        finish();
+                                                    }
+                                                });
+
+                                                break;
+                                            case 606:
+                                                mToastFactory.showToast(R.string.invalid_request);
+                                                break;
+                                            case 607:
+                                                mToastFactory.showToast(R.string.invalid_pin_request);
+                                                break;
+                                            case 608:
+                                                mToastFactory.showToast(R.string.insufficient_amount);
+                                                break;
+                                            case 609:
+                                                mToastFactory.showToast(R.string.unsuccessful_amount_transfer);
+                                                break;
+                                            default:
+                                                mToastFactory.showToast(R.string.transfer_balance_failed);
+                                                break;
+                                        }
+                                    } catch (ClassCastException e) {
+                                        mLog.d("ClassCastException", e.getMessage());
+                                    }
+                                } else {
+                                    mToastFactory.showToast(R.string.transfer_balance_failed);
+                                }
+                            } else {
+                                mToastFactory.showToast(R.string.transfer_balance_failed);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
+                            dismissProgressDialog();
+
+                            mToastFactory.showToast(R.string.transfer_balance_failed);
+
+                        }
+                    });
+                } else {
+                    mToastFactory.showToast("Please enter an amount to transfer");
+                }
+            }
+        });
     }
 
     private void loadAvatarImage(CircleImageView imvProfilePic) {

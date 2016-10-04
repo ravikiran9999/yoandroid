@@ -50,5 +50,6 @@
     <color name="textColorPrimaryInverse">#1C1C1C</color>
     <color name="overlay">#AA1C1C1C</color>
     <color name="divider">#333333</color>
+    <color name="transfer_green">#80c93b</color>
 
 </resources>
