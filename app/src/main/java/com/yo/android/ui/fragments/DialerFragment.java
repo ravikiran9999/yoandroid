@@ -102,7 +102,7 @@ public class DialerFragment extends BaseFragment {
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
-    public static boolean isFromDailer = false;
+    public  boolean isFromDailer = false;
 
 
     public interface CallLogClearListener {
