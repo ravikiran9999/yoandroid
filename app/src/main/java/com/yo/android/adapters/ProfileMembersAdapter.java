@@ -41,6 +41,7 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
             holder.getContactNumber().setVisibility(View.GONE);
         }
         if (item.getAdmin() != null && Boolean.valueOf(item.getAdmin())) {
+            holder.getPermission().setVisibility(View.VISIBLE);
             holder.getPermission().setText(R.string.admin);
             holder.getPermission().setTextColor(mContext.getResources().getColor(R.color.black));
         } else {
