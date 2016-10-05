@@ -33,6 +33,7 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
@@ -143,6 +144,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             /*case R.id.clear_chat_history:
                 Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
                 break;*/
+            case R.id.notification_icon :
+                startActivity(new Intent(getActivity(), NotificationsActivity.class));
+                break;
 
             default:
                 break;

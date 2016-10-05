@@ -8,22 +8,34 @@
         android:title="Search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
-    <item android:id="@+id/menu_followers"
+    <item
+        android:id="@+id/notification_icon"
+        android:title="@string/notifications"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_followers"
         android:title="Followers"
         app:showAsAction="never" />
-    <item android:id="@+id/menu_followings"
+    <item
+        android:id="@+id/menu_followings"
         android:title="Followings"
         app:showAsAction="never" />
-    <item android:id="@+id/menu_find_people"
+    <item
+        android:id="@+id/menu_find_people"
         android:title="Find People"
         app:showAsAction="never" />
-    <item android:id="@+id/menu_wish_list"
+    <item
+        android:id="@+id/menu_wish_list"
         android:title="Liked Articles"
         app:showAsAction="never" />
-    <item android:id="@+id/menu_my_collections"
+    <item
+        android:id="@+id/menu_my_collections"
         android:title="My Collections"
         app:showAsAction="never" />
-    <item android:id="@+id/menu_create_magazines"
+    <item
+        android:id="@+id/menu_create_magazines"
         android:title="My Magazines"
         app:showAsAction="never" />
 </menu>
