@@ -25,12 +25,17 @@ import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
+import com.yo.android.util.Constants;
+import com.yo.android.vox.BalanceHelper;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
+import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -44,6 +49,10 @@ public class TransferBalanceActivity extends BaseActivity {
     private EditText etAmount;
     private String name;
     private String id;
+    @Inject
+    BalanceHelper balanceHelper;
+    private TextView tvBalance;
+    private String currencySymbol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +67,13 @@ public class TransferBalanceActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         String balance = getIntent().getStringExtra("balance");
-        String currencySymbol = getIntent().getStringExtra("currencySymbol");
+        currencySymbol = getIntent().getStringExtra("currencySymbol");
         name = getIntent().getStringExtra("name");
         final String phoneNo = getIntent().getStringExtra("phoneNo");
         String profilePic = getIntent().getStringExtra("profilePic");
         id = getIntent().getStringExtra("id");
 
-        TextView tvBalance = (TextView) findViewById(R.id.txt_balance);
+        tvBalance = (TextView) findViewById(R.id.txt_balance);
         tvBalance.setText(String.format("%s%s", currencySymbol, balance));
 
         TextView tvPhoneNumber = (TextView) findViewById(R.id.tv_phone_number);
@@ -76,6 +85,8 @@ public class TransferBalanceActivity extends BaseActivity {
         Button btnTransfer = (Button) findViewById(R.id.btn_transfer);
 
         etAmount = (EditText) findViewById(R.id.et_amount);
+
+        EventBus.getDefault().register(this);
 
         if (!TextUtils.isEmpty(name)) {
             tvPhoneNumber.setText(name);
@@ -174,7 +185,7 @@ public class TransferBalanceActivity extends BaseActivity {
                                         String format = df.format(Double.valueOf(response.body().getBalance()));
                                         String remainingBalance = "\"Your Remaining Balance is $" + format + "\"";
                                         final SpannableString text = new SpannableString(remainingBalance);
-                                        text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length()-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                        text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                         tvDesc.setText(text);
 
                                         final AlertDialog alertDialog = builder.create();
@@ -271,5 +282,39 @@ public class TransferBalanceActivity extends BaseActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    public void onEventMainThread(String action) {
+        if (Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION.equals(action)) {
+            if (balanceHelper != null) {
+                showProgressDialog();
+                balanceHelper.checkBalance(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dismissProgressDialog();
+                        try {
+                            DecimalFormat df = new DecimalFormat("0.000");
+                            String format = df.format(Double.valueOf(balanceHelper.getCurrentBalance()));
+                            preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
+                            tvBalance.setText(String.format("%s%s", currencySymbol, format));
+                        } catch (IllegalArgumentException e) {
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        dismissProgressDialog();
+
+                    }
+                });
+            }
+        }
     }
 }

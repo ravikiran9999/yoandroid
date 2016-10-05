@@ -48,11 +48,13 @@ import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -179,12 +181,15 @@ public class BottomTabsActivity extends BaseActivity {
         SyncUtils.createSyncAccount(this, preferenceEndPoint);
         mContactSyncHelper.checkContacts();
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(connection);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -346,6 +351,32 @@ public class BottomTabsActivity extends BaseActivity {
 
                 }
             });
+        }
+    }
+
+    public void onEventMainThread(String action) {
+        if (Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION.equals(action)) {
+            if (balanceHelper != null) {
+                showProgressDialog();
+                balanceHelper.checkBalance(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        dismissProgressDialog();
+                        try {
+                            DecimalFormat df = new DecimalFormat("0.000");
+                            String format = df.format(Double.valueOf(balanceHelper.getCurrentBalance()));
+                            preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
+                        } catch (IllegalArgumentException e) {
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        dismissProgressDialog();
+
+                    }
+                });
+            }
         }
     }
 }
