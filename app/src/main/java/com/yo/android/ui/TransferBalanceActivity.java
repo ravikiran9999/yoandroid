@@ -41,6 +41,9 @@ public class TransferBalanceActivity extends BaseActivity {
 
     private TextDrawable.IBuilder mDrawableBuilder;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+    private EditText etAmount;
+    private String name;
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +59,10 @@ public class TransferBalanceActivity extends BaseActivity {
 
         String balance = getIntent().getStringExtra("balance");
         String currencySymbol = getIntent().getStringExtra("currencySymbol");
-        final String name = getIntent().getStringExtra("name");
-        String phoneNo = getIntent().getStringExtra("phoneNo");
+        name = getIntent().getStringExtra("name");
+        final String phoneNo = getIntent().getStringExtra("phoneNo");
         String profilePic = getIntent().getStringExtra("profilePic");
-        final String id = getIntent().getStringExtra("id");
+        id = getIntent().getStringExtra("id");
 
         TextView tvBalance = (TextView) findViewById(R.id.txt_balance);
         tvBalance.setText(String.format("%s%s", currencySymbol, balance));
@@ -72,7 +75,7 @@ public class TransferBalanceActivity extends BaseActivity {
 
         Button btnTransfer = (Button) findViewById(R.id.btn_transfer);
 
-        final EditText etAmount = (EditText) findViewById(R.id.et_amount);
+        etAmount = (EditText) findViewById(R.id.et_amount);
 
         if (!TextUtils.isEmpty(name)) {
             tvPhoneNumber.setText(name);
@@ -122,90 +125,11 @@ public class TransferBalanceActivity extends BaseActivity {
             public void onClick(View v) {
                 String amount = etAmount.getText().toString();
                 if(!TextUtils.isEmpty(amount.trim())) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    showProgressDialog();
-                    yoService.balanceTransferAPI(accessToken, id, amount).enqueue(new Callback<com.yo.android.model.Response>() {
-                        @Override
-                        public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
-                            dismissProgressDialog();
-
-                            if (response.isSuccessful()) {
-
-                                if (response.code() == 200) {
-                                    try {
-                                        int statusCode = Integer.parseInt(response.body().getCode());
-                                        switch (statusCode) {
-                                            case 200:
-                                                final AlertDialog.Builder builder = new AlertDialog.Builder(TransferBalanceActivity.this);
-
-                                                LayoutInflater layoutInflater = LayoutInflater.from(TransferBalanceActivity.this);
-                                                final View view = layoutInflater.inflate(R.layout.transfer_balance_dialog, null);
-                                                builder.setView(view);
-
-                                                Button okBtn = (Button) view.findViewById(R.id.yes_btn);
-                                                TextView tvTitle = (TextView) view.findViewById(R.id.dialog_title);
-                                                TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
-
-                                                tvTitle.setText("Balance has been transferred successfully to " + "\"" + name + "\".");
-                                                DecimalFormat df = new DecimalFormat("0.000");
-                                                String format = df.format(Double.valueOf(response.body().getBalance()));
-                                                String remainingBalance = "\"Your Remaining Balance is $" + format + "\"";
-                                                final SpannableString text = new SpannableString(remainingBalance);
-                                                text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length()-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                                tvDesc.setText(text);
-
-                                                final AlertDialog alertDialog = builder.create();
-                                                alertDialog.setCancelable(false);
-                                                alertDialog.show();
-
-                                                okBtn.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        alertDialog.dismiss();
-                                                        setResult(RESULT_OK);
-                                                        finish();
-                                                    }
-                                                });
-
-                                                break;
-                                            case 606:
-                                                mToastFactory.showToast(R.string.invalid_request);
-                                                break;
-                                            case 607:
-                                                mToastFactory.showToast(R.string.invalid_pin_request);
-                                                break;
-                                            case 608:
-                                                mToastFactory.showToast(R.string.insufficient_amount);
-                                                break;
-                                            case 609:
-                                                mToastFactory.showToast(R.string.unsuccessful_amount_transfer);
-                                                break;
-                                            default:
-                                                mToastFactory.showToast(R.string.transfer_balance_failed);
-                                                break;
-                                        }
-                                    } catch (ClassCastException e) {
-                                        mLog.d("ClassCastException", e.getMessage());
-                                    }
-                                } else {
-                                    mToastFactory.showToast(R.string.transfer_balance_failed);
-                                }
-                            } else {
-                                mToastFactory.showToast(R.string.transfer_balance_failed);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
-                            dismissProgressDialog();
-
-                            mToastFactory.showToast(R.string.transfer_balance_failed);
-
-                        }
-                    });
+                showMessageDialog(amount, phoneNo);
                 } else {
                     mToastFactory.showToast("Please enter an amount to transfer");
                 }
+
             }
         });
     }
@@ -218,5 +142,134 @@ public class TransferBalanceActivity extends BaseActivity {
             shape.setColor(mColorGenerator.getRandomColor());
         }
         imvProfilePic.setImageDrawable(tempImage);
+    }
+
+    private void transferBalance(String amount) {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            showProgressDialog();
+            yoService.balanceTransferAPI(accessToken, id, amount).enqueue(new Callback<com.yo.android.model.Response>() {
+                @Override
+                public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
+                    dismissProgressDialog();
+
+                    if (response.isSuccessful()) {
+
+                        if (response.code() == 200) {
+                            try {
+                                int statusCode = Integer.parseInt(response.body().getCode());
+                                switch (statusCode) {
+                                    case 200:
+                                        final AlertDialog.Builder builder = new AlertDialog.Builder(TransferBalanceActivity.this);
+
+                                        LayoutInflater layoutInflater = LayoutInflater.from(TransferBalanceActivity.this);
+                                        final View view = layoutInflater.inflate(R.layout.transfer_balance_dialog, null);
+                                        builder.setView(view);
+
+                                        Button okBtn = (Button) view.findViewById(R.id.yes_btn);
+                                        TextView tvTitle = (TextView) view.findViewById(R.id.dialog_title);
+                                        TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
+
+                                        tvTitle.setText("Balance has been transferred successfully to " + "\"" + name + "\".");
+                                        DecimalFormat df = new DecimalFormat("0.000");
+                                        String format = df.format(Double.valueOf(response.body().getBalance()));
+                                        String remainingBalance = "\"Your Remaining Balance is $" + format + "\"";
+                                        final SpannableString text = new SpannableString(remainingBalance);
+                                        text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length()-1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                        tvDesc.setText(text);
+
+                                        final AlertDialog alertDialog = builder.create();
+                                        alertDialog.setCancelable(false);
+                                        alertDialog.show();
+
+                                        okBtn.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                alertDialog.dismiss();
+                                                setResult(RESULT_OK);
+                                                finish();
+                                            }
+                                        });
+
+                                        break;
+                                    case 606:
+                                        mToastFactory.showToast(R.string.invalid_request);
+                                        break;
+                                    case 607:
+                                        mToastFactory.showToast(R.string.invalid_pin_request);
+                                        break;
+                                    case 608:
+                                        mToastFactory.showToast(R.string.insufficient_amount);
+                                        break;
+                                    case 609:
+                                        mToastFactory.showToast(R.string.unsuccessful_amount_transfer);
+                                        break;
+                                    default:
+                                        mToastFactory.showToast(R.string.transfer_balance_failed);
+                                        break;
+                                }
+                            } catch (ClassCastException e) {
+                                mLog.d("ClassCastException", e.getMessage());
+                            }
+                        } else {
+                            mToastFactory.showToast(R.string.transfer_balance_failed);
+                        }
+                    } else {
+                        mToastFactory.showToast(R.string.transfer_balance_failed);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
+                    dismissProgressDialog();
+
+                    mToastFactory.showToast(R.string.transfer_balance_failed);
+
+                }
+            });
+    }
+
+    private void showMessageDialog(final String amount, final String phoneNumber) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View view = layoutInflater.inflate(R.layout.custom_dialog, null);
+        builder.setView(view);
+
+        TextView textView = (TextView) view.findViewById(R.id.dialog_content);
+        DecimalFormat df = new DecimalFormat("0.000");
+        String format = df.format(Double.valueOf(amount));
+        String confirmationText = "Are you sure you want to transfer $" + format +  " balance to " + name + " with number " + phoneNumber + "?";
+        textView.setText(confirmationText);
+
+
+        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+        yesBtn.setText(getResources().getString(R.string.yes));
+        Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+
+
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                alertDialog.dismiss();
+                transferBalance(amount);
+            }
+
+        });
+
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                alertDialog.dismiss();
+
+            }
+        });
     }
 }
