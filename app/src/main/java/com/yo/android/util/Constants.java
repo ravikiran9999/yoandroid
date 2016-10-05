@@ -103,11 +103,14 @@ public class Constants {
     public static String TOPIC_NOTIFICATION_ACTION = "com.notification.magazine.TOPIC";
     public static String TOPIC_FOLLOWING_ACTION = "com.topic.detail.FOLLOW";
     public static String REFRESH_TOPICS_ACTION = "com.refresh.magazine.TOPICS";
+    public static String BALANCE_TRANSFER_NOTIFICATION_ACTION = "com.notification.balance.TRANSFER";
 
 
     // Contacts
     public static final String NUMBER = "number";
     public static final String NAME = "name";
 
+
+    public static final String IS_IN_APP = "isInApp";
 
 }

@@ -216,7 +216,8 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                 int count = listView.getCount();
                 if (scrollState == SCROLL_STATE_IDLE) {
                     //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
-                    if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery()) && isRepresentative) {
+                    //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery()) && isRepresentative) {
+                    if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && isRepresentative) {
                         doPagination();
                     }
                 }

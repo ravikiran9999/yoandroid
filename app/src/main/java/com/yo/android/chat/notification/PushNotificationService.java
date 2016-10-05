@@ -54,9 +54,12 @@ public class PushNotificationService extends FirebaseMessagingService {
 
         if(data.get("tag").equals("Topic")) {
             EventBus.getDefault().post(Constants.TOPIC_NOTIFICATION_ACTION);
+        } else if(data.get("tag").equals("BalanceTransferred")) {
+            EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION);
         }
 
-        if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
+        //if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
+        if(preferenceEndPoint.getBooleanPreference(Constants.IS_IN_APP)) {
         mLog.i(TAG, "In Notifications screen");
         } else {
             createNotification(data.get("title").toString(), data.get("message").toString());
