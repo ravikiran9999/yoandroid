@@ -305,22 +305,7 @@ public class CallLog {
             values.put(CALLTYPE, callType);
             values.put(APP_OR_PSTN, pstnorapp);
             if (number != null && number.contains("youser")) {
-                try {
-                    number = number.substring(number.indexOf("youser") + 6, number.length() - 1);
-                    values.put(NUMBER, number);
-
-                    if (ci != null && ci.name == null) {
-                        values.put(CACHED_NAME, "");
-                    }
-                    values.put(APP_OR_PSTN, Calls.APP_TO_APP_CALL);
-
-                } catch (StringIndexOutOfBoundsException e) {
-                    values.put(NUMBER, number);
-                    if (ci != null && ci.name == null) {
-                        values.put(CACHED_NAME, "");
-                    }
-                    values.put(APP_OR_PSTN, Calls.APP_TO_APP_CALL);
-                }
+                values.put(APP_OR_PSTN, Calls.APP_TO_APP_CALL);
             }
             if (ci != null) {
                 if (ci.name != null) {
@@ -389,7 +374,6 @@ public class CallLog {
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
                         String phoneName = Helper.getContactName(context,voxuser);
-
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));

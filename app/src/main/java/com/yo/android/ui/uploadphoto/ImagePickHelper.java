@@ -20,7 +20,7 @@ public class ImagePickHelper {
 
     private Activity cameraActivity = null;
     AlertDialog dialog;
-    public File mFileTemp;
+    public static File mFileTemp; // mFileTemp is getting null because activity is rotating
     private static String TEMP_PHOTO_FILE_NAME;
     private Uri mImageCaptureUri = null;
     private static final String[] items = {"Camera", "Gallery"};
@@ -60,6 +60,7 @@ public class ImagePickHelper {
         dialog.setCancelable(true);
     }
 
+
     public void takePicture() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         dialog.dismiss();
@@ -98,7 +99,7 @@ public class ImagePickHelper {
     public static String getGalleryImagePath(Activity activity, Intent data) {
         Uri imgUri = data.getData();
         String filePath = "";
-        if (activity!=null && data.getType() == null) {
+        if (activity != null && data.getType() == null) {
             // For getting images from gallery.
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
             Cursor cursor = activity.getContentResolver().query(imgUri, filePathColumn, null, null, null);

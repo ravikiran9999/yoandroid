@@ -227,6 +227,8 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                     Response response1 = response.body();
                     if (response1 != null) {
                         boolean isNewUser = (boolean) ((LinkedTreeMap) response1.getData()).get("isNewUser");
+                        String userId = (String) ((LinkedTreeMap) response1.getData()).get("id");
+                        preferenceEndPoint.saveStringPreference(Constants.USER_ID, userId);
                         preferenceEndPoint.saveBooleanPreference("isNewUser", isNewUser);
                         boolean balanceAdded = (boolean) ((LinkedTreeMap) response1.getData()).get("balanceAdded");
                         preferenceEndPoint.saveBooleanPreference("balanceAdded", balanceAdded);

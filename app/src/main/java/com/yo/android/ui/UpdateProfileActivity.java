@@ -1,6 +1,8 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -11,10 +13,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.uploadphoto.ImageLoader;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
@@ -40,6 +44,8 @@ public class UpdateProfileActivity extends BaseActivity {
     private TextView mobileNum;
     private TextView addPhoto;
     private ImageView profileImage;
+
+
     private Button nextBtn;
     @Inject
     ToastFactory toastFactory;
@@ -49,6 +55,7 @@ public class UpdateProfileActivity extends BaseActivity {
     File imgFile;
     @Inject
     ConnectivityHelper mHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +71,15 @@ public class UpdateProfileActivity extends BaseActivity {
 
 
         addPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (UpdateProfileActivity.this != null) {
+                    Util.hideKeyboard(UpdateProfileActivity.this, getCurrentFocus());
+                }
+                cameraIntent.showDialog();
+            }
+        });
+        profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (UpdateProfileActivity.this != null) {
@@ -115,7 +131,6 @@ public class UpdateProfileActivity extends BaseActivity {
     private void setupToolbar() {
         getSupportActionBar().setHomeButtonEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
         String title = getResources().getString(R.string.profile);
         getSupportActionBar().setTitle(title);
     }
@@ -123,19 +138,34 @@ public class UpdateProfileActivity extends BaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        if (resultCode == Activity.RESULT_CANCELED) {
+            return;
+        }
         switch (requestCode) {
-
-            case Constants.ADD_IMAGE_CAPTURE:
-                if (resultCode == RESULT_OK) {
-                    try {
-                        String imagePath = cameraIntent.mFileTemp.getPath();
-                        imgFile = new File(imagePath);
-                        new ImageLoader(profileImage, imgFile, this).execute();
-                        addPhoto.setText(getResources().getString(R.string.change_picture));
-
-                    } catch (Exception e) {
+            case Helper.CROP_ACTIVITY:
+                if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
+                    Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
+                    if (imagePath != null) {
+                        imgFile = new File(imagePath.getPath());
+                        Glide.with(this).load(imgFile)
+                                .dontAnimate()
+                                .placeholder(R.drawable.dynamic_profile)
+                                .error(R.drawable.dynamic_profile)
+                                .fitCenter()
+                                .into(profileImage);
+                        addPhoto.setVisibility(View.GONE);
+                        uploadFile(imgFile);
                     }
+                }
+                break;
+            case Constants.ADD_IMAGE_CAPTURE:
+                try {
+                    String imagePath = cameraIntent.mFileTemp.getPath();
+                    if (imagePath != null) {
+                        Helper.setSelectedImage(this, imagePath, true);
+                    }
+                } catch (Exception e) {
+                    mLog.w("MoreFragment", e);
                 }
                 break;
 
@@ -143,14 +173,13 @@ public class UpdateProfileActivity extends BaseActivity {
                 if (data != null) {
                     try {
                         String imagePath = ImagePickHelper.getGalleryImagePath(this, data);
-                        imgFile = new File(imagePath);
-                        new ImageLoader(profileImage, imgFile, this).execute();
-                        addPhoto.setText(getResources().getString(R.string.change_picture));
+                        Helper.setSelectedImage(this, imagePath, true);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        mLog.w("MoreFragment", e);
                     }
                 }
             }
+
             default:
                 break;
         }
@@ -191,6 +220,10 @@ public class UpdateProfileActivity extends BaseActivity {
             mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
         }
+        String descriptionString = username.getText().toString();
+        if (TextUtils.isEmpty(descriptionString)) {
+            return;
+        }
         showProgressDialog();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         MultipartBody.Part body;
@@ -199,12 +232,11 @@ public class UpdateProfileActivity extends BaseActivity {
         } else { // create RequestBody instance from file
             RequestBody requestFile =
                     RequestBody.create(MediaType.parse("multipart/form-data"), file);
-
             // MultipartBody.Part is used to send also the actual file name
             body = MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
         }
 
-        String descriptionString = username.getText().toString();
+
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("user[first_name]"), descriptionString);

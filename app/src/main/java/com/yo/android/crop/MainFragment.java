@@ -116,6 +116,8 @@ public class MainFragment extends Fragment {
     private void bindViews(View view) {
         mCropView = (CropImageView) view.findViewById(R.id.cropImageView);
         mCropView.setOutputMaxSize(300, 300);
+        mCropView.setCropMode(CropImageView.CropMode.CIRCLE_SQUARE);
+
         view.findViewById(R.id.buttonDone).setOnClickListener(btnListener);
         view.findViewById(R.id.buttonFitImage).setOnClickListener(btnListener);
         view.findViewById(R.id.button1_1).setOnClickListener(btnListener);

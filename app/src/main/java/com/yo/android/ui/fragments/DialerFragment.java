@@ -246,12 +246,8 @@ public class DialerFragment extends BaseFragment {
         } else {
             results = prepare("Paid Calls", results, paidCalls);
         }
-        if (results != null && results.size() == 0 && !isFromDailer) {
-            startActivityForResult(new Intent(getActivity(), NewDailerActivity.class), 100);
-        } else {
-            adapter.addItems(results);
-            showEmptyText();
-        }
+        adapter.addItems(results);
+        showEmptyText();
     }
 
     @Override

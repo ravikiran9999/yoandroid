@@ -247,4 +247,5 @@
     <string name="insufficient_amount">Insufficient amount.</string>
     <string name="unsuccessful_amount_transfer">Unsuccessful amount transfer</string>
     <string name="transfer_balance_failed">Transfer balance failed. Please try again later.</string>
+    <string name="name_required">Username should not be empty</string>
 </resources>
