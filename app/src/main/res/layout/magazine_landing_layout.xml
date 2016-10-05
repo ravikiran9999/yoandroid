@@ -133,7 +133,7 @@
         <RelativeLayout
             android:id="@+id/rl_left"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="match_parent"
             android:layout_weight="1">
 
             <RelativeLayout android:id="@+id/rl_photo_left"
@@ -205,13 +205,12 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_alignParentBottom="true">
-
-
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/tv_article_title_left">
 
                 <CheckBox
                     android:id="@+id/cb_magazine_like_left"
@@ -240,7 +239,15 @@
                     android:background="@drawable/ic_magazine_share"
                     />
 
+                <include layout="@layout/summary_layout"
+                    android:layout_below="@+id/imv_magazine_share_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"/>
+
             </RelativeLayout>
+
+
 
         </RelativeLayout>
 
@@ -252,7 +259,7 @@
         <RelativeLayout
             android:id="@+id/rl_right"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="match_parent"
             android:layout_weight="1">
 
             <RelativeLayout android:id="@+id/rl_photo_right"
@@ -324,13 +331,12 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_alignParentBottom="true">
-
-
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/tv_article_title_right">
 
                 <CheckBox
                     android:id="@+id/cb_magazine_like_right"
@@ -358,6 +364,12 @@
                     android:layout_toRightOf="@+id/imv_magazine_add_right"
                     android:background="@drawable/ic_magazine_share"
                     />
+
+                <include layout="@layout/summary_layout_right"
+                    android:layout_below="@+id/imv_magazine_share_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"/>
 
             </RelativeLayout>
 

@@ -191,6 +191,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.tvTopicNameRight = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic_right);
 
+            holder.articleSummaryLeft = UI.<TextView>findViewById(layout, R.id.tv_article_short_desc_summary);
+
+            holder.articleSummaryRight = UI.<TextView>findViewById(layout, R.id.tv_article_short_desc_summary_right);
+
             layout.setTag(holder);
         } else {
             holder = (ViewHolder) layout.getTag();
@@ -1065,7 +1069,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 if (OtherProfilesLikedArticles.getListener() != null) {
@@ -1093,7 +1097,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 mToastFactory.showToast("Error while liking article " + data.getTitle());
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 Type type = new TypeToken<List<Articles>>() {
@@ -1121,7 +1125,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (OtherProfilesLikedArticles.getListener() != null) {
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
 
@@ -1147,7 +1151,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 Type type = new TypeToken<List<Articles>>() {
@@ -1266,6 +1270,29 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             }
         }
 
+        if(holder.articleSummaryLeft != null) {
+
+            float density = context.getResources().getDisplayMetrics().density;
+
+            if(density == 4.0) {
+                holder.articleSummaryLeft.setVisibility(View.VISIBLE);
+            } else if(density == 3.5) {
+                holder.articleSummaryLeft.setVisibility(View.VISIBLE);
+            } else if(density == 3.0) {
+                holder.articleSummaryLeft.setVisibility(View.VISIBLE);
+            } else if(density == 2.0) {
+                holder.articleSummaryLeft.setVisibility(View.VISIBLE);
+            } else  {
+                holder.articleSummaryLeft.setVisibility(View.GONE);
+            }
+
+            if (data.getSummary() != null && holder.articleSummaryLeft != null) {
+                holder.articleSummaryLeft
+                        .setText(Html.fromHtml(data.getSummary()));
+            }
+        }
+
+
     }
 
     private void populateRightArticle(ViewHolder holder, final Articles data, int position) {
@@ -1311,7 +1338,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 if (OtherProfilesLikedArticles.getListener() != null) {
@@ -1339,7 +1366,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 mToastFactory.showToast("Error while liking article " + data.getTitle());
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 Type type = new TypeToken<List<Articles>>() {
@@ -1367,7 +1394,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (OtherProfilesLikedArticles.getListener() != null) {
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
 
@@ -1393,7 +1420,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 Type type = new TypeToken<List<Articles>>() {
@@ -1509,6 +1536,28 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 });
             } else {
                 holder.tvTopicNameRight.setVisibility(View.GONE);
+            }
+        }
+
+        if(holder.articleSummaryRight != null) {
+
+            float density = context.getResources().getDisplayMetrics().density;
+
+            if(density == 4.0) {
+                holder.articleSummaryRight.setVisibility(View.VISIBLE);
+            } else if(density == 3.5) {
+                holder.articleSummaryRight.setVisibility(View.VISIBLE);
+            } else if(density == 3.0) {
+                holder.articleSummaryRight.setVisibility(View.VISIBLE);
+            } else if(density == 2.0) {
+                holder.articleSummaryRight.setVisibility(View.VISIBLE);
+            } else  {
+                holder.articleSummaryRight.setVisibility(View.GONE);
+            }
+
+            if (data.getSummary() != null && holder.articleSummaryRight != null) {
+                holder.articleSummaryRight
+                        .setText(Html.fromHtml(data.getSummary()));
             }
         }
 
@@ -1645,6 +1694,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private TextView tvTopicNameLeft;
 
         private TextView tvTopicNameRight;
+
+        private TextView articleSummaryLeft;
+
+        private TextView articleSummaryRight;
     }
 
 }
