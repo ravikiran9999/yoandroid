@@ -449,7 +449,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             case R.id.view_contact:
                 viewContact();
                 break;
-
         }
         return super.onOptionsItemSelected(item);
     }

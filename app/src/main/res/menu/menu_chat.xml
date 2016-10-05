@@ -8,12 +8,19 @@
         android:title="@string/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/notification_icon"
+        android:icon="@drawable/ic_newchat"
+        android:title="@string/notifications"
+        android:visible="false"
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/chat_contact"
-        android:title="@string/message"
-        app:showAsAction="always"
         android:icon="@drawable/ic_newchat"
-        />
+        android:title="@string/message"
+        app:showAsAction="always" />
 
     <!--<item
         android:id="@+id/clear_chat_history"
@@ -21,8 +28,8 @@
         app:showAsAction="never" />-->
     <item
         android:id="@+id/create_group"
+        android:icon="@drawable/ic_people_add_light"
         android:title="@string/create_group"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_people_add_light"/>
+        app:showAsAction="always" />
 
 </menu>

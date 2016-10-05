@@ -317,7 +317,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         } else {
             sent.setVisibility(View.VISIBLE);
             time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-            time.setGravity(Gravity.END);
+            time.setGravity(Gravity.RIGHT);
             sent.setVisibility(View.VISIBLE);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             if (item.getSent() != 0) {
@@ -337,8 +337,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             }
         }
         linearLayout1.addView(textView);
-        secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 0, 0));
-        secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.dp(context, 20), Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.RIGHT, 0, 8, 0, 0));
+        secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 5, 0));
+        secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.RIGHT, 0, 8, 5, 0));
 
         holder.getLl().addView(secretChatPlaceholder);
         return secretChatPlaceholder;

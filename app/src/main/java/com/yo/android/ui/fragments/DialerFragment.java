@@ -31,6 +31,7 @@ import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.ui.NewDailerActivity;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
@@ -180,7 +181,10 @@ public class DialerFragment extends BaseFragment {
                     loadCallLogs();
                 }
             });
+        } else if (item.getItemId() == R.id.notification_icon) {
+            startActivity(new Intent(getActivity(), NotificationsActivity.class));
         }
+
         if (str != null) {
             preferenceEndPoint.saveStringPreference(Constants.DIALER_FILTER, str);
             showDataOnFilter();
