@@ -221,7 +221,7 @@
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="add_balance_from_google_play">Add balance from Google Play</string>
     <string name="add_balance_from_voucher">Add balance from Voucher</string>
-    <string name="transfer_balance">Transfer balance</string>
+    <string name="transfer_balance">Transfer Balance</string>
     <string name="button_allow">Allow</string>
     <string name="button_deny">Deny</string>
     <string name="permission_pick_rationale">READ_EXTERNAL_STORAGE permission is needed to pick image.</string>
@@ -242,4 +242,9 @@
     <string name="notification_new_messages">new messages</string>
     <string name="more_notification">more notification</string>
     <string name="more_notifications">more notifications</string>
+    <string name="your_credit_balance">Your credit balance :</string>
+    <string name="invalid_request">Invalid Request.</string>
+    <string name="insufficient_amount">Insufficient amount.</string>
+    <string name="unsuccessful_amount_transfer">Unsuccessful amount transfer</string>
+    <string name="transfer_balance_failed">Transfer balance failed. Please try again later.</string>
 </resources>

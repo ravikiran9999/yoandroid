@@ -276,6 +276,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         TextView time = (TextView) mainLayout.findViewById(R.id.time);
         time.setGravity(Gravity.BOTTOM);
         time.setTextColor(context.getResources().getColor(R.color.black));
+
         RelativeLayout seenLayout = (RelativeLayout) mainLayout.findViewById(R.id.seen_layout);
         TextView seen = (TextView) mainLayout.findViewById(R.id.seen_txt);
         TextView sent = (TextView) mainLayout.findViewById(R.id.sent_txt);
