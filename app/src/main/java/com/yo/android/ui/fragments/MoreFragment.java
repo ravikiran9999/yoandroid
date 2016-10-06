@@ -155,7 +155,16 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void loadImage() {
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
-        if (!TextUtils.isEmpty(avatar)) {
+        String localImage = preferenceEndPoint.getStringPreference(Constants.IMAGE_PATH);
+        if (!TextUtils.isEmpty(localImage)) {
+            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
+            Glide.with(getActivity()).load(new File(localImage))
+                    .dontAnimate()
+                    .placeholder(profilePic.getDrawable())
+                    .error(profilePic.getDrawable())
+                    .fitCenter()
+                    .into(profilePic);
+        } else if (!TextUtils.isEmpty(avatar)) {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
             Glide.with(getActivity()).load(avatar)
                     .dontAnimate()
@@ -219,7 +228,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.notification_icon) {
+        if (item.getItemId() == R.id.notification_icon) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
         }
         return super.onOptionsItemSelected(item);
@@ -379,6 +388,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
                     Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
                     if (imagePath != null) {
+                        preferenceEndPoint.saveStringPreference(Constants.IMAGE_PATH, imagePath.getPath());
                         uploadFile(new File(imagePath.getPath()));
                     }
                 }
@@ -389,8 +399,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     if (imagePath != null) {
                         Helper.setSelectedImage(getActivity(), imagePath, true);
                     }
-                    //uploadFile(new File(imagePath));
-
                 } catch (Exception e) {
                     mLog.w("MoreFragment", e);
                 }
@@ -401,8 +409,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     try {
                         String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(), data);
                         Helper.setSelectedImage(getActivity(), imagePath, true);
-
-                        //uploadFile(new File(imagePath));
                     } catch (Exception e) {
                         mLog.w("MoreFragment", e);
                     }

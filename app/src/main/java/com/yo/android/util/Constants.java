@@ -16,6 +16,8 @@ public class Constants {
     public static final String TYPE = "type";
     public static final String TEXT = "text";
     public static final String IMAGE = "image";
+    public static final String IMAGE_PATH = "image_path";
+
     public static final String SELECTED_TEXT = "selected_text";
     public static final String GROUP_NAME = "groupName";
     public static final String SELECTED_CONTACTS = "selected_contacts";

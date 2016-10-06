@@ -146,6 +146,7 @@ public class UpdateProfileActivity extends BaseActivity {
                 if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
                     Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
                     if (imagePath != null) {
+                        preferenceEndPoint.saveStringPreference(Constants.IMAGE_PATH, imagePath.getPath());
                         imgFile = new File(imagePath.getPath());
                         Glide.with(this).load(imgFile)
                                 .dontAnimate()
