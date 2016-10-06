@@ -211,14 +211,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             });
         }
 
-
-        /*List<Contact> contactList = new ArrayList<>();
-        contactList.addAll(mContactsSyncManager.getContacts());
-        appContactsListAdapter.addItems(contactList);
-        loadInAlphabeticalOrder(contactList);
-        dismissProgressDialog();*/
-
-
     }
 
     private void loadInAlphabeticalOrder(List<Contact> contactList) {
@@ -242,9 +234,12 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 createGroup.setFirebaseRoomId(null);
                 contactList.add(0, createGroup);
             } else {
+                Contact contact = contactList.get(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
+                if (stringArrayList.contains(getResources().getString(R.string.new_group))) {
+                    contactList.remove(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
+                }
+                contactList.add(0,contact);
 
-                contactList.set(0, contactList.get(stringArrayList.indexOf(getResources().getString(R.string.new_group))));
-                contactList.remove(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
             }
         }
         tempList = contactList;
