@@ -25,6 +25,7 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.CallLogsViewHolder;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.Settings;
+import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
@@ -79,7 +80,15 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getAddToContact().setVisibility(View.GONE);
         } else {
             String phoneNumber = item.getValue().get(0).getDialnumber();
-
+            if (phoneNumber != null && phoneNumber.contains("youser")) {
+                try {
+                    phoneNumber = phoneNumber.substring(phoneNumber.indexOf("youser") + 6, phoneNumber.length() - 1);
+                    holder.getOpponentName().setText(phoneNumber);
+                } catch (StringIndexOutOfBoundsException e) {
+                }
+            } else if (phoneNumber != null) {
+                holder.getOpponentName().setText(phoneNumber);
+            }
             Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
             LayerDrawable bgDrawable = (LayerDrawable) tempImage;
             final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
@@ -87,7 +96,6 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                 shape.setColor(mColorGenerator.getRandomColor());
             }
             drawable = tempImage;
-            holder.getOpponentName().setText(phoneNumber);
             holder.getCreatNewContact().setVisibility(View.VISIBLE);
             holder.getAddToContact().setVisibility(View.VISIBLE);
         }
@@ -113,7 +121,8 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         } else {
             holder.getRowContainerdetails().setVisibility(View.GONE);
         }
-        if (item.getValue().get(0).getAppOrPstn()== CallLog.Calls.APP_TO_PSTN_CALL) {
+        if (item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_PSTN_CALL) {
+
             holder.getMessageIcon().setVisibility(View.GONE);
         } else {
             holder.getMessageIcon().setVisibility(View.VISIBLE);
@@ -158,7 +167,14 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             public void onClick(View v) {
                 Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
                 Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra(Constants.CONTACT, contactsSyncManager.getContactByVoxUserName(item.getValue().get(0).getDialnumber()));
+                Contact contact = contactsSyncManager.getContactByVoxUserName(item.getValue().get(0).getDialnumber());
+                if (contact == null) {
+                    contact = new Contact();
+                    contact.setPhoneNo(item.getValue().get(0).getDialnumber());
+                    contact.setVoxUserName(item.getValue().get(0).getDialnumber());
+                    contact.setImage(item.getValue().get(0).getImage());
+                }
+                intent.putExtra(Constants.CONTACT, contact);
                 intent.putExtra(Constants.TYPE, Constants.CONTACT);
                 mContext.startActivity(intent);
             }

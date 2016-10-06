@@ -109,6 +109,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
      * @param data
      */
     private void closeActivityAddBalance(int resultcode, Intent data) {
+        if (resultcode == Activity.RESULT_CANCELED) {
+            return;
+        }
         if (getArguments() != null && getArguments().getBoolean(Constants.OPEN_ADD_BALANCE, false)) {
             getActivity().setResult(resultcode);
             getActivity().finish();
@@ -259,7 +262,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             Intent intent = new Intent(getActivity(), TransferBalanceSelectContactActivity.class);
             intent.putExtra("balance", balance);
             intent.putExtra("currencySymbol", currencySymbol);
-            startActivityForResult(intent,11);
+            startActivityForResult(intent, 11);
         }
     }
 

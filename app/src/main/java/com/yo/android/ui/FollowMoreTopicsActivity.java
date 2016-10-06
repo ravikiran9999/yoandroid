@@ -493,11 +493,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             for (int k = 0; k < tagGroup.getTags().size(); k++) {
                 TagSelected t = (TagSelected) tagGroup.getTags().get(k);
                 if (t.getSelected()) {
-
                     followedTopicsIdsList.add(String.valueOf(t.getTagId()));
-
                 }
-
             }
 
             String accessToken = preferenceEndPoint.getStringPreference("access_token");

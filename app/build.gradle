@@ -24,7 +24,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 2
-        versionName "16.3.14.13"
+        versionName "16.4.14.15"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
         multiDexEnabled true
     }
@@ -51,14 +51,19 @@ android {
         }
     }
     buildTypes {
-        release {
+
+        sms {
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+        }
+        /*release {
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
             productFlavors.dev.signingConfig signingConfigs.devconfig
             productFlavors.stage.signingConfig signingConfigs.stageconfig
-        }
+        }*/
 
     }
     lintOptions {

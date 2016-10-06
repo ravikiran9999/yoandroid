@@ -169,25 +169,24 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
             if (mContact != null) {
 
-                if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+","").equalsIgnoreCase(mContact.getPhoneNo())) {
+                if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo())) {
                     profileName.setText(mContact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
                 }
                 if (mContact.getPhoneNo() != null) {
-                    profileNumber.setText(mContact.getPhoneNo());
+                    removeYoUserFromPhoneNumber(mContact.getPhoneNo(), profileNumber);
                 } else {
                     profileNumber.setVisibility(View.GONE);
                 }
             } else if (contact != null) {
-
-                if (contact.getName() != null && !contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
+                if (contact.getName() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
                     profileName.setText(contact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
                 }
                 if (contact.getPhoneNo() != null) {
-                    profileNumber.setText(contact.getPhoneNo());
+                    removeYoUserFromPhoneNumber(contact.getPhoneNo(), profileNumber);
                 } else {
                     profileNumber.setVisibility(View.GONE);
                 }
@@ -200,6 +199,19 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             } else {
                 profileMsg.setImageResource(R.drawable.ic_invitefriends);
             }
+        }
+    }
+
+    private void removeYoUserFromPhoneNumber(String phoneNo, TextView profileNumber) {
+        String phoneNumber = phoneNo;
+        if (phoneNumber != null && phoneNumber.contains("youser")) {
+            try {
+                phoneNumber = phoneNumber.substring(phoneNumber.indexOf("youser") + 6, phoneNumber.length() - 1);
+                profileNumber.setText(phoneNumber);
+            } catch (StringIndexOutOfBoundsException e) {
+            }
+        } else if (phoneNumber != null) {
+            profileNumber.setText(phoneNumber);
         }
     }
 

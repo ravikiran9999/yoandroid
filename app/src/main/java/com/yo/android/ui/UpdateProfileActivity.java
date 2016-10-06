@@ -154,7 +154,7 @@ public class UpdateProfileActivity extends BaseActivity {
                                 .error(R.drawable.dynamic_profile)
                                 .fitCenter()
                                 .into(profileImage);
-                        addPhoto.setVisibility(View.GONE);
+                        addPhoto.setText(getResources().getString(R.string.change_picture));
                         uploadFile(imgFile);
                     }
                 }
