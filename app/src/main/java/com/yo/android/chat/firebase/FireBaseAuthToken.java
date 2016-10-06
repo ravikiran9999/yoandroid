@@ -57,6 +57,7 @@ public class FireBaseAuthToken {
     }
 
     public void getFirebaseAuth(final FireBaseAuthListener listener) {
+        //if(!loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN).isEmpty()) {
         String firebackToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
         Log.i("FireBaseAuthToken", "FireBaseAuthToken : " + firebackToken);
         if (TextUtils.isEmpty(firebackToken) & !waitingForReply) {
@@ -74,6 +75,7 @@ public class FireBaseAuthToken {
                         if (response.body() != null) {
                             jsonObject = new JSONObject(response.body().string());
                             String firebaseToken = jsonObject.getString("firebase_token");
+                            Log.i(TAG, "New token generated " + firebaseToken);
                             loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, firebaseToken);
                             listener.onSuccess();
                             waitingForReply = false;

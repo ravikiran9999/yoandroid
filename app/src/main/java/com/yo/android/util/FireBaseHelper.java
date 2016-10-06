@@ -102,18 +102,25 @@ public class FireBaseHelper {
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     Log.e(TAG, "Login Failed! Auth token expired" + firebaseError.getMessage());
+                    unauth();
+                    loginPrefs.removePreference(Constants.FIREBASE_TOKEN);
+
+
                     /*if (myServiceConnection.isServiceConnection()) {
                         firebaseService.getFirebaseAuth();
                     }*/
                     FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                         @Override
                         public void onSuccess() {
+                            Log.e(TAG, "Login Failed! Auth token expired  and generated new token");
+
                             String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
                             authWithCustomToken(context, newAuthToken);
                         }
 
                         @Override
                         public void onFailed() {
+                            Log.e(TAG, "Login Failed! Auth token expired  and generated new token also failed.");
 
                         }
                     });

@@ -11,6 +11,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.io.IOException;
 
@@ -48,6 +49,9 @@ public class TokenAuthenticator implements Authenticator {
                 //Reset
                 tokenExpireCount = 0;
                 Intent intent = new Intent(mContext, LoginActivity.class);
+                if (mContext != null) {
+                    Util.cancelAllNotification(mContext);
+                }
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.putExtra(Constants.SESSION_EXPIRE, true);
                 mContext.startActivity(intent);

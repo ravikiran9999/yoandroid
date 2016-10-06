@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -102,37 +103,39 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
-                final String id = response.body().getId();
-                if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
-                    for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                        flipContainer.setVisibility(View.VISIBLE);
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
-                        }
-                        articlesList.add(response.body().getArticlesList().get(i));
-                    }
-                    myBaseAdapter.addItems(articlesList);
-                } else {
-                    flipContainer.setVisibility(View.GONE);
-                    if (noArticals != null) {
-                        noArticals.setVisibility(View.VISIBLE);
-
-                        noArticals.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(CreatedMagazineDetailActivity.this, LoadMagazineActivity.class);
-                                intent.putExtra("MagazineId", id);
-                                intent.putExtra("MagazineTitle", magazineTitle);
-                                intent.putExtra("MagazineDesc", magazineDesc);
-                                intent.putExtra("MagazinePrivacy", magazinePrivacy);
-                                startActivity(intent);
-                                finish();
+                if (response.body() != null) {
+                    final String id = response.body().getId();
+                    if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
+                        for (int i = 0; i < response.body().getArticlesList().size(); i++) {
+                            flipContainer.setVisibility(View.VISIBLE);
+                            if (noArticals != null) {
+                                noArticals.setVisibility(View.GONE);
                             }
-                        });
+                            articlesList.add(response.body().getArticlesList().get(i));
+                        }
+                        myBaseAdapter.addItems(articlesList);
+                    } else {
+                        flipContainer.setVisibility(View.GONE);
+                        if (noArticals != null) {
+                            noArticals.setVisibility(View.VISIBLE);
+
+                            noArticals.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(CreatedMagazineDetailActivity.this, LoadMagazineActivity.class);
+                                    intent.putExtra("MagazineId", id);
+                                    intent.putExtra("MagazineTitle", magazineTitle);
+                                    intent.putExtra("MagazineDesc", magazineDesc);
+                                    intent.putExtra("MagazinePrivacy", magazinePrivacy);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            });
+                        }
+
                     }
 
                 }
-
             }
 
             @Override
@@ -214,6 +217,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                 holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
 
+                holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -254,7 +259,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
@@ -263,8 +270,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     } else {
@@ -274,8 +282,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
                             }
 
@@ -284,7 +293,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     }
@@ -370,6 +381,25 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                     }
                 });
 
+            if(holder.tvTopicName != null) {
+                if(!TextUtils.isEmpty(data.getTopicName())) {
+                    holder.tvTopicName.setVisibility(View.VISIBLE);
+                    holder.tvTopicName.setText(data.getTopicName());
+                    holder.tvTopicName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, TopicsDetailActivity.class);
+                            intent.putExtra("TopicId", data.getTopicId());
+                            intent.putExtra("TopicName", data.getTopicName());
+                            intent.putExtra("TopicFollowing", data.getTopicFollowing());
+                            context.startActivity(intent);
+                        }
+                    });
+                } else {
+                    holder.tvTopicName.setVisibility(View.GONE);
+                }
+            }
+
             return layout;
         }
 
@@ -395,6 +425,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         private ImageView magazineAdd;
 
         private ImageView magazineShare;
+
+        private TextView tvTopicName;
     }
 
     @Override

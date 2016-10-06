@@ -15,16 +15,22 @@ public class ProfileMembersViewHolder extends AbstractViewHolder {
     private TextView contactNumber;
     private TextView contactMail;
     private TextView permission;
+    private TextView tvName;
 
     public ProfileMembersViewHolder(View view) {
         super(view);
         contactMail = (TextView) view.findViewById(R.id.tv_contact_email);
         contactNumber = (TextView) view.findViewById(R.id.tv_phone_number);
-        permission = (TextView) view.findViewById(R.id.tv_contact_type);
+        permission = (TextView) view.findViewById(R.id.isadmin);
+        tvName = (TextView) view.findViewById(R.id.tv_name);
     }
 
     public TextView getContactNumber() {
         return contactNumber;
+    }
+
+    public TextView getName() {
+        return tvName;
     }
 
     public TextView getContactMail() {

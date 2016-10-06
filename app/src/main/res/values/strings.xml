@@ -38,6 +38,7 @@
     <string name="add_contact">Add Contact</string>
     <string name="new_group">New Group</string>
 
+
     <string name="not_sender">You dont have permission to delete message </string>
 
     <string name="enter_mobile_number">Enter your mobile number to get started!</string>
@@ -133,7 +134,7 @@
     <string name="contact">Contacts</string>
     <string name="empty_country_list_message">No country list available.</string>
     <string name="activity_contry_selection_title">Select Country</string>
-    <string name="no_article_added">There is no article added yet.\nAdd any article to create your own magazine</string>
+    <string name="no_article_added">There is no article added yet.\nClick here to add an article</string>
     <string name="yesterday">"Yesterday "</string>
     <string name="otp_empty">Please enter valid PIN</string>
     <string name="otp_failure">Please enter valid PIN</string>
@@ -195,7 +196,7 @@
     <string name="missed_call">Missed call</string>
     <string name="empty_chat">No chat history found.</string>
     <string name="clear_history_dec">This will delete all calls from your history</string>
-    <string name="clear_call_history">Clear call history?</string>
+    <string name="clear_call_history">Clear Call History</string>
     <string name="ok">OK</string>
     <string name="cancle">Cancel</string>
     <string name="are_you_sure_you_want_to_unfollow">Are you sure you want to Unfollow?</string>
@@ -211,14 +212,40 @@
     <string name="call_details">Call details</string>
     <string name="add_to_a_contact">Add to a contact</string>
     <string name="create_new_contact">Create new contact</string>
-    <string name="free_calls">Free calls</string>
-    <string name="all_calls">All calls</string>
-    <string name="paid_calls">Paid calls</string>
+    <string name="free_calls">Free Calls</string>
+    <string name="all_calls">All Calls</string>
+    <string name="paid_calls">Paid Calls</string>
     <string name="contacts">Contacts</string>
     <string name="dialer">Dialer</string>
     <string name="magazines">Magazines</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="add_balance_from_google_play">Add balance from Google Play</string>
     <string name="add_balance_from_voucher">Add balance from Voucher</string>
-    <string name="transfer_balance">Transfer balance</string>
+    <string name="transfer_balance">Transfer Balance</string>
+    <string name="button_allow">Allow</string>
+    <string name="button_deny">Deny</string>
+    <string name="permission_pick_rationale">READ_EXTERNAL_STORAGE permission is needed to pick image.</string>
+    <string name="permission_crop_rationale">WRITE_EXTERNAL_STORAGE permission is needed to save cropped image.</string>
+    <string name="permission_denied">Permission was denied. Please consider granting it in order to use all features.</string>
+    <string name="permission_denied_never_ask_again">Permission was denied with never ask again.</string>
+    <string name="move_and_scale">Move and Scale</string>
+    <string name="exceed_message">Message exceeds maximum limit</string>
+    <string name="crop_image">Crop Image</string>
+    <string name="enter_mobile_number_error">please enter a valid number </string>
+    <string name="Dialog_text">Please confirm if %s number is correct.</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Ok">ok</string>
+    <string name="Dialog_title">Confirm</string>
+    <string name="others_no_article_added">There is no article added yet to the magazine.</string>
+    <string name="admin">Admin</string>
+    <string name="notification_new_message">new message</string>
+    <string name="notification_new_messages">new messages</string>
+    <string name="more_notification">more notification</string>
+    <string name="more_notifications">more notifications</string>
+    <string name="your_credit_balance">Your credit balance :</string>
+    <string name="invalid_request">Invalid Request.</string>
+    <string name="insufficient_amount">Insufficient amount.</string>
+    <string name="unsuccessful_amount_transfer">Unsuccessful amount transfer</string>
+    <string name="transfer_balance_failed">Transfer balance failed. Please try again later.</string>
+    <string name="name_required">Username should not be empty</string>
 </resources>

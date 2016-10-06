@@ -30,16 +30,22 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
 
     @Override
     public void bindView(int position, ProfileMembersViewHolder holder, GroupMembers item) {
-        //if(item.getGroupName() != null) {
-            holder.getContactNumber().setText(item.getUserProfile().getFullName());
-        if(item.getAdmin().equalsIgnoreCase("true")) {
-            holder.getPermission().setText("admin");
-            holder.getPermission().setTextColor(mContext.getResources().getColor(R.color.black));
-        } else if(item.getAdmin().equalsIgnoreCase("false")) {
-            holder.getPermission().setText("");
+        if (item.getUserProfile() != null && item.getUserProfile().getFullName() != null) {
+            holder.getName().setText(item.getUserProfile().getFullName());
+        } else {
+            holder.getName().setVisibility(View.GONE);
         }
-
-        //holder.getContactMail().setText(item.getEmailId());
-        //}
+        if (item.getUserProfile() != null && item.getUserProfile().getMobileNumber() != null) {
+            holder.getContactNumber().setText(item.getUserProfile().getMobileNumber());
+        } else {
+            holder.getContactNumber().setVisibility(View.GONE);
+        }
+        if (item.getAdmin() != null && Boolean.valueOf(item.getAdmin())) {
+            holder.getPermission().setVisibility(View.VISIBLE);
+            holder.getPermission().setText(R.string.admin);
+            holder.getPermission().setTextColor(mContext.getResources().getColor(R.color.black));
+        } else {
+            holder.getPermission().setVisibility(View.GONE);
+        }
     }
 }

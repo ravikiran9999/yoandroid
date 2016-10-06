@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 
@@ -32,6 +33,14 @@ public class GroupContactsListAdapter extends AbstractBaseAdapter<Contact, Group
 
     @Override
     public void bindView(int position, GroupContactsViewHolder holder, Contact item) {
+
+
+        if (!TextUtils.isEmpty(item.getName()) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo()))) {
+            holder.getContactName().setText(item.getName());
+            holder.getContactName().setVisibility(View.VISIBLE);
+        } else {
+            holder.getContactName().setVisibility(View.GONE);
+        }
 
         holder.getContactNumber().setText(item.getPhoneNo());
         holder.getCheckBox().setChecked(item.isSelected());

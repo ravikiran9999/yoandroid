@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -100,6 +101,8 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(magazineTitle);
 
+        noArticals.setText(getString(R.string.others_no_article_added));
+
         articlesList.clear();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
@@ -120,7 +123,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     if (noArticals != null) {
                         noArticals.setVisibility(View.VISIBLE);
 
-                        noArticals.setOnClickListener(new View.OnClickListener() {
+                        /*noArticals.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(OthersMagazinesDetailActivity.this, LoadMagazineActivity.class);
@@ -131,7 +134,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 startActivity(intent);
                                 finish();
                             }
-                        });
+                        });*/
                     }
 
                 }
@@ -224,6 +227,8 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
                 holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
 
+                holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -263,7 +268,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                notifyDataSetChanged();
+                                if (!hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
@@ -272,7 +279,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                notifyDataSetChanged();
+                                if (!hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     } else {
@@ -282,8 +291,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-
-                                notifyDataSetChanged();
+                                if (!hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
                             }
 
@@ -292,7 +302,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                notifyDataSetChanged();
+                                if (!hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     }
@@ -476,13 +488,34 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 });
             }
 
+            if(holder.tvTopicName != null) {
+                if(!TextUtils.isEmpty(data.getTopicName())) {
+                    holder.tvTopicName.setVisibility(View.VISIBLE);
+                    holder.tvTopicName.setText(data.getTopicName());
+                    holder.tvTopicName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, TopicsDetailActivity.class);
+                            intent.putExtra("TopicId", data.getTopicId());
+                            intent.putExtra("TopicName", data.getTopicName());
+                            intent.putExtra("TopicFollowing", data.getTopicFollowing());
+                            context.startActivity(intent);
+                        }
+                    });
+                } else {
+                    holder.tvTopicName.setVisibility(View.GONE);
+                }
+            }
+
             return layout;
         }
 
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            notifyDataSetChanged();
+            if (!hasDestroyed()) {
+                notifyDataSetChanged();
+            }
         }
 
         @Override
@@ -532,6 +565,8 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         private ImageView magazineShare;
 
         private Button articleFollow;
+
+        private TextView tvTopicName;
     }
 
     @Override
@@ -568,6 +603,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                             menuItem.setTitle("");
                             menuItem.setIcon(R.drawable.ic_mycollections_tick);
                             isFollowingMagazine = true;
+                            EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
 
                         }
 
@@ -609,6 +645,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     menuItem.setIcon(null);
                                     menuItem.setTitle("Follow");
                                     isFollowingMagazine = false;
+                                    EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
                                 }
 
                                 @Override

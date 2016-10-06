@@ -15,6 +15,7 @@ public class AppContactsActivity extends BaseActivity {
 
         YoContactsFragment yoContactsFragment = new YoContactsFragment();
         Bundle args = new Bundle();
+        args.putBoolean(Constants.IS_CHAT_FORWARD, getIntent().hasExtra(Constants.IS_CHAT_FORWARD));
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
 
             args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));

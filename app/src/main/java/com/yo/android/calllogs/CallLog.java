@@ -13,6 +13,7 @@ import android.provider.BaseColumns;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.Injector;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.provider.YoAppContactContract;
@@ -304,22 +305,7 @@ public class CallLog {
             values.put(CALLTYPE, callType);
             values.put(APP_OR_PSTN, pstnorapp);
             if (number != null && number.contains("youser")) {
-                try {
-                    number = number.substring(number.indexOf("youser") + 6, number.length() - 1);
-                    values.put(NUMBER, number);
-
-                    if (ci != null && ci.name == null) {
-                        values.put(CACHED_NAME, "");
-                    }
-                    values.put(APP_OR_PSTN, Calls.APP_TO_APP_CALL);
-
-                } catch (StringIndexOutOfBoundsException e) {
-                    values.put(NUMBER, number);
-                    if (ci != null && ci.name == null) {
-                        values.put(CACHED_NAME, "");
-                    }
-                    values.put(APP_OR_PSTN, Calls.APP_TO_APP_CALL);
-                }
+                values.put(APP_OR_PSTN, Calls.APP_TO_APP_CALL);
             }
             if (ci != null) {
                 if (ci.name != null) {
@@ -387,10 +373,15 @@ public class CallLog {
                     do {
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        String phoneName = Helper.getContactName(context,voxuser);
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
+                        if(phoneName !=null){
+                            info.setDestination_name(phoneName);
+                        }
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
                         info.setDuration(duration);
                         info.setImage(getImagePath(context, voxuser));
@@ -438,10 +429,16 @@ public class CallLog {
                     do {
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        String phoneName = Helper.getContactName(context,voxuser);
+
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
+                        if(phoneName !=null){
+                            info.setDestination_name(phoneName);
+                        }
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
                         info.setDuration(duration);
                         info.setImage(getImagePath(context, voxuser));
@@ -498,6 +495,7 @@ public class CallLog {
                         info.setDuration(duration);
                         String tempDate = Util.getDate(date);
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
+                        info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
                         info.setImage(getImagePath(context, voxuser));
                         // callerInfos.add(info);
                         if (!hashMap.containsKey(voxuser + tempDate)) {

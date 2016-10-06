@@ -5,6 +5,7 @@ import android.content.Context;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.adapters.SuggestionsAdapter;
+import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.firebase.FirebaseService;
@@ -23,6 +24,7 @@ import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.chat.ui.fragments.YoContactsFragment;
+import com.yo.android.crop.MainImageCropActivity;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.flip.MagazineTopicsSelectionFragment;
@@ -60,6 +62,9 @@ import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
 import com.yo.android.ui.TabsHeaderActivity;
+import com.yo.android.ui.TopicsDetailActivity;
+import com.yo.android.ui.TransferBalanceActivity;
+import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.UserProfileActivity;
@@ -139,6 +144,9 @@ import dagger.Provides;
                 OthersMagazinesDetailActivity.class,
                 UnManageInAppPurchaseActivity.class,
                 NotificationsActivity.class,
+                TopicsDetailActivity.class,
+                TransferBalanceSelectContactActivity.class,
+                TransferBalanceActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -174,7 +182,9 @@ import dagger.Provides;
                 PhoneChatActivity.class,
                 CallLogDetailsActivity.class,
                 FireBaseAuthToken.class,
-                NewDailerActivity.class
+                NewDailerActivity.class,
+                MainImageCropActivity.class,
+                UserChatAdapter.class
         },
         includes = {
                 AppModule.class,

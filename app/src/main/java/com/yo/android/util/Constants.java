@@ -7,6 +7,7 @@ public class Constants {
     public static final String MESSAGE_ID = "message_id";
     public static final String YOUR_PHONE_NUMBER = "yourPhoneNumber";
     public static final String OPPONENT_PHONE_NUMBER = "opponentPhoneNumber";
+    public static final String OPPONENT_NAME = "opponentName";
     public static final String OPPONENT_ID = "opponentId";
     public static final String CHAT_ROOM_ID = "chatRoomId";
     public static final String CHAT_FORWARD = "forward";
@@ -85,6 +86,7 @@ public class Constants {
     public static final String OPEN_ADD_BALANCE = "Open_add_balance";
     public static final String FROM = "from";
     public static final String DAILER = "Dialer";
+    public static final String IS_CHAT_FORWARD = "is_chat_forward";
     public static int SUCCESS_CODE = 200;
 
     public static final int ADD_IMAGE_CAPTURE = 1;
@@ -97,11 +99,18 @@ public class Constants {
     public static String CHAT_ROOM_REFRESH = "CHAT_ROOM_REFRESH";
     public static String UPDATE_NOTIFICATIONS = "UPDATE_NOTIFICATIONS";
     public static String COUNTRY_LIST = "COUNTRY_LIST";
+    public static String OTHERS_MAGAZINE_ACTION = "com.others.magazine.OTHERS";
+    public static String TOPIC_NOTIFICATION_ACTION = "com.notification.magazine.TOPIC";
+    public static String TOPIC_FOLLOWING_ACTION = "com.topic.detail.FOLLOW";
+    public static String REFRESH_TOPICS_ACTION = "com.refresh.magazine.TOPICS";
+    public static String BALANCE_TRANSFER_NOTIFICATION_ACTION = "com.notification.balance.TRANSFER";
 
 
     // Contacts
     public static final String NUMBER = "number";
     public static final String NAME = "name";
 
+
+    public static final String IS_IN_APP = "isInApp";
 
 }

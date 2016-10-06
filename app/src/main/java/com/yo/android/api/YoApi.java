@@ -116,7 +116,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("/api/articles.json")
-        Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id);
+        Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id, @Field("tag") String tag);
 
         @GET("api/magzines/{magzine_id}.json")
         Call<MagazineArticles> getArticlesOfMagazineAPI(@Path("magzine_id") String magzine_id, @Query("access_token") String access_token);
@@ -243,7 +243,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/articles.json")
-        Call<Articles> postStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("name") String name, @Field("description") String description, @Field("privacy") String privacy, @Field("magzine_id") String magzine_id);
+        Call<Articles> postStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("name") String name, @Field("description") String description, @Field("privacy") String privacy, @Field("magzine_id") String magzine_id, @Field("tag") String tag);
 
         @FormUrlEncoded
         @POST("api/magzines/remove_magzines.json")
@@ -265,6 +265,16 @@ public class YoApi {
 
         @GET("/api/call_costs.json")
         Call<ResponseBody> getSpentDetailsHistory(@Query("access_token") String access_token);
+
+        @GET("/api/user/app_users.json")
+        Call<List<FindPeople>> getAppUsersAPI(@Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/user/balance_transfer.json")
+        Call<Response> balanceTransferAPI(@Field("access_token") String access_token, @Field("receiver_id") String receiver_id, @Field("credit") String credit);
+
+        @GET("api/user/receiver_search.json")
+        Call<List<FindPeople>> searchInBalanceTransferContacts(@Query("access_token") String access_token, @Query("search_item") String search_item, @Query("page") int page, @Query("limit") int limit);
 
     }
 

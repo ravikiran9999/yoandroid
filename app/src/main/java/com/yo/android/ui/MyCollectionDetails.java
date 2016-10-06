@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -197,6 +198,8 @@ public class MyCollectionDetails extends BaseActivity {
 
                 holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
 
+                holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -242,7 +245,9 @@ public class MyCollectionDetails extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
                                 }
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
@@ -251,7 +256,9 @@ public class MyCollectionDetails extends BaseActivity {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     } else {
@@ -267,7 +274,9 @@ public class MyCollectionDetails extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
                                 }
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
                             }
 
@@ -276,7 +285,9 @@ public class MyCollectionDetails extends BaseActivity {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     }
@@ -380,7 +391,9 @@ public class MyCollectionDetails extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
                                 }
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
 
                             @Override
@@ -389,7 +402,9 @@ public class MyCollectionDetails extends BaseActivity {
                                 finalHolder.articleFollow.setText("Follow");
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                 data.setIsFollowing("false");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
 
                             }
                         });
@@ -410,6 +425,15 @@ public class MyCollectionDetails extends BaseActivity {
                         context.startActivity(intent);
                     }
                 });
+            }
+
+            if(holder.tvTopicName != null) {
+                if(!TextUtils.isEmpty(data.getTopicName())) {
+                    holder.tvTopicName.setVisibility(View.VISIBLE);
+                    holder.tvTopicName.setText(data.getTopicName());
+                } else {
+                    holder.tvTopicName.setVisibility(View.GONE);
+                }
             }
 
 
@@ -442,30 +466,36 @@ public class MyCollectionDetails extends BaseActivity {
                         ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Follow");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                data.setIsFollowing("false");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                }
-                                notifyDataSetChanged();
-                            }
+                                                                                            @Override
+                                                                                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                                                                ((BaseActivity) context).dismissProgressDialog();
+                                                                                                finalHolder.articleFollow.setText("Follow");
+                                                                                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                                                                                data.setIsFollowing("false");
+                                                                                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                                                                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                                                                                }
+                                                                                                if (MagazineArticlesBaseAdapter.mListener != null) {
+                                                                                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
+                                                                                                }
+                                                                                                if (!((BaseActivity) context).hasDestroyed()) {
+                                                                                                    notifyDataSetChanged();
+                                                                                                }
+                                                                                            }
 
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Following");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                data.setIsFollowing("true");
-                                notifyDataSetChanged();
-                            }
-                        });
+                                                                                            @Override
+                                                                                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                                                                                ((BaseActivity) context).dismissProgressDialog();
+                                                                                                finalHolder.articleFollow.setText("Following");
+                                                                                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                                                                                data.setIsFollowing("true");
+                                                                                                if (!((BaseActivity) context).hasDestroyed()) {
+                                                                                                    notifyDataSetChanged();
+                                                                                                }
+                                                                                            }
+                                                                                        }
+
+                        );
                     }
                 });
 
@@ -503,6 +533,8 @@ public class MyCollectionDetails extends BaseActivity {
         private ImageView magazineShare;
 
         private Button articleFollow;
+
+        private TextView tvTopicName;
     }
 
     @Override

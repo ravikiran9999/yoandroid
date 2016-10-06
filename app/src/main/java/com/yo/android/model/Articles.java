@@ -16,6 +16,9 @@ public class Articles {
     private String isFollowing;
     private String magzine_id;
     private String generated_url;
+    private String topicName;
+    private String topicId;
+    private String topicFollowing;
 
     public String getId() {
         return id;
@@ -103,5 +106,29 @@ public class Articles {
 
     public void setGenerated_url(String generated_url) {
         this.generated_url = generated_url;
+    }
+
+    public String getTopicName() {
+        return topicName;
+    }
+
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
+    }
+
+    public String getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
+    }
+
+    public String getTopicFollowing() {
+        return topicFollowing;
+    }
+
+    public void setTopicFollowing(String topicFollowing) {
+        this.topicFollowing = topicFollowing;
     }
 }

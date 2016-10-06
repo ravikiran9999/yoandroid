@@ -33,6 +33,7 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
@@ -64,6 +65,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private String voxUserName;
     private List<Room> listRoom;
     private List<String> roomId;
+    private List<String> checkRoomIdExist;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -90,6 +92,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         childEventListenersList = new ArrayList<>();
         arrayOfUsers = new ArrayList<>();
         roomId = new ArrayList<>();
+        checkRoomIdExist = new ArrayList<>();
         EventBus.getDefault().register(this);
     }
 
@@ -120,6 +123,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_chat, menu);
         this.menu = menu;
         Util.prepareContactsSearch(getActivity(), menu, chatRoomListAdapter, Constants.CHAT_FRAG);
@@ -139,6 +143,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             /*case R.id.clear_chat_history:
                 Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
+                break;*/
+            /*case R.id.notification_icon :
+                startActivity(new Intent(getActivity(), NotificationsActivity.class));
                 break;*/
 
             default:
@@ -216,7 +223,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 public void onCancelled(FirebaseError firebaseError) {
                     dismissProgressDialog();
                     firebaseError.getMessage();
-                    Toast.makeText(getActivity(), "Please try again", Toast.LENGTH_SHORT).show();
                 }
             });
             authReference.keepSynced(true);
@@ -249,47 +255,47 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                try {
-                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                    room.setYouserId(chatMessage.getYouserId());
-                    if (dataSnapshot.hasChildren()) {
-                        room.setLastChat(chatMessage.getMessage());
-                        if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
-                            room.setImages(true);
-                        } else {
-                            room.setImages(false);
-                        }
-                        room.setTime(chatMessage.getTime());
-                        room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
-                        if (!arrayOfUsers.contains(room)) {
-                            arrayOfUsers.add(room);
-                        } else {
-                            listRoom = new ArrayList<>();
-                            listRoom.addAll(arrayOfUsers);
-                            for (Room customer : listRoom) {
-                                if (arrayOfUsers.contains(customer) && customer.getFirebaseRoomId().equalsIgnoreCase(room.getFirebaseRoomId()) && !customer.getId().equalsIgnoreCase(room.getId())) {
+
+                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                room.setYouserId(chatMessage.getYouserId());
+                if (dataSnapshot.hasChildren()) {
+                    room.setLastChat(chatMessage.getMessage());
+                    if (!TextUtils.isEmpty(chatMessage.getType()) && chatMessage.getType().equals(Constants.IMAGE)) {
+                        room.setImages(true);
+                    } else {
+                        room.setImages(false);
+                    }
+                    room.setTime(chatMessage.getTime());
+                    room.setTimeStamp(Util.getChatListTimeFormat(getActivity(), chatMessage.getTime()));
+                    if (!arrayOfUsers.contains(room)) {
+                        arrayOfUsers.add(room);
+                    } else {
+                        listRoom = new ArrayList<>();
+                        listRoom.addAll(arrayOfUsers);
+                        for (Room customer : listRoom) {
+                            if (customer.getFirebaseRoomId() != null && customer.getId() != null) {
+                                if (arrayOfUsers.contains(customer) && customer.getFirebaseRoomId().equalsIgnoreCase(room.getFirebaseRoomId()) && !(customer.getId().equalsIgnoreCase(room.getId()))) {
                                     int i = listRoom.indexOf(customer);
                                     arrayOfUsers.set(i, room);
                                 }
                             }
-                            if (!listRoom.isEmpty()) {
-                                listRoom.clear();
-                            }
+                        }
+                        if (!listRoom.isEmpty()) {
+                            listRoom.clear();
                         }
                     }
-
-                    Collections.sort(arrayOfUsers, new Comparator<Room>() {
-                        @Override
-                        public int compare(Room lhs, Room rhs) {
-                            return (int) (rhs.getTime() - lhs.getTime());
-                        }
-                    });
-
-                    chatRoomListAdapter.addItems(arrayOfUsers);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+
+                Collections.sort(arrayOfUsers, new Comparator<Room>() {
+                    @Override
+                    public int compare(Room lhs, Room rhs) {
+                        return (int) (rhs.getTime() - lhs.getTime());
+                    }
+                });
+
+                chatRoomListAdapter.addItems(arrayOfUsers);
+
+
             }
 
             @Override
@@ -305,7 +311,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     if (dataSnapshot.hasChildren()) {
                         room.setLastChat("");
                         room.setImages(false);
-                        room.setTimeStamp(Util.getChatListTimeFormat(getContext(), chatMessage.getTime()));
+                        room.setTimeStamp(Util.getChatListTimeFormat(getActivity(), chatMessage.getTime()));
                     }
                     if (chatRoomListAdapter != null) {
                         chatRoomListAdapter.notifyDataSetChanged();
@@ -343,11 +349,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void getMembersId(DataSnapshot dataSnapshot) {
 
-        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+        for (final DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
             if (!roomId.contains(dataSnapshot1.getKey())) {
                 roomId.add(dataSnapshot1.getKey());
                 Firebase memberReference = dataSnapshot1.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot1.getKey());
-
                 memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -385,7 +390,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
-
             if (roomInfo.getName().isEmpty()) {
                 for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
                     if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
@@ -420,6 +424,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 arrayOfUsers.add(room);
                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+
             }
         }
         return arrayOfUsers;

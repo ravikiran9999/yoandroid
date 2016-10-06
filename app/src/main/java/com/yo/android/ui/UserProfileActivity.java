@@ -60,6 +60,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private ListView membersList;
     private Contact contact;
     private String opponentNo;
+    private String opponentName;
     private String opponentImg;
     private boolean fromChatRooms;
     private Firebase authReference;
@@ -77,6 +78,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+        getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
         ButterKnife.bind(this);
         enableBack();
         groupMembersList = new ArrayList<>();
@@ -99,9 +101,14 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (intent.hasExtra(Constants.OPPONENT_CONTACT_IMAGE)) {
                     opponentImg = intent.getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
                 }
+                if (intent.hasExtra(Constants.OPPONENT_NAME)) {
+                    opponentName = intent.getStringExtra(Constants.OPPONENT_NAME);
+                }
+
                 roomName = intent.getStringExtra(Constants.GROUP_NAME);
                 contact = new Contact();
                 contact.setPhoneNo(opponentNo);
+                contact.setName(opponentName);
                 contact.setVoxUserName(opponentNo);
                 contact.setImage(opponentImg);
                 contact.setYoAppUser(true);
@@ -113,7 +120,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     if (roomName != null) {
                         roomInfo.addListenerForSingleValueEvent(this);
                         roomInfo.keepSynced(true);
-                        profileCall.setVisibility(View.INVISIBLE);
+                        profileCall.setVisibility(View.GONE);
                     }
                 }
             }
@@ -144,6 +151,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 Glide.with(this)
                         .load(contact.getImage())
                         .placeholder(R.drawable.chat_group)
+                        .dontAnimate()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
@@ -152,6 +160,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                         .load(contact.getImage())
                         .placeholder(R.drawable.dynamic_profile)
                         .crossFade()
+                        .dontAnimate()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
             }
@@ -159,21 +168,32 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
 
             if (mContact != null) {
-                if (mContact.getName() != null) {
+
+                if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+","").equalsIgnoreCase(mContact.getPhoneNo())) {
                     profileName.setText(mContact.getName());
+                } else {
+                    profileName.setVisibility(View.GONE);
                 }
-                if (mContact.getPhoneNo() != null && (!mContact.getName().replaceAll("\\s+","").equalsIgnoreCase(mContact.getPhoneNo()))) {
+                if (mContact.getPhoneNo() != null) {
                     profileNumber.setText(mContact.getPhoneNo());
+                } else {
+                    profileNumber.setVisibility(View.GONE);
+                }
+            } else if (contact != null) {
+
+                if (contact.getName() != null && !contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
+                    profileName.setText(contact.getName());
+                } else {
+                    profileName.setVisibility(View.GONE);
+                }
+                if (contact.getPhoneNo() != null) {
+                    profileNumber.setText(contact.getPhoneNo());
+                } else {
+                    profileNumber.setVisibility(View.GONE);
                 }
             } else {
-                if (TextUtils.isEmpty(contact.getName()) || contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
-                    profileName.setText(contact.getPhoneNo());
-
-                } else {
-                    profileName.setText(contact.getName());
-                    profileNumber.setText(contact.getPhoneNo());
-                }
-
+                profileNumber.setVisibility(View.GONE);
+                profileName.setVisibility(View.GONE);
             }
             if (contact.getYoAppUser()) {
                 profileMsg.setImageResource(R.mipmap.ic_profile_chat);

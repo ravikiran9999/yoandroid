@@ -18,6 +18,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
+import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Room;
 import com.yo.android.photo.TextDrawable;
@@ -44,8 +45,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         super(context);
         Injector.obtain(context.getApplicationContext()).inject(this);
         this.context = context;
-        mDrawableBuilder = TextDrawable.builder()
-                .round();
+        mDrawableBuilder = TextDrawable.builder().round();
     }
 
     @Override
@@ -61,8 +61,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     @Override
     public void bindView(int position, final ChatRoomViewHolder holder, final Room item) {
 
-        String yourPhoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-
         if (item.getGroupName() == null) {
             if (TextUtils.isEmpty(item.getFullName())) {
                 holder.getOpponentName().setText(item.getMobileNumber());
@@ -71,26 +69,24 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             }
 
             Glide.with(mContext).load(item.getImage())
-                    .asBitmap().centerCrop()
-                    .placeholder(R.drawable.ic_contactprofile)
-                    .error(R.drawable.ic_contactprofile)
+                    .placeholder(loadAvatarImage(holder, false))
+                    .error(loadAvatarImage(holder, false))
+                    .dontAnimate()
                     .into(holder.getChatRoomPic());
 
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
             Glide.with(mContext).load(item.getImage())
-                    .asBitmap().centerCrop()
-                    .placeholder(R.drawable.ic_group)
+                    .placeholder(loadAvatarImage(holder, true))
                     .dontAnimate()
-                    .error(R.drawable.ic_group).
+                    .error(loadAvatarImage(holder, true)).
                     into(holder.getChatRoomPic());
         } else {
             holder.getOpponentName().setText("");
-
-            Glide.with(context)
-                    .load(R.drawable.ic_contactprofile)
-                    .fitCenter()
-                    .crossFade()
+            Glide.with(context).load(loadAvatarImage(holder, false))
+                    .dontAnimate()
+                    .placeholder(loadAvatarImage(holder, false))
+                    .error(loadAvatarImage(holder, false))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getChatRoomPic());
         }
@@ -100,9 +96,10 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
         } else if (!TextUtils.isEmpty(item.getLastChat())) {
             holder.getChat().setText(item.getLastChat());
+            holder.getChat().setVisibility(View.VISIBLE);
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
         } else {
-            holder.getChat().setText("");
+            holder.getChat().setVisibility(View.GONE);
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
         }
         holder.getTimeStamp().setText(item.getTimeStamp());

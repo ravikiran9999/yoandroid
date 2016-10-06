@@ -10,17 +10,14 @@
         android:id="@+id/row_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        card_view:cardCornerRadius="3dp"
-        card_view:cardElevation="1sp">
+        card_view:cardPreventCornerOverlap="false"
+        android:layout_alignParentTop="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="5dp">
+            android:layout_height="?android:attr/listPreferredItemHeight"
+            android:background="@android:color/white"
+            android:orientation="vertical">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imv_chat_room_pic"
@@ -28,50 +25,76 @@
                 android:layout_height="50dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
-                android:src="@drawable/ic_contactprofile" />
+                android:src="@drawable/dynamic_profile" />
 
-            <TextView
-                android:id="@+id/tv_opponent_name"
-                android:layout_width="wrap_content"
+            <LinearLayout android:id="@+id/layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/imv_chat_room_pic"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tv_time_stamp"
                 android:layout_toRightOf="@+id/imv_chat_room_pic"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                tools:text="Name" />
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_chat_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_opponent_name"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="10dp"
+                <TextView
+                    android:id="@+id/tv_opponent_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:maxLines="1"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    tools:text="Name" />
+
+                <TextView
+                    android:id="@+id/tv_chat_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_opponent_name"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@+id/imv_chat_room_pic"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"
+                    tools:text="This is a dummy text for a chat message. This is the second line of the message" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/imv_chat_room_pic"
+                android:layout_toRightOf="@+id/imv_chat_room_pic"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
-                android:layout_toRightOf="@+id/imv_chat_room_pic"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textColor="@android:color/black"
-                android:textSize="14sp"
-                tools:text="This is a dummy text for a chat message. This is the second line of the message" />
+                android:background="@color/light_gray"
+                />
 
             <TextView
                 android:id="@+id/tv_time_stamp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="16dp"
+                android:gravity="center_vertical"
                 android:textColor="@color/dialpad_icon_tint"
                 android:textSize="12sp"
                 tools:text="1 hours ago" />
-
         </RelativeLayout>
+
+
     </android.support.v7.widget.CardView>
+
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Members;
 import com.yo.android.model.Room;
@@ -45,7 +46,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     public void addItems(List<T> list) {
         mList = new ArrayList<>(list);
         //if (mOriginalList.isEmpty()) {
-        if(mOriginalList.size()==0) {
+        if (mOriginalList.size() == 0) {
             mOriginalList = new ArrayList<>(list);
         }
         //}
@@ -134,11 +135,10 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                 }
 
                 if (((Room) event).getFullName() != null && ((Room) event).getFullName().toLowerCase().contains(searchKey.toLowerCase())
-                        || ((Room)event).getGroupName() != null && ((Room)event).getGroupName().toLowerCase().contains(searchKey.toLowerCase())) {
+                        || ((Room) event).getGroupName() != null && ((Room) event).getGroupName().toLowerCase().contains(searchKey.toLowerCase())) {
                     temp.add(event);
                 }
             }
-
             addItems(temp);
         }
     }
@@ -153,8 +153,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
             for (T event : mOriginalList) {
                 if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(searchKey.toLowerCase())) {
                     temp.add(event);
-                }
-                if (((Contact) event).getPhoneNo() != null && ((Contact) event).getPhoneNo().contains(searchKey)) {
+                } else if (((Contact) event).getPhoneNo() != null && ((Contact) event).getPhoneNo().contains(searchKey)) {
                     temp.add(event);
                 }
             }
@@ -210,5 +209,6 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     public abstract V getViewHolder(View convertView);
 
     public abstract void bindView(int position, V holder, T item);
+
 
 }

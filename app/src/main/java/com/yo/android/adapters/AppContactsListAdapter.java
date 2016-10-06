@@ -13,6 +13,7 @@ import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
+import com.yo.android.util.Util;
 
 /**
  * Created by rdoddapaneni on 7/5/2016.
@@ -29,6 +30,10 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
         mColorGenerator = ColorGenerator.MATERIAL;
     }
 
+    public void addItem(Contact contact) {
+        getAllItems().add(contact);
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getLayoutId() {
@@ -41,47 +46,67 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
     }
 
     @Override
-    public void bindView(int position, AppRegisteredContactsViewHolder holder, Contact item) {
-        holder.getContactName().setText(item.getName());
-        if (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo())) {
-            holder.getContactNumber().setText(item.getPhoneNo());
-
-        } else {
-            holder.getContactNumber().setText("");
-        }
-
-        if(!item.getYoAppUser()) {
-            holder.getInviteContact().setVisibility(View.VISIBLE);
-            holder.getInviteContact().setImageResource(R.drawable.ic_invitefriends);
-        } else {
+    public void bindView(int position, AppRegisteredContactsViewHolder holder, final Contact item) {
+        if (position == 0 && item.getVoxUserName() == null && item.getPhoneNo() == null && item.getFirebaseRoomId() == null) {
+            holder.getContactName().setVisibility(View.VISIBLE);
+            holder.getContactName().setText(item.getName());
+            holder.getContactNumber().setVisibility(View.GONE);
+            holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.chat_group));
             holder.getInviteContact().setVisibility(View.GONE);
-        }
-
-        try {
-            if (!TextUtils.isEmpty(item.getImage())) {
-
-                Glide.with(mContext)
-                        .load(item.getImage())
-                        .fitCenter()
-                        .placeholder(R.drawable.ic_contactprofile)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(holder.getContactPic());
+        } else {
+            if (TextUtils.isEmpty(item.getName())) {
+                holder.getContactName().setVisibility(View.GONE);
             } else {
-                if (item.getName() != null && item.getName().length() >= 1 && !TextUtils.isDigitsOnly(item.getName())) {
-                    if (Settings.isTitlePicEnabled) {
-                        Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
-                        holder.getContactPic().setImageDrawable(drawable);
-                    } else {
-                        holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_contactprofile));
-                    }
-                } else {
-                    holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_contactprofile));
-
-                }
+                holder.getContactName().setVisibility(View.VISIBLE);
+                holder.getContactName().setText(item.getName());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo())) {
+                holder.getContactNumber().setText(item.getPhoneNo());
+
+            } else {
+                holder.getContactNumber().setVisibility(View.GONE);
+            }
+
+            if (!item.getYoAppUser()) {
+                holder.getInviteContact().setVisibility(View.VISIBLE);
+                holder.getInviteContact().setImageResource(R.drawable.ic_invitefriends);
+            } else {
+                holder.getInviteContact().setVisibility(View.GONE);
+            }
+
+            holder.getInviteContact().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Util.inviteFriend(mContext, item.getPhoneNo());
+                }
+            });
+
+            try {
+                if (!TextUtils.isEmpty(item.getImage())) {
+
+                    Glide.with(mContext)
+                            .load(item.getImage())
+                            .fitCenter()
+                            .placeholder(R.drawable.dynamic_profile)
+                            .crossFade()
+                            .dontAnimate()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.getContactPic());
+                } else {
+                    if (item.getName() != null && item.getName().length() >= 1 && !TextUtils.isDigitsOnly(item.getName())) {
+                        if (Settings.isTitlePicEnabled) {
+                            Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
+                            holder.getContactPic().setImageDrawable(drawable);
+                        } else {
+                            holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
+                        }
+                    } else {
+                        holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

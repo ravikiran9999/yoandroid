@@ -29,6 +29,7 @@ import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.sync.SyncUtils;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -176,13 +177,13 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 layout.setVisibility(View.GONE);
-                return false;
+                return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 layout.setVisibility(View.VISIBLE);
-                return false;
+                return true;
             }
         });
         super.onCreateOptionsMenu(menu, inflater);
@@ -197,7 +198,10 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                 i.putExtra("finishActivityOnSaveCompleted", true); // Fix for 4.0.3 +
             startActivityForResult(i, PICK_CONTACT_REQUEST);
             return true;
-        }
+        } /*else if (item.getItemId() == R.id.notification_icon) {
+            startActivity(new Intent(getActivity(), NotificationsActivity.class));
+        }*/
+
 
         return super.onOptionsItemSelected(item);
     }

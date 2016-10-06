@@ -3,25 +3,28 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
         android:id="@+id/row_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
         card_view:cardCornerRadius="3dp"
-        card_view:cardElevation="1sp">
+        card_view:cardElevation="1sp"
+        card_view:cardPreventCornerOverlap="false">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/listPreferredItemHeight"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@android:color/white"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imv_contact_pic"
@@ -37,9 +40,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/iv_invite"
                 android:layout_toRightOf="@+id/imv_contact_pic"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_name"
@@ -49,10 +52,12 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:visibility="visible"
-                    tools:text="YO!" />
+                    tools:text="YO! sfdsf sdfds fdsf sfsdf dsf dsfsd fdsf ds fsd" />
 
                 <TextView
                     android:id="@+id/tv_phone_number"
@@ -61,16 +66,27 @@
                     android:layout_below="@+id/tv_phone_number"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
-                    android:layout_marginTop="5dp"
                     android:layout_toLeftOf="@+id/iv_message_type"
                     android:layout_toRightOf="@+id/imv_contact_pic"
                     android:ellipsize="end"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
                     android:visibility="visible"
                     tools:text="9490590000" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/isadmin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center_vertical"
+                android:text="admin"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_contact_type"
@@ -97,7 +113,8 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="5dp"
                 android:padding="10dp"
-                android:src="@drawable/ic_receiver" />
+                android:src="@drawable/ic_receiver"
+                android:visibility="gone" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

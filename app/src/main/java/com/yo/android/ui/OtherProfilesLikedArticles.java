@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -230,6 +231,8 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
                 holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
 
+                holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -270,7 +273,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
@@ -285,7 +290,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     } else {
@@ -301,7 +308,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
                                 }
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
 
                             }
@@ -311,7 +320,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
                         });
                     }
@@ -418,7 +429,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
                                 }
                                 isFollowing = true;
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
                             }
 
                             @Override
@@ -428,7 +441,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                 data.setIsFollowing("false");
                                 isFollowing = false;
-                                notifyDataSetChanged();
+                                if (!((BaseActivity)context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
 
                             }
                         });
@@ -470,7 +485,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                             MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
                                         }
                                         isFollowing = false;
-                                        notifyDataSetChanged();
+                                        if (!((BaseActivity)context).hasDestroyed()) {
+                                            notifyDataSetChanged();
+                                        }
 
                                     }
 
@@ -481,7 +498,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                         data.setIsFollowing("true");
                                         isFollowing = true;
-                                        notifyDataSetChanged();
+                                        if (!((BaseActivity)context).hasDestroyed()) {
+                                            notifyDataSetChanged();
+                                        }
 
                                     }
                                 });
@@ -512,6 +531,25 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 });
             }
 
+            if(holder.tvTopicName != null) {
+                if(!TextUtils.isEmpty(data.getTopicName())) {
+                    holder.tvTopicName.setVisibility(View.VISIBLE);
+                    holder.tvTopicName.setText(data.getTopicName());
+                    holder.tvTopicName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context, TopicsDetailActivity.class);
+                            intent.putExtra("TopicId", data.getTopicId());
+                            intent.putExtra("TopicName", data.getTopicName());
+                            intent.putExtra("TopicFollowing", data.getTopicFollowing());
+                            context.startActivity(intent);
+                        }
+                    });
+                } else {
+                    holder.tvTopicName.setVisibility(View.GONE);
+                }
+            }
+
 
             return layout;
         }
@@ -519,7 +557,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            notifyDataSetChanged();
+            if (!((BaseActivity)context).hasDestroyed()) {
+                notifyDataSetChanged();
+            }
         }
 
         @Override
@@ -572,5 +612,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         private ImageView magazineShare;
 
         private Button articleFollow;
+
+        private TextView tvTopicName;
     }
 }

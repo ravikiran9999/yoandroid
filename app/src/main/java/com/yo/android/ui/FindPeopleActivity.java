@@ -167,13 +167,13 @@ public class FindPeopleActivity extends BaseActivity {
                     findPeopleAdapter.addItemsAll(findPeopleList);
                     originalList.addAll(findPeopleList);
                 }
-                isMoreLoading=false;
+                isMoreLoading = false;
             }
 
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                 dismissProgressDialog();
-                isMoreLoading=false;
+                isMoreLoading = false;
             }
         });
     }
@@ -185,10 +185,14 @@ public class FindPeopleActivity extends BaseActivity {
             if(data!= null) {
                 if("Following".equals(data.getStringExtra("FollowState"))) {
                     findPeopleAdapter.getItem(pos).setIsFollowing("true");
-                    findPeopleAdapter.notifyDataSetChanged();
+                    if (!hasDestroyed()) {
+                        findPeopleAdapter.notifyDataSetChanged();
+                    }
                 } else {
                     findPeopleAdapter.getItem(pos).setIsFollowing("false");
-                    findPeopleAdapter.notifyDataSetChanged();
+                    if (!hasDestroyed()) {
+                        findPeopleAdapter.notifyDataSetChanged();
+                    }
                 }
             }
 

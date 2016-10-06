@@ -34,6 +34,7 @@ import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
+import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.VoipConstants;
 
@@ -152,7 +153,28 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (mBalanceHelper != null && resultCode == Activity.RESULT_OK) {
+        if (mBalanceHelper != null && requestCode == 11 && resultCode == Activity.RESULT_OK) {
+            showProgressDialog();
+            mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    dismissProgressDialog();
+                    try {
+                        DecimalFormat df = new DecimalFormat("0.000");
+                        String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
+                        preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
+                    } catch (IllegalArgumentException e) {
+                        mLog.w(TAG, "getCurrentBalance", e);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    dismissProgressDialog();
+
+                }
+            });
+        } else if (mBalanceHelper != null && resultCode == Activity.RESULT_OK) {
             try {
                 DecimalFormat df = new DecimalFormat("0.000");
                 String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
@@ -160,9 +182,10 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             } catch (IllegalArgumentException e) {
                 mLog.w(TAG, "getCurrentBalance", e);
             }
-        } else {
-            mToastFactory.showToast(getString(R.string.failed_add_balance));
         }
+        /*else {
+            mToastFactory.showToast(getString(R.string.failed_add_balance));
+        }*/
         closeActivityAddBalance(resultCode, data);
     }
 
@@ -216,7 +239,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         List<MoreData> menuDataList = new ArrayList<>();
         menuDataList.add(new MoreData(getString(R.string.add_balance_from_google_play), false));
         menuDataList.add(new MoreData(getString(R.string.add_balance_from_voucher), true));
-        menuDataList.add(new MoreData(getString(R.string.transfer_balance), true));
+        if (getArguments() == null) {
+            menuDataList.add(new MoreData(getString(R.string.transfer_balance), true));
+        }
 
         return menuDataList;
     }
@@ -228,7 +253,13 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         if (name.equalsIgnoreCase(getString(R.string.add_balance_from_voucher))) {
             showVoucherDialog();
         } else if (name.equalsIgnoreCase(getString(R.string.transfer_balance))) {
-            mToastFactory.showToast("Need to implement");
+            //mToastFactory.showToast("Need to implement");
+            String balance = mBalanceHelper.getCurrentBalance();
+            String currencySymbol = mBalanceHelper.getCurrencySymbol();
+            Intent intent = new Intent(getActivity(), TransferBalanceSelectContactActivity.class);
+            intent.putExtra("balance", balance);
+            intent.putExtra("currencySymbol", currencySymbol);
+            startActivityForResult(intent,11);
         }
     }
 

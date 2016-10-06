@@ -58,6 +58,7 @@ public class GroupContactsActivity extends BaseActivity {
         //setHasOptionsMenu(true);
         //groupName = getString(Constants.GROUP_NAME);
         setContentView(R.layout.fragment_yo_contacts);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         listView = (ListView) findViewById(R.id.lv_app_contacts);
 

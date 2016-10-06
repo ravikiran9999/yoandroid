@@ -1,5 +1,7 @@
 package com.yo.android.chat.ui;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -19,8 +21,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.yo.android.R;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
-import com.yo.android.helpers.ChatRoomViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
@@ -39,6 +41,7 @@ public class ChatActivity extends BaseActivity {
 
     private String opponent;
     private String mOpponentImg;
+    private String title;
     private Room room;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     @Inject
@@ -47,6 +50,13 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancelAll();
+
+        //Clear all Notifications
+        NotificationCache.clearNotifications();
+
 
         UserChatFragment userChatFragment = new UserChatFragment();
         Bundle args = new Bundle();
@@ -70,6 +80,7 @@ public class ChatActivity extends BaseActivity {
             if (room.getGroupName() != null) {
                 args.putString(Constants.TYPE, room.getGroupName());
             }
+
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
             Util.cancelAllNotification(this);
@@ -97,6 +108,10 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             }
+
+            if (getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER) != null) {
+                args.putString(Constants.TYPE, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
+            }
         }
 
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
@@ -114,10 +129,10 @@ public class ChatActivity extends BaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayShowCustomEnabled(true);
             View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
-            LinearLayout titleView = (LinearLayout)customView.findViewById(R.id.title_view);
+            LinearLayout titleView = (LinearLayout) customView.findViewById(R.id.title_view);
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
-            String title = null;
+
             Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
             if (contact != null && !TextUtils.isEmpty(contact.getName())) {
                 title = contact.getName();
@@ -137,6 +152,7 @@ public class ChatActivity extends BaseActivity {
                         .asBitmap().centerCrop()
                         .placeholder(loadAvatarImage(true))
                         .error(loadAvatarImage(true))
+                        .dontAnimate()
                         .into(new BitmapImageViewTarget(imageView) {
                             @Override
                             protected void setResource(Bitmap resource) {
@@ -149,6 +165,7 @@ public class ChatActivity extends BaseActivity {
             } else {
                 Glide.with(this).load(mOpponentImg)
                         .asBitmap().centerCrop()
+                        .dontAnimate()
                         .placeholder(loadAvatarImage(false))
                         .error(loadAvatarImage(false))
                         .into(new BitmapImageViewTarget(imageView) {
@@ -172,6 +189,7 @@ public class ChatActivity extends BaseActivity {
 
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
+                    intent.putExtra(Constants.OPPONENT_NAME, title);
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
 

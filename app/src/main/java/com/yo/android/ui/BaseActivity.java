@@ -16,7 +16,7 @@ import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ParentActivity;
 import com.yo.android.di.AwsLogsCallBack;
-import com.yo.android.di.Injector;
+import com.yo.android.util.Constants;
 import com.yo.android.vox.VoxFactory;
 
 import javax.inject.Inject;
@@ -48,6 +48,9 @@ public class BaseActivity extends ParentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
+
         mAwsLogsCallBack.onCalled(getBaseContext(), getIntent());
         Intent intent = new Intent(this, FirebaseService.class);
         startService(intent);
@@ -65,6 +68,7 @@ public class BaseActivity extends ParentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, false);
         isDestroyed = true;
     }
 

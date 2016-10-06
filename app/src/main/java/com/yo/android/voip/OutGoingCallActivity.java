@@ -99,10 +99,23 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callModel = new SipCallModel();
         bus.register(this);
         //
+
+
+
         if (getIntent().getStringExtra(CALLER_NAME) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NAME));
         } else {
-            callerName.setText(getIntent().getStringExtra(CALLER_NO));
+            String stringExtra =getIntent().getStringExtra(CALLER_NO);
+            if (stringExtra != null && stringExtra.contains("youser")) {
+                try {
+                    stringExtra = stringExtra.substring(stringExtra.indexOf("youser") + 6, stringExtra.length() - 1);
+                    callerName.setText(stringExtra);
+                } catch (StringIndexOutOfBoundsException e) {
+                    mLog.e(TAG, "" + e);
+                }
+            } else if (stringExtra != null) {
+                callerName.setText(stringExtra);
+            }
         }
 
         //To display name of the user based on vox username

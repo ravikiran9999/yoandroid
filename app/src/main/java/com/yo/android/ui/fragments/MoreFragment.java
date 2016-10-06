@@ -1,6 +1,7 @@
 package com.yo.android.ui.fragments;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -24,13 +28,19 @@ import android.widget.TextView;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.firebase.client.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.flip.MagazineFlipArticlesFragment;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.YoSipService;
@@ -148,11 +158,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         if (!TextUtils.isEmpty(avatar)) {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
             Glide.with(getActivity()).load(avatar)
-                    .placeholder(R.drawable.dynamic_profile)
                     .dontAnimate()
-                    .error(R.drawable.dynamic_profile).
-                    into(profilePic);
-
+                    .placeholder(profilePic.getDrawable())
+                    .error(profilePic.getDrawable())
+                    .fitCenter()
+                    .into(profilePic);
         } else {
             addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
         }
@@ -199,6 +209,20 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         prepareSettingsList();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_more, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        /*if(item.getItemId() == R.id.notification_icon) {
+            startActivity(new Intent(getActivity(), NotificationsActivity.class));
+        }*/
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -302,6 +326,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
                             fireBaseHelper.unauth();
+                            FirebaseAuth.getInstance().signOut();
                             yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -315,6 +340,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                             });
                         }
                         preferenceEndPoint.clearAll();
+                        MagazineFlipArticlesFragment.lastReadArticle = 0;
 
                         //stop firebase service
                         //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
@@ -345,13 +371,25 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        if (resultCode == Activity.RESULT_CANCELED) {
+            return;
+        }
         switch (requestCode) {
-
+            case Helper.CROP_ACTIVITY:
+                if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
+                    Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
+                    if (imagePath != null) {
+                        uploadFile(new File(imagePath.getPath()));
+                    }
+                }
+                break;
             case Constants.ADD_IMAGE_CAPTURE:
                 try {
                     String imagePath = cameraIntent.mFileTemp.getPath();
-                    uploadFile(new File(imagePath));
+                    if (imagePath != null) {
+                        Helper.setSelectedImage(getActivity(), imagePath, true);
+                    }
+                    //uploadFile(new File(imagePath));
 
                 } catch (Exception e) {
                     mLog.w("MoreFragment", e);
@@ -362,7 +400,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 if (data != null) {
                     try {
                         String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(), data);
-                        uploadFile(new File(imagePath));
+                        Helper.setSelectedImage(getActivity(), imagePath, true);
+
+                        //uploadFile(new File(imagePath));
                     } catch (Exception e) {
                         mLog.w("MoreFragment", e);
                     }
@@ -384,12 +424,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         if (key.equals(Constants.CURRENT_BALANCE)) {
             String balance = mBalanceHelper.getCurrentBalance();
             String currencySymbol = mBalanceHelper.getCurrencySymbol();
-            menuAdapter.getItem(2).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
+            menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
             menuAdapter.notifyDataSetChanged();
         } else if (key.equals(Constants.USER_NAME)) {
-            String name = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
-            menuAdapter.getItem(0).setName(name);
-            menuAdapter.notifyDataSetChanged();
+            String username = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+            name.setText(username);
         }
     }
 }
