@@ -90,7 +90,7 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     // firebase
-    compile 'com.google.firebase:firebase-messaging:9.0.2'
+    compile 'com.google.firebase:firebase-messaging:9.4.0'
     compile 'com.google.firebase:firebase-auth:9.4.0'
     compile 'com.google.firebase:firebase-database:9.4.0'
     compile 'com.google.firebase:firebase-storage:9.4.0'
@@ -120,7 +120,7 @@ dependencies {
     compile "com.android.support:palette-v7:${supportAppcompatVersion}"
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile 'se.emilsjolander:android-flipview:1.1.0'
-    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:multidex:1.0.1'
     compile 'me.grantland:autofittextview:0.2.1'
     compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '7.0.3'
     compile 'com.isseiaoki:simplecropview:1.1.4'
