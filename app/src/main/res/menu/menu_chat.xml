@@ -9,12 +9,12 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
 
-    <item
+    <!--<item
         android:id="@+id/notification_icon"
         android:icon="@drawable/ic_newchat"
         android:title="@string/notifications"
         android:visible="false"
-        app:showAsAction="always" />
+        app:showAsAction="always" />-->
 
     <item
         android:id="@+id/chat_contact"
