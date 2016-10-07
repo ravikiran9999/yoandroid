@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
+import com.yo.android.model.NotificationCount;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.ui.NotificationsActivity;
@@ -66,6 +68,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private List<Room> listRoom;
     private List<String> roomId;
     private List<String> checkRoomIdExist;
+    private int mNotifCount;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -128,6 +131,28 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         this.menu = menu;
         Util.prepareContactsSearch(getActivity(), menu, chatRoomListAdapter, Constants.CHAT_FRAG);
         Util.changeSearchProperties(menu);
+
+        final View count = menu.findItem(R.id.notification_icon).getActionView();
+        final Button notifCount = (Button) count.findViewById(R.id.notif_count);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mNotifCount > 0) {
+                    count.setVisibility(View.VISIBLE);
+                    notifCount.setVisibility(View.VISIBLE);
+                    notifCount.setText(String.valueOf(mNotifCount));
+
+                }
+            }
+        });
+        count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), NotificationsActivity.class));
+
+            }
+        });
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -143,9 +168,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             /*case R.id.clear_chat_history:
                 Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
-                break;*/
-            /*case R.id.notification_icon :
-                startActivity(new Intent(getActivity(), NotificationsActivity.class));
                 break;*/
 
             default:
@@ -196,7 +218,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onResume() {
         super.onResume();
         isRoomsExist();
-
+        mNotifCount = preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT);
+        if (mNotifCount == 0) {
+            getActivity().supportInvalidateOptionsMenu();
+        }
     }
 
     private void isRoomsExist() {
@@ -428,5 +453,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         }
         return arrayOfUsers;
+    }
+
+    public void onEventMainThread(NotificationCount count) {
+        if (count.getCount() > 0) {
+            mNotifCount = count.getCount();
+            getActivity().supportInvalidateOptionsMenu();
+        }
     }
 }

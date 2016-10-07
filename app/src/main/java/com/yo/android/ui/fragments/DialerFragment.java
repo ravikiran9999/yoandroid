@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -26,6 +27,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.model.NotificationCount;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.ui.BottomTabsActivity;
@@ -105,7 +107,7 @@ public class DialerFragment extends BaseFragment {
     ContactsSyncManager mContactsSyncManager;
 
     public boolean isFromDailer = false;
-
+    private int mNotifCount;
 
     public interface CallLogClearListener {
         public void clear();
@@ -161,6 +163,27 @@ public class DialerFragment extends BaseFragment {
         this.menu = menu;
         Util.prepareSearch(getActivity(), menu, adapter);
         Util.changeSearchProperties(menu);
+
+        final View count = menu.findItem(R.id.notification_icon).getActionView();
+        final Button notifCount = (Button) count.findViewById(R.id.notif_count);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mNotifCount > 0) {
+                    count.setVisibility(View.VISIBLE);
+                    notifCount.setVisibility(View.VISIBLE);
+                    notifCount.setText(String.valueOf(mNotifCount));
+
+                }
+            }
+        });
+        count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), NotificationsActivity.class));
+            }
+        });
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -181,9 +204,7 @@ public class DialerFragment extends BaseFragment {
                     loadCallLogs();
                 }
             });
-        } /*else if (item.getItemId() == R.id.notification_icon) {
-            startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }*/
+        }
 
         if (str != null) {
             preferenceEndPoint.saveStringPreference(Constants.DIALER_FILTER, str);
@@ -327,4 +348,11 @@ public class DialerFragment extends BaseFragment {
             mBalanceHelper.checkBalance(null);
         }
     }
+
+    /*public void onEventMainThread(NotificationCount count) {
+        if(count.getCount() > 0) {
+            mNotifCount = count.getCount();
+            getActivity().supportInvalidateOptionsMenu();
+        }
+    }*/
 }

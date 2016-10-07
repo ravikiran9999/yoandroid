@@ -42,6 +42,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.MoreData;
+import com.yo.android.model.NotificationCount;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
@@ -108,7 +109,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Inject
     FireBaseHelper fireBaseHelper;
-
+    private int mNotifCount;
     public MoreFragment() {
         // Required empty public constructor
     }
@@ -214,14 +215,32 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_more, menu);
+
+        final View count = menu.findItem(R.id.notification_icon).getActionView();
+        final Button notifCount = (Button) count.findViewById(R.id.notif_count);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mNotifCount > 0) {
+                    count.setVisibility(View.VISIBLE);
+                    notifCount.setVisibility(View.VISIBLE);
+                    notifCount.setText(String.valueOf(mNotifCount));
+
+                }
+            }
+        });
+        count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), NotificationsActivity.class));
+            }
+        });
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /*if(item.getItemId() == R.id.notification_icon) {
-            startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }*/
         return super.onOptionsItemSelected(item);
     }
 
@@ -431,4 +450,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             name.setText(username);
         }
     }
+
+    /*public void onEventMainThread(NotificationCount count) {
+        if(count.getCount() > 0) {
+            mNotifCount = count.getCount();
+            getActivity().supportInvalidateOptionsMenu();
+        }
+    }*/
 }

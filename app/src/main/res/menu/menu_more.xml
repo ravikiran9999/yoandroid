@@ -4,5 +4,6 @@
         android:id="@+id/notification_icon"
         android:title="@string/notifications"
         android:visible="false"
+        app:actionLayout="@layout/custom_button"
         app:showAsAction="always" />
 </menu>

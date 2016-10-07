@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+    >
+
+    <ImageView
+        android:id="@+id/cartIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bell" />
+
+    <Button
+        android:id="@+id/notif_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="top|right"
+        android:background="@drawable/countshape"
+        android:gravity="center"
+        android:minHeight="14dp"
+        android:minWidth="14dp"
+        android:padding="2dp"
+        android:maxLines="1"
+        android:text="@string/zero"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone"
+        />
+</FrameLayout>

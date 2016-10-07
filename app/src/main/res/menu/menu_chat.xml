@@ -11,9 +11,8 @@
 
     <item
         android:id="@+id/notification_icon"
-        android:icon="@drawable/ic_newchat"
         android:title="@string/notifications"
-        android:visible="false"
+        app:actionLayout="@layout/custom_button"
         app:showAsAction="always" />
 
     <item

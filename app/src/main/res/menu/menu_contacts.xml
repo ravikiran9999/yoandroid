@@ -11,6 +11,7 @@
 
     <item
         android:id="@+id/notification_icon"
+        app:actionLayout="@layout/custom_button"
         android:title="@string/notifications"
         android:visible="false"
         app:showAsAction="always" />

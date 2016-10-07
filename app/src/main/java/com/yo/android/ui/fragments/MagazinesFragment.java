@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -25,12 +26,14 @@ import com.yo.android.adapters.FilterWithSpaceAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
+import com.yo.android.model.NotificationCount;
 import com.yo.android.model.Topics;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.MyCollections;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.WishListActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -59,7 +62,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     protected PreferenceEndPoint preferenceEndPoint;
 
     private List<Topics> topicsList;
-
+    private int mNotifCount;
     private Menu menu;
     public static List<Topics> unSelectedTopics;
     FilterWithSpaceAdapter<String> mAdapter;
@@ -98,6 +101,25 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         inflater.inflate(R.menu.menu_magazines, menu);
         this.menu = menu;
         prepareTopicsSearch(menu);
+        final View count = menu.findItem(R.id.notification_icon).getActionView();
+        final Button notifCount = (Button) count.findViewById(R.id.notif_count);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mNotifCount > 0) {
+                    count.setVisibility(View.VISIBLE);
+                    notifCount.setVisibility(View.VISIBLE);
+                    notifCount.setText(String.valueOf(mNotifCount));
+
+                }
+            }
+        });
+        count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), NotificationsActivity.class));
+            }
+        });
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -299,7 +321,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     Log.i(TAG, "onQueryTextSubmit: " + query);
-                    if(mAdapter.getCount() >0) {
+                    if (mAdapter.getCount() > 0) {
                         Log.d("Search", "The selected item is " + mAdapter.getItem(0));
                         String topicName = (String) mAdapter.getItem(0);
                         searchTextView.setText(topicName);
@@ -343,12 +365,19 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                 // do nothing
+        // do nothing
     }
 
     public void onEventMainThread(String action) {
         if (Constants.REFRESH_TOPICS_ACTION.equals(action)) {
-         callApiSearchTopics();
+            callApiSearchTopics();
         }
     }
+
+    /*public void onEventMainThread(NotificationCount count) {
+        if(count.getCount() > 0) {
+            mNotifCount = count.getCount();
+            getActivity().supportInvalidateOptionsMenu();
+        }
+    }*/
 }

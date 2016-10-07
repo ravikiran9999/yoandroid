@@ -111,6 +111,7 @@ public class Constants {
     public static final String NAME = "name";
 
 
+    public static final String NOTIFICATION_COUNT = "notification_count";
     public static final String IS_IN_APP = "isInApp";
 
 }
