@@ -181,9 +181,9 @@ public class DialerFragment extends BaseFragment {
                     loadCallLogs();
                 }
             });
-        } else if (item.getItemId() == R.id.notification_icon) {
+        } /*else if (item.getItemId() == R.id.notification_icon) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }
+        }*/
 
         if (str != null) {
             preferenceEndPoint.saveStringPreference(Constants.DIALER_FILTER, str);

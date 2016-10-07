@@ -144,9 +144,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             /*case R.id.clear_chat_history:
                 Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
                 break;*/
-            case R.id.notification_icon :
+            /*case R.id.notification_icon :
                 startActivity(new Intent(getActivity(), NotificationsActivity.class));
-                break;
+                break;*/
 
             default:
                 break;
