@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -37,6 +38,7 @@ public class GroupContactsActivity extends BaseActivity {
 
     private GroupContactsListAdapter groupContactsListAdapter;
     private ListView listView;
+    TextView textView;
     private String groupName;
     private Menu mMenu;
     @Inject
@@ -61,7 +63,7 @@ public class GroupContactsActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         listView = (ListView) findViewById(R.id.lv_app_contacts);
-
+        textView = (TextView) findViewById(R.id.no_contacts);
         groupContactsListAdapter = new GroupContactsListAdapter(this);
         listView.setAdapter(groupContactsListAdapter);
 
@@ -108,15 +110,26 @@ public class GroupContactsActivity extends BaseActivity {
                             contactList.add(response.body().get(i));
                         }
                     }
-                    groupContactsListAdapter.addItems(contactList);
-                    CreateGroupActivity.ContactsArrayList = contactList;
+
+                    if(contactList.isEmpty()) {
+                        listView.setVisibility(View.GONE);
+                        textView.setVisibility(View.VISIBLE);
+                    } else {
+                        groupContactsListAdapter.addItems(contactList);
+                        CreateGroupActivity.ContactsArrayList = contactList;
+                    }
+                } else {
+                    listView.setVisibility(View.GONE);
+                    textView.setVisibility(View.VISIBLE);
                 }
+
                 dismissProgressDialog();
             }
 
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
+                listView.setVisibility(View.GONE);
             }
         });
     }
