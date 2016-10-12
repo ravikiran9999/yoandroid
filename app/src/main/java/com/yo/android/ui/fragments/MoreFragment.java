@@ -30,6 +30,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
@@ -41,7 +43,9 @@ import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
+import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.MoreData;
+import com.yo.android.model.Popup;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
@@ -57,6 +61,7 @@ import com.yo.android.util.Util;
 import com.yo.android.voip.VoipConstants;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -209,6 +214,13 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         prepareSettingsList();
+
+        /*if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+            Type type = new TypeToken<List<Popup>>() {
+            }.getType();
+            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+            PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this);
+        }*/
     }
 
     @Override
@@ -429,6 +441,30 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         } else if (key.equals(Constants.USER_NAME)) {
             String username = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
             name.setText(username);
+        }
+
+        if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.profile))) {
+            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this);
+            }
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this);
+            }
+        }
+        else {
         }
     }
 }

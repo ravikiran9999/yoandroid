@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -11,15 +12,22 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Contacts;
+import com.yo.android.model.Popup;
 import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.util.Constants;
 
-public class TabsHeaderActivity extends BaseActivity {
+import java.lang.reflect.Type;
+import java.util.List;
+
+public class TabsHeaderActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +82,15 @@ public class TabsHeaderActivity extends BaseActivity {
 
             }
         });
+
+        preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+        if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+            Type type = new TypeToken<List<Popup>>() {
+            }.getType();
+            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+            PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null);
+        }
     }
 
 
@@ -98,5 +115,21 @@ public class TabsHeaderActivity extends BaseActivity {
         viewPager.setAdapter(adapter);
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        //if(isMenuVisible()) {
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null);
+            }
+        //}
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
 }
