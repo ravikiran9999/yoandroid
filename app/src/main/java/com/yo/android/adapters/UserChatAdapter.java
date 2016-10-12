@@ -3,12 +3,9 @@ package com.yo.android.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
@@ -16,19 +13,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.chat.ImageLoader;
 import com.yo.android.chat.SquareImageView;
@@ -40,8 +28,6 @@ import com.yo.android.model.Contact;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
-
-import java.io.File;
 
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
@@ -145,49 +131,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         }
     }
 
-    private void newAddView(final ChatMessage item, final UserChatViewHolder holder) {
-        holder.getLl().removeAllViews();
-        holder.getLl().setTag(holder);
-        PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-        final LinearLayout secretChatPlaceholder = new LinearLayout(context);
-        boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
-        secretChatPlaceholder.setBackgroundResource(R.drawable.system);
-
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(30, 0, 30, 5);
-        secretChatPlaceholder.setLayoutParams(lp);
-        secretChatPlaceholder.getBackground().setColorFilter(colorFilter);
-        secretChatPlaceholder.setPadding(Helper.dp(context, 2), Helper.dp(context, 2), Helper.dp(context, 2), Helper.dp(context, 2));
-        secretChatPlaceholder.setOrientation(LinearLayout.VERTICAL);
-        //Adding person name or phone number
-        LinearLayout linearLayout1 = new LinearLayout(context);
-        linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
-        if (!isRTL) {
-
-            TextView senderId = new TextView(context);
-            senderId.setLayoutParams(lp);
-            Contact contact = mContactsSyncManager.getContactByVoxUserName(item.getVoxUserName());
-            if (contact != null && contact.getName() != null) {
-                senderId.setText(contact.getName());
-            } else {
-                //  boolean isValidMobile = isValidMobile(item.getChatProfileUserName());
-                // String profileName = isValidMobile ? " ~" + item.getChatProfileUserName() : "";
-                senderId.setText(item.getSenderID() + "");
-            }
-            senderId.setTextColor(mColorGenerator.getRandomColor());
-            linearLayout1.addView(senderId);
-        }
-        // Add image
-        final ImageView imageView1 = new ImageView(context);
-        linearLayout1.addView(imageView1);
-        secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 0, 0));
-
-        if (item.getImagePath() != null) {
-            //updateImage(item, holder, secretChatPlaceholder, imageView1);
-        }
-
-    }
-
     private void loadingFromXml(final ChatMessage item, final UserChatViewHolder holder) {
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
@@ -264,7 +207,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         lp.setMargins(30, 0, 50, 0);
 
         EmojiconTextView textView = new EmojiconTextView(context);
-        textView.setEmojiconSize(28);
+        textView.setEmojiconSize(Helper.dp(context, 20));
         textView.setLayoutParams(lp);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
         textView.setGravity(Gravity.LEFT);
@@ -290,7 +233,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 if (contact != null && !TextUtils.isEmpty(contact.getName())) {
                     senderId.setText(contact.getName());
                     int existingColor = mColorGenerator.getColor(contact.getName());
-                    if(existingColor == 0) {
+                    if (existingColor == 0) {
                         senderId.setTextColor(mColorGenerator.getRandomColor());
                     } else {
                         senderId.setTextColor(existingColor);
@@ -298,7 +241,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 } else {
                     senderId.setText(item.getSenderID());
                     int existingColor = mColorGenerator.getColor(item.getSenderID());
-                    if(existingColor == 0) {
+                    if (existingColor == 0) {
                         senderId.setTextColor(mColorGenerator.getRandomColor());
                     } else {
                         senderId.setTextColor(existingColor);
@@ -360,123 +303,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         } catch (NullPointerException e) {
             return false;
         }
-    }
-
-    private void addView(final RelativeLayout relativeLayout, final ChatMessage item, final UserChatViewHolder holder) {
-
-        holder.getLl().removeAllViews();
-        holder.getLl().setTag(holder);
-        LinearLayout linearLayout1 = new LinearLayout(context);
-        linearLayout1.setOrientation(LinearLayout.VERTICAL);
-
-        if (item.getType().equals(Constants.TEXT)) {
-
-            if (roomType != null) {
-                TextView senderId = new TextView(context);
-                senderId.setText(item.getSenderID());
-                senderId.setTextColor(Color.BLACK);
-                linearLayout1.addView(senderId);
-            }
-
-            TextView textView = new TextView(context);
-            textView.setTextColor(Color.BLACK);
-            textView.setText(item.getMessage());
-            linearLayout1.addView(textView);
-            relativeLayout.addView(linearLayout1);
-
-            holder.getLl().setTag(holder);
-            holder.getLl().addView(relativeLayout);
-
-
-        } else if (item.getType().equals(Constants.IMAGE)) {
-            try {
-
-                final ProgressBar progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleLarge);
-                progressBar.setIndeterminate(true);
-                progressBar.setVisibility(View.VISIBLE);
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(1050, 900);
-                params.addRule(RelativeLayout.CENTER_IN_PARENT);
-                relativeLayout.addView(progressBar, params);
-
-
-                if (roomType != null) {
-                    TextView senderId = new TextView(context);
-                    senderId.setText(item.getSenderID());
-                    senderId.setTextColor(Color.BLACK);
-
-                    linearLayout1.addView(senderId);
-                }
-
-                final ImageView imageView = new ImageView(context);
-                RelativeLayout.LayoutParams imageparams = new RelativeLayout.LayoutParams(1050, 900);
-                imageparams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-                imageView.setLayoutParams(imageparams);
-                imageView.setTag(holder);
-                imageView.setAdjustViewBounds(true);
-
-                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
-                // Create a storage reference from our app
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
-                StorageReference imageRef = storageRef.child(item.getImagePath());
-                linearLayout1.addView(imageView);
-                relativeLayout.addView(linearLayout1);
-                if (item.getImagePath() != null) {
-                    Helper.loadDirectly(mContext, imageView, new File(item.getImagePath()));
-                } else if (item.getImageUrl() != null) {
-                    Picasso.with(context).load(Uri.parse(item.getImageUrl()))
-                            .config(Bitmap.Config.RGB_565)
-                            .into(imageView, new Callback() {
-                                @Override
-                                public void onSuccess() {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                }
-
-                                @Override
-                                public void onError() {
-
-                                }
-                            });
-
-                } else {
-                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-
-                            Picasso.with(context).load(uri).into(imageView, new Callback() {
-                                @Override
-                                public void onSuccess() {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                }
-
-                                @Override
-                                public void onError() {
-
-                                }
-                            });
-
-
-                            item.setImageUrl(uri.toString());
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                }
-
-            } catch (OutOfMemoryError outOfMemoryError) {
-                outOfMemoryError.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            holder.getLl().addView(relativeLayout);
-        } else {
-            holder.getLl().addView(null);
-        }
-
     }
 
     @Override
