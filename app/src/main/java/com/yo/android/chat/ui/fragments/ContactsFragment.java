@@ -206,9 +206,9 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                 i.putExtra("finishActivityOnSaveCompleted", true); // Fix for 4.0.3 +
             startActivityForResult(i, PICK_CONTACT_REQUEST);
             return true;
-        } else if (item.getItemId() == R.id.notification_icon) {
+        } /*else if (item.getItemId() == R.id.notification_icon) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }
+        }*/
 
 
         return super.onOptionsItemSelected(item);

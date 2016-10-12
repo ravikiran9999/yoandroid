@@ -231,9 +231,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.notification_icon) {
+        /*if(item.getItemId() == R.id.notification_icon) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 

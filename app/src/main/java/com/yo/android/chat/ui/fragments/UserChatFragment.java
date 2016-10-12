@@ -296,7 +296,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        SparseBooleanArray selected;
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -409,7 +409,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-
+                userChatAdapter.getSelectedIds().clear();
             }
         });
         getActivity().supportInvalidateOptionsMenu();

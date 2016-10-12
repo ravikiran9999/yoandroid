@@ -26,6 +26,15 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/no_contacts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="No contacts found" />
+
+
     <ListView
         android:id="@+id/lv_app_contacts"
         android:layout_width="match_parent"
