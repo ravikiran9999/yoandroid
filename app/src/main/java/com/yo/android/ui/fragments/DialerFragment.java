@@ -164,26 +164,6 @@ public class DialerFragment extends BaseFragment {
         Util.prepareSearch(getActivity(), menu, adapter);
         Util.changeSearchProperties(menu);
 
-        final View count = menu.findItem(R.id.notification_icon).getActionView();
-        final Button notifCount = (Button) count.findViewById(R.id.notif_count);
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mNotifCount > 0) {
-                    count.setVisibility(View.VISIBLE);
-                    notifCount.setVisibility(View.VISIBLE);
-                    notifCount.setText(String.valueOf(mNotifCount));
-
-                }
-            }
-        });
-        count.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), NotificationsActivity.class));
-            }
-        });
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 

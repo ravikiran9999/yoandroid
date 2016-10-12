@@ -68,7 +68,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private List<Room> listRoom;
     private List<String> roomId;
     private List<String> checkRoomIdExist;
-    private int mNotifCount;
+
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -113,6 +113,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         listView = (ListView) view.findViewById(R.id.lv_chat_room);
         emptyImageView = (ImageView) view.findViewById(R.id.empty_chat);
         listView.setOnItemClickListener(this);
+
         return view;
     }
 
@@ -131,27 +132,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         this.menu = menu;
         Util.prepareContactsSearch(getActivity(), menu, chatRoomListAdapter, Constants.CHAT_FRAG);
         Util.changeSearchProperties(menu);
-
-        final View count = menu.findItem(R.id.notification_icon).getActionView();
-        final Button notifCount = (Button) count.findViewById(R.id.notif_count);
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mNotifCount > 0) {
-                    count.setVisibility(View.VISIBLE);
-                    notifCount.setVisibility(View.VISIBLE);
-                    notifCount.setText(String.valueOf(mNotifCount));
-
-                }
-            }
-        });
-        count.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), NotificationsActivity.class));
-
-            }
-        });
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -218,10 +198,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onResume() {
         super.onResume();
         isRoomsExist();
-        mNotifCount = preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT);
-        if (mNotifCount == 0) {
-            getActivity().supportInvalidateOptionsMenu();
-        }
+
     }
 
     private void isRoomsExist() {
@@ -453,12 +430,5 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         }
         return arrayOfUsers;
-    }
-
-    public void onEventMainThread(NotificationCount count) {
-        if (count.getCount() > 0) {
-            mNotifCount = count.getCount();
-            getActivity().supportInvalidateOptionsMenu();
-        }
     }
 }

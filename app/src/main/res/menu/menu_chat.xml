@@ -10,12 +10,6 @@
         app:showAsAction="always|collapseActionView" />
 
     <item
-        android:id="@+id/notification_icon"
-        android:title="@string/notifications"
-        app:actionLayout="@layout/custom_button"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/chat_contact"
         android:icon="@drawable/ic_newchat"
         android:title="@string/message"
