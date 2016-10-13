@@ -9,14 +9,16 @@
         android:id="@+id/frame_layout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:padding="5dp">
+        android:padding="5dp"
+        tools:background="@color/colorPrimaryDark">
 
         <ImageView
             android:id="@+id/cartIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_launcher" />
+            android:padding="12dp"
+            android:src="@drawable/yo_notification" />
 
         <Button
             android:id="@+id/notif_count"
@@ -24,15 +26,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
             android:background="@drawable/countshape"
-            android:gravity="center"
+            android:maxHeight="24dp"
             android:maxLines="1"
+            android:maxWidth="24dp"
             android:minHeight="14dp"
             android:minWidth="14dp"
             android:padding="2dp"
             android:text="@string/zero"
             android:textColor="@color/white"
             android:textSize="12sp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:visibility="visible" />
     </FrameLayout>
 
     <RelativeLayout
@@ -47,6 +51,7 @@
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/white"
+            android:textStyle="bold"
             tools:text="Title" />
     </RelativeLayout>
 
