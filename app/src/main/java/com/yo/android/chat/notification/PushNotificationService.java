@@ -13,6 +13,7 @@ import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
+import com.yo.android.helpers.PopupHelper;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 
@@ -56,11 +57,13 @@ public class PushNotificationService extends FirebaseMessagingService {
             EventBus.getDefault().post(Constants.TOPIC_NOTIFICATION_ACTION);
         } else if(data.get("tag").equals("BalanceTransferred")) {
             EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION);
+        } else if(data.get("tag").equals("POPUP")) {
+            PopupHelper.handlePop(preferenceEndPoint, data);
         }
 
         //if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
-        if(preferenceEndPoint.getBooleanPreference(Constants.IS_IN_APP)) {
-        mLog.i(TAG, "In Notifications screen");
+        if (preferenceEndPoint.getBooleanPreference(Constants.IS_IN_APP)) {
+            mLog.i(TAG, "In Notifications screen");
         } else {
             createNotification(data.get("title").toString(), data.get("message").toString());
         }

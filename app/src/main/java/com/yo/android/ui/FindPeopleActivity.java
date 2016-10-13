@@ -88,7 +88,16 @@ public class FindPeopleActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        callFindPeopleService();
+        if(searchView != null) {
+            if (searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
+                pageCount = 1;
+                callFindPeopleService();
+            } else {
+                callSearchingService(searchView.getQuery().toString());
+            }
+        } else {
+            callFindPeopleService();
+        }
     }
 
     private void callFindPeopleService() {
@@ -292,6 +301,8 @@ public class FindPeopleActivity extends BaseActivity {
     }
 
     public void refresh() {
+        callFindPeopleService();
+        pageCount = 1;
         findPeopleAdapter.clearAll();
         findPeopleAdapter.addItemsAll(originalList);
         lvFindPeople.setVisibility(View.VISIBLE);

@@ -141,6 +141,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
         });
 
+        //YODialogs.showPopup(getActivity(), "YO! Get $50 Cashback on Recharge of $100+", "YO! is doing a wonderful promotion of its wallet feature by collaborating with many banking companies these days and they are proving some specific coupon codes to obtain the benefit of adding money in Yo! wallet.");
+
     }
 
     public void getCachedArticles() {
