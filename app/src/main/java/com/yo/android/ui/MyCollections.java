@@ -1,16 +1,18 @@
 package com.yo.android.ui;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -194,7 +196,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         return true;
     }
 
-    private void showDeleteAlert() {
+    /*private void showDeleteAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getResources().getString(R.string.delete_topic_message));
         builder.setCancelable(false);
@@ -220,6 +222,42 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }*/
+
+    private void showDeleteAlert() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+        TextView tvDialogContent = (TextView) view.findViewById(R.id.dialog_content);
+        tvDialogContent.setText(getResources().getString(R.string.delete_topic_message));
+        builder.setView(view);
+
+        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+        Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+        yesBtn.setText(getString(R.string.yes));
+        noBtn.setText(getString(R.string.no));
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                deleteTopic();
+            }
+        });
+
+
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
     }
 
     private void deleteTopic() {

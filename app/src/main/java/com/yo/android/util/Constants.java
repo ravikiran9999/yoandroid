@@ -105,7 +105,6 @@ public class Constants {
     public static String REFRESH_TOPICS_ACTION = "com.refresh.magazine.TOPICS";
     public static String BALANCE_TRANSFER_NOTIFICATION_ACTION = "com.notification.balance.TRANSFER";
 
-
     // Contacts
     public static final String NUMBER = "number";
     public static final String NAME = "name";
@@ -113,5 +112,6 @@ public class Constants {
 
     public static final String NOTIFICATION_COUNT = "notification_count";
     public static final String IS_IN_APP = "isInApp";
+    public static final String POPUP_NOTIFICATION = "popupNotification";
 
 }

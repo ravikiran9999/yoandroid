@@ -20,14 +20,18 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.FilterWithSpaceAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
-import com.yo.android.model.NotificationCount;
+import com.yo.android.helpers.PopupHelper;
+import com.yo.android.model.Popup;
 import com.yo.android.model.Topics;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
@@ -39,6 +43,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +67,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     protected PreferenceEndPoint preferenceEndPoint;
 
     private List<Topics> topicsList;
-    private int mNotifCount;
+
     private Menu menu;
     public static List<Topics> unSelectedTopics;
     FilterWithSpaceAdapter<String> mAdapter;
@@ -346,7 +351,14 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        // do nothing
+        if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.magazines))) {
+            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this);
+            }
+        }
     }
 
     public void onEventMainThread(String action) {
@@ -355,10 +367,18 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         }
     }
 
-    /*public void onEventMainThread(NotificationCount count) {
-        if(count.getCount() > 0) {
-            mNotifCount = count.getCount();
-            getActivity().supportInvalidateOptionsMenu();
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this);
+            }
         }
-    }*/
+        else {
+        }
+    }
 }

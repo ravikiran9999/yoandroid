@@ -2,6 +2,7 @@ package com.yo.android.chat.ui.fragments;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,14 +29,19 @@ import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
+import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
+import com.yo.android.model.Popup;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
+import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,7 +55,7 @@ import de.greenrobot.event.EventBus;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "ChatFragment";
 
@@ -93,12 +99,14 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         roomId = new ArrayList<>();
         checkRoomIdExist = new ArrayList<>();
         EventBus.getDefault().register(this);
+        preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -109,7 +117,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         listView = (ListView) view.findViewById(R.id.lv_chat_room);
         emptyImageView = (ImageView) view.findViewById(R.id.empty_chat);
         listView.setOnItemClickListener(this);
-
         return view;
     }
 
@@ -128,7 +135,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         this.menu = menu;
         Util.prepareContactsSearch(getActivity(), menu, chatRoomListAdapter, Constants.CHAT_FRAG);
         Util.changeSearchProperties(menu);
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -426,5 +432,33 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         }
         return arrayOfUsers;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this);
+            }
+
+        }
+        else {
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.chats))) {
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this);
+            }
+        }
     }
 }
