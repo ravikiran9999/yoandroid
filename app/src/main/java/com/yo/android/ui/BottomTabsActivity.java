@@ -115,6 +115,9 @@ public class BottomTabsActivity extends BaseActivity {
         // toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
         context = this;
+
+        preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
+
         viewPager = (CustomViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);

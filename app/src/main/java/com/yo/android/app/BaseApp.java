@@ -39,7 +39,7 @@ public class BaseApp extends MultiDexApplication {
         Firebase.setAndroidContext(getApplicationContext());
        // ReCreateService.getInstance(this).start(this);
 
-        preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
+        
     }
 
 
