@@ -207,8 +207,11 @@ public class ChatActivity extends BaseActivity {
     private String getOppenent(@NonNull Room room) {
 
         if (room.getGroupName() == null) {
-
-            return room.getVoxUserName();
+            if (!TextUtils.isEmpty(room.getVoxUserName())) {
+                return room.getVoxUserName();
+            } else if (!TextUtils.isEmpty(room.getMobileNumber())) {
+                return room.getMobileNumber();
+            }
 
         } else if (room.getGroupName() != null) {
             return room.getGroupName();

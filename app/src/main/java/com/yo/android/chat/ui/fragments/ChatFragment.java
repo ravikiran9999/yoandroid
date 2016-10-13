@@ -17,15 +17,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
@@ -74,6 +71,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private List<Room> listRoom;
     private List<String> roomId;
     private List<String> checkRoomIdExist;
+
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -155,9 +153,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             /*case R.id.clear_chat_history:
                 Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
-                break;*/
-            /*case R.id.notification_icon :
-                startActivity(new Intent(getActivity(), NotificationsActivity.class));
                 break;*/
 
             default:

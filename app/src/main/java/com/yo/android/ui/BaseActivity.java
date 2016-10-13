@@ -49,8 +49,6 @@ public class BaseActivity extends ParentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
-
         mAwsLogsCallBack.onCalled(getBaseContext(), getIntent());
         Intent intent = new Intent(this, FirebaseService.class);
         startService(intent);
@@ -68,7 +66,6 @@ public class BaseActivity extends ParentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, false);
         isDestroyed = true;
     }
 

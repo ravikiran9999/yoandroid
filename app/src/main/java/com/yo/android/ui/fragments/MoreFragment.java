@@ -227,20 +227,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         }*/
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_more, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        /*if(item.getItemId() == R.id.notification_icon) {
-            startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }*/
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * Prepares the Settings list
      */

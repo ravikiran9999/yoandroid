@@ -222,12 +222,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             }
         });
         Helper.displayIndex(getActivity(), layout, contactList, listView);
-
         ArrayList<String> stringArrayList = new ArrayList<>();
         for (Contact contact : contactList) {
             stringArrayList.add(contact.getName());
         }
-
         if (getArguments() != null && !getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false) && !contactList.isEmpty()) {
 
             if (!stringArrayList.contains(getResources().getString(R.string.new_group))) {

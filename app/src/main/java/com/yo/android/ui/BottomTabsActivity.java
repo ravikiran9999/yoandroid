@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -13,13 +12,13 @@ import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +32,7 @@ import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
+import com.yo.android.model.NotificationCount;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.SipProfile;
@@ -79,6 +79,9 @@ public class BottomTabsActivity extends BaseActivity {
     @Inject
     ContactSyncHelper mContactSyncHelper;
 
+    private Button notificationCount;
+    private ViewGroup customActionBar;
+    private Context context;
     private SipBinder sipBinder;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -111,6 +114,9 @@ public class BottomTabsActivity extends BaseActivity {
         setContentView(R.layout.activity_bottom_tabs);
         // toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
+        context = this;
+
+        preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
 
         viewPager = (CustomViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
@@ -133,20 +139,32 @@ public class BottomTabsActivity extends BaseActivity {
             index++;
         }
 
+        customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
+        notificationCount = (Button) customActionBar.findViewById(R.id.notif_count);
+        notificationCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context, NotificationsActivity.class));
+
+            }
+        });
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (getFragment() instanceof MoreFragment) {
-                    getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
-                } else {
-                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
-                }
-                getSupportActionBar().setTitle((dataList.get(position)).getTitle());
-
-                //setToolBarColor(getResources().getColor(R.color.colorPrimary));
                 try {
-                    // setToolBarTitle((dataList.get(position)).getTitle());
-                } catch (Exception e) {
+                    getSupportActionBar().setDisplayShowTitleEnabled(false);
+                    getSupportActionBar().setDisplayShowCustomEnabled(true);
+                    getSupportActionBar().setCustomView(customActionBar);
+                    if (getFragment() instanceof MoreFragment) {
+                        getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
+                    } else {
+                        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+                    }
+                    TextView actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);
+                    actionBarTitle.setText((dataList.get(position)).getTitle());
+
+                } catch (NullPointerException e) {
                     mLog.w("onPageSelected", e);
                 }
             }
@@ -377,6 +395,33 @@ public class BottomTabsActivity extends BaseActivity {
                     }
                 });
             }
+        }
+    }
+
+    public void onEventMainThread(NotificationCount count) {
+        if (count.getCount() > 0) {
+            update(count.getCount());
+        }
+    }
+
+    public void update(final int value) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notificationCount.setVisibility(View.VISIBLE);
+                notificationCount.setText(String.valueOf(value));
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) == 0) {
+            notificationCount.setVisibility(View.GONE);
+        } else if(preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) > 0) {
+            update(preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT));
         }
     }
 }

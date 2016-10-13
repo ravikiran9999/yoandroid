@@ -80,6 +80,5 @@ public class TokenAuthenticator implements Authenticator {
             }
         }
         return response.request();
-
     }
 }

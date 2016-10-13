@@ -59,18 +59,25 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
     public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
 
         if (!TextUtils.isEmpty(item.getName())) {
-            holder.getContactNumber().setText(item.getName());
+
+            if (TextUtils.isDigitsOnly(item.getName().replaceAll("\\s+", ""))) {
+                String numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+                holder.getContactNumber().setText(numberWithCountryCode);
+            } else {
+                holder.getContactNumber().setText(item.getName());
+            }
             holder.getContactNumber().setVisibility(View.VISIBLE);
         } else {
             holder.getContactNumber().setVisibility(View.GONE);
         }
-        holder.getContactNumber().setText(item.getName());
-        if(item.getPhoneNo()!=null){
+
+        if (item.getPhoneNo() != null) {
             item.setPhoneNo(item.getPhoneNo().trim());
         }
 
         if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo()))) {
-            holder.getContactMail().setText(item.getPhoneNo());
+            String numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+            holder.getContactMail().setText(numberWithCountryCode);
             holder.getContactMail().setVisibility(View.VISIBLE);
 
         } else {

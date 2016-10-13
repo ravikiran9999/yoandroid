@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -189,9 +190,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     loadCallLogs();
                 }
             });
-        } /*else if (item.getItemId() == R.id.notification_icon) {
-            startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }*/
+        }
 
         if (str != null) {
             preferenceEndPoint.saveStringPreference(Constants.DIALER_FILTER, str);
