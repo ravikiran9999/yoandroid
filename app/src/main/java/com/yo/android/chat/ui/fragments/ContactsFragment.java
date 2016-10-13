@@ -38,6 +38,7 @@ import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 
 import java.lang.reflect.Type;
@@ -56,7 +57,7 @@ import retrofit2.Response;
  * A simple {@link Fragment} subclass.
  */
 
-public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
+public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
     /**
      * Project used when querying content provider. Returns all known fields.
      */
@@ -92,6 +93,8 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     private boolean CONTACT_SYNC = true;
     private ListView layout;
+    private boolean isAlreadyShown;
+    private boolean isRemoved;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -273,7 +276,10 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
             }
         }
         else {
@@ -284,10 +290,17 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.contacts))) {
             if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                if(!isRemoved) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
+                } else {
+                    isRemoved = false;
+                }
             }
         }
     }
@@ -296,5 +309,17 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onDestroy() {
         super.onDestroy();
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void closePopup() {
+        isAlreadyShown = false;
+        isRemoved = true;
+        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+        Type type = new TypeToken<List<Popup>>() {
+        }.getType();
+        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        popup.remove(0);
+        preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }

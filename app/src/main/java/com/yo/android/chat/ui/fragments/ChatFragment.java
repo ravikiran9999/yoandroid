@@ -42,6 +42,7 @@ import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
+import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 
 import java.lang.reflect.Type;
@@ -58,7 +59,7 @@ import de.greenrobot.event.EventBus;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
     private static final String TAG = "ChatFragment";
 
@@ -83,6 +84,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
+    private boolean isAlreadyShown;
+    private boolean isRemoved;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -443,27 +446,49 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
             }
 
-        }
-        else {
+        } else {
         }
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.chats))) {
-            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this);
+        if (((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.chats))) {
+            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                if(!isRemoved) {
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    if (!isAlreadyShown) {
+                        PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
+                        isAlreadyShown = true;
+                    }
+                } else {
+                    isRemoved = false;
+                }
+
             }
         }
+    }
+
+    @Override
+    public void closePopup() {
+        isAlreadyShown = false;
+        isRemoved = true;
+        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+        Type type = new TypeToken<List<Popup>>() {
+        }.getType();
+        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        popup.remove(0);
+        preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }

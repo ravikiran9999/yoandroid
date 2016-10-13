@@ -36,6 +36,7 @@ import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
 import com.yo.android.vox.BalanceHelper;
@@ -63,7 +64,7 @@ import retrofit2.Response;
 /**
  * Created by Ramesh on 3/7/16.
  */
-public class DialerFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class DialerFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
     public static final String REFRESH_CALL_LOGS = "com.yo.android.ACTION_REFRESH_CALL_LOGS";
 
@@ -109,7 +110,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     ContactsSyncManager mContactsSyncManager;
 
     public boolean isFromDailer = false;
-
+    private boolean isAlreadyShown;
+    private boolean isRemoved;
 
     public interface CallLogClearListener {
         public void clear();
@@ -342,7 +344,10 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
             }
         }
         else {
@@ -353,11 +358,30 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.dialer))) {
             if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                if(!isRemoved) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
+                } else {
+                    isRemoved = false;
+                }
             }
         }
+    }
+
+    @Override
+    public void closePopup() {
+        isAlreadyShown = false;
+        isRemoved = true;
+        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+        Type type = new TypeToken<List<Popup>>() {
+        }.getType();
+        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        popup.remove(0);
+        preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }
