@@ -6,10 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,7 +28,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -70,14 +66,11 @@ import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.UserProfileActivity;
-import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
+import com.yo.android.util.Util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +78,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
@@ -93,6 +85,8 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.yo.android.util.Util.copyFile;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -106,7 +100,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ArrayList<ChatMessage> chatMessageArray;
     private HashMap<Integer, ArrayList<ChatMessage>> chatMessageHashMap;
     private EditText chatText;
-    private TextView noChatAvailable;
     private ListView listView;
     private String opponentNumber;
     private String opponentId;
@@ -123,13 +116,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String childRoomId;
     List<ChatMessage> chatForwards;
     private int forwardInt = 0;
-    private String timeStp;
     private String mobilenumber;
     private String roomType;
     private EmojiconsPopup popup;
     private ImageView emoji;
     private ImageView cameraView;
     private int roomCreationProgress = 0;
+    private String opponentImg;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -137,13 +130,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
-
     @Inject
     YoApi.YoService yoService;
-
-
-    private String opponentImg;
-
 
     public UserChatFragment() {
         // Required empty public constructor
@@ -186,7 +174,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         emoji = (ImageView) view.findViewById(R.id.emojiView);
         cameraView = (ImageView) view.findViewById(R.id.cameraView);
         chatText = (EditText) view.findViewById(R.id.chat_text);
-        noChatAvailable = (TextView) view.findViewById(R.id.no_chat_text);
 
         chatMessageHashMap = new HashMap<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
@@ -296,7 +283,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        SparseBooleanArray selected;
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -449,6 +435,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             case R.id.view_contact:
                 viewContact();
                 break;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -560,7 +548,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 chatMessageArray = new ArrayList<>();
             }
 
-            timeStp = Long.toString(chatMessage.getTime());
+            String timeStp = Long.toString(chatMessage.getTime());
             chatMessage.setSent(1);
             chatMessageArray.add(chatMessage);
             userChatAdapter.addItems(chatMessageArray);
@@ -648,110 +636,83 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
                     Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
                     updateChatWithLocalImage(imagePath.getPath());
-
                 }
                 break;
             case ADD_IMAGE_CAPTURE:
-                try {
-                    if (data != null) {
-                        Uri targetUri = data.getData();
-                    }
-                    String mPartyPicUri = mFileTemp.getPath();
-                    String path = new CompressImage(getActivity()).compressImage(mPartyPicUri);
-                    mFileTemp.delete();
-                    updateChatWithLocalImage(path);
-                } catch (Exception e) {
-
-                }
+                addImageCapture(data);
                 break;
 
-            case ADD_SELECT_PICTURE: {
+            case ADD_SELECT_PICTURE:
                 if (data != null) {
-                    Uri targetUri = data.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    try {
-                        Cursor cursor = getActivity().getContentResolver().query(targetUri,
-                                filePathColumn, null, null, null);
-                        cursor.moveToFirst();
-                        int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
-                        final String filePath = cursor.getString(columnIndex);
-                        new Thread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                String state = Environment.getExternalStorageState();
-                                String tempPhotoFileName = Long.toString(System.currentTimeMillis()) + ".jpg";
-                                if (Environment.MEDIA_MOUNTED.equals(state)) {
-                                    File newFolder = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages");
-                                    if (!newFolder.exists()) {
-                                        newFolder.mkdirs();
-                                    }
-                                    mFileTemp = new File(newFolder.getAbsolutePath(), tempPhotoFileName);
-                                } else {
-                                    mFileTemp = new File(getActivity().getFilesDir(), tempPhotoFileName);
-                                }
-                                copyFile(filePath, mFileTemp.getAbsolutePath());
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (mFileTemp != null && !isKb(mFileTemp.length())) {
-                                            String path = new CompressImage(getActivity()).compressImage(mFileTemp.getAbsolutePath());
-                                            mFileTemp.delete();
-                                            updateChatWithLocalImage(path);
-                                        } else {
-                                            updateChatWithLocalImage(mFileTemp.getAbsolutePath());
-                                        }
-
-                                    }
-                                });
-                            }
-                        }).start();
-
-
-                        cursor.close();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    addSelectPicture(data);
                 }
-            }
+
+                break;
             default:
                 break;
         }
     }
 
-    private boolean isKb(long length) {
-        double size = length / 1024.0;
-        return size > 1 ? false : true;
+    private void addSelectPicture(Intent data) {
+        Uri targetUri = data.getData();
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        try {
+            Cursor cursor = getActivity().getContentResolver().query(targetUri,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
+            final String filePath = cursor.getString(columnIndex);
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    String state = Environment.getExternalStorageState();
+                    String tempPhotoFileName = Long.toString(System.currentTimeMillis()) + ".jpg";
+                    if (Environment.MEDIA_MOUNTED.equals(state)) {
+                        File newFolder = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages");
+                        if (!newFolder.exists()) {
+                            newFolder.mkdirs();
+                        }
+                        mFileTemp = new File(newFolder.getAbsolutePath(), tempPhotoFileName);
+                    } else {
+                        mFileTemp = new File(getActivity().getFilesDir(), tempPhotoFileName);
+                    }
+                    copyFile(filePath, mFileTemp.getAbsolutePath());
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mFileTemp != null && !Util.isKb(mFileTemp.length())) {
+                                String path = new CompressImage(getActivity()).compressImage(mFileTemp.getAbsolutePath());
+                                mFileTemp.delete();
+                                updateChatWithLocalImage(path);
+                            } else {
+                                updateChatWithLocalImage(mFileTemp.getAbsolutePath());
+                            }
+
+                        }
+                    });
+                }
+            }).start();
+
+            cursor.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void copyFile(String inputPath, String outputPath) {
-
-        FileInputStream in = null;
-        FileOutputStream out = null;
+    private void addImageCapture(Intent data) {
         try {
-            in = new FileInputStream(inputPath);
-            out = new FileOutputStream(outputPath);
-
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
-            }
-            in.close();
-            in = null;
-
-            // write the output file (You have now copied the file)
-            out.flush();
-            out.close();
-            out = null;
-
-        } catch (FileNotFoundException fnfe1) {
-            Log.e("tag", fnfe1.getMessage());
+            /*if (data != null) {
+                Uri targetUri = data.getData();
+            }*/
+            String mPartyPicUri = mFileTemp.getPath();
+            String path = new CompressImage(getActivity()).compressImage(mPartyPicUri);
+            mFileTemp.delete();
+            updateChatWithLocalImage(path);
         } catch (Exception e) {
-            Log.e("tag", e.getMessage());
-        }
 
+        }
     }
 
     @NonNull
@@ -821,7 +782,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setTime(timestamp);
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
-
         sendChatMessage(chatMessage);
     }
 
@@ -856,14 +816,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 userChatAdapter.addItems(chatMessageArray);
                 listView.smoothScrollToPosition(userChatAdapter.getCount());
 
-                if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0)) {
-                    if (getActivity() instanceof ChatActivity) {
-                        long timestamp = System.currentTimeMillis();
-                        chatMessage.setDelivered(1);
-                        chatMessage.setDeliveredTime(timestamp);
-                        Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
-                        dataSnapshot.getRef().updateChildren(hashtaghMap);
-                    }
+                if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0) && getActivity() instanceof ChatActivity) {
+                    long timestamp = System.currentTimeMillis();
+                    chatMessage.setDelivered(1);
+                    chatMessage.setDeliveredTime(timestamp);
+                    Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
+                    dataSnapshot.getRef().updateChildren(hashtaghMap);
                 }
             }
         } catch (Exception e) {
@@ -894,12 +852,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
-
+        // this method will be triggered on child removed
     }
 
     @Override
     public void onChildMoved(com.firebase.client.DataSnapshot dataSnapshot, String s) {
-
+        // this method will be triggered on child moved
     }
 
     @Override
@@ -981,7 +939,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onKeyboardOpen(int keyBoardHeight) {
-
+        // method will be called on keyboard open
     }
 
     @Override
@@ -1014,6 +972,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        // before text changed
     }
 
     @Override
@@ -1027,8 +986,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void afterTextChanged(Editable s) {
+        // after text changed
     }
-
-
 }
 

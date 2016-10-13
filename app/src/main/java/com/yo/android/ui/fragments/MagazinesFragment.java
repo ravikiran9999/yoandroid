@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -36,6 +37,7 @@ import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.MyCollections;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.WishListActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -305,7 +307,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     Log.i(TAG, "onQueryTextSubmit: " + query);
-                    if(mAdapter.getCount() >0) {
+                    if (mAdapter.getCount() > 0) {
                         Log.d("Search", "The selected item is " + mAdapter.getItem(0));
                         String topicName = (String) mAdapter.getItem(0);
                         searchTextView.setText(topicName);
@@ -361,7 +363,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     public void onEventMainThread(String action) {
         if (Constants.REFRESH_TOPICS_ACTION.equals(action)) {
-         callApiSearchTopics();
+            callApiSearchTopics();
         }
     }
 

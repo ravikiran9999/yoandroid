@@ -169,25 +169,27 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
             if (mContact != null) {
 
-                if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+","").equalsIgnoreCase(mContact.getPhoneNo())) {
+                if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo())) {
                     profileName.setText(mContact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
                 }
                 if (mContact.getPhoneNo() != null) {
-                    profileNumber.setText(mContact.getPhoneNo());
+                    String numberWithCountryCode = "+" + mContact.getCountryCode().concat(mContact.getPhoneNo());
+                    profileNumber.setText(numberWithCountryCode);
                 } else {
                     profileNumber.setVisibility(View.GONE);
                 }
             } else if (contact != null) {
 
-                if (contact.getName() != null && !contact.getName().replaceAll("\\s+","").equalsIgnoreCase(contact.getPhoneNo())) {
+                if (contact.getName() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
                     profileName.setText(contact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
                 }
                 if (contact.getPhoneNo() != null) {
-                    profileNumber.setText(contact.getPhoneNo());
+                    String numberWithCountryCode = "+" + mContact.getCountryCode().concat(mContact.getPhoneNo());
+                    profileNumber.setText(numberWithCountryCode);
                 } else {
                     profileNumber.setVisibility(View.GONE);
                 }
