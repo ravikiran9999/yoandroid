@@ -175,7 +175,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     profileName.setVisibility(View.GONE);
                 }
                 if (mContact.getPhoneNo() != null) {
-                    removeYoUserFromPhoneNumber(mContact.getPhoneNo(), profileNumber);
+                    if (mContact.getCountryCode() != null) {
+                        removeYoUserFromPhoneNumber("+" + mContact.getCountryCode(), mContact.getPhoneNo(), profileNumber);
+                    } else {
+                        removeYoUserFromPhoneNumber(null, mContact.getPhoneNo(), profileNumber);
+                    }
                 } else {
                     profileNumber.setVisibility(View.GONE);
                 }
@@ -186,7 +190,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     profileName.setVisibility(View.GONE);
                 }
                 if (contact.getPhoneNo() != null) {
-                    removeYoUserFromPhoneNumber(contact.getPhoneNo(), profileNumber);
+                    if (contact.getCountryCode() != null) {
+                        removeYoUserFromPhoneNumber("+" + contact.getCountryCode(), contact.getPhoneNo(), profileNumber);
+                    } else {
+                        removeYoUserFromPhoneNumber(null, contact.getPhoneNo(), profileNumber);
+                    }
                 } else {
                     profileNumber.setVisibility(View.GONE);
                 }
@@ -202,12 +210,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         }
     }
 
-    private void removeYoUserFromPhoneNumber(String phoneNo, TextView profileNumber) {
+    private void removeYoUserFromPhoneNumber(String countrycode, String phoneNo, TextView profileNumber) {
         String phoneNumber = phoneNo;
         if (phoneNumber != null && phoneNumber.contains("youser")) {
             try {
                 phoneNumber = phoneNumber.substring(phoneNumber.indexOf("youser") + 6, phoneNumber.length() - 1);
-                profileNumber.setText(phoneNumber);
+                String finalNumber = countrycode == null ? phoneNumber : countrycode + phoneNumber;
+                profileNumber.setText(finalNumber);
             } catch (StringIndexOutOfBoundsException e) {
             }
         } else if (phoneNumber != null) {

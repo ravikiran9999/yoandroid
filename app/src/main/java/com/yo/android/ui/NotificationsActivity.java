@@ -49,7 +49,7 @@ public class NotificationsActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         EventBus.getDefault().register(this);
-
+        preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
         preferenceEndPoint.saveBooleanPreference("isNotifications", true);
 
         notificationsAdapter = new NotificationsAdapter(this);

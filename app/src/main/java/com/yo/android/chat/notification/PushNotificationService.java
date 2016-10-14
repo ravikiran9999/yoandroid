@@ -14,6 +14,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.PopupHelper;
+import com.yo.android.model.NotificationCount;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 
@@ -53,17 +54,21 @@ public class PushNotificationService extends FirebaseMessagingService {
         mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
         EventBus.getDefault().post(Constants.UPDATE_NOTIFICATIONS);
 
-        if(data.get("tag").equals("Topic")) {
+        if (data.get("tag").equals("Topic")) {
             EventBus.getDefault().post(Constants.TOPIC_NOTIFICATION_ACTION);
-        } else if(data.get("tag").equals("BalanceTransferred")) {
+        } else if (data.get("tag").equals("BalanceTransferred")) {
             EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION);
         } else if(data.get("tag").equals("POPUP")) {
             PopupHelper.handlePop(preferenceEndPoint, data);
         }
 
         //if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
+
         if (preferenceEndPoint.getBooleanPreference(Constants.IS_IN_APP)) {
-            mLog.i(TAG, "In Notifications screen");
+            int i = preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT);
+            i = ++i;
+            preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, i);
+            EventBus.getDefault().post(new NotificationCount(i));
         } else {
             createNotification(data.get("title").toString(), data.get("message").toString());
         }

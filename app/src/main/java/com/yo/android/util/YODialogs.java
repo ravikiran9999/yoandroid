@@ -20,6 +20,8 @@ import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
 
+import java.util.Date;
+
 /**
  * Created by rajesh on 8/9/16.
  */
@@ -61,7 +63,7 @@ public class YODialogs {
         }
     }
 
-    public static void showPopup(final PreferenceEndPoint preferenceEndPoint, final Activity activity, Popup popup) {
+    public static void showPopup(final PreferenceEndPoint preferenceEndPoint, final Activity activity, Popup popup, final PopupDialogListener listener) {
 
         if (activity != null) {
 
@@ -75,6 +77,8 @@ public class YODialogs {
             ImageView tvDialogImage = (ImageView) view.findViewById(R.id.imv_dialog_image);
             TextView tvDialogTitle = (TextView) view.findViewById(R.id.dialog_title);
             TextView tvDialogContent = (TextView) view.findViewById(R.id.dialog_content);
+            TextView tvLiveFrom = (TextView) view.findViewById(R.id.tv_live_from);
+            TextView tvLiveTo = (TextView) view.findViewById(R.id.tv_live_to);
             ImageView imvClose = (ImageView) view.findViewById(R.id.imv_popup_close);
 
             String imageUrl = popup.getData().getImage_url();
@@ -102,6 +106,20 @@ public class YODialogs {
             tvDialogTitle.setText(title);
             tvDialogContent.setText(message);
 
+            if(!TextUtils.isEmpty(popup.getData().getLive_from()) && !TextUtils.isEmpty(popup.getData().getLive_to())) {
+                String liveFromTime = popup.getData().getLive_from().substring(0, popup.getData().getLive_from().lastIndexOf("."));
+                Date liveFromDate = Util.convertUtcToGmt(liveFromTime);
+                String liveToTime = popup.getData().getLive_to().substring(0, popup.getData().getLive_to().lastIndexOf("."));
+                Date liveToDate = Util.convertUtcToGmt(liveToTime);
+                tvLiveFrom.setVisibility(View.VISIBLE);
+                tvLiveTo.setVisibility(View.VISIBLE);
+                tvLiveFrom.setText("Live From: " + liveFromDate);
+                tvLiveTo.setText("Live To: " + liveToDate);
+            } else {
+                tvLiveFrom.setVisibility(View.GONE);
+                tvLiveTo.setVisibility(View.GONE);
+            }
+
             final AlertDialog alertDialog = builder.create();
             alertDialog.setCancelable(false);
             alertDialog.show();
@@ -120,7 +138,10 @@ public class YODialogs {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
-                    preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+                    if(listener != null) {
+                        listener.closePopup();
+                    }
+                    //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
                     if (redirectTo.equals("AddFriends")) {
                         activity.startActivity(new Intent(activity, InviteActivity.class));
                     } else if (redirectTo.equals("AddBalance")) {
@@ -133,7 +154,10 @@ public class YODialogs {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
-                    preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+                    if(listener != null) {
+                        listener.closePopup();
+                    }
+                    //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
                 }
             });
         }

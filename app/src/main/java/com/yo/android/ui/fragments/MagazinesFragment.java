@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -36,8 +37,10 @@ import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.MyCollections;
+import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.WishListActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 
 import java.lang.reflect.Field;
@@ -56,7 +59,7 @@ import retrofit2.Response;
 /**
  * Created by creatives on 6/27/2016.
  */
-public class MagazinesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MagazinesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
     @Inject
     YoApi.YoService yoService;
@@ -69,6 +72,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     private Menu menu;
     public static List<Topics> unSelectedTopics;
     FilterWithSpaceAdapter<String> mAdapter;
+    private boolean isAlreadyShown;
+    private boolean isRemoved;
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
         return mMagazineFlipArticlesFragment;
@@ -305,7 +310,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     Log.i(TAG, "onQueryTextSubmit: " + query);
-                    if(mAdapter.getCount() >0) {
+                    if (mAdapter.getCount() > 0) {
                         Log.d("Search", "The selected item is " + mAdapter.getItem(0));
                         String topicName = (String) mAdapter.getItem(0);
                         searchTextView.setText(topicName);
@@ -351,17 +356,24 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.magazines))) {
             if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                if(!isRemoved) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
+                } else {
+                    isRemoved = false;
+                }
             }
         }
     }
 
     public void onEventMainThread(String action) {
         if (Constants.REFRESH_TOPICS_ACTION.equals(action)) {
-         callApiSearchTopics();
+            callApiSearchTopics();
         }
     }
 
@@ -373,10 +385,25 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
             }
         }
         else {
         }
+    }
+
+    @Override
+    public void closePopup() {
+        isAlreadyShown = false;
+        isRemoved = true;
+        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+        Type type = new TypeToken<List<Popup>>() {
+        }.getType();
+        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        popup.remove(0);
+        preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }

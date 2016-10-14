@@ -121,7 +121,7 @@
     <string name="invite">Invite</string>
 
     <string name="title_activity_load_magazine">LoadMagazineActivity</string>
-
+    <string name="zero">0</string>
     <string name="group_creation_error">Group not created. Please try again</string>
     <string name="enter_group_name">Please enter group name</string>
     <string name="create_group">Create group</string>

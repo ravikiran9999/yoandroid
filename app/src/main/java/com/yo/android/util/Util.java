@@ -44,6 +44,9 @@ import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -204,7 +207,7 @@ public class Util {
     }
 
     public static String getChatListTimeFormat(@NonNull final Context context, long time) {
-        if(context == null){
+        if (context == null) {
             return null;
 
         }
@@ -318,6 +321,7 @@ public class Util {
                     Util.hideKeyboard(activity, activity.getCurrentFocus());
                 return true;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
@@ -632,5 +636,46 @@ public class Util {
             }
 
         }
+    }
+
+    public static void copyFile(String inputPath, String outputPath) {
+
+        FileInputStream in = null;
+        FileOutputStream out = null;
+        try {
+            in = new FileInputStream(inputPath);
+            out = new FileOutputStream(outputPath);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            // write the output file (You have now copied the file)
+            out.flush();
+
+        } catch (FileNotFoundException fnfe1) {
+            Log.e("tag", fnfe1.getMessage());
+        } catch (Exception e) {
+            Log.e("tag", e.getMessage());
+        } finally {
+            try {
+                if (in != null) {
+
+                    in.close();
+
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static boolean isKb(long length) {
+        double size = length / 1024.0;
+        return size <= 1;
     }
 }

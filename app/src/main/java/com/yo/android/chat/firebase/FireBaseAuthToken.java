@@ -59,10 +59,11 @@ public class FireBaseAuthToken {
     public void getFirebaseAuth(final FireBaseAuthListener listener) {
         //if(!loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN).isEmpty()) {
         String firebackToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
+        Log.i("FireBaseAuthToken", "FireBaseAuthToken : " + firebackToken);
         if (TextUtils.isEmpty(firebackToken) & !waitingForReply) {
             waitingForReply = true;
             String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-
+            Log.i("FireBaseAuthToken", "YoApiACCESS_TOKEN : " + access);
             yoService.firebaseAuthToken(access).enqueue(new Callback<ResponseBody>() {
                 public final String TAG = FireBaseAuthToken.class.getSimpleName();
 

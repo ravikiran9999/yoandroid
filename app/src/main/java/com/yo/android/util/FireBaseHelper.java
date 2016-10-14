@@ -4,6 +4,7 @@ package com.yo.android.util;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
@@ -71,6 +72,7 @@ public class FireBaseHelper {
     public Firebase authWithCustomToken(final Context context, final String authToken) {
         mContext = context;
         //Url from Firebase dashboard
+
         AuthData authData = ref.getAuth();
         if (authData == null) {
             ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
@@ -80,6 +82,7 @@ public class FireBaseHelper {
                         Log.i(TAG, "Login Succeeded!");
 
                     } else {
+
                         FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                             @Override
                             public void onSuccess() {
@@ -121,6 +124,7 @@ public class FireBaseHelper {
 
                         }
                     });
+                    Toast.makeText(context, "Login un Succeeded!", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {

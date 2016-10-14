@@ -17,15 +17,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.ChatRoomListAdapter;
@@ -42,6 +39,7 @@ import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
+import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 
 import java.lang.reflect.Type;
@@ -58,7 +56,7 @@ import de.greenrobot.event.EventBus;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
     private static final String TAG = "ChatFragment";
 
@@ -74,6 +72,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private List<String> roomId;
     private List<String> checkRoomIdExist;
 
+
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -83,6 +82,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
+    private boolean isAlreadyShown;
+    private boolean isRemoved;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -152,9 +153,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             /*case R.id.clear_chat_history:
                 Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
-                break;*/
-            /*case R.id.notification_icon :
-                startActivity(new Intent(getActivity(), NotificationsActivity.class));
                 break;*/
 
             default:
@@ -443,27 +441,49 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
             }
 
-        }
-        else {
+        } else {
         }
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.chats))) {
-            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this);
+        if (((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.chats))) {
+            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                if(!isRemoved) {
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    if (!isAlreadyShown) {
+                        PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
+                        isAlreadyShown = true;
+                    }
+                } else {
+                    isRemoved = false;
+                }
+
             }
         }
+    }
+
+    @Override
+    public void closePopup() {
+        isAlreadyShown = false;
+        isRemoved = true;
+        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+        Type type = new TypeToken<List<Popup>>() {
+        }.getType();
+        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        popup.remove(0);
+        preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }
