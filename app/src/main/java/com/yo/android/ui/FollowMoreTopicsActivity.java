@@ -66,6 +66,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private List<String> followedTopicsIdsList;
     private Button done;
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
+    private TextView tvHelloInterests;
+    private TextView tvPickTopics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +91,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tagGroup = (TagView) findViewById(R.id.tag_group);
         done = (Button) findViewById(R.id.btn_done);
         noSearchResults = (TextView) findViewById(R.id.no_search_results);
+        tvHelloInterests = (TextView) findViewById(R.id.hello_interests);
+        tvPickTopics = (TextView) findViewById(R.id.pick_topics);
 
         initialTags = new ArrayList<>();
         topicsList = new ArrayList<Topics>();
@@ -452,6 +456,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             //Util.hideKeyboard(this, getCurrentFocus());
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             noSearchResults.setVisibility(View.GONE);
+            tvHelloInterests.setVisibility(View.VISIBLE);
+            tvPickTopics.setVisibility(View.VISIBLE);
             new TagLoader(topicsList, tagGroup).execute();
             return;
         }
@@ -466,9 +472,13 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         }
         if (tagGroup.getTags().size() == 0) {
             noSearchResults.setVisibility(View.VISIBLE);
+            tvHelloInterests.setVisibility(View.GONE);
+            tvPickTopics.setVisibility(View.GONE);
             isInvalidSearch = true;
         } else {
             noSearchResults.setVisibility(View.GONE);
+            tvHelloInterests.setVisibility(View.VISIBLE);
+            tvPickTopics.setVisibility(View.VISIBLE);
             isInvalidSearch = false;
         }
     }

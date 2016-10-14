@@ -1,6 +1,7 @@
 package com.yo.android.chat.ui.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Build;
@@ -22,18 +23,24 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.Helper;
+import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Contact;
+import com.yo.android.model.Popup;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.sync.SyncUtils;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,7 +56,7 @@ import retrofit2.Response;
  * A simple {@link Fragment} subclass.
  */
 
-public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
     /**
      * Project used when querying content provider. Returns all known fields.
      */
@@ -94,6 +101,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -198,9 +206,9 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                 i.putExtra("finishActivityOnSaveCompleted", true); // Fix for 4.0.3 +
             startActivityForResult(i, PICK_CONTACT_REQUEST);
             return true;
-        } else if (item.getItemId() == R.id.notification_icon) {
+        } /*else if (item.getItemId() == R.id.notification_icon) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }
+        }*/
 
 
         return super.onOptionsItemSelected(item);
@@ -255,5 +263,38 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         getLoaderManager().restartLoader(0, null, this);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this);
+            }
+        }
+        else {
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.contacts))) {
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this);
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 }

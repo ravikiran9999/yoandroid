@@ -21,7 +21,7 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
 
     public ImageLoader(ImageView imageView, File file, Context context) {
         // Use a WeakReference to ensure the ImageView can be garbage collected
-        imageViewReference = new WeakReference<ImageView>(imageView);
+        imageViewReference = new WeakReference<>(imageView);
         imageFile = file;
         mContext = context;
     }

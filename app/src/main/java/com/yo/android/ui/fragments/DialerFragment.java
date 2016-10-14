@@ -1,6 +1,7 @@
 package com.yo.android.ui.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -26,6 +27,8 @@ import com.yo.android.api.YoApi;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.helpers.PopupHelper;
+import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.ui.BottomTabsActivity;
@@ -39,6 +42,7 @@ import com.yo.android.vox.BalanceHelper;
 import com.yo.android.vox.VoxFactory;
 
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +63,7 @@ import retrofit2.Response;
 /**
  * Created by Ramesh on 3/7/16.
  */
-public class DialerFragment extends BaseFragment {
+public class DialerFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String REFRESH_CALL_LOGS = "com.yo.android.ACTION_REFRESH_CALL_LOGS";
 
@@ -122,6 +126,7 @@ public class DialerFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         bus.register(this);
+        preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -153,6 +158,7 @@ public class DialerFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         bus.unregister(this);
+        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -181,9 +187,9 @@ public class DialerFragment extends BaseFragment {
                     loadCallLogs();
                 }
             });
-        } else if (item.getItemId() == R.id.notification_icon) {
+        } /*else if (item.getItemId() == R.id.notification_icon) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }
+        }*/
 
         if (str != null) {
             preferenceEndPoint.saveStringPreference(Constants.DIALER_FILTER, str);
@@ -325,6 +331,33 @@ public class DialerFragment extends BaseFragment {
         if (action.equals(REFRESH_CALL_LOGS)) {
             loadCallLogs();
             mBalanceHelper.checkBalance(null);
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this);
+            }
+        }
+        else {
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.dialer))) {
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this);
+            }
         }
     }
 }
