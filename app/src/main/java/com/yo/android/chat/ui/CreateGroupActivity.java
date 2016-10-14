@@ -220,5 +220,3 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         }
     }
 }
-
-
