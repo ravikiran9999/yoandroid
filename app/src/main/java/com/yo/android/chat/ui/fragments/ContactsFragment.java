@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -273,37 +274,50 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (!isAlreadyShown) {
-                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
-                    isAlreadyShown = true;
+            if (getActivity() instanceof BottomTabsActivity) {
+                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                if (activity.getFragment() instanceof ContactsFragment) {
+                    if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                        Type type = new TypeToken<List<Popup>>() {
+                        }.getType();
+                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        if (popup != null && popup.size() > 0) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
+                                isAlreadyShown = true;
+                            }
+                        }
+                    }
                 }
             }
+
         } else {
         }
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        CharSequence title = ((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle();
-        if (!TextUtils.isEmpty(title) && title.equals(getString(R.string.contacts))) {
-            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                if (!isRemoved) {
-                    Type type = new TypeToken<List<Popup>>() {
-                    }.getType();
-                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                    if (!isAlreadyShown) {
-                        PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
-                        isAlreadyShown = true;
+        if (getActivity() instanceof BottomTabsActivity) {
+            BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+            if (activity.getFragment() instanceof ContactsFragment) {
+                if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                    if (!isRemoved) {
+                        Type type = new TypeToken<List<Popup>>() {
+                        }.getType();
+                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
+                                isAlreadyShown = true;
+                            }
+                        }
+                    } else {
+                        isRemoved = false;
                     }
-                } else {
-                    isRemoved = false;
                 }
             }
         }
+
     }
 
     @Override

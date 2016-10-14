@@ -339,37 +339,50 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (!isAlreadyShown) {
-                    PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
-                    isAlreadyShown = true;
+            if (getActivity() instanceof BottomTabsActivity) {
+                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                if (activity.getFragment() instanceof DialerFragment) {
+                    if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                        Type type = new TypeToken<List<Popup>>() {
+                        }.getType();
+                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.DIALER) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
+                                isAlreadyShown = true;
+                            }
+                        }
+                    }
                 }
             }
+
         } else {
         }
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        CharSequence title = ((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle();
-        if (!TextUtils.isEmpty(title) && title.equals(getString(R.string.dialer))) {
-            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                if (!isRemoved) {
-                    Type type = new TypeToken<List<Popup>>() {
-                    }.getType();
-                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                    if (!isAlreadyShown) {
-                        PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
-                        isAlreadyShown = true;
+        if (getActivity() instanceof BottomTabsActivity) {
+            BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+            if (activity.getFragment() instanceof DialerFragment) {
+                if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                    if (!isRemoved) {
+                        Type type = new TypeToken<List<Popup>>() {
+                        }.getType();
+                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        if (popup != null && popup.size() > 0) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
+                                isAlreadyShown = true;
+                            }
+                        }
+                    } else {
+                        isRemoved = false;
                     }
-                } else {
-                    isRemoved = false;
                 }
             }
         }
+
     }
 
     @Override
