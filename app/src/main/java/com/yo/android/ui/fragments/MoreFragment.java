@@ -455,7 +455,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             name.setText(username);
         }
 
-        if (((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.profile))) {
+        if(getString(R.string.profile).equals(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle())) {
             if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                 if(!isRemoved) {
                 Type type = new TypeToken<List<Popup>>() {

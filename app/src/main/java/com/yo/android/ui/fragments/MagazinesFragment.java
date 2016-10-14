@@ -354,7 +354,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.magazines))) {
+        if(getString(R.string.magazines).equals(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle())) {
             if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                 if(!isRemoved) {
                 Type type = new TypeToken<List<Popup>>() {
