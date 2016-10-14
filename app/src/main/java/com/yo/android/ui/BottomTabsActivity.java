@@ -221,7 +221,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
     }
 
-    private Fragment getFragment() {
+    public Fragment getFragment() {
         int position = tabLayout.getSelectedTabPosition();
         return mAdapter.getItem(position);
     }

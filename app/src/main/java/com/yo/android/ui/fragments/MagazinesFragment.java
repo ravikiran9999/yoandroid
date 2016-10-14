@@ -354,21 +354,27 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(getString(R.string.magazines).equals(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle())) {
-            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                if(!isRemoved) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (!isAlreadyShown) {
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
-                    isAlreadyShown = true;
-                }
-                } else {
-                    isRemoved = false;
+        if (getActivity() instanceof BottomTabsActivity) {
+            BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+            if (activity.getFragment() instanceof MagazinesFragment) {
+                if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                    if (!isRemoved) {
+                        Type type = new TypeToken<List<Popup>>() {
+                        }.getType();
+                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.MAGAZINES) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
+                                isAlreadyShown = true;
+                            }
+                        }
+                    } else {
+                        isRemoved = false;
+                    }
                 }
             }
         }
+
     }
 
     public void onEventMainThread(String action) {
@@ -381,17 +387,24 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (!isAlreadyShown) {
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
-                    isAlreadyShown = true;
+            if (getActivity() instanceof BottomTabsActivity) {
+                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                if (activity.getFragment() instanceof MagazinesFragment) {
+                    if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                        Type type = new TypeToken<List<Popup>>() {
+                        }.getType();
+                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        if (popup != null && popup.size() > 0) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
+                                isAlreadyShown = true;
+                            }
+                        }
+                    }
                 }
             }
-        }
-        else {
+
+        } else {
         }
     }
 

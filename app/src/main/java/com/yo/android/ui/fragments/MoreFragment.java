@@ -455,36 +455,50 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             name.setText(username);
         }
 
-        if(getString(R.string.profile).equals(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle())) {
-            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                if(!isRemoved) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (!isAlreadyShown) {
-                    PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
-                    isAlreadyShown = true;
-                }
-                } else {
-                    isRemoved = false;
+        if (getActivity() instanceof BottomTabsActivity) {
+            BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+            if (activity.getFragment() instanceof MoreFragment) {
+                if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                    if (!isRemoved) {
+                        Type type = new TypeToken<List<Popup>>() {
+                        }.getType();
+                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                isAlreadyShown = true;
+                            }
+                        }
+                    } else {
+                        isRemoved = false;
+                    }
                 }
             }
         }
+
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (!isAlreadyShown) {
-                    PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
-                    isAlreadyShown = true;
+            if (getActivity() instanceof BottomTabsActivity) {
+                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                if (activity.getFragment() instanceof MoreFragment) {
+                    if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                        Type type = new TypeToken<List<Popup>>() {
+                        }.getType();
+                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        if (popup != null && popup.size() > 0) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                isAlreadyShown = true;
+                            }
+                        }
+                    }
                 }
             }
+
         } else {
         }
     }
