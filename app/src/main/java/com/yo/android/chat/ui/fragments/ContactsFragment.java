@@ -272,7 +272,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -281,8 +281,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                     isAlreadyShown = true;
                 }
             }
-        }
-        else {
+        } else {
         }
     }
 
@@ -290,15 +289,15 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         CharSequence title = ((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle();
         if (!TextUtils.isEmpty(title) && title.equals(getString(R.string.contacts))) {
-            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                if(!isRemoved) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (!isAlreadyShown) {
-                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
-                    isAlreadyShown = true;
-                }
+            if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                if (!isRemoved) {
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    if (!isAlreadyShown) {
+                        PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
+                        isAlreadyShown = true;
+                    }
                 } else {
                     isRemoved = false;
                 }

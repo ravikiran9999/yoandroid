@@ -29,6 +29,16 @@ android {
         multiDexEnabled true
     }
     productFlavors {
+        devsms {
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
+            buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""
+            buildConfigField "String", "CLIENT_SECRET", "\"1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
+            minSdkVersion 18
+        }
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
@@ -39,8 +49,8 @@ android {
             buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
             minSdkVersion 18
         }
-        stage {
-            applicationIdSuffix ".stage"
+        /*stage {
+            // applicationIdSuffix ".stage"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
@@ -49,13 +59,28 @@ android {
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
 
         }
+        stagesms {
+            //applicationIdSuffix ".stage"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
+            buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
+            buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
+
+        }*/
     }
     buildTypes {
 
-        sms {
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+//        sms {
+//            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+//            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+//        }
+      /*  nonsms {
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
-        }
+        }*/
         /*release {
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             minifyEnabled false
