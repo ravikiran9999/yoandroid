@@ -410,7 +410,8 @@ public class BottomTabsActivity extends BaseActivity {
             @Override
             public void run() {
                 notificationCount.setVisibility(View.VISIBLE);
-                notificationCount.setText(String.valueOf(value));
+                String valueCount = value > 99 ? "99+" : String.valueOf(value);
+                notificationCount.setText(valueCount);
             }
         });
     }
@@ -420,7 +421,7 @@ public class BottomTabsActivity extends BaseActivity {
         super.onResume();
         if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) == 0) {
             notificationCount.setVisibility(View.GONE);
-        } else if(preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) > 0) {
+        } else if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) > 0) {
             update(preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT));
         }
     }
