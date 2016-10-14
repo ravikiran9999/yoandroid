@@ -413,6 +413,16 @@ public class Util {
         }
     }
 
+    public static void closeSearchView(Menu menu) {
+        try {
+            if (menu.findItem(R.id.menu_search).isActionViewExpanded()) {
+                (menu.findItem(R.id.menu_search)).collapseActionView();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void shareIntent(View view, String url, String title) {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);

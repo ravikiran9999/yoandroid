@@ -357,6 +357,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         if (getActivity() instanceof BottomTabsActivity) {
             BottomTabsActivity activity = (BottomTabsActivity) getActivity();
             if (activity.getFragment() instanceof MagazinesFragment) {
+
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                     if (!isRemoved) {
                         Type type = new TypeToken<List<Popup>>() {

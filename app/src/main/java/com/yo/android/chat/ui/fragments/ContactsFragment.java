@@ -13,6 +13,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -179,6 +180,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_contacts, menu);
         this.menu = menu;
         Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG);

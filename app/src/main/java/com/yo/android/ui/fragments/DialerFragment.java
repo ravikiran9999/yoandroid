@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -153,7 +154,6 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                 showEmptyText();
             }
         });
-
     }
 
 
