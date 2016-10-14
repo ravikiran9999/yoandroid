@@ -459,7 +459,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.chats))) {
+        CharSequence title = ((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle();
+        if (!TextUtils.isEmpty(title) && title.equals(getString(R.string.chats))) {
             if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                 if(!isRemoved) {
                     Type type = new TypeToken<List<Popup>>() {

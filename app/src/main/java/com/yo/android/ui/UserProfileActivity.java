@@ -141,11 +141,12 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     private void setDataFromPreferences() {
         if (contact != null) {
-            if (fromChatRooms) {
+            getSupportActionBar().setTitle(getResources().getString(R.string.profile));
+            /*if (fromChatRooms) {
                 getSupportActionBar().setTitle(getResources().getString(R.string.profile));
             } else {
                 getSupportActionBar().setTitle(contact.getName());
-            }
+            }*/
 
             if (roomName != null) {
                 Glide.with(this)
