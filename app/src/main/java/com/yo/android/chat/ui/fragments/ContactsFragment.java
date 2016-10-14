@@ -179,6 +179,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_contacts, menu);
         this.menu = menu;
         Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG);
