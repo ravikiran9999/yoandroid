@@ -16,12 +16,15 @@ import com.yo.android.R;
 import com.yo.android.adapters.GroupContactsListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,6 +41,7 @@ public class GroupContactsActivity extends BaseActivity {
 
     private GroupContactsListAdapter groupContactsListAdapter;
     private ListView listView;
+    private ListView layout;
     TextView textView;
     private String groupName;
     private Menu mMenu;
@@ -64,6 +68,7 @@ public class GroupContactsActivity extends BaseActivity {
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         listView = (ListView) findViewById(R.id.lv_app_contacts);
         textView = (TextView) findViewById(R.id.no_contacts);
+        layout = (ListView) findViewById(R.id.side_index);
         groupContactsListAdapter = new GroupContactsListAdapter(this);
         listView.setAdapter(groupContactsListAdapter);
 
@@ -115,8 +120,7 @@ public class GroupContactsActivity extends BaseActivity {
                         listView.setVisibility(View.GONE);
                         textView.setVisibility(View.VISIBLE);
                     } else {
-                        groupContactsListAdapter.addItems(contactList);
-                        CreateGroupActivity.ContactsArrayList = contactList;
+                        loadInAlphabeticalOrder(contactList);
                     }
                 } else {
                     listView.setVisibility(View.GONE);
@@ -167,4 +171,16 @@ public class GroupContactsActivity extends BaseActivity {
             llNoPeople.setVisibility(View.GONE);
         }
     }*/
+
+    private void loadInAlphabeticalOrder(List<Contact> contactList) {
+        Collections.sort(contactList, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact lhs, Contact rhs) {
+                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
+            }
+        });
+        Helper.displayIndex(this, layout, contactList, listView);
+        groupContactsListAdapter.addItems(contactList);
+        CreateGroupActivity.ContactsArrayList = contactList;
+    }
 }

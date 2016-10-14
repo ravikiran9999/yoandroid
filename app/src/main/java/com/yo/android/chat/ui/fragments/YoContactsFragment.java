@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,9 +25,6 @@ import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
-import com.yo.android.model.Registration;
-import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -49,7 +45,6 @@ import retrofit2.Response;
 public class YoContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private static final int CREATE_GROUP_RESULT = 100;
-    private ArrayList<Registration> arrayOfUsers;
     private ArrayList<ChatMessage> forwardChatMessages;
     private AppContactsListAdapter appContactsListAdapter;
     private ListView listView;
@@ -64,12 +59,12 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     private MenuItem collapseView;
 
-    public Menu getMenu() {
-        return menu;
-    }
-
     public YoContactsFragment() {
         // Required empty public constructor
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 
     @Override
@@ -95,12 +90,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
         if (getArguments() != null) {
             forwardChatMessages = getArguments().getParcelableArrayList(Constants.CHAT_FORWARD);
         }
 
-        arrayOfUsers = new ArrayList<>();
         appContactsListAdapter = new AppContactsListAdapter(getActivity().getApplicationContext());
         listView.setAdapter(appContactsListAdapter);
         getYoAppUsers();
@@ -109,13 +102,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                getActivity().finish();
-                break;
-            default:
-                break;
-
+        if (item.getItemId() == android.R.id.home) {
+            getActivity().finish();
         }
         return super.onOptionsItemSelected(item);
 
@@ -150,6 +138,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         if (collapseView != null) {
             collapseView.collapseActionView();
         }
+        itemClick(position);
+    }
+
+    private void itemClick(int position) {
         Contact contact = (Contact) listView.getItemAtPosition(position);
         if (position == 0 && contact.getVoxUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null) {
             startActivityForResult(new Intent(getActivity(), CreateGroupActivity.class), CREATE_GROUP_RESULT);
@@ -160,16 +152,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 navigateToChatScreen(contact);
             }
         }
-    }
-
-    private void navigateToChatScreen(String roomId, String opponentPhoneNumber, String yourPhoneNumber, String opponentId) {
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
-        intent.putExtra(Constants.OPPONENT_ID, opponentId);
-        intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
-        startActivity(intent);
-        getActivity().finish();
     }
 
     private void navigateToChatScreen(Contact contact, ArrayList<ChatMessage> forward) {
@@ -243,11 +225,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 contactList.add(0, contact);
 
             }
-        } else if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
+        } else if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false) && stringArrayList.contains(getResources().getString(R.string.new_group))) {
 
-            if (stringArrayList.contains(getResources().getString(R.string.new_group))) {
-                contactList.remove(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
-            }
+            contactList.remove(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
         }
         tempList = contactList;
         appContactsListAdapter.addItems(contactList);
