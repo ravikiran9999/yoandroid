@@ -78,7 +78,6 @@ public class BottomTabsActivity extends BaseActivity {
     MyServiceConnection myServiceConnection;
     @Inject
     ContactSyncHelper mContactSyncHelper;
-
     private Button notificationCount;
     private ViewGroup customActionBar;
     private Context context;
@@ -153,9 +152,11 @@ public class BottomTabsActivity extends BaseActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 try {
+                    Util.closeSearchView(getMenu());
                     getSupportActionBar().setDisplayShowTitleEnabled(false);
                     getSupportActionBar().setDisplayShowCustomEnabled(true);
                     getSupportActionBar().setCustomView(customActionBar);
+
                     if (getFragment() instanceof MoreFragment) {
                         getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
                     } else {
@@ -282,22 +283,28 @@ public class BottomTabsActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (R.id.menu_search == item.getItemId()) {
             //setToolBarColor(getResources().getColor(R.color.colorPrimary));
-            Menu menu = null;
-            if (getFragment() instanceof ChatFragment) {
-                menu = ((ChatFragment) getFragment()).getMenu();
-            } else if (getFragment() instanceof ContactsFragment) {
-                menu = ((ContactsFragment) getFragment()).getMenu();
-            } else if (getFragment() instanceof DialerFragment) {
-                menu = ((DialerFragment) getFragment()).getMenu();
-            } else if (getFragment() instanceof MagazinesFragment) {
-                menu = ((MagazinesFragment) getFragment()).getMenu();
-            }
-            if (menu != null) {
-                Util.changeMenuItemsVisibility(menu, R.id.menu_search, false);
-                Util.registerSearchLister(this, menu);
+
+            Menu menu1 = getMenu();
+            if (menu1 != null) {
+                Util.changeMenuItemsVisibility(menu1, R.id.menu_search, false);
+                Util.registerSearchLister(this, menu1);
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private Menu getMenu() {
+        Menu menu = null;
+        if (getFragment() instanceof ChatFragment) {
+            menu = ((ChatFragment) getFragment()).getMenu();
+        } else if (getFragment() instanceof ContactsFragment) {
+            menu = ((ContactsFragment) getFragment()).getMenu();
+        } else if (getFragment() instanceof DialerFragment) {
+            menu = ((DialerFragment) getFragment()).getMenu();
+        } else if (getFragment() instanceof MagazinesFragment) {
+            menu = ((MagazinesFragment) getFragment()).getMenu();
+        }
+        return menu;
     }
 
     public void refresh() {

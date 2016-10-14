@@ -58,17 +58,19 @@ public class PushNotificationService extends FirebaseMessagingService {
             EventBus.getDefault().post(Constants.TOPIC_NOTIFICATION_ACTION);
         } else if (data.get("tag").equals("BalanceTransferred")) {
             EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION);
-        } else if(data.get("tag").equals("POPUP")) {
+        } else if (data.get("tag").equals("POPUP")) {
             PopupHelper.handlePop(preferenceEndPoint, data);
         }
 
         //if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
 
         if (preferenceEndPoint.getBooleanPreference(Constants.IS_IN_APP)) {
-            int i = preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT);
-            i = ++i;
-            preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, i);
-            EventBus.getDefault().post(new NotificationCount(i));
+            if (!data.get("tag").equals("POPUP")) {
+                int i = preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT);
+                i = ++i;
+                preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, i);
+                EventBus.getDefault().post(new NotificationCount(i));
+            }
         } else {
             createNotification(data.get("title").toString(), data.get("message").toString());
         }

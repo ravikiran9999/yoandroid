@@ -424,8 +424,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     SipHelper.makeCall(getActivity(), opponentNumber);
                 }
                 break;
-            case R.id.attach:
-                break;
             case R.id.camera:
                 takePicture();
                 break;

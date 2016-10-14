@@ -455,16 +455,17 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             name.setText(username);
         }
 
-        if(getString(R.string.profile).equals(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle())) {
+        CharSequence title = ((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle();
+        if (!TextUtils.isEmpty(title) && title.equals(getString(R.string.profile))) {
             if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                if(!isRemoved) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (!isAlreadyShown) {
-                    PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
-                    isAlreadyShown = true;
-                }
+                if (!isRemoved) {
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    if (!isAlreadyShown) {
+                        PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                        isAlreadyShown = true;
+                    }
                 } else {
                     isRemoved = false;
                 }

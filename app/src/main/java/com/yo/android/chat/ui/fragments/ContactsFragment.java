@@ -13,6 +13,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -178,6 +179,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_contacts, menu);
         this.menu = menu;
         Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG);
@@ -286,7 +288,8 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (getString(R.string.contacts).equals(((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle())) {
+        CharSequence title = ((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle();
+        if (!TextUtils.isEmpty(title) && title.equals(getString(R.string.contacts))) {
             if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                 if (!isRemoved) {
                     Type type = new TypeToken<List<Popup>>() {

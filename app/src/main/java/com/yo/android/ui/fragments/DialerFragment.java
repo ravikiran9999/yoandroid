@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -153,7 +154,6 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                 showEmptyText();
             }
         });
-
     }
 
 
@@ -354,7 +354,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (getString(R.string.dialer).equals(((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle())) {
+        CharSequence title = ((BottomTabsActivity) getActivity()).getSupportActionBar().getTitle();
+        if (!TextUtils.isEmpty(title) && title.equals(getString(R.string.dialer))) {
             if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                 if (!isRemoved) {
                     Type type = new TypeToken<List<Popup>>() {
