@@ -57,6 +57,7 @@ import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.util.FireBaseHelper;
+import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 import com.yo.android.voip.VoipConstants;
 
@@ -84,7 +85,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
 
     private MoreListAdapter menuAdapter;
@@ -113,6 +114,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Inject
     FireBaseHelper fireBaseHelper;
+
+    private boolean isAlreadyShown;
+    private boolean isRemoved;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -431,10 +435,17 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         if(((BottomTabsActivity)getActivity()).getSupportActionBar().getTitle().equals(getString(R.string.profile))) {
             if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                if(!isRemoved) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                    PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
+                } else {
+                    isRemoved = false;
+                }
             }
         }
     }
@@ -447,10 +458,25 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this);
+                if (!isAlreadyShown) {
+                    PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                    isAlreadyShown = true;
+                }
             }
         }
         else {
         }
+    }
+
+    @Override
+    public void closePopup() {
+        isAlreadyShown = false;
+        isRemoved = true;
+        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+        Type type = new TypeToken<List<Popup>>() {
+        }.getType();
+        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        popup.remove(0);
+        preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }

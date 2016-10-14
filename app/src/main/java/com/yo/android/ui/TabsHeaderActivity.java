@@ -23,11 +23,15 @@ import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.util.Constants;
+import com.yo.android.util.PopupDialogListener;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class TabsHeaderActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class TabsHeaderActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
+
+    private boolean isAlreadyShown;
+    private boolean isRemoved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +93,10 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
             Type type = new TypeToken<List<Popup>>() {
             }.getType();
             List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-            PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null);
+            if (!isAlreadyShown) {
+            PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
+                isAlreadyShown = true;
+            }
         }
     }
 
@@ -119,10 +126,17 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         //if(isMenuVisible()) {
             if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                if(!isRemoved) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null);
+                if (!isAlreadyShown) {
+                PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
+                    isAlreadyShown = true;
+                }
+                } else {
+                    isRemoved = false;
+                }
             }
         //}
     }
@@ -131,5 +145,17 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     protected void onDestroy() {
         super.onDestroy();
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void closePopup() {
+        isAlreadyShown = false;
+        isRemoved = true;
+        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+        Type type = new TypeToken<List<Popup>>() {
+        }.getType();
+        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        popup.remove(0);
+        preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }
