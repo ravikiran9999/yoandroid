@@ -93,7 +93,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
             Type type = new TypeToken<List<Popup>>() {
             }.getType();
             List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-            if(popup != null && popup.size() >0) {
+            if(popup != null && popup.size() >0  && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
                 if (!isAlreadyShown) {
                     PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
                     isAlreadyShown = true;
@@ -138,9 +138,9 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
                             isAlreadyShown = true;
                         }
                     }
-                } else {
+                } /*else {
                     isRemoved = false;
-                }
+                }*/
             }
         //}
     }

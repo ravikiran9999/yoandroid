@@ -22,6 +22,7 @@ import com.yo.android.util.YODialogs;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,15 @@ public class PopupHelper {
             List<Popup> tempPopupList;
             tempPopupList = popupList;
             int i = -1;
-            for (Popup popup :  popupList) {
+            /*for(Iterator<Shop> it = result.iterator(); it.hasNext();) {
+                Shop s = it.next();
+                if(s.getClientPoints().getPointsSpent() == 0) {
+                    it.remove();
+                }
+            }*/
+            //for (Popup popup :  popupList) {
+            for (Iterator<Popup> it = popupList.iterator(); it.hasNext();) {
+                Popup popup = it.next();
                 i++;
                 switch (popup.getPopupsEnum()) {
                     case MAGAZINES:
@@ -57,7 +66,8 @@ public class PopupHelper {
                                 YODialogs.showPopup(preferenceEndPoint, activity, popup, listener);
                             } else if(!liveToDate.after(currentDate)){
                                 //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
-                                tempPopupList.remove(i);
+                                //tempPopupList.remove(i);
+                                it.remove();
                                 preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
                             }
                         } else {
@@ -76,7 +86,8 @@ public class PopupHelper {
                                 YODialogs.showPopup(preferenceEndPoint, activity, popup, listener);
                             } else if(!liveToDate.after(currentDate)){
                                 //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
-                                tempPopupList.remove(i);
+                                //tempPopupList.remove(i);
+                                it.remove();
                                 preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
                             }
                         } else {
@@ -95,7 +106,8 @@ public class PopupHelper {
                                 YODialogs.showPopup(preferenceEndPoint, activity, popup, listener);
                             } else if(!liveToDate.after(currentDate)){
                                 //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
-                                tempPopupList.remove(i);
+                                //tempPopupList.remove(i);
+                                it.remove();
                                 preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
                             }
                         } else {
@@ -114,7 +126,8 @@ public class PopupHelper {
                                 YODialogs.showPopup(preferenceEndPoint, activity, popup, listener);
                             } else if(!liveToDate.after(currentDate)){
                                 //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
-                                tempPopupList.remove(i);
+                                //tempPopupList.remove(i);
+                                it.remove();
                                 preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
                             }
                         } else {
@@ -133,7 +146,8 @@ public class PopupHelper {
                                 YODialogs.showPopup(preferenceEndPoint, activity, popup, listener);
                             } else if(!liveToDate.after(currentDate)){
                                 //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
-                                tempPopupList.remove(i);
+                                //tempPopupList.remove(i);
+                                it.remove();
                                 preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
                             }
                         } else {
@@ -152,7 +166,8 @@ public class PopupHelper {
                                 YODialogs.showPopup(preferenceEndPoint, activity, popup, listener);
                             } else if(!liveToDate.after(currentDate)){
                                 //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
-                                tempPopupList.remove(i);
+                                //tempPopupList.remove(i);
+                                it.remove();
                                 preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
                             }
                         } else {
