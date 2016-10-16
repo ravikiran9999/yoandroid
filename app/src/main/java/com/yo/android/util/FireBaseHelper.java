@@ -124,7 +124,7 @@ public class FireBaseHelper {
 
                         }
                     });
-                    Toast.makeText(context, "Login un Succeeded!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Login un Succeeded!", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {

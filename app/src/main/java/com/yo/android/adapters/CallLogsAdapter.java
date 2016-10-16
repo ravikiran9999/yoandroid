@@ -14,6 +14,7 @@ import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -24,6 +25,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.CallLogsViewHolder;
 import com.yo.android.helpers.Helper;
+import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.CallLogsResult;
@@ -38,6 +40,8 @@ import com.yo.android.voip.OutGoingCallActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<CallLogsResult>>, CallLogsViewHolder> {
 
@@ -75,7 +79,21 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         holder.getMessageIcon().setVisibility(View.VISIBLE);
         if (destination_name != null && destination_name.length() >= 1) {
             holder.getOpponentName().setText(destination_name);
-            drawable = mDrawableBuilder.build(String.valueOf(destination_name.charAt(0)), mColorGenerator.getRandomColor());
+            String title = String.valueOf(destination_name.charAt(0)).toUpperCase();
+            Pattern p = Pattern.compile("^[a-zA-Z]");
+            Matcher m = p.matcher(title);
+            boolean b = m.matches();
+            if (b) {
+                drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
+                holder.getContactPic().setImageDrawable(drawable);
+            } else {
+                Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+                LayerDrawable bgDrawable = (LayerDrawable) tempImage;
+                final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
+                if (Settings.isTitlePicEnabled) {
+                    shape.setColor(mColorGenerator.getRandomColor());
+                }
+                drawable = tempImage;            }
             holder.getCreatNewContact().setVisibility(View.GONE);
             holder.getAddToContact().setVisibility(View.GONE);
         } else {
@@ -218,5 +236,16 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     public void showView(int position) {
         updateViewPosition = position;
         notifyDataSetChanged();
+    }
+
+    private void loadAvatarImage(ImageView holder) {
+        Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+        LayerDrawable bgDrawable = (LayerDrawable) tempImage;
+        final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
+        if (Settings.isTitlePicEnabled) {
+            shape.setColor(mColorGenerator.getRandomColor());
+        }
+        holder.setVisibility(View.VISIBLE);
+        holder.setImageDrawable(tempImage);
     }
 }
