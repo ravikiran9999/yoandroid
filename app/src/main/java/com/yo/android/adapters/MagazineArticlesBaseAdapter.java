@@ -69,10 +69,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     private Articles secondArticle;
     private Articles thirdArticle;
     private List<Articles> allArticles;
+    private MagazineFlipArticlesFragment magazineFlipArticlesFragment;
 
     public MagazineArticlesBaseAdapter(Context context,
                                        PreferenceEndPoint preferenceEndPoint,
-                                       YoApi.YoService yoService, ToastFactory mToastFactory) {
+                                       YoApi.YoService yoService, ToastFactory mToastFactory, MagazineFlipArticlesFragment magazineFlipArticlesFragment) {
         inflater = LayoutInflater.from(context);
         this.context = context;
         reflectListener = this;
@@ -83,6 +84,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         items = new ArrayList<>();
         totalItems = new ArrayList<>();
         allArticles = new ArrayList<>();
+        this.magazineFlipArticlesFragment = magazineFlipArticlesFragment;
     }
 
     @Override
@@ -699,17 +701,19 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     public void addItems(List<Articles> articlesList) {
         allArticles = new ArrayList<>(articlesList);
         totalItems = new ArrayList<>(articlesList);
-        if(totalItems.size()>1) {
-            secondArticle = totalItems.get(1);
-        }
-        if(totalItems.size()>2) {
-            thirdArticle = totalItems.get(2);
-        }
-        if(totalItems.size()>1) {
-            totalItems.remove(1);
-        }
-        if(totalItems.size()>1) {
-            totalItems.remove(1);
+        if(!magazineFlipArticlesFragment.isSearch) {
+            if (totalItems.size() > 1) {
+                secondArticle = totalItems.get(1);
+            }
+            if (totalItems.size() > 2) {
+                thirdArticle = totalItems.get(2);
+            }
+            if (totalItems.size() > 1) {
+                totalItems.remove(1);
+            }
+            if (totalItems.size() > 1) {
+                totalItems.remove(1);
+            }
         }
         items = new ArrayList<>(totalItems);
         if (!((BaseActivity)context).hasDestroyed()) {
@@ -772,10 +776,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     @Override
     public int getItemViewType(int position) {
         //return (position == 0) ? 0 : 1;
-        if(position == 0) {
+        if(position == 0 && !magazineFlipArticlesFragment.isSearch) {
             return  0;
         } else if(position == MagazineFlipArticlesFragment.suggestionsPosition) {
             return 2;
+        } else if(magazineFlipArticlesFragment.isSearch) {
+            return  1;
         } else {
             return 1;
         }
