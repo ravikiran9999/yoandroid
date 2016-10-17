@@ -114,6 +114,7 @@
                     android:background="@color/grey_divider" />
             </RelativeLayout>
 
+
             <RelativeLayout
                 android:id="@+id/row_container_details"
                 android:layout_width="match_parent"
