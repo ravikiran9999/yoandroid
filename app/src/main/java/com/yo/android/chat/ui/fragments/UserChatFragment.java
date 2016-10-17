@@ -548,10 +548,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             String timeStp = Long.toString(chatMessage.getTime());
             chatMessage.setSent(1);
-            chatMessageArray.add(chatMessage);
-            userChatAdapter.addItems(chatMessageArray);
+
             if (forwardInt == 0) {
+
+                chatMessageArray.add(chatMessage);
+                userChatAdapter.addItems(chatMessageArray);
                 chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
+
             }
 
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
