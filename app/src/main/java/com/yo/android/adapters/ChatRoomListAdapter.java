@@ -106,6 +106,9 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     }
 
     private Drawable loadAvatarImage(ChatRoomViewHolder holder, boolean isgroup) {
+        if (holder.getChatRoomPic().getTag(Settings.imageTag) != null) {
+            return (Drawable) holder.getChatRoomPic().getTag(Settings.imageTag);
+        }
         Drawable tempImage;
         if (isgroup) {
             tempImage = mContext.getResources().getDrawable(R.drawable.chat_group);
@@ -120,6 +123,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         if (Settings.isTitlePicEnabled) {
             shape.setColor(mColorGenerator.getRandomColor());
         }
+        holder.getChatRoomPic().setTag(Settings.imageTag, tempImage);
         return tempImage;
     }
 }

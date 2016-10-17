@@ -1,16 +1,14 @@
 package com.yo.android.app;
 
-import android.app.Application;
-import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
+import com.bumptech.glide.request.target.ViewTarget;
 import com.firebase.client.Firebase;
-import com.google.firebase.database.FirebaseDatabase;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.di.RootModule;
 import com.yo.android.util.Constants;
-import com.yo.android.util.ReCreateService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,14 +32,13 @@ public class BaseApp extends MultiDexApplication {
         injectDependencies();
 
         /* Enable disk persistence  */
-       // FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        // FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
-       // ReCreateService.getInstance(this).start(this);
+        // ReCreateService.getInstance(this).start(this);
 
-        
+
     }
-
 
 
     private void injectDependencies() {
