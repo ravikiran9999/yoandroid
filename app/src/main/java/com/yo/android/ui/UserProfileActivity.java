@@ -79,6 +79,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
+        getSupportActionBar().setElevation(0);
+
         ButterKnife.bind(this);
         enableBack();
         groupMembersList = new ArrayList<>();
@@ -142,11 +144,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private void setDataFromPreferences() {
         if (contact != null) {
             getSupportActionBar().setTitle(getResources().getString(R.string.profile));
-            /*if (fromChatRooms) {
-                getSupportActionBar().setTitle(getResources().getString(R.string.profile));
-            } else {
-                getSupportActionBar().setTitle(contact.getName());
-            }*/
+
 
             if (roomName != null) {
                 Glide.with(this)

@@ -195,7 +195,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             return;
         }
 
-
         showProgressDialog();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         // create RequestBody instance from file
@@ -235,22 +234,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this);
         }*/
     }
-
-   /* @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_more, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        *//*if(item.getItemId() == R.id.notification_icon) {
-            startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        }*//*
-        return super.onOptionsItemSelected(item);
-    }
-*/
 
     /**
      * Prepares the Settings list
@@ -514,4 +497,5 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
+
 }

@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.orion.android.common.logger.Log;
@@ -107,6 +110,8 @@ public class ProgressDialogFactory {
         Dialog dialogTransparent = new Dialog(activity, android.R.style.Theme_Black);
         View view = LayoutInflater.from(activity).inflate(
                 R.layout.remove_border, null);
+        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progressBar1);
+        progressBar.getIndeterminateDrawable().setColorFilter(activity.getResources().getColor(R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
         dialogTransparent.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogTransparent.getWindow().setBackgroundDrawableResource(
                 android.R.color.transparent);
