@@ -136,7 +136,12 @@ public class TransferBalanceActivity extends BaseActivity {
             public void onClick(View v) {
                 String amount = etAmount.getText().toString();
                 if(!TextUtils.isEmpty(amount.trim())) {
-                showMessageDialog(amount, phoneNo);
+                    double val = Double.parseDouble(amount.trim());
+                    if(val != 0) {
+                        showMessageDialog(amount, phoneNo);
+                    } else {
+                        mToastFactory.showToast("Please enter a valid amount to transfer");
+                    }
                 } else {
                     mToastFactory.showToast("Please enter an amount to transfer");
                 }
