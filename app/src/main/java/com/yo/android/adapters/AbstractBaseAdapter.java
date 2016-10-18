@@ -31,7 +31,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     private List<T> mOriginalList = new ArrayList<>();
     private SparseBooleanArray mSelectedItemsIds;
     private String myNumber;
-
+    public List<T> temp;
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
@@ -45,11 +45,10 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
     public void addItems(List<T> list) {
         mList = new ArrayList<>(list);
-        //if (mOriginalList.isEmpty()) {
         if (mOriginalList.size() == 0) {
             mOriginalList = new ArrayList<>(list);
         }
-        //}
+
         notifyDataSetChanged();
     }
 
@@ -149,7 +148,8 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
             addItems(mOriginalList);
         } else {
 
-            List<T> temp = new ArrayList<>();
+            //List<T> temp = new ArrayList<>();
+            temp = new ArrayList<>();
             for (T event : mOriginalList) {
                 if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(searchKey.toLowerCase())) {
                     temp.add(event);
