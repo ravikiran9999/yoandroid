@@ -142,15 +142,25 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void itemClick(int position) {
-        Contact contact = (Contact) listView.getItemAtPosition(position);
-        if (position == 0 && contact.getVoxUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null) {
-            startActivityForResult(new Intent(getActivity(), CreateGroupActivity.class), CREATE_GROUP_RESULT);
-        } else {
-            if (forwardChatMessages != null && contact != null && contact.getYoAppUser()) {
-                navigateToChatScreen(contact, forwardChatMessages);
-            } else if (contact != null && contact.getYoAppUser()) {
-                navigateToChatScreen(contact);
+        Contact contact;
+        try {
+            if (appContactsListAdapter.temp != null && !appContactsListAdapter.temp.isEmpty()) {
+                contact = appContactsListAdapter.temp.get(position);
+            } else {
+                contact = (Contact) listView.getItemAtPosition(position);
             }
+
+            if (position == 0 && contact.getVoxUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null) {
+                startActivityForResult(new Intent(getActivity(), CreateGroupActivity.class), CREATE_GROUP_RESULT);
+            } else {
+                if (forwardChatMessages != null && contact != null && contact.getYoAppUser()) {
+                    navigateToChatScreen(contact, forwardChatMessages);
+                } else if (contact != null && contact.getYoAppUser()) {
+                    navigateToChatScreen(contact);
+                }
+            }
+        }catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
