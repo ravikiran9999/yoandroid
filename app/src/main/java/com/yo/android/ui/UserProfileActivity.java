@@ -20,6 +20,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.ProfileMembersAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.GroupMembers;
 import com.yo.android.model.RoomInfo;
@@ -29,6 +30,8 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -298,6 +301,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
+                                if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber()) && userProfile.getMobileNumber().substring(3).equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                                    userProfile.setFullName(getString(R.string.you));
+                                }
                                 for (Map.Entry m : groupMembersHashMap.entrySet()) {
                                     if (dataSnapshot.getRef().getParent().getKey().equals(m.getKey())) {
                                         GroupMembers groupMembers = (GroupMembers) m.getValue();
@@ -305,7 +311,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                                         groupMembersList.add(groupMembers);
                                     }
                                 }
-                                profileMembersAdapter.addItems(groupMembersList);
+                                loadAlphabetOrder(groupMembersList);
                             }
 
                             @Override
@@ -314,7 +320,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                             }
                         });
                     }
-
                 }
 
                 @Override
@@ -328,5 +333,23 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     @Override
     public void onCancelled(FirebaseError firebaseError) {
         firebaseError.getMessage();
+    }
+
+    private void loadAlphabetOrder(List<GroupMembers> list) {
+
+        Collections.sort(list, new Comparator<GroupMembers>() {
+            @Override
+            public int compare(GroupMembers lhs, GroupMembers rhs) {
+                return lhs.getUserProfile().getFullName().toLowerCase().compareTo(rhs.getUserProfile().getFullName().toLowerCase());
+            }
+        });
+        for (GroupMembers groupMembers : list) {
+            if (groupMembers.getUserProfile().getFullName().equalsIgnoreCase(getString(R.string.you))) {
+                list.add(list.size(), groupMembers);
+                list.remove(groupMembers);
+            }
+        }
+
+        profileMembersAdapter.addItems(list);
     }
 }

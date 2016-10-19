@@ -28,4 +28,12 @@ public class UserProfile {
     public String getMobileNumber() {
         return mobileNumber;
     }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
 }
