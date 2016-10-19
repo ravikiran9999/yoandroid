@@ -25,6 +25,8 @@ import com.yo.android.model.UserProfileInfo;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -204,8 +206,9 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
         contactsListAdapter.addItemsAll(list);
         invalidateOptionsMenu();
-        originalList = list;
-        Helper.displayIndexTransferBalance(this, layout, list, listView);
+        //originalList = list;
+        originalList.addAll(list);
+        Helper.displayIndexTransferBalance(this, layout, originalList, listView);
     }
 
     private boolean isMoreLoading = false;
@@ -218,9 +221,11 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                 int count = listView.getCount();
                 if (scrollState == SCROLL_STATE_IDLE) {
                     //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
-                    if (isMoreLoading == false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery()) && isRepresentative) {
-                        //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && isRepresentative) {
-                        doPagination();
+                    if(searchView != null) {
+                        if (isMoreLoading == false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery()) && isRepresentative) {
+                            //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && isRepresentative) {
+                            doPagination();
+                        }
                     }
                 }
             }
@@ -290,7 +295,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Enter atleast 6 characters...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-        searchView.setInputType(InputType.TYPE_CLASS_NUMBER);
+        searchView.setInputType(InputType.TYPE_CLASS_PHONE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             public static final String TAG = "Search in TransferBal";
 
@@ -329,11 +334,17 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
             contactsListAdapter.clearAll();
             contactsListAdapter.addItemsAll(originalList);
         } else if (searchKey.length() > 5) {
+            String decodedString = searchKey;
+            try {
+                decodedString = URLDecoder.decode(searchKey, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             if (call != null) {
                 call.cancel();
             }
-            call = yoService.searchInBalanceTransferContacts(accessToken, searchKey, 1, 100);
+            call = yoService.searchInBalanceTransferContacts(accessToken, decodedString, 1, 100);
             call.enqueue(new Callback<List<FindPeople>>() {
                 @Override
                 public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
