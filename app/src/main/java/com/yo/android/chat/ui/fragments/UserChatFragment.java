@@ -566,7 +566,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         Toast.makeText(getActivity(), "Message not sent", Toast.LENGTH_SHORT).show();
                     }
                 }
-
             });
 
 

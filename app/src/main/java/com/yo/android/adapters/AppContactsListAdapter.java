@@ -2,6 +2,8 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -9,11 +11,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.AppRegisteredContactsViewHolder;
+import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Util;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by rdoddapaneni on 7/5/2016.
@@ -95,8 +101,18 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
                 } else {
                     if (item.getName() != null && item.getName().length() >= 1 && !TextUtils.isDigitsOnly(item.getName())) {
                         if (Settings.isTitlePicEnabled) {
-                            Drawable drawable = mDrawableBuilder.build(String.valueOf(item.getName().charAt(0)), mColorGenerator.getRandomColor());
-                            holder.getContactPic().setImageDrawable(drawable);
+                            if (item.getName() != null && item.getName().length() >= 1) {
+                                String title = String.valueOf(item.getName().charAt(0)).toUpperCase();
+                                Pattern p = Pattern.compile("^[a-zA-Z]");
+                                Matcher m = p.matcher(title);
+                                boolean b = m.matches();
+                                if (b) {
+                                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
+                                    holder.getContactPic().setImageDrawable(drawable);
+                                } else {
+                                    loadAvatarImage(holder);
+                                }
+                            }
                         } else {
                             holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
                         }
@@ -108,5 +124,17 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
                 e.printStackTrace();
             }
         }
+    }
+    private void loadAvatarImage(AppRegisteredContactsViewHolder holder) {
+        Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+        LayerDrawable bgDrawable = (LayerDrawable) tempImage;
+        final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
+        if (Settings.isTitlePicEnabled) {
+            shape.setColor(mColorGenerator.getRandomColor());
+        }
+        if (holder.getContactPic().getTag(Settings.imageTag) == null) {
+            holder.getContactPic().setTag(Settings.imageTag, tempImage);
+        }
+        holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag(Settings.imageTag));
     }
 }

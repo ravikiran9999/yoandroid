@@ -58,7 +58,7 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<FindPeopl
             holder.getContactNumber().setVisibility(View.GONE);
         }
         holder.getContactNumber().setText(item.getFirst_name() + " " + item.getLast_name());
-        if(item.getPhone_no()!=null){
+        if (item.getPhone_no() != null) {
             item.setPhone_no(item.getPhone_no().trim());
         }
 
@@ -107,7 +107,10 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<FindPeopl
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
             shape.setColor(mColorGenerator.getRandomColor());
-            holder.getContactPic().setImageDrawable(tempImage);
+            if (holder.getContactPic().getTag(Settings.imageTag) == null) {
+                holder.getContactPic().setTag(Settings.imageTag, tempImage);
+            }
+            holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag(Settings.imageTag));
         } else {
             Glide.with(mContext)
                     .load("")

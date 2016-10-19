@@ -150,8 +150,8 @@ public class ChatActivity extends BaseActivity {
             if (room != null && room.getGroupName() != null) {
                 Glide.with(this).load(mOpponentImg)
                         .asBitmap().centerCrop()
-                        .placeholder(loadAvatarImage(true))
-                        .error(loadAvatarImage(true))
+                        .placeholder(loadAvatarImage(imageView, true))
+                        .error(loadAvatarImage(imageView, true))
                         .dontAnimate()
                         .into(new BitmapImageViewTarget(imageView) {
                             @Override
@@ -159,22 +159,28 @@ public class ChatActivity extends BaseActivity {
                                 RoundedBitmapDrawable circularBitmapDrawable =
                                         RoundedBitmapDrawableFactory.create(getResources(), resource);
                                 circularBitmapDrawable.setCircular(true);
-                                imageView.setImageDrawable(circularBitmapDrawable);
+                                if (imageView.getTag(Settings.imageTag) == null) {
+                                    imageView.setTag(Settings.imageTag, circularBitmapDrawable);
+                                }
+                                imageView.setImageDrawable((Drawable) imageView.getTag(Settings.imageTag));
                             }
                         });
             } else {
                 Glide.with(this).load(mOpponentImg)
                         .asBitmap().centerCrop()
                         .dontAnimate()
-                        .placeholder(loadAvatarImage(false))
-                        .error(loadAvatarImage(false))
+                        .placeholder(loadAvatarImage(imageView, false))
+                        .error(loadAvatarImage(imageView, false))
                         .into(new BitmapImageViewTarget(imageView) {
                             @Override
                             protected void setResource(Bitmap resource) {
                                 RoundedBitmapDrawable circularBitmapDrawable =
                                         RoundedBitmapDrawableFactory.create(getResources(), resource);
                                 circularBitmapDrawable.setCircular(true);
-                                imageView.setImageDrawable(circularBitmapDrawable);
+                                if (imageView.getTag(Settings.imageTag) == null) {
+                                    imageView.setTag(Settings.imageTag, circularBitmapDrawable);
+                                }
+                                imageView.setImageDrawable((Drawable) imageView.getTag(Settings.imageTag));
                             }
                         });
             }
@@ -228,7 +234,11 @@ public class ChatActivity extends BaseActivity {
         Util.cancelAllNotification(this);
     }
 
-    private Drawable loadAvatarImage(boolean isgroup) {
+    private Drawable loadAvatarImage(ImageView imageview, boolean isgroup) {
+        if (imageview.getTag() != null) {
+            return (Drawable) imageview.getTag(Settings.imageTag);
+        }
+
         Drawable tempImage;
         if (isgroup) {
             tempImage = getResources().getDrawable(R.drawable.chat_group);
@@ -243,6 +253,7 @@ public class ChatActivity extends BaseActivity {
         if (Settings.isTitlePicEnabled) {
             shape.setColor(mColorGenerator.getRandomColor());
         }
+        imageview.setTag(Settings.imageTag, tempImage);
         return tempImage;
     }
 }

@@ -47,7 +47,8 @@
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                 />
         </FrameLayout>
 
         <LinearLayout

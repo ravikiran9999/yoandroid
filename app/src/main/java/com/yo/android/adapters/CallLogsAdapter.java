@@ -93,7 +93,8 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                 if (Settings.isTitlePicEnabled) {
                     shape.setColor(mColorGenerator.getRandomColor());
                 }
-                drawable = tempImage;            }
+                drawable = tempImage;
+            }
             holder.getCreatNewContact().setVisibility(View.GONE);
             holder.getAddToContact().setVisibility(View.GONE);
         } else {
@@ -124,10 +125,10 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                     .error(drawable).
                     into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
-            if (holder.getContactPic().getTag() == null) {
-                holder.getContactPic().setTag(drawable);
+            if (holder.getContactPic().getTag(Settings.imageTag) == null) {
+                holder.getContactPic().setTag(Settings.imageTag, drawable);
             }
-            holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag());
+            holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag(Settings.imageTag));
         }
 
         //By default set these properties
@@ -246,6 +247,9 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             shape.setColor(mColorGenerator.getRandomColor());
         }
         holder.setVisibility(View.VISIBLE);
+        if (holder.getTag(Settings.imageTag) == null) {
+            holder.setTag(Settings.imageTag, tempImage);
+        }
         holder.setImageDrawable(tempImage);
     }
 }
