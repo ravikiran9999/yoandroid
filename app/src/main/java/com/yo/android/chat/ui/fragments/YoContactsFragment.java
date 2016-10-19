@@ -193,7 +193,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 @Override
                 public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                     loadInAlphabeticalOrder(mContactsSyncManager.getContacts());
-
                     dismissProgressDialog();
                 }
 
