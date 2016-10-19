@@ -32,9 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone"
-        android:text="No contacts found" />
-
+        android:text="@string/no_contacts_found"
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/lv_app_contacts"
@@ -54,5 +53,3 @@
         android:gravity="center_horizontal"
         android:orientation="vertical" />
 </RelativeLayout>
-
-

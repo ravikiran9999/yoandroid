@@ -165,13 +165,16 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
             //List<T> temp = new ArrayList<>();
             temp = new ArrayList<>();
+            temp.add(0,mOriginalList.get(0));
             for (T event : mOriginalList) {
                 if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(searchKey.toLowerCase())) {
                     temp.add(event);
                 } else if (((Contact) event).getPhoneNo() != null && ((Contact) event).getPhoneNo().contains(searchKey)) {
                     temp.add(event);
                 }
+
             }
+
             addItems(temp);
         }
     }
