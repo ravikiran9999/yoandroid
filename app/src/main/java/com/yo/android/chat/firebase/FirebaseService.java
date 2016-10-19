@@ -21,7 +21,6 @@ import com.firebase.client.FirebaseError;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
-import com.yo.android.api.YoApi;
 import com.yo.android.chat.ImageLoader;
 import com.yo.android.chat.notification.localnotificationsbuilder.GeneratePictureStyleNotification;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
