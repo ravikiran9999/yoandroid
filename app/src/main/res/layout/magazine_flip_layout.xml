@@ -53,7 +53,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:background="@color/white"
-            android:scaleType="fitCenter"></ImageView>
+            android:scaleType="fitXY"></ImageView>
 
         <Button
             android:id="@+id/imv_magazine_follow"

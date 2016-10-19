@@ -70,7 +70,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     private FlipView flipView;
 
-    private boolean isSearch;
+    public boolean isSearch;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -99,7 +99,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         networkFailureText = (TextView) view.findViewById(R.id.network_failure);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
         flipView = (FlipView) view.findViewById(R.id.flip_view);
-        myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory);
+        myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory, this);
         flipView.setAdapter(myBaseAdapter);
         followMoreTopics = (Button) view.findViewById(R.id.btn_magazine_follow_topics);
         flipView.setOnFlipListener(this);

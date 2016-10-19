@@ -20,7 +20,8 @@
         android:layout_height="@dimen/image_popup_height"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:scaleType="fitXY"/>
 
     <TextView
         android:id="@+id/dialog_title"
