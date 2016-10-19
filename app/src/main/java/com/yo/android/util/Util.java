@@ -303,6 +303,50 @@ public class Util {
         });
     }
 
+    public static void prepareTransferBalanceContactsSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
+        final SearchManager searchManager =
+                (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem;
+        SearchView searchView;
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Enter atleast 3 characters...." + "</font>"));
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(activity.getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            public static final String TAG = "PrepareSearch in Util";
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "onQueryTextChange: " + query);
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG, "onQueryTextChange: " + newText);
+                if (adapter != null) {
+                    adapter.performTransferBalanceContactsSearch(newText);
+                }
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
+                if (adapter != null) {
+                    adapter.performTransferBalanceContactsSearch("");
+                }
+                return true;
+            }
+        });
+    }
+
     public static void prepareContactsSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final String roomType) {
 
         final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);

@@ -140,10 +140,10 @@ public class TransferBalanceActivity extends BaseActivity {
                     if(val != 0) {
                         showMessageDialog(amount, phoneNo);
                     } else {
-                        mToastFactory.showToast("Please enter a valid amount to transfer");
+                        mToastFactory.showToast(getResources().getString(R.string.enter_valid_amount));
                     }
                 } else {
-                    mToastFactory.showToast("Please enter an amount to transfer");
+                    mToastFactory.showToast(getResources().getString(R.string.enter_amount_to_transfer));
                 }
 
             }

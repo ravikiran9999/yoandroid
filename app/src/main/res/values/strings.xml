@@ -248,4 +248,6 @@
     <string name="unsuccessful_amount_transfer">Unsuccessful amount transfer</string>
     <string name="transfer_balance_failed">Transfer balance failed. Please try again later.</string>
     <string name="name_required">Username should not be empty</string>
+    <string name="enter_valid_amount">Please enter a valid amount to transfer</string>
+    <string name="enter_amount_to_transfer">"Please enter an amount to transfer</string>
 </resources>
