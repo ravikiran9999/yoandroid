@@ -122,7 +122,7 @@ public class TransferBalanceActivity extends BaseActivity {
                 Matcher m = p.matcher(title1);
                 boolean b = m.matches();
                 if (b) {
-                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
+                    Drawable drawable = mDrawableBuilder.build(title1, mColorGenerator.getRandomColor());
                     imvProfilePic.setImageDrawable(drawable);
                 } else {
                     loadAvatarImage(imvProfilePic);
@@ -142,10 +142,10 @@ public class TransferBalanceActivity extends BaseActivity {
                     if (val != 0) {
                         showMessageDialog(amount, phoneNo);
                     } else {
-                        mToastFactory.showToast("Please enter a valid amount to transfer");
+                        mToastFactory.showToast(getResources().getString(R.string.enter_valid_amount));
                     }
                 } else {
-                    mToastFactory.showToast("Please enter an amount to transfer");
+                    mToastFactory.showToast(getResources().getString(R.string.enter_amount_to_transfer));
                 }
 
             }
@@ -153,7 +153,7 @@ public class TransferBalanceActivity extends BaseActivity {
     }
 
     private void loadAvatarImage(CircleImageView imvProfilePic) {
-        Drawable tempImage = getResources().getDrawable(R.drawable.dynamic_profile);
+        /*Drawable tempImage = getResources().getDrawable(R.drawable.dynamic_profile);
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
@@ -162,7 +162,27 @@ public class TransferBalanceActivity extends BaseActivity {
         if (imvProfilePic.getTag() == null) {
             imvProfilePic.setTag(Settings.imageTag, tempImage);
         }
-        imvProfilePic.setImageDrawable((Drawable) imvProfilePic.getTag(Settings.imageTag));
+        imvProfilePic.setImageDrawable((Drawable) imvProfilePic.getTag(Settings.imageTag));*/
+
+        Drawable tempImage = getResources().getDrawable(R.drawable.dynamic_profile);
+        LayerDrawable bgDrawable = (LayerDrawable) tempImage;
+        final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
+        if (Settings.isTitlePicEnabled) {
+            shape.setColor(mColorGenerator.getRandomColor());
+            if (imvProfilePic.getTag(Settings.imageTag) == null) {
+                imvProfilePic.setTag(Settings.imageTag, tempImage);
+            }
+            imvProfilePic.setImageDrawable((Drawable) imvProfilePic.getTag(Settings.imageTag));
+        } else {
+            Glide.with(this)
+                    .load("")
+                    .fitCenter()
+                    .placeholder(R.drawable.dynamic_profile)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.dynamic_profile)
+                    .into(imvProfilePic);
+        }
     }
 
     private void transferBalance(String amount) {

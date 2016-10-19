@@ -122,4 +122,20 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<FindPeopl
                     .into(holder.getContactPic());
         }
     }
+
+    @Override
+    protected boolean hasData(FindPeople findPeople, String key) {
+        if (findPeople.getFirst_name() != null && findPeople.getLast_name() != null && findPeople.getPhone_no() != null) {
+            if (containsValue(findPeople.getFirst_name().toLowerCase(), key)
+                    || containsValue(findPeople.getLast_name().toLowerCase(), key)
+                    || containsValue(findPeople.getPhone_no().toLowerCase(), key)) {
+                return true;
+            }
+        }
+        return super.hasData(findPeople, key);
+    }
+
+    private boolean containsValue(String str, String key) {
+        return str != null && str.toLowerCase().contains(key);
+    }
 }

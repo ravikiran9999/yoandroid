@@ -3,10 +3,10 @@ package com.yo.android.ui;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -17,16 +17,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.yo.android.R;
-import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.adapters.TransferBalanceContactAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.helpers.Helper;
-import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -96,6 +96,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                     isRepresentative = response.body().isRepresentative();
 
                     handleRepresentative(isRepresentative);
+                    invalidateOptionsMenu();
 
                 }
             }
@@ -108,7 +109,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     }
 
     private void handleRepresentative(boolean isRepresentative) {
-        if(isRepresentative) {
+        if (isRepresentative) {
             callFindPeopleService();
         } else {
             callAppUsersService();
@@ -128,8 +129,8 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                     findPeopleAdapter.addItemsAll(findPeopleList);
                     lvFindPeople.setVisibility(View.VISIBLE);
                     noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.GONE);
-                    originalList = response.body();*/
+                    llNoPeople.setVisibility(View.GONE);*/
+                    originalList = response.body();
 
                     loadAlphabetOrder(findPeopleList);
 
@@ -163,8 +164,8 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                     findPeopleAdapter.addItemsAll(findPeopleList);
                     lvFindPeople.setVisibility(View.VISIBLE);
                     noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.GONE);
-                    originalList = response.body();*/
+                    llNoPeople.setVisibility(View.GONE);*/
+                    originalList = response.body();
 
                     loadAlphabetOrder(findPeopleList);
 
@@ -182,17 +183,17 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         });
     }
 
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
         menu1 = menu;
-        if(isRepresentative) {
+        if (isRepresentative) {
             searchPeople(menu);
         } else {
-            Util.prepareSearch(TransferBalanceSelectContactActivity.this, menu, contactsListAdapter);
+            Util.prepareTransferBalanceContactsSearch(TransferBalanceSelectContactActivity.this, menu, contactsListAdapter);
         }
         return super.onCreateOptionsMenu(menu);
-    }*/
+    }
 
     private void loadAlphabetOrder(List<FindPeople> list) {
 
@@ -204,10 +205,14 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         });
 
         contactsListAdapter.addItemsAll(list);
-        originalList = list;
-        Helper.displayIndexTransferBalance(this, layout, list, listView);
+        invalidateOptionsMenu();
+        //originalList = list;
+        originalList.addAll(list);
+        Helper.displayIndexTransferBalance(this, layout, originalList, listView);
     }
-    private boolean isMoreLoading=false;
+
+    private boolean isMoreLoading = false;
+
     private AbsListView.OnScrollListener onScrollListener() {
         return new AbsListView.OnScrollListener() {
             @Override
@@ -216,9 +221,11 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                 int count = listView.getCount();
                 if (scrollState == SCROLL_STATE_IDLE) {
                     //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
-                    //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery()) && isRepresentative) {
-                    if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && isRepresentative) {
-                        doPagination();
+                    if(searchView != null) {
+                        if (isMoreLoading == false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery()) && isRepresentative) {
+                            //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && isRepresentative) {
+                            doPagination();
+                        }
                     }
                 }
             }
@@ -232,7 +239,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     }
 
     private void doPagination() {
-        isMoreLoading=true;
+        isMoreLoading = true;
         pageCount++;
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getFindPeopleAPI(accessToken, pageCount, 30).enqueue(new Callback<List<FindPeople>>() {
@@ -256,15 +263,15 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            FindPeople contact = (FindPeople) listView.getItemAtPosition(position);
-            Intent intent = new Intent(this, TransferBalanceActivity.class);
-            intent.putExtra("balance", balance);
-            intent.putExtra("currencySymbol", currencySymbol);
-            intent.putExtra("name", contact.getFirst_name() + " " + contact.getLast_name());
-            intent.putExtra("phoneNo", contact.getPhone_no());
-            intent.putExtra("profilePic", contact.getAvatar());
-            intent.putExtra("id", contact.getId());
-            startActivityForResult(intent, 22);
+        FindPeople contact = (FindPeople) listView.getItemAtPosition(position);
+        Intent intent = new Intent(this, TransferBalanceActivity.class);
+        intent.putExtra("balance", balance);
+        intent.putExtra("currencySymbol", currencySymbol);
+        intent.putExtra("name", contact.getFirst_name() + " " + contact.getLast_name());
+        intent.putExtra("phoneNo", contact.getPhone_no());
+        intent.putExtra("profilePic", contact.getAvatar());
+        intent.putExtra("id", contact.getId());
+        startActivityForResult(intent, 22);
     }
 
     @Override
@@ -285,9 +292,10 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Enter atleast 6 characters...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+        searchView.setInputType(InputType.TYPE_CLASS_PHONE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             public static final String TAG = "Search in TransferBal";
 
@@ -325,12 +333,18 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         if (searchKey.isEmpty()) {
             contactsListAdapter.clearAll();
             contactsListAdapter.addItemsAll(originalList);
-        } else {
+        } else if (searchKey.length() > 5) {
+            String decodedString = searchKey;
+            try {
+                decodedString = URLDecoder.decode(searchKey, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            if(call != null) {
+            if (call != null) {
                 call.cancel();
             }
-            call = yoService.searchInBalanceTransferContacts(accessToken, searchKey, 1, 100);
+            call = yoService.searchInBalanceTransferContacts(accessToken, decodedString, 1, 100);
             call.enqueue(new Callback<List<FindPeople>>() {
                 @Override
                 public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
@@ -360,7 +374,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
     }
 
-    /*@Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (menu1 != null) {
             Util.changeMenuItemsVisibility(menu1, R.id.menu_search, false);
@@ -373,10 +387,10 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         contactsListAdapter.clearAll();
         contactsListAdapter.addItemsAll(originalList);
         listView.setVisibility(View.VISIBLE);
-        if(originalList.size()> 0) {
-            *//*noData.setVisibility(View.GONE);
-            llNoPeople.setVisibility(View.GONE);*//*
+        if (originalList.size() > 0) {
+            /*noData.setVisibility(View.GONE);
+            llNoPeople.setVisibility(View.GONE);*/
         }
-    }*/
+    }
 
 }
