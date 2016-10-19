@@ -59,9 +59,13 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
     public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
 
         if (!TextUtils.isEmpty(item.getName())) {
-
+            String numberWithCountryCode;
             if (TextUtils.isDigitsOnly(item.getName().replaceAll("\\s+", ""))) {
-                String numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+                if (item.getCountryCode() != null) {
+                    numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+                } else {
+                    numberWithCountryCode = item.getPhoneNo();
+                }
                 holder.getContactNumber().setText(numberWithCountryCode);
             } else {
                 holder.getContactNumber().setText(item.getName());
@@ -76,7 +80,12 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         }
 
         if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo()))) {
-            String numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+            String numberWithCountryCode;
+            if (item.getCountryCode() != null) {
+                numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+            } else {
+                numberWithCountryCode = item.getPhoneNo();
+            }
             holder.getContactMail().setText(numberWithCountryCode);
             holder.getContactMail().setVisibility(View.VISIBLE);
 
@@ -172,7 +181,10 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         if (Settings.isTitlePicEnabled) {
             shape.setColor(mColorGenerator.getRandomColor());
         }
-        holder.getContactPic().setImageDrawable(tempImage);
+        if (holder.getContactPic().getTag(Settings.imageTag) == null) {
+            holder.getContactPic().setTag(Settings.imageTag, tempImage);
+        }
+        holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag(Settings.imageTag));
     }
 
     private static void navigateToChatScreen(Context context, String roomId, String opponentPhoneNumber, String yourPhoneNumber, String opponentId) {
