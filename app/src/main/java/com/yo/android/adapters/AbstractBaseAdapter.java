@@ -113,6 +113,21 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
     }
 
+    public void performTransferBalanceContactsSearch(final @NonNull String key) {
+        String searchKey = key.trim();
+        if (searchKey.isEmpty()) {
+            addItems(mOriginalList);
+        } else if(searchKey.length()>2){
+            List<T> temp = new ArrayList<>();
+            for (T event : mOriginalList) {
+                if (hasData(event, searchKey)) {
+                    temp.add(event);
+                }
+            }
+            addItems(temp);
+        }
+    }
+
     public void performContactsSearch(final @NonNull String key) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
