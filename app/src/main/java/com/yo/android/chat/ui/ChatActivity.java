@@ -138,7 +138,7 @@ public class ChatActivity extends BaseActivity {
                 title = contact.getName();
             } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
                 title = room.getFullName();
-            } else if (opponent != null && opponent.contains("youser")) {
+            } else if (opponent != null && opponent.contains(Constants.YO_USER)) {
                 title = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
             }
             if (title != null) {
