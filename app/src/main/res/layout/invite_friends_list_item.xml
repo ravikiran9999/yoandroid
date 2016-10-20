@@ -46,30 +46,30 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_phone_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    tools:text="Name" />
-
-                <TextView
                     android:id="@+id/tv_contact_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_phone_number"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="5dp"
                     android:layout_toLeftOf="@+id/iv_contact_type"
                     android:layout_toRightOf="@+id/imv_contact_pic"
                     android:ellipsize="end"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
-                    tools:text="This is a dummy text for a chat message. This is the second line of the message" />
+                    tools:text="Name" />
+
+                <TextView
+                    android:id="@+id/tv_phone_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_contact_email"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    tools:text="Number" />
 
             </LinearLayout>
 
