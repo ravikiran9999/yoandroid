@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,11 @@ public class AlphabetAdapter extends BaseAdapter {
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            holder.textView.setText(getItem(position).substring(0, 1));
+            if (TextUtils.isDigitsOnly(getItem(position))) {
+                holder.textView.setText(mContext.getString(R.string.hash));
+            } else {
+                holder.textView.setText(getItem(position).substring(0, 1));
+            }
             return convertView;
         }
         return null;
