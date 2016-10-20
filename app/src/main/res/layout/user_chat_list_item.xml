@@ -16,10 +16,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/msg_out_photo"
+        android:layout_margin="12dp"
         android:padding="8dp"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:visibility="gone"
+        android:textAllCaps="true"
         tools:text="Today"
         tools:visibility="visible" />
 
@@ -27,7 +29,6 @@
         android:id="@+id/linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:orientation="horizontal">
 
         <TextView
