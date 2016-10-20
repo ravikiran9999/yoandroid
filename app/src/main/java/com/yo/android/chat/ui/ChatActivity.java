@@ -159,7 +159,7 @@ public class ChatActivity extends BaseActivity {
                                 RoundedBitmapDrawable circularBitmapDrawable =
                                         RoundedBitmapDrawableFactory.create(getResources(), resource);
                                 circularBitmapDrawable.setCircular(true);
-                                if (imageView.getTag(Settings.imageTag) == null) {
+                                if (imageView.getTag(Settings.imageTag) != null) {
                                     imageView.setTag(Settings.imageTag, circularBitmapDrawable);
                                 }
                                 imageView.setImageDrawable((Drawable) imageView.getTag(Settings.imageTag));
@@ -177,7 +177,7 @@ public class ChatActivity extends BaseActivity {
                                 RoundedBitmapDrawable circularBitmapDrawable =
                                         RoundedBitmapDrawableFactory.create(getResources(), resource);
                                 circularBitmapDrawable.setCircular(true);
-                                if (imageView.getTag(Settings.imageTag) == null) {
+                                if (imageView.getTag(Settings.imageTag) != null) {
                                     imageView.setTag(Settings.imageTag, circularBitmapDrawable);
                                 }
                                 imageView.setImageDrawable((Drawable) imageView.getTag(Settings.imageTag));
@@ -189,7 +189,7 @@ public class ChatActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
 
-                    if (opponent != null && opponent.contains("youser")) {
+                    if (opponent != null && opponent.contains(Constants.YO_USER)) {
                         opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
                     }
 

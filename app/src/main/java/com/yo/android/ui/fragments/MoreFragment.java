@@ -275,7 +275,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         return menuDataList;
     }
 
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
