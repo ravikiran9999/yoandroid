@@ -207,7 +207,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             View layout = convertView;
             if (layout == null) {
@@ -539,10 +539,12 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, TopicsDetailActivity.class);
-                            intent.putExtra("TopicId", data.getTopicId());
+                            /*intent.putExtra("TopicId", data.getTopicId());
                             intent.putExtra("TopicName", data.getTopicName());
-                            intent.putExtra("TopicFollowing", data.getTopicFollowing());
-                            context.startActivity(intent);
+                            intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
+                            intent.putExtra("Topic", data);
+                            intent.putExtra("Position", position);
+                            startActivityForResult(intent, 80);
                         }
                     });
                 } else {
@@ -595,6 +597,12 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 }
             }
         }
+
+        public void updateTopic(Articles topic, int position) {
+            items.remove(position);
+            items.add(position, topic);
+            notifyDataSetChanged();
+        }
     }
 
     private static class ViewHolder {
@@ -614,5 +622,19 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         private Button articleFollow;
 
         private TextView tvTopicName;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 80 && resultCode == getActivity().RESULT_OK) {
+            if (data != null) {
+                Articles topic = data.getParcelableExtra("UpdatedTopic");
+                int pos = data.getIntExtra("Pos", 0);
+                myBaseAdapter.updateTopic(topic, pos);
+            }
+
+        }
     }
 }

@@ -208,7 +208,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             View layout = convertView;
             if (layout == null) {
@@ -501,10 +501,12 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, TopicsDetailActivity.class);
-                            intent.putExtra("TopicId", data.getTopicId());
+                            /*intent.putExtra("TopicId", data.getTopicId());
                             intent.putExtra("TopicName", data.getTopicName());
-                            intent.putExtra("TopicFollowing", data.getTopicFollowing());
-                            context.startActivity(intent);
+                            intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
+                            intent.putExtra("Topic", data);
+                            intent.putExtra("Position", position);
+                            startActivityForResult(intent, 70);
                         }
                     });
                 } else {
@@ -552,6 +554,12 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     }
                 }
             }
+        }
+
+        public void updateTopic(Articles topic, int position) {
+            items.remove(position);
+            items.add(position, topic);
+            notifyDataSetChanged();
         }
     }
 
@@ -716,6 +724,13 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 String editedDesc = data.getStringExtra("EditedDesc");
 
                 getSupportActionBar().setTitle(editedTitle);
+            }
+
+        } else if (requestCode == 70 && resultCode == RESULT_OK) {
+            if (data != null) {
+                Articles topic = data.getParcelableExtra("UpdatedTopic");
+                int pos = data.getIntExtra("Pos", 0);
+                myBaseAdapter.updateTopic(topic, pos);
             }
 
         }

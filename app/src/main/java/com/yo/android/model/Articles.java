@@ -1,9 +1,12 @@
 package com.yo.android.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by creatives on 7/5/2016.
  */
-public class Articles {
+public class Articles implements Parcelable {
 
     private String id;
     private String title;
@@ -19,6 +22,35 @@ public class Articles {
     private String topicName;
     private String topicId;
     private String topicFollowing;
+
+    protected Articles(Parcel in) {
+        id = in.readString();
+        title = in.readString();
+        url = in.readString();
+        image_filename = in.readString();
+        summary = in.readString();
+        isChecked = in.readByte() != 0;
+        liked = in.readString();
+        isFollow = in.readByte() != 0;
+        isFollowing = in.readString();
+        magzine_id = in.readString();
+        generated_url = in.readString();
+        topicName = in.readString();
+        topicId = in.readString();
+        topicFollowing = in.readString();
+    }
+
+    public static final Creator<Articles> CREATOR = new Creator<Articles>() {
+        @Override
+        public Articles createFromParcel(Parcel in) {
+            return new Articles(in);
+        }
+
+        @Override
+        public Articles[] newArray(int size) {
+            return new Articles[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -130,5 +162,29 @@ public class Articles {
 
     public void setTopicFollowing(String topicFollowing) {
         this.topicFollowing = topicFollowing;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(id);
+        dest.writeString(title);
+        dest.writeString(url);
+        dest.writeString(image_filename);
+        dest.writeString(summary);
+        dest.writeInt(isChecked ? 0 : 1);
+        dest.writeString(liked);
+        dest.writeInt(isFollow ? 0 : 1);
+        dest.writeString(isFollowing);
+        dest.writeString(magzine_id);
+        dest.writeString(generated_url);
+        dest.writeString(topicName);
+        dest.writeString(topicId);
+        dest.writeString(topicFollowing);
     }
 }
