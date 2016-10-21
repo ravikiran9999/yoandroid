@@ -98,4 +98,10 @@ public class OthersMagazinesAdapter extends BaseAdapter {
 
         return convertView;
     }
+
+    public void updateMagazine(OwnMagazine ownMagazine, int position) {
+        ownMagazineList.remove(position);
+        ownMagazineList.add(position, ownMagazine);
+        notifyDataSetChanged();
+    }
 }
