@@ -83,14 +83,29 @@ public class OthersProfileMagazines extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent intent = new Intent(getActivity(), OthersMagazinesDetailActivity.class);
-                intent.putExtra("MagazineTitle", adapter.getItem(position).getName());
+                /*intent.putExtra("MagazineTitle", adapter.getItem(position).getName());
                 intent.putExtra("MagazineId", adapter.getItem(position).getId());
                 intent.putExtra("MagazineDesc", adapter.getItem(position).getDescription());
                 intent.putExtra("MagazinePrivacy", adapter.getItem(position).getPrivacy());
-                intent.putExtra("MagazineIsFollowing", adapter.getItem(position).getIsFollowing());
-                startActivity(intent);
+                intent.putExtra("MagazineIsFollowing", adapter.getItem(position).getIsFollowing());*/
+                intent.putExtra("OwnMagazine", adapter.getItem(position));
+                intent.putExtra("Position", position);
+                startActivityForResult(intent, 50);
             }
 
             });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 50 && resultCode == getActivity().RESULT_OK) {
+            if (data != null) {
+                OwnMagazine ownMagazine = data.getParcelableExtra("Magazine");
+                int pos = data.getIntExtra("Pos", 0);
+                adapter.updateMagazine(ownMagazine, pos);
+            }
+
+        }
     }
 }
