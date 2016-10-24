@@ -106,7 +106,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         View layout = convertView;
         int type = getItemViewType(position);
@@ -480,10 +480,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, TopicsDetailActivity.class);
-                        intent.putExtra("TopicId", data.getTopicId());
+                        /*intent.putExtra("TopicId", data.getTopicId());
                         intent.putExtra("TopicName", data.getTopicName());
-                        intent.putExtra("TopicFollowing", data.getTopicFollowing());
-                        context.startActivity(intent);
+                        intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
+                        intent.putExtra("Topic", data);
+                        intent.putExtra("Position", position);
+                        ((Activity) context).startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -787,7 +789,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
     }
 
-    private void populateTopArticle(View layout, ViewHolder holder, final Articles data, int position) {
+    private void populateTopArticle(View layout, ViewHolder holder, final Articles data, final int position) {
         if(holder.magazineLikeTop != null) {
             holder.magazineLikeTop.setTag(position);
         }
@@ -1019,10 +1021,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, TopicsDetailActivity.class);
-                        intent.putExtra("TopicId", data.getTopicId());
+                        /*intent.putExtra("TopicId", data.getTopicId());
                         intent.putExtra("TopicName", data.getTopicName());
-                        intent.putExtra("TopicFollowing", data.getTopicFollowing());
-                        context.startActivity(intent);
+                        intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
+                        intent.putExtra("Topic", data);
+                        intent.putExtra("Position", position);
+                        ((Activity) context).startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1032,7 +1036,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     }
 
-    private void populateLeftArticle(ViewHolder holder, final Articles data, int position) {
+    private void populateLeftArticle(ViewHolder holder, final Articles data, final int position) {
         if(holder.magazineLikeLeft != null) {
             holder.magazineLikeLeft.setVisibility(View.VISIBLE);
             holder.magazineLikeLeft.setTag(position);
@@ -1266,10 +1270,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, TopicsDetailActivity.class);
-                        intent.putExtra("TopicId", data.getTopicId());
+                        /*intent.putExtra("TopicId", data.getTopicId());
                         intent.putExtra("TopicName", data.getTopicName());
-                        intent.putExtra("TopicFollowing", data.getTopicFollowing());
-                        context.startActivity(intent);
+                        intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
+                        intent.putExtra("Topic", data);
+                        intent.putExtra("Position", position);
+                        ((Activity) context).startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1302,7 +1308,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     }
 
-    private void populateRightArticle(ViewHolder holder, final Articles data, int position) {
+    private void populateRightArticle(ViewHolder holder, final Articles data, final int position) {
         if(holder.magazineLikeRight != null) {
             holder.magazineLikeRight.setVisibility(View.VISIBLE);
             holder.magazineLikeRight.setTag(position);
@@ -1536,10 +1542,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, TopicsDetailActivity.class);
-                        intent.putExtra("TopicId", data.getTopicId());
+                        /*intent.putExtra("TopicId", data.getTopicId());
                         intent.putExtra("TopicName", data.getTopicName());
-                        intent.putExtra("TopicFollowing", data.getTopicFollowing());
-                        context.startActivity(intent);
+                        intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
+                        intent.putExtra("Topic", data);
+                        intent.putExtra("Position", position);
+                        ((Activity) context).startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1706,6 +1714,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private TextView articleSummaryLeft;
 
         private TextView articleSummaryRight;
+    }
+
+    public void updateTopic(Articles topic, int position) {
+        items.remove(position);
+        items.add(position, topic);
+        notifyDataSetChanged();
     }
 
 }
