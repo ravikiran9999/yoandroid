@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -59,6 +60,10 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     TextView profileName;
     @Bind(R.id.profile_number)
     TextView profileNumber;
+    @Bind(R.id.profile_name_title)
+    TextView profileNameTitle;
+    @Bind(R.id.number_title)
+    TextView numberTitle;
     private ProfileMembersAdapter profileMembersAdapter;
     private ListView membersList;
     private Contact contact;
@@ -92,6 +97,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
         authReference = fireBaseHelper.authWithCustomToken(this, preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+        membersList = (ListView) findViewById(R.id.members);
+        profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
+        membersList.setAdapter(profileMembersAdapter);
+
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(Constants.CONTACT)) {
@@ -117,6 +127,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 contact.setVoxUserName(opponentNo);
                 contact.setImage(opponentImg);
                 contact.setYoAppUser(true);
+
                 setDataFromPreferences();
 
                 if (intent.hasExtra(Constants.CHAT_ROOM_ID)) {
@@ -130,11 +141,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 }
             }
         }
-
-        membersList = (ListView) findViewById(R.id.members);
-        profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
-        membersList.setAdapter(profileMembersAdapter);
-
     }
 
     @Override
@@ -157,6 +163,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
+                membersList.setVisibility(View.VISIBLE);
+                profileNumber.setVisibility(View.GONE);
             } else {
                 Glide.with(this)
                         .load(contact.getImage())
@@ -165,8 +173,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                         .dontAnimate()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
+                membersList.setVisibility(View.GONE);
+                profileNumber.setVisibility(View.VISIBLE);
             }
-
+            String name = roomName == null ? getString(R.string.name) : getString(R.string.group_name);
+            profileNameTitle.setText(name);
+            String title = roomName == null ? getString(R.string.prompt_phone_number) : getString(R.string.participants);
+            numberTitle.setText(title);
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
 
             if (mContact != null) {
@@ -186,12 +199,12 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     profileNumber.setVisibility(View.GONE);
                 }
             } else if (contact != null) {
-                if (contact.getName() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
+                if (contact.getName() != null) {
                     profileName.setText(contact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
                 }
-                if (contact.getPhoneNo() != null) {
+                if (contact.getPhoneNo() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
                     if (contact.getCountryCode() != null) {
                         removeYoUserFromPhoneNumber("+" + contact.getCountryCode(), contact.getPhoneNo(), profileNumber);
                     } else {
@@ -214,9 +227,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     private void removeYoUserFromPhoneNumber(String countrycode, String phoneNo, TextView profileNumber) {
         String phoneNumber = phoneNo;
-        if (phoneNumber != null && phoneNumber.contains("youser")) {
+        if (phoneNumber != null && phoneNumber.contains(Constants.YO_USER)) {
             try {
-                phoneNumber = phoneNumber.substring(phoneNumber.indexOf("youser") + 6, phoneNumber.length() - 1);
+                phoneNumber = phoneNumber.substring(phoneNumber.indexOf(Constants.YO_USER) + 6, phoneNumber.length() - 1);
                 String finalNumber = countrycode == null ? phoneNumber : countrycode + phoneNumber;
                 profileNumber.setText(finalNumber);
             } catch (StringIndexOutOfBoundsException e) {

@@ -253,4 +253,7 @@
     <string name="enter_valid_amount">Please enter a valid amount to transfer</string>
     <string name="enter_amount_to_transfer">Please enter an amount to transfer</string>
     <string name="hash">#</string>
+    <string name="participants">Participants</string>
+    <string name="name">Name</string>
+    <string name="group_name">Group Name</string>
 </resources>
