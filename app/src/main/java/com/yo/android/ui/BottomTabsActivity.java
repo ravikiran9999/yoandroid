@@ -140,11 +140,13 @@ public class BottomTabsActivity extends BaseActivity {
 
         customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
         notificationCount = (Button) customActionBar.findViewById(R.id.notif_count);
-        notificationCount.setOnClickListener(new View.OnClickListener() {
+        ImageView notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
+        notificationEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(context, NotificationsActivity.class));
-
+                if(notificationCount.getVisibility() == View.VISIBLE) {
+                    startActivity(new Intent(context, NotificationsActivity.class));
+                }
             }
         });
 
