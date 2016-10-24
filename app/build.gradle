@@ -15,7 +15,7 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "23.0.3"
     useLibrary 'org.apache.http.legacy'
     // Enabling multidex support.
@@ -131,7 +131,7 @@ dependencies {
     compile project(':emojilib')
     //Butter knife - view injector
     compile 'com.squareup.dagger:dagger:1.2.2'
-    compile 'com.android.support:support-v4:23.4.0'
+    compile "com.android.support:support-v4:${supportAppcompatVersion}"
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'

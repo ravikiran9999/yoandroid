@@ -1,15 +1,33 @@
 package com.yo.android.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by creatives on 7/9/2016.
  */
-public class OwnMagazine {
+public class OwnMagazine implements Parcelable {
     private String id;
     private String name;
     private String description;
     private String privacy;
     private String image;
     private String isFollowing;
+
+    public static final Creator<OwnMagazine> CREATOR = new Creator<OwnMagazine>() {
+        @Override
+        public OwnMagazine createFromParcel(Parcel in) {
+            return new OwnMagazine(in);
+        }
+
+        @Override
+        public OwnMagazine[] newArray(int size) {
+            return new OwnMagazine[size];
+        }
+    };
+
+    public OwnMagazine() {
+    }
 
     public String getId() {
         return id;
@@ -57,5 +75,29 @@ public class OwnMagazine {
 
     public void setIsFollowing(String isFollowing) {
         this.isFollowing = isFollowing;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(privacy);
+        dest.writeString(image);
+        dest.writeString(isFollowing);
+    }
+
+    private OwnMagazine(Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+        this.description = in.readString();
+        this.privacy = in.readString();
+        this.image = in.readString();
+        this.isFollowing = in.readString();
     }
 }

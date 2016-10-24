@@ -2,9 +2,6 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-
 import com.yo.android.R;
 import com.yo.android.helpers.InviteFriendsViewHolder;
 import com.yo.android.model.Contact;

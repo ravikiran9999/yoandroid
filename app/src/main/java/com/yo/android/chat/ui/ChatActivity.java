@@ -138,7 +138,7 @@ public class ChatActivity extends BaseActivity {
                 title = contact.getName();
             } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
                 title = room.getFullName();
-            } else if (opponent != null && opponent.contains("youser")) {
+            } else if (opponent != null && opponent.contains(Constants.YO_USER)) {
                 title = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
             }
             if (title != null) {
@@ -159,7 +159,7 @@ public class ChatActivity extends BaseActivity {
                                 RoundedBitmapDrawable circularBitmapDrawable =
                                         RoundedBitmapDrawableFactory.create(getResources(), resource);
                                 circularBitmapDrawable.setCircular(true);
-                                if (imageView.getTag(Settings.imageTag) == null) {
+                                if (imageView.getTag(Settings.imageTag) != null) {
                                     imageView.setTag(Settings.imageTag, circularBitmapDrawable);
                                 }
                                 imageView.setImageDrawable((Drawable) imageView.getTag(Settings.imageTag));
@@ -177,7 +177,7 @@ public class ChatActivity extends BaseActivity {
                                 RoundedBitmapDrawable circularBitmapDrawable =
                                         RoundedBitmapDrawableFactory.create(getResources(), resource);
                                 circularBitmapDrawable.setCircular(true);
-                                if (imageView.getTag(Settings.imageTag) == null) {
+                                if (imageView.getTag(Settings.imageTag) != null) {
                                     imageView.setTag(Settings.imageTag, circularBitmapDrawable);
                                 }
                                 imageView.setImageDrawable((Drawable) imageView.getTag(Settings.imageTag));
@@ -189,13 +189,14 @@ public class ChatActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
 
-                    if (opponent != null && opponent.contains("youser")) {
+                    if (opponent != null && opponent.contains(Constants.YO_USER)) {
                         opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
                     }
 
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
-                    intent.putExtra(Constants.OPPONENT_NAME, title);
+                    String titles = title == null ? opponent : title;
+                    intent.putExtra(Constants.OPPONENT_NAME, titles);
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
 

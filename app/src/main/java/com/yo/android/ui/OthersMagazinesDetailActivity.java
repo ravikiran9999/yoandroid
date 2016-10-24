@@ -39,6 +39,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.model.MagazineArticles;
+import com.yo.android.model.OwnMagazine;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -67,13 +68,15 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
     public static MyBaseAdapter myBaseAdapter;
     private TextView noArticals;
     private FrameLayout flipContainer;
-    private String magazineTitle;
+   /* private String magazineTitle;
     private String magazineId;
     private String magazineDesc;
     private String magazinePrivacy;
-    private String magazineIsFollowing;
+    private String magazineIsFollowing;*/
     private boolean isFollowing;
     private boolean isFollowingMagazine;
+    private OwnMagazine ownMagazine;
+    private int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,19 +96,21 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         EventBus.getDefault().register(this);
 
         Intent intent = getIntent();
-        magazineTitle = intent.getStringExtra("MagazineTitle");
+        /*magazineTitle = intent.getStringExtra("MagazineTitle");
         magazineId = intent.getStringExtra("MagazineId");
         magazineDesc = intent.getStringExtra("MagazineDesc");
         magazinePrivacy = intent.getStringExtra("MagazinePrivacy");
-        magazineIsFollowing = intent.getStringExtra("MagazineIsFollowing");
+        magazineIsFollowing = intent.getStringExtra("MagazineIsFollowing");*/
+        ownMagazine = intent.getParcelableExtra("OwnMagazine");
+        position = intent.getIntExtra("Position", 0);
 
-        getSupportActionBar().setTitle(magazineTitle);
+        getSupportActionBar().setTitle(ownMagazine.getName());
 
         noArticals.setText(getString(R.string.others_no_article_added));
 
         articlesList.clear();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
+        yoService.getArticlesOfMagazineAPI(ownMagazine.getId(), accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
                 final String id = response.body().getId();
@@ -203,7 +208,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             View layout = convertView;
             if (layout == null) {
@@ -496,10 +501,12 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, TopicsDetailActivity.class);
-                            intent.putExtra("TopicId", data.getTopicId());
+                            /*intent.putExtra("TopicId", data.getTopicId());
                             intent.putExtra("TopicName", data.getTopicName());
-                            intent.putExtra("TopicFollowing", data.getTopicFollowing());
-                            context.startActivity(intent);
+                            intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
+                            intent.putExtra("Topic", data);
+                            intent.putExtra("Position", position);
+                            startActivityForResult(intent, 70);
                         }
                     });
                 } else {
@@ -548,6 +555,12 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 }
             }
         }
+
+        public void updateTopic(Articles topic, int position) {
+            items.remove(position);
+            items.add(position, topic);
+            notifyDataSetChanged();
+        }
     }
 
     private static class ViewHolder {
@@ -574,7 +587,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_collections_detail, menu);
 
-        if ("true".equals(magazineIsFollowing)) {
+        if ("true".equals(ownMagazine.getIsFollowing())) {
             menu.getItem(0).setTitle("");
             menu.getItem(0).setIcon(R.drawable.ic_mycollections_tick);
             isFollowingMagazine = true;
@@ -589,20 +602,22 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
+
         final MenuItem menuItem = item;
         switch (item.getItemId()) {
             case R.id.menu_follow_magazine:
-                if (!isFollowingMagazine) {
+                super.onOptionsItemSelected(item);
+                if (!Boolean.valueOf(ownMagazine.getIsFollowing())) {
                     showProgressDialog();
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.followMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
+                    yoService.followMagazineAPI(ownMagazine.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             dismissProgressDialog();
                             menuItem.setTitle("");
                             menuItem.setIcon(R.drawable.ic_mycollections_tick);
                             isFollowingMagazine = true;
+                            ownMagazine.setIsFollowing("true");
                             EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
 
                         }
@@ -612,6 +627,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                             dismissProgressDialog();
                             menuItem.setIcon(null);
                             menuItem.setTitle("Follow");
+                            ownMagazine.setIsFollowing("false");
                             isFollowingMagazine = false;
                         }
                     });
@@ -638,13 +654,14 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                             alertDialog.dismiss();
                             showProgressDialog();
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                            yoService.unfollowMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
+                            yoService.unfollowMagazineAPI(ownMagazine.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     dismissProgressDialog();
                                     menuItem.setIcon(null);
                                     menuItem.setTitle("Follow");
                                     isFollowingMagazine = false;
+                                    ownMagazine.setIsFollowing("false");
                                     EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
                                 }
 
@@ -654,6 +671,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     menuItem.setTitle("");
                                     menuItem.setIcon(R.drawable.ic_mycollections_tick);
                                     isFollowingMagazine = true;
+                                    ownMagazine.setIsFollowing("true");
 
                                 }
                             });
@@ -671,7 +689,15 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 }
 
                 break;
+            case android.R.id.home:
+                Intent intent = new Intent();
+                intent.putExtra("Magazine", ownMagazine);
+                intent.putExtra("Pos", position);
+                setResult(RESULT_OK, intent);
+                super.onOptionsItemSelected(item);
+                break;
             default:
+                super.onOptionsItemSelected(item);
                 break;
         }
         return true;
@@ -700,6 +726,25 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 getSupportActionBar().setTitle(editedTitle);
             }
 
+        } else if (requestCode == 70 && resultCode == RESULT_OK) {
+            if (data != null) {
+                Articles topic = data.getParcelableExtra("UpdatedTopic");
+                int pos = data.getIntExtra("Pos", 0);
+                myBaseAdapter.updateTopic(topic, pos);
+            }
+
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent intent = new Intent();
+        intent.putExtra("Magazine", ownMagazine);
+        intent.putExtra("Pos", position);
+        setResult(RESULT_OK, intent);
+        finish();
+
+        super.onBackPressed();
     }
 }

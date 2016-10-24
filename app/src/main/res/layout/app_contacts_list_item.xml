@@ -84,7 +84,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="10dp"
                 android:gravity="center_vertical"
-                android:text="admin"
+                tools:text="admin"
                 android:visibility="gone" />
 
             <TextView
