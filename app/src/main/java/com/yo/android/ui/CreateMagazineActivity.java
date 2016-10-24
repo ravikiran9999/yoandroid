@@ -46,7 +46,7 @@ public class CreateMagazineActivity extends BaseActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final String title = "My Magazines";
+        final String title = getString(R.string.my_magazines);
 
         getSupportActionBar().setTitle(title);
 

@@ -5,32 +5,32 @@
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search_white_36dp"
-        android:title="Search"
+        android:title="@string/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
 
     <item
         android:id="@+id/menu_followers"
-        android:title="Followers"
+        android:title="@string/followers"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_followings"
-        android:title="Followings"
+        android:title="@string/followings"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_find_people"
-        android:title="Find People"
+        android:title="@string/find_people"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_wish_list"
-        android:title="Liked Articles"
+        android:title="@string/liked_articles"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_my_collections"
-        android:title="My Collections"
+        android:title="@string/my_topics"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_create_magazines"
-        android:title="My Magazines"
+        android:title="@string/my_magazines"
         app:showAsAction="never" />
 </menu>

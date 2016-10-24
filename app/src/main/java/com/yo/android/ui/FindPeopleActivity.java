@@ -56,7 +56,7 @@ public class FindPeopleActivity extends BaseActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = "Find People";
+        String title = getString(R.string.find_people);
 
         getSupportActionBar().setTitle(title);
 
