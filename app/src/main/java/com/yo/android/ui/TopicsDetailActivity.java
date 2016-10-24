@@ -59,9 +59,11 @@ public class TopicsDetailActivity extends BaseActivity {
     protected PreferenceEndPoint preferenceEndPoint;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
-    private String topicId;
-    private String topicFollowing;
+    /*private String topicId;
+    private String topicFollowing; */
     private boolean isFollowingTopic;
+    private Articles topic;
+    private int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +79,13 @@ public class TopicsDetailActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        topicId = intent.getStringExtra("TopicId");
+        /*topicId = intent.getStringExtra("TopicId");
         String topicName = intent.getStringExtra("TopicName");
-        topicFollowing = intent.getStringExtra("TopicFollowing");
+        topicFollowing = intent.getStringExtra("TopicFollowing");*/
+        topic = intent.getParcelableExtra("Topic");
+        position = intent.getIntExtra("Position", 0);
 
-        String title = topicName;
+        String title = topic.getTopicName();
 
         getSupportActionBar().setTitle(title);
 
@@ -89,7 +93,7 @@ public class TopicsDetailActivity extends BaseActivity {
 
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             List<String> tagIds = new ArrayList<String>();
-            tagIds.add(topicId);
+            tagIds.add(topic.getTopicId());
             yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
                 @Override
                 public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
@@ -522,7 +526,7 @@ public class TopicsDetailActivity extends BaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_collections_detail, menu);
 
-        if ("true".equals(topicFollowing)) {
+        if ("true".equals(topic.getTopicFollowing())) {
             menu.getItem(0).setTitle("");
             menu.getItem(0).setIcon(R.drawable.ic_mycollections_tick);
             isFollowingTopic = true;
@@ -538,11 +542,12 @@ public class TopicsDetailActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
+
         final MenuItem menuItem = item;
         switch (item.getItemId()) {
             case R.id.menu_follow_magazine:
-                if (!isFollowingTopic) {
+                super.onOptionsItemSelected(item);
+                if (!Boolean.valueOf(topic.getTopicFollowing())) {
                     showProgressDialog();
 
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -553,7 +558,7 @@ public class TopicsDetailActivity extends BaseActivity {
                             followedTopicsIdsList.add(prefTags[i]);
                         }
                     }
-                    followedTopicsIdsList.add(String.valueOf(topicId));
+                    followedTopicsIdsList.add(String.valueOf(topic.getTopicId()));
                     yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -561,6 +566,7 @@ public class TopicsDetailActivity extends BaseActivity {
                             menuItem.setTitle("");
                             menuItem.setIcon(R.drawable.ic_mycollections_tick);
                             isFollowingTopic = true;
+                            topic.setTopicFollowing("true");
                             EventBus.getDefault().post(Constants.TOPIC_FOLLOWING_ACTION);
 
                             preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
@@ -572,6 +578,7 @@ public class TopicsDetailActivity extends BaseActivity {
                             menuItem.setIcon(null);
                             menuItem.setTitle("Follow");
                             isFollowingTopic = false;
+                            topic.setTopicFollowing("false");
                         }
                     });
                 } else {
@@ -597,7 +604,7 @@ public class TopicsDetailActivity extends BaseActivity {
                             showProgressDialog();
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
                             List<String> topicIds = new ArrayList<String>();
-                            topicIds.add(topicId);
+                            topicIds.add(topic.getTopicId());
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -605,6 +612,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                     menuItem.setIcon(null);
                                     menuItem.setTitle("Follow");
                                     isFollowingTopic = false;
+                                    topic.setTopicFollowing("false");
                                     EventBus.getDefault().post(Constants.TOPIC_FOLLOWING_ACTION);
 
                                 }
@@ -615,6 +623,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                     menuItem.setTitle("");
                                     menuItem.setIcon(R.drawable.ic_mycollections_tick);
                                     isFollowingTopic = true;
+                                    topic.setTopicFollowing("true");
                                 }
                             });
                         }
@@ -630,10 +639,30 @@ public class TopicsDetailActivity extends BaseActivity {
                 }
 
                 break;
+            case android.R.id.home:
+                Intent intent = new Intent();
+                intent.putExtra("UpdatedTopic", topic);
+                intent.putExtra("Pos", position);
+                setResult(RESULT_OK, intent);
+                super.onOptionsItemSelected(item);
+                break;
             default:
+                super.onOptionsItemSelected(item);
                 break;
 
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent intent = new Intent();
+        intent.putExtra("UpdatedTopic", topic);
+        intent.putExtra("Pos", position);
+        setResult(RESULT_OK, intent);
+        finish();
+
+        super.onBackPressed();
     }
 }

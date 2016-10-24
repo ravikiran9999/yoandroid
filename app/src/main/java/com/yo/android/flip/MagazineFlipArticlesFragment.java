@@ -109,6 +109,15 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 60 && resultCode == getActivity().RESULT_OK) {
+            if (data != null) {
+                Articles topic = data.getParcelableExtra("UpdatedTopic");
+                int pos = data.getIntExtra("Pos", 0);
+                myBaseAdapter.updateTopic(topic, pos);
+            }
+
+        }
     }
 
     @Override
