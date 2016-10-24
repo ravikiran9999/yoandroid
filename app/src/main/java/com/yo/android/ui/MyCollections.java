@@ -52,7 +52,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = "My Collections";
+        String title = getString(R.string.my_topics);
 
         getSupportActionBar().setTitle(title);
 

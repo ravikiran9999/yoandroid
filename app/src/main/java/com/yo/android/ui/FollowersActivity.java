@@ -43,7 +43,7 @@ public class FollowersActivity extends BaseActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = "Followers";
+        String title = getString(R.string.followers);
 
         getSupportActionBar().setTitle(title);
 
