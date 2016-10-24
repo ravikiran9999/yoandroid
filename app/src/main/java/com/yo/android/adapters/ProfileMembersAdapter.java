@@ -20,7 +20,7 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
 
     @Override
     public int getLayoutId() {
-        return R.layout.app_contacts_list_item;
+        return R.layout.profile_members_list_item;
     }
 
     @Override
