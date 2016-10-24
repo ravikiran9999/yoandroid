@@ -253,4 +253,5 @@
     <string name="enter_valid_amount">Please enter a valid amount to transfer</string>
     <string name="enter_amount_to_transfer">Please enter an amount to transfer</string>
     <string name="hash">#</string>
+    <string name="you_might_follow_topics">You might also follow these topics</string>
 </resources>

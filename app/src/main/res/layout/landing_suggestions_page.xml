@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:text="You might also like these topics"
+        android:text="@string/you_might_follow_topics"
         android:textColor="@android:color/black"
         android:textSize="20sp" />
 
