@@ -195,7 +195,8 @@ public class ChatActivity extends BaseActivity {
 
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
-                    intent.putExtra(Constants.OPPONENT_NAME, title);
+                    String titles = title == null ? opponent : title;
+                    intent.putExtra(Constants.OPPONENT_NAME, titles);
                     intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
 

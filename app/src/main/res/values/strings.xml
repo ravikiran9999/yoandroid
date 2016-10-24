@@ -260,4 +260,7 @@
     <string name="liked_articles">Liked Articles</string>
     <string name="my_topics">My Topics</string>
     <string name="my_magazines">My Magazines</string>
+    <string name="participants">Participants</string>
+    <string name="name">Name</string>
+    <string name="group_name">Group Name</string>
 </resources>
