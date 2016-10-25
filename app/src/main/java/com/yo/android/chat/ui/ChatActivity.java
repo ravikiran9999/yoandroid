@@ -77,6 +77,10 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             }
 
+            if (room.getFullName() != null) {
+                args.putString(Constants.OPPONENT_NAME, room.getFullName());
+            }
+
             if (room.getGroupName() != null) {
                 args.putString(Constants.TYPE, room.getGroupName());
             }
