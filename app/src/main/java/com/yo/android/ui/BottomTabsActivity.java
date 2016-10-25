@@ -144,9 +144,7 @@ public class BottomTabsActivity extends BaseActivity {
         notificationEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(notificationCount.getVisibility() == View.VISIBLE) {
-                    startActivity(new Intent(context, NotificationsActivity.class));
-                }
+                startActivity(new Intent(context, NotificationsActivity.class));
             }
         });
 
