@@ -50,13 +50,14 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     private CountryCallRatesAdapter adapter;
     private MenuItem searchMenuItem;
     private SearchView searchView;
-
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_yo_contacts);
         ButterKnife.bind(this);
+        context = this;
         enableBack();
         getSupportActionBar().setTitle(R.string.activity_contry_selection_title);
         layout.setVisibility(View.GONE);
@@ -130,7 +131,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             @Override
             public boolean onQueryTextChange(String newText) {
                 mLog.i(TAG, "onQueryTextChange: " + newText);
-                adapter.performSearch(newText);
+                adapter.performCountryCodeSearch(newText);
                 showEmptyText();
                 return true;
             }
@@ -138,7 +139,12 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                adapter.performSearch("");
+                if (this != null) {
+                    Util.hideKeyboard(context, getCurrentFocus());
+                }
+                if (adapter != null) {
+                    adapter.performSearch("");
+                }
                 return true;
             }
         });
