@@ -1,6 +1,7 @@
 package com.cunoraz.tagview;
 
 import android.graphics.drawable.Drawable;
+import android.view.View;
 
 
 public class Tag {
@@ -19,6 +20,7 @@ public class Tag {
     public float layoutBorderSize;
     public int layoutBorderColor;
     public Drawable background;
+    private View view;
 
 
     public Tag(String text) {
@@ -28,7 +30,7 @@ public class Tag {
 
     private void init(int id, String text, int tagTextColor, float tagTextSize,
                       int layoutColor, int layoutColorPress, boolean isDeletable,
-                      int deleteIndicatorColor,float deleteIndicatorSize, float radius,
+                      int deleteIndicatorColor, float deleteIndicatorSize, float radius,
                       String deleteIcon, float layoutBorderSize, int layoutBorderColor) {
         this.id = id;
         this.text = text;
@@ -43,5 +45,13 @@ public class Tag {
         this.deleteIcon = deleteIcon;
         this.layoutBorderSize = layoutBorderSize;
         this.layoutBorderColor = layoutBorderColor;
+    }
+
+    public void setTagView(View view) {
+        this.view = view;
+    }
+
+    public View getTagView() {
+        return view;
     }
 }
