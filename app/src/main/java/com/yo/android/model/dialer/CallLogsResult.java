@@ -18,6 +18,7 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
 //            "destination_name": "SIP2SIP Call",
 //            "dialedstatus": "NOT  ANSWER"
 //    }
+    private String id;
     private String salerate;
     private String salecost;
     private String dialnumber;
@@ -60,6 +61,7 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
         image = in.readString();
         duration = in.readString();
         appOrPstn = in.readInt();
+        id = in.readString();
     }
 
     public static final Creator<CallLogsResult> CREATOR = new Creator<CallLogsResult>() {
@@ -74,6 +76,13 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
         }
     };
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getDuration() {
         return duration;
@@ -149,7 +158,7 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
 
     @Override
     public String toString() {
-        return "ClassPojo [salerate = " + salerate + ", salecost = " + salecost + ", dialnumber = " + dialnumber + ", dialedstatus = " + dialedstatus + ", stime = " + stime + ", billsec = " + billsec + ", destination_name = " + destination_name + "]";
+        return "ClassPojo [salerate = " + salerate + ", salecost = " + salecost + ", dialnumber = " + dialnumber + ", dialedstatus = " + dialedstatus + ", stime = " + stime + ", billsec = " + billsec + ", destination_name = " + destination_name + ", id = " + id + "]";
     }
 
     public boolean isHeader() {
@@ -210,6 +219,7 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
         dest.writeString(image);
         dest.writeString(duration);
         dest.writeInt(appOrPstn);
+        dest.writeString(id);
 
     }
 }
