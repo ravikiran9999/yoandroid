@@ -63,11 +63,6 @@ public class CallRateDetail {
         this.PACKAGEID = PACKAGEID;
     }
 
-    @Override
-    public String toString() {
-        return "ClassPojo [PREFIX = " + PREFIX + ", RATE = " + RATE + ", DESTINATION = " + DESTINATION + ", PULSE = " + PULSE + ", PACKAGEID = " + PACKAGEID + "]";
-    }
-
     public String getUpdated() {
         return updated;
     }
