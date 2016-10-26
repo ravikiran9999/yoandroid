@@ -190,7 +190,7 @@ public class TagView extends RelativeLayout {
         }
 
         // clear all tag
-        //removeAllViews();
+        removeAllViews();
 
         // layout padding left & layout padding right
         float total = getPaddingLeft() + getPaddingRight();
