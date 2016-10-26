@@ -357,7 +357,7 @@ public class CallLog {
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
             ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
-            ;
+
             HashMap<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
             Cursor c = null;
             try {

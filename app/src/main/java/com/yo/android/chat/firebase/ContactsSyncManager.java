@@ -191,6 +191,7 @@ public class ContactsSyncManager {
         }
         return null;
     }
+
     public Contact getContactPSTN(int countrycode,String pstnnumber) {
         if (pstnnumber != null) {
             Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
