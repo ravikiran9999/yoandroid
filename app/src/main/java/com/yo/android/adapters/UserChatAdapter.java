@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -153,6 +154,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         TextView sentTxt = (TextView) view.findViewById(R.id.sent_txt);
         TextView seenTxt = (TextView) view.findViewById(R.id.seen_txt);
         TextView time = (TextView) view.findViewById(R.id.time);
+        ImageView timeLoad = (ImageView) view.findViewById(R.id.time_load);
         extraText.setVisibility(View.GONE);
         if (!isRTL) {
             profileNameLayout.setVisibility(View.VISIBLE);
@@ -173,6 +175,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 profileNameLayout.setVisibility(View.GONE);
             }
             if (item.getDeliveredTime() != 0) {
+                timeLoad.setVisibility(View.GONE);
                 String seen = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seen);
             }
@@ -185,6 +188,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             seenLayout.setVisibility(View.VISIBLE);
             if (item.getSent() != 0) {
                 String sent = Util.getTimeFormatForChat(mContext, item.getTime());
+                timeLoad.setVisibility(View.GONE);
                 time.setText(sent);
                 seenTxt.setVisibility(View.GONE);
             }
