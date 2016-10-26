@@ -154,6 +154,32 @@ public class TagView extends RelativeLayout {
         drawTags();
     }
 
+    public void updateTag(Tag tag) {
+
+        if (!mInitialized) {
+            return;
+        }
+        tag.getTagView().setBackgroundDrawable(getSelector(tag));
+        //View tagLayout = (View) mInflater.inflate(R.layout.tagview_item, null);
+        TextView tagView = (TextView) tag.getTagView().findViewById(R.id.tv_tag_item_contain);
+        tagView.setTextColor(tag.tagTextColor);
+
+        tag.getTagView().invalidate();
+    }
+    public void removeTag(Tag tag) {
+
+        if (!mInitialized) {
+            return;
+        }
+
+        //View tagLayout = (View) mInflater.inflate(R.layout.tagview_item, null);
+        TextView tagView = (TextView) tag.getTagView().findViewById(R.id.tv_tag_item_contain);
+        tagView.setTextColor(tag.tagTextColor);
+
+        tag.getTagView().invalidate();
+    }
+
+
     /**
      * tag draw
      */
@@ -164,7 +190,7 @@ public class TagView extends RelativeLayout {
         }
 
         // clear all tag
-        removeAllViews();
+        //removeAllViews();
 
         // layout padding left & layout padding right
         float total = getPaddingLeft() + getPaddingRight();
@@ -180,6 +206,7 @@ public class TagView extends RelativeLayout {
             // inflate tag layout
             View tagLayout = (View) mInflater.inflate(R.layout.tagview_item, null);
             tagLayout.setId(listIndex);
+            item.setTagView(tagLayout);
             tagLayout.setBackgroundDrawable(getSelector(tag));
 
             // tag text
@@ -415,6 +442,10 @@ public class TagView extends RelativeLayout {
      */
     public void setOnTagDeleteListener(OnTagDeleteListener deleteListener) {
         mDeleteListener = deleteListener;
+    }
+
+    public void remove(Tag tag) {
+        mTags.remove(tag);
     }
 
 

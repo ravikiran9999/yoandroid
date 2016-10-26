@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,11 +21,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
+import com.cunoraz.tagview.Utils;
 import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -68,6 +71,17 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
     private TextView tvHelloInterests;
     private TextView tvPickTopics;
+    private static int TAB_GREY;
+    private static int WHITE;
+    private static int COLOR_PRIMARY;
+
+
+    private int lineMargin;
+    private int tagMargin;
+    private int textPaddingLeft;
+    private int textPaddingRight;
+    private int textPaddingTop;
+    private int texPaddingBottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +112,10 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         topicsList = new ArrayList<Topics>();
         addedTopics = new ArrayList<String>();
 
+        TAB_GREY = getResources().getColor(R.color.tab_grey);
+        WHITE = getResources().getColor(R.color.white);
+        COLOR_PRIMARY = getResources().getColor(R.color.colorPrimary);
+
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
@@ -127,40 +145,63 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     if (!tag.getSelected()) {
                         addedTopics.remove(tag);
                         String tagId = tag.getTagId();
-                        for (int i = 0; i < topicsList.size(); i++) {
+                        /*for (int i = 0; i < topicsList.size(); i++) {
                             if (topicsList.get(i).getId().equals(tagId)) {
                                 topicsList.get(i).setSelected(false);
                             }
+                        }*/
+                        for (Topics topics : topicsList) {
+                            if (topics.getId().equals(tagId)) {
+                                topics.setSelected(false);
+                                break;
+                            }
                         }
-                        tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.tab_grey);
-                        tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.white);
-                        tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.tab_grey);
+
+                        Tag unselectedTag = tagGroup.getTags().get(position);
+                        unselectedTag.layoutBorderColor = TAB_GREY;
+                        unselectedTag.layoutColor = WHITE;
+                        unselectedTag.tagTextColor = TAB_GREY;
+                        tagGroup.updateTag(unselectedTag);
+
+
                         //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
                     } else {
                         addedTopics.add(tag.text);
                         String tagId = tag.getTagId();
-                        for (int i = 0; i < topicsList.size(); i++) {
+                        /*for (int i = 0; i < topicsList.size(); i++) {
                             if (topicsList.get(i).getId().equals(tagId)) {
                                 topicsList.get(i).setSelected(true);
                             }
+                        }*/
+                        for (Topics topics : topicsList) {
+                            if (topics.getId().equals(tagId)) {
+                                topics.setSelected(true);
+                                break;
+                            }
                         }
-                        tagGroup.getTags().get(position).layoutBorderColor = getResources().getColor(R.color.white);
-                        tagGroup.getTags().get(position).layoutColor = getResources().getColor(R.color.colorPrimary);
-                        tagGroup.getTags().get(position).tagTextColor = getResources().getColor(R.color.white);
+                        Tag selectedTag = tagGroup.getTags().get(position);
+                        selectedTag.layoutBorderColor = WHITE;
+                        selectedTag.layoutColor = COLOR_PRIMARY;
+                        selectedTag.tagTextColor = WHITE;
+                        tagGroup.updateTag(selectedTag);
+
                         //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
                     }
 
+                    //tagGroup.setWillNotDraw(false);
+                    //tagGroup.invalidate();
 
                     Tag tagDummy = new Tag("Android");
                     tagDummy.radius = 1f;
-                    tagDummy.layoutBorderColor = getResources().getColor(R.color.tab_grey);
+                    tagDummy.layoutBorderColor = TAB_GREY;
                     tagDummy.layoutBorderSize = 1f;
-                    tagDummy.layoutColor = getResources().getColor(android.R.color.white);
-                    tagDummy.tagTextColor = getResources().getColor(R.color.tab_grey);
+                    tagDummy.layoutColor = WHITE;
+                    tagDummy.tagTextColor = TAB_GREY;
                     //tagDummy.layoutColorPress = getResources().getColor(R.color.colorPrimary);
 
-                    tagGroup.addTag(tagDummy);
-                    tagGroup.remove(tagGroup.getTags().size() - 1);
+                    //tagGroup.drawTags();
+                    // tagGroup.updateTag(tagDummy);
+                    // tagGroup.remove(tagGroup.getTags().size() - 1);
                 } catch (Exception e) {
                     mLog.e("TAGS", "Exception" + e);
                 }
@@ -184,6 +225,16 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 // do nothing
             }
         });
+
+
+        TypedArray typeArray = obtainStyledAttributes(null, com.cunoraz.tagview.R.styleable.TagView, 0, 0);
+        this.lineMargin = (int) typeArray.getDimension(com.cunoraz.tagview.R.styleable.TagView_lineMargin, Utils.dipToPx(this, com.cunoraz.tagview.Constants.DEFAULT_LINE_MARGIN));
+        this.tagMargin = (int) typeArray.getDimension(com.cunoraz.tagview.R.styleable.TagView_tagMargin, Utils.dipToPx(this, com.cunoraz.tagview.Constants.DEFAULT_TAG_MARGIN));
+        this.textPaddingLeft = (int) typeArray.getDimension(com.cunoraz.tagview.R.styleable.TagView_textPaddingLeft, Utils.dipToPx(this, com.cunoraz.tagview.Constants.DEFAULT_TAG_TEXT_PADDING_LEFT));
+        this.textPaddingRight = (int) typeArray.getDimension(com.cunoraz.tagview.R.styleable.TagView_textPaddingRight, Utils.dipToPx(this, com.cunoraz.tagview.Constants.DEFAULT_TAG_TEXT_PADDING_RIGHT));
+        this.textPaddingTop = (int) typeArray.getDimension(com.cunoraz.tagview.R.styleable.TagView_textPaddingTop, Utils.dipToPx(this, com.cunoraz.tagview.Constants.DEFAULT_TAG_TEXT_PADDING_TOP));
+        this.texPaddingBottom = (int) typeArray.getDimension(com.cunoraz.tagview.R.styleable.TagView_textPaddingBottom, Utils.dipToPx(this, com.cunoraz.tagview.Constants.DEFAULT_TAG_TEXT_PADDING_BOTTOM));
+        typeArray.recycle();
     }
 
     @Override
@@ -199,8 +250,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             float x = event.getRawX() + w.getLeft() - scrcoords[0];
             float y = event.getRawY() + w.getTop() - scrcoords[1];
 
-            Log.d("FollowMoreTopics", "Touch event "+event.getRawX()+","+event.getRawY()+" "+x+","+y+" rect "+w.getLeft()+","+w.getTop()+","+w.getRight()+","+w.getBottom()+" coords "+scrcoords[0]+","+scrcoords[1]);
-            if (event.getAction() == MotionEvent.ACTION_UP && (x < w.getLeft() || x >= w.getRight() || y < w.getTop() || y > w.getBottom()) ) {
+            Log.d("FollowMoreTopics", "Touch event " + event.getRawX() + "," + event.getRawY() + " " + x + "," + y + " rect " + w.getLeft() + "," + w.getTop() + "," + w.getRight() + "," + w.getBottom() + " coords " + scrcoords[0] + "," + scrcoords[1]);
+            if (event.getAction() == MotionEvent.ACTION_UP && (x < w.getLeft() || x >= w.getRight() || y < w.getTop() || y > w.getBottom())) {
 
                 if (this != null) {
                     Util.hideKeyboard(FollowMoreTopicsActivity.this, getCurrentFocus());
@@ -431,6 +482,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     //Crash Happened ::    File: ArrayList.java   Class:java.util.ArrayList$ArrayListIterator   Method:next   Line:573
                     // File: FollowMoreTopicsActivity.java   Class:com.yo.android.ui.FollowMoreTopicsActivity   Method:setTags   Line:419
                     setTags(newText);
+                   // setNewTags(newText);
                 } catch (Exception e) {
 
                 }
@@ -446,6 +498,37 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 return true;
             }
         });
+    }
+
+    private void setNewTags(CharSequence cs) {
+        if (TextUtils.isEmpty(cs.toString().trim())) {
+            //Util.hideKeyboard(this, getCurrentFocus());
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            noSearchResults.setVisibility(View.GONE);
+            tvHelloInterests.setVisibility(View.VISIBLE);
+            tvPickTopics.setVisibility(View.VISIBLE);
+            return;
+        }
+        String text = cs.toString();
+        List<Tag> listTags = tagGroup.getTags();
+        for (Tag tag : listTags) {
+            TextView tagView = (TextView) tag.getTagView().findViewById(com.cunoraz.tagview.R.id.tv_tag_item_contain);
+            String data = tagView.getText().toString().toUpperCase();
+            if(!data.contains(text.toUpperCase())){
+                tagGroup.removeView(tag.getTagView());
+                tagGroup.invalidate();
+            }
+        }
+        listTags = tagGroup.getTags();
+        for (Tag tag : listTags) {
+            TextView tagView = (TextView) tag.getTagView().findViewById(com.cunoraz.tagview.R.id.tv_tag_item_contain);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tagView.getLayoutParams();
+            params.setMargins(textPaddingLeft, textPaddingTop, textPaddingRight, texPaddingBottom);
+            tagView.setLayoutParams(params);
+            tagView.invalidate();
+            tagGroup.invalidate();
+        }
+
     }
 
     private void setTags(CharSequence cs) {
@@ -552,7 +635,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
 
             if (response.body() != null && !response.body().isEmpty()) {
-                if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
+                if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
                     preferenceEndPoint.removePreference("cached_magazines");
                 }
                 preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
@@ -632,5 +715,78 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             }
         }
     }
+
+    private class TagDummyLoader extends AsyncTask<Void, Tag, Tag> {
+
+        @NonNull
+        private final Tag tagDummy;
+        private TagView tagGroup;
+
+        public TagDummyLoader(Tag tag, TagView tagGroup) {
+            this.tagDummy = tag;
+            this.tagGroup = tagGroup;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressDialog();
+            /*topicsList = new ArrayList<Topics>();
+            tagGroup.setVisibility(View.GONE);
+            initialTags.clear();*/
+        }
+
+        @Override
+        protected Tag doInBackground(Void... params) {
+            /*topicsList.clear();
+            topicsList.addAll(dummyTopicsList);
+            synchronized (initialTags) {
+                for (Topics topic : topicsList) {
+                    final TagSelected tag = prepareTag(topic);
+                    initialTags.add(tag);
+                }
+            }
+            return initialTags;*/
+
+            /*final Tag tagDummy = new Tag("Android");
+            tagDummy.radius = 1f;
+            tagDummy.layoutBorderColor = TAB_GREY;
+            tagDummy.layoutBorderSize = 1f;
+            tagDummy.layoutColor = WHITE;
+            tagDummy.tagTextColor = TAB_GREY;
+            //tagDummy.layoutColorPress = getResources().getColor(R.color.colorPrimary);
+
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    tagGroup.addTag(tagDummy);
+                    tagGroup.remove(tagGroup.getTags().size() - 1);
+
+                }
+            });*/
+            final Tag tagDummy = new Tag("Android");
+            tagDummy.radius = 1f;
+            tagDummy.layoutBorderColor = TAB_GREY;
+            tagDummy.layoutBorderSize = 1f;
+            tagDummy.layoutColor = WHITE;
+            tagDummy.tagTextColor = TAB_GREY;
+            publishProgress(tagDummy);
+
+            return tagDummy;
+        }
+
+        @Override
+        protected void onProgressUpdate(Tag... values) {
+            super.onProgressUpdate(values);
+            /*if (tagGroup != null) {
+                tagGroup.addTag(values[0]);
+            }*/
+
+            tagGroup.addTag(tagDummy);
+            tagGroup.remove(tagGroup.getTags().size() - 1);
+
+        }
+
+    }
+
 
 }
