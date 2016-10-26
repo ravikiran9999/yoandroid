@@ -21,6 +21,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.ProfileMembersAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.GroupMembers;
@@ -65,7 +66,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     @Bind(R.id.number_title)
     TextView numberTitle;
     private ProfileMembersAdapter profileMembersAdapter;
-    private ListView membersList;
+    private NonScrollListView membersList;
     private Contact contact;
     private String opponentNo;
     private String opponentName;
@@ -86,9 +87,10 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-        getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
-        getSupportActionBar().setElevation(0);
-
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
+            getSupportActionBar().setElevation(0);
+        }
         ButterKnife.bind(this);
         enableBack();
         groupMembersList = new ArrayList<>();
@@ -98,7 +100,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         authReference = fireBaseHelper.authWithCustomToken(this, preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
-        membersList = (ListView) findViewById(R.id.members);
+        membersList = (NonScrollListView) findViewById(R.id.members);
         profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
         membersList.setAdapter(profileMembersAdapter);
 
@@ -123,7 +125,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 roomName = intent.getStringExtra(Constants.GROUP_NAME);
                 contact = new Contact();
                 contact.setPhoneNo(opponentNo);
-                contact.setName(opponentName);
+                String names = roomName == null ? opponentName : roomName;
+                contact.setName(names);
                 contact.setVoxUserName(opponentNo);
                 contact.setImage(opponentImg);
                 contact.setYoAppUser(true);
@@ -199,12 +202,12 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     profileNumber.setVisibility(View.GONE);
                 }
             } else if (contact != null) {
-                if (contact.getName() != null) {
+                if (contact.getName() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
                     profileName.setText(contact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
                 }
-                if (contact.getPhoneNo() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
+                if (contact.getPhoneNo() != null) {
                     if (contact.getCountryCode() != null) {
                         removeYoUserFromPhoneNumber("+" + contact.getCountryCode(), contact.getPhoneNo(), profileNumber);
                     } else {

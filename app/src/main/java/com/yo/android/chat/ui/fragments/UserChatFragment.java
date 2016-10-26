@@ -102,6 +102,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private EditText chatText;
     private ListView listView;
     private String opponentNumber;
+    private String opponentName;
     private String opponentId;
     private static File mFileTemp;
     private static final int ADD_IMAGE_CAPTURE = 1;
@@ -145,6 +146,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
+        opponentName = bundle.getString(Constants.OPPONENT_NAME);
 
         mobilenumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -431,6 +433,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 getImageFromGallery();
                 break;
             case R.id.view_contact:
+
                 viewContact();
                 break;
             default:
@@ -484,6 +487,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Intent intent = new Intent(getActivity(), UserProfileActivity.class);
         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
         intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
+        intent.putExtra(Constants.OPPONENT_NAME, opponentName);
         intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
 
         if (roomType != null) {
