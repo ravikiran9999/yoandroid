@@ -23,12 +23,13 @@ import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
@@ -54,7 +55,9 @@ public class CallLogDetailsActivity extends BaseActivity {
 
     @Bind(R.id.lv_call_log_details)
     ListView callLogHistoryListview;
-    protected DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a");
+    protected DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
+    protected DateFormat dateFormat1 = new SimpleDateFormat("MM/dd");
+    protected DateFormat dateFormat2 = new SimpleDateFormat("EEE");
     protected SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     private ArrayList<CallLogsResult> callLogsDetails;
@@ -147,37 +150,65 @@ public class CallLogDetailsActivity extends BaseActivity {
                 holder.callTypeText = (TextView) convertView.findViewById(R.id.calltype);
                 holder.time = (TextView) convertView.findViewById(R.id.time);
                 holder.duration = (TextView) convertView.findViewById(R.id.duration);
+                holder.ioIcon = (ImageView) convertView.findViewById(R.id.io_icon);
+                holder.date = (TextView) convertView.findViewById(R.id.date);
                 convertView.setTag(holder);
             } else {
                 holder = (CallHolder) convertView.getTag();
             }
             CallLogsResult item = getItem(position);
             try {
+                String mDate = null;
+                String day = dateFormat2.format(formatterDate.parse(item.getStime()));
+                String vv = Util.getChatListTimeFormat(convertDateFormatLong(item.getStime()));
+                if (vv.equalsIgnoreCase(Constants.TODAY) || vv.equalsIgnoreCase(Constants.YESTERDAY)) {
+                    mDate = vv;
+                } else {
+                    mDate = dateFormat1.format(formatterDate.parse(item.getStime())).concat(",").concat(" " + day);
+                }
+                holder.date.setText(mDate);
                 holder.time.setText(dateFormat.format(formatterDate.parse(item.getStime())));
-              //  holder.duration.setText(convertMillisToHMmSs(Long.valueOf(item.getDuration())));
+                holder.duration.setText(convertMillisToHMmSs(Long.valueOf(item.getDuration())));
             } catch (ParseException e) {
                 mLog.w("", e);
             }
             if (item.getCallType() == CallLog.Calls.MISSED_TYPE) {
-                holder.callTypeText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_missed_holo_dark, 0, 0, 0);
+                holder.ioIcon.setImageResource(R.drawable.ic_call_missed_holo_dark);
                 holder.callTypeText.setText(context.getResources().getString(R.string.missed_call));
             } else if (item.getCallType() == CallLog.Calls.INCOMING_TYPE) {
-                holder.callTypeText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_incoming_holo_dark, 0, 0, 0);
+                holder.ioIcon.setImageResource(R.drawable.ic_call_incoming_holo_dark);
                 holder.callTypeText.setText(context.getResources().getString(R.string.incoming_call));
             } else if (item.getCallType() == CallLog.Calls.OUTGOING_TYPE) {
-                holder.callTypeText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_outgoing_holo_dark, 0, 0, 0);
+                holder.ioIcon.setImageResource(R.drawable.ic_call_outgoing_holo_dark);
                 holder.callTypeText.setText(context.getResources().getString(R.string.outgoing_call));
             }
             return convertView;
 
         }
 
-
-
         public class CallHolder {
-            public TextView callTypeText;
+            TextView callTypeText;
             public TextView duration;
             public TextView time;
+            ImageView ioIcon;
+            TextView date;
+        }
+
+        private String convertMillisToHMmSs(long milliseconds) {
+            int seconds = (int) (milliseconds / 1000) % 60;
+            int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
+            return String.valueOf(minutes).concat(" mins").concat(" " + String.valueOf(seconds)).concat(" secs");
+        }
+
+        private long convertDateFormatLong(String dateString) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = sdf.parse(dateString);
+                return date.getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return 0;
         }
     }
 }

@@ -13,6 +13,7 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Members;
 import com.yo.android.model.Room;
+import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
@@ -121,6 +122,24 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
                 if (hasData(event, searchKey)) {
+                    temp.add(event);
+                }
+            }
+            addItems(temp);
+        }
+    }
+
+    public void performCountryCodeSearch(final @NonNull String key) {
+        String searchKey = key.trim();
+        if (searchKey.isEmpty()) {
+            addItems(mOriginalList);
+        } else {
+            List<T> temp = new ArrayList<>();
+            for (T event : mOriginalList) {
+
+                if (((CallRateDetail) event).getDestination() != null && ((CallRateDetail) event).getDestination().toLowerCase().contains(searchKey.toLowerCase())) {
+                    temp.add(event);
+                } else if (((CallRateDetail) event).getPrefix() != null && ((CallRateDetail) event).getPrefix().contains(searchKey)) {
                     temp.add(event);
                 }
             }
