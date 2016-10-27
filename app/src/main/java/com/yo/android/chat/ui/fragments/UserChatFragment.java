@@ -708,9 +708,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private void addImageCapture(Intent data) {
         try {
-            /*if (data != null) {
-                Uri targetUri = data.getData();
-            }*/
+
             String mPartyPicUri = mFileTemp.getPath();
             String path = new CompressImage(getActivity()).compressImage(mPartyPicUri);
             mFileTemp.delete();

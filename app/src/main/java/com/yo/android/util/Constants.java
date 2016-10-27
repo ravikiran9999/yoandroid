@@ -31,6 +31,8 @@ public class Constants {
     public static final String SENT = "SENT";
     public static final String SEEN = "SEEN";
     public static final String RECEIVED = "RECEIVED";
+    public static final String TODAY = "Today";
+    public static final String YESTERDAY = "Yesterday";
 
     //Preference
     public static final String USER_ID = "user_id";
