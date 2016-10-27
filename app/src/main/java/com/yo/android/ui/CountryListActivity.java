@@ -49,7 +49,6 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
 
     private CountryCallRatesAdapter adapter;
     private MenuItem searchMenuItem;
-    private SearchView searchView;
     private Context context;
 
     @Override
@@ -109,6 +108,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_country_list, menu);
         prepareSearch(menu);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -116,8 +116,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.menu_search);
-        searchView =
-                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
@@ -125,6 +124,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mLog.i(TAG, "onQueryTextChange: " + query);
+                Util.hideKeyboard(context, getCurrentFocus());
                 return true;
             }
 
@@ -139,11 +139,9 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                if (this != null) {
-                    Util.hideKeyboard(context, getCurrentFocus());
-                }
+                Util.hideKeyboard(context, getCurrentFocus());
                 if (adapter != null) {
-                    adapter.performSearch("");
+                    adapter.performCountryCodeSearch("");
                 }
                 return true;
             }
@@ -182,11 +180,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
 
         @Override
         protected boolean hasData(CallRateDetail event, String key) {
-            if (containsValue(event.getDestination().toLowerCase(), key)
-                    || containsValue(event.getPrefix().toLowerCase(), key)) {
-                return true;
-            }
-            return super.hasData(event, key);
+            return containsValue(event.getDestination().toLowerCase(), key) || containsValue(event.getPrefix().toLowerCase(), key) || super.hasData(event, key);
         }
 
         private boolean containsValue(String str, String key) {
