@@ -98,9 +98,9 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getAddToContact().setVisibility(View.GONE);
         } else {
             String phoneNumber = item.getValue().get(0).getDialnumber();
-            if (phoneNumber != null && phoneNumber.contains("youser")) {
+            if (phoneNumber != null && phoneNumber.contains(Constants.YO_USER)) {
                 try {
-                    phoneNumber = phoneNumber.substring(phoneNumber.indexOf("youser") + 6, phoneNumber.length() - 1);
+                    phoneNumber = phoneNumber.substring(phoneNumber.indexOf(Constants.YO_USER) + 6, phoneNumber.length() - 1);
                     holder.getOpponentName().setText(phoneNumber);
                 } catch (StringIndexOutOfBoundsException e) {
                 }
@@ -191,6 +191,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                     contact.setPhoneNo(item.getValue().get(0).getDialnumber());
                     contact.setVoxUserName(item.getValue().get(0).getDialnumber());
                     contact.setImage(item.getValue().get(0).getImage());
+                    //contact.setId(item.getValue().get(0).get);
                 }
                 intent.putExtra(Constants.CONTACT, contact);
                 intent.putExtra(Constants.TYPE, Constants.CONTACT);

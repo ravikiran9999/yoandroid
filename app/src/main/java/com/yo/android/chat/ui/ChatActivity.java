@@ -77,6 +77,10 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             }
 
+            if (room.getFullName() != null) {
+                args.putString(Constants.OPPONENT_NAME, room.getFullName());
+            }
+
             if (room.getGroupName() != null) {
                 args.putString(Constants.TYPE, room.getGroupName());
             }
@@ -86,13 +90,21 @@ public class ChatActivity extends BaseActivity {
             Util.cancelAllNotification(this);
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
+            String mContactId = null;
             Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
             if (contact != null) {
                 opponent = contact.getVoxUserName();
                 args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
-                args.putString(Constants.OPPONENT_ID, contact.getId());
+                if (contact.getId() == null) {
+                    mContactId = mContactsSyncManager.getContactByVoxUserName(opponent).getId();
+
+                }
+
+                String contactId = contact.getId() == null ? mContactId : contact.getId();
+                args.putString(Constants.OPPONENT_ID, contactId);
+                //args.putString(Constants.OPPONENT_ID, contact.getId());
 
                 Util.cancelAllNotification(this);
             }

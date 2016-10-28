@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -116,15 +118,25 @@ public class ImageLoader {
     };
 
     private static void getImageHeightAndWidth(Context context, final File file, ImageView imageView) {
-        int maxWidth = 800;
+        float ratio = 1;
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        int maxWidth = display.getWidth() * 2 / 3;
+
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         int height = options.outHeight;
         int width = options.outWidth;
-        float ratio = (float) width / maxWidth;
-        width = maxWidth;
+        ratio = (float) width / maxWidth;
+
+        if (height > width) {
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            height = maxWidth;
+        } else {
         height = (int) (height / ratio);
+        }
+        width = maxWidth;
         Glide.with(context)
                 .load(file)
                 .priority(Priority.IMMEDIATE)
