@@ -2,6 +2,9 @@ package com.yo.android.pjsip;
 
 import android.util.Log;
 
+import com.yo.android.BuildConfig;
+import com.yo.android.vox.CodecPriority;
+
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.BuddyConfig;
 import org.pjsip.pjsua2.ContainerNode;
@@ -13,6 +16,7 @@ import org.pjsip.pjsua2.StringVector;
 import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.UaConfig;
 import org.pjsip.pjsua2.pj_log_decoration;
+import org.pjsip.pjsua2.pj_qos_type;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 
 import java.io.File;
@@ -35,12 +39,12 @@ class MyApp {
         System.out.println("Library loaded");
     }
 
-    public static Endpoint ep = new Endpoint();
+    public static Endpoint mEndpoint = new Endpoint();
     public static MyAppObserver observer;
     public ArrayList<MyAccount> accList = new ArrayList<MyAccount>();
 
     private ArrayList<MyAccountConfig> accCfgs = new ArrayList<MyAccountConfig>();
-    private EpConfig epConfig = new EpConfig();
+    private EpConfig epConfig;
     private TransportConfig sipTpConfig = new TransportConfig();
     private String appDir;
 
@@ -50,6 +54,8 @@ class MyApp {
     private final String configName = "pjsua2.json";
     private final int SIP_PORT = 6000;
     private final int LOG_LEVEL = 5;
+    public static String AGENT_NAME = "AndroidSipService/" + BuildConfig.VERSION_CODE;
+
 
     public void init(MyAppObserver obs, String app_dir) {
         init(obs, app_dir, false);
@@ -59,13 +65,45 @@ class MyApp {
                      boolean own_worker_thread) {
         observer = obs;
         appDir = app_dir;
-        if (ep == null) {
-            ep = new Endpoint();
+        if (mEndpoint == null) {
+            mEndpoint = new Endpoint();
         }
 
 		/* Create endpoint */
         try {
-            ep.libCreate();
+            mEndpoint.libCreate();
+
+
+            epConfig = new EpConfig();
+            epConfig.getUaConfig().setUserAgent(AGENT_NAME);
+            epConfig.getMedConfig().setHasIoqueue(true);
+            epConfig.getMedConfig().setClockRate(16000);
+            epConfig.getMedConfig().setQuality(10);
+            epConfig.getMedConfig().setEcOptions(1);
+            epConfig.getMedConfig().setEcTailLen(200);
+            epConfig.getMedConfig().setThreadCnt(2);
+            mEndpoint.libInit(epConfig);
+
+            TransportConfig udpTransport = new TransportConfig();
+            udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+            TransportConfig tcpTransport = new TransportConfig();
+            tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
+            mEndpoint.libStart();
+
+            mEndpoint.codecSetPriority("G729/8000", (short) (CodecPriority.PRIORITY_MAX - 1));
+            mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_DISABLED));
+            mEndpoint.codecSetPriority("speex/8000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("speex/16000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("speex/32000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("GSM/8000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("G722/16000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("G7221/16000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("G7221/32000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("ilbc/8000", (short) CodecPriority.PRIORITY_DISABLED);
+
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -96,7 +134,7 @@ class MyApp {
 
 		/* Set ua config. */
         UaConfig ua_cfg = epConfig.getUaConfig();
-        ua_cfg.setUserAgent("Pjsua2 Android " + ep.libVersion().getFull());
+        ua_cfg.setUserAgent("Pjsua2 Android " + mEndpoint.libVersion().getFull());
         StringVector stun_servers = new StringVector();
         stun_servers.add("stun.pjsip.org");
         ua_cfg.setStunServer(stun_servers);
@@ -107,26 +145,26 @@ class MyApp {
 
 		/* Init endpoint */
         try {
-            ep.libInit(epConfig);
+            mEndpoint.libInit(epConfig);
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
 
 		/* Create transports. */
-        try {
-            ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP,
+       /* try {
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP,
                     sipTpConfig);
         } catch (Exception e) {
             System.out.println(e);
         }
 
         try {
-            ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP,
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP,
                     sipTpConfig);
         } catch (Exception e) {
             System.out.println(e);
-        }
+        }*/
 
 		/* Create accounts. */
         for (int i = 0; i < accCfgs.size(); i++) {
@@ -134,6 +172,8 @@ class MyApp {
 
 			/* Customize account config */
             my_cfg.accCfg.getNatConfig().setIceEnabled(true);
+            my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
+            my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
             my_cfg.accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
             my_cfg.accCfg.getVideoConfig().setAutoShowIncoming(true);
 
@@ -150,7 +190,7 @@ class MyApp {
 
 		/* Start. */
         try {
-            ep.libStart();
+            mEndpoint.libStart();
         } catch (Exception e) {
             return;
         }
@@ -266,11 +306,11 @@ class MyApp {
         Runtime.getRuntime().gc();
 
 		/*
-		 * Shutdown pjsua. Note that Endpoint destructor will also invoke
+         * Shutdown pjsua. Note that Endpoint destructor will also invoke
 		 * libDestroy(), so this will be a test of double libDestroy().
 		 */
         try {
-            ep.libDestroy();
+            mEndpoint.libDestroy();
         } catch (Exception e) {
         }
 
@@ -278,7 +318,7 @@ class MyApp {
 		 * Force delete Endpoint here, to avoid deletion from a non- registered
 		 * thread (by GC?).
 		 */
-        ep.delete();
-        ep = null;
+        mEndpoint.delete();
+        mEndpoint = null;
     }
 }

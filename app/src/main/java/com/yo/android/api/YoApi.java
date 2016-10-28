@@ -276,6 +276,12 @@ public class YoApi {
         @GET("api/user/receiver_search.json")
         Call<List<FindPeople>> searchInBalanceTransferContacts(@Query("access_token") String access_token, @Query("search_item") String search_item, @Query("page") int page, @Query("limit") int limit);
 
+        @GET("api/user/{id}.json")
+        Call<FindPeople> getUserInfoFromId(@Path("id") String id, @Query("access_token") String access_token);
+
+        @GET("api/articles/{article_id}.json")
+        Call<Articles> getArticleInfo(@Path("article_id") String article_id, @Query("access_token") String access_token);
+
     }
 
     public interface YoRefreshTokenService {

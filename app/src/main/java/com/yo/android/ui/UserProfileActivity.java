@@ -3,6 +3,7 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,6 +66,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     TextView profileNameTitle;
     @Bind(R.id.number_title)
     TextView numberTitle;
+    @Bind(R.id.name_card_view)
+    CardView cardView;
     private ProfileMembersAdapter profileMembersAdapter;
     private NonScrollListView membersList;
     private Contact contact;
@@ -187,10 +190,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (mContact != null) {
 
                 if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo())) {
+                    cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(mContact.getName());
                 } else {
-                    profileName.setVisibility(View.GONE);
+                    cardView.setVisibility(View.GONE);
                 }
                 if (mContact.getPhoneNo() != null) {
                     if (mContact.getCountryCode() != null) {
@@ -203,11 +207,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 }
             } else if (contact != null) {
                 if (contact.getName() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
+                    cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(contact.getName());
                 } else {
-                    profileName.setVisibility(View.GONE);
+                    cardView.setVisibility(View.GONE);
                 }
+                //if (contact.getPhoneNo() != null && contact.getName() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
                 if (contact.getPhoneNo() != null) {
                     if (contact.getCountryCode() != null) {
                         removeYoUserFromPhoneNumber("+" + contact.getCountryCode(), contact.getPhoneNo(), profileNumber);

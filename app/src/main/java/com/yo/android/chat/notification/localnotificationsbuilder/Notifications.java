@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationCompat;
 
 
 import com.yo.android.R;
+import com.yo.android.chat.notification.helper.AppRunningState;
 import com.yo.android.chat.notification.helper.Constants;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
@@ -63,9 +64,9 @@ public class Notifications {
         mBuilder.setNumber(pushNotificationList.size());
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setAutoCancel(true);
-        // if (!AppRunningState.isRunning(mContext) || AppRunningState.isLocked(mContext)) {
+         if (!AppRunningState.isRunning(mContext)) {
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-        // }
+         }
     }
 
 

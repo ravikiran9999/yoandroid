@@ -60,9 +60,9 @@ class MyCall extends Call {
 
                 // connect ports
                 try {
-                    MyApp.ep.audDevManager().getCaptureDevMedia()
+                    MyApp.mEndpoint.audDevManager().getCaptureDevMedia()
                             .startTransmit(am);
-                    am.startTransmit(MyApp.ep.audDevManager()
+                    am.startTransmit(MyApp.mEndpoint.audDevManager()
                             .getPlaybackDevMedia());
                 } catch (Exception e) {
                     continue;
