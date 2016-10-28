@@ -17,8 +17,10 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.orion.android.common.logger.Log;
+import com.orion.android.common.logging.Logger;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.calllogs.CallerInfo;
@@ -34,15 +36,21 @@ import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.SipCallModel;
 import com.yo.android.voip.UserAgent;
 import com.yo.android.voip.VoipConstants;
+import com.yo.android.vox.CodecPriority;
 
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AuthCredInfo;
 import org.pjsip.pjsua2.AuthCredInfoVector;
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallOpParam;
+import org.pjsip.pjsua2.Endpoint;
+import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.StringVector;
+import org.pjsip.pjsua2.TransportConfig;
+import org.pjsip.pjsua2.pj_qos_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
+import org.pjsip.pjsua2.pjsip_transport_type_e;
 
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -91,6 +99,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private PowerManager.WakeLock ongoingCallLock;
     private PowerManager.WakeLock eventLock;
+    private Endpoint mEndpoint;
+    public static String AGENT_NAME = "AndroidSipService/" + BuildConfig.VERSION_CODE;
 
     @Override
     public void onCreate() {
@@ -398,6 +408,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     public void addAccount(SipProfile sipProfile) {
         try {
+            //startStack();
             myAccount = buildAccount();
             String id = String.format("sip:%s@%s", sipProfile.getUsername(), sipProfile.getDomain());
             String registrar = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
@@ -456,6 +467,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             try {
                 call.isActive(finalUri, prm);
                 call.makeCall(finalUri, prm);
+
             } catch (Exception e) {
                 mLog.w(TAG, e);
                 call.delete();
@@ -693,5 +705,91 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
+    /**
+     * Starts PJSIP Stack.
+     */
+    private void startStack() {
+
+        //if (mStarted) return;
+
+        try {
+            Logger.warn("Starting PJSIP");
+            mEndpoint = new Endpoint();
+            mEndpoint.libCreate();
+
+            EpConfig epConfig = new EpConfig();
+            epConfig.getUaConfig().setUserAgent(AGENT_NAME);
+            epConfig.getMedConfig().setHasIoqueue(true);
+            epConfig.getMedConfig().setClockRate(16000);
+            epConfig.getMedConfig().setQuality(10);
+            epConfig.getMedConfig().setEcOptions(1);
+            epConfig.getMedConfig().setEcTailLen(200);
+            epConfig.getMedConfig().setThreadCnt(2);
+            mEndpoint.libInit(epConfig);
+
+            TransportConfig udpTransport = new TransportConfig();
+            udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+            TransportConfig tcpTransport = new TransportConfig();
+            tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
+            mEndpoint.libStart();
+
+            mEndpoint.codecSetPriority("G729/8000", (short) (CodecPriority.PRIORITY_MAX - 1));
+            mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_DISABLED));
+            mEndpoint.codecSetPriority("speex/8000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("speex/16000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("speex/32000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("GSM/8000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("G722/16000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("G7221/16000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("G7221/32000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("ilbc/8000", (short) CodecPriority.PRIORITY_DISABLED);
+
+
+            Logger.warn("PJSIP started!");
+            // mStarted = true;
+            // mBroadcastEmitter.stackStatus(true);
+
+        } catch (Exception exc) {
+            Logger.warn("Error while starting PJSIP");
+            //mStarted = false;
+        }
+    }
+
+    /**
+     * Shuts down PJSIP Stack
+     *
+     * @throws Exception if an error occurs while trying to shut down the stack
+     */
+    private void stopStack() {
+
+        // if (!mStarted) return;
+
+        try {
+            Logger.warn("Stopping PJSIP");
+
+            //  removeAllActiveAccounts();
+
+            // try to force GC to do its job before destroying the library, since it's
+            // recommended to do that by PJSUA examples
+            Runtime.getRuntime().gc();
+
+            mEndpoint.libDestroy();
+            mEndpoint.delete();
+            mEndpoint = null;
+
+            Logger.warn("PJSIP stopped");
+            // mBroadcastEmitter.stackStatus(false);
+
+        } catch (Exception exc) {
+            Logger.warn("Error while stopping PJSIP");
+
+        } finally {
+            // mStarted = false;
+            mEndpoint = null;
+        }
+    }
 
 }

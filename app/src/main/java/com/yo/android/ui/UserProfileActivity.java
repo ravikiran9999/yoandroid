@@ -184,7 +184,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
             if (mContact != null) {
 
-                if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo())) {
+                if (mContact.getName() != null && !(mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo()))) {
                     profileName.setText(mContact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
@@ -204,7 +204,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 } else {
                     profileName.setVisibility(View.GONE);
                 }
-                if (contact.getPhoneNo() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
+                if (contact.getPhoneNo() != null && contact.getName() != null && !(contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo()))) {
                     if (contact.getCountryCode() != null) {
                         removeYoUserFromPhoneNumber("+" + contact.getCountryCode(), contact.getPhoneNo(), profileNumber);
                     } else {

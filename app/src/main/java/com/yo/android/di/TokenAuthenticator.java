@@ -66,6 +66,8 @@ public class TokenAuthenticator implements Authenticator {
                         = tokenService.refreshToken(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET, "refresh_token", refreshToken)
                         .execute()
                         .body();
+                refreshToken = responseBody.getRefreshToken();
+
                 preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, responseBody.getAccessToken());
                 preferenceEndPoint.saveStringPreference(YoApi.REFRESH_TOKEN, responseBody.getRefreshToken());
                 HttpUrl httpUrl = response.request().url().newBuilder().addQueryParameter(YoApi.ACCESS_TOKEN, responseBody.getAccessToken()).build();
