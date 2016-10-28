@@ -372,6 +372,8 @@ public class Util {
                 if (adapter != null) {
                     if (roomType.equalsIgnoreCase(Constants.CHAT_FRAG)) {
                         adapter.performContactsSearch(newText);
+                    } else if(roomType.equalsIgnoreCase(Constants.DAILER_FRAG)){
+                        adapter.performCallLogsSearch(newText);
                     } else {
                         adapter.performYoContactsSearch(newText);
                     }

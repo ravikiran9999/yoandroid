@@ -191,7 +191,6 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                     contact.setPhoneNo(item.getValue().get(0).getDialnumber());
                     contact.setVoxUserName(item.getValue().get(0).getDialnumber());
                     contact.setImage(item.getValue().get(0).getImage());
-                    //contact.setId(item.getValue().get(0).get);
                 }
                 intent.putExtra(Constants.CONTACT, contact);
                 intent.putExtra(Constants.TYPE, Constants.CONTACT);

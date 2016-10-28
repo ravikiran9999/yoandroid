@@ -180,7 +180,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 profileNumber.setVisibility(View.VISIBLE);
             }
             String name = roomName == null ? getString(R.string.name) : getString(R.string.group_name);
-            profileNameTitle.setText(name);
             String title = roomName == null ? getString(R.string.prompt_phone_number) : getString(R.string.participants);
             numberTitle.setText(title);
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
@@ -188,6 +187,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (mContact != null) {
 
                 if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo())) {
+                    profileNameTitle.setText(name);
                     profileName.setText(mContact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
@@ -203,6 +203,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 }
             } else if (contact != null) {
                 if (contact.getName() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
+                    profileNameTitle.setText(name);
                     profileName.setText(contact.getName());
                 } else {
                     profileName.setVisibility(View.GONE);
