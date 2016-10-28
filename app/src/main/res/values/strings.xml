@@ -263,4 +263,5 @@
     <string name="participants">Participants</string>
     <string name="name">Name</string>
     <string name="group_name">Group Name</string>
+    <string name="select_country_name">Select Country Name</string>
 </resources>
