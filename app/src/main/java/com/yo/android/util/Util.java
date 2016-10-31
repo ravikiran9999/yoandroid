@@ -464,7 +464,7 @@ public class Util {
 
     public static void closeSearchView(Menu menu) {
         try {
-            if (menu.findItem(R.id.menu_search).isActionViewExpanded()) {
+            if (menu.findItem(R.id.menu_search) != null && menu.findItem(R.id.menu_search).isActionViewExpanded()) {
                 (menu.findItem(R.id.menu_search)).collapseActionView();
             }
         } catch (Exception e) {
