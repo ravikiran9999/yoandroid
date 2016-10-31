@@ -28,8 +28,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -372,7 +375,7 @@ public class Util {
                 if (adapter != null) {
                     if (roomType.equalsIgnoreCase(Constants.CHAT_FRAG)) {
                         adapter.performContactsSearch(newText);
-                    } else if(roomType.equalsIgnoreCase(Constants.DAILER_FRAG)){
+                    } else if (roomType.equalsIgnoreCase(Constants.DAILER_FRAG)) {
                         adapter.performCallLogsSearch(newText);
                     } else {
                         adapter.performYoContactsSearch(newText);
@@ -733,5 +736,24 @@ public class Util {
     public static boolean isKb(long length) {
         double size = length / 1024.0;
         return size <= 1;
+    }
+
+    public static void setDynamicHeight(ListView mListView) {
+        ListAdapter mListAdapter = mListView.getAdapter();
+        if (mListAdapter == null) {
+            // when adapter is null
+            return;
+        }
+        int height = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        for (int i = 0; i < mListAdapter.getCount(); i++) {
+            View listItem = mListAdapter.getView(i, null, mListView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            height += listItem.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = mListView.getLayoutParams();
+        params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
+        mListView.setLayoutParams(params);
+        mListView.requestLayout();
     }
 }
