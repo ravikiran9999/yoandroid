@@ -292,8 +292,11 @@ public class BottomTabsActivity extends BaseActivity {
                     finish();
                 }
 
+            } else if("Missed call".equals(tag)) {
+                //startActivity(new Intent(this, DialerActivity.class));
+                viewPager.setCurrentItem(2);
             }
-        }
+         }
         }
     }
 

@@ -36,6 +36,9 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.calllogs.CallerInfo;
+import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
+import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
+import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Contact;
@@ -77,6 +80,7 @@ public class Util {
 
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
+    private static final int SIX = 6;
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         return createNotification(context, title, body, clzz, intent, true);
@@ -108,6 +112,48 @@ public class Util {
         NotificationManager notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(notificationId, notification);
         return notificationId;
+    }
+
+    public static <T> void setBigStyleNotification(Context context, String title, String message, String tag, String id, boolean onGoing, boolean isDialer, Class<T> clzz, Intent intent) {
+        Notifications notification = new Notifications();
+        Intent notificationIntent = null;
+        if(tag.equals("Outgoing call") || tag.equals("Incoming call")) {
+            notificationIntent = intent;
+        } else {
+            notificationIntent = new Intent(context, BottomTabsActivity.class);
+            notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
+            notificationIntent.putExtra("title", title);
+            notificationIntent.putExtra("message", message);
+            notificationIntent.putExtra("tag", tag);
+            notificationIntent.putExtra("id", id);
+        }
+
+        NotificationBuilderObject notificationsInboxData = prepareNotificationData(title, message);
+        UserData data = new UserData();
+        data.setDescription(message);
+        //List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
+        List<UserData> notificationList = new ArrayList<>();
+        notificationList.add(data);
+        notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, onGoing, isDialer);
+    }
+
+    @NonNull
+    private static NotificationBuilderObject prepareNotificationData(String title, String message) {
+        NotificationBuilderObject notificationData = new NotificationBuilderObject();
+        notificationData.setNotificationTitle(title);
+        notificationData.setNotificationSmallIcon(getNotificationIcon());
+        notificationData.setNotificationText(message);
+        notificationData.setNotificationLargeIconDrawable(R.mipmap.ic_launcher);
+        notificationData.setNotificationInfo("3");
+        //notificationData.setNotificationLargeiconUrl(chatMessage.getImagePath());
+        //notificationData.setNotificationLargeText("Hello Every one ....Welcome to Notifications Demo..we are very glade to meet you here.Android Developers ");
+        return notificationData;
+    }
+
+    private static int getNotificationIcon() {
+        boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
+        return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
     }
 
     public static void cancelNotification(Context context, int notificationId) {

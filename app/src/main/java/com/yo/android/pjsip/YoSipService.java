@@ -25,6 +25,7 @@ import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.calllogs.CallerInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.Contact;
 import com.yo.android.ui.BottomTabsActivity;
@@ -195,8 +196,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 call.hangup(prm);
                 String source = getPhoneNumber(call.getInfo().getRemoteUri());
                 source = parseVoxUser(source);
-                Util.createNotification(this, source,
-                        "Missed call", BottomTabsActivity.class, new Intent(), false);
+                /*Util.createNotification(this, source,
+                        "Missed call", BottomTabsActivity.class, new Intent(), false);*/
+                Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
                 storeCallLog(CallLog.Calls.MISSED_TYPE, source);
             } catch (Exception e) {
                 mLog.w(TAG, e);
@@ -239,7 +241,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             lastLaunchCallHandler = currentElapsedTime;
             mediaManager.playRingtone();
             if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
-                inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
+                //inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
+                inComingCallNotificationId = Notifications.NOTIFICATION_ID;
+                Util.setBigStyleNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", "Incoming call", "", true, true, InComingCallActivity.class, intent);
             }
         }
     }
@@ -368,9 +372,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (sipCallState.getCallDir() == SipCallState.INCOMING) {
             if (sipCallState.getCallState() == SipCallState.CALL_RINGING) {
                 mLog.e(TAG, "Missed call >>>>>" + sipCallState.getMobileNumber());
-                Util.createNotification(this,
+                /*Util.createNotification(this,
                         parseVoxUser(sipCallState.getMobileNumber()),
-                        "Missed call ", BottomTabsActivity.class, new Intent(), false);
+                        "Missed call ", BottomTabsActivity.class, new Intent(), false);*/
+                Util.setBigStyleNotification(this, parseVoxUser(sipCallState.getMobileNumber()), "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
 
             }
         }
@@ -500,7 +505,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         startActivity(intent);
         destination = parseVoxUser(destination);
         if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
-            outGoingCallNotificationId = Util.createNotification(this, destination, "Outgoing call", OutGoingCallActivity.class, intent);
+            //outGoingCallNotificationId = Util.createNotification(this, destination, "Outgoing call", OutGoingCallActivity.class, intent);
+            outGoingCallNotificationId = Notifications.NOTIFICATION_ID;
+            Util.setBigStyleNotification(this, destination, "Outgoing call", "Outgoing call", "", true, true, OutGoingCallActivity.class, intent);
         }
     }
 
