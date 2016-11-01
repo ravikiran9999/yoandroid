@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class CallRateDetail {
 
     private String id;
-
+    private boolean recentSelected;
     private String updated;
 
     @SerializedName("prefix")
@@ -79,11 +79,19 @@ public class CallRateDetail {
         this.id = id;
     }
 
+    public boolean isRecentSelected() {
+        return recentSelected;
+    }
+
+    public void setRecentSelected(boolean recentSelected) {
+        this.recentSelected = recentSelected;
+    }
+
     @Override
     public boolean equals(Object v) {
         boolean retVal = false;
 
-        if (v instanceof CallRateDetail){
+        if (v instanceof CallRateDetail) {
             CallRateDetail ptr = (CallRateDetail) v;
             retVal = ptr.getId() == this.id;
         }
@@ -98,4 +106,8 @@ public class CallRateDetail {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        return "ClassPojo [id = " + id + ", updated = " + updated + ", recentSelected = " + recentSelected + ", PREFIX = " + PREFIX + ", RATE = " + RATE + ", DESTINATION = " + DESTINATION + ", PULSE = " + PULSE + ", PACKAGEID = " + PACKAGEID + "]";
+    }
 }

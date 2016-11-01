@@ -156,10 +156,10 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
         this.callType = callType;
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return "ClassPojo [salerate = " + salerate + ", salecost = " + salecost + ", dialnumber = " + dialnumber + ", dialedstatus = " + dialedstatus + ", stime = " + stime + ", billsec = " + billsec + ", destination_name = " + destination_name + ", id = " + id + "]";
-    }
+    }*/
 
     public boolean isHeader() {
         return header;
