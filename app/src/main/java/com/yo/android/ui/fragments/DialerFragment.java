@@ -89,7 +89,6 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     private EventBus bus = EventBus.getDefault();
     private CallLogsAdapter adapter;
 
-
     //private ImageView btnDialer;
 
     private View bottom_layout;
@@ -187,7 +186,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
             YODialogs.clearHistory(getActivity(), new CallLogClearListener() {
                 @Override
                 public void clear() {
-                    loadCallLogs();
+                    clearCallLogs();
                 }
             });
         }
@@ -204,7 +203,6 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         super.onViewCreated(view, savedInstanceState);
 
         ButterKnife.bind(this, view);
-
 
     }
 
@@ -245,6 +243,10 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         paidCalls = CallLog.Calls.getPSTNCallLog(getActivity());
         showEmptyText();
         showDataOnFilter();
+    }
+
+    private void clearCallLogs() {
+        CallLog.Calls.clearCallHistory(getActivity());
     }
 
     private void showDataOnFilter() {
@@ -330,7 +332,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
      */
     public void onEventMainThread(String action) {
         if (action.equals(REFRESH_CALL_LOGS)) {
-            loadCallLogs();
+            //loadCallLogs();
+            showDataOnFilter();
             mBalanceHelper.checkBalance(null);
         }
     }

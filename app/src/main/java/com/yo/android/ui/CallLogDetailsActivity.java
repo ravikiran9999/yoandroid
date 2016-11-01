@@ -3,6 +3,7 @@ package com.yo.android.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.BinderThread;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,6 +48,9 @@ public class CallLogDetailsActivity extends BaseActivity {
     @Bind(R.id.call_log_opponent_name)
     TextView opponentName;
 
+    @Bind(R.id.call_log_opponent_number)
+    TextView opponentNumber;
+
     @Bind(R.id.call_info_date)
     TextView callInfoDate;
 
@@ -70,6 +74,8 @@ public class CallLogDetailsActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.call_info);
         callLogsDetails = getIntent().getParcelableArrayListExtra(Constants.CALL_LOG_DETAILS);
+        String name = callLogsDetails.get(0).getDestination_name();
+        String number = callLogsDetails.get(0).getDialnumber();
         Log.e("", callLogsDetails + "");
         if (callLogsDetails.size() >= 1) {
             Glide.with(this).load(callLogsDetails.get(0).getImage())
@@ -77,10 +83,13 @@ public class CallLogDetailsActivity extends BaseActivity {
                     .dontAnimate()
                     .error(R.drawable.dynamic_profile).
                     into(imageView);
-            if (callLogsDetails.get(0).getDestination_name() != null) {
-                opponentName.setText(callLogsDetails.get(0).getDestination_name());
-            } else {
-                opponentName.setText(callLogsDetails.get(0).getDialnumber());
+            if (!TextUtils.isEmpty(name)) {
+                opponentName.setVisibility(View.VISIBLE);
+                opponentName.setText(name);
+                opponentNumber.setText(number);
+            } else if (!TextUtils.isEmpty(number)) {
+                opponentName.setVisibility(View.GONE);
+                opponentNumber.setText(number);
             }
             CallLogDetailsAdapter adapter = new CallLogDetailsAdapter(this, callLogsDetails);
             callLogHistoryListview.setAdapter(adapter);

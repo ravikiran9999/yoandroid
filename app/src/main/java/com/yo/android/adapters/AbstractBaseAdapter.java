@@ -52,7 +52,6 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         if (mOriginalList.size() == 0) {
             mOriginalList = new ArrayList<>(list);
         }
-
         notifyDataSetChanged();
     }
 

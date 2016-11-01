@@ -60,7 +60,6 @@
                         android:gravity="left|bottom"
                         android:inputType="number"
                         android:maxLines="1"
-                        android:singleLine="true"
                         android:textColor="@color/dialpad_digits_text_color"
                         android:textSize="@dimen/dialpad_digits_text_size"
                         android:textStyle="normal"
