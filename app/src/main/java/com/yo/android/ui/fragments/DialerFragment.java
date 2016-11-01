@@ -99,6 +99,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     private Menu menu;
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> appCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> paidCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
+    private ArrayList<Map.Entry<String, List<CallLogsResult>>> results = new ArrayList<>();
     @Inject
     protected YoApi.YoService yoService;
 
@@ -193,6 +194,11 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         return super.onOptionsItemSelected(item);
     }
 
+    private void clearCallLogs() {
+        CallLog.Calls.clearCallHistory(getActivity());
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -223,7 +229,6 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         }
     };
 
-
     @OnClick(R.id.floatingDialer)
     public void onDialerClick() {
         startActivity(new Intent(getActivity(), NewDailerActivity.class));
@@ -240,13 +245,10 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         showDataOnFilter();
     }
 
-    private void clearCallLogs() {
-        CallLog.Calls.clearCallHistory(getActivity());
-    }
-
     private void showDataOnFilter() {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
-        ArrayList<Map.Entry<String, List<CallLogsResult>>> results = new ArrayList<>();
+        ArrayList<Map.Entry<String, List<CallLogsResult>>> tempResults = new ArrayList<>();
+        results.clear();
         if (filter.equalsIgnoreCase("all calls")) {
             results = prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
         } else if (filter.equalsIgnoreCase("app calls")) {
@@ -254,7 +256,13 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         } else {
             results = prepare("Paid Calls", results, paidCalls);
         }
-        adapter.addItems(results);
+        tempResults.addAll(results);
+        if (adapter.getAllItems().size() < results.size()) {
+            results.clear();
+            adapter.clearAll();
+            results.addAll(tempResults);
+            adapter.addItemsAll(results);
+        }
         showEmptyText();
     }
 
@@ -278,6 +286,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         }
         return results;
     }
+
 
     private void showEmptyText() {
         try {
@@ -327,8 +336,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
      */
     public void onEventMainThread(String action) {
         if (action.equals(REFRESH_CALL_LOGS)) {
-            //loadCallLogs();
-            showDataOnFilter();
+            loadCallLogs();
             mBalanceHelper.checkBalance(null);
         }
     }
