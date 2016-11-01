@@ -210,6 +210,11 @@ public class NewDailerActivity extends BaseActivity {
 
     private void loadCurrentBalance() {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
+        double val = Double.parseDouble(balance.trim());
+        if(val <=2) {
+            mLog.w(TAG, "Current balance is less than or equal to $2");
+            Util.setBigStyleNotificationForBalance(this, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
+        }
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
                 txtBalance.setText(String.format("%s%s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));

@@ -26,6 +26,7 @@ import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import java.text.DecimalFormat;
@@ -334,6 +335,12 @@ public class TransferBalanceActivity extends BaseActivity {
                             String format = df.format(Double.valueOf(balanceHelper.getCurrentBalance()));
                             preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
                             tvBalance.setText(String.format("%s%s", currencySymbol, format));
+                            double val = Double.parseDouble(format.trim());
+                            if(val <=2) {
+                                mLog.w("TransferBalanceActivity", "Current balance is less than or equal to $2");
+                                Util.setBigStyleNotificationForBalance(TransferBalanceActivity.this, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
+
+                            }
                         } catch (IllegalArgumentException e) {
                         }
                     }
