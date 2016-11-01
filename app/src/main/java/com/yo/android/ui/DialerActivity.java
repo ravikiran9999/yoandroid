@@ -34,7 +34,7 @@ public class DialerActivity extends BaseActivity {
             R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.star,
             R.id.pound};
     private ImageView btnCallGreen;
-    private ImageView btnDialer;
+    //private ImageView btnDialer;
     private TextView txtBalance;
     private TextView txtCallRate;
     private boolean show;
@@ -59,7 +59,7 @@ public class DialerActivity extends BaseActivity {
         txtBalance = (TextView) findViewById(R.id.txt_balance);
         txtCallRate = (TextView) findViewById(R.id.txt_call_rate);
         btnCallGreen = (ImageView) findViewById(R.id.btnCall);
-        btnDialer = (ImageView) findViewById(R.id.btnDialer);
+        //btnDialer = (ImageView) findViewById(R.id.btnDialer);
         findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,13 +85,13 @@ public class DialerActivity extends BaseActivity {
                 }
             });
         }
-        btnDialer.setVisibility(View.GONE);
-        btnDialer.setOnClickListener(new View.OnClickListener() {
+        //btnDialer.setVisibility(View.GONE);
+       /* btnDialer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialPad();
             }
-        });
+        });*/
         btnCallGreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,7 +162,7 @@ public class DialerActivity extends BaseActivity {
             public void onAnimationEnd(Animation animation) {
                 dialPadView.setVisibility(View.VISIBLE);
                 btnCallGreen.setVisibility(View.VISIBLE);
-                btnDialer.setVisibility(View.GONE);
+                //btnDialer.setVisibility(View.GONE);
             }
 
             @Override
@@ -186,7 +186,7 @@ public class DialerActivity extends BaseActivity {
             public void onAnimationEnd(Animation animation) {
                 dialPadView.setVisibility(View.GONE);
                 btnCallGreen.setVisibility(View.GONE);
-                btnDialer.setVisibility(View.VISIBLE);
+                //btnDialer.setVisibility(View.VISIBLE);
             }
 
             @Override

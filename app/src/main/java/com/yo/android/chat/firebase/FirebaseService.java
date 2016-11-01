@@ -310,7 +310,7 @@ public class FirebaseService extends InjectedService {
                 UserData data = new UserData();
                 data.setDescription(chatMessage.getMessage());
                 notificationList.add(data);
-                notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX);
+                notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, false);
                 break;
             case STYLE_PICTURE:
                 NotificationBuilderObject notificationPictureInfo = prepareNotificationData(chatMessage);

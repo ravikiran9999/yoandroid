@@ -60,15 +60,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="80dp">
+        android:layout_marginTop="80dp"
+        android:gravity="center">
 
         <ImageView
             android:id="@+id/imv_speaker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="60dp"
-            android:background="@drawable/ic_speaker_on" />
+
+
+            android:background="@drawable/ic_speaker_on" />android:layout_alignParentLeft="true"android:layout_marginLeft="60dp"
 
         <ImageView
             android:id="@+id/imv_mic_off"
@@ -77,12 +78,12 @@
             android:layout_marginLeft="40dp"
             android:background="@drawable/ic_mute_off" />
 
-        <ImageView
+        <!--<ImageView
             android:id="@+id/btnDialer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
-            android:background="@drawable/ic_dialer_on_call" />
+            android:background="@drawable/ic_dialer_on_call" />-->
 
         <ImageView
             android:id="@+id/btnHold"

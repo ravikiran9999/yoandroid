@@ -130,7 +130,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         //List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
         List<UserData> notificationList = new ArrayList<>();
         notificationList.add(data);
-        notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX);
+        notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, false);
     }
 
     @NonNull

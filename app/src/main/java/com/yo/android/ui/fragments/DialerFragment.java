@@ -3,10 +3,8 @@ package com.yo.android.ui.fragments;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -34,9 +31,7 @@ import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.ui.NewDailerActivity;
-import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
@@ -254,7 +249,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         ArrayList<Map.Entry<String, List<CallLogsResult>>> results = new ArrayList<>();
         if (filter.equalsIgnoreCase("all calls")) {
             results = prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
-        } else if (filter.equalsIgnoreCase("App Calls")) {
+        } else if (filter.equalsIgnoreCase("app calls")) {
             results = prepare("Free Calls", results, appCalls);
         } else {
             results = prepare("Paid Calls", results, paidCalls);
