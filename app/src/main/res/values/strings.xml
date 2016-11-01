@@ -263,6 +263,7 @@
     <string name="participants">Participants</string>
     <string name="name">Name</string>
     <string name="group_name">Group Name</string>
+    <string name="select_country_name">Select Country Name</string>
     <string name="recent_county_code">Recent Countries/regions</string>
     <string name="all_county_code">All Countries/regions</string>
 </resources>

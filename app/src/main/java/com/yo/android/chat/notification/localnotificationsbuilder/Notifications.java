@@ -38,7 +38,7 @@ public class Notifications {
      * @param notificationList
      * @param maxNotifications
      */
-    public void buildInboxStyleNotifications(Context mContext, Intent destinationClass, NotificationBuilderObject notificationBuilderObject, List<UserData> notificationList, int maxNotifications) {
+    public void buildInboxStyleNotifications(Context mContext, Intent destinationClass, NotificationBuilderObject notificationBuilderObject, List<UserData> notificationList, int maxNotifications, boolean onGoing, boolean isDialer) {
         String newMessage;
         NotificationCache.get().setCacheNotifications(notificationList);
         List<UserData> pushNotificationList = NotificationCache.get().getCacheNotifications();
@@ -63,10 +63,18 @@ public class Notifications {
         mBuilder.setStyle(inboxStyle);
         mBuilder.setNumber(pushNotificationList.size());
         mBuilder.setContentIntent(contentIntent);
-        mBuilder.setAutoCancel(true);
-         if (!AppRunningState.isRunning(mContext)) {
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-         }
+        if (onGoing) {
+            mBuilder.setOngoing(true);
+        } else {
+            mBuilder.setAutoCancel(true);
+        }
+        if(!isDialer) {
+            if (!AppRunningState.isRunning(mContext)) {
+            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            }
+        } else {
+            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        }
     }
 
 
