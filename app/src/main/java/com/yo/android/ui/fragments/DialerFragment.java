@@ -195,8 +195,15 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     }
 
     private void clearCallLogs() {
-        CallLog.Calls.clearCallHistory(getActivity());
-        adapter.notifyDataSetChanged();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                CallLog.Calls.clearCallHistory(getActivity());
+                adapter.clearAll();
+                showEmptyText();
+            }
+        });
+
     }
 
     @Override
