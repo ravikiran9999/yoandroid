@@ -14,6 +14,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,12 +28,14 @@ import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
+import com.yo.android.util.Constants;
 
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 
 
@@ -56,6 +60,8 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private TextView callerNumber2;
     private TextView callDuration;
     private ImageView callerImageView;
+    @Bind(R.id.dialPadView)
+    DialPadView dialPadView;
     int sec = 0, min = 0, hr = 0;
     private EventBus bus = EventBus.getDefault();
     private View mReceivedCallHeader;
@@ -121,9 +127,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         } else if (getIntent().getStringExtra(CALLER) != null) {
 
             String stringExtra = getIntent().getStringExtra(CALLER);
-            if (stringExtra != null && stringExtra.contains("youser")) {
+            if (stringExtra != null && stringExtra.contains(Constants.YO_USER)) {
                 try {
-                    stringExtra = stringExtra.substring(stringExtra.indexOf("youser") + 6, stringExtra.length() - 1);
+                    stringExtra = stringExtra.substring(stringExtra.indexOf(Constants.YO_USER) + 6, stringExtra.length() - 1);
                     callerName.setText(stringExtra);
                     callerName2.setText(stringExtra);
                 } catch (StringIndexOutOfBoundsException e) {
@@ -153,6 +159,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.btnEndCall).setOnClickListener(this);
         findViewById(R.id.btnRejectCall).setOnClickListener(this);
         findViewById(R.id.btnAcceptCall).setOnClickListener(this);
+        findViewById(R.id.btnDialer).setOnClickListener(this);
         findViewById(R.id.btnHold).setOnClickListener(this);
         mReceivedCallHeader = findViewById(R.id.received_call_header);
         mInComingHeader = findViewById(R.id.incoming_call_header);
@@ -248,6 +255,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             case R.id.btnMessage:
                 mToastFactory.showToast("Message: Need to implement");
                 break;
+            case R.id.btnDialer:
+
+                break;
             default:
                 break;
         }
@@ -324,4 +334,27 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
         }
     };
+
+    public void slideUpDown() {
+        if (!isPanelShown()) {
+            // Show the panel
+            Animation bottomUp = AnimationUtils.loadAnimation(this,
+                    R.anim.bottom_up);
+
+            dialPadView.startAnimation(bottomUp);
+            dialPadView.setVisibility(View.VISIBLE);
+        }
+        else {
+            // Hide the Panel
+            Animation bottomDown = AnimationUtils.loadAnimation(this,
+                    R.anim.bottom_down);
+
+            dialPadView.startAnimation(bottomDown);
+            dialPadView.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean isPanelShown() {
+        return dialPadView.getVisibility() == View.VISIBLE;
+    }
 }
