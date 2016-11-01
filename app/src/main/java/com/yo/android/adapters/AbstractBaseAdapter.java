@@ -13,11 +13,14 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Members;
 import com.yo.android.model.Room;
+import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -118,7 +121,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
-        } else if(searchKey.length()>2){
+        } else if (searchKey.length() > 2) {
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
                 if (hasData(event, searchKey)) {
@@ -141,6 +144,31 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                     temp.add(event);
                 } else if (((CallRateDetail) event).getPrefix() != null && ((CallRateDetail) event).getPrefix().contains(searchKey)) {
                     temp.add(event);
+                }
+            }
+            addItems(temp);
+        }
+    }
+
+    public void performCallLogsSearch(final @NonNull String key) {
+        String searchKey = key.trim();
+        if (searchKey.isEmpty()) {
+            addItems(mOriginalList);
+        } else {
+            List<T> temp = new ArrayList<>();
+            for (T event : mOriginalList) {
+                if (((Map.Entry) event).getKey().equals("All Calls")) {
+
+                } else {
+                    int callSize = ((ArrayList) ((Map.Entry) event).getValue()).size();
+                    for (int i = 0; i < callSize; i++) {
+                        CallLogsResult callLogsResult = (CallLogsResult) ((ArrayList) ((Map.Entry) event).getValue()).get(i);
+                        if (callLogsResult.getDialnumber() != null && callLogsResult.getDialnumber().toLowerCase().contains(searchKey)) {
+                            temp.add(event);
+                        } else if (callLogsResult.getDestination_name() != null && callLogsResult.getDestination_name().toLowerCase().contains(searchKey.toLowerCase())) {
+                            temp.add(event);
+                        }
+                    }
                 }
             }
             addItems(temp);
@@ -184,7 +212,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
             //List<T> temp = new ArrayList<>();
             temp = new ArrayList<>();
-            temp.add(0,mOriginalList.get(0));
+            temp.add(0, mOriginalList.get(0));
             for (T event : mOriginalList) {
                 if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(searchKey.toLowerCase())) {
                     temp.add(event);

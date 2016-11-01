@@ -23,6 +23,7 @@ public class Constants {
     public static final String SELECTED_CONTACTS = "selected_contacts";
     public static final String CONTACT = "contact";
 
+    public static final String DAILER_FRAG = "DialerFrag";
     public static final String CHAT_FRAG = "ChatFrag";
     public static final String CONT_FRAG = "ContFrag";
     public static final String Yo_CONT_FRAG = "YoContFrag";
@@ -57,6 +58,7 @@ public class Constants {
     public static final String COUNTRY_CALL_PULSE = "country_call_pulse";
     public static final String COUNTRY_CODE_PREFIX = "country_code_prefix";
     public static final String COUNTRY_CODE_FROM_SIM = "country_code_from_sim";
+    public static final String COUNTRY_CODE_SELECTED = "country_code_selected";
 
     // Firebase tables
     public static final String APP_USERS = "AppUsers";

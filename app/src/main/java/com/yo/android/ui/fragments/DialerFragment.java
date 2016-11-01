@@ -168,7 +168,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_dialer, menu);
         this.menu = menu;
-        Util.prepareSearch(getActivity(), menu, adapter);
+        Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -270,7 +270,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> prepare(String type, ArrayList<Map.Entry<String, List<CallLogsResult>>> results, ArrayList<Map.Entry<String, List<CallLogsResult>>> checkList) {
         if (!checkList.isEmpty()) {
             List<CallLogsResult> resultList = new ArrayList<>();
-            HashMap<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
+            HashMap<String, List<CallLogsResult>> hashMap = new HashMap<>();
             CallLogsResult result = new CallLogsResult();
             result.setHeader(true);
             result.setHeaderTitle(type);
