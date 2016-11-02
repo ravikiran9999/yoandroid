@@ -60,7 +60,6 @@
                         android:gravity="left|bottom"
                         android:inputType="number"
                         android:maxLines="1"
-                        android:singleLine="true"
                         android:textColor="@color/dialpad_digits_text_color"
                         android:textSize="@dimen/dialpad_digits_text_size"
                         android:textStyle="normal"
@@ -85,7 +84,6 @@
                         android:drawablePadding="8dp"
                         android:gravity="left"
                         android:maxLines="1"
-                        android:text="@string/select_country_name"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp" />
 

@@ -93,7 +93,8 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                 if (Settings.isTitlePicEnabled) {
                     shape.setColor(mColorGenerator.getRandomColor());
                 }
-                drawable = tempImage;            }
+                drawable = tempImage;
+            }
             holder.getCreatNewContact().setVisibility(View.GONE);
             holder.getAddToContact().setVisibility(View.GONE);
         } else {

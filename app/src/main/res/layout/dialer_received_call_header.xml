@@ -78,12 +78,12 @@
             android:layout_marginLeft="40dp"
             android:background="@drawable/ic_mute_off" />
 
-        <!--<ImageView
+        <ImageView
             android:id="@+id/btnDialer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
-            android:background="@drawable/ic_dialer_on_call" />-->
+            android:background="@drawable/ic_dialer_on_call" />
 
         <ImageView
             android:id="@+id/btnHold"

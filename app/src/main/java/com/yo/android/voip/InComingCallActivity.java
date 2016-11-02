@@ -27,6 +27,7 @@ import com.yo.android.model.Contact;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Constants;
 
@@ -159,7 +160,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.btnEndCall).setOnClickListener(this);
         findViewById(R.id.btnRejectCall).setOnClickListener(this);
         findViewById(R.id.btnAcceptCall).setOnClickListener(this);
-        findViewById(R.id.btnDialer).setOnClickListener(this);
+        //findViewById(R.id.btnDialer).setOnClickListener(this);
         findViewById(R.id.btnHold).setOnClickListener(this);
         mReceivedCallHeader = findViewById(R.id.received_call_header);
         mInComingHeader = findViewById(R.id.incoming_call_header);
@@ -256,7 +257,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 mToastFactory.showToast("Message: Need to implement");
                 break;
             case R.id.btnDialer:
-
+                Intent intent = new Intent(this, NewDailerActivity.class);
+                intent.putExtra("FromInComingCallActivity", true);
+                startActivity(intent);
                 break;
             default:
                 break;

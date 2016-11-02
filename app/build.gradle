@@ -26,6 +26,7 @@ android {
         versionCode 2
         versionName "16.4.15.3"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+        buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         multiDexEnabled true
     }
     productFlavors {
