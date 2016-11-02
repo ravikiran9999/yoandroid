@@ -78,7 +78,6 @@ public class NewDailerActivity extends BaseActivity {
     @Bind(R.id.dialPadView)
     protected DialPadView dialPadView;
 
-
     protected EditText mDigits;
 
     @Bind(R.id.deleteButton)

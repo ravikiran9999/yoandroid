@@ -160,7 +160,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.btnEndCall).setOnClickListener(this);
         findViewById(R.id.btnRejectCall).setOnClickListener(this);
         findViewById(R.id.btnAcceptCall).setOnClickListener(this);
-        findViewById(R.id.btnDialer).setOnClickListener(this);
+        //findViewById(R.id.btnDialer).setOnClickListener(this);
         findViewById(R.id.btnHold).setOnClickListener(this);
         mReceivedCallHeader = findViewById(R.id.received_call_header);
         mInComingHeader = findViewById(R.id.incoming_call_header);
