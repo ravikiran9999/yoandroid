@@ -802,4 +802,24 @@ public class Util {
         mListView.setLayoutParams(params);
         mListView.requestLayout();
     }
+
+    public static void setBigStyleNotificationForBalance(Context context, String title, String message, String tag, String id) {
+        Notifications notification = new Notifications();
+
+        Intent notificationIntent = new Intent(context, BottomTabsActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
+        notificationIntent.putExtra("title", title);
+        notificationIntent.putExtra("message", message);
+        notificationIntent.putExtra("tag", tag);
+        notificationIntent.putExtra("id", id);
+
+        NotificationBuilderObject notificationsInboxData = prepareNotificationData(title, message);
+        UserData data = new UserData();
+        data.setDescription(message);
+        //List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
+        List<UserData> notificationList = new ArrayList<>();
+        notificationList.add(data);
+        notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
+    }
 }

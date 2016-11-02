@@ -1,5 +1,6 @@
 package com.yo.android.vox;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.orion.android.common.logger.Log;
@@ -40,13 +41,15 @@ public class BalanceHelper {
     YoApi.YoService yoService;
     PreferenceEndPoint prefs;
     Log mLog;
+    Context context;
 
     @Inject
-    public BalanceHelper(Log log, VoxFactory voxFactory, YoApi.YoService yoService, @Named("login") PreferenceEndPoint preferenceEndPoint) {
+    public BalanceHelper(Context context, Log log, VoxFactory voxFactory, YoApi.YoService yoService, @Named("login") PreferenceEndPoint preferenceEndPoint) {
         this.mLog = log;
         this.voxFactory = voxFactory;
         this.yoService = yoService;
         this.prefs = preferenceEndPoint;
+        this.context = context;
     }
 
 
@@ -69,6 +72,11 @@ public class BalanceHelper {
                             DecimalFormat df = new DecimalFormat("0.000");
                             String format = df.format(Double.valueOf(balance));
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                            double val = Double.parseDouble(balance.trim());
+                            if(val <=2) {
+                                mLog.w(TAG, "Current balance is less than or equal to $2");
+                                Util.setBigStyleNotificationForBalance(context, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
+                            }
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
