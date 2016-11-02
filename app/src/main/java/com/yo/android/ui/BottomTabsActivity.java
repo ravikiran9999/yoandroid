@@ -106,7 +106,7 @@ public class BottomTabsActivity extends BaseActivity {
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
                 .withUserName(username == null ? "" : username)
-                .withPassword(password)
+                .withPassword("123456")
                 .withServer("209.239.120.239")
                 .build();
         sipBinder.getHandler().addAccount(sipProfile);
@@ -210,93 +210,93 @@ public class BottomTabsActivity extends BaseActivity {
         EventBus.getDefault().register(this);
 
         List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
-        if(notificationList.size() == 1) {
+        if (notificationList.size() == 1) {
             Intent intent1 = getIntent();
             String title = intent1.getStringExtra("title");
             String message = intent1.getStringExtra("message");
             String tag = intent1.getStringExtra("tag");
             final String redirectId = intent1.getStringExtra("id");
 
-            if(!("POPUP").equals(tag)) {
-            if ("User".equals(tag)) {
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.getUserInfoFromId(redirectId, accessToken).enqueue(new Callback<FindPeople>() {
-                    @Override
-                    public void onResponse(Call<FindPeople> call, Response<FindPeople> response) {
+            if (!("POPUP").equals(tag)) {
+                if ("User".equals(tag)) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.getUserInfoFromId(redirectId, accessToken).enqueue(new Callback<FindPeople>() {
+                        @Override
+                        public void onResponse(Call<FindPeople> call, Response<FindPeople> response) {
 
-                        if (response.body() != null) {
-                            FindPeople userInfo = response.body();
-                            Intent intent = new Intent(BottomTabsActivity.this, OthersProfileActivity.class);
-                            intent.putExtra(Constants.USER_ID, redirectId);
-                            intent.putExtra("PersonName", userInfo.getFirst_name() + " " + userInfo.getLast_name());
-                            intent.putExtra("PersonPic", userInfo.getAvatar());
-                            intent.putExtra("PersonIsFollowing", userInfo.getIsFollowing());
-                            intent.putExtra("MagazinesCount", userInfo.getMagzinesCount());
-                            intent.putExtra("FollowersCount", userInfo.getFollowersCount());
-                            intent.putExtra("LikedArticlesCount", userInfo.getLikedArticlesCount());
-                            startActivity(intent);
-                            finish();
+                            if (response.body() != null) {
+                                FindPeople userInfo = response.body();
+                                Intent intent = new Intent(BottomTabsActivity.this, OthersProfileActivity.class);
+                                intent.putExtra(Constants.USER_ID, redirectId);
+                                intent.putExtra("PersonName", userInfo.getFirst_name() + " " + userInfo.getLast_name());
+                                intent.putExtra("PersonPic", userInfo.getAvatar());
+                                intent.putExtra("PersonIsFollowing", userInfo.getIsFollowing());
+                                intent.putExtra("MagazinesCount", userInfo.getMagzinesCount());
+                                intent.putExtra("FollowersCount", userInfo.getFollowersCount());
+                                intent.putExtra("LikedArticlesCount", userInfo.getLikedArticlesCount());
+                                startActivity(intent);
+                                finish();
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<FindPeople> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<FindPeople> call, Throwable t) {
 
-                    }
-                });
-
-            } else if ("Topic".equals(tag)) {
-                Intent intent = new Intent(this, MyCollectionDetails.class);
-                intent.putExtra("TopicId", redirectId);
-                intent.putExtra("TopicName", title);
-                intent.putExtra("Type", "Tag");
-                startActivity(intent);
-                finish();
-            } else if ("Article".equals(tag)) {
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                yoService.getArticleInfo(redirectId, accessToken).enqueue(new Callback<Articles>() {
-                    @Override
-                    public void onResponse(Call<Articles> call, Response<Articles> response) {
-                        if (response.body() != null) {
-                            Articles articles = response.body();
-                            Intent intent = new Intent(BottomTabsActivity.this, MagazineArticleDetailsActivity.class);
-                            intent.putExtra("Title", articles.getTitle());
-                            intent.putExtra("Image", articles.getUrl());
-                            startActivity(intent);
-                            finish();
                         }
-                    }
+                    });
 
-                    @Override
-                    public void onFailure(Call<Articles> call, Throwable t) {
-
-                    }
-                });
-
-            } else if ("Magzine".equals(tag)) {
-                Intent intent = new Intent(this, MyCollectionDetails.class);
-                intent.putExtra("TopicId", redirectId);
-                intent.putExtra("TopicName", title);
-                intent.putExtra("Type", "Magzine");
-                startActivity(intent);
-                finish();
-            } else if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
-                startActivity(new Intent(this, TabsHeaderActivity.class));
-                finish();
-            } else if ("Broadcast".equals(tag) || "Tip".equals(tag) || "PriceUpdate".equals(tag)) {
-                if (redirectId.equals("AddFriends")) {
-                    startActivity(new Intent(this, InviteActivity.class));
+                } else if ("Topic".equals(tag)) {
+                    Intent intent = new Intent(this, MyCollectionDetails.class);
+                    intent.putExtra("TopicId", redirectId);
+                    intent.putExtra("TopicName", title);
+                    intent.putExtra("Type", "Tag");
+                    startActivity(intent);
                     finish();
-                } else if (redirectId.equals("AddBalance")) {
+                } else if ("Article".equals(tag)) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.getArticleInfo(redirectId, accessToken).enqueue(new Callback<Articles>() {
+                        @Override
+                        public void onResponse(Call<Articles> call, Response<Articles> response) {
+                            if (response.body() != null) {
+                                Articles articles = response.body();
+                                Intent intent = new Intent(BottomTabsActivity.this, MagazineArticleDetailsActivity.class);
+                                intent.putExtra("Title", articles.getTitle());
+                                intent.putExtra("Image", articles.getUrl());
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Articles> call, Throwable t) {
+
+                        }
+                    });
+
+                } else if ("Magzine".equals(tag)) {
+                    Intent intent = new Intent(this, MyCollectionDetails.class);
+                    intent.putExtra("TopicId", redirectId);
+                    intent.putExtra("TopicName", title);
+                    intent.putExtra("Type", "Magzine");
+                    startActivity(intent);
+                    finish();
+                } else if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
                     startActivity(new Intent(this, TabsHeaderActivity.class));
                     finish();
-                }
+                } else if ("Broadcast".equals(tag) || "Tip".equals(tag) || "PriceUpdate".equals(tag)) {
+                    if (redirectId.equals("AddFriends")) {
+                        startActivity(new Intent(this, InviteActivity.class));
+                        finish();
+                    } else if (redirectId.equals("AddBalance")) {
+                        startActivity(new Intent(this, TabsHeaderActivity.class));
+                        finish();
+                    }
 
-            } else if("Missed call".equals(tag)) {
-                //startActivity(new Intent(this, DialerActivity.class));
-                viewPager.setCurrentItem(2);
+                } else if ("Missed call".equals(tag)) {
+                    //startActivity(new Intent(this, DialerActivity.class));
+                    viewPager.setCurrentItem(2);
+                }
             }
-         }
         }
     }
 
