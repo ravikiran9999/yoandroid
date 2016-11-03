@@ -430,12 +430,22 @@ public class NewDailerActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-            String cPrefix = setCallRateText();
+            String cPrefix = "";
+            if(!setCallRateText().contains(" ")) {
+                cPrefix = setCallRateText() + " ";
+            } else {
+                cPrefix = setCallRateText();
+            }
             //TODO: Need to improve the logic
             String str = dialPadView.getDigits().getText().toString();
-            str = str.substring(str.indexOf(" ") + 1);
-            dialPadView.getDigits().setText(cPrefix + " " + str);
-            dialPadView.getDigits().setSelection(cPrefix.length());
+            if(!"+".equals(str)) {
+                str = str.substring(str.indexOf(" ") + 1);
+                dialPadView.getDigits().setText(cPrefix + str);
+                dialPadView.getDigits().setSelection(cPrefix.length());
+            } else {
+                dialPadView.getDigits().setText(cPrefix);
+                dialPadView.getDigits().setSelection(cPrefix.length());
+            }
         } else if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == Activity.RESULT_OK) {
             loadCurrentBalance();
         }
