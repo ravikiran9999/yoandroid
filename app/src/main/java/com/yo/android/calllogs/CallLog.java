@@ -48,6 +48,7 @@ public class CallLog {
 
     public static final String AUTHORITY = YoAppContactContract.CONTENT_AUTHORITY;
 
+
     /**
      * The content:// style URL for this provider
      */
@@ -58,7 +59,6 @@ public class CallLog {
      * Contains the recent calls.
      */
     public static class Calls implements BaseColumns {
-
 
         /**
          * The content:// style URL for this table
@@ -373,19 +373,20 @@ public class CallLog {
                     do {
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
-                        String phoneName = Helper.getContactName(context,voxuser);
+                        String phoneName = Helper.getContactName(context, voxuser);
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
+                        String tempDate = Util.getDate(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
-                        if(phoneName !=null){
+                        if (phoneName != null) {
                             info.setDestination_name(phoneName);
                         }
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
                         info.setDuration(duration);
                         info.setImage(getImagePath(context, voxuser));
-                        if (!hashMap.containsKey(voxuser)) {
+                        if (!hashMap.containsKey(voxuser + tempDate)) {
                             List<CallLogsResult> list = new ArrayList<CallLogsResult>();
                             list.add(info);
                             hashMap.put(voxuser, list);
@@ -429,14 +430,14 @@ public class CallLog {
                     do {
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
-                        String phoneName = Helper.getContactName(context,voxuser);
+                        String phoneName = Helper.getContactName(context, voxuser);
 
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
-                        if(phoneName !=null){
+                        if (phoneName != null) {
                             info.setDestination_name(phoneName);
                         }
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
@@ -469,9 +470,8 @@ public class CallLog {
          */
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getAppToAppCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
-            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
+            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<>();
             Map<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
-
             Cursor c = null;
             try {
                 c = resolver.query(
@@ -497,12 +497,12 @@ public class CallLog {
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
                         info.setImage(getImagePath(context, voxuser));
-                        // callerInfos.add(info);
+
                         if (!hashMap.containsKey(voxuser + tempDate)) {
                             List<CallLogsResult> list = new ArrayList<CallLogsResult>();
                             list.add(info);
                             hashMap.put(voxuser + tempDate, list);
-                            // callerInfos.add(hashMap.entrySet().iterator().next());
+
                         } else {
                             hashMap.get(voxuser + tempDate).add(info);
                         }

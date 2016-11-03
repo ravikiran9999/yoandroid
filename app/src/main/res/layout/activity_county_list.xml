@@ -7,8 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,11 +48,12 @@
                 android:id="@+id/tv_recent_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:padding="2dp"
                 android:text="@string/recent_county_code"
                 android:textColor="@color/black"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <ListView
                 android:id="@+id/lv_app_contacts_recent"
@@ -61,13 +61,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:divider="@android:color/transparent"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:padding="2dp"
                 android:text="@string/all_county_code"
                 android:textColor="@color/black" />

@@ -87,12 +87,23 @@ public class FirebaseService extends InjectedService {
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
         isRunning = true;
 
+        FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
+            @Override
+            public void onSuccess() {
+                getAllRooms();
+            }
+
+            @Override
+            public void onFailed() {
+                Log.i(TAG, "Failed FirebaseAuthToken");
+            }
+        });
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (isRunning) {
+        /*if (isRunning) {
             Log.i(TAG, "Service running");
             FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                 @Override
@@ -105,7 +116,7 @@ public class FirebaseService extends InjectedService {
                     Log.i(TAG, "Failed FirebaseAuthToken");
                 }
             });
-        }
+        }*/
         return START_STICKY;
     }
 
@@ -297,7 +308,7 @@ public class FirebaseService extends InjectedService {
         notificationIntent.putExtra(Constants.VOX_USER_NAME, voxUsername);
         notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
         notificationIntent.putExtra(Constants.OPPONENT_ID, chatMessage.getYouserId());
-        if(!TextUtils.isEmpty(chatMessage.getRoomName())) {
+        if (!TextUtils.isEmpty(chatMessage.getRoomName())) {
             notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
         }
         switch (mode) {
