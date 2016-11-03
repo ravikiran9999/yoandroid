@@ -213,7 +213,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
 			/* Answer with ringing */
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);
-        if (mediaManager.isSilentMode()) {
+        if (mediaManager.isSilentMode() || mediaManager.isVibrationMode()) {
             mediaManager.setVibrate();
         }
         try {
@@ -242,7 +242,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             intent.putExtra(InComingCallActivity.CALLER, getPhoneNumber(mycall.getInfo().getRemoteUri()));
             startActivity(intent);
             lastLaunchCallHandler = currentElapsedTime;
-            mediaManager.playRingtone();
+            if(mediaManager.isSilentMode() || mediaManager.isVibrationMode()) {
+                mediaManager.setVibrate();
+            } else {
+                mediaManager.playRingtone();
+            }
             if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
                 //inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
                 inComingCallNotificationId = Notifications.NOTIFICATION_ID;
