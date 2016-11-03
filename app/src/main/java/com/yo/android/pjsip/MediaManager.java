@@ -13,7 +13,7 @@ import android.provider.Settings;
 /**
  * Created by Ramesh on 14/8/16.
  */
-public class MediaManager{
+public class MediaManager {
 
     private final AudioManager audioManager;
     private Context context;
@@ -40,18 +40,16 @@ public class MediaManager{
         return audioManager.isSpeakerphoneOn();
     }
 
-    private String getRingtone() {
+    public String getRingtone() {
         return Settings.System.DEFAULT_RINGTONE_URI.toString();
     }
 
     public void playRingtone() {
-        if (ringtone == null) {
-            ringtone = RingtoneManager.getRingtone(context, Uri.parse(getRingtone()));
-            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-            if (!ringtone.isPlaying()) {
-                ringtone.play();
-            }
-        }
+        ringtone = RingtoneManager.getRingtone(context, Uri.parse(getRingtone()));
+        audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        ringtone.play();
+
+
     }
 
     public void stopRingTone() {

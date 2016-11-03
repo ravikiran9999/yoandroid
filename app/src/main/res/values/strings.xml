@@ -181,7 +181,7 @@
     <string name="call_forwarded">Call is  being forwarded</string>
     <string name="temporerly_unavailable">Destination was temporarily unavailable</string>
     <string name="ringing">Ringing</string>
-    <string name="busy">Callee is busy</string>
+    <string name="busy">Line busy</string>
     <string name="all_busy">All possible destinations are busy</string>
     <string name="invalid_voucher">Invalid Voucher.</string>
     <string name="voucher_recharge_successful">Voucher Recharge Successful</string>

@@ -24,13 +24,13 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 2
-        versionName "16.4.15.3"
+        versionName "16.4.15.4"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         multiDexEnabled true
     }
     productFlavors {
-        devsms {
+       /* devsms {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
@@ -39,7 +39,7 @@ android {
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
             minSdkVersion 18
-        }
+        }*/
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
@@ -121,10 +121,10 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     // firebase
-    compile 'com.google.firebase:firebase-messaging:9.8.0'
-    compile 'com.google.firebase:firebase-auth:9.8.0'
-    compile 'com.google.firebase:firebase-database:9.8.0'
-    compile 'com.google.firebase:firebase-storage:9.8.0'
+    compile 'com.google.firebase:firebase-messaging:9.4.0'
+    compile 'com.google.firebase:firebase-auth:9.4.0'
+    compile 'com.google.firebase:firebase-database:9.4.0'
+    compile 'com.google.firebase:firebase-storage:9.4.0'
     compile 'com.firebase:firebase-client-android:2.5.2'
     compile project(':flip')
     compile project(':tagview')
