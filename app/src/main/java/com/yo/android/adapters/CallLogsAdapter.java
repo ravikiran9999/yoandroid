@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -37,7 +38,11 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.OutGoingCallActivity;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -50,6 +55,10 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     private TextDrawable.IBuilder mDrawableBuilder;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private static int updateViewPosition = -1;
+
+    protected DateFormat dateFormat1 = new SimpleDateFormat("MM/dd");
+    protected DateFormat dateFormat2 = new SimpleDateFormat("EEE");
+    private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     public CallLogsAdapter(Context context, PreferenceEndPoint prefs, ContactsSyncManager contactsSyncManager) {
         super(context);
@@ -158,20 +167,21 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getHeader().setText(item.getValue().get(0).getHeaderTitle());
         } else if (item.getValue().get(0).getCallType() == CallLog.Calls.MISSED_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_missed_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
         } else if (item.getValue().get(0).getCallType() == CallLog.Calls.INCOMING_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_incoming_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
         } else if (item.getValue().get(0).getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_outgoing_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
         } else if (item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
-            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
         } else {
-            holder.getTimeStamp().setText(numberOfCallsPerDay + Util.parseConvertUtcToGmt(item.getValue().get(0).getStime()));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_greenarrowup, 0, 0, 0);
         }
+        holder.getDateTimeStamp().setText(currentDate(item.getValue().get(0).getStime()));
         holder.getCallIcon().setTag(item);
         holder.getMessageIcon().setTag(item);
         holder.getCallIcon().setOnClickListener(new View.OnClickListener() {
@@ -251,5 +261,36 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.setTag(Settings.imageTag, tempImage);
         }
         holder.setImageDrawable(tempImage);
+    }
+
+    private String currentDate(@NonNull String mTime) {
+        String mDate = null;
+        try {
+            if (mTime != null) {
+                String day = dateFormat2.format(formatterDate.parse(mTime));
+                String currentDate = Util.getChatListTimeFormat(convertDateFormatLong(mTime));
+                if (currentDate.equalsIgnoreCase(Constants.TODAY) || currentDate.equalsIgnoreCase(Constants.YESTERDAY)) {
+                    mDate = currentDate;
+                } else {
+                    mDate = dateFormat1.format(formatterDate.parse(mTime)).concat(",").concat(" " + day);
+                }
+            } else {
+                return mDate;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return mDate;
+    }
+
+    private long convertDateFormatLong(String dateString) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = sdf.parse(dateString);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
