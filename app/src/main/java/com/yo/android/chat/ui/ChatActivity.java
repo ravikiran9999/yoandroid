@@ -140,6 +140,7 @@ public class ChatActivity extends BaseActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayShowCustomEnabled(true);
+
             View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
             LinearLayout titleView = (LinearLayout) customView.findViewById(R.id.title_view);
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);

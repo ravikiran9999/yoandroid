@@ -17,6 +17,7 @@ public class CallLogsViewHolder extends AbstractViewHolder {
 
     private TextView header;
     private TextView timeStamp;
+    private TextView dateTimeStamp;
 
     private TextView messageIcon;
 
@@ -73,6 +74,7 @@ public class CallLogsViewHolder extends AbstractViewHolder {
         header = (TextView) view.findViewById(R.id.header);
         rowContainer = view.findViewById(R.id.row_container);
         timeStamp = (TextView) view.findViewById(R.id.tv_time_stamp);
+        timeStamp = (TextView) view.findViewById(R.id.tv_time_stamp);
         messageIcon = (TextView) view.findViewById(R.id.iv_message_type);
         callIcon = (ImageView) view.findViewById(R.id.iv_contact_type);
         contactPic = (ImageView) view.findViewById(R.id.imv_contact_pic);
@@ -80,7 +82,7 @@ public class CallLogsViewHolder extends AbstractViewHolder {
         info = (TextView) view.findViewById(R.id.info);
         addToContact = (TextView) view.findViewById(R.id.add_to_contact);
         creatNewContact = (TextView) view.findViewById(R.id.create_new_contact);
-
+        dateTimeStamp = (TextView) view.findViewById(R.id.tv_date_time);
     }
 
     public TextView getMessageIcon() {
@@ -101,5 +103,9 @@ public class CallLogsViewHolder extends AbstractViewHolder {
 
     public ImageView getContactPic() {
         return contactPic;
+    }
+
+    public TextView getDateTimeStamp() {
+        return dateTimeStamp;
     }
 }
