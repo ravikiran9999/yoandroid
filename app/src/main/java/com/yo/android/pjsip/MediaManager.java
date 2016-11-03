@@ -6,6 +6,8 @@ import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Vibrator;
 import android.provider.Settings;
 
 /**
@@ -62,11 +64,17 @@ public class MediaManager{
     public void setVibrate() {
         if (audioManager != null) {
             audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+            /*Vibrator vibrator =(Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(5000);*/
         }
     }
 
     public boolean isSilentMode() {
         return audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT ? true : false;
+    }
+
+    public boolean isVibrationMode() {
+        return audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE ? true : false;
     }
 
     public void setAudioMode(int mode) {
