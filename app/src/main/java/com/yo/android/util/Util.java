@@ -93,6 +93,7 @@ public class Util {
         //
         Intent destinationIntent = new Intent(context, clzz);
         destinationIntent.putExtra("from_notification", true);
+        destinationIntent.putExtra("type", body);
         destinationIntent.putExtras(intent);
         int notificationId = body.hashCode();
         PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
