@@ -3,6 +3,7 @@ package com.yo.android.pjsip;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -46,6 +47,7 @@ import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
+import org.pjsip.pjsua2.OnIncomingCallParam;
 import org.pjsip.pjsua2.StringVector;
 import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.pj_qos_type;
@@ -53,6 +55,7 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -184,33 +187,33 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mLog.e("YoSipService", "notifyRegState>>>> %s", registrationStatus);
     }
 
+
     @Override
-    public void notifyIncomingCall(MyCall call) {
+    public void notifyIncomingCall(MyCall call, OnIncomingCallParam prms) {
         /* Incoming call */
         CallOpParam prm = new CallOpParam();
-
 			/* Only one call at anytime */
         if (currentCall != null) {
-            prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
-            try {
-                call.hangup(prm);
-                String source = getPhoneNumber(call.getInfo().getRemoteUri());
-                source = parseVoxUser(source);
-                /*Util.createNotification(this, source,
-                        "Missed call", BottomTabsActivity.class, new Intent(), false);*/
-                Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
-                storeCallLog(CallLog.Calls.MISSED_TYPE, source);
-            } catch (Exception e) {
-                mLog.w(TAG, e);
-            }
-            // TODO: set status code
-            call.delete();
+                prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
+                try {
+                    String source = getPhoneNumber(call.getInfo().getRemoteUri());
+                    call.hangup(prm);
+                    source = parseVoxUser(source);
+                    Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
+                    storeCallLog(CallLog.Calls.MISSED_TYPE, source);
+                } catch (Exception e) {
+                    mLog.w(TAG, e);
+                }
+                // TODO: set status code
+                 call.delete();
+                //call.delete();
+
             return;
         }
 
 			/* Answer with ringing */
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);
-        if (mediaManager.isSilentMode()) {
+        if (mediaManager.isSilentMode() || mediaManager.isVibrationMode()) {
             mediaManager.setVibrate();
         }
         try {
@@ -239,7 +242,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             intent.putExtra(InComingCallActivity.CALLER, getPhoneNumber(mycall.getInfo().getRemoteUri()));
             startActivity(intent);
             lastLaunchCallHandler = currentElapsedTime;
-            mediaManager.playRingtone();
+            if(mediaManager.isSilentMode() || mediaManager.isVibrationMode()) {
+                mediaManager.setVibrate();
+            } else {
+                mediaManager.playRingtone();
+            }
             if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
                 //inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
                 inComingCallNotificationId = Notifications.NOTIFICATION_ID;
@@ -415,6 +422,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         try {
             //startStack();
             myAccount = buildAccount();
+
             String id = String.format("sip:%s@%s", sipProfile.getUsername(), sipProfile.getDomain());
             String registrar = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
             String proxy = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);

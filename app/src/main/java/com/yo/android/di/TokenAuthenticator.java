@@ -44,10 +44,13 @@ public class TokenAuthenticator implements Authenticator {
         if (((!isRequestForTokens && tokenExpireCount > 5) || sessionExpire)) {
             //Session Expire
             if (!sessionExpire) {
-                preferenceEndPoint.clearAll();
                 preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, true);
                 //Reset
                 tokenExpireCount = 0;
+                mLog.e("TokenAuthenticator", "Refreshtoken - "+ refreshToken);
+                mLog.e("TokenAuthenticator", "access token - "+ preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN));
+                mLog.e("TokenAuthenticator", "Final TokenExpireCount -"+ tokenExpireCount);
+                preferenceEndPoint.clearAll();
                 Intent intent = new Intent(mContext, LoginActivity.class);
                 if (mContext != null) {
                     Util.cancelAllNotification(mContext);

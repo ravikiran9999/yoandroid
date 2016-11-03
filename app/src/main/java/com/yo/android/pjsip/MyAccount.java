@@ -61,7 +61,7 @@ class MyAccount extends Account {
     public void onIncomingCall(OnIncomingCallParam prm) {
         System.out.println("======== Incoming call ======== ");
         MyCall call = new MyCall(this, prm.getCallId());
-        MyApp.observer.notifyIncomingCall(call);
+        MyApp.observer.notifyIncomingCall(call,prm);
     }
 
     @Override
