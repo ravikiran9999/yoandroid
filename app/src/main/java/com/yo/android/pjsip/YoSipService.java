@@ -217,19 +217,22 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         CallOpParam prm = new CallOpParam();
             /* Only one call at anytime */
         if (currentCall != null) {
-            prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
-            try {
-                String source = getPhoneNumber(call.getInfo().getRemoteUri());
-                call.answer(prm);
-                source = parseVoxUser(source);
-                Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
-                storeCallLog(CallLog.Calls.MISSED_TYPE, source);
-            } catch (Exception e) {
-                mLog.w(TAG, e);
-            }
-            // TODO: set status code
-            call.delete();
-            //call.delete();
+
+                prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
+                try {
+                    String source = getPhoneNumber(call.getInfo().getRemoteUri());
+                    call.answer(prm);
+                    source = parseVoxUser(source);
+                    Util.createNotification(this, source,
+                            "Missed call", BottomTabsActivity.class, new Intent(), false);
+                    //Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
+                    storeCallLog(CallLog.Calls.MISSED_TYPE, source);
+                } catch (Exception e) {
+                    mLog.w(TAG, e);
+                }
+                // TODO: set status code
+                 call.delete();
+                //call.delete();
 
             return;
         }
@@ -261,9 +264,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             lastLaunchCallHandler = currentElapsedTime;
             startRingtone();
             if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
-                //inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
-                inComingCallNotificationId = Notifications.NOTIFICATION_ID;
-                Util.setBigStyleNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", "Incoming call", "", true, true, InComingCallActivity.class, intent);
+                inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
+/*                inComingCallNotificationId = Notifications.NOTIFICATION_ID;
+                Util.setBigStyleNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", "Incoming call", "", true, true, InComingCallActivity.class, intent);*/
             }
         }
     }
@@ -396,10 +399,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (sipCallState.getCallDir() == SipCallState.INCOMING) {
             if (sipCallState.getCallState() == SipCallState.CALL_RINGING) {
                 mLog.e(TAG, "Missed call >>>>>" + sipCallState.getMobileNumber());
-                /*Util.createNotification(this,
+                Util.createNotification(this,
                         parseVoxUser(sipCallState.getMobileNumber()),
-                        "Missed call ", BottomTabsActivity.class, new Intent(), false);*/
-                Util.setBigStyleNotification(this, parseVoxUser(sipCallState.getMobileNumber()), "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
+                        "Missed call ", BottomTabsActivity.class, new Intent(), false);
+                //Util.setBigStyleNotification(this, parseVoxUser(sipCallState.getMobileNumber()), "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
 
             }
         }
@@ -533,9 +536,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         startActivity(intent);
         destination = parseVoxUser(destination);
         if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
-            //outGoingCallNotificationId = Util.createNotification(this, destination, "Outgoing call", OutGoingCallActivity.class, intent);
-            outGoingCallNotificationId = Notifications.NOTIFICATION_ID;
-            Util.setBigStyleNotification(this, destination, "Outgoing call", "Outgoing call", "", true, true, OutGoingCallActivity.class, intent);
+            outGoingCallNotificationId = Util.createNotification(this, destination, "Outgoing call", OutGoingCallActivity.class, intent);
+            /*outGoingCallNotificationId = Notifications.NOTIFICATION_ID;
+            Util.setBigStyleNotification(this, destination, "Outgoing call", "Outgoing call", "", true, true, OutGoingCallActivity.class, intent);*/
         }
     }
 
@@ -893,7 +896,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     protected synchronized void startDefaultRingtone() {
         try {
             ringtone = RingtoneManager.getRingtone(this, Uri.parse(mediaManager.getRingtone()));
-            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            mAudioManager.setRingerMode(AudioManager.STREAM_RING);
             ringtone.play();
         } catch (Exception exc) {
             Logger.warn("Error while trying to play ringtone!");

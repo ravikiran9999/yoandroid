@@ -130,15 +130,6 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
                     navigateToChatScreen(item);
 
-                    /*String yourPhoneNumber = userId;
-                    String opponentPhoneNumber = item.getPhoneNo();
-
-                    if(item.getFirebaseRoomId() != null) {
-                        navigateToChatScreen(mContext, item.getFirebaseRoomId(), opponentPhoneNumber, yourPhoneNumber, null);
-                    } else {
-                        navigateToChatScreen(mContext, "", opponentPhoneNumber, yourPhoneNumber, item.getId());
-                    }*/
-
                 } else {
                     Util.inviteFriend(context, item.getPhoneNo());
                 }

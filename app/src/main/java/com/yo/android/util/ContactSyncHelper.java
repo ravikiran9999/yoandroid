@@ -332,7 +332,8 @@ public class ContactSyncHelper {
                         if (contact.last_name == null) {
                             contact.last_name = "";
                         }
-                        if (contact.last_name.length() == 0 && contact.first_name.length() == 0 && sname2 != null && sname2.length() != 0) {
+                        //if (contact.last_name.length() == 0 && contact.first_name.length() == 0 && sname2 != null && sname2.length() != 0) {
+                        if (sname2 != null && sname2.length() != 0) {
                             contact.first_name = sname2;
                         }
                     }

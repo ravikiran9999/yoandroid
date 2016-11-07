@@ -298,6 +298,13 @@ public class BottomTabsActivity extends BaseActivity {
                 }
             }
         }
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("type")) {
+            if("Missed call".equals(intent.getStringExtra("type").trim())) {
+                viewPager.setCurrentItem(2);
+            }
+        }
     }
 
     @Override

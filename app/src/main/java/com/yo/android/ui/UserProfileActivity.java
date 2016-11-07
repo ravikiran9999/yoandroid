@@ -189,7 +189,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
             if (mContact != null) {
 
-                if (mContact.getName() != null && !mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo())) {
+                if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo())) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(mContact.getName());
@@ -206,14 +206,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     profileNumber.setVisibility(View.GONE);
                 }
             } else if (contact != null) {
-                if (contact.getName() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
+                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName())&& !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(contact.getName());
                 } else {
                     cardView.setVisibility(View.GONE);
                 }
-                //if (contact.getPhoneNo() != null && contact.getName() != null && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
                 if (contact.getPhoneNo() != null) {
                     if (contact.getCountryCode() != null) {
                         removeYoUserFromPhoneNumber("+" + contact.getCountryCode(), contact.getPhoneNo(), profileNumber);

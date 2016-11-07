@@ -99,7 +99,7 @@ public class CallLogDetailsActivity extends BaseActivity {
                 s = formatter.format(formatterDate.parse(callLogsDetails.get(0).getStime()));
             } catch (ParseException e) {
             }
-            callInfoDate.setText(s);
+            //callInfoDate.setText(s);
             callImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -169,9 +169,9 @@ public class CallLogDetailsActivity extends BaseActivity {
             try {
                 String mDate = null;
                 String day = dateFormat2.format(formatterDate.parse(item.getStime()));
-                String vv = Util.getChatListTimeFormat(convertDateFormatLong(item.getStime()));
-                if (vv.equalsIgnoreCase(Constants.TODAY) || vv.equalsIgnoreCase(Constants.YESTERDAY)) {
-                    mDate = vv;
+                String currentDate = Util.getChatListTimeFormat(convertDateFormatLong(item.getStime()));
+                if (currentDate.equalsIgnoreCase(Constants.TODAY) || currentDate.equalsIgnoreCase(Constants.YESTERDAY)) {
+                    mDate = currentDate;
                 } else {
                     mDate = dateFormat1.format(formatterDate.parse(item.getStime())).concat(",").concat(" " + day);
                 }

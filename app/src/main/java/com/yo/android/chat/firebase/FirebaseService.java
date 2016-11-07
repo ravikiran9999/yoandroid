@@ -87,6 +87,17 @@ public class FirebaseService extends InjectedService {
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
         isRunning = true;
 
+        /*FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
+            @Override
+            public void onSuccess() {
+                getAllRooms();
+            }
+
+            @Override
+            public void onFailed() {
+                Log.i(TAG, "Failed FirebaseAuthToken");
+            }
+        });*/
     }
 
     @Override
@@ -297,7 +308,7 @@ public class FirebaseService extends InjectedService {
         notificationIntent.putExtra(Constants.VOX_USER_NAME, voxUsername);
         notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
         notificationIntent.putExtra(Constants.OPPONENT_ID, chatMessage.getYouserId());
-        if(!TextUtils.isEmpty(chatMessage.getRoomName())) {
+        if (!TextUtils.isEmpty(chatMessage.getRoomName())) {
             notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
         }
         switch (mode) {
@@ -310,7 +321,7 @@ public class FirebaseService extends InjectedService {
                 UserData data = new UserData();
                 data.setDescription(chatMessage.getMessage());
                 notificationList.add(data);
-                notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, false);
+                notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
                 break;
             case STYLE_PICTURE:
                 NotificationBuilderObject notificationPictureInfo = prepareNotificationData(chatMessage);

@@ -40,7 +40,6 @@ public class BaseActivity extends ParentActivity {
     @Inject
     MyServiceConnection myServiceConnection;
 
-
     private boolean enableBack;
 
     private boolean isDestroyed;
