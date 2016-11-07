@@ -73,6 +73,7 @@ public class FirebaseService extends InjectedService {
     FireBaseHelper fireBaseHelper;
 
     private boolean isRunning = false;
+    private int initRoomCount;
 
     @Inject
     @Named("login")
@@ -86,6 +87,7 @@ public class FirebaseService extends InjectedService {
         context = this;
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
         isRunning = true;
+        initRoomCount = 0;
     }
 
     @Override
@@ -96,7 +98,10 @@ public class FirebaseService extends InjectedService {
             FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                 @Override
                 public void onSuccess() {
-                    getAllRooms();
+                    if(initRoomCount == 0) {
+                        initRoomCount = 1;
+                        getAllRooms();
+                    }
                 }
 
                 @Override
@@ -151,6 +156,7 @@ public class FirebaseService extends InjectedService {
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 firebaseError.getMessage();
+                initRoomCount = 0;
             }
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
