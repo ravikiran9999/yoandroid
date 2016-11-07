@@ -1,5 +1,6 @@
 package com.yo.android.pjsip;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import org.pjsip.pjsua2.CallInfo;
@@ -12,7 +13,7 @@ public interface SipServiceHandler {
 
     MediaManager getMediaManager();
 
-    void makeCall(String destination, Bundle options);
+    void makeCall(String destination, Bundle options,Intent intent);
 
     void setHoldCall(boolean isHold);
 

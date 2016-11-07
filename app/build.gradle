@@ -62,14 +62,13 @@ android {
         }*/
         stage {
             applicationIdSuffix ".stage"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
             buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
-
         }
     }
     buildTypes {

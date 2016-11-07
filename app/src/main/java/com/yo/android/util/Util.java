@@ -100,10 +100,12 @@ public class Util {
 
         NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
         notificationStyle.bigText(body);
+        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context.getApplicationContext())
-                .setSmallIcon(R.drawable.ic_yo_notification)
+                .setSmallIcon(getNotificationIcon())
                 .setContentTitle(title == null ? "Yo App" : title)
                 .setContentText(body)
+                .setLargeIcon(largeIcon)
                 .setContentIntent(pendingIntent)
                 .setStyle(notificationStyle);
         if (onGoing) {

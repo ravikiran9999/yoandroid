@@ -17,4 +17,5 @@ public interface VoipConstants {
     int CALL_DIRECTION_IN_MISSED = BASE + 3;
     int CALL_MODE_VOIP = BASE + 10;
 
+    public static final String PSTN = "PSTN";
 }

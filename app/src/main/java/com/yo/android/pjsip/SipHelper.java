@@ -3,6 +3,7 @@ package com.yo.android.pjsip;
 import android.content.Context;
 import android.content.Intent;
 
+import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.VoipConstants;
 
@@ -18,6 +19,9 @@ public class SipHelper {
 //        mContext.startActivity(intent);
 
         Intent intent = new Intent(VoipConstants.CALL_ACTION_OUT_GOING, null, mContext, YoSipService.class);
+        if(mContext instanceof NewDailerActivity){
+            intent.putExtra(VoipConstants.PSTN, true);
+        }
         intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
         mContext.startService(intent);
     }
