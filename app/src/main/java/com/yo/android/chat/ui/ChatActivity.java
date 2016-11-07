@@ -25,6 +25,8 @@ import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
+import com.yo.android.model.NotificationCount;
+import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.Room;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.ui.BaseActivity;
@@ -33,6 +35,8 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import javax.inject.Inject;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -88,6 +92,7 @@ public class ChatActivity extends BaseActivity {
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
             Util.cancelAllNotification(this);
+            EventBus.getDefault().post(new NotificationCountReset(0));
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             String mContactId = null;
@@ -107,6 +112,7 @@ public class ChatActivity extends BaseActivity {
                 //args.putString(Constants.OPPONENT_ID, contact.getId());
 
                 Util.cancelAllNotification(this);
+                EventBus.getDefault().post(new NotificationCountReset(0));
             }
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
@@ -124,6 +130,8 @@ public class ChatActivity extends BaseActivity {
             if (getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER) != null) {
                 args.putString(Constants.TYPE, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
             }
+
+            EventBus.getDefault().post(new NotificationCountReset(0));
         }
 
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
@@ -270,4 +278,6 @@ public class ChatActivity extends BaseActivity {
         imageview.setTag(Settings.imageTag, tempImage);
         return tempImage;
     }
+
+
 }

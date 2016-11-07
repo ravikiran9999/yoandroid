@@ -30,6 +30,7 @@ import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.NotificationCountReset;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 
@@ -45,6 +46,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,6 +75,7 @@ public class FirebaseService extends InjectedService {
     FireBaseHelper fireBaseHelper;
 
     private boolean isRunning = false;
+    private int initRoomCount;
 
     @Inject
     @Named("login")
@@ -86,6 +89,9 @@ public class FirebaseService extends InjectedService {
         context = this;
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
         isRunning = true;
+        initRoomCount = 0;
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -96,7 +102,10 @@ public class FirebaseService extends InjectedService {
             FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                 @Override
                 public void onSuccess() {
-                    getAllRooms();
+                    if (initRoomCount == 0) {
+                        initRoomCount = 1;
+                        getAllRooms();
+                    }
                 }
 
                 @Override
@@ -151,6 +160,7 @@ public class FirebaseService extends InjectedService {
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 firebaseError.getMessage();
+                initRoomCount = 0;
             }
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
@@ -177,7 +187,6 @@ public class FirebaseService extends InjectedService {
                         String[] strings = cn.getShortClassName().split(Pattern.quote("."));
                         int i = strings.length - 1;
                         if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0 && loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS) && (!strings[i].equalsIgnoreCase("ChatActivity"))) {
-                            // postNotification(chatMessage.getRoomId(), chatMessage);
                             newPushNotification(chatMessage.getRoomId(), chatMessage);
                         }
 
@@ -232,51 +241,6 @@ public class FirebaseService extends InjectedService {
             });
         } else {
             sendTrayNotifications(STYLE_INBOX, roomId, chatMessage);
-        }
-    }
-
-
-    private void postNotification(String roomId, ChatMessage chatMessage) {
-        try {
-
-            String body = chatMessage.getMessage();
-            String title = chatMessage.getSenderID();
-            String voxUsername = chatMessage.getVoxUserName();
-
-
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-            long num = Long.parseLong(title);
-            int notificationId = (int) num;
-
-
-            NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
-            notificationStyle.bigText(body);
-            Intent notificationIntent = new Intent(this, ChatActivity.class);
-            notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            notificationIntent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-            notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
-            notificationIntent.putExtra(Constants.VOX_USER_NAME, voxUsername);
-            notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
-            notificationIntent.putExtra(Constants.OPPONENT_ID, chatMessage.getYouserId());
-
-            PendingIntent contentIntent = PendingIntent.getActivity(this, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            android.app.Notification notification = new NotificationCompat.Builder(this)
-                    .setSmallIcon(getNotificationIcon())
-                    .setContentTitle(title == null ? "Yo App" : title)
-
-                    .setContentText(body)
-                    .setNumber(++messageCount)
-                    .setContentIntent(contentIntent)
-                    .setAutoCancel(true)
-                    .setStyle(notificationStyle)
-                    .build();
-
-            mNotificationManager.notify(notificationId, notification);
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -363,5 +327,11 @@ public class FirebaseService extends InjectedService {
     public void onDestroy() {
         super.onDestroy();
         Toast.makeText(this, "FirebaseService killed", Toast.LENGTH_LONG).show();
+    }
+
+    public void onEventMainThread(NotificationCountReset count) {
+        if (notificationList != null && count.getCount() == 0) {
+            notificationList.clear();
+        }
     }
 }
