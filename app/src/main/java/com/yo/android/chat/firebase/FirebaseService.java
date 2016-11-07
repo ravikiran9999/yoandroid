@@ -86,18 +86,6 @@ public class FirebaseService extends InjectedService {
         context = this;
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
         isRunning = true;
-
-        /*FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
-            @Override
-            public void onSuccess() {
-                getAllRooms();
-            }
-
-            @Override
-            public void onFailed() {
-                Log.i(TAG, "Failed FirebaseAuthToken");
-            }
-        });*/
     }
 
     @Override

@@ -93,6 +93,8 @@ public class ImagePickHelper {
     public void getImageFromGallery() {
         dialog.dismiss();
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
         cameraActivity.startActivityForResult(intent, Constants.ADD_SELECT_PICTURE);
     }
 
