@@ -193,8 +193,10 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 }
                 if (isHoldOn) {
                     callModel.setEvent(HOLD_ON);
+                    ((ImageView) v).setBackgroundResource(R.drawable.ic_play);
                 } else {
                     callModel.setEvent(HOLD_OFF);
+                    ((ImageView) v).setBackgroundResource(R.drawable.ic_hold);
                 }
                 bus.post(callModel);
                 mToastFactory.showToast("Hold " + (isHoldOn ? "ON" : "OFF"));
@@ -206,10 +208,10 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 }
                 if (isMute) {
                     callModel.setEvent(MUTE_ON);
-                    ((ImageView) v).setImageResource(R.drawable.ic_mute_on);
+                    ((ImageView) v).setBackgroundResource(R.drawable.ic_mute_on);
                 } else {
                     callModel.setEvent(MUTE_OFF);
-                    ((ImageView) v).setImageResource(R.drawable.ic_mute_off);
+                    ((ImageView) v).setBackgroundResource(R.drawable.ic_mute_off);
                 }
                 bus.post(callModel);
                 mToastFactory.showToast("Mute " + (isMute ? "ON" : "OFF"));
@@ -225,10 +227,10 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
                 if (isSpeakerOn) {
                     callModel.setEvent(SPEAKER_ON);
-                    ((ImageView) v).setImageResource(R.drawable.ic_speaker_on);
+                    ((ImageView) v).setBackgroundResource(R.drawable.ic_speaker_on);
                 } else {
                     callModel.setEvent(SPEAKER_OFF);
-                    ((ImageView) v).setImageResource(R.drawable.ic_speaker_off);
+                    ((ImageView) v).setBackgroundResource(R.drawable.ic_speaker_off);
                 }
                 bus.post(callModel);
                 mToastFactory.showToast("Speaker " + (isSpeakerOn ? "ON" : "OFF"));
