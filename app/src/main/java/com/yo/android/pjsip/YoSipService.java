@@ -64,6 +64,7 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_role_e;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
+import org.pjsip.pjsua2.pjsua_call_flag;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
 import java.util.concurrent.TimeUnit;
@@ -585,6 +586,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (isHold) {
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
+                prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UPDATE_CONTACT.swigValue());
                 try {
                     currentCall.setHold(prm);
                 } catch (Exception e) {
@@ -594,6 +596,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         } else {
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
+                prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
                 try {
                     currentCall.reinvite(prm);
                 } catch (Exception e) {

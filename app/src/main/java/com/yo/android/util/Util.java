@@ -428,8 +428,9 @@ public class Util {
                         adapter.performContactsSearch(newText);
                     } else if (roomType.equalsIgnoreCase(Constants.DAILER_FRAG)) {
                         adapter.performCallLogsSearch(newText);
-                    } else {
-                        adapter.performYoContactsSearch(newText);
+                    } else if (roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) || roomType.equalsIgnoreCase(Constants.CONT_FRAG)) {
+                        String contactType = roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ? Constants.Yo_CONT_FRAG : Constants.CONT_FRAG;
+                        adapter.performYoContactsSearch(newText, contactType);
                     }
                 }
                 return true;

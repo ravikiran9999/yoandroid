@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
 
 
-            android:background="@drawable/ic_speaker_on" />android:layout_alignParentLeft="true"android:layout_marginLeft="60dp"
+            android:background="@drawable/ic_speaker_off" />android:layout_alignParentLeft="true"android:layout_marginLeft="60dp"
 
         <ImageView
             android:id="@+id/imv_mic_off"
