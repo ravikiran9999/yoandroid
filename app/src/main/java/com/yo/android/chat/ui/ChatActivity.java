@@ -92,7 +92,6 @@ public class ChatActivity extends BaseActivity {
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
             Util.cancelAllNotification(this);
-            EventBus.getDefault().post(new NotificationCountReset(0));
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             String mContactId = null;
@@ -112,7 +111,7 @@ public class ChatActivity extends BaseActivity {
                 //args.putString(Constants.OPPONENT_ID, contact.getId());
 
                 Util.cancelAllNotification(this);
-                EventBus.getDefault().post(new NotificationCountReset(0));
+
             }
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
@@ -130,8 +129,6 @@ public class ChatActivity extends BaseActivity {
             if (getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER) != null) {
                 args.putString(Constants.TYPE, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
             }
-
-            EventBus.getDefault().post(new NotificationCountReset(0));
         }
 
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
@@ -279,5 +276,9 @@ public class ChatActivity extends BaseActivity {
         return tempImage;
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().post(new NotificationCountReset(0));
+    }
 }
