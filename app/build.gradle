@@ -24,7 +24,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 2
-        versionName "16.4.15.4"
+        versionName "16.4.15.6"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         multiDexEnabled true

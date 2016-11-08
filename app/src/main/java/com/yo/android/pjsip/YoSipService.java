@@ -296,6 +296,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         CallInfo ci;
         try {
             ci = call.getInfo();
+            if (ci != null) {
+                //EventBus.getDefault().post(ci.getStateText());
+            }
+            Logger.warn("Call Status " + ci.toString());
             if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY
                     && ci.getRole() == pjsip_role_e.PJSIP_ROLE_UAC
                     && ci.getLastReason().equals("Ringing")) {
@@ -536,7 +540,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
         if (oldintent != null && !(oldintent.hasExtra(VoipConstants.PSTN))) {
-          startDefaultRingtone();
+            startDefaultRingtone();
         }
         Intent intent = new Intent(this, OutGoingCallActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);

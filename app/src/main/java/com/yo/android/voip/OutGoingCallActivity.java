@@ -101,11 +101,10 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         //
 
 
-
         if (getIntent().getStringExtra(CALLER_NAME) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NAME));
         } else {
-            String stringExtra =getIntent().getStringExtra(CALLER_NO);
+            String stringExtra = getIntent().getStringExtra(CALLER_NO);
             if (stringExtra != null && stringExtra.contains("youser")) {
                 try {
                     stringExtra = stringExtra.substring(stringExtra.indexOf("youser") + 6, stringExtra.length() - 1);
@@ -148,7 +147,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
 
 
-        callDuration.setText(getResources().getString(R.string.dialing));
+        callDuration.setText(getResources().getString(R.string.calling));
         callModel.setOnCall(true);
         //CallLogs Model
         mobile = getIntent().getStringExtra(CALLER_NO);
@@ -226,6 +225,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+
     //    @Subscribe
     public void onEvent(SipCallModel model) {
         if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
@@ -244,6 +244,15 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    //    @Subscribe
+    public void onEvent(final String connectionText) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                callDuration.setText(connectionText);
+            }
+        });
+    }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override

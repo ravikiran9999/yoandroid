@@ -266,4 +266,5 @@
     <string name="select_country_name">Select Country Name</string>
     <string name="recent_county_code">Recent Countries/regions</string>
     <string name="all_county_code">All Countries/regions</string>
+    <string name="calling">Calling...</string>
 </resources>

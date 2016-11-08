@@ -279,7 +279,15 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         callModel.setOnCall(true);
         bus.post(callModel);
     }
-
+    //    @Subscribe
+    public void onEvent(final String connectionText) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                callDuration.setText(connectionText);
+            }
+        });
+    }
     //    @Subscribe
     public void onEvent(SipCallModel model) {
         if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {

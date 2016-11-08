@@ -13,7 +13,7 @@ public interface SipServiceHandler {
 
     MediaManager getMediaManager();
 
-    void makeCall(String destination, Bundle options,Intent intent);
+    void makeCall(String destination, Bundle options, Intent intent);
 
     void setHoldCall(boolean isHold);
 
@@ -28,4 +28,5 @@ public interface SipServiceHandler {
     SipCallState getSipCallState();
 
     String getRegistrationStatus();
+
 }
