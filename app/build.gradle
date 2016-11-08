@@ -39,7 +39,7 @@ android {
              buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
              buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
              minSdkVersion 18
-         }
+         }*/
          dev {
              buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
              buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
@@ -49,7 +49,7 @@ android {
              buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
              buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
              minSdkVersion 18
-         }*/
+         }
         /*stage {
             applicationIdSuffix ".stage"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
@@ -60,7 +60,7 @@ android {
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
 
         }*/
-        stage {
+        /*stage {
             applicationIdSuffix ".stage"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
@@ -69,7 +69,7 @@ android {
             buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
-        }
+        }*/
     }
     buildTypes {
 
