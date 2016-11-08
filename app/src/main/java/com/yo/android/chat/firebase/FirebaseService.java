@@ -62,7 +62,6 @@ public class FirebaseService extends InjectedService {
     private int messageCount;
     private Context context;
     private List<UserData> notificationList = new ArrayList<>();
-    ;
     private static final int SIX = 6;
 
     private static final int STYLE_TEXT = 1;
@@ -89,7 +88,6 @@ public class FirebaseService extends InjectedService {
         context = this;
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
         isRunning = true;
-        initRoomCount = 0;
 
         EventBus.getDefault().register(this);
     }
@@ -102,10 +100,7 @@ public class FirebaseService extends InjectedService {
             FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                 @Override
                 public void onSuccess() {
-                    if (initRoomCount == 0) {
-                        initRoomCount = 1;
-                        getAllRooms();
-                    }
+                    getAllRooms();
                 }
 
                 @Override
@@ -159,7 +154,7 @@ public class FirebaseService extends InjectedService {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                firebaseError.getMessage();
+                Toast.makeText(getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                 initRoomCount = 0;
             }
         };
@@ -271,8 +266,13 @@ public class FirebaseService extends InjectedService {
             case STYLE_INBOX:
                 NotificationBuilderObject notificationsInboxData = prepareNotificationData(chatMessage);
                 UserData data = new UserData();
+                data.setMessageId(chatMessage.getMsgID());
                 data.setDescription(chatMessage.getMessage());
-                notificationList.add(data);
+
+                if(!notificationList.contains(data)) {
+                    notificationList.add(data);
+                }
+
                 notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
                 break;
             case STYLE_PICTURE:
@@ -326,12 +326,15 @@ public class FirebaseService extends InjectedService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         Toast.makeText(this, "FirebaseService killed", Toast.LENGTH_LONG).show();
     }
 
     public void onEventMainThread(NotificationCountReset count) {
         if (notificationList != null && count.getCount() == 0) {
             notificationList.clear();
+            initRoomCount = 0;
+            //init();
         }
     }
 }

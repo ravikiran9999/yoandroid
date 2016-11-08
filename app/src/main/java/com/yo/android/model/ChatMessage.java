@@ -7,6 +7,7 @@ package com.yo.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -14,6 +15,8 @@ import com.yo.android.util.Util;
 /**
  * Class name will be tablename
  */
+
+@IgnoreExtraProperties
 public class ChatMessage implements Parcelable {
 
     @DatabaseField(id = true)
@@ -48,6 +51,7 @@ public class ChatMessage implements Parcelable {
 
 
     public ChatMessage() {
+        // Default constructor required for calls to DataSnapshot.getValue(ChatMessage.class)
     }
 
 

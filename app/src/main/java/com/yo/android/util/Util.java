@@ -123,7 +123,7 @@ public class Util {
     public static <T> void setBigStyleNotification(Context context, String title, String message, String tag, String id, boolean onGoing, boolean isDialer, Class<T> clzz, Intent intent) {
         Notifications notification = new Notifications();
         Intent notificationIntent = null;
-        if(tag.equals("Outgoing call") || tag.equals("Incoming call")) {
+        if (tag.equals("Outgoing call") || tag.equals("Incoming call")) {
             notificationIntent = intent;
         } else {
             notificationIntent = new Intent(context, BottomTabsActivity.class);
@@ -426,8 +426,9 @@ public class Util {
                         adapter.performContactsSearch(newText);
                     } else if (roomType.equalsIgnoreCase(Constants.DAILER_FRAG)) {
                         adapter.performCallLogsSearch(newText);
-                    } else {
-                        adapter.performYoContactsSearch(newText);
+                    } else if (roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) || roomType.equalsIgnoreCase(Constants.CONT_FRAG)) {
+                        String contactType = roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ? Constants.Yo_CONT_FRAG : Constants.CONT_FRAG;
+                        adapter.performYoContactsSearch(newText, contactType);
                     }
                 }
                 return true;
