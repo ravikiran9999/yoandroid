@@ -36,6 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.calllogs.CallerInfo;
@@ -85,6 +86,7 @@ public class Util {
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     private static final int SIX = 6;
 
+
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         return createNotification(context, title, body, clzz, intent, true);
     }
@@ -123,7 +125,7 @@ public class Util {
     public static <T> void setBigStyleNotification(Context context, String title, String message, String tag, String id, boolean onGoing, boolean isDialer, Class<T> clzz, Intent intent) {
         Notifications notification = new Notifications();
         Intent notificationIntent = null;
-        if(tag.equals("Outgoing call") || tag.equals("Incoming call")) {
+        if (tag.equals("Outgoing call") || tag.equals("Incoming call")) {
             notificationIntent = intent;
         } else {
             notificationIntent = new Intent(context, BottomTabsActivity.class);
@@ -824,5 +826,45 @@ public class Util {
         List<UserData> notificationList = new ArrayList<>();
         notificationList.add(data);
         notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
+    }
+
+    public static void showErrorMessages(final int statusCode, Context context, final ToastFactory mToastFactory) {
+        if (context instanceof Activity) {
+            ((Activity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    switch (statusCode) {
+                        case 603:
+                            mToastFactory.showToast(R.string.busy);
+                            break;
+                        case 404:
+                            mToastFactory.showToast(R.string.no_network);
+                            break;
+                        case 503:
+                            mToastFactory.showToast(R.string.not_online);
+                            break;
+                        case 487:
+                            //Missed call
+                            break;
+                        case 181:
+                            mToastFactory.showToast(R.string.call_forwarded);
+                            break;
+                        case 182:
+                        case 480:
+                            mToastFactory.showToast(R.string.temporerly_unavailable);
+                            break;
+                        case 180:
+                            mToastFactory.showToast(R.string.ringing);
+                            break;
+                        case 486:
+                            mToastFactory.showToast(R.string.busy);
+                            break;
+                        case 600:
+                            mToastFactory.showToast(R.string.all_busy);
+                            break;
+                    }
+                }
+            });
+        }
     }
 }

@@ -25,6 +25,7 @@ import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
+import com.yo.android.util.Util;
 
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
@@ -227,32 +228,27 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
 
     //    @Subscribe
-    public void onEvent(SipCallModel model) {
-        if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
-            running = true;
-            mHandler.post(startTimer);
-        } else if (!model.isOnCall()) {
-            if (model.getEvent() == UserAgent.CALL_STATE_BUSY
-                    || model.getEvent() == UserAgent.CALL_STATE_ERROR
-                    || model.getEvent() == UserAgent.CALL_STATE_END
-                    ) {
+    public void onEvent(Object object) {
+        if (object instanceof SipCallModel) {
+            SipCallModel model = (SipCallModel) object;
+            if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
+                running = true;
+                mHandler.post(startTimer);
+            } else if (!model.isOnCall()) {
+                if (model.getEvent() == UserAgent.CALL_STATE_BUSY
+                        || model.getEvent() == UserAgent.CALL_STATE_ERROR
+                        || model.getEvent() == UserAgent.CALL_STATE_END
+                        ) {
 
-                bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                finish();
+                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                    finish();
+                }
             }
-
+        } else if (object instanceof Integer) {
+            Util.showErrorMessages((int) object, this, mToastFactory);
         }
     }
 
-    //    @Subscribe
-    public void onEvent(final String connectionText) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                callDuration.setText(connectionText);
-            }
-        });
-    }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override

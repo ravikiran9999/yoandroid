@@ -30,6 +30,7 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
@@ -279,30 +280,24 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         callModel.setOnCall(true);
         bus.post(callModel);
     }
+
     //    @Subscribe
-    public void onEvent(final String connectionText) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                callDuration.setText(connectionText);
+    public void onEvent(Object object) {
+        if (object instanceof SipCallModel) {
+            SipCallModel model = (SipCallModel) object;
+            if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
+                //
+            } else if (!model.isOnCall()) {
+                if (model.getEvent() == UserAgent.CALL_STATE_BUSY
+                        || model.getEvent() == UserAgent.CALL_STATE_ERROR
+                        || model.getEvent() == UserAgent.CALL_STATE_END
+                        ) {
+                    finish();
+                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                }
             }
-        });
-    }
-    //    @Subscribe
-    public void onEvent(SipCallModel model) {
-        if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
-            //
-        } else if (!model.isOnCall()) {
-            if (model.getEvent() == UserAgent.CALL_STATE_BUSY
-                    || model.getEvent() == UserAgent.CALL_STATE_ERROR
-                    || model.getEvent() == UserAgent.CALL_STATE_END
-                    ) {
-                finish();
-                bus.post(DialerFragment.REFRESH_CALL_LOGS);
-
-
-            }
-
+        } else if(object instanceof  Integer) {
+            Util.showErrorMessages((int) object, this,mToastFactory);
         }
     }
 
@@ -354,8 +349,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
             dialPadView.startAnimation(bottomUp);
             dialPadView.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             // Hide the Panel
             Animation bottomDown = AnimationUtils.loadAnimation(this,
                     R.anim.bottom_down);

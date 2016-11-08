@@ -2,6 +2,7 @@ package com.yo.android.pjsip;
 
 import android.util.Log;
 
+import com.orion.android.common.logging.Logger;
 import com.yo.android.BuildConfig;
 import com.yo.android.vox.CodecPriority;
 
@@ -201,6 +202,7 @@ class MyApp {
         try {
             acc.create(cfg);
         } catch (Exception e) {
+            Logger.warn("Exception while creating an account " + e.getMessage());
             acc = null;
             return null;
         }
@@ -315,7 +317,7 @@ class MyApp {
         }
 
 		/*
-		 * Force delete Endpoint here, to avoid deletion from a non- registered
+         * Force delete Endpoint here, to avoid deletion from a non- registered
 		 * thread (by GC?).
 		 */
         mEndpoint.delete();

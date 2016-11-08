@@ -340,7 +340,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                switch (statusCode) {
+                /*switch (statusCode) {
                     case 603:
                         if (!isHangup) {
                             mToastFactory.showToast(R.string.busy);
@@ -371,7 +371,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     case 600:
                         mToastFactory.showToast(R.string.all_busy);
                         break;
+                }*/
 
+
+                if (statusCode == 603 && !isHangup) {
+                    isHangup = !isHangup;
+                    EventBus.getDefault().post(statusCode);
+                } else if (statusCode != 603) {
+                    EventBus.getDefault().post(statusCode);
                 }
             }
         });
@@ -470,6 +477,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 } catch (Exception e) {
                     mLog.w(TAG, e);
                 }
+            } else {
+                mLog.w(TAG, "Created account object is null");
             }
         } catch (Exception | UnsatisfiedLinkError e) {
             mLog.w(TAG, e);
