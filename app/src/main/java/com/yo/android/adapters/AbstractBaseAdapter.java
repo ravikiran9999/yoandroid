@@ -203,15 +203,16 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
     }
 
-    public void performYoContactsSearch(final @NonNull String key) {
+    public void performYoContactsSearch(final @NonNull String key, final @NonNull String contactType) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
         } else {
 
-            //List<T> temp = new ArrayList<>();
             temp = new ArrayList<>();
-            temp.add(0, mOriginalList.get(0));
+            if (contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
+                temp.add(0, mOriginalList.get(0));
+            }
             for (T event : mOriginalList) {
                 if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(searchKey.toLowerCase())) {
                     temp.add(event);
