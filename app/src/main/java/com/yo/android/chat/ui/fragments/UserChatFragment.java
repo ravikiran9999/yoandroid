@@ -626,6 +626,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void getImageFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
         startActivityForResult(intent, ADD_SELECT_PICTURE);
     }
 

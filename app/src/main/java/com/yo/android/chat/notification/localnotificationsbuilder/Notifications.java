@@ -41,12 +41,9 @@ public class Notifications {
     public void buildInboxStyleNotifications(Context mContext, Intent destinationClass, NotificationBuilderObject notificationBuilderObject, List<UserData> notificationList, int maxNotifications, boolean onGoing, boolean isDialer) {
         String newMessage;
         NotificationCache.get().setCacheNotifications(notificationList);
-        List<UserData> pushNotificationList = NotificationCache.get().getCacheNotifications();
-        if (pushNotificationList.size() == 1) {
-            newMessage = mContext.getResources().getString(R.string.notification_new_message);
-        } else {
-            newMessage = mContext.getResources().getString(R.string.notification_new_messages);
-        }
+        //List<UserData> pushNotificationList = NotificationCache.get().getCacheNotifications();
+        List<UserData> pushNotificationList = notificationList;
+        newMessage = pushNotificationList.size() == 1 ? mContext.getResources().getString(R.string.notification_new_message) : mContext.getResources().getString(R.string.notification_new_messages);
 
 
         PendingIntent contentIntent = getPendingIntent(mContext, destinationClass);
@@ -68,9 +65,9 @@ public class Notifications {
         } else {
             mBuilder.setAutoCancel(true);
         }
-        if(!isDialer) {
+        if (!isDialer) {
             if (!AppRunningState.isRunning(mContext)) {
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
             }
         } else {
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
