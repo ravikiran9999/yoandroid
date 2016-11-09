@@ -76,6 +76,9 @@ public class CallLogDetailsActivity extends BaseActivity {
         callLogsDetails = getIntent().getParcelableArrayListExtra(Constants.CALL_LOG_DETAILS);
         String name = callLogsDetails.get(0).getDestination_name();
         String number = callLogsDetails.get(0).getDialnumber();
+        if (number != null && number.contains(Constants.YO_USER)) {
+            number = number.replaceAll("[^\\d.]", "").substring(2, 12);
+        }
         Log.e("", callLogsDetails + "");
         if (callLogsDetails.size() >= 1) {
             Glide.with(this).load(callLogsDetails.get(0).getImage())
