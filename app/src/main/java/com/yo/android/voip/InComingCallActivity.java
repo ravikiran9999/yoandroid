@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.model.Contact;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
@@ -160,8 +161,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.btnEndCall).setOnClickListener(this);
         findViewById(R.id.btnRejectCall).setOnClickListener(this);
         findViewById(R.id.btnAcceptCall).setOnClickListener(this);
-        //findViewById(R.id.btnDialer).setOnClickListener(this);
+        findViewById(R.id.btnDialer).setOnClickListener(this);
         findViewById(R.id.btnHold).setOnClickListener(this);
+        findViewById(R.id.btnMessageIncoming).setOnClickListener(this);
         mReceivedCallHeader = findViewById(R.id.received_call_header);
         mInComingHeader = findViewById(R.id.incoming_call_header);
         mReceivedCallHeader.setVisibility(View.GONE);
@@ -255,8 +257,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 mHandler.post(startTimer);
                 onCallAccepted();
                 break;
-            case R.id.btnMessage:
-                mToastFactory.showToast("Message: Need to implement");
+            case R.id.btnMessageIncoming:
+                //mToastFactory.showToast("Message: Need to implement");
+                startActivity(new Intent(this, AppContactsActivity.class));
                 break;
             case R.id.btnDialer:
                 Intent intent = new Intent(this, NewDailerActivity.class);
@@ -274,7 +277,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         mReceivedCallHeader.setVisibility(View.VISIBLE);
         findViewById(R.id.btnEndCall).setVisibility(View.VISIBLE);
         findViewById(R.id.btnRejectCall).setVisibility(View.GONE);
-        findViewById(R.id.btnMessage).setVisibility(View.GONE);
+        findViewById(R.id.btnMessageIncoming).setVisibility(View.VISIBLE);
         findViewById(R.id.btnHold).setAlpha(1);
         mInComingHeader.setVisibility(View.GONE);
         mLog.d("BUS", "ONCALLACCEPTED");
