@@ -18,6 +18,7 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.KeyEvent;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -128,6 +129,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private Uri mRingtoneUri;
     Ringtone ringtone;
 
+    private boolean isMusicActivite;
+
+    private int callType = -1;
+
+
     private static ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_VOICE_CALL, 100);
 
 
@@ -150,6 +156,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public MediaManager getMediaManager() {
         return mediaManager;
     }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -222,8 +229,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         /* Incoming call */
         CallOpParam prm = new CallOpParam();
             /* Only one call at anytime */
+        AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        if (mAudioManager.isMusicActive()) {
+            isMusicActivite = true;
+            Util.sendMediaButton(this, KeyEvent.KEYCODE_MEDIA_PAUSE);
+        }
+        callType = CallLog.Calls.INCOMING_TYPE;
         if (currentCall != null) {
-
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
             try {
                 String source = getPhoneNumber(call.getInfo().getRemoteUri());
@@ -232,7 +244,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 Util.createNotification(this, source,
                         "Missed call", BottomTabsActivity.class, new Intent(), false);
                 //Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
-                storeCallLog(CallLog.Calls.MISSED_TYPE, source);
+                callType = CallLog.Calls.MISSED_TYPE;
+                storeCallLog(source);
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
@@ -337,7 +350,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void handlerErrorCodes(final CallInfo call, SipCallState sipCallstate) {
         final int statusCode = call.getLastStatusCode().swigValue();
+
         mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
+        if(statusCode == 487){
+            callType = CallLog.Calls.MISSED_TYPE;
+        }
+        if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
+            storeCallLog(sipCallstate.getMobileNumber());
+        }
+
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -379,7 +400,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     isHangup = !isHangup;
                     EventBus.getDefault().post(statusCode);
                 } else if (statusCode != 603) {
+                    isHangup = false;
                     EventBus.getDefault().post(statusCode);
+                } else {
+                    isHangup = false;
                 }
             }
         });
@@ -388,14 +412,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         //503 Service Unavailable  - Buddy is not available
         //603 Allocated Channels Busy -Lines are busy
         // 487 missed call
-        if (sipCallstate != null && sipCallstate.getMobileNumber() != null && statusCode == 603) {
-            storeCallLog(CallLog.Calls.INCOMING_TYPE, sipCallstate.getMobileNumber());
-        } else if (!isHangup) {
-            storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
-            isHangup = false;
-        } else if (sipCallstate.getMobileNumber() != null) {
-            storeCallLog(CallLog.Calls.MISSED_TYPE, sipCallstate.getMobileNumber());
-        }
+
     }
 
     private void callAccepted() {
@@ -414,6 +431,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private void callDisconnected() {
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
+        if (isMusicActivite) {
+            Util.sendMediaButton(this, KeyEvent.KEYCODE_MEDIA_PLAY);
+        }
         mediaManager.setAudioMode(AudioManager.MODE_NORMAL);
         currentCall = null;
         stopRingtone();
@@ -422,6 +442,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (sipCallState.getCallDir() == SipCallState.INCOMING) {
             if (sipCallState.getCallState() == SipCallState.CALL_RINGING) {
                 mLog.e(TAG, "Missed call >>>>>" + sipCallState.getMobileNumber());
+               // callType = CallLog.Calls.MISSED_TYPE;
                 Util.createNotification(this,
                         parseVoxUser(sipCallState.getMobileNumber()),
                         "Missed call ", BottomTabsActivity.class, new Intent(), false);
@@ -519,6 +540,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (myAccount == null) {
             myAccount = buildAccount();
         }
+        callType = CallLog.Calls.OUTGOING_TYPE;
         if (myAccount != null) {
             MyCall call = new MyCall(myAccount, -1);
             CallOpParam prm = new CallOpParam(true);
@@ -638,7 +660,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public void hangupCall(int callType) {
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
-
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
@@ -646,9 +667,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 currentCall.hangup(prm);
                 isHangup = true;
                 sipCallState.setCallState(SipCallState.CALL_FINISHED);
-                if (sipCallState.getMobileNumber() != null) {
-                    storeCallLog(callType, sipCallState.getMobileNumber());
-                }
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
@@ -656,13 +674,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
-    private void storeCallLog(int callType, String mobileNumber) {
+    private void storeCallLog(String mobileNumber) {
         long currentTime = System.currentTimeMillis();
         long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
-        if (callType == CallLog.Calls.MISSED_TYPE || callType == -1) {
+        if (callStarted == 0 || callType == -1) {
             callDuration = 0;
         }
-        String prefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
         int pstnorapp = 0;
         Contact contact = mContactsSyncManager.getContactByVoxUserName(mobileNumber);
         CallerInfo info = new CallerInfo();

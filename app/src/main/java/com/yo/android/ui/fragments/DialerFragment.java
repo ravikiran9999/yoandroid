@@ -269,13 +269,12 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
             results = prepare("Paid Calls", results, paidCalls);
         }
         tempResults.addAll(results);
-        if (adapter.getAllItems().size() < results.size()) {
-            results.clear();
-            adapter.clearAll();
-            results.addAll(tempResults);
-            adapter.addItemsAll(results);
-            tempResults = null;
-        }
+        results.clear();
+        adapter.clearAll();
+        results.addAll(tempResults);
+        adapter.addItemsAll(results);
+        tempResults = null;
+
         showEmptyText();
     }
 

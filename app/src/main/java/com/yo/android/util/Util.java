@@ -25,6 +25,7 @@ import android.text.Html;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -93,6 +94,15 @@ public class Util {
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent, boolean onGoing) {
         //
+
+        if (title != null && title.contains(Constants.YO_USER)) {
+            try {
+                title = title.substring(title.indexOf(Constants.YO_USER) + 6, title.length() - 1);
+
+            } catch (StringIndexOutOfBoundsException e) {
+            }
+        }
+
         Intent destinationIntent = new Intent(context, clzz);
         destinationIntent.putExtra("from_notification", true);
         destinationIntent.putExtra("type", body);
@@ -867,5 +877,17 @@ public class Util {
                 }
             });
         }
+    }
+
+    public static void sendMediaButton(Context context, int keyCode) {
+        KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
+        Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+        intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);
+        context.sendOrderedBroadcast(intent, null);
+
+        keyEvent = new KeyEvent(KeyEvent.ACTION_UP, keyCode);
+        intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+        intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);
+        context.sendOrderedBroadcast(intent, null);
     }
 }

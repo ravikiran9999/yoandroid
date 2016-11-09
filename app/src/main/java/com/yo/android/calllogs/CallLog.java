@@ -386,12 +386,13 @@ public class CallLog {
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
                         info.setDuration(duration);
                         info.setImage(getImagePath(context, voxuser));
+
                         if (!hashMap.containsKey(voxuser + tempDate)) {
                             List<CallLogsResult> list = new ArrayList<CallLogsResult>();
                             list.add(info);
-                            hashMap.put(voxuser, list);
+                            hashMap.put(voxuser + tempDate, list);
                         } else {
-                            hashMap.get(voxuser).add(info);
+                            hashMap.get(voxuser + tempDate).add(info);
                         }
                     } while (c.moveToNext());
                     callerInfos = new ArrayList(hashMap.entrySet());

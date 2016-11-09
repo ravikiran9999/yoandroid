@@ -2,12 +2,10 @@ package com.yo.android.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.BinderThread;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +23,10 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.text.DateFormat;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -86,9 +81,23 @@ public class CallLogDetailsActivity extends BaseActivity {
             if (!TextUtils.isEmpty(name)) {
                 opponentName.setVisibility(View.VISIBLE);
                 opponentName.setText(name);
+                if (number != null && number.contains(Constants.YO_USER)) {
+                    try {
+                        number = number.substring(number.indexOf(Constants.YO_USER) + 6, number.length() - 1);
+
+                    } catch (StringIndexOutOfBoundsException e) {
+                    }
+                }
                 opponentNumber.setText(number);
             } else if (!TextUtils.isEmpty(number)) {
                 opponentName.setVisibility(View.GONE);
+                if (number != null && number.contains(Constants.YO_USER)) {
+                    try {
+                        number = number.substring(number.indexOf(Constants.YO_USER) + 6, number.length() - 1);
+
+                    } catch (StringIndexOutOfBoundsException e) {
+                    }
+                }
                 opponentNumber.setText(number);
             }
             CallLogDetailsAdapter adapter = new CallLogDetailsAdapter(this, callLogsDetails);
@@ -177,7 +186,7 @@ public class CallLogDetailsActivity extends BaseActivity {
                 }
                 holder.date.setText(mDate);
                 holder.time.setText(dateFormat.format(formatterDate.parse(item.getStime())));
-                holder.duration.setText(convertMillisToHMmSs(Long.valueOf(item.getDuration())));
+                holder.duration.setText(convertSecToHMmSs(Long.valueOf(item.getDuration())));
             } catch (ParseException e) {
                 mLog.w("", e);
             }
@@ -203,10 +212,18 @@ public class CallLogDetailsActivity extends BaseActivity {
             TextView date;
         }
 
-        private String convertMillisToHMmSs(long milliseconds) {
-            int seconds = (int) (milliseconds / 1000) % 60;
-            int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
-            return String.valueOf(minutes).concat(" mins").concat(" " + String.valueOf(seconds)).concat(" secs");
+        private String convertSecToHMmSs(long totalSecs) {
+
+            long hours = totalSecs / 3600;
+            long minutes = (totalSecs % 3600) / 60;
+            long seconds = totalSecs % 60;
+            if (minutes == 0) {
+                return String.format("%02d secs", seconds);
+            }
+            if (hours == 0) {
+                return String.format("%02d mins %02d secs", minutes, seconds);
+            }
+            return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
         }
 
         private long convertDateFormatLong(String dateString) {
