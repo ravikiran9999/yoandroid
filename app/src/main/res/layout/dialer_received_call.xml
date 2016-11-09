@@ -65,7 +65,7 @@
 
 
         <ImageView
-            android:id="@+id/iv_chat_icon"
+            android:id="@+id/btnMessageIncoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
