@@ -121,7 +121,14 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
-            shape.setColor(mColorGenerator.getRandomColor());
+
+            int existingColor = mColorGenerator.getColor(shape);
+            if (existingColor == 0) {
+                shape.setColor(mColorGenerator.getRandomColor());
+            } else {
+                shape.setColor(existingColor);
+            }
+
         }
         holder.getChatRoomPic().setTag(Settings.imageTag, tempImage);
         return tempImage;

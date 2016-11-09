@@ -262,19 +262,30 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         ArrayList<Map.Entry<String, List<CallLogsResult>>> tempResults = new ArrayList<>();
         results.clear();
         if (filter.equalsIgnoreCase("all calls")) {
-            results = prepare("All Calls", results, CallLog.Calls.getCallLog(getActivity()));
+            results = prepare("Free Calls", results, appCalls);
+            tempResults.addAll(results);
+            results = prepare("Paid Calls", results, paidCalls);
+            tempResults.addAll(results);
+            results.clear();
+            results.addAll(tempResults);
+            tempResults.clear();
         } else if (filter.equalsIgnoreCase("app calls")) {
             results = prepare("Free Calls", results, appCalls);
         } else {
             results = prepare("Paid Calls", results, paidCalls);
         }
         tempResults.addAll(results);
-        results.clear();
-        adapter.clearAll();
-        results.addAll(tempResults);
-        adapter.addItemsAll(results);
-        tempResults = null;
 
+        if (adapter.getAllItems().size() < results.size()) {
+            results.clear();
+            adapter.clearAll();
+            results.addAll(tempResults);
+            adapter.addItemsAll(results);
+            tempResults = null;
+        } else {
+            adapter.clearAll();
+            adapter.addItems(results);
+        }
         showEmptyText();
     }
 
