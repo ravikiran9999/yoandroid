@@ -71,7 +71,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="40dp"
-            android:background="@drawable/ic_sms_to_incoming_call" />
+            android:src="@drawable/ic_sms_to_incoming_call" />
 
 
     </RelativeLayout>

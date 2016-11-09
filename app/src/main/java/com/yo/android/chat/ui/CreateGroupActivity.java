@@ -1,5 +1,6 @@
 package com.yo.android.chat.ui;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +12,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.SelectedContactsAdapter;
@@ -148,7 +152,17 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                     try {
                         String imagePath = ImagePickHelper.getGalleryImagePath(this, data);
                         imgFile = new File(imagePath);
-                        new ImageLoader(groupImage, imgFile, this).execute();
+                        //new ImageLoader(groupImage, imgFile, this).execute();
+                        Glide.with(this)
+                                .load(imgFile.getAbsoluteFile())
+                                .priority(Priority.IMMEDIATE)
+                                .error(getResources().getDrawable(R.drawable.image_creategroup))
+                                .centerCrop()
+                                .dontAnimate()
+                                .crossFade()
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .into(groupImage);
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
