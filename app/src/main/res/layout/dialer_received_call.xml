@@ -65,13 +65,13 @@
 
 
         <ImageView
-            android:id="@+id/btnMessage"
+            android:id="@+id/iv_chat_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="40dp"
-            android:background="@drawable/ic_sms_to_incoming_call" />
+            android:src="@drawable/ic_sms_to_incoming_call" />
 
 
     </RelativeLayout>

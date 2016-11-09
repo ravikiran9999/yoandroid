@@ -274,7 +274,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         mReceivedCallHeader.setVisibility(View.VISIBLE);
         findViewById(R.id.btnEndCall).setVisibility(View.VISIBLE);
         findViewById(R.id.btnRejectCall).setVisibility(View.GONE);
-        findViewById(R.id.btnMessage).setVisibility(View.GONE);
+        findViewById(R.id.iv_chat_icon).setVisibility(View.GONE);
         findViewById(R.id.btnHold).setAlpha(1);
         mInComingHeader.setVisibility(View.GONE);
         mLog.d("BUS", "ONCALLACCEPTED");
