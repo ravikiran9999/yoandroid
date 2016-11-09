@@ -38,12 +38,11 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
     protected Bitmap doInBackground(Void... params) {
         if (imageFile.exists()) {
             try {
-                //Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(imageFile), null, null);
-                Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), null);
+                Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(imageFile), null, null);
                 return bitmap;
 
-            /*} catch (FileNotFoundException e) {
-                Log.i("File not found", "FNFE" + e);*/
+            } catch (FileNotFoundException e) {
+                Log.i("File not found", "FNFE" + e);
             } catch (OutOfMemoryError e) {
                 Log.i("Out of Memory", "OOME" + e);
             }
