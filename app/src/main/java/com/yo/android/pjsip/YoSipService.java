@@ -132,7 +132,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private boolean isMusicActivite;
 
     private int callType = -1;
-
+    private String phone;
 
     private static ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_VOICE_CALL, 100);
 
@@ -352,11 +352,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         final int statusCode = call.getLastStatusCode().swigValue();
 
         mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
-        if(statusCode == 487){
+        if (statusCode == 487) {
             callType = CallLog.Calls.MISSED_TYPE;
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
             storeCallLog(sipCallstate.getMobileNumber());
+        } else if (callType == CallLog.Calls.OUTGOING_TYPE) {
+            storeCallLog(phone);
         }
 
         mHandler.post(new Runnable() {
@@ -442,7 +444,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (sipCallState.getCallDir() == SipCallState.INCOMING) {
             if (sipCallState.getCallState() == SipCallState.CALL_RINGING) {
                 mLog.e(TAG, "Missed call >>>>>" + sipCallState.getMobileNumber());
-               // callType = CallLog.Calls.MISSED_TYPE;
+                // callType = CallLog.Calls.MISSED_TYPE;
                 Util.createNotification(this,
                         parseVoxUser(sipCallState.getMobileNumber()),
                         "Missed call ", BottomTabsActivity.class, new Intent(), false);
@@ -528,7 +530,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     public void makeCall(String destination, Bundle options, Intent intent) {
-        String phone = destination;
+        phone = destination;
         if (destination != null && !destination.startsWith("sip:")) {
             destination = "sip:" + destination;
         }
