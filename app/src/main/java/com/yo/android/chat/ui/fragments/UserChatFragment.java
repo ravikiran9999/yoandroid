@@ -645,7 +645,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 }
                 break;
             case ADD_IMAGE_CAPTURE:
-                addImageCapture(data);
+                if (resultCode == Activity.RESULT_OK) {
+                    addImageCapture(data);
+                }
                 break;
 
             case ADD_SELECT_PICTURE:

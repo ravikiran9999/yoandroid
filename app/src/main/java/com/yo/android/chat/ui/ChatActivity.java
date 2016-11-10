@@ -25,7 +25,6 @@ import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
-import com.yo.android.model.NotificationCount;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.Room;
 import com.yo.android.photo.util.ColorGenerator;
@@ -102,13 +101,13 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                 if (contact.getId() == null) {
-                    mContactId = mContactsSyncManager.getContactByVoxUserName(opponent).getId();
-
+                    if (mContactsSyncManager.getContactByVoxUserName(opponent) != null) {
+                        mContactId = mContactsSyncManager.getContactByVoxUserName(opponent).getId();
+                    }
                 }
 
                 String contactId = contact.getId() == null ? mContactId : contact.getId();
                 args.putString(Constants.OPPONENT_ID, contactId);
-                //args.putString(Constants.OPPONENT_ID, contact.getId());
 
                 Util.cancelAllNotification(this);
 

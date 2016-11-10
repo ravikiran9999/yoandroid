@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -155,6 +156,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         TextView seenTxt = (TextView) view.findViewById(R.id.seen_txt);
         TextView time = (TextView) view.findViewById(R.id.time);
         ImageView timeLoad = (ImageView) view.findViewById(R.id.time_load);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         extraText.setVisibility(View.GONE);
         if (!isRTL) {
             profileNameLayout.setVisibility(View.VISIBLE);
@@ -198,7 +200,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 seenTxt.setVisibility(View.VISIBLE);
             }
         }
-        ImageLoader.updateImage(context, item, loadImage);
+        ImageLoader.updateImage(context, item, loadImage, progressBar);
         holder.getLl().addView(view);
     }
 
