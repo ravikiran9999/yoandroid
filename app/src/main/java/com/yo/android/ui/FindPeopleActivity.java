@@ -257,6 +257,9 @@ public class FindPeopleActivity extends BaseActivity {
         if (searchKey.isEmpty()) {
             findPeopleAdapter.clearAll();
             findPeopleAdapter.addItemsAll(originalList);
+            lvFindPeople.setVisibility(View.VISIBLE);
+            noData.setVisibility(View.GONE);
+            llNoPeople.setVisibility(View.GONE);
         } else {
             showProgressDialog();
             mProgressDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
