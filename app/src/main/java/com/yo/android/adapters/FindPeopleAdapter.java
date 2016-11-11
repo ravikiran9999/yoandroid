@@ -74,22 +74,18 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
     public void bindView(final int position, final FindPeopleViewHolder holder, final FindPeople item) {
 
         if (item.getAvatar() == null || TextUtils.isEmpty(item.getAvatar())) {
-            Glide.with(context)
-                    .load(R.drawable.dynamic_profile)
+            Glide.with(context).load(R.drawable.dynamic_profile)
+                    .dontAnimate()
                     .placeholder(R.drawable.dynamic_profile)
                     .error(R.drawable.dynamic_profile)
                     .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getImvFindPeoplePic());
         } else {
-            Glide.with(context)
-                    .load(item.getAvatar())
+            Glide.with(context).load(item.getAvatar())
+                    .dontAnimate()
                     .placeholder(R.drawable.dynamic_profile)
                     .error(R.drawable.dynamic_profile)
                     .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getImvFindPeoplePic());
         }
         if (!TextUtils.isEmpty(item.getFirst_name())) {
