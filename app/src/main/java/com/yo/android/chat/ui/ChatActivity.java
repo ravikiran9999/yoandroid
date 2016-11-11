@@ -101,8 +101,16 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                 if (contact.getId() == null) {
+/*<<<<<<< HEAD
                     if (mContactsSyncManager.getContactByVoxUserName(opponent) != null) {
                         mContactId = mContactsSyncManager.getContactByVoxUserName(opponent).getId();
+=======*/
+                    Contact c = mContactsSyncManager.getContactByVoxUserName(opponent);
+                    if (c != null) {
+                        mContactId = c.getId();
+                    } else {
+                        mContactId = opponent;
+//>>>>>>> 683926e08a1e764cf5bd68d877c95834628aa931
                     }
                 }
 

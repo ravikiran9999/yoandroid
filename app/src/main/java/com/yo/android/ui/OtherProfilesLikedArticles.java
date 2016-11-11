@@ -43,6 +43,7 @@ import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.inject.Inject;
 
@@ -598,9 +599,21 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             }
         }
 
-        public void updateTopic(Articles topic, int position) {
+        public void updateTopic(boolean isFollowing, Articles topic, int position) {
             items.remove(position);
             items.add(position, topic);
+
+            for (ListIterator<Articles> it = items.listIterator(); it.hasNext();) {
+                Articles top = it.next();
+                if(!TextUtils.isEmpty(top.getTopicName()) && top.getTopicName().equals(topic.getTopicName())) {
+                    if(isFollowing) {
+                        top.setTopicFollowing("true");
+                    } else {
+                        top.setTopicFollowing("false");
+                    }
+                }
+
+            }
             notifyDataSetChanged();
         }
     }
@@ -632,7 +645,8 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             if (data != null) {
                 Articles topic = data.getParcelableExtra("UpdatedTopic");
                 int pos = data.getIntExtra("Pos", 0);
-                myBaseAdapter.updateTopic(topic, pos);
+                boolean isTopicFollowing = Boolean.valueOf(topic.getTopicFollowing());
+                myBaseAdapter.updateTopic(isTopicFollowing, topic, pos);
             }
 
         }
