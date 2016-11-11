@@ -47,6 +47,7 @@ import com.yo.android.util.Util;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -1716,9 +1717,21 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private TextView articleSummaryRight;
     }
 
-    public void updateTopic(Articles topic, int position) {
+    public void updateTopic(boolean isFollowing, Articles topic, int position) {
         items.remove(position);
         items.add(position, topic);
+
+        for (ListIterator<Articles> it = items.listIterator(); it.hasNext();) {
+            Articles top = it.next();
+            if(!TextUtils.isEmpty(top.getTopicName()) && top.getTopicName().equals(topic.getTopicName())) {
+                if(isFollowing) {
+                    top.setTopicFollowing("true");
+                } else {
+                    top.setTopicFollowing("false");
+                }
+            }
+
+        }
         notifyDataSetChanged();
     }
 
