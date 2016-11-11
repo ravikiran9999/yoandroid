@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -568,7 +569,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
-                        Toast.makeText(getActivity(), "Message not sent", Toast.LENGTH_SHORT).show();
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
