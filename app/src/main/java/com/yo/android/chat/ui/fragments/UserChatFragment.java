@@ -186,6 +186,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setClipToPadding(false);
         listView.setPadding(0, Helper.dp(getActivity(), 4), 0, Helper.dp(getActivity(), 3));
         listView.setLayoutAnimation(null);
+        listView.setStackFromBottom(true);
 
         chatText.addTextChangedListener(this);
         listView.setOnItemClickListener(this);

@@ -47,6 +47,8 @@ public class ChatActivity extends BaseActivity {
     private String title;
     private Room room;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+    private Contact nContact = null;
+    private Contact contactfromOpponent;
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
@@ -100,21 +102,13 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
-                if (contact.getId() == null) {
-/*<<<<<<< HEAD
-                    if (mContactsSyncManager.getContactByVoxUserName(opponent) != null) {
-                        mContactId = mContactsSyncManager.getContactByVoxUserName(opponent).getId();
-=======*/
-                    Contact c = mContactsSyncManager.getContactByVoxUserName(opponent);
-                    if (c != null) {
-                        mContactId = c.getId();
-                    } else {
-                        mContactId = opponent;
-//>>>>>>> 683926e08a1e764cf5bd68d877c95834628aa931
-                    }
+                Contact mContact = mContactsSyncManager.getContactByVoxUserName(opponent);
+                if (contact.getId() == null && mContact != null) {
+                    nContact = mContactsSyncManager.getContactByVoxUserName(opponent);
+                    //mContactId = mContactsSyncManager.getContactByVoxUserName(opponent).getId();
                 }
 
-                String contactId = contact.getId() == null ? mContactId : contact.getId();
+                String contactId = contact.getId() == null ? nContact.getId() : contact.getId();
                 args.putString(Constants.OPPONENT_ID, contactId);
 
                 Util.cancelAllNotification(this);
@@ -158,9 +152,14 @@ public class ChatActivity extends BaseActivity {
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
 
-            Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
-            if (contact != null && !TextUtils.isEmpty(contact.getName())) {
-                title = contact.getName();
+            if (nContact != null) {
+                contactfromOpponent = nContact;
+            } else {
+                contactfromOpponent = mContactsSyncManager.getContactByVoxUserName(opponent);
+            }
+
+            if (contactfromOpponent != null && !TextUtils.isEmpty(contactfromOpponent.getName())) {
+                title = contactfromOpponent.getName();
             } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
                 title = room.getFullName();
             } else if (opponent != null && opponent.contains(Constants.YO_USER)) {

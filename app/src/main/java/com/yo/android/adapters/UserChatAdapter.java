@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
@@ -205,7 +206,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
 
-    private LinearLayout newTextAddView(final ChatMessage item, final UserChatViewHolder holder) {
+    private LinearLayout newTextAddView(@NonNull final ChatMessage item, @NonNull final UserChatViewHolder holder) {
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
         PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
@@ -216,6 +217,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         LinearLayout linearLayout1 = new LinearLayout(context);
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
+        linearLayout1.setPadding(2,2,2,2);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(30, 0, 50, 0);
 
