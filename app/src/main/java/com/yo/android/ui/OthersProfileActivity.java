@@ -101,12 +101,11 @@ public class OthersProfileActivity extends BaseActivity {
         String pic = getIntent().getStringExtra("PersonPic");
         String isFollowing = getIntent().getStringExtra("PersonIsFollowing");
 
-        Glide.with(this)
-                .load(pic)
+        Glide.with(this).load(pic)
+                .dontAnimate()
                 .placeholder(R.drawable.dynamic_profile)
                 .error(R.drawable.dynamic_profile)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .fitCenter()
                 .into(picture);
 
         tvName.setText(name);

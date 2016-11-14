@@ -42,6 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
+import se.emilsjolander.flipview.OverFlipMode;
 
 /**
  * Created by creatives on 6/30/2016.
@@ -152,6 +153,18 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         });
 
         //YODialogs.showPopup(getActivity(), "YO! Get $50 Cashback on Recharge of $100+", "YO! is doing a wonderful promotion of its wallet feature by collaborating with many banking companies these days and they are proving some specific coupon codes to obtain the benefit of adding money in Yo! wallet.");
+
+        flipView.setOnOverFlipListener(new FlipView.OnOverFlipListener() {
+            @Override
+            public void onOverFlip(FlipView flipView, OverFlipMode overFlipMode, boolean overFlippingPrevious, float overFlipDistance, float flipDistancePerPage) {
+                if(flipView.getCurrentPage()!=0) {
+                    flipView.flipTo(0);
+                } else if(flipView.getCurrentPage()==0) {
+                    flipView.flipTo(myBaseAdapter.getCount()-1);
+                }
+            }
+        });
+
 
     }
 

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -256,7 +257,12 @@ public class FindPeopleActivity extends BaseActivity {
         if (searchKey.isEmpty()) {
             findPeopleAdapter.clearAll();
             findPeopleAdapter.addItemsAll(originalList);
+            lvFindPeople.setVisibility(View.VISIBLE);
+            noData.setVisibility(View.GONE);
+            llNoPeople.setVisibility(View.GONE);
         } else {
+            showProgressDialog();
+            mProgressDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             if(call != null) {
                 call.cancel();
@@ -265,6 +271,7 @@ public class FindPeopleActivity extends BaseActivity {
             call.enqueue(new Callback<List<FindPeople>>() {
                 @Override
                 public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
+                    dismissProgressDialog();
                     if (response.body() != null && response.body().size() > 0) {
                         List<FindPeople> findPeopleList = response.body();
                         findPeopleAdapter.clearAll();
@@ -282,6 +289,7 @@ public class FindPeopleActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<List<FindPeople>> call, Throwable t) {
+                    dismissProgressDialog();
                     noData.setVisibility(View.VISIBLE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);

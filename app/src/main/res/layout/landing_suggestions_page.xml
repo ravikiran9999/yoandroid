@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <TextView
+    <TextView android:id="@+id/tv_you_might"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/you_might_follow_topics"
         android:textColor="@android:color/black"
         android:textSize="20sp" />
@@ -18,7 +19,9 @@
         android:id="@+id/lv_suggestions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@android:color/transparent"></ListView>
+        android:divider="@android:color/transparent"
+        android:layout_below="@+id/tv_you_might"
+        android:layout_above="@+id/tv_follow_more_topics"></ListView>
 
     <TextView
         android:id="@+id/tv_follow_more_topics"
@@ -31,6 +34,7 @@
         android:drawableRight="@drawable/ic_right_arrow"
         android:text="Follow More Topics"
         android:textColor="@android:color/black"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+</RelativeLayout>
