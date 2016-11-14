@@ -517,7 +517,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(allArticles.size()>=4 && MagazinesFragment.unSelectedTopics.size()>0) {
             if(holder.lvSuggestions != null) {
-                SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context);
+                SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context, magazineFlipArticlesFragment);
                 holder.lvSuggestions.setAdapter(suggestionsAdapter);
                 int n = 5;
                 if(MagazinesFragment.unSelectedTopics.size()>=n) {

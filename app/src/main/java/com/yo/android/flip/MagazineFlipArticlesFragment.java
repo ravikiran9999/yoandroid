@@ -55,7 +55,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     YoApi.YoService yoService;
     private LinearLayout llNoArticles;
     private FrameLayout flipContainer;
-    private ProgressBar mProgress;
+    public ProgressBar mProgress;
     private Button followMoreTopics;
 
     @Inject
