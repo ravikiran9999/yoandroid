@@ -35,9 +35,13 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
         } else {
             holder.getName().setVisibility(View.GONE);
         }
-        if (item.getUserProfile() != null && item.getUserProfile().getMobileNumber() != null && !item.getUserProfile().getFullName().equalsIgnoreCase(mContext.getString(R.string.you))) {
+        if (item.getUserProfile() != null && item.getUserProfile().getFullName() != null && item.getUserProfile().getMobileNumber() != null && !item.getUserProfile().getFullName().equalsIgnoreCase(mContext.getString(R.string.you))) {
+            holder.getContactNumber().setVisibility(View.VISIBLE);
             holder.getContactNumber().setText(item.getUserProfile().getMobileNumber());
-        } else {
+        } /*else if(item.getUserProfile().getMobileNumber() != null)  {
+            holder.getContactNumber().setText(item.getUserProfile().getMobileNumber());
+
+        }*/ else {
             holder.getContactNumber().setVisibility(View.GONE);
         }
         if (item.getAdmin() != null && Boolean.valueOf(item.getAdmin())) {
