@@ -25,7 +25,6 @@ import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
-import com.yo.android.model.NotificationCount;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.Room;
 import com.yo.android.photo.util.ColorGenerator;
@@ -48,6 +47,8 @@ public class ChatActivity extends BaseActivity {
     private String title;
     private Room room;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+    private Contact nContact = null;
+    private Contact contactfromOpponent;
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
@@ -101,18 +102,14 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
-                if (contact.getId() == null) {
-                    Contact c = mContactsSyncManager.getContactByVoxUserName(opponent);
-                    if (c != null) {
-                        mContactId = c.getId();
-                    } else {
-                        mContactId = opponent;
-                    }
+                Contact mContact = mContactsSyncManager.getContactByVoxUserName(opponent);
+                if (contact.getId() == null && mContact != null) {
+                    nContact = mContactsSyncManager.getContactByVoxUserName(opponent);
+                    //mContactId = mContactsSyncManager.getContactByVoxUserName(opponent).getId();
                 }
 
-                String contactId = contact.getId() == null ? mContactId : contact.getId();
+                String contactId = contact.getId() == null ? nContact.getId() : contact.getId();
                 args.putString(Constants.OPPONENT_ID, contactId);
-                //args.putString(Constants.OPPONENT_ID, contact.getId());
 
                 Util.cancelAllNotification(this);
 
@@ -155,9 +152,14 @@ public class ChatActivity extends BaseActivity {
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
 
-            Contact contact = mContactsSyncManager.getContactByVoxUserName(opponent);
-            if (contact != null && !TextUtils.isEmpty(contact.getName())) {
-                title = contact.getName();
+            if (nContact != null) {
+                contactfromOpponent = nContact;
+            } else {
+                contactfromOpponent = mContactsSyncManager.getContactByVoxUserName(opponent);
+            }
+
+            if (contactfromOpponent != null && !TextUtils.isEmpty(contactfromOpponent.getName())) {
+                title = contactfromOpponent.getName();
             } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
                 title = room.getFullName();
             } else if (opponent != null && opponent.contains(Constants.YO_USER)) {

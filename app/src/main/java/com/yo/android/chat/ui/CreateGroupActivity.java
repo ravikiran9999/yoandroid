@@ -139,7 +139,16 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                     try {
                         String imagePath = cameraIntent.mFileTemp.getPath();
                         imgFile = new File(imagePath);
-                        new ImageLoader(groupImage, imgFile, this).execute();
+                        //new ImageLoader(groupImage, imgFile, this).execute();
+                        Glide.with(this)
+                                .load(imgFile.getAbsoluteFile())
+                                .priority(Priority.IMMEDIATE)
+                                .error(getResources().getDrawable(R.drawable.image_creategroup))
+                                .centerCrop()
+                                .dontAnimate()
+                                .crossFade()
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .into(groupImage);
 
                     } catch (Exception e) {
                         e.printStackTrace();

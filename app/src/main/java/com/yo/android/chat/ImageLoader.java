@@ -8,12 +8,17 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FileDownloadTask;
@@ -38,14 +43,14 @@ public class ImageLoader {
         public void onDownlaoded(File file);
     }
 
-    public static void updateImage(final Context context, final ChatMessage item, final ImageView imageView1) {
+    public static void updateImage(final Context context, final ChatMessage item, final ImageView imageView1, final ProgressBar progressBar) {
         updateImage(item, new ImageDownloadListener() {
 
             @Override
             public void onDownlaoded(File file) {
                 if (file != null) {
                     item.setImagePath(file.getAbsolutePath());
-                    getImageHeightAndWidth(context, file, imageView1);
+                    getImageHeightAndWidth(context, file, imageView1, progressBar);
                 }
             }
         });
@@ -117,7 +122,7 @@ public class ImageLoader {
         }
     };
 
-    private static void getImageHeightAndWidth(Context context, final File file, ImageView imageView) {
+    private static void getImageHeightAndWidth(Context context, final File file, ImageView imageView, final ProgressBar progressBar) {
         float ratio = 1;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -139,6 +144,19 @@ public class ImageLoader {
         width = maxWidth;
         Glide.with(context)
                 .load(file)
+                .listener(new RequestListener<File, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, File model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, File model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
                 .priority(Priority.IMMEDIATE)
                 .override(width, height)
                 .dontAnimate()
