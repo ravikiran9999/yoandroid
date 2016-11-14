@@ -150,9 +150,10 @@ public class GroupContactsActivity extends BaseActivity {
 
     private void done() {
         ArrayList<Contact> contactArrayList = new ArrayList<>();
-        for (int i = 0; i < CreateGroupActivity.ContactsArrayList.size(); i++) {
-            if (CreateGroupActivity.ContactsArrayList.get(i).isSelected()) {
-                contactArrayList.add(CreateGroupActivity.ContactsArrayList.get(i));
+        List<Contact> contacts = CreateGroupActivity.ContactsArrayList;
+        for (int i = 0; i < contacts.size(); i++) {
+            if (contacts.get(i).isSelected()) {
+                contactArrayList.add(contacts.get(i));
             }
         }
 
