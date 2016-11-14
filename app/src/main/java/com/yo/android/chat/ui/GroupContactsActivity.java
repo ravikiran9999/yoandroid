@@ -64,7 +64,8 @@ public class GroupContactsActivity extends BaseActivity {
         //setHasOptionsMenu(true);
         //groupName = getString(Constants.GROUP_NAME);
         setContentView(R.layout.fragment_yo_contacts);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         listView = (ListView) findViewById(R.id.lv_app_contacts);
         textView = (TextView) findViewById(R.id.no_contacts);
@@ -116,7 +117,7 @@ public class GroupContactsActivity extends BaseActivity {
                         }
                     }
 
-                    if(contactList.isEmpty()) {
+                    if (contactList.isEmpty()) {
                         listView.setVisibility(View.GONE);
                         textView.setVisibility(View.VISIBLE);
                     } else {
@@ -183,5 +184,11 @@ public class GroupContactsActivity extends BaseActivity {
         Helper.displayIndex(this, layout, contactList, listView);
         groupContactsListAdapter.addItems(contactList);
         CreateGroupActivity.ContactsArrayList = contactList;
+    }
+
+    @Override
+    public void onBackPressed() {
+        done();
+        super.onBackPressed();
     }
 }
