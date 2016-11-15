@@ -126,18 +126,14 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
                     loadingFromXml(item, holder);
-                } /*else {
-                    holder.getLl().setVisibility(View.GONE);
-                }*/
+                }
             } else {
                 holder.getLinearLayout().setGravity(Gravity.START);
                 if (item.getType().equals(Constants.TEXT)) {
                     newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
                     loadingFromXml(item, holder);
-                } /*else {
-                    holder.getLl().setVisibility(View.GONE);
-                }*/
+                }
             }
 
         } catch (Exception e) {
