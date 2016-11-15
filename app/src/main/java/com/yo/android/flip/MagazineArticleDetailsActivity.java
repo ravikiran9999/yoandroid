@@ -31,6 +31,11 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
 
         WebView webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
+        webview.getSettings().setAllowContentAccess(true);
+        webview.getSettings().setBuiltInZoomControls(false);
+        webview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        webview.getSettings().setLoadWithOverviewMode(true);
+        webview.getSettings().setDomStorageEnabled(true);
 
         webview.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
