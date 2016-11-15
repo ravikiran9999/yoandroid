@@ -208,7 +208,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     profileNumber.setVisibility(View.GONE);
                 }
             } else if (contact != null) {
-                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName())&& !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
+                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(contact.getName());
@@ -327,8 +327,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                                 UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
                                 if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber()) && userProfile.getMobileNumber().substring(3).equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                                     userProfile.setFullName(getString(R.string.you));
-                                } else if(userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber())) {
-                                   userProfile.setFullName(mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getMobileNumber()));
+                                } else if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber())) {
+                                    userProfile.setFullName(mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber()));
                                 }
                                 for (Map.Entry m : groupMembersHashMap.entrySet()) {
                                     if (dataSnapshot.getRef().getParent().getKey().equals(m.getKey())) {
@@ -366,12 +366,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             Collections.sort(list, new Comparator<GroupMembers>() {
                 @Override
                 public int compare(GroupMembers lhs, GroupMembers rhs) {
-                    //return lhs.getUserProfile().getFullName().toLowerCase().compareTo(rhs.getUserProfile().getFullName().toLowerCase());
-                    if(lhs.getUserProfile().getFullName() != null && rhs.getUserProfile().getFullName() != null) {
-                        return lhs.getUserProfile().getFullName().toLowerCase().compareTo(rhs.getUserProfile().getFullName().toLowerCase());
-                    } else {
-                        return lhs.getUserProfile().getMobileNumber().toLowerCase().compareTo(rhs.getUserProfile().getMobileNumber().toLowerCase());
-                    }
+                    return lhs.getUserProfile().getFullName().toLowerCase().compareTo(rhs.getUserProfile().getFullName().toLowerCase());
                 }
             });
         } catch (Exception e) {

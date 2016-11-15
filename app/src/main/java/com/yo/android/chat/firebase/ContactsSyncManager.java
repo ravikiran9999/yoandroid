@@ -219,15 +219,9 @@ public class ContactsSyncManager {
     }
 
     public String getContactNameByPhoneNumber(String phoneNumber) {
-        String newPhoneNumber = null;
         if (phoneNumber != null) {
-            if (phoneNumber.length() > 10) {
-                newPhoneNumber = phoneNumber.substring(3, 13);
-            }
-            Log.i("", "newPhoneNumber : " + newPhoneNumber);
-
             Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
-            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "= '" + newPhoneNumber + "'", null, null);
+            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "= '" + phoneNumber + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
 
             if (c != null && c.moveToFirst()) {
                 Contact contact = ContactsSyncManager.prepareContact(c);

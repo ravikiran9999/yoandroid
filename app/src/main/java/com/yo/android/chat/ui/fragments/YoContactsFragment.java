@@ -159,7 +159,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                     navigateToChatScreen(contact);
                 }
             }
-        }catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -183,10 +183,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void getYoAppUsers() {
-
-        if (!mContactsSyncManager.getContacts().isEmpty()) {
+        List<Contact> contacts = mContactsSyncManager.getContacts();
+        if (!contacts.isEmpty()) {
             loadInAlphabeticalOrder(mContactsSyncManager.getContacts());
-        } else if (mContactsSyncManager.getContacts().isEmpty()) {
+        } else if (contacts.isEmpty()) {
             showProgressDialog();
 
             mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
