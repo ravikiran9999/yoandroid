@@ -124,7 +124,7 @@ public class CreateMagazineActivity extends BaseActivity {
                     intent.putExtra("MagazineId",ownMagazine.getId());
                     intent.putExtra("MagazineDesc", ownMagazine.getDescription());
                     intent.putExtra("MagazinePrivacy", ownMagazine.getPrivacy());
-                    startActivity(intent);
+                    startActivityForResult(intent, 2);
                 }
             }
         });

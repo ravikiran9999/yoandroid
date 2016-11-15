@@ -9,6 +9,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.di.Injector;
+import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.SuggestionsViewHolder;
 import com.yo.android.model.Topics;
 import com.yo.android.ui.BaseActivity;
@@ -36,10 +37,12 @@ public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsV
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    private MagazineFlipArticlesFragment magazineFlipArticlesFragment;
 
-    public SuggestionsAdapter(Context context) {
+    public SuggestionsAdapter(Context context, MagazineFlipArticlesFragment magazineFlipArticlesFragment) {
         super(context);
         this.context = context;
+        this.magazineFlipArticlesFragment = magazineFlipArticlesFragment;
         Injector.obtain(context.getApplicationContext()).inject(this);
     }
 
@@ -60,7 +63,9 @@ public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsV
         holder.getBtnFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BaseActivity) context).showProgressDialog();
+                if(magazineFlipArticlesFragment.mProgress != null) {
+                    magazineFlipArticlesFragment.mProgress.setVisibility(View.VISIBLE);
+                }
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 final List<String> followedTopicsIdsList = new ArrayList<String>();
                 if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
@@ -73,7 +78,6 @@ public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsV
                 yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        ((BaseActivity) context).dismissProgressDialog();
                         holder.getBtnFollow().setText("Following");
                         holder.getBtnFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                         item.setSelected(true);
@@ -83,7 +87,9 @@ public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsV
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        ((BaseActivity) context).dismissProgressDialog();
+                        if(magazineFlipArticlesFragment.mProgress != null) {
+                            magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
+                        }
                         Toast.makeText(context, "Error while adding topics", Toast.LENGTH_LONG).show();
                         holder.getBtnFollow().setText("Follow");
                         holder.getBtnFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);

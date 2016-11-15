@@ -517,7 +517,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(allArticles.size()>=4 && MagazinesFragment.unSelectedTopics.size()>0) {
             if(holder.lvSuggestions != null) {
-                SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context);
+                SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context, magazineFlipArticlesFragment);
                 holder.lvSuggestions.setAdapter(suggestionsAdapter);
                 int n = 5;
                 if(MagazinesFragment.unSelectedTopics.size()>=n) {
@@ -1193,7 +1193,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        .centerCrop()
+                        //.centerCrop()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
@@ -1465,7 +1465,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        .centerCrop()
+                        //.centerCrop()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
