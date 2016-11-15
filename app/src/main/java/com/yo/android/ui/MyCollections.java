@@ -3,6 +3,7 @@ package com.yo.android.ui;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,6 +44,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     MyCollectionsAdapter myCollectionsAdapter;
     private boolean contextualMenu;
     private GridView gridView;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +146,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             }
 
         } else {
-            invalidateOptionsMenu();
+            //invalidateOptionsMenu();
             if (position == 0 && "Follow more topics".equalsIgnoreCase(collections.getName())) {
                 Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
                 intent.putExtra("From", "MyCollections");
@@ -177,6 +179,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         }
 
         Util.prepareSearch(this, menu, myCollectionsAdapter);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -368,6 +372,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 2) {
+            //invalidateOptionsMenu();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                 @Override
@@ -394,7 +399,13 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             });
 
         } else if (requestCode == 6) {
+            //invalidateOptionsMenu();
+            String searchText = "";
+            if(searchView != null) {
+                searchText = searchView.getQuery().toString();
+            }
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            final String finalSearchText = searchText;
             yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                 @Override
                 public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
@@ -406,9 +417,22 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                     if (response == null || response.body() == null) {
                         return;
                     }
-                    collectionsList.addAll(response.body());
-                    myCollectionsAdapter.clearAll();
-                    myCollectionsAdapter.addItems(collectionsList);
+
+                    if(!TextUtils.isEmpty(finalSearchText.trim())) {
+                        for(int i=0 ;i <response.body().size(); i++) {
+                            if(response.body().get(i).getName().contains(finalSearchText)){
+                                collectionsList.addAll(response.body());
+                                myCollectionsAdapter.clearAll();
+                                myCollectionsAdapter.addItems(collectionsList);
+                                break;
+                            }
+                        }
+                    } else {
+                        collectionsList.addAll(response.body());
+                        myCollectionsAdapter.clearAll();
+                        myCollectionsAdapter.addItems(collectionsList);
+                    }
+
                     gridView.setAdapter(myCollectionsAdapter);
 
                     List<String> followedTopicsIdsList = new ArrayList<String>();
