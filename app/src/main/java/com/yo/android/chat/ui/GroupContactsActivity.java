@@ -54,6 +54,8 @@ public class GroupContactsActivity extends BaseActivity {
     @Named("login")
     PreferenceEndPoint loginPrefs;
 
+    List<Contact> contactsList = null;
+
     public GroupContactsActivity() {
         // Required empty public constructor
     }
@@ -64,18 +66,18 @@ public class GroupContactsActivity extends BaseActivity {
         //setHasOptionsMenu(true);
         //groupName = getString(Constants.GROUP_NAME);
         setContentView(R.layout.fragment_yo_contacts);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         listView = (ListView) findViewById(R.id.lv_app_contacts);
         textView = (TextView) findViewById(R.id.no_contacts);
         layout = (ListView) findViewById(R.id.side_index);
         groupContactsListAdapter = new GroupContactsListAdapter(this);
         listView.setAdapter(groupContactsListAdapter);
-
-        if (CreateGroupActivity.ContactsArrayList.isEmpty()) {
+        contactsList = CreateGroupActivity.ContactsArrayList;
+        if (contactsList.isEmpty()) {
             getYoAppUsers();
         } else {
-            groupContactsListAdapter.addItems(CreateGroupActivity.ContactsArrayList);
+            groupContactsListAdapter.addItems(contactsList);
         }
 
     }
@@ -116,7 +118,7 @@ public class GroupContactsActivity extends BaseActivity {
                         }
                     }
 
-                    if(contactList.isEmpty()) {
+                    if (contactList.isEmpty()) {
                         listView.setVisibility(View.GONE);
                         textView.setVisibility(View.VISIBLE);
                     } else {
@@ -150,9 +152,10 @@ public class GroupContactsActivity extends BaseActivity {
 
     private void done() {
         ArrayList<Contact> contactArrayList = new ArrayList<>();
-        for (int i = 0; i < CreateGroupActivity.ContactsArrayList.size(); i++) {
-            if (CreateGroupActivity.ContactsArrayList.get(i).isSelected()) {
-                contactArrayList.add(CreateGroupActivity.ContactsArrayList.get(i));
+        List<Contact> contacts = contactsList;
+        for (int i = 0; i < contacts.size(); i++) {
+            if (contacts.get(i).isSelected()) {
+                contactArrayList.add(contacts.get(i));
             }
         }
 
@@ -161,16 +164,6 @@ public class GroupContactsActivity extends BaseActivity {
         setResult(RESULT_OK, intent);
         finish();
     }
-
-    /*public void refresh() {
-        groupContactsListAdapter.clearAll();
-        groupContactsListAdapter.addItemsAll(originalList);
-        lvFindPeople.setVisibility(View.VISIBLE);
-        if(originalList.size()> 0) {
-            noData.setVisibility(View.GONE);
-            llNoPeople.setVisibility(View.GONE);
-        }
-    }*/
 
     private void loadInAlphabeticalOrder(List<Contact> contactList) {
         Collections.sort(contactList, new Comparator<Contact>() {
@@ -181,6 +174,12 @@ public class GroupContactsActivity extends BaseActivity {
         });
         Helper.displayIndex(this, layout, contactList, listView);
         groupContactsListAdapter.addItems(contactList);
-        CreateGroupActivity.ContactsArrayList = contactList;
+        CreateGroupActivity.ContactsArrayList.addAll(contactList);
+    }
+
+    @Override
+    public void onBackPressed() {
+        done();
+        super.onBackPressed();
     }
 }

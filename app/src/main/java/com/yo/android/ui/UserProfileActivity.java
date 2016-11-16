@@ -3,6 +3,7 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -206,7 +208,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     profileNumber.setVisibility(View.GONE);
                 }
             } else if (contact != null) {
-                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName())&& !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
+                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(contact.getName());
@@ -325,6 +327,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                                 UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
                                 if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber()) && userProfile.getMobileNumber().substring(3).equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                                     userProfile.setFullName(getString(R.string.you));
+                                } else if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber())) {
+                                    userProfile.setFullName(mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber()));
                                 }
                                 for (Map.Entry m : groupMembersHashMap.entrySet()) {
                                     if (dataSnapshot.getRef().getParent().getKey().equals(m.getKey())) {
@@ -357,19 +361,26 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         firebaseError.getMessage();
     }
 
-    private void loadAlphabetOrder(List<GroupMembers> list) {
-
-        Collections.sort(list, new Comparator<GroupMembers>() {
-            @Override
-            public int compare(GroupMembers lhs, GroupMembers rhs) {
-                return lhs.getUserProfile().getFullName().toLowerCase().compareTo(rhs.getUserProfile().getFullName().toLowerCase());
+    private void loadAlphabetOrder(@NonNull List<GroupMembers> list) {
+        try {
+            Collections.sort(list, new Comparator<GroupMembers>() {
+                @Override
+                public int compare(GroupMembers lhs, GroupMembers rhs) {
+                    return lhs.getUserProfile().getFullName().toLowerCase().compareTo(rhs.getUserProfile().getFullName().toLowerCase());
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            for (GroupMembers groupMembers : list) {
+                if (groupMembers.getUserProfile().getFullName().equalsIgnoreCase(getString(R.string.you))) {
+                    list.add(list.size(), groupMembers);
+                    list.remove(groupMembers);
+                }
             }
-        });
-        for (GroupMembers groupMembers : list) {
-            if (groupMembers.getUserProfile().getFullName().equalsIgnoreCase(getString(R.string.you))) {
-                list.add(list.size(), groupMembers);
-                list.remove(groupMembers);
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         profileMembersAdapter.addItems(list);

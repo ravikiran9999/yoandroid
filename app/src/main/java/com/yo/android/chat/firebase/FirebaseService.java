@@ -154,7 +154,7 @@ public class FirebaseService extends InjectedService {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                Toast.makeText(getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                 initRoomCount = 0;
             }
         };
