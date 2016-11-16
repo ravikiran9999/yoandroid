@@ -171,7 +171,7 @@ public class YODialogs {
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
             LayoutInflater layoutInflater = LayoutInflater.from(activity);
-            final View view = layoutInflater.inflate(R.layout.clear_call_history, null);
+            final View view = layoutInflater.inflate(R.layout.navigate_to_pstn, null);
             builder.setView(view);
 
             Button yesBtn = (Button) view.findViewById(R.id.yes_btn);

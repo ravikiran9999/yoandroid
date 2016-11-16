@@ -1,5 +1,7 @@
 package com.yo.android.util;
 
+import com.yo.android.BuildConfig;
+
 public class Constants {
 
     // Chat
@@ -114,7 +116,7 @@ public class Constants {
     // Contacts
     public static final String NUMBER = "number";
     public static final String NAME = "name";
-    public static final String YO_USER = "youser";
+    public static final String YO_USER = BuildConfig.RELEASE_USER_TYPE;
 
 
     public static final String NOTIFICATION_COUNT = "notification_count";

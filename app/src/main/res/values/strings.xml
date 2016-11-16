@@ -269,4 +269,6 @@
     <string name="calling">Calling...</string>
     <string name="paid_call">Paid Call?</string>
     <string name="calle_not_online">The YO! user you are trying is offline, do you want to make paid call?</string>
+    <string name="disabled">This functionality is currently disabled.</string>
+    <string name="invalid_username">Invalid username. Username shouldn't include special characters except - and _.</string>
 </resources>

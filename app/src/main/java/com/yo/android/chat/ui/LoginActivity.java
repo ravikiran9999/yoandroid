@@ -200,7 +200,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         UserDetails userDetails = voxFactory.newAddSubscriber(yoUser, yoUser);
         //Debug
         String action = voxFactory.addSubscriber(yoUser, phoneNumber, countryCode);
-        mLog.e(TAG, "Request for adding vox api: %s", action);
+      //  mLog.e(TAG, "Request for adding vox api: %s", action);
             /*voxService.getData(userDetails).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {

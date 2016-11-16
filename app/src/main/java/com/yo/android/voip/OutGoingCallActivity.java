@@ -11,12 +11,14 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -99,7 +101,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         initViews();
         callModel = new SipCallModel();
-        bus.register(this);
         //
 
 
@@ -107,9 +108,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             callerName.setText(getIntent().getStringExtra(CALLER_NAME));
         } else {
             String stringExtra = getIntent().getStringExtra(CALLER_NO);
-            if (stringExtra != null && stringExtra.contains("youser")) {
+            if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
                 try {
-                    stringExtra = stringExtra.substring(stringExtra.indexOf("youser") + 6, stringExtra.length() - 1);
+                    stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
                     callerName.setText(stringExtra);
                 } catch (StringIndexOutOfBoundsException e) {
                     mLog.e(TAG, "" + e);
@@ -134,9 +135,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         } else if (getIntent().getStringExtra(CALLER_NO) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NO));
             String stringExtra = getIntent().getStringExtra(CALLER_NO);
-            if (stringExtra != null && stringExtra.contains("youser")) {
+            if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
                 try {
-                    stringExtra = stringExtra.substring(stringExtra.indexOf("youser") + 6, stringExtra.length() - 1);
+                    stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
                     callerName.setText(stringExtra);
                 } catch (StringIndexOutOfBoundsException e) {
                     mLog.e(TAG, "" + e);
@@ -153,8 +154,19 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callModel.setOnCall(true);
         //CallLogs Model
         mobile = getIntent().getStringExtra(CALLER_NO);
+        Log.w(TAG, "LOADING CALL LOGS AFTER ACTION onResume");
+        bus.register(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        bus.unregister(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        Log.w(TAG, "LOADING CALL LOGS AFTER ACTION onPause");
     }
 
     private void initViews() {
@@ -173,8 +185,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         super.onDestroy();
         unbindService(connection);
         running = false;
-        bus.unregister(this);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
     }
 
@@ -254,11 +264,13 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
-            finish();
+            Log.w(TAG, "LOADING CALL LOGS AFTER ACTION ");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                    Log.w(TAG, "LOADING CALL LOGS AFTER ACTION ");
+                   // bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                   // OutGoingCallActivity.this.finish();
                 }
             });
 

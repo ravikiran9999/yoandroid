@@ -53,6 +53,7 @@ import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
+import com.yo.android.ui.fragments.DialerFragment;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -842,7 +843,7 @@ public class Util {
         notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
     }
 
-    public static void showErrorMessages(final OpponentDetails details, Context context, final ToastFactory mToastFactory) {
+    public static void showErrorMessages(final OpponentDetails details, final Context context, final ToastFactory mToastFactory) {
         if (context instanceof Activity) {
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
@@ -886,6 +887,14 @@ public class Util {
                             break;
                         case 600:
                             mToastFactory.showToast(R.string.all_busy);
+                            break;
+                        case 403:
+                            YODialogs.redirectToPSTN((Activity) context, new DialerFragment.CallLogClearListener() {
+                                @Override
+                                public void clear() {
+                                    mToastFactory.showToast(R.string.ringing);
+                                }
+                            });
                             break;
                     }
                 }

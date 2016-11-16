@@ -164,8 +164,10 @@ public class BottomTabsActivity extends BaseActivity {
                     getSupportActionBar().setCustomView(customActionBar);
 
                     if (getFragment() instanceof MoreFragment) {
+                        //getSupportActionBar().hide();
                         getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
                     } else {
+                       // getSupportActionBar().show();
                         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                     }
                     TextView actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);

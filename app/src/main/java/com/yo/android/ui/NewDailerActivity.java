@@ -24,6 +24,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.BuildConfig;
+
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.dialer.CallRateDetail;
@@ -138,9 +140,11 @@ public class NewDailerActivity extends BaseActivity {
         addBalance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(NewDailerActivity.this, TabsHeaderActivity.class);
-                intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
-                startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+                if(!BuildConfig.DISABLE_ADD_BALANCE) {
+                    Intent intent = new Intent(NewDailerActivity.this, TabsHeaderActivity.class);
+                    intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
+                    startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+                }
             }
         });
         Drawable drawable = getResources().getDrawable(R.drawable.ic_add_new_contact);

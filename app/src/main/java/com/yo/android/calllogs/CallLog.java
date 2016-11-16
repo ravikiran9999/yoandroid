@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.Helper;
@@ -304,7 +305,7 @@ public class CallLog {
             values.put(NEW, Integer.valueOf(1));
             values.put(CALLTYPE, callType);
             values.put(APP_OR_PSTN, pstnorapp);
-            if (number != null && number.contains("youser")) {
+            if (number != null && number.contains(BuildConfig.RELEASE_USER_TYPE)) {
                 values.put(APP_OR_PSTN, Calls.APP_TO_APP_CALL);
             }
             if (ci != null) {

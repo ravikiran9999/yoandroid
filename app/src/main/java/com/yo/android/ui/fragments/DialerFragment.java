@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -346,6 +347,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
      * @param action
      */
     public void onEventMainThread(String action) {
+        Log.w(TAG, "LOADING CALL LOGS AFTER ACTION "+action);
         if (action.equals(REFRESH_CALL_LOGS)) {
             loadCallLogs();
             mBalanceHelper.checkBalance(null);

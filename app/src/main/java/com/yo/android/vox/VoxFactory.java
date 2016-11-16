@@ -14,8 +14,8 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class VoxFactory {
-    private String LOGINUSER = "droid";//user4app
-    private String LOGINSECRET = "72434c4d52b3d209f99665ffe9a16fb0bad5e6c8";//"30aa498c5be84f703add8e0b1ff69fc9620e71a7";//f7c3bc1d808e04732adf679965ccc34ca7ae3441
+    private String LOGINUSER = "";
+    private String LOGINSECRET = "";
 
     @Inject
     public VoxFactory() {
@@ -49,21 +49,7 @@ public class VoxFactory {
 
     public String addSubscriber(String username, String mobile, String countryCode) {
         Map<String, Object> data = new HashMap<>();
-        data.put("PACKAGEID", "1");
-        data.put("USERNAME", username);
-        data.put("PASSWORD", "123456");
-        data.put("FULLNAME", "John Dev");
-        data.put("ADDRESS", "22-2-11,xyz");
-        data.put("EXPIRYDATE", "2019-08-27");
-        data.put("EMAILID", "test@gmail.com");
-        data.put("PHONENUMBER", mobile);
-        data.put("STATUS", "1");
-        data.put("COUNTRYCODE", countryCode);
-        data.put("MAXCALL", "1");
-        data.put("CREDIT", "0");
-        ArrayList CALLERIDARRAY = new ArrayList<String>();
-        CALLERIDARRAY.add(mobile);
-        data.put("CALLERIDARRAY", mobile);
+
         return prepareRequest("SUBSCRIBER", "ADD", data);
     }
 
