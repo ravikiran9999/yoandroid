@@ -787,9 +787,7 @@ public class Util {
         } finally {
             try {
                 if (in != null) {
-
                     in.close();
-
                 }
                 if (out != null) {
                     out.close();

@@ -150,6 +150,7 @@
         <activity
             android:name=".chat.ui.fragments.AppContactsActivity"
             android:label="@string/select_contact"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.FollowMoreTopicsActivity"
@@ -166,6 +167,7 @@
         <activity
             android:name=".chat.ui.CreateGroupActivity"
             android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
+            android:windowSoftInputMode="adjustPan"
             android:label="@string/new_group"
             android:screenOrientation="portrait" />
         <activity
