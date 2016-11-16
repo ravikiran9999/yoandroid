@@ -38,6 +38,7 @@ import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.calllogs.CallerInfo;
@@ -889,12 +890,15 @@ public class Util {
                             mToastFactory.showToast(R.string.all_busy);
                             break;
                         case 403:
-                            YODialogs.redirectToPSTN((Activity) context, new DialerFragment.CallLogClearListener() {
-                                @Override
-                                public void clear() {
-                                    mToastFactory.showToast(R.string.ringing);
-                                }
-                            });
+                            mToastFactory.showToast(R.string.unknown_error);
+                            /*if (details!=null&& details.getVoxUserName()!=null && details.getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
+                                YODialogs.redirectToPSTN((Activity) context,details, new DialerFragment.CallLogClearListener() {
+                                    @Override
+                                    public void clear() {
+
+                                    }
+                                });
+                            }*/
                             break;
                     }
                 }

@@ -154,7 +154,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callModel.setOnCall(true);
         //CallLogs Model
         mobile = getIntent().getStringExtra(CALLER_NO);
-        Log.w(TAG, "LOADING CALL LOGS AFTER ACTION onResume");
         bus.register(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
@@ -166,7 +165,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         super.onPause();
         bus.unregister(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
-        Log.w(TAG, "LOADING CALL LOGS AFTER ACTION onPause");
     }
 
     private void initViews() {
@@ -264,13 +262,11 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
-            Log.w(TAG, "LOADING CALL LOGS AFTER ACTION ");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.w(TAG, "LOADING CALL LOGS AFTER ACTION ");
-                   // bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                   // OutGoingCallActivity.this.finish();
+                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                    OutGoingCallActivity.this.finish();
                 }
             });
 

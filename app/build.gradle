@@ -28,7 +28,7 @@ android {
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "true"
-        buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+        buildConfigField "String", "RELEASE_USER_TYPE", "\"yobeta\""
         multiDexEnabled true
     }
     productFlavors {

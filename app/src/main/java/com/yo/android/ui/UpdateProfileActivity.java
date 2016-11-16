@@ -41,7 +41,7 @@ import retrofit2.Response;
  * Created by root on 19/7/16.
  */
 public class UpdateProfileActivity extends BaseActivity {
-    private static final String USER_NAME_REGX = "/\\A[a-zA-Z0-9-_ ]+\\z/";
+    private static final String USER_NAME_REGX = "^[a-zA-Z0-9 -_]*$";
     private EditText username;
     private TextView mobileNum;
     private TextView addPhoto;

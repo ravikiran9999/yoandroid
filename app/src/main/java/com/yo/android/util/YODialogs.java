@@ -16,6 +16,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.model.Popup;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
@@ -163,7 +164,7 @@ public class YODialogs {
         }
     }
 
-    public static void redirectToPSTN(final Activity activity, final DialerFragment.CallLogClearListener callLogClearListener) {
+    public static void redirectToPSTN(final Activity activity, OpponentDetails details, final DialerFragment.CallLogClearListener callLogClearListener) {
 
 
         if (activity != null) {

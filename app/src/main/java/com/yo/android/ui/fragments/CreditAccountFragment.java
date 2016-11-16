@@ -261,16 +261,13 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             showVoucherDialog();
         } else if (name.equalsIgnoreCase(getString(R.string.transfer_balance))) {
             //mToastFactory.showToast("Need to implement");
-            if(!BuildConfig.DISABLE_ADD_BALANCE) {
-                String balance = mBalanceHelper.getCurrentBalance();
-                String currencySymbol = mBalanceHelper.getCurrencySymbol();
-                Intent intent = new Intent(getActivity(), TransferBalanceSelectContactActivity.class);
-                intent.putExtra("balance", balance);
-                intent.putExtra("currencySymbol", currencySymbol);
-                startActivityForResult(intent, 11);
-            }else {
-                mToastFactory.showToast(R.string.disabled);
-            }
+            String balance = mBalanceHelper.getCurrentBalance();
+            String currencySymbol = mBalanceHelper.getCurrencySymbol();
+            Intent intent = new Intent(getActivity(), TransferBalanceSelectContactActivity.class);
+            intent.putExtra("balance", balance);
+            intent.putExtra("currencySymbol", currencySymbol);
+            startActivityForResult(intent, 11);
+
         }
     }
 
@@ -279,10 +276,13 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.btn1) {
-                if (Double.valueOf(balance) < 5.000) {
-                    addGooglePlayBalance("com.yo.products.credit.FIVE", 5f);
-                } else {
-                    mToastFactory.showToast(R.string.disabled);
+                Bundle arguments = getArguments();
+                if (arguments != null) {
+                    if (Double.valueOf(balance) < 5.000 && arguments.getBoolean(Constants.OPEN_ADD_BALANCE)) {
+                        addGooglePlayBalance("com.yo.products.credit.FIVE", 5f);
+                    } else {
+                        mToastFactory.showToast(R.string.disabled);
+                    }
                 }
             } else if (v.getId() == R.id.btn2) {
                 if (!BuildConfig.DISABLE_ADD_BALANCE) {
