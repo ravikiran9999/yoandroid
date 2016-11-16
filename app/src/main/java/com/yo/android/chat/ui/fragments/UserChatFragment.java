@@ -62,6 +62,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
@@ -125,6 +126,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ImageView cameraView;
     private int roomCreationProgress = 0;
     private String opponentImg;
+    private Contact mContact;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -148,10 +150,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
         opponentName = bundle.getString(Constants.OPPONENT_NAME);
-
         mobilenumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
+        mContact = bundle.getParcelable(Constants.CONTACT);
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));

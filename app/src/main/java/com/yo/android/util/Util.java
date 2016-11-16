@@ -41,6 +41,7 @@ import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.calllogs.CallerInfo;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
@@ -48,6 +49,7 @@ import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Contact;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
@@ -86,7 +88,8 @@ public class Util {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     private static final int SIX = 6;
-
+    @Inject
+    static ContactsSyncManager mContactsSyncManager;
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         return createNotification(context, title, body, clzz, intent, true);
@@ -839,11 +842,12 @@ public class Util {
         notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
     }
 
-    public static void showErrorMessages(final int statusCode, Context context, final ToastFactory mToastFactory) {
+    public static void showErrorMessages(final OpponentDetails details, Context context, final ToastFactory mToastFactory) {
         if (context instanceof Activity) {
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    int statusCode = details.getStatusCode();
                     switch (statusCode) {
                         case 603:
                             mToastFactory.showToast(R.string.busy);
@@ -852,6 +856,16 @@ public class Util {
                             mToastFactory.showToast(R.string.no_network);
                             break;
                         case 503:
+                            if (mContactsSyncManager != null && details != null) {
+                                Contact mContact = details.getContact();
+                                if (mContact != null) {
+                                    Log.w(Util.class.getSimpleName(), mContact.toString());
+                                } else {
+                                    Log.w(Util.class.getSimpleName(), "Contact object is null");
+                                }
+                            } else {
+                                Log.w(Util.class.getSimpleName(), "mContactsSyncManager or details object is null");
+                            }
                             mToastFactory.showToast(R.string.not_online);
                             break;
                         case 487:

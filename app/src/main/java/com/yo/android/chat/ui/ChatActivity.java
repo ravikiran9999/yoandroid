@@ -110,6 +110,7 @@ public class ChatActivity extends BaseActivity {
 
                 String contactId = contact.getId() == null ? nContact.getId() : contact.getId();
                 args.putString(Constants.OPPONENT_ID, contactId);
+                args.putParcelable(Constants.CONTACT,contact);
 
                 Util.cancelAllNotification(this);
 

@@ -35,6 +35,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.Contact;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -348,7 +349,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
-    private void handlerErrorCodes(final CallInfo call, SipCallState sipCallstate) {
+    private void handlerErrorCodes(final CallInfo call, final SipCallState sipCallstate) {
         final int statusCode = call.getLastStatusCode().swigValue();
 
         mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
@@ -397,16 +398,19 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                         break;
                 }*/
 
-
+                String phoneNumber = sipCallstate.getMobileNumber() == null ? sipCallstate.getMobileNumber() : phone;
+                Contact contact = mContactsSyncManager.getContactByVoxUserName(phoneNumber);
+                OpponentDetails details = new OpponentDetails(phoneNumber, contact, statusCode);
                 if (statusCode == 603 && !isHangup) {
                     isHangup = !isHangup;
-                    EventBus.getDefault().post(statusCode);
+                    EventBus.getDefault().post(details);
                 } else if (statusCode != 603) {
                     isHangup = false;
-                    EventBus.getDefault().post(statusCode);
+                    EventBus.getDefault().post(details);
                 } else {
                     isHangup = false;
                 }
+                callDisconnected();
             }
         });
 
@@ -531,6 +535,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     public void makeCall(String destination, Bundle options, Intent intent) {
         phone = destination;
+
         if (destination != null && !destination.startsWith("sip:")) {
             destination = "sip:" + destination;
         }

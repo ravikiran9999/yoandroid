@@ -25,6 +25,7 @@ import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.model.Contact;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
@@ -301,8 +302,8 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
             }
-        } else if(object instanceof  Integer) {
-            Util.showErrorMessages((int) object, this,mToastFactory);
+        } else if (object instanceof OpponentDetails) {
+            Util.showErrorMessages((OpponentDetails) object, this, mToastFactory);
         }
     }
 

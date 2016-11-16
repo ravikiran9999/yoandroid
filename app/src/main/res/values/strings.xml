@@ -267,4 +267,6 @@
     <string name="recent_county_code">Recent Countries/regions</string>
     <string name="all_county_code">All Countries/regions</string>
     <string name="calling">Calling...</string>
+    <string name="paid_call">Paid Call?</string>
+    <string name="calle_not_online">The YO! user you are trying is offline, do you want to make paid call?</string>
 </resources>

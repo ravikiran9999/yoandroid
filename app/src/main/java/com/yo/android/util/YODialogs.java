@@ -93,7 +93,7 @@ public class YODialogs {
                         .load(imageUrl)
                         .placeholder(R.drawable.img_placeholder)
                         .centerCrop()
-                                //Image size will be reduced 50%
+                        //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -106,7 +106,7 @@ public class YODialogs {
             tvDialogTitle.setText(title);
             tvDialogContent.setText(message);
 
-            if(!TextUtils.isEmpty(popup.getData().getLive_from()) && !TextUtils.isEmpty(popup.getData().getLive_to())) {
+            if (!TextUtils.isEmpty(popup.getData().getLive_from()) && !TextUtils.isEmpty(popup.getData().getLive_to())) {
                 String liveFromTime = popup.getData().getLive_from().substring(0, popup.getData().getLive_from().lastIndexOf("."));
                 Date liveFromDate = Util.convertUtcToGmt(liveFromTime);
                 String liveToTime = popup.getData().getLive_to().substring(0, popup.getData().getLive_to().lastIndexOf("."));
@@ -130,7 +130,7 @@ public class YODialogs {
             } else if (redirectTo.equals("AddBalance")) {
                 yesBtn.setVisibility(View.VISIBLE);
                 yesBtn.setText("ADD BALANCE");
-            } else if(redirectTo.equals("None")) {
+            } else if (redirectTo.equals("None")) {
                 yesBtn.setVisibility(View.GONE);
             }
 
@@ -138,7 +138,7 @@ public class YODialogs {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
-                    if(listener != null) {
+                    if (listener != null) {
                         listener.closePopup();
                     }
                     //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
@@ -154,13 +154,49 @@ public class YODialogs {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
-                    if(listener != null) {
+                    if (listener != null) {
                         listener.closePopup();
                     }
                     //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
                 }
             });
         }
+    }
 
+    public static void redirectToPSTN(final Activity activity, final DialerFragment.CallLogClearListener callLogClearListener) {
+
+
+        if (activity != null) {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+            LayoutInflater layoutInflater = LayoutInflater.from(activity);
+            final View view = layoutInflater.inflate(R.layout.clear_call_history, null);
+            builder.setView(view);
+
+            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+            Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    CallLog.Calls.clearCallHistory(activity);
+                    callLogClearListener.clear();
+                }
+            });
+
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+        }
     }
 }
