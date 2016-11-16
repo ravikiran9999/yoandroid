@@ -60,11 +60,12 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
             holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.chat_group));
             holder.getInviteContact().setVisibility(View.GONE);
         } else {
-            if (TextUtils.isEmpty(item.getName())) {
-                holder.getContactName().setVisibility(View.GONE);
-            } else {
-                holder.getContactName().setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(item.getName())) {
+                //holder.getContactName().setVisibility(View.VISIBLE);
                 holder.getContactName().setText(item.getName());
+
+            } else {
+                holder.getContactName().setVisibility(View.GONE);
             }
             if (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo())) {
                 holder.getContactNumber().setText(item.getPhoneNo());
@@ -125,6 +126,7 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
             }
         }
     }
+
     private void loadAvatarImage(AppRegisteredContactsViewHolder holder) {
         Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;

@@ -24,6 +24,7 @@ public class Room implements Parcelable {
     private boolean isImages;
     private String timeStamp;
     //For sorting
+    private long groupCreationTime;
     private long time;
     private String fullName;
     private String mobileNumber;
@@ -189,6 +190,14 @@ public class Room implements Parcelable {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public long getGroupCreationTime() {
+        return groupCreationTime;
+    }
+
+    public void setGroupCreationTime(long groupCreationTime) {
+        this.groupCreationTime = groupCreationTime;
     }
 
     public boolean equals(Object obj) {

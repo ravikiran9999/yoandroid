@@ -217,7 +217,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         LinearLayout linearLayout1 = new LinearLayout(context);
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
-        linearLayout1.setPadding(2,2,2,2);
+        linearLayout1.setPadding(2, 2, 2, 2);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(30, 0, 50, 0);
 

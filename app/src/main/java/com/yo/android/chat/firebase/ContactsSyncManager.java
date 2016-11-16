@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
@@ -184,7 +186,7 @@ public class ContactsSyncManager {
     public Contact getContactByVoxUserName(String voxUserName) {
         if (voxUserName != null) {
             Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
-            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + "= '" + voxUserName + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc" );
+            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + "= '" + voxUserName + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
             if (c != null && c.moveToFirst()) {
                 return ContactsSyncManager.prepareContact(c);
             }
@@ -192,10 +194,10 @@ public class ContactsSyncManager {
         return null;
     }
 
-    public Contact getContactPSTN(int countrycode,String pstnnumber) {
+    public Contact getContactPSTN(int countrycode, String pstnnumber) {
         if (pstnnumber != null) {
             Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
-            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE + "= '" + countrycode + "' and "+YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER+ " = '" + pstnnumber+"'", null,null);
+            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE + "= '" + countrycode + "' and " + YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + " = '" + pstnnumber + "'", null, null);
             if (c != null && c.moveToFirst()) {
                 Contact contact = ContactsSyncManager.prepareContact(c);
                 return contact;
@@ -208,13 +210,31 @@ public class ContactsSyncManager {
     public Contact getContactByPhoneNumber(String phoneNumber) {
         if (phoneNumber != null) {
             Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
-            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "= '" + phoneNumber + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc" );
+            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "= '" + phoneNumber + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
             if (c != null && c.moveToFirst()) {
                 return ContactsSyncManager.prepareContact(c);
             }
         }
         return null;
     }
+
+    public String getContactNameByPhoneNumber(String phoneNumber) {
+        if (phoneNumber != null) {
+            Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
+            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "= '" + phoneNumber + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
+
+            if (c != null && c.moveToFirst()) {
+                Contact contact = ContactsSyncManager.prepareContact(c);
+                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName())) {
+                    return contact.getName();
+                } else {
+                    return contact.getPhoneNo();
+                }
+            }
+        }
+        return null;
+    }
+
     public Map<String, Contact> getCachedContacts() {
         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
         Cursor c = context.getContentResolver().query(uri, PROJECTION, null, null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
