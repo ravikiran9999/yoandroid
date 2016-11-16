@@ -261,12 +261,16 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             showVoucherDialog();
         } else if (name.equalsIgnoreCase(getString(R.string.transfer_balance))) {
             //mToastFactory.showToast("Need to implement");
-            String balance = mBalanceHelper.getCurrentBalance();
-            String currencySymbol = mBalanceHelper.getCurrencySymbol();
-            Intent intent = new Intent(getActivity(), TransferBalanceSelectContactActivity.class);
-            intent.putExtra("balance", balance);
-            intent.putExtra("currencySymbol", currencySymbol);
-            startActivityForResult(intent, 11);
+            if(!BuildConfig.DISABLE_ADD_BALANCE) {
+                String balance = mBalanceHelper.getCurrentBalance();
+                String currencySymbol = mBalanceHelper.getCurrencySymbol();
+                Intent intent = new Intent(getActivity(), TransferBalanceSelectContactActivity.class);
+                intent.putExtra("balance", balance);
+                intent.putExtra("currencySymbol", currencySymbol);
+                startActivityForResult(intent, 11);
+            }else {
+                mToastFactory.showToast(R.string.disabled);
+            }
         }
     }
 

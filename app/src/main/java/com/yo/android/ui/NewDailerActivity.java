@@ -144,6 +144,8 @@ public class NewDailerActivity extends BaseActivity {
                     Intent intent = new Intent(NewDailerActivity.this, TabsHeaderActivity.class);
                     intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
                     startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+                }else {
+                    mToastFactory.showToast(R.string.disabled);
                 }
             }
         });
