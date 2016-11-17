@@ -78,6 +78,9 @@ public class GroupContactsActivity extends BaseActivity {
             getYoAppUsers();
         } else {
             groupContactsListAdapter.addItems(contactsList);
+            if(contactsList !=null) {
+                loadInAlphabeticalOrder(contactsList);
+            }
         }
 
     }
@@ -158,7 +161,6 @@ public class GroupContactsActivity extends BaseActivity {
                 contactArrayList.add(contacts.get(i));
             }
         }
-
         Intent intent = new Intent();
         intent.putParcelableArrayListExtra(Constants.SELECTED_CONTACTS, contactArrayList);
         setResult(RESULT_OK, intent);
@@ -175,6 +177,7 @@ public class GroupContactsActivity extends BaseActivity {
         Helper.displayIndex(this, layout, contactList, listView);
         groupContactsListAdapter.addItems(contactList);
         CreateGroupActivity.ContactsArrayList.addAll(contactList);
+        groupContactsListAdapter.notifyDataSetChanged();
     }
 
     @Override

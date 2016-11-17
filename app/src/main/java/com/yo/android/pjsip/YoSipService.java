@@ -183,7 +183,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 if (bundle == null) {
                     bundle = new Bundle();
                 }
-                showCallActivity(phone, bundle, intent);
+                showCallActivity(number, bundle, intent);
 
                 makeCall(number, bundle, intent);
             } else {

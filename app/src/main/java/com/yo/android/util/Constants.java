@@ -61,6 +61,9 @@ public class Constants {
     public static final String COUNTRY_CODE_PREFIX = "country_code_prefix";
     public static final String COUNTRY_CODE_FROM_SIM = "country_code_from_sim";
     public static final String COUNTRY_CODE_SELECTED = "country_code_selected";
+    public static final String CALL_RATE = "call_rate";
+
+
 
     // Firebase tables
     public static final String APP_USERS = "AppUsers";

@@ -55,6 +55,7 @@ import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.ui.fragments.DialerFragment;
+import com.yo.android.vox.BalanceHelper;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -80,6 +81,7 @@ import java.util.TimeZone;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import retrofit2.Response;
 
 /**
@@ -842,7 +844,7 @@ public class Util {
         notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
     }
 
-    public static void showErrorMessages(final OpponentDetails details, final Context context, final ToastFactory mToastFactory) {
+    public static void showErrorMessages(final EventBus bus, final OpponentDetails details, final Context context, final ToastFactory mToastFactory, final BalanceHelper mBalanceHelper, final PreferenceEndPoint mPreferenceEndPoint) {
         if (context instanceof Activity) {
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
@@ -856,17 +858,9 @@ public class Util {
                             mToastFactory.showToast(R.string.no_network);
                             break;
                         case 503:
-                            if (mContactsSyncManager != null && details != null) {
-                                Contact mContact = details.getContact();
-                                if (mContact != null) {
-                                    Log.w(Util.class.getSimpleName(), mContact.toString());
-                                } else {
-                                    Log.w(Util.class.getSimpleName(), "Contact object is null");
-                                }
-                            } else {
-                                Log.w(Util.class.getSimpleName(), "mContactsSyncManager or details object is null");
+                            if (details != null && details.getVoxUserName() != null && details.getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
+                                YODialogs.redirectToPSTN(bus, (Activity) context, details, mPreferenceEndPoint, mBalanceHelper, mToastFactory);
                             }
-                            mToastFactory.showToast(R.string.not_online);
                             break;
                         case 487:
                             //Missed call
@@ -889,15 +883,11 @@ public class Util {
                             break;
                         case 403:
                             mToastFactory.showToast(R.string.unknown_error);
-                            /*if (details!=null&& details.getVoxUserName()!=null && details.getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
-                                YODialogs.redirectToPSTN((Activity) context,details, new DialerFragment.CallLogClearListener() {
-                                    @Override
-                                    public void clear() {
-
-                                    }
-                                });
-                            }*/
                             break;
+                    }
+                    if (statusCode != 503) {
+                        bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                        ((Activity) context).finish();
                     }
                 }
             });
@@ -909,7 +899,6 @@ public class Util {
         Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
         intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);
         context.sendOrderedBroadcast(intent, null);
-
         keyEvent = new KeyEvent(KeyEvent.ACTION_UP, keyCode);
         intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
         intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);

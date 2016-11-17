@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -20,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -33,11 +33,13 @@ import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.vox.BalanceHelper;
 
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
@@ -73,6 +75,13 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
     private SipBinder sipBinder;
     private Handler mHandler = new Handler();
+
+    @Inject
+    protected BalanceHelper mBalanceHelper;
+
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -303,7 +312,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         } else if (object instanceof OpponentDetails) {
-            Util.showErrorMessages((OpponentDetails) object, this, mToastFactory);
+            Util.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory,mBalanceHelper,preferenceEndPoint);
         }
     }
 

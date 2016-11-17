@@ -2,6 +2,7 @@ package com.yo.android.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,20 +14,32 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ToastFactory;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.OpponentDetails;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
+import com.yo.android.voip.OutGoingCallActivity;
+import com.yo.android.vox.BalanceHelper;
 
 import java.util.Date;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by rajesh on 8/9/16.
  */
 public class YODialogs {
+
+
     public static void clearHistory(final Activity activity, final DialerFragment.CallLogClearListener callLogClearListener) {
 
 
@@ -164,7 +177,7 @@ public class YODialogs {
         }
     }
 
-    public static void redirectToPSTN(final Activity activity, OpponentDetails details, final DialerFragment.CallLogClearListener callLogClearListener) {
+    public static void redirectToPSTN(final EventBus bus, final Activity activity, final OpponentDetails details, PreferenceEndPoint preferenceEndPoint, BalanceHelper mBalanceHelper, final ToastFactory mToastFactory) {
 
 
         if (activity != null) {
@@ -177,7 +190,25 @@ public class YODialogs {
 
             Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
             Button noBtn = (Button) view.findViewById(R.id.no_btn);
+            TextView txtCallRate = (TextView) view.findViewById(R.id.txt_call_rate);
+            TextView txtBalance = (TextView) view.findViewById(R.id.txt_balance);
+            String callRate = preferenceEndPoint.getStringPreference(Constants.CALL_RATE, null);
 
+            txtCallRate.setText(callRate);
+            loadCurrentBalance(preferenceEndPoint, mBalanceHelper, activity, txtBalance);
+            Button addBalance = (Button) view.findViewById(R.id.add_balance);
+            addBalance.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!BuildConfig.DISABLE_ADD_BALANCE) {
+                        Intent intent = new Intent(activity, TabsHeaderActivity.class);
+                        intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
+                        activity.startActivityForResult(intent, OutGoingCallActivity.OPEN_ADD_BALANCE_RESULT);
+                    } else {
+                        mToastFactory.showToast(R.string.disabled);
+                    }
+                }
+            });
 
             final AlertDialog alertDialog = builder.create();
             alertDialog.setCancelable(false);
@@ -187,8 +218,16 @@ public class YODialogs {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
-                    CallLog.Calls.clearCallHistory(activity);
-                    callLogClearListener.clear();
+                    String stringExtra = details.getVoxUserName();
+
+                    if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
+                        try {
+                            stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
+                            SipHelper.makeCall(activity, stringExtra);
+                        } catch (StringIndexOutOfBoundsException e) {
+                        }
+                    }
+                    activity.finish();
                 }
             });
 
@@ -196,8 +235,29 @@ public class YODialogs {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
+                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                    activity.finish();
                 }
             });
+        }
+    }
+
+    private static void loadCurrentBalance(PreferenceEndPoint preferenceEndPoint, BalanceHelper mBalanceHelper, Context context, TextView txtBalance) {
+        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
+        double val = Double.parseDouble(balance.trim());
+        if (val <= 2) {
+            Util.setBigStyleNotificationForBalance(context, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
+        }
+        if (mBalanceHelper != null) {
+            if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
+                txtBalance.setText(String.format("%s%s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
+            } else {
+                txtBalance.setVisibility(View.GONE);
+            }
+        } else if (balance != null) {
+            txtBalance.setText(String.format("%s", balance));
+        } else {
+            txtBalance.setVisibility(View.GONE);
         }
     }
 }

@@ -79,6 +79,7 @@ import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.util.ReCreateService;
 import com.yo.android.util.Util;
+import com.yo.android.util.YODialogs;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -186,7 +187,7 @@ import dagger.Provides;
                 NewDailerActivity.class,
                 MainImageCropActivity.class,
                 UserChatAdapter.class,
-                Util.class
+                Util.class,
         },
         includes = {
                 AppModule.class,

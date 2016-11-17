@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -102,7 +103,12 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.create) {
-            createGroup();
+            if (!TextUtils.isEmpty(groupName.getText().toString())) {
+                createGroup();
+            } else {
+                Util.hideKeyboard(this, getCurrentFocus());
+                Toast.makeText(this, getString(R.string.enter_group_name), Toast.LENGTH_SHORT).show();
+            }
         } else if (item.getItemId() == android.R.id.home) {
             finish();
         }
@@ -111,16 +117,10 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        if (!"".equalsIgnoreCase(groupName.getText().toString())) {
-
-            mGroupName = groupName.getText().toString();
-            Intent intent = new Intent(this, GroupContactsActivity.class);
-            intent.putExtra(Constants.GROUP_NAME, mGroupName);
-            startActivityForResult(intent, REQUEST_SELECTED_CONTACTS);
-        } else {
-            Util.hideKeyboard(this, getCurrentFocus());
-            Toast.makeText(this, getString(R.string.enter_group_name), Toast.LENGTH_SHORT).show();
-        }
+        mGroupName = groupName.getText().toString();
+        Intent intent = new Intent(this, GroupContactsActivity.class);
+        intent.putExtra(Constants.GROUP_NAME, mGroupName);
+        startActivityForResult(intent, REQUEST_SELECTED_CONTACTS);
     }
 
     @Override
@@ -232,7 +232,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 }
             });
         } else {
-            Util.hideKeyboard(this,getCurrentFocus());
+            Util.hideKeyboard(this, getCurrentFocus());
             Toast.makeText(this, "Atleast one contact should be selected", Toast.LENGTH_SHORT).show();
         }
     }

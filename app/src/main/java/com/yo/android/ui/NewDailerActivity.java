@@ -420,6 +420,7 @@ public class NewDailerActivity extends BaseActivity {
             if (cName != null) {
                 countryName.setText(cName);
             }
+            preferenceEndPoint.saveStringPreference(Constants.CALL_RATE, "$" + cRate + "/" + pulse);
             txtCallRate.setText("$" + cRate + "/" + pulse);
             if (TextUtils.isEmpty(dialPadView.getDigits().getText().toString())) {
                 //TODO: Need to improve the logic

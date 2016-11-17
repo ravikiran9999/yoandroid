@@ -1,5 +1,6 @@
 package com.yo.android.voip;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
@@ -29,11 +31,13 @@ import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Util;
+import com.yo.android.vox.BalanceHelper;
 
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
 
@@ -63,6 +67,15 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private ImageView callerImageView;
 
     private SipBinder sipBinder;
+
+    @Inject
+    protected BalanceHelper mBalanceHelper;
+
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
+
+    public static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -254,7 +267,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         } else if (object instanceof OpponentDetails) {
-            Util.showErrorMessages((OpponentDetails) object, this, mToastFactory);
+            Util.showErrorMessages(bus,(OpponentDetails) object, this, mToastFactory, mBalanceHelper, preferenceEndPoint);
         }
     }
 
@@ -265,8 +278,8 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                    OutGoingCallActivity.this.finish();
+                    // bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                    // OutGoingCallActivity.this.finish();
                 }
             });
 
@@ -290,4 +303,12 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == Activity.RESULT_OK) {
+
+        }
+    }
 }

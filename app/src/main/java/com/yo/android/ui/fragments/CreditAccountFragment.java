@@ -283,6 +283,8 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                     } else {
                         mToastFactory.showToast(R.string.disabled);
                     }
+                }else{
+                    mToastFactory.showToast(R.string.disabled);
                 }
             } else if (v.getId() == R.id.btn2) {
                 if (!BuildConfig.DISABLE_ADD_BALANCE) {
