@@ -104,6 +104,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.create) {
             if (!TextUtils.isEmpty(groupName.getText().toString())) {
+                mGroupName = groupName.getText().toString();
                 createGroup();
             } else {
                 Util.hideKeyboard(this, getCurrentFocus());

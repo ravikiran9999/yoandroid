@@ -66,7 +66,10 @@ public class GroupContactsActivity extends BaseActivity {
         //setHasOptionsMenu(true);
         //groupName = getString(Constants.GROUP_NAME);
         setContentView(R.layout.fragment_yo_contacts);
-
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         listView = (ListView) findViewById(R.id.lv_app_contacts);
         textView = (TextView) findViewById(R.id.no_contacts);
@@ -77,8 +80,7 @@ public class GroupContactsActivity extends BaseActivity {
         if (contactsList.isEmpty()) {
             getYoAppUsers();
         } else {
-            groupContactsListAdapter.addItems(contactsList);
-            if(contactsList !=null) {
+            if (contactsList != null) {
                 loadInAlphabeticalOrder(contactsList);
             }
         }
