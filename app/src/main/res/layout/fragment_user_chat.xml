@@ -30,12 +30,10 @@
                 android:textStyle="bold"
                 android:visibility="invisible" />
 
-            <ListView
+            <se.emilsjolander.stickylistheaders.StickyListHeadersListView
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@null"
-                android:listSelector="@null" />
+                android:layout_height="match_parent" />
 
             <TextView
                 android:id="@+id/time_stamp_header"
@@ -47,8 +45,7 @@
                 android:padding="8dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:visibility="gone"
-                 />
+                android:visibility="gone" />
         </FrameLayout>
 
         <LinearLayout

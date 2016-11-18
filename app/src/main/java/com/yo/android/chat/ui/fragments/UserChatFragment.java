@@ -87,6 +87,7 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 import static com.yo.android.util.Util.copyFile;
 
@@ -102,7 +103,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ArrayList<ChatMessage> chatMessageArray;
     private HashMap<Integer, ArrayList<ChatMessage>> chatMessageHashMap;
     private EditText chatText;
-    private ListView listView;
+    private StickyListHeadersListView listView;
     private String opponentNumber;
     private String opponentName;
     private String opponentId;
@@ -170,7 +171,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         roomType = getArguments().getString(Constants.TYPE);
 
-        listView = (ListView) view.findViewById(R.id.listView);
+        listView = (StickyListHeadersListView) view.findViewById(R.id.listView);
         listStickeyHeader = (TextView) view.findViewById(R.id.time_stamp_header);
         listView.setDivider(null);
         listView.setDividerHeight(0);
@@ -253,12 +254,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         try {
 
             listView.setStackFromBottom(false);
+            listView.setAreHeadersSticky(false);
             listView.setOnScrollListener(new AbsListView.OnScrollListener() {
                                              @Override
                                              public void onScrollStateChanged(AbsListView view, int scrollState) {
                                                  if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                                                      listStickeyHeader.setVisibility(View.GONE);
-
                                                  } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                                                      listStickeyHeader.setVisibility(View.VISIBLE);
                                                  }
@@ -734,6 +735,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         message.setType(Constants.IMAGE);
         message.setSenderID(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         message.setImagePath(mPartyPicUri);
+        message.setTime(System.currentTimeMillis());
         userChatAdapter.UpdateItem(message);
         if (mPartyPicUri != null) {
             uploadImage(mPartyPicUri);

@@ -19,7 +19,7 @@ public class UserChatViewHolder extends AbstractViewHolder {
     private LinearLayout linearLayoutText;
     private LinearLayout ll;
     private TextView seenTimeStamp;
-    private TextView timeStampHeader;
+    //private TextView timeStampHeader;
 
     public UserChatViewHolder(View view) {
         super(view);
@@ -28,7 +28,7 @@ public class UserChatViewHolder extends AbstractViewHolder {
         seenTimeStamp = (TextView) view.findViewById(R.id.delivered_time_stamp);
         linearLayout = (LinearLayout) view.findViewById(R.id.linear);
         ll = (LinearLayout) view.findViewById(R.id.linear_layout);
-        timeStampHeader = (TextView) view.findViewById(R.id.time_stamp_header);
+        //timeStampHeader = (TextView) view.findViewById(R.id.time_stamp_header);
         //contactNumber = (TextView) view.findViewById(R.id.tv_phone_number);
 
     }
@@ -53,7 +53,7 @@ public class UserChatViewHolder extends AbstractViewHolder {
         return ll;
     }
 
-    public TextView getTimeStampHeader() {
-        return timeStampHeader;
-    }
+//    public TextView getTimeStampHeader() {
+//        return timeStampHeader;
+//    }
 }
