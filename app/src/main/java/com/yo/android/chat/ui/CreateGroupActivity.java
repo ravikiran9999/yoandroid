@@ -118,6 +118,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
             intent.putExtra(Constants.GROUP_NAME, mGroupName);
             startActivityForResult(intent, REQUEST_SELECTED_CONTACTS);
         } else {
+            Util.hideKeyboard(this, getCurrentFocus());
             Toast.makeText(this, getString(R.string.enter_group_name), Toast.LENGTH_SHORT).show();
         }
     }
@@ -231,6 +232,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 }
             });
         } else {
+            Util.hideKeyboard(this,getCurrentFocus());
             Toast.makeText(this, "Atleast one contact should be selected", Toast.LENGTH_SHORT).show();
         }
     }
