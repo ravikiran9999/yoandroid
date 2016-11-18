@@ -312,6 +312,8 @@ public class OTPFragment extends BaseFragment {
             if (t instanceof UnknownHostException) {
                 mLog.e("Magazine", "Please check network settings");
             }
+            dismissProgressDialog();
+            navigation();
         }
 
     };

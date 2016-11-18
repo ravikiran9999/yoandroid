@@ -303,7 +303,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
                 @Override
                 public void onFailure(Call<List<Articles>> call, Throwable t) {
+                    if (mProgress != null) {
+                        mProgress.setVisibility(View.GONE);
+                    }
 
+                    mToastFactory.showToast("No articles available");
                 }
             });
         }
