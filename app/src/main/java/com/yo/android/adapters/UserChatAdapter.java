@@ -112,14 +112,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     @Override
     public void bindView(int position, UserChatViewHolder holder, ChatMessage item) {
         try {
-            String headerTimeStamp = getItem(position).getStickeyHeader();
-            String headerText = "" + headerTimeStamp;
-            if (position == 0 || !getItem(position).getStickeyHeader().equalsIgnoreCase(getItem(position - 1).getStickeyHeader())) {
-                holder.getTimeStampHeader().setVisibility(View.VISIBLE);
-                holder.getTimeStampHeader().setText(headerText);
-            } else {
-                holder.getTimeStampHeader().setVisibility(View.GONE);
-            }
             if (userId.equals(item.getSenderID())) {
                 holder.getLinearLayout().setGravity(Gravity.END);
                 if (item.getType().equals(Constants.TEXT)) {
@@ -324,7 +316,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     public View getHeaderView(int position, View convertView, ViewGroup parent) {
         HeaderViewHolder holder;
         if (convertView == null) {
-
             convertView = inflater.inflate(R.layout.stickey_timestamp_header, parent, false);
             holder = new HeaderViewHolder(convertView);
             convertView.setTag(holder);
@@ -334,7 +325,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         //set header text as first char in name
         String headerTimeStamp = getItem(position).getStickeyHeader();
         String headerText = "" + headerTimeStamp;
-        holder.text.setText(headerText);
+        holder.text.setText(headerText.toUpperCase());
         return convertView;
     }
 
