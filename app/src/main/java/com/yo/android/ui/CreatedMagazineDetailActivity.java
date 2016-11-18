@@ -314,7 +314,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                             Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                             intent.putExtra("Title", data.getTitle());
                             intent.putExtra("Image", data.getUrl());
-                            context.startActivity(intent);
+                            intent.putExtra("Article", data);
+                            intent.putExtra("Position", position);
+                            startActivityForResult(intent, 500);
                         }
                     });
 
@@ -342,7 +344,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    startActivityForResult(intent, 500);
                 }
             });
 
@@ -378,7 +382,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                         Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                         intent.putExtra("Title", data.getTitle());
                         intent.putExtra("Image", data.getUrl());
-                        context.startActivity(intent);
+                        intent.putExtra("Article", data);
+                        intent.putExtra("Position", position);
+                        startActivityForResult(intent, 500);
                     }
                 });
 
@@ -429,6 +435,13 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 }
 
             }
+            notifyDataSetChanged();
+        }
+
+        public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
+                items.remove(position);
+                items.add(position, articles);
+
             notifyDataSetChanged();
         }
     }
@@ -524,6 +537,15 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 int pos = data.getIntExtra("Pos", 0);
                 boolean isTopicFollowing = Boolean.valueOf(topic.getTopicFollowing());
                 myBaseAdapter.updateTopic(isTopicFollowing, topic, pos);
+            }
+
+        } else if (requestCode == 500 && resultCode == RESULT_OK) {
+            if (data != null) {
+                Articles articles = data.getParcelableExtra("UpdatedArticle");
+                int pos = data.getIntExtra("Pos", 0);
+                String articlePlace = data.getStringExtra("ArticlePlace");
+                boolean isLiked = Boolean.valueOf(articles.getLiked());
+                myBaseAdapter.updateArticle(isLiked, articles, pos, articlePlace);
             }
 
         }

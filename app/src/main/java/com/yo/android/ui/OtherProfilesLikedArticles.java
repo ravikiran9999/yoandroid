@@ -255,18 +255,19 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             }
 
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if ("true".equals(data.getLiked())) {
+            if (Boolean.valueOf(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
             }
 
-            holder.magazineLike.setChecked(data.isChecked());
+            holder.magazineLike.setText("");
+            holder.magazineLike.setChecked(Boolean.valueOf(data.getLiked()));
 
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    data.setIsChecked(isChecked);
+                    //data.setIsChecked(isChecked);
                     if (isChecked) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -341,7 +342,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                             Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                             intent.putExtra("Title", data.getTitle());
                             intent.putExtra("Image", data.getUrl());
-                            context.startActivity(intent);
+                            intent.putExtra("Article", data);
+                            intent.putExtra("Position", position);
+                            startActivityForResult(intent, 500);
                         }
                     });
 
@@ -369,7 +372,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    startActivityForResult(intent, 500);
                 }
             });
 
@@ -527,7 +532,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                         intent.putExtra("Title", data.getTitle());
                         intent.putExtra("Image", data.getUrl());
-                        context.startActivity(intent);
+                        intent.putExtra("Article", data);
+                        intent.putExtra("Position", position);
+                        startActivityForResult(intent, 500);
                     }
                 });
             }
@@ -616,6 +623,13 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             }
             notifyDataSetChanged();
         }
+
+        public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
+            items.remove(position);
+            items.add(position, articles);
+
+            notifyDataSetChanged();
+        }
     }
 
     private static class ViewHolder {
@@ -647,6 +661,15 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 int pos = data.getIntExtra("Pos", 0);
                 boolean isTopicFollowing = Boolean.valueOf(topic.getTopicFollowing());
                 myBaseAdapter.updateTopic(isTopicFollowing, topic, pos);
+            }
+
+        } else if (requestCode == 500 && resultCode == getActivity().RESULT_OK) {
+            if (data != null) {
+                Articles articles = data.getParcelableExtra("UpdatedArticle");
+                int pos = data.getIntExtra("Pos", 0);
+                String articlePlace = data.getStringExtra("ArticlePlace");
+                boolean isLiked = Boolean.valueOf(articles.getLiked());
+                myBaseAdapter.updateArticle(isLiked, articles, pos, articlePlace);
             }
 
         }
