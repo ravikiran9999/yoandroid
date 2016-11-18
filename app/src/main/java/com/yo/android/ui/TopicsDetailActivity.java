@@ -157,7 +157,7 @@ public class TopicsDetailActivity extends BaseActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             View layout = convertView;
             if (layout == null) {
@@ -288,7 +288,9 @@ public class TopicsDetailActivity extends BaseActivity {
                             Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                             intent.putExtra("Title", data.getTitle());
                             intent.putExtra("Image", data.getUrl());
-                            context.startActivity(intent);
+                            intent.putExtra("Article", data);
+                            intent.putExtra("Position", position);
+                            startActivityForResult(intent, 500);
                         }
                     });
 
@@ -316,7 +318,9 @@ public class TopicsDetailActivity extends BaseActivity {
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    startActivityForResult(intent, 500);
                 }
             });
 
@@ -406,7 +410,9 @@ public class TopicsDetailActivity extends BaseActivity {
                         Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                         intent.putExtra("Title", data.getTitle());
                         intent.putExtra("Image", data.getUrl());
-                        context.startActivity(intent);
+                        intent.putExtra("Article", data);
+                        intent.putExtra("Position", position);
+                        startActivityForResult(intent, 500);
                     }
                 });
             }
@@ -499,6 +505,13 @@ public class TopicsDetailActivity extends BaseActivity {
             if (!((BaseActivity)context).hasDestroyed()) {
                 notifyDataSetChanged();
             }
+        }
+
+        public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
+            items.remove(position);
+            items.add(position, articles);
+
+            notifyDataSetChanged();
         }
     }
 
@@ -664,5 +677,21 @@ public class TopicsDetailActivity extends BaseActivity {
         finish();
 
         super.onBackPressed();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 500 && resultCode == RESULT_OK) {
+            if (data != null) {
+                Articles articles = data.getParcelableExtra("UpdatedArticle");
+                int pos = data.getIntExtra("Pos", 0);
+                String articlePlace = data.getStringExtra("ArticlePlace");
+                boolean isLiked = Boolean.valueOf(articles.getLiked());
+                myBaseAdapter.updateArticle(isLiked, articles, pos, articlePlace);
+            }
+
+        }
     }
 }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,6 +118,17 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 int pos = data.getIntExtra("Pos", 0);
                 boolean isTopicFollowing = Boolean.valueOf(topic.getTopicFollowing());
                 myBaseAdapter.updateTopic(isTopicFollowing, topic, pos);
+            }
+
+        } else if (requestCode == 500 && resultCode == getActivity().RESULT_OK) {
+            if (data != null) {
+                Articles articles = data.getParcelableExtra("UpdatedArticle");
+                int pos = data.getIntExtra("Pos", 0);
+                String articlePlace = data.getStringExtra("ArticlePlace");
+                boolean isLiked = Boolean.valueOf(articles.getLiked());
+                myBaseAdapter.updateArticle(isLiked, articles, pos, articlePlace);
+
+                Log.d("FlipArticlesFragment", "Title and liked " + articles.getTitle() + " " + articles.getLiked());
             }
 
         }
@@ -291,7 +303,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
                 @Override
                 public void onFailure(Call<List<Articles>> call, Throwable t) {
+                    if (mProgress != null) {
+                        mProgress.setVisibility(View.GONE);
+                    }
 
+                    mToastFactory.showToast("No articles available");
                 }
             });
         }

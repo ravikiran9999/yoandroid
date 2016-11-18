@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,8 @@ import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
 import com.yo.android.util.Util;
+
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -207,6 +210,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (data == null) {
             return layout;
         }
+        //final int pos = position + 2;
         if(holder.magazineLike != null) {
             holder.magazineLike.setTag(position);
         }
@@ -225,24 +229,29 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(holder.magazineLike != null) {
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if ("true".equals(data.getLiked())) {
+            if (Boolean.valueOf(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
             }
 
-            holder.magazineLike.setChecked(data.isChecked());
+            Log.d("MagazineBaseAdapter", "Title and liked " + data.getTitle() + " " + Boolean.valueOf(data.getLiked()));
+            holder.magazineLike.setText("");
+            holder.magazineLike.setChecked(Boolean.valueOf(data.getLiked()));
 
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    data.setIsChecked(isChecked);
+                    //data.setIsChecked(isChecked);
+                    Log.d("MagazineBaseAdapter", "Title and liked... " + data.getTitle() + " " + Boolean.valueOf(data.getLiked()));
+
                     if (isChecked) {
+                        ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                                ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 if (!((BaseActivity)context).hasDestroyed()) {
@@ -270,6 +279,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 mToastFactory.showToast("Error while liking article " + data.getTitle());
                                 data.setIsChecked(false);
                                 data.setLiked("false");
@@ -292,10 +302,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             }
                         });
                     } else {
+                        ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 if (OtherProfilesLikedArticles.getListener() != null) {
@@ -324,6 +336,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -367,7 +380,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                             intent.putExtra("Title", data.getTitle());
                             intent.putExtra("Image", data.getUrl());
-                            context.startActivity(intent);
+                            intent.putExtra("Article", data);
+                            intent.putExtra("Position", position);
+                            magazineFlipArticlesFragment.startActivityForResult(intent, 500);
                         }
                     });
         }
@@ -397,7 +412,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
                 }
             });
         }
@@ -468,7 +485,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
                 }
             });
         }
@@ -496,11 +515,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(allArticles.size()>=1) {
             Articles firstData = getItem(0);
+            //int posTop = position;
             populateTopArticle(layout, holder, firstData, position);
         }
 
         if(allArticles.size()>=2) {
             Articles secondData = secondArticle;
+            //int posLeft = position + 1;
             populateLeftArticle(holder, secondData, position);
         }
         else {
@@ -509,6 +530,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(allArticles.size()>=3) {
             Articles thirdData = thirdArticle;
+            //int posRight = position + 2;
             populateRightArticle(holder, thirdData, position);
         }
         else {
@@ -791,6 +813,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
     private void populateTopArticle(View layout, ViewHolder holder, final Articles data, final int position) {
+        Log.d("ArticlesBaseAdapter", "In populateTopArticle");
         if(holder.magazineLikeTop != null) {
             holder.magazineLikeTop.setTag(position);
         }
@@ -802,23 +825,26 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(holder.magazineLikeTop != null) {
             holder.magazineLikeTop.setOnCheckedChangeListener(null);
-            if ("true".equals(data.getLiked())) {
+            if (Boolean.valueOf(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
             }
 
-            holder.magazineLikeTop.setChecked(data.isChecked());
+            holder.magazineLikeTop.setText("");
+            holder.magazineLikeTop.setChecked(Boolean.valueOf(data.getLiked()));
 
             holder.magazineLikeTop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    data.setIsChecked(isChecked);
+                    //data.setIsChecked(isChecked);
                     if (isChecked) {
+                        ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
 
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -847,6 +873,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 mToastFactory.showToast("Error while liking article " + data.getTitle());
                                 data.setIsChecked(false);
                                 data.setLiked("false");
@@ -869,10 +896,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             }
                         });
                     } else {
+                        ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 if (OtherProfilesLikedArticles.getListener() != null) {
@@ -901,6 +930,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -951,7 +981,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
                 }
             });
         }
@@ -1038,6 +1070,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
     private void populateLeftArticle(ViewHolder holder, final Articles data, final int position) {
+        Log.d("ArticlesBaseAdapter", "In populateLeftArticle");
         if(holder.magazineLikeLeft != null) {
             holder.magazineLikeLeft.setVisibility(View.VISIBLE);
             holder.magazineLikeLeft.setTag(position);
@@ -1053,31 +1086,36 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    intent.putExtra("ArticlePlacement", "left");
+                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
                 }
             });
         }
 
         if(holder.magazineLikeLeft != null) {
             holder.magazineLikeLeft.setOnCheckedChangeListener(null);
-            if ("true".equals(data.getLiked())) {
+            if (Boolean.valueOf(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
             }
 
-            holder.magazineLikeLeft.setChecked(data.isChecked());
+            holder.magazineLikeLeft.setText("");
+            holder.magazineLikeLeft.setChecked(Boolean.valueOf(data.getLiked()));
 
             holder.magazineLikeLeft.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    data.setIsChecked(isChecked);
+                    //data.setIsChecked(isChecked);
                     if (isChecked) {
+                        ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                                ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 if (!((BaseActivity) context).hasDestroyed()) {
@@ -1105,6 +1143,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 mToastFactory.showToast("Error while liking article " + data.getTitle());
                                 data.setIsChecked(false);
                                 data.setLiked("false");
@@ -1127,10 +1166,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             }
                         });
                     } else {
+                        ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 if (OtherProfilesLikedArticles.getListener() != null) {
@@ -1159,6 +1200,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -1209,7 +1251,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    intent.putExtra("ArticlePlacement", "left");
+                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
                 }
             });
         }
@@ -1310,6 +1355,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
     private void populateRightArticle(ViewHolder holder, final Articles data, final int position) {
+        Log.d("ArticlesBaseAdapter", "In populateRightArticle");
         if(holder.magazineLikeRight != null) {
             holder.magazineLikeRight.setVisibility(View.VISIBLE);
             holder.magazineLikeRight.setTag(position);
@@ -1325,31 +1371,36 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    intent.putExtra("ArticlePlacement", "right");
+                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
                 }
             });
         }
 
         if(holder.magazineLikeRight != null) {
             holder.magazineLikeRight.setOnCheckedChangeListener(null);
-            if ("true".equals(data.getLiked())) {
+            if (Boolean.valueOf(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
             }
 
-            holder.magazineLikeRight.setChecked(data.isChecked());
+            holder.magazineLikeRight.setText("");
+            holder.magazineLikeRight.setChecked(Boolean.valueOf(data.getLiked()));
 
             holder.magazineLikeRight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    data.setIsChecked(isChecked);
+                    //data.setIsChecked(isChecked);
                     if (isChecked) {
+                        ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                                ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 if (!((BaseActivity) context).hasDestroyed()) {
@@ -1377,6 +1428,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 mToastFactory.showToast("Error while liking article " + data.getTitle());
                                 data.setIsChecked(false);
                                 data.setLiked("false");
@@ -1399,10 +1451,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             }
                         });
                     } else {
+                        ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 if (OtherProfilesLikedArticles.getListener() != null) {
@@ -1431,6 +1485,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
                                 Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -1481,7 +1536,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
                     intent.putExtra("Title", data.getTitle());
                     intent.putExtra("Image", data.getUrl());
-                    context.startActivity(intent);
+                    intent.putExtra("Article", data);
+                    intent.putExtra("Position", position);
+                    intent.putExtra("ArticlePlacement", "right");
+                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
                 }
             });
         }
@@ -1732,6 +1790,33 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             }
 
         }
+        notifyDataSetChanged();
+    }
+
+    public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
+        Log.d("ArticlesBaseAdapter", "The position in updateArticle " + position);
+        if(TextUtils.isEmpty(articlePlace)) {
+            items.remove(position);
+            items.add(position, articles);
+        } else if("left".equals(articlePlace)) {
+            secondArticle = articles;
+        } else if("right".equals(articlePlace)) {
+            thirdArticle = articles;
+        }
+
+        Log.d("ArticlesBaseAdapter", "The items in updateArticle after add " + items.get(position).getTitle() + " position " + position + " liked " + items.get(position).getLiked());
+
+        /*for (ListIterator<Articles> it = items.listIterator(); it.hasNext();) {
+            Articles top = it.next();
+            if(!TextUtils.isEmpty(top.getTitle()) && top.getTitle().equals(articles.getTitle())) {
+                if(isLiked) {
+                    top.setLiked("true");
+                } else {
+                    top.setLiked("false");
+                }
+            }
+
+        }*/
         notifyDataSetChanged();
     }
 
