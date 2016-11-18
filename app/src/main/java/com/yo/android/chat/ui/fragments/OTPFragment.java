@@ -38,6 +38,7 @@ import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
 
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Random;
@@ -213,7 +214,11 @@ public class OTPFragment extends BaseFragment {
             @Override
             public void onFailure(Call<OTPResponse> call, Throwable t) {
                 dismissProgressDialog();
-                mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+                if (!mHelper.isConnected() || t instanceof SocketTimeoutException) {
+                    mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+                } else {
+                    mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+                }
             }
         });
     }
@@ -249,7 +254,7 @@ public class OTPFragment extends BaseFragment {
     }
 
     private void finishAndNavigateToHome() {
-         //contactsSyncManager.syncContacts();
+        //contactsSyncManager.syncContacts();
         //
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -295,7 +300,7 @@ public class OTPFragment extends BaseFragment {
             dismissProgressDialog();
 
             if (response.body() != null && !response.body().isEmpty()) {
-                if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
+                if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
                     preferenceEndPoint.removePreference("cached_magazines");
                 }
                 preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
@@ -328,7 +333,7 @@ public class OTPFragment extends BaseFragment {
             dismissProgressDialog();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-        } else if(!balanceAdded) {
+        } else if (!balanceAdded) {
             preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, false);
             preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
             preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);

@@ -90,6 +90,7 @@ public class Helper {
         final List<String> indexList = new ArrayList<String>(mapIndex.keySet());
         AlphabetAdapter adapter = new AlphabetAdapter(context, indexList);
         indexLayout.setAdapter(adapter);
+
         indexLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

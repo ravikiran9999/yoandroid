@@ -279,7 +279,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 Bundle arguments = getArguments();
                 if (arguments != null) {
                     if (Double.valueOf(balance) < 5.000 && arguments.getBoolean(Constants.OPEN_ADD_BALANCE)) {
-                        addGooglePlayBalance("com.yo.products.credit.FIVE", 5f);
+                        addGooglePlayBalance("com.yo.inproducts.credit.FIVE", 5f);
                     } else {
                         mToastFactory.showToast(R.string.disabled);
                     }
@@ -288,7 +288,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 }
             } else if (v.getId() == R.id.btn2) {
                 if (!BuildConfig.DISABLE_ADD_BALANCE) {
-                    addGooglePlayBalance("com.yo.products.credit.TEN", 10f);
+                    addGooglePlayBalance("com.yo.inproducts.credit.TEN", 10f);
                 } else {
                     mToastFactory.showToast(R.string.disabled);
 
@@ -296,7 +296,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
             } else if (v.getId() == R.id.btn3) {
                 if (!BuildConfig.DISABLE_ADD_BALANCE) {
-                    addGooglePlayBalance("com.yo.products.credit.FIFTEEN", 15f);
+                    addGooglePlayBalance("com.yo.inproducts.credit.FIFTEEN", 15f);
                 } else {
                     mToastFactory.showToast(R.string.disabled);
                 }

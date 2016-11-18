@@ -924,10 +924,17 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     protected synchronized void startDefaultRingtone() {
         try {
-            ringtone = RingtoneManager.getRingtone(this, Uri.parse(mediaManager.getRingtone()));
-            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
-            mAudioManager.setRingerMode(AudioManager.STREAM_RING);
-            ringtone.play();
+            try {
+                mRingTone = MediaPlayer.create(this, Uri.parse("file:///android_asset/calling.mp3"));
+                mRingTone.setLooping(true);
+                int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+                mAudioManager.setSpeakerphoneOn(false);
+                mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+                mRingTone.setVolume(volume, volume);
+                mRingTone.start();
+            } catch (Exception exc) {
+                Logger.warn("Error while trying to play ringtone!");
+            }
         } catch (Exception exc) {
             Logger.warn("Error while trying to play ringtone!");
         }

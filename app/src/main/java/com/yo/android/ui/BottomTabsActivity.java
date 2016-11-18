@@ -208,9 +208,7 @@ public class BottomTabsActivity extends BaseActivity {
         SyncUtils.createSyncAccount(this, preferenceEndPoint);
         mContactSyncHelper.checkContacts();
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
-
         EventBus.getDefault().register(this);
-
         List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
         if (notificationList.size() == 1) {
             Intent intent1 = getIntent();

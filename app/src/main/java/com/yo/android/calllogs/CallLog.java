@@ -10,35 +10,22 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.chat.firebase.ContactsSyncManager;
-import com.yo.android.di.Injector;
 import com.yo.android.helpers.Helper;
-import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.provider.YoAppContactContract;
-import com.yo.android.util.Constants;
 import com.yo.android.util.TimeZoneUtils;
 import com.yo.android.util.Util;
 
-import org.apache.http.ParseException;
-
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * The CallLog provider contains information about placed and received calls.
@@ -359,7 +346,7 @@ public class CallLog {
             final ContentResolver resolver = context.getContentResolver();
             ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
 
-            HashMap<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
+            LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
             Cursor c = null;
             try {
                 c = resolver.query(
@@ -416,7 +403,7 @@ public class CallLog {
             final ContentResolver resolver = context.getContentResolver();
             ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
             ;
-            HashMap<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
+            LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
 
             Cursor c = null;
             try {
@@ -473,7 +460,7 @@ public class CallLog {
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getAppToAppCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
             ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<>();
-            Map<String, List<CallLogsResult>> hashMap = new HashMap<String, List<CallLogsResult>>();
+            LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
             Cursor c = null;
             try {
                 c = resolver.query(

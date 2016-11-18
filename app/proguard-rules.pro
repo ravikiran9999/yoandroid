@@ -17,6 +17,18 @@
 #}
 -keepattributes Signature
 
+-dontwarn com.squareup.okhttp.internal.huc.**
+-dontwarn com.squareup.okhttp.**
+-dontwarn com.squareup.okhttp3.**
+-dontwarn okio.**
+-dontwarn retrofit2.**
+-dontwarn org.codehaus.mojo.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+-keepattributes *Annotation*
+
+
 # This rule will properly ProGuard all the model classes in
 # the package com.yourcompany.models. Modify to fit the structure
 # of your app.

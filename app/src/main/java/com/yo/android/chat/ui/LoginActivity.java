@@ -39,6 +39,7 @@ import com.yo.android.vox.VoxFactory;
 
 import org.angmarch.views.NiceSpinner;
 
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -98,7 +99,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                 if (user != null) {
                     mLog.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
-                   // mLog.d(TAG, "onAuthStateChanged:signed_out");
+                    // mLog.d(TAG, "onAuthStateChanged:signed_out");
                     firebaseAuth.signOut();
                     if (mAuthListener != null) {
                         mAuth.removeAuthStateListener(mAuthListener);
@@ -200,7 +201,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         UserDetails userDetails = voxFactory.newAddSubscriber(yoUser, yoUser);
         //Debug
         String action = voxFactory.addSubscriber(yoUser, phoneNumber, countryCode);
-      //  mLog.e(TAG, "Request for adding vox api: %s", action);
+        //  mLog.e(TAG, "Request for adding vox api: %s", action);
             /*voxService.getData(userDetails).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -253,6 +254,11 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
 
             @Override
             public void onFailure(Call<Response> call, Throwable t) {
+                if (!mHelper.isConnected() || t instanceof SocketTimeoutException) {
+                    mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+                } else {
+                    mToastFactory.showToast(t.getLocalizedMessage());
+                }
                 dismissProgressDialog();
             }
         });
