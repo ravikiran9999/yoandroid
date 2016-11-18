@@ -735,6 +735,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         message.setType(Constants.IMAGE);
         message.setSenderID(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         message.setImagePath(mPartyPicUri);
+        message.setTime(System.currentTimeMillis());
         userChatAdapter.UpdateItem(message);
         if (mPartyPicUri != null) {
             uploadImage(mPartyPicUri);
