@@ -1,23 +1,29 @@
 package com.yo.android.ui;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.helpers.Helper;
@@ -37,13 +43,13 @@ public class ShowPhotoActivity extends BaseActivity {
     @Bind(R.id.image_open)
     protected ImageView imageOpen;
 
-    @Bind(R.id.image_progress)
-    protected ProgressBar mProgress;
-
     private PhotoViewAttacher mAttacher;
 
     @Bind(R.id.loadingFailed)
     protected TextView loadingFailed;
+
+    @Bind(R.id.image_progress)
+    protected ProgressBar progressBar;
 
 
     @Override
@@ -54,88 +60,84 @@ public class ShowPhotoActivity extends BaseActivity {
         getSupportActionBar().setTitle("Photo Preview ");
         enableBack();
         mAttacher = new PhotoViewAttacher(imageOpen);
-        imageOpen.setVisibility(View.GONE);
-        mProgress.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         if (getIntent() != null && getIntent().hasExtra(Constants.IMAGE)) {
             String imagePath = getIntent().getStringExtra(Constants.IMAGE);
-            prepareImage(imagePath, imageOpen);
+            getImageHeightAndWidth(imagePath, imageOpen);
         }
-
-
     }
-    private void getImageHeightAndWidth(final File file, ImageView imageView) {
-        int maxWidth = 800;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        int height = options.outHeight;
-        int width = options.outWidth;
-        float ratio = (float) width / maxWidth;
-        width = maxWidth;
-        height = (int) (height / ratio);
-        Glide.with(this)
-                .load(file)
-                .override(width, height)
-                .dontAnimate()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageView);
-    }
-    public void prepareImage(String imagePath, final ImageView imageOpen) {
-        /*File file = new File(imagePath);
-        File newFile = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
-        if (newFile.exists()) {
-            Glide.with(this)
-                    .load(file)
-                    .dontAnimate()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imageOpen);
-            imageOpen.setVisibility(View.VISIBLE);
-        } else {*/
-            try {
-                // Create a storage reference from our app
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
-                StorageReference imageRef = storageRef.child(imagePath);
-                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.with(ShowPhotoActivity.this)
-                                .load(uri)
-                                .into(imageOpen, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        imageOpen.setVisibility(View.VISIBLE);
-                                        mAttacher.update();
-                                    }
 
-                                    @Override
-                                    public void onError() {
-                                        // Handle any errors
-                                        if (mProgress != null) {
-                                            mProgress.setVisibility(View.GONE);
-                                        }
-                                        if (loadingFailed != null) {
-                                            loadingFailed.setVisibility(View.VISIBLE);
-                                        }
-
-                                    }
-                                });
-
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-
-            } catch (Exception e) {
-                e.printStackTrace();
+    private void getImageHeightAndWidth(String imageUrl, final ImageView imageView) {
+        final Callback loadedCallback = new Callback() {
+            @Override
+            public void onSuccess() {
+                progressBar.setVisibility(View.GONE);
             }
-        //}
+
+            @Override
+            public void onError() {
+                progressBar.setVisibility(View.GONE);
+            }
+        };
+        Picasso.Builder builder = new Picasso.Builder(this);
+        builder.listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                exception.printStackTrace();
+            }
+        });
+        if (imageUrl.contains("storage")) {
+            builder.build()
+                    .load(new File(imageUrl))
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                            float density = displayMetrics.density;
+                            int width = displayMetrics.widthPixels;
+                            int height = displayMetrics.heightPixels;
+                            imageView.getLayoutParams().width = width > Math.round(bitmap.getWidth() * density) ? Math.round(bitmap.getWidth() * density) : width;
+                            imageView.getLayoutParams().height = height > Math.round(bitmap.getHeight() * density) ? Math.round(bitmap.getHeight() * density) : height;
+                            imageView.setImageBitmap(bitmap);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });
+        } else {
+            builder.build()
+                    .load(imageUrl)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                            float density = displayMetrics.density;
+                            int width = displayMetrics.widthPixels;
+                            int height = displayMetrics.heightPixels;
+                            imageView.getLayoutParams().width = width > Math.round(bitmap.getWidth() * density) ? Math.round(bitmap.getWidth() * density) : width;
+                            imageView.getLayoutParams().height = height > Math.round(bitmap.getHeight() * density) ? Math.round(bitmap.getHeight() * density) : height;
+                            imageView.setImageBitmap(bitmap);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });
+        }
+        imageOpen.setVisibility(View.VISIBLE);
     }
 
     @Override
