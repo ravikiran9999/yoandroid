@@ -9,6 +9,6 @@
         android:layout_height="match_parent"
         android:id="@+id/flip_view"
         flipview:orientation="vertical"
-        flipview:overFlipMode="glow" />
+        flipview:overFlipMode="rubber_band" />
 
 </FrameLayout>

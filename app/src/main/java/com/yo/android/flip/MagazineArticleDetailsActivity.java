@@ -89,99 +89,101 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         });
 
         magazineLike.setOnCheckedChangeListener(null);
-        if ("true".equals(data.getLiked())) {
-            data.setIsChecked(true);
-        } else {
-            data.setIsChecked(false);
-        }
-
-        magazineLike.setChecked(data.isChecked());
-
-        magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                data.setIsChecked(isChecked);
-                if (isChecked) {
-                    showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            dismissProgressDialog();
-
-                            data.setIsChecked(true);
-                            data.setLiked("true");
-                            /*if (!((BaseActivity) context).hasDestroyed()) {
-                                notifyDataSetChanged();
-                            }*/
-                            mToastFactory.showToast("You have liked the article " + data.getTitle());
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            dismissProgressDialog();
-                            Toast.makeText(MagazineArticleDetailsActivity.this, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                            data.setIsChecked(false);
-                            data.setLiked("false");
-                            /*if (!((BaseActivity) context).hasDestroyed()) {
-                                notifyDataSetChanged();
-                            }*/
-                        }
-                    });
-                } else {
-                    showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            dismissProgressDialog();
-                            data.setIsChecked(false);
-                            data.setLiked("false");
-                            /*if (!((BaseActivity) context).hasDestroyed()) {
-                                notifyDataSetChanged();
-                            }*/
-                            mToastFactory.showToast("You have unliked the article " + data.getTitle());
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            dismissProgressDialog();
-                            Toast.makeText(MagazineArticleDetailsActivity.this, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                            data.setIsChecked(true);
-                            data.setLiked("true");
-                            /*if (!((BaseActivity) context).hasDestroyed()) {
-                                notifyDataSetChanged();
-                            }*/
-                        }
-                    });
-                }
+        if(data != null) {
+            if ("true".equals(data.getLiked())) {
+                data.setIsChecked(true);
+            } else {
+                data.setIsChecked(false);
             }
-        });
 
-        if(magazineAdd != null) {
-            ImageView add = magazineAdd;
-            add.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(MagazineArticleDetailsActivity.this, CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
-                }
-            });
-        }
+            magazineLike.setChecked(data.isChecked());
 
-        if(magazineShare != null) {
-            ImageView share = magazineShare;
-            share.setOnClickListener(new View.OnClickListener() {
+            magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    data.setIsChecked(isChecked);
+                    if (isChecked) {
+                        showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
+
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                            /*if (!((BaseActivity) context).hasDestroyed()) {
+                                notifyDataSetChanged();
+                            }*/
+                                mToastFactory.showToast("You have liked the article " + data.getTitle());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                dismissProgressDialog();
+                                Toast.makeText(MagazineArticleDetailsActivity.this, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+                            /*if (!((BaseActivity) context).hasDestroyed()) {
+                                notifyDataSetChanged();
+                            }*/
+                            }
+                        });
                     } else {
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                        showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+                            /*if (!((BaseActivity) context).hasDestroyed()) {
+                                notifyDataSetChanged();
+                            }*/
+                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                dismissProgressDialog();
+                                Toast.makeText(MagazineArticleDetailsActivity.this, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                            /*if (!((BaseActivity) context).hasDestroyed()) {
+                                notifyDataSetChanged();
+                            }*/
+                            }
+                        });
                     }
                 }
             });
+
+            if (magazineAdd != null) {
+                ImageView add = magazineAdd;
+                add.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MagazineArticleDetailsActivity.this, CreateMagazineActivity.class);
+                        intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
+                        startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                    }
+                });
+            }
+
+            if (magazineShare != null) {
+                ImageView share = magazineShare;
+                share.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (data.getImage_filename() != null) {
+                            new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
+                        } else {
+                            Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -189,7 +191,9 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             Intent intent = new Intent();
-            intent.putExtra("UpdatedArticle", data);
+            if(data != null) {
+                intent.putExtra("UpdatedArticle", data);
+            }
             intent.putExtra("Pos", position);
             intent.putExtra("ArticlePlace", articlePlacement);
             setResult(RESULT_OK, intent);
@@ -209,7 +213,9 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
     public void onBackPressed() {
 
         Intent intent = new Intent();
-        intent.putExtra("UpdatedArticle", data);
+        if(data != null) {
+            intent.putExtra("UpdatedArticle", data);
+        }
         intent.putExtra("Pos", position);
         intent.putExtra("ArticlePlace", articlePlacement);
         setResult(RESULT_OK, intent);

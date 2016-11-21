@@ -203,23 +203,26 @@ public class TopicsDetailActivity extends BaseActivity {
             }
 
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if ("true".equals(data.getLiked())) {
+            if (Boolean.valueOf(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
             }
 
-            holder.magazineLike.setChecked(data.isChecked());
+            holder.magazineLike.setText("");
+            holder.magazineLike.setChecked(Boolean.valueOf(data.getLiked()));
 
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    data.setIsChecked(isChecked);
+                    //data.setIsChecked(isChecked);
                     if (isChecked) {
+                        showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
@@ -236,6 +239,7 @@ public class TopicsDetailActivity extends BaseActivity {
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                dismissProgressDialog();
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
@@ -245,10 +249,12 @@ public class TopicsDetailActivity extends BaseActivity {
                             }
                         });
                     } else {
+                        showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
@@ -265,6 +271,7 @@ public class TopicsDetailActivity extends BaseActivity {
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                dismissProgressDialog();
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
