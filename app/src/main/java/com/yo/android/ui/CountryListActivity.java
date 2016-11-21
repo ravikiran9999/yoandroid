@@ -90,7 +90,9 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         }
         try {
             List<CallRateDetail> tempRecentCallRateDetails = gson.fromJson(preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_SELECTED), type);
-            recentCallRateDetails.addAll(tempRecentCallRateDetails);
+            if(recentCallRateDetails !=null) {
+                recentCallRateDetails.addAll(tempRecentCallRateDetails);
+            }
 
             if (recentCallRateDetails != null && !recentCallRateDetails.isEmpty()) {
                 recentTextView.setVisibility(View.VISIBLE);

@@ -35,6 +35,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.Contact;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -182,6 +183,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 if (bundle == null) {
                     bundle = new Bundle();
                 }
+                showCallActivity(number, bundle, intent);
+
                 makeCall(number, bundle, intent);
             } else {
                 mHandler.post(new Runnable() {
@@ -348,9 +351,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
-    private void handlerErrorCodes(final CallInfo call, SipCallState sipCallstate) {
+    private void handlerErrorCodes(final CallInfo call, final SipCallState sipCallstate) {
         final int statusCode = call.getLastStatusCode().swigValue();
-
         mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
         if (statusCode == 487) {
             callType = CallLog.Calls.MISSED_TYPE;
@@ -364,49 +366,18 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                /*switch (statusCode) {
-                    case 603:
-                        if (!isHangup) {
-                            mToastFactory.showToast(R.string.busy);
-                        }
-                        break;
-                    case 404:
-                        mToastFactory.showToast(R.string.no_network);
-                        break;
-                    case 503:
-                        mToastFactory.showToast(R.string.not_online);
-                        break;
-                    case 487:
-                        //Missed call
-                        break;
-                    case 181:
-                        mToastFactory.showToast(R.string.call_forwarded);
-                        break;
-                    case 182:
-                    case 480:
-                        mToastFactory.showToast(R.string.temporerly_unavailable);
-                        break;
-                    case 180:
-                        mToastFactory.showToast(R.string.ringing);
-                        break;
-                    case 486:
-                        mToastFactory.showToast(R.string.busy);
-                        break;
-                    case 600:
-                        mToastFactory.showToast(R.string.all_busy);
-                        break;
-                }*/
-
-
+                String phoneNumber = sipCallstate.getMobileNumber() == null ? sipCallstate.getMobileNumber() : phone;
+                Contact contact = mContactsSyncManager.getContactByVoxUserName(phoneNumber);
+                OpponentDetails details = new OpponentDetails(phoneNumber, contact, statusCode);
                 if (statusCode == 603 && !isHangup) {
                     isHangup = !isHangup;
-                    EventBus.getDefault().post(statusCode);
                 } else if (statusCode != 603) {
                     isHangup = false;
-                    EventBus.getDefault().post(statusCode);
                 } else {
                     isHangup = false;
                 }
+                EventBus.getDefault().post(details);
+
             }
         });
 
@@ -455,8 +426,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState.setCallState(SipCallState.CALL_FINISHED);
         //Reset
         sipCallState = new SipCallState();
-        LocalBroadcastManager.getInstance(this)
-                .sendBroadcast(new Intent(UserAgent.ACTION_CALL_END));
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
+        android.util.Log.w(TAG, "LOADING CALL LOGS AFTER ACTION " + manager);
+        manager.sendBroadcast(new Intent(UserAgent.ACTION_CALL_END));
     }
 
     @Override
@@ -531,6 +503,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     public void makeCall(String destination, Bundle options, Intent intent) {
         phone = destination;
+
         if (destination != null && !destination.startsWith("sip:")) {
             destination = "sip:" + destination;
         }
@@ -557,7 +530,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             }
 
             currentCall = call;
-            showCallActivity(phone, options, intent);
+            //showCallActivity(phone, options, intent);
         } else {
             mHandler.post(new Runnable() {
                 @Override
@@ -951,10 +924,17 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     protected synchronized void startDefaultRingtone() {
         try {
-            ringtone = RingtoneManager.getRingtone(this, Uri.parse(mediaManager.getRingtone()));
-            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
-            mAudioManager.setRingerMode(AudioManager.STREAM_RING);
-            ringtone.play();
+            try {
+                mRingTone = MediaPlayer.create(this, Uri.parse("file:///android_asset/calling.mp3"));
+                mRingTone.setLooping(true);
+                int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+                mAudioManager.setSpeakerphoneOn(false);
+                mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+                mRingTone.setVolume(volume, volume);
+                mRingTone.start();
+            } catch (Exception exc) {
+                Logger.warn("Error while trying to play ringtone!");
+            }
         } catch (Exception exc) {
             Logger.warn("Error while trying to play ringtone!");
         }

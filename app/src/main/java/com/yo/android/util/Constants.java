@@ -1,5 +1,7 @@
 package com.yo.android.util;
 
+import com.yo.android.BuildConfig;
+
 public class Constants {
 
     // Chat
@@ -59,6 +61,9 @@ public class Constants {
     public static final String COUNTRY_CODE_PREFIX = "country_code_prefix";
     public static final String COUNTRY_CODE_FROM_SIM = "country_code_from_sim";
     public static final String COUNTRY_CODE_SELECTED = "country_code_selected";
+    public static final String CALL_RATE = "call_rate";
+
+
 
     // Firebase tables
     public static final String APP_USERS = "AppUsers";
@@ -114,7 +119,7 @@ public class Constants {
     // Contacts
     public static final String NUMBER = "number";
     public static final String NAME = "name";
-    public static final String YO_USER = "youser";
+    public static final String YO_USER = BuildConfig.RELEASE_USER_TYPE;
 
 
     public static final String NOTIFICATION_COUNT = "notification_count";

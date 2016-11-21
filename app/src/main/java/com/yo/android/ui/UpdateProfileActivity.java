@@ -26,6 +26,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -40,6 +41,7 @@ import retrofit2.Response;
  * Created by root on 19/7/16.
  */
 public class UpdateProfileActivity extends BaseActivity {
+    private static final String USER_NAME_REGX = "^[a-zA-Z0-9 -_]*$";
     private EditText username;
     private TextView mobileNum;
     private TextView addPhoto;
@@ -112,7 +114,11 @@ public class UpdateProfileActivity extends BaseActivity {
 
     private void performActionNext() {
         if (!TextUtils.isEmpty(username.getText().toString().trim())) {
-            loadUserProfileInfo();
+            if(Pattern.matches(USER_NAME_REGX,username.getText().toString())) {
+                loadUserProfileInfo();
+            }else{
+                toastFactory.showToast(getResources().getString(R.string.invalid_username));
+            }
         } else {
             Util.hideKeyboard(this, getCurrentFocus());
             toastFactory.showToast(getResources().getString(R.string.enter_username));

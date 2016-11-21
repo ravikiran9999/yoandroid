@@ -1,5 +1,6 @@
 package com.yo.android.voip;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,26 +12,32 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.Contact;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Util;
+import com.yo.android.vox.BalanceHelper;
 
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
 
@@ -60,6 +67,15 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private ImageView callerImageView;
 
     private SipBinder sipBinder;
+
+    @Inject
+    protected BalanceHelper mBalanceHelper;
+
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
+
+    public static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -98,7 +114,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         initViews();
         callModel = new SipCallModel();
-        bus.register(this);
         //
 
 
@@ -106,9 +121,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             callerName.setText(getIntent().getStringExtra(CALLER_NAME));
         } else {
             String stringExtra = getIntent().getStringExtra(CALLER_NO);
-            if (stringExtra != null && stringExtra.contains("youser")) {
+            if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
                 try {
-                    stringExtra = stringExtra.substring(stringExtra.indexOf("youser") + 6, stringExtra.length() - 1);
+                    stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
                     callerName.setText(stringExtra);
                 } catch (StringIndexOutOfBoundsException e) {
                     mLog.e(TAG, "" + e);
@@ -133,9 +148,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         } else if (getIntent().getStringExtra(CALLER_NO) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NO));
             String stringExtra = getIntent().getStringExtra(CALLER_NO);
-            if (stringExtra != null && stringExtra.contains("youser")) {
+            if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
                 try {
-                    stringExtra = stringExtra.substring(stringExtra.indexOf("youser") + 6, stringExtra.length() - 1);
+                    stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
                     callerName.setText(stringExtra);
                 } catch (StringIndexOutOfBoundsException e) {
                     mLog.e(TAG, "" + e);
@@ -152,8 +167,17 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callModel.setOnCall(true);
         //CallLogs Model
         mobile = getIntent().getStringExtra(CALLER_NO);
+        bus.register(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        bus.unregister(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 
     private void initViews() {
@@ -172,8 +196,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         super.onDestroy();
         unbindService(connection);
         running = false;
-        bus.unregister(this);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
     }
 
@@ -244,8 +266,8 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                     finish();
                 }
             }
-        } else if (object instanceof Integer) {
-            Util.showErrorMessages((int) object, this, mToastFactory);
+        } else if (object instanceof OpponentDetails) {
+            Util.showErrorMessages(bus,(OpponentDetails) object, this, mToastFactory, mBalanceHelper, preferenceEndPoint);
         }
     }
 
@@ -253,11 +275,11 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
-            finish();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                    // bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                    // OutGoingCallActivity.this.finish();
                 }
             });
 
@@ -281,4 +303,12 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == Activity.RESULT_OK) {
+
+        }
+    }
 }

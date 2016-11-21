@@ -176,7 +176,6 @@ public class FirebaseService extends InjectedService {
 
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
-
                         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
                         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
                         String[] strings = cn.getShortClassName().split(Pattern.quote("."));
@@ -269,8 +268,8 @@ public class FirebaseService extends InjectedService {
                 data.setMessageId(chatMessage.getMsgID());
                 data.setDescription(chatMessage.getMessage());
 
-                if(!notificationList.contains(data)) {
-                    notificationList.add(data);
+                if (!notificationList.contains(data)) {
+                    notificationList.add(0, data);//always insert new notification on top
                 }
 
                 notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);

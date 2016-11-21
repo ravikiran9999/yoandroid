@@ -37,6 +37,8 @@ import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.voip.VoipConstants;
+import com.yo.android.BuildConfig;
+
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -65,6 +67,8 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     private MoreListAdapter menuAdapter;
     @Inject
     YoApi.YoService yoService;
+
+    private String balance;
 
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
@@ -95,7 +99,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String balance = mBalanceHelper.getCurrentBalance();
+        balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         NumberFormat formatter = new DecimalFormat("#0.00");
         txt_balance.setText(String.format("%s%s", currencySymbol, balance));
@@ -195,7 +199,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
-            String balance = mBalanceHelper.getCurrentBalance();
+            balance = mBalanceHelper.getCurrentBalance();
             String currencySymbol = mBalanceHelper.getCurrencySymbol();
             txt_balance.setText(String.format("%s%s", currencySymbol, balance));
         }
@@ -263,6 +267,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             intent.putExtra("balance", balance);
             intent.putExtra("currencySymbol", currencySymbol);
             startActivityForResult(intent, 11);
+
         }
     }
 
@@ -271,13 +276,30 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.btn1) {
-                addGooglePlayBalance("com.yo.products.credit.FIVE", 5f);
-
+                Bundle arguments = getArguments();
+                if (arguments != null) {
+                    if (Double.valueOf(balance) < 5.000 && arguments.getBoolean(Constants.OPEN_ADD_BALANCE)) {
+                        addGooglePlayBalance("com.yo.inproducts.credit.FIVE", 5f);
+                    } else {
+                        mToastFactory.showToast(R.string.disabled);
+                    }
+                }else{
+                    mToastFactory.showToast(R.string.disabled);
+                }
             } else if (v.getId() == R.id.btn2) {
-                addGooglePlayBalance("com.yo.products.credit.TEN", 10f);
+                if (!BuildConfig.DISABLE_ADD_BALANCE) {
+                    addGooglePlayBalance("com.yo.inproducts.credit.TEN", 10f);
+                } else {
+                    mToastFactory.showToast(R.string.disabled);
+
+                }
 
             } else if (v.getId() == R.id.btn3) {
-                addGooglePlayBalance("com.yo.products.credit.FIFTEEN", 15f);
+                if (!BuildConfig.DISABLE_ADD_BALANCE) {
+                    addGooglePlayBalance("com.yo.inproducts.credit.FIFTEEN", 15f);
+                } else {
+                    mToastFactory.showToast(R.string.disabled);
+                }
             }
         }
     };

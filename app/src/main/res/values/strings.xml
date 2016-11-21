@@ -267,4 +267,11 @@
     <string name="recent_county_code">Recent Countries/regions</string>
     <string name="all_county_code">All Countries/regions</string>
     <string name="calling">Calling...</string>
+    <string name="paid_call">Paid Call?</string>
+    <string name="calle_not_online">The YO! user you are trying is offline, do you want to make paid call?</string>
+    <string name="disabled">This functionality is currently disabled.</string>
+    <string name="invalid_username">Invalid username. Username should not contains special characters.</string>
+    <string name="unknown_error">Gateway is having trouble with the services. Please try again.</string>
+    <string name="call_rate">Call rate :</string>
+    <string name="add_balance_caps">ADD BALANCE</string>
 </resources>

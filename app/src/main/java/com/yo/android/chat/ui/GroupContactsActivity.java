@@ -66,7 +66,10 @@ public class GroupContactsActivity extends BaseActivity {
         //setHasOptionsMenu(true);
         //groupName = getString(Constants.GROUP_NAME);
         setContentView(R.layout.fragment_yo_contacts);
-
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         listView = (ListView) findViewById(R.id.lv_app_contacts);
         textView = (TextView) findViewById(R.id.no_contacts);
@@ -77,7 +80,9 @@ public class GroupContactsActivity extends BaseActivity {
         if (contactsList.isEmpty()) {
             getYoAppUsers();
         } else {
-            groupContactsListAdapter.addItems(contactsList);
+            if (contactsList != null) {
+                loadInAlphabeticalOrder(contactsList);
+            }
         }
 
     }
@@ -158,7 +163,6 @@ public class GroupContactsActivity extends BaseActivity {
                 contactArrayList.add(contacts.get(i));
             }
         }
-
         Intent intent = new Intent();
         intent.putParcelableArrayListExtra(Constants.SELECTED_CONTACTS, contactArrayList);
         setResult(RESULT_OK, intent);
@@ -175,6 +179,7 @@ public class GroupContactsActivity extends BaseActivity {
         Helper.displayIndex(this, layout, contactList, listView);
         groupContactsListAdapter.addItems(contactList);
         CreateGroupActivity.ContactsArrayList.addAll(contactList);
+        groupContactsListAdapter.notifyDataSetChanged();
     }
 
     @Override

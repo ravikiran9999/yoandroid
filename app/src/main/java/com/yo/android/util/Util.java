@@ -38,9 +38,11 @@ import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.calllogs.CallerInfo;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
@@ -48,9 +50,12 @@ import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Contact;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
+import com.yo.android.ui.fragments.DialerFragment;
+import com.yo.android.vox.BalanceHelper;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -76,6 +81,7 @@ import java.util.TimeZone;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import retrofit2.Response;
 
 /**
@@ -86,7 +92,8 @@ public class Util {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     private static final int SIX = 6;
-
+    @Inject
+    static ContactsSyncManager mContactsSyncManager;
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         return createNotification(context, title, body, clzz, intent, true);
@@ -837,11 +844,12 @@ public class Util {
         notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
     }
 
-    public static void showErrorMessages(final int statusCode, Context context, final ToastFactory mToastFactory) {
+    public static void showErrorMessages(final EventBus bus, final OpponentDetails details, final Context context, final ToastFactory mToastFactory, final BalanceHelper mBalanceHelper, final PreferenceEndPoint mPreferenceEndPoint) {
         if (context instanceof Activity) {
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    int statusCode = details.getStatusCode();
                     switch (statusCode) {
                         case 603:
                             mToastFactory.showToast(R.string.busy);
@@ -850,7 +858,9 @@ public class Util {
                             mToastFactory.showToast(R.string.no_network);
                             break;
                         case 503:
-                            mToastFactory.showToast(R.string.not_online);
+                            if (details != null && details.getVoxUserName() != null && details.getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
+                                YODialogs.redirectToPSTN(bus, (Activity) context, details, mPreferenceEndPoint, mBalanceHelper, mToastFactory);
+                            }
                             break;
                         case 487:
                             //Missed call
@@ -871,6 +881,13 @@ public class Util {
                         case 600:
                             mToastFactory.showToast(R.string.all_busy);
                             break;
+                        case 403:
+                            mToastFactory.showToast(R.string.unknown_error);
+                            break;
+                    }
+                    if (statusCode != 503) {
+                        bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                        ((Activity) context).finish();
                     }
                 }
             });
@@ -882,7 +899,6 @@ public class Util {
         Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
         intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);
         context.sendOrderedBroadcast(intent, null);
-
         keyEvent = new KeyEvent(KeyEvent.ACTION_UP, keyCode);
         intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
         intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);

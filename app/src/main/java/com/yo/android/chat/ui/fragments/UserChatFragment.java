@@ -62,6 +62,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
@@ -86,6 +87,7 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 import static com.yo.android.util.Util.copyFile;
 
@@ -101,7 +103,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ArrayList<ChatMessage> chatMessageArray;
     private HashMap<Integer, ArrayList<ChatMessage>> chatMessageHashMap;
     private EditText chatText;
-    private ListView listView;
+    private StickyListHeadersListView listView;
     private String opponentNumber;
     private String opponentName;
     private String opponentId;
@@ -125,6 +127,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ImageView cameraView;
     private int roomCreationProgress = 0;
     private String opponentImg;
+    private Contact mContact;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -148,10 +151,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
         opponentName = bundle.getString(Constants.OPPONENT_NAME);
-
         mobilenumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
+        mContact = bundle.getParcelable(Constants.CONTACT);
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
@@ -168,7 +171,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         roomType = getArguments().getString(Constants.TYPE);
 
-        listView = (ListView) view.findViewById(R.id.listView);
+        listView = (StickyListHeadersListView) view.findViewById(R.id.listView);
         listStickeyHeader = (TextView) view.findViewById(R.id.time_stamp_header);
         listView.setDivider(null);
         listView.setDividerHeight(0);
@@ -251,12 +254,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         try {
 
             listView.setStackFromBottom(false);
+            listView.setAreHeadersSticky(false);
             listView.setOnScrollListener(new AbsListView.OnScrollListener() {
                                              @Override
                                              public void onScrollStateChanged(AbsListView view, int scrollState) {
                                                  if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                                                      listStickeyHeader.setVisibility(View.GONE);
-
                                                  } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                                                      listStickeyHeader.setVisibility(View.VISIBLE);
                                                  }
@@ -732,6 +735,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         message.setType(Constants.IMAGE);
         message.setSenderID(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         message.setImagePath(mPartyPicUri);
+        message.setTime(System.currentTimeMillis());
         userChatAdapter.UpdateItem(message);
         if (mPartyPicUri != null) {
             uploadImage(mPartyPicUri);

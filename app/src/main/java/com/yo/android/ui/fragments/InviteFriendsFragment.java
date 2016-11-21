@@ -9,15 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.InviteFriendsAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,6 +38,8 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
 
     private ListView lv_invite;
     private InviteFriendsAdapter inviteFriendsAdapter;
+    private ListView layout;
+    private TextView txtEmpty;
 
     @Inject
     ContactsSyncManager mSyncManager;
@@ -47,7 +54,22 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_invite_friends, container, false);
         lv_invite = (ListView) view.findViewById(R.id.invite_list);
+        layout = (ListView) view.findViewById(R.id.side_index);
+        txtEmpty = (TextView) view.findViewById(R.id.txtEmpty);
+
         return view;
+    }
+
+    private void loadInAlphabeticalOrder(List<Contact> contactList) {
+        Collections.sort(contactList, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact lhs, Contact rhs) {
+                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
+            }
+        });
+        Helper.displayIndex(getActivity(), layout, contactList, lv_invite);
+        inviteFriendsAdapter.addItems(contactList);
+        inviteFriendsAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -68,7 +90,17 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
                             nonYoAppContacts.add(con);
                         }
                     }
-                    inviteFriendsAdapter.addItems(nonYoAppContacts);
+                    if (nonYoAppContacts.isEmpty()) {
+                        lv_invite.setVisibility(View.GONE);
+                        layout.setVisibility(View.GONE);
+                        txtEmpty.setVisibility(View.VISIBLE);
+                    } else {
+                        txtEmpty.setVisibility(View.GONE);
+                        layout.setVisibility(View.VISIBLE);
+                        lv_invite.setVisibility(View.VISIBLE);
+                        loadInAlphabeticalOrder(nonYoAppContacts);
+                    }
+
                     dismissProgressDialog();
                 }
 
@@ -85,7 +117,7 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
                     nonYoAppContacts.add(con);
                 }
             }
-            inviteFriendsAdapter.addItems(nonYoAppContacts);
+            loadInAlphabeticalOrder(nonYoAppContacts);
         }
         lv_invite.setOnItemClickListener(this);
     }

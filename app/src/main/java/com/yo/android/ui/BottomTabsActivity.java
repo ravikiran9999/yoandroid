@@ -164,8 +164,10 @@ public class BottomTabsActivity extends BaseActivity {
                     getSupportActionBar().setCustomView(customActionBar);
 
                     if (getFragment() instanceof MoreFragment) {
+                        //getSupportActionBar().hide();
                         getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
                     } else {
+                       // getSupportActionBar().show();
                         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                     }
                     TextView actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);
@@ -206,9 +208,7 @@ public class BottomTabsActivity extends BaseActivity {
         SyncUtils.createSyncAccount(this, preferenceEndPoint);
         mContactSyncHelper.checkContacts();
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
-
         EventBus.getDefault().register(this);
-
         List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
         if (notificationList.size() == 1) {
             Intent intent1 = getIntent();
