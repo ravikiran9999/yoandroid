@@ -311,7 +311,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        .centerCrop()
+                        //.centerCrop()
                                 //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
