@@ -94,9 +94,11 @@ public class TopicsDetailActivity extends BaseActivity {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             List<String> tagIds = new ArrayList<String>();
             tagIds.add(topic.getTopicId());
+            showProgressDialog();
             yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
                 @Override
                 public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                    dismissProgressDialog();
                     if (response.body().size() > 0) {
                         for (int i = 0; i < response.body().size(); i++) {
                             articlesList.add(response.body().get(i));
@@ -109,6 +111,7 @@ public class TopicsDetailActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<List<Articles>> call, Throwable t) {
+                    dismissProgressDialog();
                     Toast.makeText(TopicsDetailActivity.this, "Error retrieving Articles", Toast.LENGTH_LONG).show();
                 }
             });
