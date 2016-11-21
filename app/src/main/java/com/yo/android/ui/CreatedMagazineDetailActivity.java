@@ -100,10 +100,12 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
     private void loadArticles() {
         articlesList.clear();
+        showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
+                dismissProgressDialog();
                 if (response.body() != null) {
                     final String id = response.body().getId();
                     if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
@@ -141,6 +143,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<MagazineArticles> call, Throwable t) {
+                dismissProgressDialog();
                 flipContainer.setVisibility(View.GONE);
                 if (noArticals != null) {
                     noArticals.setVisibility(View.VISIBLE);
