@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,6 +49,7 @@ public class FindPeopleActivity extends BaseActivity {
     private int pos;
     private SearchView searchView;
     private Call<List<FindPeople>> call;
+    private ImageView imvEmptyFindPeople;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,8 @@ public class FindPeopleActivity extends BaseActivity {
         llNoPeople = (LinearLayout) findViewById(R.id.ll_no_people);
         lvFindPeople.setAdapter(findPeopleAdapter);
         lvFindPeople.setOnScrollListener(onScrollListener());
+        imvEmptyFindPeople = (ImageView) findViewById(R.id.imv_empty_followings);
+        imvEmptyFindPeople.setImageResource(R.drawable.ic_empty_find_people);
         originalList = new ArrayList<>();
 
         lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -118,7 +122,7 @@ public class FindPeopleActivity extends BaseActivity {
                     originalList = response.body();
 
                 } else {
-                    noData.setVisibility(View.VISIBLE);
+                    noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
                 }
@@ -127,7 +131,7 @@ public class FindPeopleActivity extends BaseActivity {
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                 dismissProgressDialog();
-                noData.setVisibility(View.VISIBLE);
+                noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.VISIBLE);
                 lvFindPeople.setVisibility(View.GONE);
             }

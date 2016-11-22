@@ -16,7 +16,7 @@
             android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:scaleType="centerCrop"></ImageView>
+            android:scaleType="fitXY"></ImageView>
 
         <Button
             android:id="@+id/imv_magazine_follow"

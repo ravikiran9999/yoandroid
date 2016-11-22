@@ -262,6 +262,8 @@ public class BottomTabsActivity extends BaseActivity {
                                 Intent intent = new Intent(BottomTabsActivity.this, MagazineArticleDetailsActivity.class);
                                 intent.putExtra("Title", articles.getTitle());
                                 intent.putExtra("Image", articles.getUrl());
+                                intent.putExtra("Article", articles);
+                                intent.putExtra("Position", 0);
                                 startActivity(intent);
                                 finish();
                             }
