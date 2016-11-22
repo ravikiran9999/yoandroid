@@ -15,9 +15,11 @@ import com.yo.android.model.Subscriber;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.model.denominations.Denominations;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -192,7 +194,7 @@ public class YoApi {
                 @Header("Authorization") String authorization,
                 @Part("room[user_ids][]") List<String> user,
                 @Part("room[group_name]") RequestBody groupName,
-                @Part MultipartBody.Part file );
+                @Part MultipartBody.Part file);
 
 
         @GET("api/articles.json")
@@ -279,8 +281,13 @@ public class YoApi {
         @GET("api/user/{id}.json")
         Call<FindPeople> getUserInfoFromId(@Path("id") String id, @Query("access_token") String access_token);
 
+
         @GET("api/articles/{article_id}.json")
         Call<Articles> getArticleInfo(@Path("article_id") String article_id, @Query("access_token") String access_token);
+
+
+        @GET("api/denominations.json")
+        Call<List<Denominations>> getDenominations(@Query("access_token") String access_token);
 
     }
 

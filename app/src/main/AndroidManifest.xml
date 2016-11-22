@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yo.android" >
+    package="com.yo.android">
 
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -26,6 +26,8 @@
     <!-- Required because we're manually creating a new account. -->
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Pjsip needs this permission. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <uses-feature
         android:name="android.hardware.sip.voip"
@@ -44,11 +46,11 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".ui.SplashScreenActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,14 +61,14 @@
         <!-- uncomment below lines to enable notifications -->
         <service
             android:name=".chat.notification.PushNotificationService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
             android:name=".chat.notification.MyInstanceIDListenerService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
@@ -218,8 +220,8 @@
             android:screenOrientation="portrait" />
 
         <!-- SMS Receiver -->
-        <receiver android:name=".voip.IncomingSmsReceiver" >
-            <intent-filter android:priority="99999" >
+        <receiver android:name=".voip.IncomingSmsReceiver">
+            <intent-filter android:priority="99999">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
@@ -260,7 +262,7 @@
         -->
         <service
             android:name=".sync.SyncService"
-            android:exported="true" >
+            android:exported="true">
 
             <!--
             This intent filter is required. It allows the system to launch our sync service
@@ -283,7 +285,7 @@
         It's also possible to attach a SyncAdapter to an existing account provided by another
         package. In that case, this element could be omitted here.
         -->
-        <service android:name=".sync.accounts.GenericAccountService" >
+        <service android:name=".sync.accounts.GenericAccountService">
 
             <!-- Required filter used by the system to launch our account service. -->
             <intent-filter>
