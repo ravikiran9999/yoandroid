@@ -100,10 +100,12 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
     private void loadArticles() {
         articlesList.clear();
+        showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
+                dismissProgressDialog();
                 if (response.body() != null) {
                     final String id = response.body().getId();
                     if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
@@ -141,6 +143,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<MagazineArticles> call, Throwable t) {
+                dismissProgressDialog();
                 flipContainer.setVisibility(View.GONE);
                 if (noArticals != null) {
                     noArticals.setVisibility(View.VISIBLE);
@@ -240,24 +243,26 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
             }
 
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if ("true".equals(data.getLiked())) {
+            if (Boolean.valueOf(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
             }
 
-            holder.magazineLike.setChecked(data.isChecked());
+            holder.magazineLike.setText("");
+            holder.magazineLike.setChecked(Boolean.valueOf(data.getLiked()));
 
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    data.setIsChecked(isChecked);
+                    //data.setIsChecked(isChecked);
                     if (isChecked) {
+                        showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                                dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 if (!((BaseActivity)context).hasDestroyed()) {
@@ -268,6 +273,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                dismissProgressDialog();
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
@@ -277,10 +283,12 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                             }
                         });
                     } else {
+                        showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                                 if (!((BaseActivity)context).hasDestroyed()) {
@@ -291,6 +299,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                dismissProgressDialog();
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -327,7 +336,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        .centerCrop()
+                        //.centerCrop()
                                 //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()

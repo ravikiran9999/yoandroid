@@ -60,10 +60,12 @@ public class CreateMagazineActivity extends BaseActivity {
         gridView = (GridView) findViewById(R.id.create_magazines_gridview);
         createMagazinesAdapter = new CreateMagazinesAdapter(CreateMagazineActivity.this);
         gridView.setAdapter(createMagazinesAdapter);
+        showProgressDialog();
         final String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getMagazinesAPI(accessToken).enqueue(new Callback<List<OwnMagazine>>() {
             @Override
             public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
+                dismissProgressDialog();
                 List<OwnMagazine> ownMagazineList;
                 ownMagazineList = new ArrayList<OwnMagazine>();
                 OwnMagazine ownMagazine = new OwnMagazine();
@@ -83,7 +85,7 @@ public class CreateMagazineActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<List<OwnMagazine>> call, Throwable t) {
-               // do nothing
+               dismissProgressDialog();
             }
         });
 

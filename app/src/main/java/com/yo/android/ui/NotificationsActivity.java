@@ -149,6 +149,8 @@ public class NotificationsActivity extends BaseActivity {
                                 Intent intent = new Intent(NotificationsActivity.this, MagazineArticleDetailsActivity.class);
                                 intent.putExtra("Title", articles.getTitle());
                                 intent.putExtra("Image", articles.getUrl());
+                                intent.putExtra("Article", articles);
+                                intent.putExtra("Position", 0);
                                 startActivity(intent);
                             }
                         }

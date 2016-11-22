@@ -202,18 +202,19 @@ public class WishListActivity extends BaseActivity {
             }
 
             holder.magazineLike.setOnCheckedChangeListener(null);
-            if ("true".equals(data.getLiked())) {
+            if (Boolean.valueOf(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
                 data.setIsChecked(false);
             }
 
-            holder.magazineLike.setChecked(data.isChecked());
+            holder.magazineLike.setText("");
+            holder.magazineLike.setChecked(Boolean.valueOf(data.getLiked()));
 
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    data.setIsChecked(isChecked);
+                    //data.setIsChecked(isChecked);
                     if (isChecked) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -309,7 +310,7 @@ public class WishListActivity extends BaseActivity {
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        .centerCrop()
+                        //.centerCrop()
                                 //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()

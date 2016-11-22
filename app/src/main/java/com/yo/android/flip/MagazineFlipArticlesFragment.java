@@ -306,8 +306,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (mProgress != null) {
                         mProgress.setVisibility(View.GONE);
                     }
+                    flipContainer.setVisibility(View.GONE);
+                    llNoArticles.setVisibility(View.VISIBLE);
 
-                    mToastFactory.showToast("No articles available");
+                    //mToastFactory.showToast("No articles available");
                 }
             });
         }
@@ -380,8 +382,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         networkFailureText.setVisibility(View.GONE);
                         /*llNoArticles.setVisibility(View.VISIBLE);
                         flipContainer.setVisibility(View.GONE);*/
-                        flipContainer.setVisibility(View.VISIBLE);
-                        llNoArticles.setVisibility(View.GONE);
+                        flipContainer.setVisibility(View.GONE);
+                        llNoArticles.setVisibility(View.VISIBLE);
                         //loadArticles(null);
                         getCachedArticles();
                     }

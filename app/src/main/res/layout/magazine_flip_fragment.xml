@@ -37,7 +37,8 @@
                 android:layout_height="wrap_content"
                 android:text="You have not selected any topics. Please select them by clicking on Follow More Topics button."
                 android:textColor="@color/tab_grey"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/btn_magazine_follow_topics"
@@ -50,7 +51,14 @@
                 android:paddingRight="5dp"
                 android:text="Follow More Topics"
                 android:textAllCaps="false"
-                android:textColor="@color/tab_grey" />
+                android:textColor="@color/tab_grey"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/imv_empty_magazines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_empty_magazines"/>
         </LinearLayout>
 
         <FrameLayout
@@ -64,7 +72,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/flip_view"
                 flipview:orientation="vertical"
-                flipview:overFlipMode="glow" />
+                flipview:overFlipMode="rubber_band" />
             </FrameLayout>
 
         <ProgressBar
