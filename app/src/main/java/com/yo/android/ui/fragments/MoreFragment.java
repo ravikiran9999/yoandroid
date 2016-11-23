@@ -246,7 +246,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 return R.layout.item_with_options;
             }
         };
-        NonScrollListView menuListView = (NonScrollListView) getView().findViewById(R.id.lv_settings);
+        ListView menuListView = (ListView) getView().findViewById(R.id.lv_settings);
         menuAdapter.addItems(getMenuList());
 
         menuListView.setAdapter(menuAdapter);
