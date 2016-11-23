@@ -257,8 +257,10 @@ public class OTPFragment extends BaseFragment {
         //contactsSyncManager.syncContacts();
         //
 
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getAllArticlesAPI(accessToken).enqueue(callback);
+       /* String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getAllArticlesAPI(accessToken).enqueue(callback);*/
+
+        navigation();
 
         /*final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
         final boolean balanceAdded = preferenceEndPoint.getBooleanPreference("balanceAdded");
