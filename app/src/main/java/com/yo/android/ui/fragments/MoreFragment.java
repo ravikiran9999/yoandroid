@@ -39,6 +39,7 @@ import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
@@ -245,7 +246,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 return R.layout.item_with_options;
             }
         };
-        ListView menuListView = (ListView) getView().findViewById(R.id.lv_settings);
+        NonScrollListView menuListView = (NonScrollListView) getView().findViewById(R.id.lv_settings);
         menuAdapter.addItems(getMenuList());
 
         menuListView.setAdapter(menuAdapter);

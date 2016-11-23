@@ -524,7 +524,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 call.makeCall(finalUri, prm);
 
             } catch (Exception e) {
-                mLog.w(TAG, e);
+                mLog.w(TAG, "Exception making call " + e);
                 call.delete();
                 return;
             }

@@ -64,7 +64,6 @@ public class Constants {
     public static final String CALL_RATE = "call_rate";
 
 
-
     // Firebase tables
     public static final String APP_USERS = "AppUsers";
     public static final String ROOMS = "Rooms";

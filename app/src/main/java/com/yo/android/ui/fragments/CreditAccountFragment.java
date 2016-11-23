@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Network;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,10 +27,13 @@ import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
+import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.MenuViewHolder;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
+import com.yo.android.model.FindPeople;
 import com.yo.android.model.MoreData;
+import com.yo.android.model.denominations.Denominations;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.MoreSettingsActivity;
@@ -77,6 +82,28 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        Call<List<Denominations>> call = yoService.getDenominations(accessToken);
+        call.enqueue(new Callback<List<Denominations>>() {
+            @Override
+            public void onResponse(Call<List<Denominations>> call, Response<List<Denominations>> response) {
+                if (response.body() != null && response.body().size() > 0) {
+                    List<Denominations> demonimations = response.body();
+                    for (Denominations item : demonimations) {
+                        Log.w(TAG, "Data " + item.getProductID());
+                    }
+                    prepareCreditAccountList(demonimations);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Denominations>> call, Throwable t) {
+                Log.w(TAG, "Data Failed to load currenncy");
+
+            }
+        });
+
     }
 
     @Override
@@ -103,7 +130,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         NumberFormat formatter = new DecimalFormat("#0.00");
         txt_balance.setText(String.format("%s%s", currencySymbol, balance));
-        prepareCreditAccountList();
     }
 
 
@@ -122,15 +148,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         }
     }
 
-    /*@OnClick(R.id.btn1)
-    public void onBtnClick() {
-        final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
-        intent.putExtra("sku", "com.yo.products.credit.FIVE");
-        intent.putExtra("price", 5f);
-        final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        intent.putExtra(Constants.USER_ID, userId);
-        startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
-    }*/
 
     private void addGooglePlayBalance(String sku, float price) {
         final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
@@ -141,21 +158,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
     }
 
-    /*@OnClick(R.id.btn2)
-    public void onBtnClick2() {
-
-
-    }*/
-
-    /*@OnClick(R.id.btn3)
-    public void onBtnClick3() {
-        final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
-        intent.putExtra("sku", "com.yo.products.credit.FIFTEEN");
-        intent.putExtra("price", 15f);
-        final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        intent.putExtra(Constants.USER_ID, userId);
-        startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
-    }*/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -207,8 +209,11 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
     /**
      * Prepares the Credit Account list
+     *
+     * @param demonimations
      */
-    public void prepareCreditAccountList() {
+    public void prepareCreditAccountList(final List<Denominations> demonimations) {
+        final CurrencyListAdapter adapter = prepareCurrencyAdapter();
         menuAdapter = new MoreListAdapter(getActivity()) {
             @Override
             public int getLayoutId() {
@@ -217,10 +222,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
             @Override
             public void bindView(int position, MenuViewHolder holder, MoreData item) {
-                View viewById = holder.getRootView().findViewById(R.id.add_google_play_items);
-                viewById.findViewById(R.id.btn1).setOnClickListener(payBtnListener);
-                viewById.findViewById(R.id.btn2).setOnClickListener(payBtnListener);
-                viewById.findViewById(R.id.btn3).setOnClickListener(payBtnListener);
+                NonScrollableGridView viewById = (NonScrollableGridView) holder.getRootView().findViewById(R.id.add_google_play_items);
+                viewById.setAdapter(adapter);
+                adapter.addItems(demonimations);
                 if (position == 0) {
                     viewById.setVisibility(View.VISIBLE);
                 } else {
@@ -229,11 +233,23 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 super.bindView(position, holder, item);
             }
         };
-        ListView menuListView = (ListView) getView().findViewById(R.id.lv_settings);
+        NonScrollListView menuListView = (NonScrollListView) getView().findViewById(R.id.lv_settings);
         menuAdapter.addItems(getMenuList());
-
         menuListView.setAdapter(menuAdapter);
         menuListView.setOnItemClickListener(this);
+    }
+
+    private CurrencyListAdapter prepareCurrencyAdapter() {
+        return new CurrencyListAdapter(getActivity()) {
+            @Override
+            public void bindView(int position, CurrencyViewHolder holder, Denominations item) {
+                Button viewById = holder.getButtonView();
+                viewById.setText(item.getCurrencySymbol() + " " + item.getDenomination());
+                viewById.setTag(R.id.btn1, item);
+                viewById.setOnClickListener(payBtnListener);
+            }
+        };
+
     }
 
     /**
@@ -275,32 +291,23 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.btn1) {
-                Bundle arguments = getArguments();
-                if (arguments != null) {
-                    if (Double.valueOf(balance) < 5.000 && arguments.getBoolean(Constants.OPEN_ADD_BALANCE)) {
-                        addGooglePlayBalance("com.yo.inproducts.credit.FIVE", 5f);
-                    } else {
+            Denominations item = (Denominations) v.getTag(R.id.btn1);
+            addGooglePlayBalance("android.test.purchased", item.getDenomination());
+
+            //Bundle arguments = getArguments();
+            //if (arguments != null) {
+            //if (Double.valueOf(balance) < 5.000 && arguments.getBoolean(Constants.OPEN_ADD_BALANCE)) {
+           /* if (Double.valueOf(balance) < 5.000) {
+
+            } else {
+                addGooglePlayBalance(item.getProductID(), item.getDenomination());
+            }*/
+                    /*} else {
                         mToastFactory.showToast(R.string.disabled);
-                    }
-                }else{
-                    mToastFactory.showToast(R.string.disabled);
-                }
-            } else if (v.getId() == R.id.btn2) {
-                if (!BuildConfig.DISABLE_ADD_BALANCE) {
-                    addGooglePlayBalance("com.yo.inproducts.credit.TEN", 10f);
-                } else {
-                    mToastFactory.showToast(R.string.disabled);
-
-                }
-
-            } else if (v.getId() == R.id.btn3) {
-                if (!BuildConfig.DISABLE_ADD_BALANCE) {
-                    addGooglePlayBalance("com.yo.inproducts.credit.FIFTEEN", 15f);
-                } else {
-                    mToastFactory.showToast(R.string.disabled);
-                }
-            }
+                    }*/
+            /*} else {
+                mToastFactory.showToast(R.string.disabled);
+            }*/
         }
     };
 
