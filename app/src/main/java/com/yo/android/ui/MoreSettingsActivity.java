@@ -196,7 +196,7 @@ public class MoreSettingsActivity extends BaseActivity implements SharedPreferen
 //                MediaType.parse("multipart/form-data"), String.valueOf(notificationSwitch.isEnabled()));
         showProgressDialog();
         String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-        yoService.updateProfile(userId, access, description, firstName, notificationAlerts, syncContacts, null).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, access, description, firstName, notificationAlerts, syncContacts, null, null, null, null, null).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
