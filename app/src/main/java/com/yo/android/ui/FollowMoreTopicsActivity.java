@@ -590,7 +590,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 }
             }
 
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            navigation();
+
+            /*String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -601,15 +603,16 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
                         //TODO:Disalbe flag for Follow more
                         preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.getAllArticlesAPI(accessToken).enqueue(callback);
+                        *//*String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.getAllArticlesAPI(accessToken).enqueue(callback);*//*
+                        navigation();
 
-                        /*Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
+                        *//*Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
                         myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
                         myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
                         startActivity(myCollectionsIntent);
-                        finish();*/
+                        finish();*//*
                     } else {
                         Intent intent = new Intent();
                         setResult(2, intent);
@@ -623,7 +626,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Toast.makeText(FollowMoreTopicsActivity.this, "Error while adding topics", Toast.LENGTH_LONG).show();
                 }
-            });
+            });*/
 
         } else if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == RESULT_CANCELED) {
             done.setEnabled(true);
@@ -786,6 +789,70 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         }
 
+    }
+
+    private void addTopics() {
+        if (searchTags != null && !searchTags.isEmpty()) {
+            for (int i = 0; i < initialTags.size(); i++) {
+                for (int j = 0; j < searchTags.size(); j++) {
+                    TagSelected initialSel = (TagSelected) initialTags.get(i);
+                    TagSelected searchSel = (TagSelected) searchTags.get(j);
+                    if (initialSel.getTagId().equals(searchSel.getTagId())) {
+                        initialTags.remove(initialSel);
+                        initialTags.add(searchSel);
+                    }
+                }
+            }
+        }
+        tagGroup.addTags(initialTags);
+        for (int k = 0; k < tagGroup.getTags().size(); k++) {
+            TagSelected t = (TagSelected) tagGroup.getTags().get(k);
+            if (t.getSelected()) {
+                followedTopicsIdsList.add(String.valueOf(t.getTagId()));
+            }
+        }
+
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if ("Magazines".equals(from)) {
+                    Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
+                    startActivity(myCollectionsIntent);
+                    finish();
+                } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
+                    //TODO:Disalbe flag for Follow more
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
+                   /* String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.getAllArticlesAPI(accessToken).enqueue(callback);*/
+                    Intent intent = new Intent(FollowMoreTopicsActivity.this, TabsHeaderActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
+                    ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
+                    intent.putStringArrayListExtra("tagIds", tagIds);
+                    startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+                    //startActivity(intent);
+
+                        /*Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
+                        myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
+                        myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
+                        startActivity(myCollectionsIntent);
+                        finish();*/
+                } else {
+                    Intent intent = new Intent();
+                    setResult(2, intent);
+                    finish();
+                }
+
+                preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(FollowMoreTopicsActivity.this, "Error while adding topics", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 

@@ -77,10 +77,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
-
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onResume() {
+        super.onResume();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         Call<List<Denominations>> call = yoService.getDenominations(accessToken);
@@ -108,7 +107,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
             }
         });
-
     }
 
     @Override
@@ -237,7 +235,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 super.bindView(position, holder, item);
             }
         };
-        NonScrollListView menuListView = (NonScrollListView) getView().findViewById(R.id.lv_settings);
+        ListView menuListView = (ListView) getView().findViewById(R.id.lv_settings);
         menuAdapter.addItems(getMenuList());
         menuListView.setAdapter(menuAdapter);
         menuListView.setOnItemClickListener(this);

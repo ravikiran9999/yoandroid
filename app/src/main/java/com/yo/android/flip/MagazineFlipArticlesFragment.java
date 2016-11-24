@@ -145,15 +145,15 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 //loadArticles(null);
                 getCachedArticles();
             }
-        } else {
+        } /*else {
             mProgress.setVisibility(View.GONE);
-            /*flipContainer.setVisibility(View.GONE);
-            llNoArticles.setVisibility(View.VISIBLE);*/
+            *//*flipContainer.setVisibility(View.GONE);
+            llNoArticles.setVisibility(View.VISIBLE);*//*
             flipContainer.setVisibility(View.VISIBLE);
             llNoArticles.setVisibility(View.GONE);
             //loadArticles(null);
             getCachedArticles();
-        }
+        }*/
 
         followMoreTopics.setOnClickListener(new View.OnClickListener() {
             @Override

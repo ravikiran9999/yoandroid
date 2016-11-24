@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -52,6 +53,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -143,7 +145,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         topicsList = new ArrayList<Topics>();
         unSelectedTopics = new ArrayList<>();
 
-        callApiSearchTopics();
+        if (getActivity().getIntent().hasExtra("tagIds")) {
+            List<String> followedTopicsIdsList = getActivity().getIntent().getStringArrayListExtra("tagIds");
+            addTopics(followedTopicsIdsList);
+        } else {
+            callApiSearchTopics();
+        }
     }
 
     private void callApiSearchTopics() {
@@ -419,5 +426,35 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
+    }
+
+    private void addTopics(final List<String> followedTopicsIdsList) {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                /*if ("Magazines".equals(from)) {
+                    Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
+                    startActivity(myCollectionsIntent);
+                    finish();
+                } else */
+                if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
+                    //TODO:Disalbe flag for Follow more
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
+                   callApiSearchTopics();
+                } /*else {
+                    Intent intent = new Intent();
+                    setResult(2, intent);
+                    finish();
+                }*/
+
+                preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(), "Error while adding topics", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
