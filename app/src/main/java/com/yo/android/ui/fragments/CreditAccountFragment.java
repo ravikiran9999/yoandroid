@@ -93,6 +93,11 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                         Log.w(TAG, "Data " + item.getProductID());
                     }
                     prepareCreditAccountList(demonimations);
+                    if (demonimations != null && demonimations.size() > 0) {
+                        preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
+                        txt_balance.setText(String.format("%s %s", demonimations.get(0).getCurrencySymbol(), balance));
+                    }
+
 
                 }
             }
@@ -129,7 +134,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         NumberFormat formatter = new DecimalFormat("#0.00");
-        txt_balance.setText(String.format("%s%s", currencySymbol, balance));
     }
 
 
