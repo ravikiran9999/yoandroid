@@ -27,6 +27,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -289,6 +290,9 @@ public class YoApi {
         @GET("api/denominations.json")
         Call<List<Denominations>> getDenominations(@Query("access_token") String access_token);
 
+        @FormUrlEncoded
+        @POST("api/user/other_user_info.json")
+        Call<YOUserInfo> getYOUserInfoBYYOName(@Field("vox_user_name") String vox_user_name);
     }
 
     public interface YoRefreshTokenService {

@@ -2,6 +2,7 @@ package com.yo.android.pjsip;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
@@ -524,7 +525,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 call.makeCall(finalUri, prm);
 
             } catch (Exception e) {
-                mLog.w(TAG, "Exception making call " + e);
+                mLog.w(TAG, "Exception making call " + e.getMessage());
                 call.delete();
                 return;
             }
@@ -925,18 +926,25 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     protected synchronized void startDefaultRingtone() {
         try {
             try {
-                mRingTone = MediaPlayer.create(this, Uri.parse("file:///android_asset/calling.mp3"));
+                mRingTone = MediaPlayer.create(this, R.raw.calling);
                 mRingTone.setLooping(true);
                 int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
                 mAudioManager.setSpeakerphoneOn(false);
                 mAudioManager.setMode(AudioManager.MODE_IN_CALL);
                 mRingTone.setVolume(volume, volume);
+                mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                    }
+                });
                 mRingTone.start();
             } catch (Exception exc) {
-                Logger.warn("Error while trying to play ringtone!");
+                Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
             }
         } catch (Exception exc) {
-            Logger.warn("Error while trying to play ringtone!");
+            Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
         }
     }
 
