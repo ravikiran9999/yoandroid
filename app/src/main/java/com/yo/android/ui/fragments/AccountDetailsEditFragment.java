@@ -40,10 +40,13 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
 
     private TextView okBtn;
 
-    public AccountDetailsEditFragment(final String title, final String edit, final String key) {
+    private String countryCode;
+
+    public AccountDetailsEditFragment(final String title, final String edit, final String key, final String countryCode) {
         this.title = title;
         this.edit = edit;
         this.key = key;
+        this.countryCode = countryCode;
     }
 
     @Override
@@ -105,21 +108,25 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
     private void saveEditedValue() {
         if (key.equalsIgnoreCase(Constants.DOB_TEMP)) {
             preferenceEndPoint.saveStringPreference(key, editBirth.getText().toString());
+            getActivity().onBackPressed();
         } else {
             String text = editProfile.getText().toString();
             if (key.equalsIgnoreCase(Constants.PHONE_NO_TEMP) && !isValidMobile(text)) {
-                Toast.makeText(getActivity(), "Enter valid phone number", Toast.LENGTH_SHORT).show();
+                mToastFactory.showToast(getString(R.string.valid_phone));
             } else if (key.equalsIgnoreCase(Constants.EMAIL_TEMP) && !isValidMail(text)) {
-                Toast.makeText(getActivity(), "Enter valid email Id", Toast.LENGTH_SHORT).show();
+                mToastFactory.showToast(getString(R.string.valid_email));
             } else {
                 if (!TextUtils.isEmpty(text)) {
+                    if (key.equalsIgnoreCase(Constants.PHONE_NO_TEMP)) {
+                        text = countryCode + text;
+                    }
                     preferenceEndPoint.saveStringPreference(key, text.trim());
                 } else {
                     preferenceEndPoint.saveStringPreference(key, text);
                 }
+                getActivity().onBackPressed();
             }
         }
-        getActivity().onBackPressed();
     }
 
     /**
