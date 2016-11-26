@@ -101,7 +101,7 @@ public class ChatActivity extends BaseActivity {
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
             Util.cancelAllNotification(this);
-
+            callUserChat(args,userChatFragment);
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             final String mContactId = null;
             final Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
@@ -121,12 +121,7 @@ public class ChatActivity extends BaseActivity {
                             contact.setId(response.body().getId());
                             args.putString(Constants.OPPONENT_ID, response.body().getId());
                             args.putParcelable(Constants.CONTACT, contact);
-                            userChatFragment.setArguments(args);
-                            getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .add(android.R.id.content, userChatFragment)
-                                    .commit();
-
+                            callUserChat(args,userChatFragment);
                         }
 
                         @Override
@@ -140,6 +135,7 @@ public class ChatActivity extends BaseActivity {
                     String contactId = contact.getId() == null ? mContact.getId() : contact.getId();
                     args.putString(Constants.OPPONENT_ID, contactId);
                     args.putParcelable(Constants.CONTACT, contact);
+                    callUserChat(args,userChatFragment);
                 }
 
 
@@ -162,19 +158,10 @@ public class ChatActivity extends BaseActivity {
             if (getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER) != null) {
                 args.putString(Constants.TYPE, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
             }
+            callUserChat(args,userChatFragment);
         }
 
-        if (mContact != null) {
-            if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
-                args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
-            }
-            userChatFragment.setArguments(args);
 
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(android.R.id.content, userChatFragment)
-                    .commit();
-        }
         enableBack();
 
         if (getSupportActionBar() != null) {
@@ -267,6 +254,18 @@ public class ChatActivity extends BaseActivity {
             });
             getSupportActionBar().setCustomView(customView);
         }
+    }
+
+    private void callUserChat(Bundle args, UserChatFragment userChatFragment) {
+        if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
+            args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
+        }
+        userChatFragment.setArguments(args);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, userChatFragment)
+                .commit();
     }
 
     private String getOppenent(@NonNull Room room) {

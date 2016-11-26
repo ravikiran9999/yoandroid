@@ -125,4 +125,22 @@ public class Constants {
     public static final String IS_IN_APP = "isInApp";
     public static final String POPUP_NOTIFICATION = "popupNotification";
 
+    public static final String ID = "id";
+    public static final String PHONE_NO = "phone_no";
+    public static final String DESCRIPTION = "description";
+    public static final String FIRST_NAME = "first_name";
+    public static final String LAST_NAME = "last_name";
+    public static final String AVATAR = "avatar";
+    public static final String GENDER = "gender";
+    public static final String DOB = "dob";
+    public static final String EMAIL = "email";
+    public static final String PHONE_NO_TEMP = "phone_no_temp";
+    public static final String DESCRIPTION_TEMP = "description_temp";
+    public static final String FIRST_NAME_TEMP = "first_name_temp";
+    public static final String LAST_NAME_TEMP = "last_name_temp";
+    public static final String AVATAR_TEMP = "avatar_temp";
+    public static final String GENDER_TEMP = "gender_temp";
+    public static final String DOB_TEMP = "dob_temp";
+    public static final String EMAIL_TEMP = "email_temp";
+
 }

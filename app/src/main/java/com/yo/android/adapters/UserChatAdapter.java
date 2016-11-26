@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
@@ -211,26 +212,27 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
         linearLayout1.setPadding(2, 2, 2, 2);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(30, 0, 50, 0);
+        lp.setMargins(10, 0, 20, 0);
 
         EmojiconTextView textView = new EmojiconTextView(context);
         textView.setEmojiconSize(Helper.dp(context, 20));
         textView.setLayoutParams(lp);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
         textView.setGravity(Gravity.LEFT);
-        textView.setMaxWidth(Helper.dp(context, 260));
+        int maxWidth = Helper.dp(context, 260);
+        textView.setMaxWidth(maxWidth);
         textView.setTextColor(Color.BLACK);
         textView.setText(item.getMessage());
 
+
         RelativeLayout mainLayout = (RelativeLayout) inflater.inflate(R.layout.chat_message, null);
         TextView time = (TextView) mainLayout.findViewById(R.id.time);
-        time.setGravity(Gravity.BOTTOM);
+        time.setGravity(Gravity.TOP);
         time.setTextColor(context.getResources().getColor(R.color.black));
 
         RelativeLayout seenLayout = (RelativeLayout) mainLayout.findViewById(R.id.seen_layout);
-        TextView seen = (TextView) mainLayout.findViewById(R.id.seen_txt);
         TextView sent = (TextView) mainLayout.findViewById(R.id.sent_txt);
-
+        sent.setGravity(Gravity.TOP);
         if (!isRTL) {
             TextView senderId = new TextView(context);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_in);
@@ -265,30 +267,38 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 time.setGravity(Gravity.RIGHT);
             }
         } else {
-            sent.setVisibility(View.VISIBLE);
             time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
             time.setGravity(Gravity.RIGHT);
             sent.setVisibility(View.VISIBLE);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
-            if (item.getSent() != 0) {
+            Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
+            img.setBounds(0, 4, 30, 35);
+            time.setCompoundDrawables(null, null, img, null);
+            time.setCompoundDrawablePadding(10);
+
+
+            if (item.getSent() == 1 ) {
                 String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
                 time.setText(sentText);
                 sent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-                sent.setGravity(Gravity.END);
+                img = context.getResources().getDrawable(R.drawable.sent);
+                img.setBounds(0, 4, 50, 50);
+                time.setCompoundDrawables(null, null, img, null);
+                time.setCompoundDrawablePadding(10);
             }
+
             if (item.getDeliveredTime() != 0) {
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
-                seen.setVisibility(View.VISIBLE);
-                seen.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-                seen.setGravity(Gravity.END);
-            } else {
-                seen.setVisibility(View.GONE);
+                img = context.getResources().getDrawable(R.drawable.seen);
+                img.setBounds(0, 4, 50, 50);
+                time.setCompoundDrawables(null, null, img, null);
+                time.setCompoundDrawablePadding(10);
             }
         }
         linearLayout1.addView(textView);
-        secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 8, 5, 0));
-        secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.RIGHT, 0, 8, 5, 0));
+        secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, isRTL ? 0 : 7, 0, 1, 0));
+        secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, Gravity.RIGHT, 0, 0, 5, 0));
 
         holder.getLl().addView(secretChatPlaceholder);
         return secretChatPlaceholder;
@@ -323,7 +333,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             holder = (HeaderViewHolder) convertView.getTag();
         }
         //set header text as first char in name
-        String headerTimeStamp = ((ChatMessage)getItem(position)).getStickeyHeader();
+        String headerTimeStamp = ((ChatMessage) getItem(position)).getStickeyHeader();
         if (headerTimeStamp != null && holder != null) {
             String headerText = "" + headerTimeStamp;
             holder.text.setText(headerText.toUpperCase());
@@ -334,7 +344,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     @Override
     public long getHeaderId(int position) {
-        String timeStamp = ((ChatMessage)getItem(position)).getStickeyHeader();
+        String timeStamp = ((ChatMessage) getItem(position)).getStickeyHeader();
         if (timeStamp != null) {
             return timeStamp.subSequence(0, timeStamp.length()).hashCode();
         }

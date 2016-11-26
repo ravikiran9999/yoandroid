@@ -5,30 +5,21 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,10 +28,8 @@ import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.NonScrollListView;
-import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
@@ -50,6 +39,7 @@ import com.yo.android.model.Popup;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.ui.AccountDetailsActivity;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.NotificationsActivity;
@@ -88,36 +78,39 @@ import retrofit2.Response;
  */
 public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
-
     private MoreListAdapter menuAdapter;
+
     @Inject
     @Named("login")
     PreferenceEndPoint preferenceEndPoint;
+
     @Inject
     ContactSyncHelper mContactSyncHelper;
 
     @Inject
     YoApi.YoService yoService;
+
     FrameLayout changePhoto;
+
     CircleImageView profilePic;
+
     @Inject
     ImagePickHelper cameraIntent;
+
     @Inject
     ConnectivityHelper mHelper;
+
     @Bind(R.id.add_change_photo_text)
     TextView addOrChangePhotoText;
-
-    @Bind(R.id.name)
-    protected TextView name;
-
-    @Bind(R.id.phone_number)
-    protected TextView phoneNumber;
 
     @Inject
     FireBaseHelper fireBaseHelper;
 
     private boolean isAlreadyShown;
+
     private boolean isRemoved;
+
+    private TextView profileStatus;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -149,9 +142,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         ButterKnife.bind(this, view);
         changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
         profilePic = (CircleImageView) view.findViewById(R.id.profile_pic);
+        profileStatus = (TextView) view.findViewById(R.id.profile_status);
         cameraIntent.setActivity(getActivity());
-        name.setText(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
-        phoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         changePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,8 +151,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
         loadImage();
-
-
+        callOtherInfoApi();
     }
 
     private void loadImage() {
@@ -206,7 +197,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
         String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-        yoService.updateProfile(userId, access, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, access, null, null, null, null, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
@@ -221,6 +212,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 dismissProgressDialog();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, ""));
     }
 
     @Override
@@ -269,6 +266,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         menuDataList.add(new MoreData(String.format("Yo Credit (%s %s)", currencySymbol, balance), true));
+        menuDataList.add(new MoreData("Account Details", true));
         menuDataList.add(new MoreData("Invite Friends", true));
         menuDataList.add(new MoreData("Notifications", true));
         menuDataList.add(new MoreData("Settings", true));
@@ -282,20 +280,17 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         if (name.equalsIgnoreCase("Sign Out")) {
             showLogoutDialog();
-
         } else if (name.equalsIgnoreCase("Invite Friends")) {
-
             startActivity(new Intent(getActivity(), InviteActivity.class));
-
         } else if (name.contains("Yo Credit")) {
             startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
-
         } else if (name.contains("Notifications")) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
-
         } else if ("Settings".equals(name)) {
             Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
             startActivityForResult(intent, Constants.GO_TO_SETTINGS);
+        } else if (name.equalsIgnoreCase("Account Details")) {
+            startActivity(new Intent(getActivity(), AccountDetailsActivity.class));
         }
     }
 
@@ -431,13 +426,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         if (key.equals(Constants.CURRENT_BALANCE)) {
             String balance = mBalanceHelper.getCurrentBalance();
             String currencySymbol = mBalanceHelper.getCurrencySymbol();
-            if(menuAdapter != null) {
+            if (menuAdapter != null) {
                 menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
                 menuAdapter.notifyDataSetChanged();
             }
         } else if (key.equals(Constants.USER_NAME)) {
             String username = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
-            name.setText(username);
         }
 
         if (getActivity() instanceof BottomTabsActivity) {
@@ -498,6 +492,55 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
+    }
+
+    private void callOtherInfoApi() {
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
+        RequestBody firstName =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), userName);
+        yoService.updateProfile(userId, access, null, firstName, null, null, null, null, null, null, null).enqueue(new Callback<UserProfileInfo>() {
+            @Override
+            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                dismissProgressDialog();
+                if (response.body() != null) {
+                    saveUserProfileValues(response.body());
+                }
+                loadImage();
+                profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, ""));
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
+    }
+
+    private void saveUserProfileValues(final UserProfileInfo response) {
+        String avatar = response.getAvatar();
+        String email = response.getEmail();
+        String description = response.getDescription();
+        String dob = response.getDob();
+        String gender = response.getGender();
+        String firstName = response.getFirstName();
+        String phoneNo = response.getPhoneNumber();
+        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, avatar);
+        preferenceEndPoint.saveStringPreference(Constants.EMAIL, email);
+        preferenceEndPoint.saveStringPreference(Constants.DESCRIPTION, description);
+        preferenceEndPoint.saveStringPreference(Constants.DOB, dob);
+        preferenceEndPoint.saveStringPreference(Constants.GENDER, gender);
+        preferenceEndPoint.saveStringPreference(Constants.FIRST_NAME, firstName);
+        preferenceEndPoint.saveStringPreference(Constants.PHONE_NO, phoneNo);
+        preferenceEndPoint.saveStringPreference(Constants.AVATAR_TEMP, avatar);
+        preferenceEndPoint.saveStringPreference(Constants.EMAIL_TEMP, email);
+        preferenceEndPoint.saveStringPreference(Constants.DESCRIPTION_TEMP, description);
+        preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, dob);
+        preferenceEndPoint.saveStringPreference(Constants.GENDER_TEMP, gender);
+        preferenceEndPoint.saveStringPreference(Constants.FIRST_NAME_TEMP, firstName);
+        preferenceEndPoint.saveStringPreference(Constants.PHONE_NO_TEMP, phoneNo);
     }
 
 }

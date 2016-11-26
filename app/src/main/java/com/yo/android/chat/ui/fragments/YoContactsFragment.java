@@ -145,7 +145,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         Contact contact;
         try {
             if (appContactsListAdapter.temp != null && !appContactsListAdapter.temp.isEmpty()) {
-                contact = appContactsListAdapter.temp.get(position);
+                contact = appContactsListAdapter.getAllItems().get(position);
             } else {
                 contact = (Contact) listView.getItemAtPosition(position);
             }
