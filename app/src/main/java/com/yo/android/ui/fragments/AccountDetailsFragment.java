@@ -129,31 +129,36 @@ public class AccountDetailsFragment extends BaseFragment {
 
     @OnClick(R.id.account_status_card)
     protected void accountStatusClick() {
-        callEditFragment("Add New Status", preferenceEndPoint.getStringPreference(Constants.DESCRIPTION_TEMP, ""), Constants.DESCRIPTION_TEMP);
+        String title = String.format(getString(R.string.add_new), getString(R.string.status_title));
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DESCRIPTION_TEMP, ""), Constants.DESCRIPTION_TEMP);
     }
 
     @OnClick(R.id.account_name_card)
     protected void accountNameClick() {
-        callEditFragment("Add New Name", preferenceEndPoint.getStringPreference(Constants.FIRST_NAME_TEMP, ""), Constants.FIRST_NAME_TEMP);
+        String title = String.format(getString(R.string.add_new), getString(R.string.name));
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.FIRST_NAME_TEMP, ""), Constants.FIRST_NAME_TEMP);
     }
 
     @OnClick(R.id.account_phone_number_card)
     protected void accountPhoneClick() {
-        callEditFragment("Add New Phone Number", withoutCountryCode, Constants.PHONE_NO_TEMP);
+        String title = String.format(getString(R.string.add_new), getString(R.string.phone_number));
+        callEditFragment(title, withoutCountryCode, Constants.PHONE_NO_TEMP);
     }
 
     @OnClick(R.id.account_dob_card)
     protected void accountDOBClick() {
-        callEditFragment("Add New DOB", preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, ""), Constants.DOB_TEMP);
+        String title = String.format(getString(R.string.add_new), getString(R.string.dob));
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, ""), Constants.DOB_TEMP);
     }
 
     @OnClick(R.id.account_email_card)
     protected void accountEmailClick() {
-        callEditFragment("Add New Email", preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, ""), Constants.EMAIL_TEMP);
+        String title = String.format(getString(R.string.add_new), getString(R.string.email_id));
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, ""), Constants.EMAIL_TEMP);
     }
 
     private void callEditFragment(final String title, final String edit, final String key) {
-        AccountDetailsEditFragment accountDetailsFragment = new AccountDetailsEditFragment(title, edit, key);
+        AccountDetailsEditFragment accountDetailsFragment = new AccountDetailsEditFragment(title, edit, key, getCountryCode(preferenceEndPoint.getStringPreference(Constants.PHONE_NO)));
         getActivity().getSupportFragmentManager().beginTransaction()
                 .add(android.R.id.content, accountDetailsFragment, "FRAGMENT")
                 .addToBackStack(null)
@@ -202,14 +207,14 @@ public class AccountDetailsFragment extends BaseFragment {
                     saveUserProfileValues(response.body());
                     getActivity().finish();
                 } else {
-                    Toast.makeText(getContext(), "Failed to update account details", Toast.LENGTH_SHORT).show();
+                    mToastFactory.showToast(getString(R.string.failed_update));
                 }
             }
 
             @Override
             public void onFailure(Call<UserProfileInfo> call, Throwable t) {
                 dismissProgressDialog();
-                Toast.makeText(getContext(), "Failed to update account details", Toast.LENGTH_SHORT).show();
+                mToastFactory.showToast(getString(R.string.failed_update));
             }
         });
     }
@@ -298,7 +303,7 @@ public class AccountDetailsFragment extends BaseFragment {
             withoutCountryCode = number;
             accountPhoneNumber.setText(Html.fromHtml(String.format(getString(R.string.phone_text_field), countryCode, number)));
         } else {
-            accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO, ""));
+            accountPhoneNumber.setText(phone);
         }
     }
 

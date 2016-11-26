@@ -1,32 +1,18 @@
 package com.yo.android.ui;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-import com.yo.android.BuildConfig;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.yo.android.R;
-import com.yo.android.helpers.Helper;
 import com.yo.android.util.Constants;
 
 import java.io.File;
@@ -68,74 +54,32 @@ public class ShowPhotoActivity extends BaseActivity {
     }
 
     private void getImageHeightAndWidth(String imageUrl, final ImageView imageView) {
-        final Callback loadedCallback = new Callback() {
+        SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
             @Override
-            public void onSuccess() {
-                progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onError() {
-                progressBar.setVisibility(View.GONE);
+            public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+                DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                float density = displayMetrics.density;
+                int width = displayMetrics.widthPixels;
+                int height = displayMetrics.heightPixels;
+                imageView.getLayoutParams().width = width > Math.round(bitmap.getWidth() * density) ? Math.round(bitmap.getWidth() * density) : width;
+                imageView.getLayoutParams().height = height > Math.round(bitmap.getHeight() * density) ? Math.round(bitmap.getHeight() * density) : height;
+                imageView.setImageBitmap(bitmap);
             }
         };
-        Picasso.Builder builder = new Picasso.Builder(this);
-        builder.listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                exception.printStackTrace();
-            }
-        });
-        if (imageUrl.contains("storage")) {
-            builder.build()
+        if (imageUrl.contains("storage/")) {
+            Glide.with(getApplicationContext())
                     .load(new File(imageUrl))
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                            float density = displayMetrics.density;
-                            int width = displayMetrics.widthPixels;
-                            int height = displayMetrics.heightPixels;
-                            imageView.getLayoutParams().width = width > Math.round(bitmap.getWidth() * density) ? Math.round(bitmap.getWidth() * density) : width;
-                            imageView.getLayoutParams().height = height > Math.round(bitmap.getHeight() * density) ? Math.round(bitmap.getHeight() * density) : height;
-                            imageView.setImageBitmap(bitmap);
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                        }
-                    });
+                    .asBitmap()
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(target);
         } else {
-            builder.build()
-                    .load(imageUrl)
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                            float density = displayMetrics.density;
-                            int width = displayMetrics.widthPixels;
-                            int height = displayMetrics.heightPixels;
-                            imageView.getLayoutParams().width = width > Math.round(bitmap.getWidth() * density) ? Math.round(bitmap.getWidth() * density) : width;
-                            imageView.getLayoutParams().height = height > Math.round(bitmap.getHeight() * density) ? Math.round(bitmap.getHeight() * density) : height;
-                            imageView.setImageBitmap(bitmap);
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                        }
-                    });
+            Glide.with(getApplicationContext())
+                    .load((imageUrl))
+                    .asBitmap()
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(target);
         }
         imageOpen.setVisibility(View.VISIBLE);
     }

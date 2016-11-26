@@ -17,13 +17,15 @@ import com.yo.android.util.Constants;
  */
 public class AccountDetailsActivity extends BaseActivity {
 
+    public static final String FRAGMENT = "fragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setTitle("Account Details");
+        getSupportActionBar().setTitle(getString(R.string.account_details));
         AccountDetailsFragment accountDetailsFragment = new AccountDetailsFragment();
         getSupportFragmentManager().beginTransaction()
-                .add(android.R.id.content, accountDetailsFragment, "FRAGMENT")
+                .add(android.R.id.content, accountDetailsFragment, FRAGMENT)
                 .commit();
         enableBack();
     }
@@ -48,14 +50,14 @@ public class AccountDetailsActivity extends BaseActivity {
     private void showConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setMessage("Are you sure you want to save the changes?")
-                .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
+                .setMessage(R.string.save_changes)
+                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ((AccountDetailsFragment) getSupportFragmentManager().findFragmentByTag("FRAGMENT")).saveDetails();
+                        ((AccountDetailsFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT)).saveDetails();
                     }
                 })
-                .setNegativeButton("CANCEL", null);
+                .setNegativeButton(R.string.cancel, null);
         // Create the AlertDialog object and return it
         builder.create().show();
     }
@@ -63,9 +65,9 @@ public class AccountDetailsActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (getSupportFragmentManager().findFragmentByTag("FRAGMENT") instanceof AccountDetailsFragment) {
-            getSupportActionBar().setTitle("Account Details");
-            ((AccountDetailsFragment) getSupportFragmentManager().findFragmentByTag("FRAGMENT")).setUserInfoDetails();
+        if (getSupportFragmentManager().findFragmentByTag(FRAGMENT) instanceof AccountDetailsFragment) {
+            getSupportActionBar().setTitle(getString(R.string.account_details));
+            ((AccountDetailsFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT)).setUserInfoDetails();
         }
     }
 
