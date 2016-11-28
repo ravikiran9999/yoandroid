@@ -229,8 +229,10 @@ public class FirebaseService extends InjectedService {
 
                 @Override
                 public void onDownlaoded(File file) {
-                    chatMessage.setImagePath(file.getAbsolutePath());
-                    sendTrayNotifications(STYLE_PICTURE, roomId, chatMessage);
+                    if (file != null) {
+                        chatMessage.setImagePath(file.getAbsolutePath());
+                        sendTrayNotifications(STYLE_PICTURE, roomId, chatMessage);
+                    }
                 }
             });
         } else {

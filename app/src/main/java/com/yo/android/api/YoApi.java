@@ -174,6 +174,10 @@ public class YoApi {
                 @Header("Authorization") String authorization,
                 @Part("user[description]") RequestBody descBody,
                 @Part("user[first_name]") RequestBody firstName,
+                @Part("user[phone_no]") RequestBody phoneNo,
+                @Part("user[email]") RequestBody email,
+                @Part("user[dob]") RequestBody dob,
+                @Part("user[gender]") RequestBody gender,
                 @Part("user[notification_alert]") RequestBody notificationsAlert,
                 @Part("user[contacts_sync]") RequestBody syncContacts,
                 @Part MultipartBody.Part file);
@@ -288,6 +292,9 @@ public class YoApi {
 
         @GET("api/denominations.json")
         Call<List<Denominations>> getDenominations(@Query("access_token") String access_token);
+        @FormUrlEncoded
+        @POST("/api/user/other_user_info.json")
+        Call<ResponseBody> getUserOtherInfo(@Field("vox_user_name") String vox_user_name);
 
         @GET("api/articles/articles_with_pagination.json")
         Call<List<Articles>> getArticlesWithPaginationAPI(@Query("access_token") String access_token, @Query("page") int page, @Query("limit") int limit);

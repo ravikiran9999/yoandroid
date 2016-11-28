@@ -85,6 +85,7 @@ public class BottomTabsActivity extends BaseActivity {
     @Inject
     ContactSyncHelper mContactSyncHelper;
     private Button notificationCount;
+    private ImageView notificationEnable;
     private ViewGroup customActionBar;
     private Context context;
     private SipBinder sipBinder;
@@ -146,7 +147,7 @@ public class BottomTabsActivity extends BaseActivity {
 
         customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
         notificationCount = (Button) customActionBar.findViewById(R.id.notif_count);
-        ImageView notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
+        notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
         notificationEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,15 +164,20 @@ public class BottomTabsActivity extends BaseActivity {
                     getSupportActionBar().setDisplayShowCustomEnabled(true);
                     getSupportActionBar().setCustomView(customActionBar);
 
-                    if (getFragment() instanceof MoreFragment) {
-                        //getSupportActionBar().hide();
-                        getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
-                    } else {
-                       // getSupportActionBar().show();
-                        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
-                    }
                     TextView actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);
                     actionBarTitle.setText((dataList.get(position)).getTitle());
+
+                    if (getFragment() instanceof MoreFragment) {
+                        notificationCount.setVisibility(View.GONE);
+                        notificationEnable.setVisibility(View.GONE);
+                        getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
+                    } else {
+                        if (!notificationCount.getText().toString().equalsIgnoreCase("0")) {
+                            notificationCount.setVisibility(View.VISIBLE);
+                        }
+                        notificationEnable.setVisibility(View.VISIBLE);
+                        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+                    }
 
                 } catch (NullPointerException e) {
                     mLog.w("onPageSelected", e);
@@ -302,8 +308,8 @@ public class BottomTabsActivity extends BaseActivity {
         }
 
         Intent intent = getIntent();
-        if(intent.hasExtra("type")) {
-            if("Missed call".equals(intent.getStringExtra("type").trim())) {
+        if (intent.hasExtra("type")) {
+            if ("Missed call".equals(intent.getStringExtra("type").trim())) {
                 viewPager.setCurrentItem(2);
             }
         }

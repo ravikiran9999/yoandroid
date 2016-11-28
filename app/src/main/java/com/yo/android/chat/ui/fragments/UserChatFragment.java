@@ -252,31 +252,19 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         try {
-
             listView.setStackFromBottom(false);
-            listView.setAreHeadersSticky(false);
             listView.setOnScrollListener(new AbsListView.OnScrollListener() {
                                              @Override
                                              public void onScrollStateChanged(AbsListView view, int scrollState) {
                                                  if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                                                     listStickeyHeader.setVisibility(View.GONE);
+                                                     listView.setAreHeadersSticky(false);
                                                  } else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                                                     listStickeyHeader.setVisibility(View.VISIBLE);
+                                                     listView.setAreHeadersSticky(true);
                                                  }
                                              }
 
                                              @Override
                                              public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                                                 try {
-                                                     if (userChatAdapter != null && userChatAdapter.getCount() > 0 && (listStickeyHeader != null)) {
-                                                         String headerText = userChatAdapter.getItem(listView.getFirstVisiblePosition()).getStickeyHeader();
-                                                         if (headerText != null) {
-                                                             listStickeyHeader.setText(headerText.toUpperCase());
-                                                         }
-                                                     }
-                                                 } catch (Exception e) {
-                                                     mLog.w("UserChat", e);
-                                                 }
                                              }
                                          }
 
@@ -817,7 +805,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             Intent photoIntent = new Intent(getActivity(), ShowPhotoActivity.class);
             photoIntent.putExtra(Constants.IMAGE, userChatAdapter.getItem(position).getImagePath());
             getActivity().startActivity(photoIntent);
-
         }
     }
 

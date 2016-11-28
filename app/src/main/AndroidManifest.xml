@@ -218,6 +218,10 @@
         <activity
             android:name=".ui.fragments.InviteActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.yo.android.ui.AccountDetailsActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait" />
 
         <!-- SMS Receiver -->
         <receiver android:name=".voip.IncomingSmsReceiver">

@@ -31,6 +31,7 @@ import com.yo.android.flip.MagazineTopicsSelectionFragment;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.sync.YoContactsSyncAdapter;
+import com.yo.android.ui.AccountDetailsActivity;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.ui.CountryListActivity;
@@ -69,6 +70,8 @@ import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.WishListActivity;
+import com.yo.android.ui.fragments.AccountDetailsEditFragment;
+import com.yo.android.ui.fragments.AccountDetailsFragment;
 import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
@@ -140,6 +143,7 @@ import dagger.Provides;
                 UserProfileActivity.class,
 
                 InviteActivity.class,
+                AccountDetailsActivity.class,
                 OthersProfileMagazines.class,
                 OtherProfilesFollowers.class,
                 OtherProfilesLikedArticles.class,
@@ -158,6 +162,8 @@ import dagger.Provides;
                 DialerFragment.class,
                 ChatFragment.class,
                 YoContactsFragment.class,
+                AccountDetailsFragment.class,
+                AccountDetailsEditFragment.class,
                 MagazineTopicsSelectionFragment.class,
                 MagazineFlipArticlesFragment.class,
                 MoreFragment.class,

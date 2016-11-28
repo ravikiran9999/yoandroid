@@ -248,7 +248,7 @@ public class UpdateProfileActivity extends BaseActivity {
                 RequestBody.create(
                         MediaType.parse("user[first_name]"), descriptionString);
         String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-        yoService.updateProfile(userId, access, null, description, null, null, body).enqueue(new Callback<UserProfileInfo>() {
+        yoService.updateProfile(userId, access, null, description, null, null, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
