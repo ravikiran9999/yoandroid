@@ -39,6 +39,8 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -62,6 +64,7 @@ public class MyCollectionDetails extends BaseActivity {
     private MyBaseAdapter myBaseAdapter;
     private String type;
     private String topicId;
+    private LinkedHashSet<Articles> articlesHashSet = new LinkedHashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +101,10 @@ public class MyCollectionDetails extends BaseActivity {
                     dismissProgressDialog();
                     if (response.body().size() > 0) {
                         for (int i = 0; i < response.body().size(); i++) {
-                            articlesList.add(response.body().get(i));
+                            //articlesList.add(response.body().get(i));
+                            articlesHashSet.add(response.body().get(i));
                         }
+                        articlesList = new ArrayList<Articles>(articlesHashSet);
                         myBaseAdapter.addItems(articlesList);
                     } else {
                         mToastFactory.showToast("No Articles");
@@ -121,8 +126,10 @@ public class MyCollectionDetails extends BaseActivity {
                     dismissProgressDialog();
                     if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
                         for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                            articlesList.add(response.body().getArticlesList().get(i));
+                            //articlesList.add(response.body().getArticlesList().get(i));
+                            articlesHashSet.add(response.body().getArticlesList().get(i));
                         }
+                        articlesList = new ArrayList<Articles>(articlesHashSet);
                         myBaseAdapter.addItems(articlesList);
                     }
 

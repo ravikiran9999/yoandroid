@@ -3,6 +3,8 @@ package com.yo.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashSet;
+
 /**
  * Created by creatives on 7/5/2016.
  */
@@ -22,6 +24,9 @@ public class Articles implements Parcelable {
     private String topicName;
     private String topicId;
     private String topicFollowing;
+
+    public Articles() {
+    }
 
     protected Articles(Parcel in) {
         id = in.readString();
@@ -186,5 +191,19 @@ public class Articles implements Parcelable {
         dest.writeString(topicName);
         dest.writeString(topicId);
         dest.writeString(topicFollowing);
+    }
+
+    public int hashCode() {
+        int hash = getId().hashCode();
+        return hash;
+    }
+
+    public boolean equals(Object obj) {
+        if (obj instanceof Articles) {
+            Articles articles = (Articles) obj;
+            return (articles.getId().equals(this.getId()));
+        } else {
+            return false;
+        }
     }
 }

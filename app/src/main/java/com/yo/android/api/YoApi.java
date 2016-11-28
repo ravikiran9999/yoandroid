@@ -289,6 +289,9 @@ public class YoApi {
         @GET("api/denominations.json")
         Call<List<Denominations>> getDenominations(@Query("access_token") String access_token);
 
+        @GET("api/articles/articles_with_pagination.json")
+        Call<List<Articles>> getArticlesWithPaginationAPI(@Query("access_token") String access_token, @Query("page") int page, @Query("limit") int limit);
+
     }
 
     public interface YoRefreshTokenService {

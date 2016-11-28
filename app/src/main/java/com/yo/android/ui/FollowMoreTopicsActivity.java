@@ -310,7 +310,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         //TODO:Disalbe flag for Follow more
                         preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.getAllArticlesAPI(accessToken).enqueue(callback);
+                        //yoService.getAllArticlesAPI(accessToken).enqueue(callback);
+                        yoService.getArticlesWithPaginationAPI(accessToken, 1, 200);
                         /*Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
                         myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
