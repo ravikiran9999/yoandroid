@@ -292,4 +292,5 @@
     <string name="save_changes">Are you sure you want to save the changes?</string>
     <string name="hold">Hold</string>
     <string name="unhold">Unhold</string>
+    <string name="edit_details">Edit %1$s</string>
 </resources>
