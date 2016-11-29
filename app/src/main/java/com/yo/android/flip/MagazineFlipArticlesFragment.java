@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -82,6 +83,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private TextView tvProgressText;
     private List<String> readArticleIds;
     private LinkedHashSet<List<String>> articlesIdsHashSet = new LinkedHashSet<>();
+    private static int currentFlippedPosition;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -116,6 +118,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         flipView.setOnFlipListener(this);
         tvProgressText = (TextView) view.findViewById(R.id.tv_progress_text);
         readArticleIds = new ArrayList<>();
+
+        update();
         return view;
     }
 
@@ -146,9 +150,29 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("FlipArticlesFragment", "In onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("FlipArticlesFragment", "In onPause()");
+    }
+
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+        super.onOptionsMenuClosed(menu);
+        Log.d("FlipArticlesFragment", "In onOptionsMenuClosed()");
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mLog.d("onActivityCreated", "In onActivityCreated");
+
+        currentFlippedPosition = 0;
 
         /*if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
@@ -214,8 +238,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             String cachedMagazines = sharedCachedMagazines;
             List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
             myBaseAdapter.addItems(cachedMagazinesList);
-            removeFirstPageArticles();
-            flipView.flipTo(lastReadArticle);
+            //removeFirstPageArticles();
+            //flipView.flipTo(lastReadArticle);
+            flipView.flipTo(0);
             articlesRootLayout.setVisibility(View.VISIBLE);
             networkFailureText.setVisibility(View.GONE);
             if (llNoArticles != null) {
@@ -433,9 +458,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    public void update() {
+        Log.d("FlipArticlesFragment", "In update() FlipArticlesFragment");
         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
@@ -443,10 +467,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 getCachedArticles();
             }
         }
-    }
-
-    public void onPause() {
-        super.onPause();
     }
 
 
@@ -498,8 +518,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         } else {
             lastReadArticle = 0;
         }
+        currentFlippedPosition = position;
 
-        if(position == 0) {
+        /*if(position == 0) {
             String articleId1 = myBaseAdapter.getItem(position).getId();
             String articleId2 = myBaseAdapter.secondArticle.getId();
             String articleId3 = myBaseAdapter.thirdArticle.getId();
@@ -536,6 +557,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             editor.commit();
 
         } else {
+            String articleId1 = myBaseAdapter.getItem(position).getId();
+            String articleId2 = myBaseAdapter.secondArticle.getId();
+            String articleId3 = myBaseAdapter.thirdArticle.getId();
+
+            Log.d("FlipArticlesFragment", "Article Id1 is " + articleId1 + "Article Id2 is " + articleId2 + " Article Id3 is " + articleId3);
+            readArticleIds.add(articleId1);
+            readArticleIds.add(articleId2);
+            readArticleIds.add(articleId3);
             String articleId = myBaseAdapter.getItem(position).getId();
             Log.d("FlipArticlesFragment", "Article Id is " + articleId);
 
@@ -559,11 +588,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }.getType();
             String cachedMagazines = sharedCachedMagazines;
             List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+            cachedMagazinesList.remove(myBaseAdapter.getItem(0));
+            cachedMagazinesList.remove(myBaseAdapter.secondArticle);
+            cachedMagazinesList.remove(myBaseAdapter.thirdArticle);
             cachedMagazinesList.remove(myBaseAdapter.getItem(position));
 
             editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
             editor.commit();
-        }
+        }*/
 
         if(position+2 == myBaseAdapter.getCount()/2 && !isArticlesEndReached) {
             pageCount++;
@@ -600,6 +632,21 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     }
                     List<Articles> articlesList = new ArrayList<Articles>(tempList);
                     //myBaseAdapter.addItems(response.body());
+                    String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+                    if(!TextUtils.isEmpty(readCachedIds)) {
+                        Type type1 = new TypeToken<List<String>>() {
+                        }.getType();
+                        String cachedIds = readCachedIds;
+                        List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+                        for (int i = 0; i < articlesList.size(); i++) {
+                            for (int j = 0; j < cachedReadList.size(); j++) {
+                                if (articlesList.size()>0 && articlesList.get(i).getId().equals(cachedReadList.get(j)))
+                                    articlesList.remove(i);
+                                //Log.d("FlipArticlesFragment", "Cached Article Name is " + cachedMagazinesList.get(i).getTitle() + " Cached Articles size " + cachedMagazinesList.size());
+                            }
+                        }
+                    }
                     myBaseAdapter.addItems(articlesList);
                     mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
                     flipView.flipTo(lastReadArticle);
@@ -609,9 +656,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         /*if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
                             preferenceEndPoint.removePreference("cached_magazines");
                         }*/
-                        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                        //String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                         SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-                        editor.putString("cached_magazines", new Gson().toJson(response.body()));
+                        editor.putString("cached_magazines", new Gson().toJson(articlesList));
                         editor.commit();
                         //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
 
@@ -779,5 +826,73 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
             editor.commit();
+    }
+
+    public void removeReadArticles() {
+
+        if(currentFlippedPosition >0) {
+            String articleId2 = myBaseAdapter.secondArticle.getId();
+            String articleId3 = myBaseAdapter.thirdArticle.getId();
+            readArticleIds.add(articleId2);
+            readArticleIds.add(articleId3);
+
+
+            Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
+            for (int i = 0; i <= currentFlippedPosition; i++) {
+                String articleId = myBaseAdapter.getItem(i).getId();
+                Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(i).getTitle() + " Articles size " + myBaseAdapter.getCount());
+
+                readArticleIds.add(articleId);
+            }
+
+
+            articlesIdsHashSet.add(readArticleIds);
+            Iterator<List<String>> itr = articlesIdsHashSet.iterator();
+            List<String> tempList = new ArrayList<String>();
+            while (itr.hasNext()) {
+                tempList = itr.next();
+            }
+            List<String> articlesList = new ArrayList<String>(tempList);
+
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+            editor.putString("read_article_ids", new Gson().toJson(articlesList));
+            editor.commit();
+
+
+            String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("cached_magazines", "");
+            Type type = new TypeToken<List<Articles>>() {
+            }.getType();
+            String cachedMagazines = sharedCachedMagazines;
+            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+            //if(currentFlippedPosition >0) {
+            cachedMagazinesList.remove(myBaseAdapter.secondArticle);
+            cachedMagazinesList.remove(myBaseAdapter.thirdArticle);
+            //}
+            /*for (int i = 0; i <= currentFlippedPosition; i++) {
+                cachedMagazinesList.remove(i);
+                Log.d("FlipArticlesFragment", "Cached Article Name is " + cachedMagazinesList.get(i).getTitle() + " Cached Articles size " + cachedMagazinesList.size());
+            }*/
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+            Type type1 = new TypeToken<List<String>>() {
+            }.getType();
+            String cachedIds = readCachedIds;
+            List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+            for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                for(int j=0; j<cachedReadList.size(); j++) {
+                    if (cachedMagazinesList.size()>0 && cachedMagazinesList.get(i).getId().equals(cachedReadList.get(j)))
+                        cachedMagazinesList.remove(i);
+                    Log.d("FlipArticlesFragment", "Cached Article Name is " + cachedMagazinesList.get(i).getTitle() + " Cached Articles size " + cachedMagazinesList.size());
+                }
+            }
+        /*cachedMagazinesList.remove(myBaseAdapter.getItem(0));
+        cachedMagazinesList.remove(myBaseAdapter.secondArticle);
+        cachedMagazinesList.remove(myBaseAdapter.thirdArticle);
+        cachedMagazinesList.remove(myBaseAdapter.getItem(position));*/
+
+            editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+            editor.commit();
+        }
+
     }
 }

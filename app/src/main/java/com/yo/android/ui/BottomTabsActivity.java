@@ -13,6 +13,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -179,6 +180,9 @@ public class BottomTabsActivity extends BaseActivity {
                         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                     }
 
+
+                    mLog.d("onPageSelected", getFragment() + "");
+
                 } catch (NullPointerException e) {
                     mLog.w("onPageSelected", e);
                 }
@@ -186,6 +190,13 @@ public class BottomTabsActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
+
+                if(position == 0 && getFragment() instanceof MagazinesFragment) {
+                    Log.d("BottomTabsActivity", "onPageSelected In update() BottomTabsActivity");
+
+                    ((MagazinesFragment)getFragment()).removeReadArticles();
+                    ((MagazinesFragment)getFragment()).update();
+                }
 
             }
 

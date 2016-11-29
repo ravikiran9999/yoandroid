@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,19 +29,24 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 //import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
+import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -52,7 +59,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 
-public class MyCollectionDetails extends BaseActivity {
+public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlipListener {
 
     @Inject
     YoApi.YoService yoService;
@@ -65,19 +72,26 @@ public class MyCollectionDetails extends BaseActivity {
     private String type;
     private String topicId;
     private LinkedHashSet<Articles> articlesHashSet = new LinkedHashSet<>();
+    private static int currentFlippedPosition;
+    private List<String> readArticleIds;
+    private LinkedHashSet<List<String>> articlesIdsHashSet = new LinkedHashSet<>();
+    private TextView tvNoArticles;
+    private FlipView flipView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_collection_details);
 
-        FlipView flipView = (FlipView) findViewById(R.id.flip_view);
+        flipView = (FlipView) findViewById(R.id.flip_view);
+        tvNoArticles = (TextView) findViewById(R.id.tv_no_articles);
         myBaseAdapter = new MyBaseAdapter(this);
         flipView.setAdapter(myBaseAdapter);
 
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        flipView.setOnFlipListener(this);
 
         Intent intent = getIntent();
         topicId = intent.getStringExtra("TopicId");
@@ -89,6 +103,11 @@ public class MyCollectionDetails extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         articlesList.clear();
+
+        readArticleIds = new ArrayList<>();
+        currentFlippedPosition = 0;
+        tvNoArticles.setVisibility(View.GONE);
+        flipView.setVisibility(View.VISIBLE);
 
         if ("Tag".equals(type)) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -105,7 +124,34 @@ public class MyCollectionDetails extends BaseActivity {
                             articlesHashSet.add(response.body().get(i));
                         }
                         articlesList = new ArrayList<Articles>(articlesHashSet);
+                        List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
+                        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
+                        if (!TextUtils.isEmpty(readCachedIds)) {
+                            Type type1 = new TypeToken<List<String>>() {
+                            }.getType();
+                            String cachedIds = readCachedIds;
+                            List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+
+
+                            for (Articles article : articlesList) {
+                                for (String artId : cachedReadList) {
+                                    if (article.getId().equals(artId)) {
+                                        tempArticlesList.remove(article);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        articlesList = tempArticlesList;
                         myBaseAdapter.addItems(articlesList);
+                        if(articlesList.size()==0) {
+                            tvNoArticles.setVisibility(View.VISIBLE);
+                            flipView.setVisibility(View.GONE);
+                        } else {
+                            tvNoArticles.setVisibility(View.GONE);
+                            flipView.setVisibility(View.VISIBLE);
+                        }
                     } else {
                         mToastFactory.showToast("No Articles");
                     }
@@ -130,7 +176,34 @@ public class MyCollectionDetails extends BaseActivity {
                             articlesHashSet.add(response.body().getArticlesList().get(i));
                         }
                         articlesList = new ArrayList<Articles>(articlesHashSet);
+                        List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
+                        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
+                        if (!TextUtils.isEmpty(readCachedIds)) {
+                            Type type1 = new TypeToken<List<String>>() {
+                            }.getType();
+                            String cachedIds = readCachedIds;
+                            List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+
+
+                            for (Articles article : articlesList) {
+                                for (String artId : cachedReadList) {
+                                    if (article.getId().equals(artId)) {
+                                        tempArticlesList.remove(article);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        articlesList = tempArticlesList;
                         myBaseAdapter.addItems(articlesList);
+                        if(articlesList.size()==0) {
+                            tvNoArticles.setVisibility(View.VISIBLE);
+                            flipView.setVisibility(View.GONE);
+                        } else {
+                            tvNoArticles.setVisibility(View.GONE);
+                            flipView.setVisibility(View.VISIBLE);
+                        }
                     }
 
                 }
@@ -138,6 +211,8 @@ public class MyCollectionDetails extends BaseActivity {
                 @Override
                 public void onFailure(Call<MagazineArticles> call, Throwable t) {
                     dismissProgressDialog();
+                    tvNoArticles.setVisibility(View.VISIBLE);
+                    flipView.setVisibility(View.GONE);
                 }
             });
         }
@@ -150,6 +225,17 @@ public class MyCollectionDetails extends BaseActivity {
 
     public void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onFlippedToPage(FlipView v, int position, long id) {
+        currentFlippedPosition = position;
+    }
+
+    @Override
+    public void onBackPressed() {
+        removeReadArticles();
+        super.onBackPressed();
     }
 
     private class MyBaseAdapter extends BaseAdapter {
@@ -260,7 +346,7 @@ public class MyCollectionDetails extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
@@ -272,7 +358,7 @@ public class MyCollectionDetails extends BaseActivity {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -292,7 +378,7 @@ public class MyCollectionDetails extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
@@ -304,7 +390,7 @@ public class MyCollectionDetails extends BaseActivity {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -337,7 +423,7 @@ public class MyCollectionDetails extends BaseActivity {
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        //.centerCrop()
+                                //.centerCrop()
                                 //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
@@ -414,7 +500,7 @@ public class MyCollectionDetails extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -425,7 +511,7 @@ public class MyCollectionDetails extends BaseActivity {
                                 finalHolder.articleFollow.setText("Follow");
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                 data.setIsFollowing("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
 
@@ -437,8 +523,8 @@ public class MyCollectionDetails extends BaseActivity {
                 }
             });
 
-            LinearLayout llArticleInfo = (LinearLayout)layout.findViewById(R.id.ll_article_info);
-            if(llArticleInfo != null) {
+            LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
+            if (llArticleInfo != null) {
                 llArticleInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -452,8 +538,8 @@ public class MyCollectionDetails extends BaseActivity {
                 });
             }
 
-            if(holder.tvTopicName != null) {
-                if(!TextUtils.isEmpty(data.getTopicName())) {
+            if (holder.tvTopicName != null) {
+                if (!TextUtils.isEmpty(data.getTopicName())) {
                     holder.tvTopicName.setVisibility(View.VISIBLE);
                     holder.tvTopicName.setText(data.getTopicName());
                 } else {
@@ -537,7 +623,7 @@ public class MyCollectionDetails extends BaseActivity {
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            if (!((BaseActivity)context).hasDestroyed()) {
+            if (!((BaseActivity) context).hasDestroyed()) {
                 notifyDataSetChanged();
             }
         }
@@ -681,6 +767,10 @@ public class MyCollectionDetails extends BaseActivity {
                     });
                 }
                 break;
+            case android.R.id.home:
+                removeReadArticles();
+                super.onOptionsItemSelected(item);
+                break;
             default:
                 break;
 
@@ -702,5 +792,76 @@ public class MyCollectionDetails extends BaseActivity {
             }
 
         }
+    }
+
+    public void removeReadArticles() {
+
+        Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
+        if (myBaseAdapter.getCount() > 0) {
+            for (int i = 0; i <= currentFlippedPosition; i++) {
+                String articleId = myBaseAdapter.getItem(i).getId();
+                Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(i).getTitle() + " Articles size " + myBaseAdapter.getCount());
+
+                readArticleIds.add(articleId);
+            }
+
+
+            articlesIdsHashSet.add(readArticleIds);
+            Iterator<List<String>> itr = articlesIdsHashSet.iterator();
+            List<String> tempList = new ArrayList<String>();
+            while (itr.hasNext()) {
+                tempList = itr.next();
+            }
+            List<String> articlesList = new ArrayList<String>(tempList);
+
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(this, userId);
+            String readCachedIds1 = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
+            List<String> cachedReadList1 = new ArrayList<>();
+            if (!TextUtils.isEmpty(readCachedIds1)) {
+                Type type2 = new TypeToken<List<String>>() {
+                }.getType();
+                String cachedIds1 = readCachedIds1;
+                cachedReadList1 = new Gson().fromJson(cachedIds1, type2);
+            }
+            articlesList.addAll(cachedReadList1);
+            editor.putString("read_article_ids", new Gson().toJson(articlesList));
+            editor.commit();
+
+
+            String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("cached_magazines", "");
+            Type type = new TypeToken<List<Articles>>() {
+            }.getType();
+            String cachedMagazines = sharedCachedMagazines;
+            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+            //if(currentFlippedPosition >0) {
+           /* cachedMagazinesList.remove(myBaseAdapter.secondArticle);
+            cachedMagazinesList.remove(myBaseAdapter.thirdArticle);*/
+            //}
+            /*for (int i = 0; i <= currentFlippedPosition; i++) {
+                cachedMagazinesList.remove(i);
+                Log.d("FlipArticlesFragment", "Cached Article Name is " + cachedMagazinesList.get(i).getTitle() + " Cached Articles size " + cachedMagazinesList.size());
+            }*/
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("read_article_ids", "");
+            Type type1 = new TypeToken<List<String>>() {
+            }.getType();
+            String cachedIds = readCachedIds;
+            List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+            for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                for (int j = 0; j < cachedReadList.size(); j++) {
+                    if (cachedMagazinesList.size() > 0 && i < cachedMagazinesList.size() && cachedMagazinesList.get(i).getId().equals(cachedReadList.get(j)))
+                        cachedMagazinesList.remove(i);
+                    Log.d("FlipArticlesFragment", "Cached Article Name is " + cachedMagazinesList.get(i).getTitle() + " Cached Articles size " + cachedMagazinesList.size());
+                }
+            }
+        /*cachedMagazinesList.remove(myBaseAdapter.getItem(0));
+        cachedMagazinesList.remove(myBaseAdapter.secondArticle);
+        cachedMagazinesList.remove(myBaseAdapter.thirdArticle);
+        cachedMagazinesList.remove(myBaseAdapter.getItem(position));*/
+
+            editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+            editor.commit();
+        }
+
     }
 }
