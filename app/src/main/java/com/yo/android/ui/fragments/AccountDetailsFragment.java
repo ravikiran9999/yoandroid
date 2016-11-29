@@ -135,25 +135,19 @@ public class AccountDetailsFragment extends BaseFragment {
 
     @OnClick(R.id.account_name_card)
     protected void accountNameClick() {
-        String title = String.format(getString(R.string.add_new), getString(R.string.name));
+        String title = String.format(getString(R.string.edit_details), getString(R.string.name));
         callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.FIRST_NAME_TEMP, ""), Constants.FIRST_NAME_TEMP);
-    }
-
-    @OnClick(R.id.account_phone_number_card)
-    protected void accountPhoneClick() {
-        String title = String.format(getString(R.string.add_new), getString(R.string.phone_number));
-        callEditFragment(title, withoutCountryCode, Constants.PHONE_NO_TEMP);
     }
 
     @OnClick(R.id.account_dob_card)
     protected void accountDOBClick() {
-        String title = String.format(getString(R.string.add_new), getString(R.string.dob));
+        String title = String.format(getString(R.string.edit_details), getString(R.string.dob));
         callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, ""), Constants.DOB_TEMP);
     }
 
     @OnClick(R.id.account_email_card)
     protected void accountEmailClick() {
-        String title = String.format(getString(R.string.add_new), getString(R.string.email_id));
+        String title = String.format(getString(R.string.edit_details), getString(R.string.email_id));
         callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, ""), Constants.EMAIL_TEMP);
     }
 

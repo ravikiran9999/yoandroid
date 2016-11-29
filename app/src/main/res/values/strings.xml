@@ -289,4 +289,5 @@
     <string name="failed_update">Failed to update account details</string>
     <string name="confirm">Confirm</string>
     <string name="save_changes">Are you sure you want to save the changes?</string>
+    <string name="edit_details">Edit %1$s</string>
 </resources>
