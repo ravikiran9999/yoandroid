@@ -15,7 +15,7 @@ public interface SipServiceHandler {
 
     void makeCall(String destination, Bundle options, Intent intent);
 
-    void setHoldCall(boolean isHold);
+    void setHoldCall(boolean isHold) ;
 
     CallInfo getInfo();
 

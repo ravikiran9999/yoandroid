@@ -50,8 +50,11 @@ public class TransferBalanceActivity extends BaseActivity {
     private EditText etAmount;
     private String name;
     private String id;
+
+
     @Inject
-    BalanceHelper balanceHelper;
+    protected BalanceHelper mBalanceHelper;
+
     private TextView tvBalance;
     private String currencySymbol;
 
@@ -143,7 +146,11 @@ public class TransferBalanceActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(amount.trim())) {
                     double val = Double.parseDouble(amount.trim());
                     if (val != 0) {
-                        showMessageDialog(amount, phoneNo);
+                        if (Integer.parseInt(mBalanceHelper.getCurrentBalance()) >= Integer.parseInt(amount)) {
+                            showMessageDialog(amount, phoneNo);
+                        } else {
+                            mToastFactory.showToast(R.string.insufficient_amount);
+                        }
                     } else {
                         mToastFactory.showToast(getResources().getString(R.string.enter_valid_amount));
                     }
@@ -326,15 +333,15 @@ public class TransferBalanceActivity extends BaseActivity {
 
     public void onEventMainThread(String action) {
         if (Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION.equals(action)) {
-            if (balanceHelper != null) {
+            if (mBalanceHelper != null) {
                 showProgressDialog();
-                balanceHelper.checkBalance(new Callback<ResponseBody>() {
+                mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         dismissProgressDialog();
                         try {
                             DecimalFormat df = new DecimalFormat("0.000");
-                            String format = df.format(Double.valueOf(balanceHelper.getCurrentBalance()));
+                            String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
                             preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
                             tvBalance.setText(String.format("%s%s", currencySymbol, format));
                             double val = Double.parseDouble(format.trim());

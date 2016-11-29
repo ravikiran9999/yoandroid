@@ -281,6 +281,10 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(true);
                 }
+            } else if (hold == KEEP_ON_HOLD_RESUME) {
+                if (sipBinder != null) {
+                    sipBinder.getHandler().setHoldCall(false);
+                }
             }
         }
     }

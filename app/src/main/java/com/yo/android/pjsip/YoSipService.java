@@ -591,10 +591,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     public void setHoldCall(boolean isHold) {
         if (isHold) {
+            mToastFactory.showToast(R.string.hold);
+            if (mRingTone != null && mRingTone.isPlaying()) {
+                mRingTone.pause();
+            }
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UPDATE_CONTACT.swigValue());
                 try {
+
                     currentCall.setHold(prm);
                 } catch (Exception e) {
                     mLog.w(TAG, e);
@@ -604,8 +609,17 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
+
+
                 try {
+                    if (currentCall.getInfo() != null
+                            && currentCall.getInfo().getState() != pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+                        if (mRingTone != null) {
+                            mRingTone.start();
+                        }
+                    }
                     currentCall.reinvite(prm);
+                    mToastFactory.showToast(R.string.unhold);
                 } catch (Exception e) {
                     mLog.w(TAG, e);
                 }
@@ -630,6 +644,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
         try {
             currentCall.answer(prm);
+
             if (mediaManager != null) {
                 stopRingtone();
                 // mediaManager.stopRingTone();
