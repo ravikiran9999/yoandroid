@@ -75,6 +75,10 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
     private String balance;
 
+    @Bind(R.id.lv_settings)
+    protected ListView menuListView;
+
+
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
     @Override
@@ -96,8 +100,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                         preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
                         txt_balance.setText(String.format("%s %s", demonimations.get(0).getCurrencySymbol(), balance));
                     }
-
-
                 }
             }
 
@@ -235,7 +237,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 super.bindView(position, holder, item);
             }
         };
-        ListView menuListView = (ListView) getView().findViewById(R.id.lv_settings);
         menuAdapter.addItems(getMenuList());
         menuListView.setAdapter(menuAdapter);
         menuListView.setOnItemClickListener(this);

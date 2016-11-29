@@ -136,6 +136,8 @@ public class TransferBalanceActivity extends BaseActivity {
         btnTransfer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //Check current balance and call is going on cases before transfer.
                 String amount = etAmount.getText().toString();
 
                 if (!TextUtils.isEmpty(amount.trim())) {
@@ -336,7 +338,7 @@ public class TransferBalanceActivity extends BaseActivity {
                             preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
                             tvBalance.setText(String.format("%s%s", currencySymbol, format));
                             double val = Double.parseDouble(format.trim());
-                            if(val <=2) {
+                            if (val <= 2) {
                                 mLog.w("TransferBalanceActivity", "Current balance is less than or equal to $2");
                                 Util.setBigStyleNotificationForBalance(TransferBalanceActivity.this, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
 

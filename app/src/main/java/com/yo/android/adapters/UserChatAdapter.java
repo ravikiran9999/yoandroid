@@ -145,17 +145,13 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         TextView profileName = (TextView) view.findViewById(R.id.profile_name);
         SquareImageView loadImage = (SquareImageView) view.findViewById(R.id.chat_image);
         TextView extraText = (TextView) view.findViewById(R.id.extra_chat_message);
-        RelativeLayout seenLayout = (RelativeLayout) view.findViewById(R.id.seen_layout);
-        TextView sentTxt = (TextView) view.findViewById(R.id.sent_txt);
-        TextView seenTxt = (TextView) view.findViewById(R.id.seen_txt);
+
         TextView time = (TextView) view.findViewById(R.id.time);
-        ImageView timeLoad = (ImageView) view.findViewById(R.id.time_load);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         extraText.setVisibility(View.GONE);
         if (!isRTL) {
             profileNameLayout.setVisibility(View.VISIBLE);
             gravityLayout.setGravity(Gravity.LEFT);
-            seenLayout.setVisibility(View.GONE); //No seen for left side panel
             gravityLayout.setBackgroundResource(R.drawable.msg_in_photo);
             if (roomType != null) {
                 profileNameLayout.setVisibility(View.VISIBLE);
@@ -171,7 +167,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 profileNameLayout.setVisibility(View.GONE);
             }
             if (item.getDeliveredTime() != 0) {
-                timeLoad.setVisibility(View.GONE);
                 String seen = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seen);
             }
@@ -180,18 +175,25 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             gravityLayout.setGravity(Gravity.RIGHT);
             profileNameLayout.setVisibility(View.GONE);
             gravityLayout.setBackgroundResource(R.drawable.msg_out_photo);
-            sentTxt.setVisibility(View.VISIBLE);
-            seenLayout.setVisibility(View.VISIBLE);
-            if (item.getSent() != 0) {
-                String sent = Util.getTimeFormatForChat(mContext, item.getTime());
-                timeLoad.setVisibility(View.GONE);
-                time.setText(sent);
-                seenTxt.setVisibility(View.GONE);
+            Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
+            img.setBounds(0, 4, 30, 35);
+            time.setCompoundDrawables(null, null, img, null);
+            time.setCompoundDrawablePadding(10);
+            String sent = Util.getTimeFormatForChat(mContext, item.getTime());
+            time.setText(sent);
+
+            if (item.getSent() == 1) {
+                img = context.getResources().getDrawable(R.drawable.sent);
+                img.setBounds(0, 4, 50, 50);
+                time.setCompoundDrawables(null, null, img, null);
+                time.setCompoundDrawablePadding(10);
+
             }
             if (item.getDeliveredTime() != 0) {
-                String seen = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
-                time.setText(seen);
-                seenTxt.setVisibility(View.VISIBLE);
+                img = context.getResources().getDrawable(R.drawable.seen);
+                img.setBounds(0, 4, 50, 50);
+                time.setCompoundDrawables(null, null, img, null);
+                time.setCompoundDrawablePadding(10);
             }
         }
         ImageLoader.updateImage(context, item, loadImage, progressBar);
@@ -275,21 +277,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             img.setBounds(0, 4, 30, 35);
             time.setCompoundDrawables(null, null, img, null);
             time.setCompoundDrawablePadding(10);
-
-
-            if (item.getSent() == 1 ) {
-                String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
-                time.setText(sentText);
-                sent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+            String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
+            time.setText(sentText);
+            if (item.getSent() == 1) {
                 img = context.getResources().getDrawable(R.drawable.sent);
                 img.setBounds(0, 4, 50, 50);
                 time.setCompoundDrawables(null, null, img, null);
                 time.setCompoundDrawablePadding(10);
             }
-
             if (item.getDeliveredTime() != 0) {
-                String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
-                time.setText(seenText);
                 img = context.getResources().getDrawable(R.drawable.seen);
                 img.setBounds(0, 4, 50, 50);
                 time.setCompoundDrawables(null, null, img, null);

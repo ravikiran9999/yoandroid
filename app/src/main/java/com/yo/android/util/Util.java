@@ -37,6 +37,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -92,8 +93,7 @@ public class Util {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     private static final int SIX = 6;
-    @Inject
-    static ContactsSyncManager mContactsSyncManager;
+
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         return createNotification(context, title, body, clzz, intent, true);
@@ -844,7 +844,7 @@ public class Util {
         notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
     }
 
-    public static void showErrorMessages(final EventBus bus, final OpponentDetails details, final Context context, final ToastFactory mToastFactory, final BalanceHelper mBalanceHelper, final PreferenceEndPoint mPreferenceEndPoint) {
+    public static void showErrorMessages(final EventBus bus, final OpponentDetails details, final Context context, final ToastFactory mToastFactory, final BalanceHelper mBalanceHelper, final PreferenceEndPoint mPreferenceEndPoint, final ConnectivityHelper mHelper) {
         if (context instanceof Activity) {
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
@@ -858,8 +858,13 @@ public class Util {
                             mToastFactory.showToast(R.string.no_network);
                             break;
                         case 503:
-                            if (details != null && details.getVoxUserName() != null && details.getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
-                                YODialogs.redirectToPSTN(bus, (Activity) context, details, mPreferenceEndPoint, mBalanceHelper, mToastFactory);
+                            if (!mHelper.isConnected()) {
+                                mToastFactory.showToast(R.string.no_network);
+                                ((Activity) context).finish();
+                            } else {
+                                if (details != null && details.getVoxUserName() != null && details.getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
+                                    YODialogs.redirectToPSTN(bus, (Activity) context, details, mPreferenceEndPoint, mBalanceHelper, mToastFactory);
+                                }
                             }
                             break;
                         case 487:
@@ -883,6 +888,9 @@ public class Util {
                             break;
                         case 403:
                             mToastFactory.showToast(R.string.unknown_error);
+                            break;
+                        case 408:
+                            mToastFactory.showToast(R.string.temporerly_unavailable);
                             break;
                     }
                     if (statusCode != 503) {
