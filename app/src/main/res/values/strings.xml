@@ -274,6 +274,7 @@
     <string name="unknown_error">Gateway is having trouble with the services. Please try again.</string>
     <string name="call_rate">Call rate :</string>
     <string name="add_balance_caps">ADD BALANCE</string>
+    <string name="loading">loading</string>
     <string name="dob">Date of Birth</string>
     <string name="email_id">Email Id</string>
     <string name="phone_number">Phone Number</string>
@@ -289,4 +290,7 @@
     <string name="failed_update">Failed to update account details</string>
     <string name="confirm">Confirm</string>
     <string name="save_changes">Are you sure you want to save the changes?</string>
+    <string name="hold">Hold</string>
+    <string name="unhold">Unhold</string>
+    <string name="edit_details">Edit %1$s</string>
 </resources>

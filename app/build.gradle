@@ -24,11 +24,11 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 4
-        versionName "16.4.15.9"
+        versionName "16.4.16.0"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
-        buildConfigField "boolean", "DISABLE_ADD_BALANCE", "true"
-        buildConfigField "String", "RELEASE_USER_TYPE", "\"yobeta\""
+        buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
+        buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
         multiDexEnabled true
     }
     productFlavors {
@@ -45,6 +45,7 @@ android {
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""
             buildConfigField "String", "CLIENT_SECRET", "\"1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49\""
@@ -65,6 +66,7 @@ android {
         stage {
             applicationIdSuffix ".stage"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"yobeta\""
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""

@@ -145,7 +145,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         Contact contact;
         try {
             if (appContactsListAdapter.temp != null && !appContactsListAdapter.temp.isEmpty()) {
-                contact = appContactsListAdapter.temp.get(position);
+                contact = appContactsListAdapter.getAllItems().get(position);
             } else {
                 contact = (Contact) listView.getItemAtPosition(position);
             }
@@ -206,6 +206,16 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void loadInAlphabeticalOrder(List<Contact> contactList) {
+        if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
+            List<Contact> yoList = new ArrayList<>();
+
+            for (Contact contact : contactList) {
+                if (contact.getYoAppUser()) {
+                    yoList.add(contact);
+                }
+            }
+            contactList = yoList;
+        }
         Collections.sort(contactList, new Comparator<Contact>() {
             @Override
             public int compare(Contact lhs, Contact rhs) {
@@ -215,7 +225,13 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         Helper.displayIndex(getActivity(), layout, contactList, listView);
         ArrayList<String> stringArrayList = new ArrayList<>();
         for (Contact contact : contactList) {
-            stringArrayList.add(contact.getName());
+            if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
+                if (contact.getYoAppUser()) {
+                    stringArrayList.add(contact.getName());
+                }
+            } else {
+                stringArrayList.add(contact.getName());
+            }
         }
         if (getArguments() != null && !getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false) && !contactList.isEmpty()) {
 

@@ -15,11 +15,13 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.yo.android.R;
+import com.yo.android.api.YOUserInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
@@ -36,6 +38,9 @@ import com.yo.android.util.Util;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -47,14 +52,17 @@ public class ChatActivity extends BaseActivity {
     private String title;
     private Room room;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
-    private Contact nContact = null;
     private Contact contactfromOpponent;
+    private Contact mContact;
     @Inject
     ContactsSyncManager mContactsSyncManager;
+    private RelativeLayout progressLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.loading);
+        progressLayout = (RelativeLayout) findViewById(R.id.progress_layout);
 
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancelAll();
@@ -63,8 +71,8 @@ public class ChatActivity extends BaseActivity {
         NotificationCache.clearNotifications();
 
 
-        UserChatFragment userChatFragment = new UserChatFragment();
-        Bundle args = new Bundle();
+        final UserChatFragment userChatFragment = new UserChatFragment();
+        final Bundle args = new Bundle();
 
         if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.ROOM)) {
             room = getIntent().getParcelableExtra(Constants.ROOM);
@@ -93,24 +101,43 @@ public class ChatActivity extends BaseActivity {
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
             Util.cancelAllNotification(this);
-
+            callUserChat(args,userChatFragment);
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
-            String mContactId = null;
-            Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
+            final String mContactId = null;
+            final Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
             if (contact != null) {
+
                 opponent = contact.getVoxUserName();
                 args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
-                Contact mContact = mContactsSyncManager.getContactByVoxUserName(opponent);
-                if (contact.getId() == null && mContact != null) {
-                    nContact = mContactsSyncManager.getContactByVoxUserName(opponent);
-                    //mContactId = mContactsSyncManager.getContactByVoxUserName(opponent).getId();
+                mContact = mContactsSyncManager.getContactByVoxUserName(opponent);
+                if (mContact == null) {
+                    //server request with opponent id
+                    yoService.getYOUserInfoBYYOName(opponent).enqueue(new Callback<YOUserInfo>() {
+                        @Override
+                        public void onResponse(Call<YOUserInfo> call, Response<YOUserInfo> response) {
+                            //update new data into database
+                            contact.setId(response.body().getId());
+                            args.putString(Constants.OPPONENT_ID, response.body().getId());
+                            args.putParcelable(Constants.CONTACT, contact);
+                            callUserChat(args,userChatFragment);
+                        }
+
+                        @Override
+                        public void onFailure(Call<YOUserInfo> call, Throwable t) {
+                            mToastFactory.showToast(R.id.chat_initiation_failed);
+                            progressLayout.setVisibility(View.GONE);
+                        }
+                    });
+
+                } else {
+                    String contactId = contact.getId() == null ? mContact.getId() : contact.getId();
+                    args.putString(Constants.OPPONENT_ID, contactId);
+                    args.putParcelable(Constants.CONTACT, contact);
+                    callUserChat(args,userChatFragment);
                 }
 
-                String contactId = contact.getId() == null ? nContact.getId() : contact.getId();
-                args.putString(Constants.OPPONENT_ID, contactId);
-                args.putParcelable(Constants.CONTACT,contact);
 
                 Util.cancelAllNotification(this);
 
@@ -131,17 +158,10 @@ public class ChatActivity extends BaseActivity {
             if (getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER) != null) {
                 args.putString(Constants.TYPE, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
             }
+            callUserChat(args,userChatFragment);
         }
 
-        if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
-            args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
-        }
-        userChatFragment.setArguments(args);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.content, userChatFragment)
-                .commit();
         enableBack();
 
         if (getSupportActionBar() != null) {
@@ -153,8 +173,8 @@ public class ChatActivity extends BaseActivity {
             TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
             final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
 
-            if (nContact != null) {
-                contactfromOpponent = nContact;
+            if (mContact != null) {
+                contactfromOpponent = mContact;
             } else {
                 contactfromOpponent = mContactsSyncManager.getContactByVoxUserName(opponent);
             }
@@ -236,6 +256,18 @@ public class ChatActivity extends BaseActivity {
         }
     }
 
+    private void callUserChat(Bundle args, UserChatFragment userChatFragment) {
+        if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
+            args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
+        }
+        userChatFragment.setArguments(args);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, userChatFragment)
+                .commit();
+    }
+
     private String getOppenent(@NonNull Room room) {
 
         if (room.getGroupName() == null) {
@@ -292,5 +324,11 @@ public class ChatActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().post(new NotificationCountReset(0));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        progressLayout.setVisibility(View.GONE);
     }
 }

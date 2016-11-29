@@ -169,14 +169,8 @@ public class BottomTabsActivity extends BaseActivity {
                     actionBarTitle.setText((dataList.get(position)).getTitle());
 
                     if (getFragment() instanceof MoreFragment) {
-                        notificationCount.setVisibility(View.GONE);
-                        notificationEnable.setVisibility(View.GONE);
                         getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
                     } else {
-                        if (!notificationCount.getText().toString().equalsIgnoreCase("0")) {
-                            notificationCount.setVisibility(View.VISIBLE);
-                        }
-                        notificationEnable.setVisibility(View.VISIBLE);
                         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                     }
 

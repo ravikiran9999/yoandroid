@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
@@ -51,6 +52,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     public static final String CALLER_NO = "callerNo";
     public static final String CALLER_NAME = "callerName";
     private static final String TAG = OutGoingCallActivity.class.getSimpleName();
+    private static final int KEEP_ON_HOLD = 100;
+    private static final int KEEP_ON_HOLD_RESUME = 101;
+
     private SipCallModel callModel;
     private CallLogsModel log;
     private boolean isMute;
@@ -74,6 +78,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+
+    @Inject
+    ConnectivityHelper mHelper;
 
     public static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
@@ -267,7 +274,18 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         } else if (object instanceof OpponentDetails) {
-            Util.showErrorMessages(bus,(OpponentDetails) object, this, mToastFactory, mBalanceHelper, preferenceEndPoint);
+            Util.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
+        } else if (object instanceof Integer) {
+            int hold = (int) object;
+            if (hold == KEEP_ON_HOLD) {
+                if (sipBinder != null) {
+                    sipBinder.getHandler().setHoldCall(true);
+                }
+            } else if (hold == KEEP_ON_HOLD_RESUME) {
+                if (sipBinder != null) {
+                    sipBinder.getHandler().setHoldCall(false);
+                }
+            }
         }
     }
 
