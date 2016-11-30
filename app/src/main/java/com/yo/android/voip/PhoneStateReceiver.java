@@ -16,7 +16,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-        Toast.makeText(context, state + incomingNumber, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, state + incomingNumber, Toast.LENGTH_SHORT).show();
 
         if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
             EventBus.getDefault().post(100);
