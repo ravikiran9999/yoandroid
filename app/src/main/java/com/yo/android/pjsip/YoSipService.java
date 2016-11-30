@@ -43,6 +43,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
+import com.yo.android.voip.PhoneStateReceiver;
 import com.yo.android.voip.SipCallModel;
 import com.yo.android.voip.UserAgent;
 import com.yo.android.voip.VoipConstants;
@@ -248,14 +249,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             Util.sendMediaButton(this, KeyEvent.KEYCODE_MEDIA_PAUSE);
         }
         callType = CallLog.Calls.INCOMING_TYPE;
-        if (currentCall != null) {
+        // if user is already in yo call or if any default phone calls it should show missed call.
+        if (currentCall != null || PhoneStateReceiver.isDefaultCall) {
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
             try {
                 String source = getPhoneNumber(call.getInfo().getRemoteUri());
                 call.answer(prm);
                 source = parseVoxUser(source);
-                Util.createNotification(this, source,
-                        "Missed call", BottomTabsActivity.class, new Intent(), false);
+                Util.createNotification(this, source, getResources().getString(R.string.missed_call), BottomTabsActivity.class, new Intent(), false);
                 //Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
                 callType = CallLog.Calls.MISSED_TYPE;
                 storeCallLog(source);
@@ -984,7 +985,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     protected synchronized void startRingtone() {
         mVibrator.vibrate(VIBRATOR_PATTERN, 0);
-
         try {
             mRingTone = MediaPlayer.create(this, mRingtoneUri);
             mRingTone.setLooping(true);

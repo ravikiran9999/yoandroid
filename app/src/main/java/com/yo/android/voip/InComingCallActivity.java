@@ -84,6 +84,8 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     @Inject
     ConnectivityHelper mHelper;
 
+    private static final int KEEP_ON_HOLD = 100;
+    private static final int KEEP_ON_HOLD_RESUME = 101;
 
     @Inject
     @Named("login")
@@ -327,6 +329,18 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             object1.setSelfReject(selfReject);
             selfReject = false;
             Util.showErrorMessages(bus, object1, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
+        } else if (object instanceof Integer) {
+            // while incoming call is going on if default incoming call comes should put on hold
+            int hold = (int) object;
+            if (hold == KEEP_ON_HOLD) {
+                if (sipBinder != null) {
+                    sipBinder.getHandler().setHoldCall(true);
+                }
+            } else if (hold == KEEP_ON_HOLD_RESUME) {
+                if (sipBinder != null) {
+                    sipBinder.getHandler().setHoldCall(false);
+                }
+            }
         }
     }
 
