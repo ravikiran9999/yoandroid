@@ -8,6 +8,7 @@ import android.net.Network;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -261,32 +262,35 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
      * @return
      */
     public List<MoreData> getMenuList() {
-
         List<MoreData> menuDataList = new ArrayList<>();
-        menuDataList.add(new MoreData(getString(R.string.add_balance_from_google_play), false));
-        menuDataList.add(new MoreData(getString(R.string.add_balance_from_voucher), true));
-        if (getArguments() == null) {
-            menuDataList.add(new MoreData(getString(R.string.transfer_balance), true));
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            menuDataList.add(new MoreData(activity.getString(R.string.add_balance_from_google_play), false));
+            menuDataList.add(new MoreData(activity.getString(R.string.add_balance_from_voucher), true));
+            if (getArguments() == null) {
+                menuDataList.add(new MoreData(activity.getString(R.string.transfer_balance), true));
+            }
         }
-
         return menuDataList;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            if (name.equalsIgnoreCase(activity.getString(R.string.add_balance_from_voucher))) {
+                showVoucherDialog();
+            } else if (name.equalsIgnoreCase(activity.getString(R.string.transfer_balance))) {
+                //mToastFactory.showToast("Need to implement");
+                String balance = mBalanceHelper.getCurrentBalance();
+                String currencySymbol = mBalanceHelper.getCurrencySymbol();
+                Intent intent = new Intent(activity, TransferBalanceSelectContactActivity.class);
+                intent.putExtra("balance", balance);
+                intent.putExtra("currencySymbol", currencySymbol);
+                startActivityForResult(intent, 11);
 
-        if (name.equalsIgnoreCase(getString(R.string.add_balance_from_voucher))) {
-            showVoucherDialog();
-        } else if (name.equalsIgnoreCase(getString(R.string.transfer_balance))) {
-            //mToastFactory.showToast("Need to implement");
-            String balance = mBalanceHelper.getCurrentBalance();
-            String currencySymbol = mBalanceHelper.getCurrencySymbol();
-            Intent intent = new Intent(getActivity(), TransferBalanceSelectContactActivity.class);
-            intent.putExtra("balance", balance);
-            intent.putExtra("currencySymbol", currencySymbol);
-            startActivityForResult(intent, 11);
-
+            }
         }
     }
 
@@ -337,7 +341,11 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             } else if (phonNumber != null) {
                 namePhoneText.setText(phonNumber);
             } else {
-                namePhoneText.setText("Unknown");
+                if (getActivity() != null) {
+                    namePhoneText.setText(getActivity().getString(R.string.unknown));
+                } else {
+                    namePhoneText.setText("Unknown");
+                }
             }
 
             final AlertDialog alertDialog = builder.create();

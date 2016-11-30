@@ -293,4 +293,6 @@
     <string name="hold">Hold</string>
     <string name="unhold">Unhold</string>
     <string name="edit_details">Edit %1$s</string>
+    <string name="unknown">Unknown</string>
+
 </resources>
