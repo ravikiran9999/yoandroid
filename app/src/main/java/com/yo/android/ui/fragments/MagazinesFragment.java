@@ -153,6 +153,20 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         }
     }
 
+    public void update() {
+        if(mMagazineFlipArticlesFragment != null) {
+            Log.d("MagazinesFragment", "In update() MagazinesFragment");
+            mMagazineFlipArticlesFragment.update();
+        }
+    }
+
+    public void removeReadArticles() {
+        if(mMagazineFlipArticlesFragment != null) {
+            Log.d("MagazinesFragment", "In removeReadArticles() MagazinesFragment");
+            mMagazineFlipArticlesFragment.removeReadArticles();
+        }
+    }
+
     private void callApiSearchTopics() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
 
@@ -441,7 +455,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
                     //TODO:Disalbe flag for Follow more
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
-                   callApiSearchTopics();
+                    callApiSearchTopics();
                 } /*else {
                     Intent intent = new Intent();
                     setResult(2, intent);
@@ -457,4 +471,11 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             }
         });
     }
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+        super.onOptionsMenuClosed(menu);
+        Log.d("MagazinesFragment", "In onOptionsMenuClosed()");
+    }
+
+
 }

@@ -3,6 +3,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
+    <TextView
+        android:id="@+id/tv_no_articles"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="There are no articles"
+        android:textColor="@color/tab_grey"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:gravity="center"/>
     <se.emilsjolander.flipview.FlipView
         xmlns:flipview="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"

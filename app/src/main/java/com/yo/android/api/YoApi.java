@@ -297,6 +297,9 @@ public class YoApi {
         @POST("/api/user/other_user_info.json")
         Call<ResponseBody> getUserOtherInfo(@Field("vox_user_name") String vox_user_name);
 
+        @GET("api/articles/articles_with_pagination.json")
+        Call<List<Articles>> getArticlesWithPaginationAPI(@Query("access_token") String access_token, @Query("page") int page, @Query("limit") int limit);
+
         @FormUrlEncoded
         @POST("api/user/other_user_info.json")
         Call<YOUserInfo> getYOUserInfoBYYOName(@Field("vox_user_name") String vox_user_name);
