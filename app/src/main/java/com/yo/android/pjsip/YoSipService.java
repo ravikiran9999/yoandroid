@@ -592,8 +592,16 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public void setHoldCall(boolean isHold) {
         if (isHold) {
             mToastFactory.showToast(R.string.hold);
-            if (mRingTone != null && mRingTone.isPlaying()) {
-                mRingTone.pause();
+            try {
+                if (mRingTone != null && mRingTone.isPlaying()) {
+                    mRingTone.pause();
+                }
+            } catch (IllegalStateException e) {
+                if (mRingTone != null) {
+                    mRingTone.stop();
+                    mRingTone.release();
+                }
+                mLog.w(TAG, e);
             }
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
