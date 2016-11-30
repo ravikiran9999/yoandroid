@@ -189,6 +189,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     if (bundle == null) {
                         bundle = new Bundle();
                     }
+
                     showCallActivity(number, bundle, intent);
 
                     makeCall(number, bundle, intent);
@@ -556,9 +557,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState.setCallDir(SipCallState.OUTGOING);
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
-        if (oldintent != null && !(oldintent.hasExtra(VoipConstants.PSTN))) {
-            startDefaultRingtone();
-        }
+        startDefaultRingtone();
         Intent intent = new Intent(this, OutGoingCallActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("data", options);
@@ -956,29 +955,31 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     protected synchronized void startDefaultRingtone() {
-        try {
-            try {
-                mAudioManager.setSpeakerphoneOn(false);
-                mRingTone = MediaPlayer.create(this, R.raw.calling);
-                mRingTone.setLooping(true);
-                int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
-                mAudioManager.setMode(AudioManager.MODE_IN_CALL);
-                mRingTone.setVolume(volume, volume);
-                mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        mediaPlayer.stop();
-                        mediaPlayer.release();
-                    }
-                });
 
-                mRingTone.start();
-            } catch (Exception exc) {
-                Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
-            }
+        try {
+            int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+            mAudioManager.setSpeakerphoneOn(false);
+            mRingTone = MediaPlayer.create(this, R.raw.calling);
+            mRingTone.setVolume(volume, volume);
+            mRingTone.setLooping(true);
+            mAudioManager.setMode(AudioManager.RINGER_MODE_SILENT);
+            mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                }
+            });
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mRingTone.start();
+                }
+            }, 1000);
         } catch (Exception exc) {
             Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
         }
+
     }
 
     protected synchronized void startRingtone() {
