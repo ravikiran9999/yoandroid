@@ -595,6 +595,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             try {
                 if (mRingTone != null && mRingTone.isPlaying()) {
                     mRingTone.pause();
+                    mVibrator.cancel();
                 }
             } catch (IllegalStateException e) {
                 if (mRingTone != null) {
@@ -617,13 +618,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
-
-
                 try {
                     if (currentCall.getInfo() != null
                             && currentCall.getInfo().getState() != pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
                         if (mRingTone != null) {
                             mRingTone.start();
+                            mVibrator.vibrate(VIBRATOR_PATTERN, 0);
                         }
                     }
                     currentCall.reinvite(prm);
