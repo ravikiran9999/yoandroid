@@ -146,7 +146,7 @@ public class TransferBalanceActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(amount.trim())) {
                     double val = Double.parseDouble(amount.trim());
                     if (val != 0) {
-                        if (Integer.parseInt(mBalanceHelper.getCurrentBalance()) >= Integer.parseInt(amount)) {
+                        if (Integer.parseInt(mBalanceHelper.getCurrentBalance()) >= Double.parseDouble(amount)) {
                             showMessageDialog(amount, phoneNo);
                         } else {
                             mToastFactory.showToast(R.string.insufficient_amount);
