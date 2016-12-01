@@ -219,9 +219,9 @@
             android:name=".ui.fragments.InviteActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.yo.android.ui.AccountDetailsActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="portrait" />
+            android:name=".ui.AccountDetailsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- SMS Receiver -->
         <receiver android:name=".voip.IncomingSmsReceiver">
@@ -229,14 +229,13 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".voip.PhoneStateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
-        - See more at: http://www.theappguruz.com/blog/detecting-incoming-phone-calls-in-android#sthash.NRSvyBGE.dpuf
-
+        - See more at:
+        http://www.theappguruz.com/blog/detecting-incoming-phone-calls-in-android#sthash.NRSvyBGE.dpuf
         <activity
             android:name=".ui.FollowingsActivity"
             android:screenOrientation="portrait" />
@@ -320,6 +319,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible" />
         <activity android:name=".chat.ui.CustomWindow" />
+
+        <service
+            android:name=".util.FetchNewArticlesService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
