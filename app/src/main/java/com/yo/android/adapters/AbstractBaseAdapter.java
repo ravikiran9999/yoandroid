@@ -156,19 +156,18 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         } else {
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
-                if (((Map.Entry) event).getKey().equals("All Calls")) {
-
-                } else {
-                    int callSize = ((ArrayList) ((Map.Entry) event).getValue()).size();
-                    for (int i = 0; i < callSize; i++) {
-                        CallLogsResult callLogsResult = (CallLogsResult) ((ArrayList) ((Map.Entry) event).getValue()).get(i);
-                        if (callLogsResult.getDialnumber() != null && callLogsResult.getDialnumber().toLowerCase().contains(searchKey)) {
-                            temp.add(event);
-                        } else if (callLogsResult.getDestination_name() != null && callLogsResult.getDestination_name().toLowerCase().contains(searchKey.toLowerCase())) {
-                            temp.add(event);
-                        }
+                int callSize = ((ArrayList) ((Map.Entry) event).getValue()).size();
+                for (int i = 0; i < callSize; i++) {
+                    CallLogsResult callLogsResult = (CallLogsResult) ((ArrayList) ((Map.Entry) event).getValue()).get(i);
+                    if (callLogsResult.getDialnumber() != null && callLogsResult.getDialnumber().toLowerCase().contains(searchKey)) {
+                        temp.add(event);
+                        break;
+                    } else if (callLogsResult.getDestination_name() != null && callLogsResult.getDestination_name().toLowerCase().contains(searchKey.toLowerCase())) {
+                        temp.add(event);
+                        break;
                     }
                 }
+
             }
             addItems(temp);
         }
@@ -208,10 +207,11 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
         } else {
-
             temp = new ArrayList<>();
             if (contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
-                temp.add(0, mOriginalList.get(0));
+                if (mOriginalList != null && mOriginalList.size() > 0) {
+                    temp.add(0, mOriginalList.get(0));
+                }
             }
             for (T event : mOriginalList) {
                 if (((Contact) event).getName() != null && ((Contact) event).getName().toLowerCase().contains(searchKey.toLowerCase())) {
