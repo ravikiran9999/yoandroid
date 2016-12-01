@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -74,10 +75,15 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private View mInComingHeader;
 
     private SipBinder sipBinder;
+
     private Handler mHandler = new Handler();
 
     @Inject
     protected BalanceHelper mBalanceHelper;
+
+    @Inject
+    ConnectivityHelper mHelper;
+
 
     @Inject
     @Named("login")
@@ -312,7 +318,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         } else if (object instanceof OpponentDetails) {
-            Util.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory,mBalanceHelper,preferenceEndPoint);
+            Util.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory,mBalanceHelper,preferenceEndPoint,mHelper);
         }
     }
 

@@ -2,6 +2,7 @@ package com.yo.android.pjsip;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
@@ -26,6 +27,7 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.logging.Logger;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -112,6 +114,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
+    @Inject
+    ConnectivityHelper mHelper;
+
     //New changes
 
     private PowerManager.WakeLock ongoingCallLock;
@@ -176,29 +181,33 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (intent == null) {
             return;
         }
-        if (VoipConstants.CALL_ACTION_OUT_GOING.equalsIgnoreCase(intent.getAction())) {
-            if (currentCall == null) {
-                String number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
-                Bundle bundle = intent.getBundleExtra("data");
-                if (bundle == null) {
-                    bundle = new Bundle();
-                }
-                showCallActivity(number, bundle, intent);
-
-                makeCall(number, bundle, intent);
-            } else {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mToastFactory.showToast("Already call is in progress");
+        if (mHelper.isConnected()) {
+            if (VoipConstants.CALL_ACTION_OUT_GOING.equalsIgnoreCase(intent.getAction())) {
+                if (currentCall == null) {
+                    String number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
+                    Bundle bundle = intent.getBundleExtra("data");
+                    if (bundle == null) {
+                        bundle = new Bundle();
                     }
-                });
-                mLog.i(TAG, "performAction>>> Already call is in progress.");
+                    showCallActivity(number, bundle, intent);
+
+                    makeCall(number, bundle, intent);
+                } else {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mToastFactory.showToast("Already call is in progress");
+                        }
+                    });
+                    mLog.i(TAG, "performAction>>> Already call is in progress.");
+                }
+            } else if (VoipConstants.ACCOUNT_LOGOUT.equalsIgnoreCase(intent.getAction())) {
+                myApp.deinit();
+                created = false;
+                stopSelf();
             }
-        } else if (VoipConstants.ACCOUNT_LOGOUT.equalsIgnoreCase(intent.getAction())) {
-            myApp.deinit();
-            created = false;
-            stopSelf();
+        } else {
+            mToastFactory.showToast(getResources().getString(R.string.no_network));
         }
 
     }
@@ -338,7 +347,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 //TODO:Handle more error codes to display proper messages to the user
                 handlerErrorCodes(call.getInfo(), sipCallState);
                 if (statusCode == 503) {
-                    mLog.e(TAG, "503 >>> Buddy is not online at this moment");
+
+                    mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
                 }
                 mLog.e(TAG, "%d %s", call.getInfo().getLastStatusCode().swigValue(), call.getInfo().getLastReason());
             } catch (Exception e) {
@@ -524,7 +534,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 call.makeCall(finalUri, prm);
 
             } catch (Exception e) {
-                mLog.w(TAG, "Exception making call " + e);
+                mLog.w(TAG, "Exception making call " + e.getMessage());
                 call.delete();
                 return;
             }
@@ -581,10 +591,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     public void setHoldCall(boolean isHold) {
         if (isHold) {
+            mToastFactory.showToast(R.string.hold);
+            if (mRingTone != null && mRingTone.isPlaying()) {
+                mRingTone.pause();
+            }
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UPDATE_CONTACT.swigValue());
                 try {
+
                     currentCall.setHold(prm);
                 } catch (Exception e) {
                     mLog.w(TAG, e);
@@ -594,8 +609,17 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
+
+
                 try {
+                    if (currentCall.getInfo() != null
+                            && currentCall.getInfo().getState() != pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+                        if (mRingTone != null) {
+                            mRingTone.start();
+                        }
+                    }
                     currentCall.reinvite(prm);
+                    mToastFactory.showToast(R.string.unhold);
                 } catch (Exception e) {
                     mLog.w(TAG, e);
                 }
@@ -620,6 +644,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
         try {
             currentCall.answer(prm);
+
             if (mediaManager != null) {
                 stopRingtone();
                 // mediaManager.stopRingTone();
@@ -925,18 +950,26 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     protected synchronized void startDefaultRingtone() {
         try {
             try {
-                mRingTone = MediaPlayer.create(this, Uri.parse("file:///android_asset/calling.mp3"));
+                mAudioManager.setSpeakerphoneOn(false);
+                mRingTone = MediaPlayer.create(this, R.raw.calling);
                 mRingTone.setLooping(true);
                 int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
-                mAudioManager.setSpeakerphoneOn(false);
                 mAudioManager.setMode(AudioManager.MODE_IN_CALL);
                 mRingTone.setVolume(volume, volume);
+                mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                    }
+                });
+
                 mRingTone.start();
             } catch (Exception exc) {
-                Logger.warn("Error while trying to play ringtone!");
+                Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
             }
         } catch (Exception exc) {
-            Logger.warn("Error while trying to play ringtone!");
+            Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
         }
     }
 
@@ -950,6 +983,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             mAudioManager.setSpeakerphoneOn(false);
             mAudioManager.setMode(AudioManager.MODE_IN_CALL);
             mRingTone.setVolume(volume, volume);
+            mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                }
+            });
             mRingTone.start();
         } catch (Exception exc) {
             Logger.warn("Error while trying to play ringtone!");

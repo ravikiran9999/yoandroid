@@ -91,8 +91,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="5dp"
             android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
-            tool:text="$3.000" />
+            android:textSize="14sp" />
 
     </RelativeLayout>
 
@@ -105,7 +104,6 @@
         android:layout_margin="10dp"
         android:gravity="right"
         android:orientation="horizontal">
-
 
 
         <Button
@@ -128,6 +126,7 @@
             android:elevation="0dp"
             android:text="@string/yes"
             android:textColor="@color/colorAccent" />
+
         <Button
             android:id="@+id/add_balance"
             android:layout_width="wrap_content"

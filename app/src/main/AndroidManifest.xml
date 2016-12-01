@@ -230,6 +230,13 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".voip.PhoneStateReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+        - See more at: http://www.theappguruz.com/blog/detecting-incoming-phone-calls-in-android#sthash.NRSvyBGE.dpuf
+
         <activity
             android:name=".ui.FollowingsActivity"
             android:screenOrientation="portrait" />

@@ -52,6 +52,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
@@ -131,6 +132,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Inject
     FireBaseHelper fireBaseHelper;
+
+    @Inject
+    ConnectivityHelper mHelper;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -545,7 +549,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
 
             String timeStp = Long.toString(chatMessage.getTime());
-            chatMessage.setSent(1);
+            if (!mHelper.isConnected()) {
+                chatMessage.setSent(2);
+            }else {
+                chatMessage.setSent(1);
+            }
 
             if (forwardInt == 0) {
 
@@ -558,13 +566,21 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
             final Firebase roomChildReference = roomReference.child(timeStp);
             roomChildReference.updateChildren(updateMessageMap, new Firebase.CompletionListener() {
+
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    Log.w(TAG,"ONCOMPLETE");
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
+                        Log.w(TAG,"ONCOMPLETE fail");
+
                         Activity activity = getActivity();
                         if (activity != null) {
                             Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Log.w(TAG,"ONCOMPLETE success");
+                        chatMessage.setSent(1);
+                        userChatAdapter.notifyDataSetChanged();;
                     }
                 }
             });
@@ -816,7 +832,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
-                listView.smoothScrollToPosition(userChatAdapter.getCount());
+                listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
 
                 if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0) && getActivity() instanceof ChatActivity) {
                     long timestamp = System.currentTimeMillis();

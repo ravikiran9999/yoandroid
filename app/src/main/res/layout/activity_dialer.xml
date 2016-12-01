@@ -145,7 +145,7 @@
                     android:paddingLeft="5dp"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
-                    tool:text="$3.000" />
+                   />
 
                 <TextView
                     android:id="@+id/add_balance"
