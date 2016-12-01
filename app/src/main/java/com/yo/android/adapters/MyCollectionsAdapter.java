@@ -53,6 +53,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
 
             Glide.with(mContext)
                     .load(item.getImage())
+                    .placeholder(R.drawable.ic_default_magazine)
                     .fitCenter()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -60,7 +61,8 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         } else {
 
             Glide.with(mContext)
-                    .load(R.color.grey_divider)
+                    //.load(R.color.grey_divider)
+                    .load(R.drawable.ic_default_magazine)
                     .fitCenter()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
