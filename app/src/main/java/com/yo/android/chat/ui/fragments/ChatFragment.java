@@ -87,7 +87,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Inject
     ContactsSyncManager mContactsSyncManager;
     private boolean isAlreadyShown;
-    private boolean isRemoved;
+    //private boolean isRemoved;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -452,12 +452,23 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
+                        if (popup != null) {
+                            for (Popup p : popup) {
+                                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
+                                    if (!isAlreadyShown) {
+                                        PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
+                                        isAlreadyShown = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
                             if (!isAlreadyShown) {
                                 PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
                                 isAlreadyShown = true;
                             }
-                        }
+                        }*/
                     }
                 }
             }
@@ -472,17 +483,28 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             BottomTabsActivity activity = (BottomTabsActivity) getActivity();
             if (activity.getFragment() instanceof ChatFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                    if (!isRemoved) {
+                    //if (!isRemoved) {
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
+                    if (popup != null) {
+                        for (Popup p : popup) {
+                            if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
+                                if (!isAlreadyShown) {
+                                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
+                                    isAlreadyShown = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
                             if (!isAlreadyShown) {
                                 PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
                                 isAlreadyShown = true;
                             }
-                        }
-                    } /*else {
+                        }*/
+                    /*} else {
                         isRemoved = false;
                     }*/
 
@@ -495,12 +517,22 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void closePopup() {
         isAlreadyShown = false;
-        isRemoved = true;
+        //isRemoved = true;
         //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-        popup.remove(0);
+        if (popup != null) {
+            List<Popup> tempPopup = new ArrayList<>(popup);
+            for (Popup p : popup) {
+                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
+                    tempPopup.remove(p);
+                    break;
+                }
+            }
+            popup = tempPopup;
+        }
+        //popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }

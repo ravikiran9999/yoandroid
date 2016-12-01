@@ -97,7 +97,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     private boolean CONTACT_SYNC = true;
     private ListView layout;
     private boolean isAlreadyShown;
-    private boolean isRemoved;
+    //private boolean isRemoved;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -281,12 +281,23 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
+                        if (popup != null) {
+                            for (Popup p : popup) {
+                                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
+                                    if (!isAlreadyShown) {
+                                        PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
+                                        isAlreadyShown = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
                             if (!isAlreadyShown) {
                                 PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
                                 isAlreadyShown = true;
                             }
-                        }
+                        }*/
                     }
                 }
             }
@@ -301,17 +312,28 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             BottomTabsActivity activity = (BottomTabsActivity) getActivity();
             if (activity.getFragment() instanceof ContactsFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                    if (!isRemoved) {
+                    //if (!isRemoved) {
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
+                    if (popup != null) {
+                        for (Popup p : popup) {
+                            if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
+                                if (!isAlreadyShown) {
+                                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
+                                    isAlreadyShown = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
                             if (!isAlreadyShown) {
                                 PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
                                 isAlreadyShown = true;
                             }
-                        }
-                    }/* else {
+                        }*/
+                    /*} else {
                         isRemoved = false;
                     }*/
                 }
@@ -329,12 +351,22 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void closePopup() {
         isAlreadyShown = false;
-        isRemoved = true;
+        //isRemoved = true;
         //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-        popup.remove(0);
+        if (popup != null) {
+            List<Popup> tempPopup = new ArrayList<>(popup);
+            for (Popup p : popup) {
+                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
+                    tempPopup.remove(p);
+                    break;
+                }
+            }
+            popup = tempPopup;
+        }
+        //popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }
