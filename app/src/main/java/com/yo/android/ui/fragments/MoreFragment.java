@@ -217,7 +217,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onResume() {
         super.onResume();
-        profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, ""));
+        profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
     }
 
     @Override
@@ -542,7 +542,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     saveUserProfileValues(response.body());
                 }
                 loadImage();
-                profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, ""));
+                profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
             }
 
             @Override
