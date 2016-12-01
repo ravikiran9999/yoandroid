@@ -41,7 +41,7 @@ import retrofit2.Response;
  * Created by root on 19/7/16.
  */
 public class UpdateProfileActivity extends BaseActivity {
-    private static final String USER_NAME_REGX = "^[a-zA-Z0-9 -_]*$";
+    private static final String USER_NAME_REGX = "^[a-zA-Z0-9-_ ]*$";
     private EditText username;
     private TextView mobileNum;
     private TextView addPhoto;
@@ -114,9 +114,9 @@ public class UpdateProfileActivity extends BaseActivity {
 
     private void performActionNext() {
         if (!TextUtils.isEmpty(username.getText().toString().trim())) {
-            if(Pattern.matches(USER_NAME_REGX,username.getText().toString())) {
+            if (Pattern.matches(USER_NAME_REGX, username.getText().toString())) {
                 loadUserProfileInfo();
-            }else{
+            } else {
                 toastFactory.showToast(getResources().getString(R.string.invalid_username));
             }
         } else {
@@ -267,14 +267,18 @@ public class UpdateProfileActivity extends BaseActivity {
                     startActivity(intent);
                     UpdateProfileActivity.this.finish();
                 } else {
-                    toastFactory.showToast("Unable to update the profile");
+                    if (response.code() == 422) {
+                        toastFactory.showToast(getResources().getString(R.string.invalid_username));
+                    } else {
+                        toastFactory.showToast(getResources().getString(R.string.profile_failed));
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<UserProfileInfo> call, Throwable t) {
                 dismissProgressDialog();
-                toastFactory.showToast("Unable to update the profile");
+                toastFactory.showToast(getResources().getString(R.string.profile_failed));
             }
         });
     }

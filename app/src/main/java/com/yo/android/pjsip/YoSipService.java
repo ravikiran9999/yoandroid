@@ -104,6 +104,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Inject
     ToastFactory mToastFactory;
     public static MyCall currentCall = null;
+    public static String outgoingCallUri;
     private SipCallState sipCallState;
     private Handler mHandler;
     private String registrationStatus = "";
@@ -240,6 +241,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     @Override
     public void notifyIncomingCall(MyCall call, OnIncomingCallParam prms) {
+        outgoingCallUri = null;
         /* Incoming call */
         CallOpParam prm = new CallOpParam();
             /* Only one call at anytime */
@@ -270,11 +272,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             return;
         }
         currentCall = call;
-        try {
+        /*try {
             currentCall.answer(prm);
         } catch (Exception e) {
             mLog.w(TAG, e);
-        }
+        }*/
         try {
             sipCallState.setCallDir(SipCallState.INCOMING);
             sipCallState.setCallState(SipCallState.CALL_RINGING);
@@ -520,6 +522,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             destination = "sip:" + destination;
         }
         String finalUri = String.format("%s@%s", destination, getDomain());
+        mLog.e(TAG, "Final uri to make a call " + finalUri);
+        outgoingCallUri = finalUri;
         /* Only one call at anytime */
         if (currentCall != null) {
             return;
@@ -652,11 +656,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
         try {
             currentCall.answer(prm);
-
-            if (mediaManager != null) {
-                stopRingtone();
-                // mediaManager.stopRingTone();
-            }
+            stopRingtone();
             sipCallState.setCallState(SipCallState.IN_CALL);
         } catch (Exception e) {
             mLog.w(TAG, e);

@@ -282,13 +282,17 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             if (name.equalsIgnoreCase(activity.getString(R.string.add_balance_from_voucher))) {
                 showVoucherDialog();
             } else if (name.equalsIgnoreCase(activity.getString(R.string.transfer_balance))) {
-                //mToastFactory.showToast("Need to implement");
-                String balance = mBalanceHelper.getCurrentBalance();
-                String currencySymbol = mBalanceHelper.getCurrencySymbol();
-                Intent intent = new Intent(activity, TransferBalanceSelectContactActivity.class);
-                intent.putExtra("balance", balance);
-                intent.putExtra("currencySymbol", currencySymbol);
-                startActivityForResult(intent, 11);
+                //TODO: Need to implement allow balance transfer even in out going call.
+                if (YoSipService.currentCall != null && YoSipService.outgoingCallUri != null) {
+                    mToastFactory.showToast(getActivity().getResources().getString(R.string.balance_transfer_not_allowed));
+                } else {
+                    String balance = mBalanceHelper.getCurrentBalance();
+                    String currencySymbol = mBalanceHelper.getCurrencySymbol();
+                    Intent intent = new Intent(activity, TransferBalanceSelectContactActivity.class);
+                    intent.putExtra("balance", balance);
+                    intent.putExtra("currencySymbol", currencySymbol);
+                    startActivityForResult(intent, 11);
+                }
 
             }
         }
