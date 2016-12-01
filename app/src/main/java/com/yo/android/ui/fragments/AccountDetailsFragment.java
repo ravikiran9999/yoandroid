@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -91,7 +90,7 @@ public class AccountDetailsFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
-        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, ""));
+        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         accountEmail.setText(preferenceEndPoint.getStringPreference(Constants.EMAIL, ""));
 
@@ -123,14 +122,14 @@ public class AccountDetailsFragment extends BaseFragment {
         if (isValidDate(preferenceEndPoint.getStringPreference(Constants.DOB, ""))) {
             saveDOBProperly();
         }
-        setPhoneNumber(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
-        accountDOB.setText(preferenceEndPoint.getStringPreference(Constants.DOB, ""));
+        accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
+        accountDOB.setText(preferenceEndPoint.getStringPreference(Constants.DOB, "dd-mm-yyyy"));
     }
 
     @OnClick(R.id.account_status_card)
     protected void accountStatusClick() {
         String title = String.format(getString(R.string.add_new), getString(R.string.status_title));
-        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DESCRIPTION_TEMP, ""), Constants.DESCRIPTION_TEMP);
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DESCRIPTION_TEMP, "Available"), Constants.DESCRIPTION_TEMP);
     }
 
     @OnClick(R.id.account_name_card)
@@ -142,7 +141,7 @@ public class AccountDetailsFragment extends BaseFragment {
     @OnClick(R.id.account_dob_card)
     protected void accountDOBClick() {
         String title = String.format(getString(R.string.edit_details), getString(R.string.dob));
-        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, ""), Constants.DOB_TEMP);
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, "dd-mm-yyyy"), Constants.DOB_TEMP);
     }
 
     @OnClick(R.id.account_email_card)
@@ -214,10 +213,10 @@ public class AccountDetailsFragment extends BaseFragment {
     }
 
     public void setUserInfoDetails() {
-        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION_TEMP, ""));
+        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION_TEMP, "Available"));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME_TEMP, ""));
-        setPhoneNumber(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
-        accountDOB.setText(preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, ""));
+        accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
+        accountDOB.setText(preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, "dd-mm-yyyy"));
         accountEmail.setText(preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, ""));
     }
 
