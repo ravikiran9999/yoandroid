@@ -1,5 +1,7 @@
 package com.yo.android.ui;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +52,7 @@ import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
+import com.yo.android.util.FetchNewArticlesService;
 import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
@@ -57,6 +60,7 @@ import com.yo.android.widgets.CustomViewPager;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -185,11 +189,11 @@ public class BottomTabsActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
 
-                if(position == 0 && getFragment() instanceof MagazinesFragment) {
+                if (position == 0 && getFragment() instanceof MagazinesFragment) {
                     Log.d("BottomTabsActivity", "onPageSelected In update() BottomTabsActivity");
 
-                    ((MagazinesFragment)getFragment()).removeReadArticles();
-                    ((MagazinesFragment)getFragment()).update();
+                    ((MagazinesFragment) getFragment()).removeReadArticles();
+                    ((MagazinesFragment) getFragment()).update();
                 }
 
             }
@@ -199,6 +203,8 @@ public class BottomTabsActivity extends BaseActivity {
 
             }
         });
+
+        startServiceToFetchNewArticles();
 
         // firebase service
 
@@ -547,5 +553,16 @@ public class BottomTabsActivity extends BaseActivity {
         } else if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) > 0) {
             update(preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT));
         }
+    }
+
+    private void startServiceToFetchNewArticles() {
+        // Start service using AlarmManager
+        Calendar cal = Calendar.getInstance();
+        Intent intent = new Intent(this, FetchNewArticlesService.class);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intent,
+                0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+                Constants.FETCHING_NEW_ARTICLES_FREQUENCY, pintent);
     }
 }
