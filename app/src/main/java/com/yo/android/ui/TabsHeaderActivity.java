@@ -27,12 +27,13 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TabsHeaderActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
     private boolean isAlreadyShown;
-    private boolean isRemoved;
+    //private boolean isRemoved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,12 +96,23 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
             Type type = new TypeToken<List<Popup>>() {
             }.getType();
             List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-            if(popup != null && popup.size() >0  && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
+            if (popup != null) {
+                for (Popup p : popup) {
+                    if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
+                        if (!isAlreadyShown) {
+                            PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
+                            isAlreadyShown = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            /*if(popup != null && popup.size() >0  && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
                 if (!isAlreadyShown) {
                     PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
                     isAlreadyShown = true;
                 }
-            }
+            }*/
         }
     }
 
@@ -130,17 +142,28 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         //if(isMenuVisible()) {
             if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                if(!isRemoved) {
+                //if(!isRemoved) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                    if(popup != null && popup.size() >0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
+                if (popup != null) {
+                    for (Popup p : popup) {
+                        if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
+                                isAlreadyShown = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                    /*if(popup != null && popup.size() >0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
                         if (!isAlreadyShown) {
                             PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
                             isAlreadyShown = true;
                         }
-                    }
-                } /*else {
+                    }*/
+                /*} else {
                     isRemoved = false;
                 }*/
             }
@@ -156,12 +179,22 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     @Override
     public void closePopup() {
         isAlreadyShown = false;
-        isRemoved = true;
+        //isRemoved = true;
         //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-        popup.remove(0);
+        if (popup != null) {
+            List<Popup> tempPopup = new ArrayList<>(popup);
+            for (Popup p : popup) {
+                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
+                    tempPopup.remove(p);
+                    break;
+                }
+            }
+            popup = tempPopup;
+        }
+        //popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }
