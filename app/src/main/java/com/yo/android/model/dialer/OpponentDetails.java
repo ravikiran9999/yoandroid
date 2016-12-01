@@ -9,6 +9,16 @@ public class OpponentDetails {
     private String voxUserName;
     private Contact contact;
     private int statusCode;
+    private boolean selfReject;
+
+    public boolean isSelfReject() {
+        return selfReject;
+    }
+
+    public void setSelfReject(boolean selfReject) {
+        this.selfReject = selfReject;
+    }
+
 
     public String getVoxUserName() {
         return voxUserName;

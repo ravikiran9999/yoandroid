@@ -852,7 +852,9 @@ public class Util {
                     int statusCode = details.getStatusCode();
                     switch (statusCode) {
                         case 603:
-                            mToastFactory.showToast(R.string.busy);
+                            if (!details.isSelfReject()) {
+                                mToastFactory.showToast(R.string.busy);
+                            }
                             break;
                         case 404:
                             mToastFactory.showToast(R.string.no_network);

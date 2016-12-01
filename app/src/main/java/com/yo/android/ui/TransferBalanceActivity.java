@@ -25,6 +25,7 @@ import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
@@ -146,8 +147,10 @@ public class TransferBalanceActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(amount.trim())) {
                     double val = Double.parseDouble(amount.trim());
                     if (val != 0) {
-                        if (Integer.parseInt(mBalanceHelper.getCurrentBalance()) >= Integer.parseInt(amount)) {
+                        if (Double.parseDouble(mBalanceHelper.getCurrentBalance()) >= Double.parseDouble(amount)) {
+
                             showMessageDialog(amount, phoneNo);
+
                         } else {
                             mToastFactory.showToast(R.string.insufficient_amount);
                         }
