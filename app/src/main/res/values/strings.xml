@@ -294,5 +294,5 @@
     <string name="unhold">Unhold</string>
     <string name="edit_details">Edit %1$s</string>
     <string name="unknown">Unknown</string>
-
+    <string name="empty_field">Field should not be empty</string>
 </resources>

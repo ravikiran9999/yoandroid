@@ -121,10 +121,10 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
                         text = countryCode + text;
                     }
                     preferenceEndPoint.saveStringPreference(key, text.trim());
+                    getActivity().onBackPressed();
                 } else {
-                    preferenceEndPoint.saveStringPreference(key, text);
+                    mToastFactory.showToast(getString(R.string.empty_field));
                 }
-                getActivity().onBackPressed();
             }
         }
     }

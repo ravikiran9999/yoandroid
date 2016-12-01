@@ -28,6 +28,8 @@ public class SelectDateFragment extends DialogFragment implements DatePickerDial
 
     protected boolean isDateOfBirth;
 
+    public static final String stringDate = "dd-mm-yyyy";
+
     public SelectDateFragment(View view, boolean isDateOfBirth) {
         this.view = view;
         this.isDateOfBirth = isDateOfBirth;
@@ -40,9 +42,15 @@ public class SelectDateFragment extends DialogFragment implements DatePickerDial
 
         if (view instanceof EditText) {
             String dateValue = ((EditText) view).getText().toString().trim();
+            if (dateValue.equalsIgnoreCase(stringDate)) {
+                return getDialog(calendar, "");
+            }
             return getDialog(calendar, dateValue);
         } else if (view instanceof TextView) {
             String dateValue = ((TextView) view).getText().toString().trim();
+            if (dateValue.equalsIgnoreCase(stringDate)) {
+                return getDialog(calendar, "");
+            }
             return getDialog(calendar, dateValue);
         }
         return null;
