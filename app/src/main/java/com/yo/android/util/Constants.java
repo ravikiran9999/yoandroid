@@ -143,4 +143,6 @@ public class Constants {
     public static final String DOB_TEMP = "dob_temp";
     public static final String EMAIL_TEMP = "email_temp";
 
+    public static final int FETCHING_NEW_ARTICLES_FREQUENCY = 24 * 60 * 60 * 1000;
+
 }
