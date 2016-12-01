@@ -73,6 +73,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
 
                 Glide.with(mContext)
                         .load(ownMagazineList.get(position).getImage())
+                        .placeholder(R.drawable.ic_default_magazine)
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -81,7 +82,8 @@ public class OthersMagazinesAdapter extends BaseAdapter {
             } else {
 
                 Glide.with(mContext)
-                        .load(R.color.black)
+                        //.load(R.color.black)
+                        .load(R.drawable.ic_default_magazine)
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -89,7 +91,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
             }
             textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
             textViewDesc.setTextColor(mContext.getResources().getColor(android.R.color.white));
-            squareItemLinearLayout.setBackgroundColor(mContext.getResources().getColor(android.R.color.black));
+            //squareItemLinearLayout.setBackgroundColor(mContext.getResources().getColor(android.R.color.black));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.TOP | Gravity.LEFT;
