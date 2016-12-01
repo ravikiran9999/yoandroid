@@ -269,7 +269,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         menuDataList.add(new MoreData("Account Details", true));
         menuDataList.add(new MoreData("Invite Friends", true));
         menuDataList.add(new MoreData("Notifications", true));
-        menuDataList.add(new MoreData("Notifications", true));
         menuDataList.add(new MoreData("Settings", true));
         menuDataList.add(new MoreData("Sign Out", false));
         return menuDataList;

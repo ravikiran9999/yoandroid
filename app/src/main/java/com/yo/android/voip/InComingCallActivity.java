@@ -84,10 +84,14 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     @Inject
     ConnectivityHelper mHelper;
 
+    private static final int KEEP_ON_HOLD = 100;
+    private static final int KEEP_ON_HOLD_RESUME = 101;
 
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+
+    private boolean selfReject;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -107,11 +111,13 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private void updateState() {
         if (sipBinder != null) {
             CallInfo callInfo = sipBinder.getHandler().getInfo();
-            boolean isConnected = callInfo.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED;
-            if (isConnected) {
-                running = true;
-                mHandler.post(startTimer);
-                onCallAccepted();
+            if (callInfo != null) {
+                boolean isConnected = callInfo.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED;
+                if (isConnected) {
+                    running = true;
+                    mHandler.post(startTimer);
+                    onCallAccepted();
+                }
             }
         }
     }
@@ -218,7 +224,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     ((ImageView) v).setBackgroundResource(R.drawable.ic_hold);
                 }
                 bus.post(callModel);
-                mToastFactory.showToast("Hold " + (isHoldOn ? "ON" : "OFF"));
+                //mToastFactory.showToast("Hold " + (isHoldOn ? "ON" : "OFF"));
                 break;
             case R.id.imv_mic_off:
                 isMute = !isMute;
@@ -256,6 +262,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.btnEndCall:
             case R.id.btnRejectCall:
+                selfReject = true;
                 if (sipBinder != null) {
                     sipBinder.getHandler().hangupCall(CallLog.Calls.INCOMING_TYPE);
                     running = false;
@@ -318,7 +325,22 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         } else if (object instanceof OpponentDetails) {
-            Util.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory,mBalanceHelper,preferenceEndPoint,mHelper);
+            OpponentDetails object1 = (OpponentDetails) object;
+            object1.setSelfReject(selfReject);
+            selfReject = false;
+            Util.showErrorMessages(bus, object1, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
+        } else if (object instanceof Integer) {
+            // while incoming call is going on if default incoming call comes should put on hold
+            int hold = (int) object;
+            if (hold == KEEP_ON_HOLD) {
+                if (sipBinder != null) {
+                    sipBinder.getHandler().setHoldCall(true);
+                }
+            } else if (hold == KEEP_ON_HOLD_RESUME) {
+                if (sipBinder != null) {
+                    sipBinder.getHandler().setHoldCall(false);
+                }
+            }
         }
     }
 

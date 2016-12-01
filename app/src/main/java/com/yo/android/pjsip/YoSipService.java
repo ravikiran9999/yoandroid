@@ -43,6 +43,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
+import com.yo.android.voip.PhoneStateReceiver;
 import com.yo.android.voip.SipCallModel;
 import com.yo.android.voip.UserAgent;
 import com.yo.android.voip.VoipConstants;
@@ -103,6 +104,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Inject
     ToastFactory mToastFactory;
     public static MyCall currentCall = null;
+    public static String outgoingCallUri;
     private SipCallState sipCallState;
     private Handler mHandler;
     private String registrationStatus = "";
@@ -189,6 +191,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     if (bundle == null) {
                         bundle = new Bundle();
                     }
+
                     showCallActivity(number, bundle, intent);
 
                     makeCall(number, bundle, intent);
@@ -238,6 +241,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     @Override
     public void notifyIncomingCall(MyCall call, OnIncomingCallParam prms) {
+        outgoingCallUri = null;
         /* Incoming call */
         CallOpParam prm = new CallOpParam();
             /* Only one call at anytime */
@@ -247,14 +251,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             Util.sendMediaButton(this, KeyEvent.KEYCODE_MEDIA_PAUSE);
         }
         callType = CallLog.Calls.INCOMING_TYPE;
-        if (currentCall != null) {
+        // if user is already in yo call or if any default phone calls it should show missed call.
+        if (currentCall != null || PhoneStateReceiver.isDefaultCall) {
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
             try {
                 String source = getPhoneNumber(call.getInfo().getRemoteUri());
                 call.answer(prm);
                 source = parseVoxUser(source);
-                Util.createNotification(this, source,
-                        "Missed call", BottomTabsActivity.class, new Intent(), false);
+                Util.createNotification(this, source, getResources().getString(R.string.missed_call), BottomTabsActivity.class, new Intent(), false);
                 //Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
                 callType = CallLog.Calls.MISSED_TYPE;
                 storeCallLog(source);
@@ -268,11 +272,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             return;
         }
         currentCall = call;
-        try {
+        /*try {
             currentCall.answer(prm);
         } catch (Exception e) {
             mLog.w(TAG, e);
-        }
+        }*/
         try {
             sipCallState.setCallDir(SipCallState.INCOMING);
             sipCallState.setCallState(SipCallState.CALL_RINGING);
@@ -518,6 +522,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             destination = "sip:" + destination;
         }
         String finalUri = String.format("%s@%s", destination, getDomain());
+        mLog.e(TAG, "Final uri to make a call " + finalUri);
+        outgoingCallUri = finalUri;
         /* Only one call at anytime */
         if (currentCall != null) {
             return;
@@ -556,13 +562,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState.setCallDir(SipCallState.OUTGOING);
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
-        if (oldintent != null && !(oldintent.hasExtra(VoipConstants.PSTN))) {
-            startDefaultRingtone();
-        }
+        startDefaultRingtone();
         Intent intent = new Intent(this, OutGoingCallActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("data", options);
         intent.putExtra(OutGoingCallActivity.CALLER_NO, destination);
+        intent.putExtra(VoipConstants.PSTN, oldintent.hasExtra(VoipConstants.PSTN));
+        intent.putExtra(OutGoingCallActivity.DISPLAY_NUMBER, oldintent.getStringExtra(OutGoingCallActivity.DISPLAY_NUMBER));
+
+
         startActivity(intent);
         destination = parseVoxUser(destination);
         if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
@@ -592,8 +600,17 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public void setHoldCall(boolean isHold) {
         if (isHold) {
             mToastFactory.showToast(R.string.hold);
-            if (mRingTone != null && mRingTone.isPlaying()) {
-                mRingTone.pause();
+            try {
+                if (mRingTone != null && mRingTone.isPlaying()) {
+                    mRingTone.pause();
+                    mVibrator.cancel();
+                }
+            } catch (IllegalStateException e) {
+                if (mRingTone != null) {
+                    mRingTone.stop();
+                    mRingTone.release();
+                }
+                mLog.w(TAG, e);
             }
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
@@ -609,13 +626,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
-
-
                 try {
                     if (currentCall.getInfo() != null
                             && currentCall.getInfo().getState() != pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
                         if (mRingTone != null) {
                             mRingTone.start();
+                            mVibrator.vibrate(VIBRATOR_PATTERN, 0);
                         }
                     }
                     currentCall.reinvite(prm);
@@ -644,11 +660,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
         try {
             currentCall.answer(prm);
-
-            if (mediaManager != null) {
-                stopRingtone();
-                // mediaManager.stopRingTone();
-            }
+            stopRingtone();
             sipCallState.setCallState(SipCallState.IN_CALL);
         } catch (Exception e) {
             mLog.w(TAG, e);
@@ -948,34 +960,35 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     protected synchronized void startDefaultRingtone() {
-        try {
-            try {
-                mAudioManager.setSpeakerphoneOn(false);
-                mRingTone = MediaPlayer.create(this, R.raw.calling);
-                mRingTone.setLooping(true);
-                int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
-                mAudioManager.setMode(AudioManager.MODE_IN_CALL);
-                mRingTone.setVolume(volume, volume);
-                mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        mediaPlayer.stop();
-                        mediaPlayer.release();
-                    }
-                });
 
-                mRingTone.start();
-            } catch (Exception exc) {
-                Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
-            }
+        try {
+            int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+            mAudioManager.setSpeakerphoneOn(false);
+            mRingTone = MediaPlayer.create(this, R.raw.calling);
+            mRingTone.setVolume(volume, volume);
+            mRingTone.setLooping(true);
+            mAudioManager.setMode(AudioManager.RINGER_MODE_SILENT);
+            mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                }
+            });
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mRingTone.start();
+                }
+            }, 1000);
         } catch (Exception exc) {
             Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
         }
+
     }
 
     protected synchronized void startRingtone() {
         mVibrator.vibrate(VIBRATOR_PATTERN, 0);
-
         try {
             mRingTone = MediaPlayer.create(this, mRingtoneUri);
             mRingTone.setLooping(true);
