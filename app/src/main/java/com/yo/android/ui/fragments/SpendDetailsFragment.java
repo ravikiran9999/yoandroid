@@ -82,25 +82,26 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
     @Override
     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-        if (isAdded() && response.body() != null) {
-            dismissProgressDialog();
-            try {
-                String str = Util.toString(response.body().byteStream());
-                List<SubscribersList> detailResponseList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<SubscribersList>>() {
-                }.getType());
-                if (detailResponseList != null && !detailResponseList.isEmpty()) {
-                    adapter.addItems(detailResponseList);
+        if (getActivity() != null) {
+            if (response.body() != null) {
+                dismissProgressDialog();
+                try {
+                    List<SubscribersList> detailResponseList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<SubscribersList>>() {
+                    }.getType());
+                    if (detailResponseList != null && !detailResponseList.isEmpty()) {
+                        adapter.addItems(detailResponseList);
+                    }
+                } catch (Exception e) {
+                    mLog.w("SpendDetails", "onResponse", e);
                 }
-            } catch (Exception e) {
-                mLog.w("SpendDetails", "onResponse", e);
+                showEmptyText();
             }
-            showEmptyText();
         }
     }
 
     @Override
     public void onFailure(Call<ResponseBody> call, Throwable t) {
-        if (isAdded()) {
+        if (getActivity() != null) {
             dismissProgressDialog();
             adapter.clearAll();
             showEmptyText();
