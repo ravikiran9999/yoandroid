@@ -140,11 +140,11 @@ public class NewDailerActivity extends BaseActivity {
         addBalance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!BuildConfig.DISABLE_ADD_BALANCE) {
+                if (!BuildConfig.DISABLE_ADD_BALANCE) {
                     Intent intent = new Intent(NewDailerActivity.this, TabsHeaderActivity.class);
                     intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
                     startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
-                }else {
+                } else {
                     mToastFactory.showToast(R.string.disabled);
                 }
             }
@@ -202,12 +202,12 @@ public class NewDailerActivity extends BaseActivity {
             }
         });
 
-        llOptions = (LinearLayout)findViewById(R.id.ll_options);
+        llOptions = (LinearLayout) findViewById(R.id.ll_options);
         Intent intent = getIntent();
-        if(intent.hasExtra("FromInComingCallActivity")) {
-             if(intent.getBooleanExtra("FromInComingCallActivity", false)) {
-              llOptions.setVisibility(View.GONE);
-             }
+        if (intent.hasExtra("FromInComingCallActivity")) {
+            if (intent.getBooleanExtra("FromInComingCallActivity", false)) {
+                llOptions.setVisibility(View.GONE);
+            }
         } else {
             llOptions.setVisibility(View.VISIBLE);
         }
@@ -216,7 +216,7 @@ public class NewDailerActivity extends BaseActivity {
     private void loadCurrentBalance() {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
         double val = Double.parseDouble(balance.trim());
-        if(val <=2) {
+        if (val <= 2) {
             mLog.w(TAG, "Current balance is less than or equal to $2");
             Util.setBigStyleNotificationForBalance(this, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
         }
@@ -289,10 +289,14 @@ public class NewDailerActivity extends BaseActivity {
                 //TODO: Need to improve logic for PSTN calls
                 //Begin Normalizing PSTN number
                 String temp = dialPadView.getDigits().getText().toString().trim();
+
                 String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
                 boolean prefixrequired;
                 String number;
                 if (temp.startsWith("+")) {
+                    prefixrequired = false;
+                    number = temp;
+                } else if (temp.startsWith("00")) {
                     prefixrequired = false;
                     number = temp;
                 } else if (!TextUtils.isEmpty(cPrefix)) {
@@ -300,7 +304,9 @@ public class NewDailerActivity extends BaseActivity {
                 } else {
                     number = temp;
                 }
-                number = number.replace(" ", "").replace("+", "");
+                String displayNumber = number;
+                SipHelper.init(displayNumber);
+                number = number.replace(" ", "").replace("+", "").replace("00", "");
                 if (cPrefix != null) {
                     cPrefix = cPrefix.replace("+", "");
                 }
@@ -438,14 +444,14 @@ public class NewDailerActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
             String cPrefix = "";
-            if(!setCallRateText().contains(" ")) {
+            if (!setCallRateText().contains(" ")) {
                 cPrefix = setCallRateText() + " ";
             } else {
                 cPrefix = setCallRateText();
             }
             //TODO: Need to improve the logic
             String str = dialPadView.getDigits().getText().toString();
-            if(!"+".equals(str)) {
+            if (!"+".equals(str)) {
                 str = str.substring(str.indexOf(" ") + 1);
                 dialPadView.getDigits().setText(cPrefix + str);
                 dialPadView.getDigits().setSelection(cPrefix.length());

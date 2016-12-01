@@ -54,6 +54,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private static final String TAG = OutGoingCallActivity.class.getSimpleName();
     private static final int KEEP_ON_HOLD = 100;
     private static final int KEEP_ON_HOLD_RESUME = 101;
+    public static final String DISPLAY_NUMBER = "displaynumber";
 
     private SipCallModel callModel;
     private CallLogsModel log;
@@ -61,6 +62,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private boolean isSpeakerOn;
     private TextView callerName;
     private TextView callerNumber;
+    private String diplayNumber;
     private TextView callDuration;
     int sec = 0, min = 0, hr = 0;
     private Handler handler;
@@ -121,10 +123,10 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         initViews();
         callModel = new SipCallModel();
-        //
 
-
-        if (getIntent().getStringExtra(CALLER_NAME) != null) {
+        if (getIntent().hasExtra(VoipConstants.PSTN)) {
+            callerName.setText(getIntent().getStringExtra(DISPLAY_NUMBER));
+        } else if (getIntent().getStringExtra(CALLER_NAME) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NAME));
         } else {
             String stringExtra = getIntent().getStringExtra(CALLER_NO);
@@ -150,30 +152,12 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                     into(callerImageView);
         }
 
-        if (contact != null && contact.getName() != null) {
-            callerName.setText(contact.getName());
-        } else if (getIntent().getStringExtra(CALLER_NO) != null) {
-            callerName.setText(getIntent().getStringExtra(CALLER_NO));
-            String stringExtra = getIntent().getStringExtra(CALLER_NO);
-            if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
-                try {
-                    stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
-                    callerName.setText(stringExtra);
-                } catch (StringIndexOutOfBoundsException e) {
-                    mLog.e(TAG, "" + e);
-                }
-            } else if (stringExtra != null) {
-                callerName.setText(stringExtra);
-            }
-        } else if (getIntent().getStringExtra(CALLER_NAME) != null) {
-            callerName.setText(getIntent().getStringExtra(CALLER_NAME));
-        }
-
 
         callDuration.setText(getResources().getString(R.string.calling));
         callModel.setOnCall(true);
         //CallLogs Model
         mobile = getIntent().getStringExtra(CALLER_NO);
+        diplayNumber = getIntent().getStringExtra(DISPLAY_NUMBER);
         bus.register(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);

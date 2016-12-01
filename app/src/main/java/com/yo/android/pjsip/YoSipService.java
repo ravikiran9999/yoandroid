@@ -567,6 +567,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("data", options);
         intent.putExtra(OutGoingCallActivity.CALLER_NO, destination);
+        intent.putExtra(VoipConstants.PSTN, oldintent.hasExtra(VoipConstants.PSTN));
+        intent.putExtra(OutGoingCallActivity.DISPLAY_NUMBER, oldintent.getStringExtra(OutGoingCallActivity.DISPLAY_NUMBER));
+
+
         startActivity(intent);
         destination = parseVoxUser(destination);
         if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {

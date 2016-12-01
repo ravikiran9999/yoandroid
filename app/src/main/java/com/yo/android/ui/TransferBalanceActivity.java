@@ -25,7 +25,6 @@ import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
-import com.yo.android.pjsip.MyCall;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
