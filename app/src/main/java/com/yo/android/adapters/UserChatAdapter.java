@@ -141,9 +141,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         View view = inflater.inflate(R.layout.chatitem, null);
         TextView senderNameOrNumber = (TextView) view.findViewById(R.id.sender_id);
         RelativeLayout profileNameLayout = (RelativeLayout) view.findViewById(R.id.chat_profilename_layout);
-        LinearLayout gravityLayout = (LinearLayout) view.findViewById(R.id.chat_gravity_decide_layout);
+        RelativeLayout gravityLayout = (RelativeLayout) view.findViewById(R.id.chat_gravity_decide_layout);
         TextView profileName = (TextView) view.findViewById(R.id.profile_name);
-        SquareImageView loadImage = (SquareImageView) view.findViewById(R.id.chat_image);
+        ImageView loadImage = (ImageView) view.findViewById(R.id.chat_image);
         TextView extraText = (TextView) view.findViewById(R.id.extra_chat_message);
 
         TextView time = (TextView) view.findViewById(R.id.time);
@@ -295,7 +295,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         linearLayout1.addView(textView);
         secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, isRTL ? 0 : 7, 0, 1, 0));
         secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, Gravity.RIGHT, 0, 0, 5, 0));
-
         holder.getLl().addView(secretChatPlaceholder);
         return secretChatPlaceholder;
     }

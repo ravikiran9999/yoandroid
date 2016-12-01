@@ -978,7 +978,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mRingTone.start();
+                    try {
+                        mRingTone.start();
+                    } catch (IllegalStateException e) {
+
+                    }
                 }
             }, 1000);
         } catch (Exception exc) {

@@ -91,7 +91,7 @@ public class GroupContactsActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_multiple_contacts, menu);
         mMenu = menu;
-        Util.prepareContactsSearch(this, mMenu, groupContactsListAdapter, Constants.Yo_CONT_FRAG);
+        Util.prepareContactsSearch(this, mMenu, groupContactsListAdapter, Constants.CONT_FRAG);
         Util.changeSearchProperties(mMenu);
         return super.onCreateOptionsMenu(mMenu);
     }

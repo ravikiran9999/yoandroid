@@ -13,36 +13,14 @@ import com.yo.android.adapters.AbstractViewHolder;
 
 public class UserChatViewHolder extends AbstractViewHolder {
 
-    private TextView name;
-    private TextView chatTimeStamp;
     private LinearLayout linearLayout;
-    private LinearLayout linearLayoutText;
     private LinearLayout ll;
-    private TextView seenTimeStamp;
-    //private TextView timeStampHeader;
+
 
     public UserChatViewHolder(View view) {
         super(view);
-        //name = (TextView) view.findViewById(R.id.name);
-        chatTimeStamp = (TextView) view.findViewById(R.id.time_stamp);
-        seenTimeStamp = (TextView) view.findViewById(R.id.delivered_time_stamp);
         linearLayout = (LinearLayout) view.findViewById(R.id.linear);
         ll = (LinearLayout) view.findViewById(R.id.linear_layout);
-        //timeStampHeader = (TextView) view.findViewById(R.id.time_stamp_header);
-        //contactNumber = (TextView) view.findViewById(R.id.tv_phone_number);
-
-    }
-
-    public TextView getName() {
-        return name;
-    }
-
-    public TextView getChatTimeStamp() {
-        return chatTimeStamp;
-    }
-
-    public TextView getSeenTimeStamp() {
-        return seenTimeStamp;
     }
 
     public LinearLayout getLinearLayout() {
@@ -53,7 +31,4 @@ public class UserChatViewHolder extends AbstractViewHolder {
         return ll;
     }
 
-//    public TextView getTimeStampHeader() {
-//        return timeStampHeader;
-//    }
 }

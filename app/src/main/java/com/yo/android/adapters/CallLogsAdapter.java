@@ -93,9 +93,15 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             Matcher m = p.matcher(title);
             boolean b = m.matches();
             if (b) {
+                /*if (holder.getContactPic().getTag(Settings.imageTag) != null && (Drawable) holder.getContactPic().getTag(Settings.imageTag) != null) {
+                    holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag(Settings.imageTag));
+                } else {*/
                 drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
+                holder.getContactPic().setTag(Settings.imageTag, drawable);
                 holder.getContactPic().setImageDrawable(drawable);
+                //}
             } else {
+
                 Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
                 LayerDrawable bgDrawable = (LayerDrawable) tempImage;
                 final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
@@ -103,6 +109,10 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                     shape.setColor(mColorGenerator.getRandomColor());
                 }
                 drawable = tempImage;
+                holder.getContactPic().setImageDrawable(drawable);
+                holder.getContactPic().setTag(Settings.imageTag, drawable);
+
+
             }
             holder.getCreatNewContact().setVisibility(View.GONE);
             holder.getAddToContact().setVisibility(View.GONE);
@@ -117,13 +127,17 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             } else if (phoneNumber != null) {
                 holder.getOpponentName().setText(phoneNumber);
             }
+
+
             Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
             LayerDrawable bgDrawable = (LayerDrawable) tempImage;
             final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
             if (Settings.isTitlePicEnabled) {
                 shape.setColor(mColorGenerator.getRandomColor());
             }
-            drawable = tempImage;
+            holder.getContactPic().setImageDrawable(tempImage);
+            holder.getContactPic().setTag(Settings.imageTag, tempImage);
+
             holder.getCreatNewContact().setVisibility(View.VISIBLE);
             holder.getAddToContact().setVisibility(View.VISIBLE);
         }
@@ -133,11 +147,6 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                     .dontAnimate()
                     .error(drawable).
                     into(holder.getContactPic());
-        } else if (Settings.isTitlePicEnabled) {
-            if (holder.getContactPic().getTag(Settings.imageTag) == null) {
-                holder.getContactPic().setTag(Settings.imageTag, drawable);
-            }
-            holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag(Settings.imageTag));
         }
 
         //By default set these properties

@@ -123,11 +123,14 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         initViews();
         callModel = new SipCallModel();
+        Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER_NO));
 
-        if (getIntent().hasExtra(VoipConstants.PSTN)) {
+        if (getIntent().hasExtra(VoipConstants.PSTN) && getIntent().getBooleanExtra(VoipConstants.PSTN, false)) {
             callerName.setText(getIntent().getStringExtra(DISPLAY_NUMBER));
         } else if (getIntent().getStringExtra(CALLER_NAME) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NAME));
+        } else if (contact != null && contact.getName() != null) {
+            callerName.setText(contact.getName());
         } else {
             String stringExtra = getIntent().getStringExtra(CALLER_NO);
             if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
@@ -143,7 +146,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
 
         //To display name of the user based on vox username
-        Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER_NO));
         if (contact != null) {
             Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getVoxUserName()))
                     .placeholder(R.drawable.ic_contacts)
