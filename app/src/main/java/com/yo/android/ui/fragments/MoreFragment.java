@@ -119,6 +119,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -217,7 +218,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onResume() {
         super.onResume();
-        profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
+        String status = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available");
+        if (status.equalsIgnoreCase("")) {
+            status = "Available";
+        }
+        profileStatus.setText(status);
     }
 
     @Override
@@ -533,6 +538,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         RequestBody firstName =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), userName);
+        //showProgressDialog();
         yoService.updateProfile(userId, access, null, firstName, null, null, null, null, null, null, null).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
@@ -541,7 +547,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     saveUserProfileValues(response.body());
                 }
                 loadImage();
-                profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
+                String status = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available");
+                if (status.equalsIgnoreCase("")) {
+                    status = "Available";
+                }
+                profileStatus.setText(status);
             }
 
             @Override

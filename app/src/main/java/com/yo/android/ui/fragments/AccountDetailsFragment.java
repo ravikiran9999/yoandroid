@@ -92,8 +92,11 @@ public class AccountDetailsFragment extends BaseFragment {
         setHasOptionsMenu(true);
         accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
-        accountEmail.setText(preferenceEndPoint.getStringPreference(Constants.EMAIL, ""));
-
+        String email = preferenceEndPoint.getStringPreference(Constants.EMAIL, "Enter Email Id");
+        if (email.equalsIgnoreCase("")) {
+            email = "Enter Email Id";
+        }
+        accountEmail.setText(email);
         genderText = preferenceEndPoint.getStringPreference(Constants.GENDER, "");
         if (genderText.equalsIgnoreCase(getString(R.string.male))) {
             genderToggle.check(R.id.male);
@@ -217,7 +220,11 @@ public class AccountDetailsFragment extends BaseFragment {
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME_TEMP, ""));
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
         accountDOB.setText(preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, "dd-mm-yyyy"));
-        accountEmail.setText(preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, ""));
+        String email = preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, "Enter Email Id");
+        if (email.equalsIgnoreCase("")) {
+            email = "Enter Email Id";
+        }
+        accountEmail.setText(email);
     }
 
     private void saveUserProfileValues(final UserProfileInfo response) {
