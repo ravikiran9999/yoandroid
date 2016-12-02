@@ -63,8 +63,6 @@ public class GroupContactsActivity extends BaseActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setHasOptionsMenu(true);
-        //groupName = getString(Constants.GROUP_NAME);
         setContentView(R.layout.fragment_yo_contacts);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -80,9 +78,8 @@ public class GroupContactsActivity extends BaseActivity {
         if (contactsList.isEmpty()) {
             getYoAppUsers();
         } else {
-            if (contactsList != null) {
-                loadInAlphabeticalOrder(contactsList);
-            }
+            groupContactsListAdapter.addItems(contactsList);
+            Helper.displayIndex(this, layout, contactsList, listView);
         }
 
     }
