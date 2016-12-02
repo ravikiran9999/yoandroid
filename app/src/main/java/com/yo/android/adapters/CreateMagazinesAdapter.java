@@ -44,21 +44,30 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
 
                 Glide.with(mContext)
                         .load(item.getImage())
-                        .placeholder(R.drawable.ic_default_magazine)
+                        .placeholder(R.drawable.img_placeholder)
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
 
             } else {
-
-                Glide.with(mContext)
-                        //.load(R.color.black)
-                        .load(R.drawable.ic_default_magazine)
-                        .fitCenter()
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(holder.getImageView());
+                if(item.getArticlesCount() == 0) {
+                    Glide.with(mContext)
+                            //.load(R.color.black)
+                            .load(R.drawable.ic_default_magazine)
+                            .fitCenter()
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.getImageView());
+                } else {
+                    Glide.with(mContext)
+                            //.load(R.color.black)
+                            .load(R.drawable.img_placeholder)
+                            .fitCenter()
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.getImageView());
+                }
 
             }
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));
@@ -75,21 +84,30 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
 
                 Glide.with(mContext)
                         .load(item.getImage())
-                        .placeholder(R.drawable.ic_default_magazine)
+                        .placeholder(R.drawable.img_placeholder)
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
 
             } else {
-
-                Glide.with(mContext)
-                        //.load(R.color.black)
-                        .load(R.drawable.ic_default_magazine)
-                        .fitCenter()
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(holder.getImageView());
+                if(item.getArticlesCount() == 0) {
+                    Glide.with(mContext)
+                            //.load(R.color.black)
+                            .load(R.drawable.ic_default_magazine)
+                            .fitCenter()
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.getImageView());
+                } else {
+                    Glide.with(mContext)
+                            //.load(R.color.black)
+                            .load(R.drawable.img_placeholder)
+                            .fitCenter()
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.getImageView());
+                }
             }
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));
             holder.getTextViewDesc().setTextColor(mContext.getResources().getColor(android.R.color.white));

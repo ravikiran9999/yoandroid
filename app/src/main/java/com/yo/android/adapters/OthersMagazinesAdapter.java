@@ -73,21 +73,30 @@ public class OthersMagazinesAdapter extends BaseAdapter {
 
                 Glide.with(mContext)
                         .load(ownMagazineList.get(position).getImage())
-                        .placeholder(R.drawable.ic_default_magazine)
+                        .placeholder(R.drawable.img_placeholder)
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(imageView);
 
             } else {
-
-                Glide.with(mContext)
-                        //.load(R.color.black)
-                        .load(R.drawable.ic_default_magazine)
-                        .fitCenter()
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(imageView);
+                if(ownMagazineList.get(position).getArticlesCount() == 0) {
+                    Glide.with(mContext)
+                            //.load(R.color.black)
+                            .load(R.drawable.ic_default_magazine)
+                            .fitCenter()
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(imageView);
+                } else {
+                    Glide.with(mContext)
+                            //.load(R.color.black)
+                            .load(R.drawable.img_placeholder)
+                            .fitCenter()
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(imageView);
+                }
             }
             textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
             textViewDesc.setTextColor(mContext.getResources().getColor(android.R.color.white));
