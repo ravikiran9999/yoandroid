@@ -25,7 +25,7 @@ android {
         targetSdkVersion 22
         versionCode 4
         versionName "16.4.16.2"
-        buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+        buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
         buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""

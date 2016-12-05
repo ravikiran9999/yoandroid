@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.chat.ui.fragments.BaseFragment;
@@ -22,6 +23,7 @@ import com.yo.android.vox.BalanceHelper;
 
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -89,7 +91,13 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     List<SubscribersList> detailResponseList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<SubscribersList>>() {
                     }.getType());
                     if (detailResponseList != null && !detailResponseList.isEmpty()) {
-                        adapter.addItems(detailResponseList);
+                        List<SubscribersList> removedFreeSpents = new ArrayList<>();
+                        for (SubscribersList item : detailResponseList) {
+                            if (item.getCalltype().equals("PSTN")) {
+                                removedFreeSpents.add(item);
+                            }
+                        }
+                        adapter.addItems(removedFreeSpents);
                     }
                 } catch (Exception e) {
                     mLog.w("SpendDetails", "onResponse", e);
