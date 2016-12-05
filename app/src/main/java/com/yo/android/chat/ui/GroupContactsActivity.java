@@ -55,6 +55,7 @@ public class GroupContactsActivity extends BaseActivity {
     PreferenceEndPoint loginPrefs;
 
     List<Contact> contactsList = null;
+    List<Contact> selectedContactsList = null;
 
     public GroupContactsActivity() {
         // Required empty public constructor
@@ -74,7 +75,9 @@ public class GroupContactsActivity extends BaseActivity {
         layout = (ListView) findViewById(R.id.side_index);
         groupContactsListAdapter = new GroupContactsListAdapter(this);
         listView.setAdapter(groupContactsListAdapter);
+        selectedContactsList = getIntent().getParcelableArrayListExtra(Constants.SELECTED_CONTACTS);
         contactsList = CreateGroupActivity.ContactsArrayList;
+        changeSelectedContactStatus(contactsList);
         if (contactsList.isEmpty()) {
             getYoAppUsers();
         } else {
@@ -95,6 +98,7 @@ public class GroupContactsActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if (item.getItemId() == R.id.done) {
             done();
         } else {
@@ -166,6 +170,18 @@ public class GroupContactsActivity extends BaseActivity {
         finish();
     }
 
+    private void changeSelectedContactStatus(List<Contact> mContactList) {
+
+        for (Contact allContacts : mContactList) {
+            for (Contact selectContact : selectedContactsList) {
+                if (allContacts != null && selectContact != null && allContacts.getPhoneNo().equalsIgnoreCase(selectContact.getPhoneNo())) {
+                    allContacts.setSelected(true);
+
+                }
+            }
+        }
+    }
+
     private void loadInAlphabeticalOrder(List<Contact> contactList) {
         Collections.sort(contactList, new Comparator<Contact>() {
             @Override
@@ -177,11 +193,5 @@ public class GroupContactsActivity extends BaseActivity {
         groupContactsListAdapter.addItems(contactList);
         CreateGroupActivity.ContactsArrayList.addAll(contactList);
         groupContactsListAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onBackPressed() {
-        done();
-        super.onBackPressed();
     }
 }
