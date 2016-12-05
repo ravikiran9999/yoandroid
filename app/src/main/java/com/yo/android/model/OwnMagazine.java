@@ -13,6 +13,7 @@ public class OwnMagazine implements Parcelable {
     private String privacy;
     private String image;
     private String isFollowing;
+    private int articlesCount;
 
     public static final Creator<OwnMagazine> CREATOR = new Creator<OwnMagazine>() {
         @Override
@@ -27,6 +28,14 @@ public class OwnMagazine implements Parcelable {
     };
 
     public OwnMagazine() {
+    }
+
+    public int getArticlesCount() {
+        return articlesCount;
+    }
+
+    public void setArticlesCount(int articlesCount) {
+        this.articlesCount = articlesCount;
     }
 
     public String getId() {
@@ -90,6 +99,7 @@ public class OwnMagazine implements Parcelable {
         dest.writeString(privacy);
         dest.writeString(image);
         dest.writeString(isFollowing);
+        dest.writeInt(articlesCount);
     }
 
     private OwnMagazine(Parcel in) {
@@ -99,5 +109,6 @@ public class OwnMagazine implements Parcelable {
         this.privacy = in.readString();
         this.image = in.readString();
         this.isFollowing = in.readString();
+        this.articlesCount = in.readInt();
     }
 }

@@ -10,6 +10,15 @@ public class Collections {
     private String image;
     private String type;
     private boolean select;
+    private int articlesCount;
+
+    public int getArticlesCount() {
+        return articlesCount;
+    }
+
+    public void setArticlesCount(int articlesCount) {
+        this.articlesCount = articlesCount;
+    }
 
     public String getId() {
         return id;

@@ -53,20 +53,29 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
 
             Glide.with(mContext)
                     .load(item.getImage())
-                    .placeholder(R.drawable.ic_default_magazine)
+                    .placeholder(R.drawable.img_placeholder)
                     .fitCenter()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getImageView());
         } else {
-
-            Glide.with(mContext)
-                    //.load(R.color.grey_divider)
-                    .load(R.drawable.ic_default_magazine)
-                    .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.getImageView());
+            if(item.getArticlesCount() == 0) {
+                Glide.with(mContext)
+                        //.load(R.color.grey_divider)
+                        .load(R.drawable.ic_default_magazine)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(holder.getImageView());
+            } else {
+                Glide.with(mContext)
+                        //.load(R.color.grey_divider)
+                        .load(R.drawable.img_placeholder)
+                        .fitCenter()
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(holder.getImageView());
+            }
         }
         holder.getTextView().setText(item.getName());
         if (position != 0) {
