@@ -54,6 +54,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private static final String TAG = OutGoingCallActivity.class.getSimpleName();
     private static final int KEEP_ON_HOLD = 100;
     private static final int KEEP_ON_HOLD_RESUME = 101;
+
     public static final String DISPLAY_NUMBER = "displaynumber";
 
     private SipCallModel callModel;
@@ -161,7 +162,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         mobile = getIntent().getStringExtra(CALLER_NO);
         diplayNumber = getIntent().getStringExtra(DISPLAY_NUMBER);
         bus.register(this);
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(UserAgent.ACTION_CALL_END));
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
     }
 
@@ -170,7 +170,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     protected void onPause() {
         super.onPause();
         bus.unregister(this);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 
     private void initViews() {
@@ -277,19 +276,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     }
 
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, Intent intent) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                    // OutGoingCallActivity.this.finish();
-                }
-            });
 
-        }
-    };
     private Runnable startTimer = new Runnable() {
         @Override
         public void run() {

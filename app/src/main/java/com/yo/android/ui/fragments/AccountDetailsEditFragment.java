@@ -59,6 +59,9 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
+        if (edit.equalsIgnoreCase("dd-mm-yyyy")) {
+            edit = "";
+        }
         ((AccountDetailsActivity) getActivity()).getSupportActionBar().setTitle(title);
         ((AccountDetailsActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         ((AccountDetailsActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -55,4 +55,6 @@
     <color name="transfer_green">#80c93b</color>
     <color name="transperantDarkGray">#a0494848</color>
 
+    <color name="list_selected">#B6D8E0</color>
+
 </resources>
