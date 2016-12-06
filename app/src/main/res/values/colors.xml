@@ -54,4 +54,6 @@
     <color name="divider">#333333</color>
     <color name="transfer_green">#80c93b</color>
 
+    <color name="list_selected">#B6D8E0</color>
+
 </resources>

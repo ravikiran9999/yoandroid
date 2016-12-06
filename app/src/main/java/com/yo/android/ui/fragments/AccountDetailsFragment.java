@@ -78,6 +78,12 @@ public class AccountDetailsFragment extends BaseFragment {
 
     private String withoutCountryCode;
 
+    public static final String dobHint = "dd-mm-yyyy";
+
+    public static final String emailHint = "Enter Email Id";
+
+    public int tokenExpireCount = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,20 +98,17 @@ public class AccountDetailsFragment extends BaseFragment {
         setHasOptionsMenu(true);
         accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
-        String email = preferenceEndPoint.getStringPreference(Constants.EMAIL, "Enter Email Id");
+        String email = preferenceEndPoint.getStringPreference(Constants.EMAIL, emailHint);
         if (email.equalsIgnoreCase("")) {
-            email = "Enter Email Id";
+            email = emailHint;
         }
+        setTextColor(email, accountEmail, emailHint);
         accountEmail.setText(email);
         genderText = preferenceEndPoint.getStringPreference(Constants.GENDER, "");
         if (genderText.equalsIgnoreCase(getString(R.string.male))) {
             genderToggle.check(R.id.male);
-            maleRadio.setTextColor(getResources().getColor(R.color.white));
-            femaleRadio.setTextColor(getResources().getColor(R.color.colorPrimary));
         } else if (genderText.equalsIgnoreCase(getString(R.string.female))) {
             genderToggle.check(R.id.female);
-            maleRadio.setTextColor(getResources().getColor(R.color.colorPrimary));
-            femaleRadio.setTextColor(getResources().getColor(R.color.white));
         }
 
         genderToggle.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -113,12 +116,8 @@ public class AccountDetailsFragment extends BaseFragment {
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
                 if (id == R.id.male) {
                     genderText = getString(R.string.male);
-                    maleRadio.setTextColor(getResources().getColor(R.color.white));
-                    femaleRadio.setTextColor(getResources().getColor(R.color.colorPrimary));
                 } else if (id == R.id.female) {
                     genderText = getString(R.string.female);
-                    maleRadio.setTextColor(getResources().getColor(R.color.colorPrimary));
-                    femaleRadio.setTextColor(getResources().getColor(R.color.white));
                 }
             }
         });
@@ -126,7 +125,12 @@ public class AccountDetailsFragment extends BaseFragment {
             saveDOBProperly();
         }
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
-        accountDOB.setText(preferenceEndPoint.getStringPreference(Constants.DOB, "dd-mm-yyyy"));
+        String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, dobHint);
+        if (dob.equalsIgnoreCase("")) {
+            dob = dobHint;
+        }
+        setTextColor(dob, accountDOB, dobHint);
+        accountDOB.setText(dob);
     }
 
     @OnClick(R.id.account_status_card)
@@ -189,9 +193,15 @@ public class AccountDetailsFragment extends BaseFragment {
         RequestBody email =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), accountEmail.getText().toString());
+        if (accountEmail.getText().toString().equalsIgnoreCase(emailHint)) {
+            email = null;
+        }
         RequestBody dob =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), accountDOB.getText().toString());
+        if (accountDOB.getText().toString().equalsIgnoreCase(dobHint)) {
+            dob = null;
+        }
         RequestBody gender =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), genderText);
@@ -219,11 +229,17 @@ public class AccountDetailsFragment extends BaseFragment {
         accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION_TEMP, "Available"));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME_TEMP, ""));
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
-        accountDOB.setText(preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, "dd-mm-yyyy"));
-        String email = preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, "Enter Email Id");
-        if (email.equalsIgnoreCase("")) {
-            email = "Enter Email Id";
+        String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, dobHint);
+        if (dob.equalsIgnoreCase("")) {
+            dob = dobHint;
         }
+        setTextColor(dob, accountDOB, dobHint);
+        accountDOB.setText(dob);
+        String email = preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, emailHint);
+        if (email.equalsIgnoreCase("")) {
+            email = emailHint;
+        }
+        setTextColor(email, accountEmail, emailHint);
         accountEmail.setText(email);
     }
 
@@ -291,7 +307,7 @@ public class AccountDetailsFragment extends BaseFragment {
             System.err.println("NumberParseException was thrown: " + e.toString());
         }
         if (countryCode != 0) {
-         return "+" + countryCode;
+            return "+" + countryCode;
         }
         return String.valueOf(countryCode);
     }
@@ -304,6 +320,14 @@ public class AccountDetailsFragment extends BaseFragment {
             accountPhoneNumber.setText(Html.fromHtml(String.format(getString(R.string.phone_text_field), countryCode, number)));
         } else {
             accountPhoneNumber.setText(phone);
+        }
+    }
+
+    private void setTextColor(final String text, final TextView textView, final String hint) {
+        if (text.equalsIgnoreCase(hint)) {
+            textView.setTextColor(getResources().getColor(R.color.gray));
+        } else {
+            textView.setTextColor(getResources().getColor(R.color.black));
         }
     }
 
