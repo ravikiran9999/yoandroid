@@ -430,11 +430,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             } else {
-                String groupCreatedtime = null;
-                String aa = roomInfo.getCreated_at();
+                //String groupCreatedTime = null;
+                Date date = null;
                 try {
-                    Date date = formatterDate.parse(aa);
-                    groupCreatedtime = Util.getChatListTimeFormat(date.getTime());
+                    String createdTime = roomInfo.getCreated_at();
+                    date = formatterDate.parse(createdTime);
+                    //groupCreatedTime = Util.getChatListTimeFormat(date.getTime());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -443,7 +444,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 room.setGroupName(roomInfo.getName());
                 room.setImage(roomInfo.getImage());
                 room.setVoxUserName(voxUserName);
-                room.setTime(Long.parseLong(groupCreatedtime));
+                //room.setTime(Long.parseLong(groupCreatedTime));
+                if (date != null) {
+                    room.setTime(date.getTime());
+                }
                 arrayOfUsers.add(room);
                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));

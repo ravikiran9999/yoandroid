@@ -184,14 +184,14 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
             if (item.getSent() == 1) {
                 img = context.getResources().getDrawable(R.drawable.sent);
-                img.setBounds(0, 4, 50, 50);
+                img.setBounds(0, 0, 25, 25);
                 time.setCompoundDrawables(null, null, img, null);
                 time.setCompoundDrawablePadding(10);
 
             }
             if (item.getDeliveredTime() != 0) {
                 img = context.getResources().getDrawable(R.drawable.seen);
-                img.setBounds(0, 4, 50, 50);
+                img.setBounds(0, 0, 25, 25);
                 time.setCompoundDrawables(null, null, img, null);
                 time.setCompoundDrawablePadding(10);
             }
@@ -267,10 +267,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 time.setText(seenText);
                 time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                 time.setGravity(Gravity.RIGHT);
+
             }
         } else {
             time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-            time.setGravity(Gravity.RIGHT);
+            time.setGravity(Gravity.END);
             sent.setVisibility(View.VISIBLE);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
@@ -281,13 +282,13 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             time.setText(sentText);
             if (item.getSent() == 1) {
                 img = context.getResources().getDrawable(R.drawable.sent);
-                img.setBounds(0, 4, 50, 50);
+                img.setBounds(0, 0, 25, 25);
                 time.setCompoundDrawables(null, null, img, null);
                 time.setCompoundDrawablePadding(10);
             }
             if (item.getDeliveredTime() != 0) {
                 img = context.getResources().getDrawable(R.drawable.seen);
-                img.setBounds(0, 4, 50, 50);
+                img.setBounds(0, 0, 25, 25);
                 time.setCompoundDrawables(null, null, img, null);
                 time.setCompoundDrawablePadding(10);
             }
