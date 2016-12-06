@@ -306,7 +306,8 @@ public class NewDailerActivity extends BaseActivity {
                 }
                 String displayNumber = number;
                 SipHelper.init(displayNumber);
-                number = number.replace(" ", "").replace("+", "").replace("00", "");
+                number = number.replace(" ", "").replace("+", "");
+                number = Long.valueOf(number).toString();
                 if (cPrefix != null) {
                     cPrefix = cPrefix.replace("+", "");
                 }

@@ -19,6 +19,7 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -119,6 +120,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Inject
     ConnectivityHelper mHelper;
 
+    private Intent mIntent;
+
     //New changes
 
     private PowerManager.WakeLock ongoingCallLock;
@@ -183,18 +186,23 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (intent == null) {
             return;
         }
+        mIntent = intent;
         if (mHelper.isConnected()) {
             if (VoipConstants.CALL_ACTION_OUT_GOING.equalsIgnoreCase(intent.getAction())) {
                 if (currentCall == null) {
                     String number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
                     Bundle bundle = intent.getBundleExtra("data");
+
                     if (bundle == null) {
                         bundle = new Bundle();
                     }
-
-                    showCallActivity(number, bundle, intent);
-
-                    makeCall(number, bundle, intent);
+                    int value = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).getCallState();
+                    if (value == 0) {
+                        showCallActivity(number, bundle, intent);
+                        makeCall(number, bundle, intent);
+                    } else {
+                        mToastFactory.showToast("Already call is in progress");
+                    }
                 } else {
                     mHandler.post(new Runnable() {
                         @Override
@@ -326,18 +334,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         CallInfo ci;
         try {
             ci = call.getInfo();
-            if (ci != null) {
-                //EventBus.getDefault().post(ci.getStateText());
-            }
-            Logger.warn("Call Status " + ci.toString());
-            if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY
-                    && ci.getRole() == pjsip_role_e.PJSIP_ROLE_UAC
-                    && ci.getLastReason().equals("Ringing")) {
-                startRingtone();
-            } else {
-                stopRingtone();
-            }
-
         } catch (Exception e) {
             ci = null;
         }
@@ -441,7 +437,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         //Reset
         sipCallState = new SipCallState();
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
-        android.util.Log.w(TAG, "LOADING CALL LOGS AFTER ACTION " + manager);
         manager.sendBroadcast(new Intent(UserAgent.ACTION_CALL_END));
     }
 
@@ -600,16 +595,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public void setHoldCall(boolean isHold) {
         if (isHold) {
             mToastFactory.showToast(R.string.hold);
+            getMediaManager().setMicrophoneMuteOn(true);
             try {
                 if (mRingTone != null && mRingTone.isPlaying()) {
                     mRingTone.pause();
                     mVibrator.cancel();
                 }
             } catch (IllegalStateException e) {
-                if (mRingTone != null) {
-                    mRingTone.stop();
-                    mRingTone.release();
-                }
                 mLog.w(TAG, e);
             }
             if (currentCall != null) {
@@ -626,6 +618,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
+                getMediaManager().setMicrophoneMuteOn(false);
                 try {
                     if (currentCall.getInfo() != null
                             && currentCall.getInfo().getState() != pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {

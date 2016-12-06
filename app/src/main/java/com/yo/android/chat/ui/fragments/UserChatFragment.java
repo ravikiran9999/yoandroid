@@ -551,7 +551,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             String timeStp = Long.toString(chatMessage.getTime());
             if (!mHelper.isConnected()) {
                 chatMessage.setSent(2);
-            }else {
+            } else {
                 chatMessage.setSent(1);
             }
 
@@ -569,18 +569,19 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                    Log.w(TAG,"ONCOMPLETE");
+                    Log.w(TAG, "ONCOMPLETE");
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
-                        Log.w(TAG,"ONCOMPLETE fail");
+                        Log.w(TAG, "ONCOMPLETE fail");
 
                         Activity activity = getActivity();
                         if (activity != null) {
                             Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Log.w(TAG,"ONCOMPLETE success");
+                        Log.w(TAG, "ONCOMPLETE success");
                         chatMessage.setSent(1);
-                        userChatAdapter.notifyDataSetChanged();;
+                        userChatAdapter.notifyDataSetChanged();
+                        ;
                     }
                 }
             });
@@ -594,6 +595,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private void registerChildEventListener(Firebase roomReference) {
         if (!isChildEventListenerAdd) {
+            //isChildEventListenerAdd = Boolean.TRUE;
             roomReference.addChildEventListener(this);
             roomReference.keepSynced(true);
         }
@@ -904,9 +906,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         List<String> selectedUsers = new ArrayList<>();
         selectedUsers.add(opponentId);
+        showProgressDialog();
         yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
             @Override
             public void onResponse(Call<Room> call, Response<Room> response) {
+                dismissProgressDialog();
                 if (response.isSuccessful()) {
                     Room room = response.body();
                     if (room.getFirebaseRoomId() != null) {

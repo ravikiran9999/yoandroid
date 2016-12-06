@@ -37,6 +37,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
+import com.yo.android.voip.CallEvents;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.vox.VoxFactory;
 
@@ -67,7 +68,7 @@ import retrofit2.Response;
 /**
  * Created by Ramesh on 3/7/16.
  */
-public class DialerFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
+public class DialerFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, CallEvents {
 
     public static final String REFRESH_CALL_LOGS = "com.yo.android.ACTION_REFRESH_CALL_LOGS";
 
@@ -347,11 +348,15 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
      * @param action
      */
     public void onEventMainThread(String action) {
-        Log.w(TAG, "LOADING CALL LOGS AFTER ACTION "+action);
+        Log.w(TAG, "LOADING CALL LOGS AFTER ACTION " + action);
         if (action.equals(REFRESH_CALL_LOGS)) {
             loadCallLogs();
             mBalanceHelper.checkBalance(null);
         }
+    }
+
+    public void onEvent(Object object) {
+        onEventMainThread(REFRESH_CALL_LOGS);
     }
 
     @Override
@@ -397,20 +402,20 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
             if (activity.getFragment() instanceof DialerFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                     //if (!isRemoved) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        if (popup != null) {
-                            for (Popup p : popup) {
-                                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.DIALER) {
-                                    if (!isAlreadyShown) {
-                                        PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
-                                        isAlreadyShown = true;
-                                        break;
-                                    }
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    if (popup != null) {
+                        for (Popup p : popup) {
+                            if (p.getPopupsEnum() == PopupHelper.PopupsEnum.DIALER) {
+                                if (!isAlreadyShown) {
+                                    PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
+                                    isAlreadyShown = true;
+                                    break;
                                 }
                             }
                         }
+                    }
                         /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.DIALER) {
                             if (!isAlreadyShown) {
                                 PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
