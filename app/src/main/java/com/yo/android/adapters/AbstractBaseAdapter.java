@@ -236,6 +236,10 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         notifyDataSetChanged();
     }
 
+    public int getOriginalListCount() {
+        return mOriginalList.size();
+    }
+
     public List<T> getAllItems() {
         return mList;
     }

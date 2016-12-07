@@ -5,7 +5,16 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.di.Injector;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 public class FetchNewArticlesService extends Service {
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
     public FetchNewArticlesService() {
     }
 
@@ -17,6 +26,7 @@ public class FetchNewArticlesService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("FetchNewArticlesService", "FetchNewArticlesService Started");
+        preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
         return START_STICKY;
     }
 
@@ -28,6 +38,7 @@ public class FetchNewArticlesService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Injector.obtain(getApplication()).inject(this);
     }
 
 }

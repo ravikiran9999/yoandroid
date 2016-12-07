@@ -811,6 +811,23 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         if (!((BaseActivity)context).hasDestroyed()) {
                             notifyDataSetChanged();
                         }
+                        Type type1 = new TypeToken<List<Articles>>() {
+                        }.getType();
+                        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                        String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
+                        List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+                        if(cachedMagazinesList != null) {
+                            for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                    cachedMagazinesList.get(i).setLiked(data.getLiked());
+                                }
+                            }
+
+                            //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                            editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                            editor.commit();
+                        }
                         break;
                     }
 
