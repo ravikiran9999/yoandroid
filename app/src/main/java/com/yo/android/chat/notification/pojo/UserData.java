@@ -7,6 +7,7 @@ public class UserData {
 
     private String description;
     private int messageId;
+    private String senderName;
 
     @Override
     public boolean equals(Object o) {
@@ -42,5 +43,13 @@ public class UserData {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 }

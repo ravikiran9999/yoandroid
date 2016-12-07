@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -39,7 +38,6 @@ import com.yo.android.model.Popup;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.PopupDialogListener;
@@ -49,7 +47,6 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -430,12 +427,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             } else {
-                //String groupCreatedTime = null;
                 Date date = null;
                 try {
                     String createdTime = roomInfo.getCreated_at();
                     date = formatterDate.parse(createdTime);
-                    //groupCreatedTime = Util.getChatListTimeFormat(date.getTime());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
