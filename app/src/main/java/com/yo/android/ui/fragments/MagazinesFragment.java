@@ -264,15 +264,16 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 public boolean onMenuItemActionExpand(MenuItem item) {
                     mMagazineFlipArticlesFragment.lastReadArticle = 0;
 
-                    return false;
+                    return true;
                 }
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
 
                     mMagazineFlipArticlesFragment.lastReadArticle = 0;
+                    mMagazineFlipArticlesFragment.refresh();
 
-                    return false;
+                    return true;
                 }
             });
 

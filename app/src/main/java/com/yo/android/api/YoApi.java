@@ -303,6 +303,14 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/user/other_user_info.json")
         Call<YOUserInfo> getYOUserInfoBYYOName(@Field("vox_user_name") String vox_user_name);
+
+        @FormUrlEncoded
+        @POST("api/tags/{ID}/filtered_articles.json")
+        Call<List<Articles>> getRemainingArticlesInTopicAPI(@Field("access_token") String access_token, @Path("ID") String ID, @Field("article_ids[]") List<String> article_ids);
+
+        @FormUrlEncoded
+        @POST("api/magzines/{ID}/filtered_articles.json")
+        Call<MagazineArticles> getRemainingArticlesInMagAPI(@Field("access_token") String access_token, @Path("ID") String ID, @Field("article_ids[]") List<String> article_ids);
     }
 
     public interface YoRefreshTokenService {
