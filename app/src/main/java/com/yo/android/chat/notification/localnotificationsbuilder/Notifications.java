@@ -40,9 +40,11 @@ public class Notifications {
      */
     public void buildInboxStyleNotifications(Context mContext, Intent destinationClass, NotificationBuilderObject notificationBuilderObject, List<UserData> notificationList, int maxNotifications, boolean onGoing, boolean isDialer) {
         String newMessage;
+
         NotificationCache.get().setCacheNotifications(notificationList);
         //List<UserData> pushNotificationList = NotificationCache.get().getCacheNotifications();
         List<UserData> pushNotificationList = notificationList;
+        UserData userData = pushNotificationList.get(pushNotificationList.size() - ONE);
         newMessage = pushNotificationList.size() == 1 ? mContext.getResources().getString(R.string.notification_new_message) : mContext.getResources().getString(R.string.notification_new_messages);
 
 
@@ -51,7 +53,7 @@ public class Notifications {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setContentTitle(pushNotificationList.size() + " " + newMessage)
                 .setSmallIcon(R.drawable.ic_yo_notification)
-                .setContentText(pushNotificationList.get(pushNotificationList.size() - ONE).getDescription() + "")
+                .setContentText(userData.getSenderName() + " : " + userData.getDescription())
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), notificationBuilderObject.getNotificationLargeIconDrawable()));
 
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
