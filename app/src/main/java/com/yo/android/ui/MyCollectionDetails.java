@@ -40,11 +40,13 @@ import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
 import com.yo.android.model.MagazineArticles;
+import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -150,6 +152,19 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 }
             }
             cachedArticlesList = tempArticlesList;
+            List<Articles> emptyUpdatedArticles = new ArrayList<>();
+            List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+            for(Articles updatedArticles: cachedArticlesList) {
+                if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                    notEmptyUpdatedArticles.add(updatedArticles);
+                } else {
+                    emptyUpdatedArticles.add(updatedArticles);
+                }
+            }
+            Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+            Collections.reverse(notEmptyUpdatedArticles);
+            notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+            cachedArticlesList = notEmptyUpdatedArticles;
             myBaseAdapter.addItems(cachedArticlesList);
             if(cachedArticlesList.size()==0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
@@ -248,6 +263,19 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 }
             }
             cachedArticlesList = tempArticlesList;
+            List<Articles> emptyUpdatedArticles = new ArrayList<>();
+            List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+            for(Articles updatedArticles: cachedArticlesList) {
+                if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                    notEmptyUpdatedArticles.add(updatedArticles);
+                } else {
+                    emptyUpdatedArticles.add(updatedArticles);
+                }
+            }
+            Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+            Collections.reverse(notEmptyUpdatedArticles);
+            notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+            cachedArticlesList = notEmptyUpdatedArticles;
             myBaseAdapter.addItems(cachedArticlesList);
             if(cachedArticlesList.size()==0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
@@ -1045,6 +1073,24 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         }
                     }
                     articlesList = tempArticlesList;
+
+                    List<Articles> emptyUpdatedArticles = new ArrayList<>();
+                    List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+                    for(Articles updatedArticles: articlesList) {
+                        if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                            notEmptyUpdatedArticles.add(updatedArticles);
+                        } else {
+                            emptyUpdatedArticles.add(updatedArticles);
+                        }
+                    }
+                    Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+                    Collections.reverse(notEmptyUpdatedArticles);
+                    notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+                    articlesList = notEmptyUpdatedArticles;
+
+                    for(Articles a: articlesList) {
+                        Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
+                    }
                     myBaseAdapter.addItems(articlesList);
                     if(articlesList.size()==0) {
                         tvNoArticles.setVisibility(View.VISIBLE);
@@ -1117,6 +1163,22 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         }
                     }
                     articlesList = tempArticlesList;
+                    List<Articles> emptyUpdatedArticles = new ArrayList<>();
+                    List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+                    for(Articles updatedArticles: articlesList) {
+                        if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                            notEmptyUpdatedArticles.add(updatedArticles);
+                        } else {
+                            emptyUpdatedArticles.add(updatedArticles);
+                        }
+                    }
+                    Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+                    Collections.reverse(notEmptyUpdatedArticles);
+                    notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+                    articlesList = notEmptyUpdatedArticles;
+                    for(Articles a: articlesList) {
+                        Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
+                    }
                     myBaseAdapter.addItems(articlesList);
                     if(articlesList.size()==0) {
                         tvNoArticles.setVisibility(View.VISIBLE);
