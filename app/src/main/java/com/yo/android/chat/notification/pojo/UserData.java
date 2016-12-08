@@ -1,5 +1,7 @@
 package com.yo.android.chat.notification.pojo;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Anitha on 7/12/15.
  */
@@ -8,6 +10,7 @@ public class UserData {
     private String description;
     private int messageId;
     private String senderName;
+    private Bitmap bitmap;
 
     @Override
     public boolean equals(Object o) {
@@ -51,5 +54,13 @@ public class UserData {
 
     public void setSenderName(String senderName) {
         this.senderName = senderName;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 }

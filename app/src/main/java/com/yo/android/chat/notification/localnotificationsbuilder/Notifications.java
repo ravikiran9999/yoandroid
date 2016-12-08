@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 
 
 import com.yo.android.R;
@@ -16,6 +17,7 @@ import com.yo.android.chat.notification.helper.Constants;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
+import com.yo.android.model.Notification;
 
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class Notifications {
         NotificationCache.get().setCacheNotifications(notificationList);
         //List<UserData> pushNotificationList = NotificationCache.get().getCacheNotifications();
         List<UserData> pushNotificationList = notificationList;
-        UserData userData = pushNotificationList.get(pushNotificationList.size() - ONE);
+        UserData userData = pushNotificationList.get(0);
         newMessage = pushNotificationList.size() == 1 ? mContext.getResources().getString(R.string.notification_new_message) : mContext.getResources().getString(R.string.notification_new_messages);
 
 
@@ -52,9 +54,13 @@ public class Notifications {
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                 .setContentTitle(pushNotificationList.size() + " " + newMessage)
-                .setSmallIcon(R.drawable.ic_yo_notification)
-                .setContentText(userData.getSenderName() + " : " + userData.getDescription())
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), notificationBuilderObject.getNotificationLargeIconDrawable()));
+                .setSmallIcon(R.drawable.ic_yo_notification);
+        if (userData.getSenderName() != null && !TextUtils.isEmpty(userData.getSenderName())) {
+            mBuilder.setContentText(userData.getSenderName() + " : " + userData.getDescription());
+        } else {
+            mBuilder.setContentText(userData.getDescription());
+        }
+        mBuilder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), notificationBuilderObject.getNotificationLargeIconDrawable()));
 
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
         inboxStyle.setBigContentTitle(pushNotificationList.size() + " " + newMessage);
