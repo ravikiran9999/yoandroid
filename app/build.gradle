@@ -16,7 +16,7 @@ android {
         }
     }
     compileSdkVersion 24
-    buildToolsVersion '25'
+    buildToolsVersion "25.0.0"
     useLibrary 'org.apache.http.legacy'
     // Enabling multidex support.
     defaultConfig {
@@ -24,7 +24,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 4
-        versionName "16.4.16.2"
+        versionName "16.4.16.3"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
