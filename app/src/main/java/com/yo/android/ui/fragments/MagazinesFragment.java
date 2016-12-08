@@ -500,7 +500,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error while adding topics", Toast.LENGTH_LONG).show();
+                if(getActivity() != null) {
+                    Toast.makeText(getActivity(), "Error while adding topics", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
