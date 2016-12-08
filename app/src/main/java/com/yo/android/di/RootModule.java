@@ -80,6 +80,7 @@ import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
+import com.yo.android.util.FetchNewArticlesService;
 import com.yo.android.util.ReCreateService;
 import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
@@ -194,6 +195,7 @@ import dagger.Provides;
                 MainImageCropActivity.class,
                 UserChatAdapter.class,
                 Util.class,
+                FetchNewArticlesService.class,
         },
         includes = {
                 AppModule.class,

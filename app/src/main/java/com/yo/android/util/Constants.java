@@ -18,6 +18,7 @@ public class Constants {
     public static final String TYPE = "type";
     public static final String TEXT = "text";
     public static final String IMAGE = "image";
+    public static final String PHOTO = "Photo";
     public static final String IMAGE_PATH = "image_path";
 
     public static final String SELECTED_TEXT = "selected_text";
@@ -114,6 +115,7 @@ public class Constants {
     public static String TOPIC_FOLLOWING_ACTION = "com.topic.detail.FOLLOW";
     public static String REFRESH_TOPICS_ACTION = "com.refresh.magazine.TOPICS";
     public static String BALANCE_TRANSFER_NOTIFICATION_ACTION = "com.notification.balance.TRANSFER";
+    public static String STOP_FETCHING_ARTICLES_ACTION = "com.stop.articles.FETCH";
 
     // Contacts
     public static final String NUMBER = "number";
@@ -144,5 +146,6 @@ public class Constants {
     public static final String EMAIL_TEMP = "email_temp";
 
     public static final int FETCHING_NEW_ARTICLES_FREQUENCY = 24 * 60 * 60 * 1000;
+    public static final String IS_SERVICE_RUNNING = "is_service_running";
 
 }

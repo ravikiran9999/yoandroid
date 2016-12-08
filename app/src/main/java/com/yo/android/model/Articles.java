@@ -24,6 +24,7 @@ public class Articles implements Parcelable {
     private String topicName;
     private String topicId;
     private String topicFollowing;
+    private String updated;
 
     public Articles() {
     }
@@ -43,6 +44,7 @@ public class Articles implements Parcelable {
         topicName = in.readString();
         topicId = in.readString();
         topicFollowing = in.readString();
+        updated = in.readString();
     }
 
     public static final Creator<Articles> CREATOR = new Creator<Articles>() {
@@ -169,6 +171,14 @@ public class Articles implements Parcelable {
         this.topicFollowing = topicFollowing;
     }
 
+    public String getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(String updated) {
+        this.updated = updated;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -191,6 +201,7 @@ public class Articles implements Parcelable {
         dest.writeString(topicName);
         dest.writeString(topicId);
         dest.writeString(topicFollowing);
+        dest.writeString(updated);
     }
 
     public int hashCode() {

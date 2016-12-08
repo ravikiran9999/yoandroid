@@ -114,10 +114,11 @@ public class FirebaseService extends InjectedService {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        //return mBinder;
+        return null;
     }
 
-    @Override
+    /*@Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
     }
@@ -125,7 +126,7 @@ public class FirebaseService extends InjectedService {
     @Override
     public boolean onUnbind(Intent intent) {
         return true;
-    }
+    }*/
 
 
     private void getAllRooms() {
@@ -268,7 +269,12 @@ public class FirebaseService extends InjectedService {
                 NotificationBuilderObject notificationsInboxData = prepareNotificationData(chatMessage);
                 UserData data = new UserData();
                 data.setMessageId(chatMessage.getMsgID());
-                data.setDescription(chatMessage.getMessage());
+                if (chatMessage.getType().equalsIgnoreCase(Constants.TEXT)) {
+                    data.setDescription(chatMessage.getMessage());
+                } else if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
+                    data.setDescription(Constants.PHOTO);
+                }
+                data.setSenderName(chatMessage.getSenderID());
 
                 if (!notificationList.contains(data)) {
                     notificationList.add(0, data);//always insert new notification on top
@@ -278,7 +284,7 @@ public class FirebaseService extends InjectedService {
                 break;
             case STYLE_PICTURE:
                 NotificationBuilderObject notificationPictureInfo = prepareNotificationData(chatMessage);
-                new GeneratePictureStyleNotification(this, notificationIntent, notificationPictureInfo).execute();
+                new GeneratePictureStyleNotification(this, notificationIntent, notificationPictureInfo, notificationList).execute();
                 break;
             case STYLE_TEXT_WITH_ACTION:
                 NotificationBuilderObject notificationTextActionData = prepareNotificationData(chatMessage);
@@ -295,7 +301,11 @@ public class FirebaseService extends InjectedService {
         NotificationBuilderObject notificationData = new NotificationBuilderObject();
         notificationData.setNotificationTitle(chatMessage.getSenderID());
         notificationData.setNotificationSmallIcon(getNotificationIcon());
-        notificationData.setNotificationText(chatMessage.getMessage());
+        if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
+            notificationData.setNotificationText(Constants.PHOTO);
+        } else {
+            notificationData.setNotificationText(chatMessage.getMessage());
+        }
         notificationData.setNotificationLargeIconDrawable(R.mipmap.ic_launcher);
         notificationData.setNotificationInfo("3");
         notificationData.setNotificationLargeiconUrl(chatMessage.getImagePath());

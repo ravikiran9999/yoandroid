@@ -15,7 +15,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -507,6 +506,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void sendChatMessage(@NonNull final String message, @NonNull String userId, @NonNull String type) {
 
         long timestamp = System.currentTimeMillis();
+        int msgId = (int)timestamp;
         final ChatMessage chatMessage = new ChatMessage();
         chatMessage.setType(type);
         chatMessage.setTime(timestamp);
@@ -518,7 +518,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
-        chatMessage.setMsgID(message.hashCode());
+        //chatMessage.setMsgID(message.hashCode());
+        chatMessage.setMsgID(msgId);
         if (!TextUtils.isEmpty(roomType)) {
             chatMessage.setRoomName(roomType);
         }
@@ -803,6 +804,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setTime(timestamp);
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
+
+        chatMessage.setRoomId(childRoomId);
+        //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
+        chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+        chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
+
         sendChatMessage(chatMessage);
     }
 
@@ -906,9 +913,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         List<String> selectedUsers = new ArrayList<>();
         selectedUsers.add(opponentId);
+        showProgressDialog();
         yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
             @Override
             public void onResponse(Call<Room> call, Response<Room> response) {
+                dismissProgressDialog();
                 if (response.isSuccessful()) {
                     Room room = response.body();
                     if (room.getFirebaseRoomId() != null) {

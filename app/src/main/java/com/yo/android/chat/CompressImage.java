@@ -121,12 +121,22 @@ public class CompressImage {
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.flush();
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
         }
 
         return filepath;
     }
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
@@ -161,10 +171,7 @@ public class CompressImage {
         } else {
             mImageName = name;
         }
-        String uriString = (mediaStorageDir.getAbsolutePath() + "/" + mImageName);
-
-        return uriString;
-
+        return (mediaStorageDir.getAbsolutePath() + "/" + mImageName);
     }
 
 }

@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -39,7 +38,6 @@ import com.yo.android.model.Popup;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.PopupDialogListener;
@@ -49,7 +47,6 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -430,11 +427,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             } else {
-                String groupCreatedtime = null;
-                String aa = roomInfo.getCreated_at();
+                Date date = null;
                 try {
-                    Date date = formatterDate.parse(aa);
-                    groupCreatedtime = Util.getChatListTimeFormat(date.getTime());
+                    String createdTime = roomInfo.getCreated_at();
+                    date = formatterDate.parse(createdTime);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -443,7 +439,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 room.setGroupName(roomInfo.getName());
                 room.setImage(roomInfo.getImage());
                 room.setVoxUserName(voxUserName);
-                room.setTime(Long.parseLong(groupCreatedtime));
+                //room.setTime(Long.parseLong(groupCreatedTime));
+                if (date != null) {
+                    room.setTime(date.getTime());
+                }
                 arrayOfUsers.add(room);
                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));

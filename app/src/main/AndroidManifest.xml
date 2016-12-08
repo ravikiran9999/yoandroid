@@ -174,8 +174,7 @@
             android:name=".chat.ui.CreateGroupActivity"
             android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:label="@string/new_group"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".chat.ui.GroupContactsActivity"
             android:label="@string/select_contact"

@@ -151,4 +151,10 @@ public class FollowingsActivity extends BaseActivity {
 
         }
     }
+
+    public void showEmptyDataScreen() {
+        noData.setVisibility(View.GONE);
+        llNoPeople.setVisibility(View.VISIBLE);
+        lvFindPeople.setVisibility(View.GONE);
+    }
 }
