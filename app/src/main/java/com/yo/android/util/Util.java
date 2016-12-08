@@ -42,19 +42,15 @@ import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
-import com.yo.android.calllogs.CallerInfo;
-import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
-import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.model.Articles;
-import com.yo.android.model.Contact;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.model.dialer.OpponentDetails;
+import com.yo.android.pjsip.StatusCodes;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
-import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.vox.BalanceHelper;
 
@@ -78,9 +74,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
 import retrofit2.Response;
@@ -851,17 +844,24 @@ public class Util {
                 public void run() {
                     int statusCode = details.getStatusCode();
                     switch (statusCode) {
+                        case StatusCodes.TWO_THOUSAND_ONE:
+                        case 408:
+                            if (!details.isSelfReject()) {
+                                mToastFactory.showToast(R.string.no_answer);
+                            }
+                            break;
                         case 603:
+                        case 486:
                             if (!details.isSelfReject()) {
                                 mToastFactory.showToast(R.string.busy);
                             }
                             break;
                         case 404:
-                            mToastFactory.showToast(R.string.no_network);
+                            mToastFactory.showToast(R.string.calls_no_network);
                             break;
                         case 503:
                             if (!mHelper.isConnected()) {
-                                mToastFactory.showToast(R.string.no_network);
+                                mToastFactory.showToast(R.string.calls_no_network);
                                 ((Activity) context).finish();
                             } else {
                                 if (details != null && details.getVoxUserName() != null && details.getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
@@ -877,13 +877,10 @@ public class Util {
                             break;
                         case 182:
                         case 480:
-                            mToastFactory.showToast(R.string.temporerly_unavailable);
+                            mToastFactory.showToast(R.string.no_answer);
                             break;
                         case 180:
                             mToastFactory.showToast(R.string.ringing);
-                            break;
-                        case 486:
-                            mToastFactory.showToast(R.string.busy);
                             break;
                         case 600:
                             mToastFactory.showToast(R.string.all_busy);
@@ -891,9 +888,7 @@ public class Util {
                         case 403:
                             mToastFactory.showToast(R.string.unknown_error);
                             break;
-                        case 408:
-                            mToastFactory.showToast(R.string.temporerly_unavailable);
-                            break;
+
                     }
                     if (statusCode != 503) {
                         bus.post(DialerFragment.REFRESH_CALL_LOGS);
