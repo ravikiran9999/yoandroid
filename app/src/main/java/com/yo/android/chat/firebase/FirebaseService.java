@@ -114,10 +114,11 @@ public class FirebaseService extends InjectedService {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        //return mBinder;
+        return null;
     }
 
-    @Override
+    /*@Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
     }
@@ -125,7 +126,7 @@ public class FirebaseService extends InjectedService {
     @Override
     public boolean onUnbind(Intent intent) {
         return true;
-    }
+    }*/
 
 
     private void getAllRooms() {
@@ -269,6 +270,7 @@ public class FirebaseService extends InjectedService {
                 UserData data = new UserData();
                 data.setMessageId(chatMessage.getMsgID());
                 data.setDescription(chatMessage.getMessage());
+                data.setSenderName(chatMessage.getSenderID());
 
                 if (!notificationList.contains(data)) {
                     notificationList.add(0, data);//always insert new notification on top
