@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
@@ -40,9 +41,9 @@ public class Notifications {
      * @param notificationList
      * @param maxNotifications
      */
-    public void buildInboxStyleNotifications(Context mContext, Intent destinationClass, NotificationBuilderObject notificationBuilderObject, List<UserData> notificationList, int maxNotifications, boolean onGoing, boolean isDialer) {
-        String newMessage;
+    public void buildInboxStyleNotifications(Context mContext, Intent destinationClass, NotificationBuilderObject notificationBuilderObject, @NonNull List<UserData> notificationList, int maxNotifications, boolean onGoing, boolean isDialer) {
 
+        String newMessage;
         NotificationCache.get().setCacheNotifications(notificationList);
         //List<UserData> pushNotificationList = NotificationCache.get().getCacheNotifications();
         List<UserData> pushNotificationList = notificationList;
@@ -62,10 +63,23 @@ public class Notifications {
         }
         mBuilder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), notificationBuilderObject.getNotificationLargeIconDrawable()));
 
-        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+        if (pushNotificationList.size() == 1 && userData.getDescription().equalsIgnoreCase(com.yo.android.util.Constants.PHOTO)) {
+            mBuilder.setContentTitle(notificationBuilderObject.getNotificationTitle())
+                    .setContentText(notificationBuilderObject.getNotificationText())
+                    .setSmallIcon(notificationBuilderObject.getNotificationSmallIcon())
+                    .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(userData.getBitmap()));
+
+        } else {
+            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+            inboxStyle.setBigContentTitle(pushNotificationList.size() + " " + newMessage);
+            setSummaryText(mContext, maxNotifications, pushNotificationList, inboxStyle);
+            mBuilder.setStyle(inboxStyle);
+        }
+
+        /*NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
         inboxStyle.setBigContentTitle(pushNotificationList.size() + " " + newMessage);
         setSummaryText(mContext, maxNotifications, pushNotificationList, inboxStyle);
-        mBuilder.setStyle(inboxStyle);
+        mBuilder.setStyle(inboxStyle);*/
         mBuilder.setNumber(pushNotificationList.size());
         mBuilder.setContentIntent(contentIntent);
         if (onGoing) {
@@ -80,6 +94,7 @@ public class Notifications {
         } else {
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         }
+
     }
 
 
