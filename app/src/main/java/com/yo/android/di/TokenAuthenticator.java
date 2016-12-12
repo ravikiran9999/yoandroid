@@ -27,63 +27,89 @@ public class TokenAuthenticator implements Authenticator {
     private PreferenceEndPoint preferenceEndPoint;
     private Log mLog;
     private int tokenExpireCount = 0;
+    private long tokenSuccessTime = 0;
     private Context mContext;
+
+    private Object lock = new Object();
+
+    String refreshToken = null;
 
     public TokenAuthenticator(Context context, YoApi.YoRefreshTokenService tokenService, PreferenceEndPoint preferenceEndPoint, Log log) {
         this.tokenService = tokenService;
         this.preferenceEndPoint = preferenceEndPoint;
+        refreshToken = preferenceEndPoint.getStringPreference(YoApi.REFRESH_TOKEN);
         this.mLog = log;
         this.mContext = context;
     }
 
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
-        String refreshToken = preferenceEndPoint.getStringPreference(YoApi.REFRESH_TOKEN);
-        boolean isRequestForTokens = response.request().url().toString().contains("oauth/token.json");
-        boolean sessionExpire = preferenceEndPoint.getBooleanPreference(Constants.SESSION_EXPIRE, false);
-        if (((!isRequestForTokens && tokenExpireCount > 5) || sessionExpire)) {
-            //Session Expire
-            if (!sessionExpire) {
-                preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, true);
-                //Reset
-                tokenExpireCount = 0;
-                mLog.e("TokenAuthenticator", "Refreshtoken - "+ refreshToken);
-                mLog.e("TokenAuthenticator", "access token - "+ preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN));
-                mLog.e("TokenAuthenticator", "Final TokenExpireCount -"+ tokenExpireCount);
-                preferenceEndPoint.clearAll();
-                Intent intent = new Intent(mContext, LoginActivity.class);
-                if (mContext != null) {
-                    Util.cancelAllNotification(mContext);
-                }
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra(Constants.SESSION_EXPIRE, true);
-                mContext.startActivity(intent);
-            } else {
-                mLog.e("TokenAuthenticator", "TokenExpireCount - %d", tokenExpireCount);
-            }
-        } else if (!isRequestForTokens && response.code() == 401 && !TextUtils.isEmpty(refreshToken)) {
-            try {
-                tokenExpireCount++;
-                mLog.e("TokenAuthenticator", "TokenExpireCount - %d", tokenExpireCount);
-                OTPResponse responseBody
-                        = tokenService.refreshToken(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET, "refresh_token", refreshToken)
-                        .execute()
-                        .body();
-                refreshToken = responseBody.getRefreshToken();
-
-                preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, responseBody.getAccessToken());
-                preferenceEndPoint.saveStringPreference(YoApi.REFRESH_TOKEN, responseBody.getRefreshToken());
-                HttpUrl httpUrl = response.request().url().newBuilder().addQueryParameter(YoApi.ACCESS_TOKEN, responseBody.getAccessToken()).build();
+        mLog.e("TokenAuthenticator", "start authentication");
+        synchronized (mContext) {
+            refreshToken = preferenceEndPoint.getStringPreference(YoApi.REFRESH_TOKEN);
+            boolean isRequestForTokens = response.request().url().toString().contains("oauth/token.json");
+            boolean sessionExpire = preferenceEndPoint.getBooleanPreference(Constants.SESSION_EXPIRE, false);
+            if (System.currentTimeMillis() - tokenSuccessTime < 120000) {
+                String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+                mLog.e("AccessToken Call ", accessToken);
+                HttpUrl httpUrl = response.request().url().newBuilder().addQueryParameter(YoApi.ACCESS_TOKEN, accessToken).build();
                 // Add new httpurl to rejected request and retry it
+                mLog.e("TokenAuthenticator", "finish authentication");
                 return response.request()
                         .newBuilder()
                         .url(httpUrl)
                         .build();
+            }
+            if (((!isRequestForTokens && tokenExpireCount > 5) || sessionExpire)) {
+                //Session Expire
+                if (!sessionExpire) {
+                    preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, true);
+                    //Reset
+                    tokenExpireCount = 0;
+                    mLog.e("TokenAuthenticator", "Refreshtoken - " + refreshToken);
+                    mLog.e("TokenAuthenticator", "access token - " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN));
+                    mLog.e("TokenAuthenticator", "Final TokenExpireCount -" + tokenExpireCount);
+                    preferenceEndPoint.clearAll();
+                    Intent intent = new Intent(mContext, LoginActivity.class);
+                    if (mContext != null) {
+                        Util.cancelAllNotification(mContext);
+                    }
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.putExtra(Constants.SESSION_EXPIRE, true);
+                    mContext.startActivity(intent);
+                } else {
+                    mLog.e("TokenAuthenticator", "TokenExpireCount - %d", tokenExpireCount);
+                }
+            } else if (!isRequestForTokens && response.code() == 401 && !TextUtils.isEmpty(refreshToken)) {
+                try {
+                    tokenExpireCount++;
+                    mLog.e("TokenAuthenticator", "TokenExpireCount - %d", tokenExpireCount);
+                    OTPResponse responseBody
+                            = tokenService.refreshToken(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET, "refresh_token", refreshToken)
+                            .execute()
+                            .body();
+                    if (responseBody != null) {
+                        refreshToken = responseBody.getRefreshToken();
 
-            } catch (Exception e) {
-                mLog.w("TokenAuthenticator", e);
+                        preferenceEndPoint.saveStringPreference(YoApi.REFRESH_TOKEN, refreshToken);
+                        preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, responseBody.getAccessToken());
+                        mLog.e("AccessToken", responseBody.getAccessToken());
+                        HttpUrl httpUrl = response.request().url().newBuilder().addQueryParameter(YoApi.ACCESS_TOKEN, responseBody.getAccessToken()).build();
+                        mLog.e("HttpUrl ", httpUrl.toString());
+                        tokenSuccessTime = System.currentTimeMillis();
+                        // Add new httpurl to rejected request and retry it
+                        mLog.e("TokenAuthenticator", "finish authentication");
+                        return response.request()
+                                .newBuilder()
+                                .url(httpUrl)
+                                .build();
+                    }
+                } catch (Exception e) {
+                    mLog.w("TokenAuthenticator", e);
+                }
             }
         }
+        mLog.e("TokenAuthenticator", "finish authentication");
         return response.request();
     }
 }
