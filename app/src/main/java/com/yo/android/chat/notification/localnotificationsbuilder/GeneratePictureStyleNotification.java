@@ -92,7 +92,6 @@ public class GeneratePictureStyleNotification extends AsyncTask<String, Void, Bi
             }
             notification.buildInboxStyleNotifications(mContext, destination, notificationBuilderObject, notificationList, SIX, false, true);
         }
-
     }
 }
 
