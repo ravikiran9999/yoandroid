@@ -159,7 +159,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                     navigateToChatScreen(contact);
                 }
             }
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
     }
