@@ -55,6 +55,17 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         notifyDataSetChanged();
     }
 
+    public void addChatRoomItems(List<T> list) {
+        mList = new ArrayList<>(list);
+        if (mOriginalList.size() == 0) {
+            mOriginalList = new ArrayList<>(list);
+        } else if(list.size() > mOriginalList.size()) {
+            mOriginalList.clear();
+            mOriginalList.addAll(list);
+        }
+        notifyDataSetChanged();
+    }
+
     /*public boolean toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
         return false;

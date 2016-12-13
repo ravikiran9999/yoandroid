@@ -154,15 +154,18 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     }
 
     private void loadContacts(Cursor c) {
-        List<Contact> list = new ArrayList<>();
-        if (c != null && c.moveToFirst()) {
-            do {
-                Contact contact = ContactsSyncManager.prepareContact(c);
-                list.add(contact);
-            } while (c.moveToNext());
+        try {
+            List<Contact> list = new ArrayList<>();
+            if (c != null && c.moveToFirst()) {
+                do {
+                    Contact contact = ContactsSyncManager.prepareContact(c);
+                    list.add(contact);
+                } while (c.moveToNext());
+            }
+            loadAlphabetOrder(list);
+        } finally {
+            if (c != null) c.close();
         }
-        loadAlphabetOrder(list);
-
     }
 
     private void loadAlphabetOrder(List<Contact> list) {
@@ -313,9 +316,9 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             if (activity.getFragment() instanceof ContactsFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                     //if (!isRemoved) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
                     if (popup != null) {
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {

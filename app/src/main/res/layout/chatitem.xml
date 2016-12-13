@@ -41,7 +41,8 @@
 
         <RelativeLayout
             android:layout_width="230dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:minHeight="230dp"
             android:gravity="right"
             android:padding="5dp">
 
