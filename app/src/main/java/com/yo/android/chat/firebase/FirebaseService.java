@@ -284,6 +284,13 @@ public class FirebaseService extends InjectedService {
                 break;
             case STYLE_PICTURE:
                 NotificationBuilderObject notificationPictureInfo = prepareNotificationData(chatMessage);
+                UserData pictureData = new UserData();
+                pictureData.setMessageId(chatMessage.getMsgID());
+                pictureData.setDescription(Constants.PHOTO);
+                pictureData.setSenderName(chatMessage.getSenderID());
+                if (!notificationList.contains(pictureData)) {
+                    notificationList.add(0, pictureData);//always insert new notification on top
+                }
                 new GeneratePictureStyleNotification(this, notificationIntent, notificationPictureInfo, notificationList).execute();
                 break;
             case STYLE_TEXT_WITH_ACTION:

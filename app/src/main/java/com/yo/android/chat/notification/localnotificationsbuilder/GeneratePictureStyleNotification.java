@@ -87,25 +87,11 @@ public class GeneratePictureStyleNotification extends AsyncTask<String, Void, Bi
             Notifications notification = new Notifications();
             destination.putExtra(Constants.NOTIFICATIONS_LIST, "value");
             PendingIntent pendingIntent = PendingIntent.getActivity(mContext, Constants.NOTIFICATION_REQUEST_CODE, destination, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationCompat.Builder notif = new NotificationCompat.Builder(mContext)
-                    .setContentIntent(pendingIntent)
-                    .setContentTitle(notificationBuilderObject.getNotificationTitle())
-                    .setContentText(notificationBuilderObject.getNotificationText())
-                    .setSmallIcon(notificationBuilderObject.getNotificationSmallIcon())
-                    .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(result));
-
-            // if Large Image is from Drawable
-            if (notificationBuilderObject.getNotificationLargeIconDrawable() > 0) {
-                notif.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), notificationBuilderObject.getNotificationLargeIconDrawable()));
-            } else {
-                notif.setLargeIcon(result);
+            for (UserData userData : notificationList) {
+                userData.setBitmap(result);
             }
-
-            notificationManager.notify(1, notif.build());
+            notification.buildInboxStyleNotifications(mContext, destination, notificationBuilderObject, notificationList, SIX, false, true);
         }
-
     }
 }
 
