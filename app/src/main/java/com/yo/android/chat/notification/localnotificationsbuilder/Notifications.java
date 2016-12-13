@@ -47,54 +47,55 @@ public class Notifications {
         NotificationCache.get().setCacheNotifications(notificationList);
         //List<UserData> pushNotificationList = NotificationCache.get().getCacheNotifications();
         List<UserData> pushNotificationList = notificationList;
-        UserData userData = pushNotificationList.get(0);
-        newMessage = pushNotificationList.size() == 1 ? mContext.getResources().getString(R.string.notification_new_message) : mContext.getResources().getString(R.string.notification_new_messages);
+        try {
+            if (pushNotificationList.size() > 0) {
+                UserData userData = pushNotificationList.get(0);
+                newMessage = pushNotificationList.size() == 1 ? mContext.getResources().getString(R.string.notification_new_message) : mContext.getResources().getString(R.string.notification_new_messages);
 
 
-        PendingIntent contentIntent = getPendingIntent(mContext, destinationClass);
-        mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
-                .setContentTitle(pushNotificationList.size() + " " + newMessage)
-                .setSmallIcon(R.drawable.ic_yo_notification);
-        if (userData.getSenderName() != null && !TextUtils.isEmpty(userData.getSenderName())) {
-            mBuilder.setContentText(userData.getSenderName() + " : " + userData.getDescription());
-        } else {
-            mBuilder.setContentText(userData.getDescription());
-        }
-        mBuilder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), notificationBuilderObject.getNotificationLargeIconDrawable()));
+                PendingIntent contentIntent = getPendingIntent(mContext, destinationClass);
+                mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
+                        .setContentTitle(pushNotificationList.size() + " " + newMessage)
+                        .setSmallIcon(R.drawable.ic_yo_notification);
+                if (userData.getSenderName() != null && !TextUtils.isEmpty(userData.getSenderName())) {
+                    mBuilder.setContentText(userData.getSenderName() + " : " + userData.getDescription());
+                } else {
+                    mBuilder.setContentText(userData.getDescription());
+                }
+                mBuilder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), notificationBuilderObject.getNotificationLargeIconDrawable()));
 
-        if (pushNotificationList.size() == 1 && userData.getDescription().equalsIgnoreCase(com.yo.android.util.Constants.PHOTO)) {
-            mBuilder.setContentTitle(notificationBuilderObject.getNotificationTitle())
-                    .setContentText(notificationBuilderObject.getNotificationText())
-                    .setSmallIcon(notificationBuilderObject.getNotificationSmallIcon())
-                    .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(userData.getBitmap()));
+                if (pushNotificationList.size() == 1 && userData.getDescription().equalsIgnoreCase(com.yo.android.util.Constants.PHOTO)) {
+                    mBuilder.setContentTitle(notificationBuilderObject.getNotificationTitle())
+                            .setContentText(notificationBuilderObject.getNotificationText())
+                            .setSmallIcon(notificationBuilderObject.getNotificationSmallIcon())
+                            .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(userData.getBitmap()));
 
-        } else {
-            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-            inboxStyle.setBigContentTitle(pushNotificationList.size() + " " + newMessage);
-            setSummaryText(mContext, maxNotifications, pushNotificationList, inboxStyle);
-            mBuilder.setStyle(inboxStyle);
-        }
+                } else {
+                    NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+                    inboxStyle.setBigContentTitle(pushNotificationList.size() + " " + newMessage);
+                    setSummaryText(mContext, maxNotifications, pushNotificationList, inboxStyle);
+                    mBuilder.setStyle(inboxStyle);
+                }
 
-        /*NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        inboxStyle.setBigContentTitle(pushNotificationList.size() + " " + newMessage);
-        setSummaryText(mContext, maxNotifications, pushNotificationList, inboxStyle);
-        mBuilder.setStyle(inboxStyle);*/
-        mBuilder.setNumber(pushNotificationList.size());
-        mBuilder.setContentIntent(contentIntent);
-        if (onGoing) {
-            mBuilder.setOngoing(true);
-        } else {
-            mBuilder.setAutoCancel(true);
-        }
-        if (!isDialer) {
-            if (!AppRunningState.isRunning(mContext)) {
-                mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                mBuilder.setNumber(pushNotificationList.size());
+                mBuilder.setContentIntent(contentIntent);
+                if (onGoing) {
+                    mBuilder.setOngoing(true);
+                } else {
+                    mBuilder.setAutoCancel(true);
+                }
+                if (!isDialer) {
+                    if (!AppRunningState.isRunning(mContext)) {
+                        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                    }
+                } else {
+                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                }
             }
-        } else {
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        } catch (IndexOutOfBoundsException iobe) {
+            iobe.printStackTrace();
         }
-
     }
 
 
