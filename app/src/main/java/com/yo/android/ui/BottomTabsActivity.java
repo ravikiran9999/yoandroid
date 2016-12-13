@@ -181,12 +181,10 @@ public class BottomTabsActivity extends BaseActivity {
                     } else {
                         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                     }
-
-
-                    mLog.d("onPageSelected", getFragment() + "");
-
                 } catch (NullPointerException e) {
-                    mLog.w("onPageSelected", e);
+                    if (mLog != null) {
+                        mLog.w("onPageSelected", e);
+                    }
                 }
             }
 

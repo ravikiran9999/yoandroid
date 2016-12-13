@@ -1,0 +1,29 @@
+package com.paradigmcreatives.networkmanager;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+/**
+ * Created by Rajesh Babu Polamarasetti on 11/6/15.
+ */
+public class NetworkUtils {
+    /**
+     * Checks if is online.
+     * @param context the context
+     * @return true, if online otherwise false
+     */
+    public static boolean isOnline(Context context) {
+        if(context == null){
+            throw new IllegalArgumentException("Context should not be null while checking network connectivity.");
+        }
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        if (netInfo != null) {
+            return netInfo.isConnectedOrConnecting();
+        }
+        return false;
+    }
+}
+

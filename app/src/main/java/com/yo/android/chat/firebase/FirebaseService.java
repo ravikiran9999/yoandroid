@@ -269,7 +269,11 @@ public class FirebaseService extends InjectedService {
                 NotificationBuilderObject notificationsInboxData = prepareNotificationData(chatMessage);
                 UserData data = new UserData();
                 data.setMessageId(chatMessage.getMsgID());
-                data.setDescription(chatMessage.getMessage());
+                if (chatMessage.getType().equalsIgnoreCase(Constants.TEXT)) {
+                    data.setDescription(chatMessage.getMessage());
+                } else if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
+                    data.setDescription(Constants.PHOTO);
+                }
                 data.setSenderName(chatMessage.getSenderID());
 
                 if (!notificationList.contains(data)) {
@@ -280,7 +284,14 @@ public class FirebaseService extends InjectedService {
                 break;
             case STYLE_PICTURE:
                 NotificationBuilderObject notificationPictureInfo = prepareNotificationData(chatMessage);
-                new GeneratePictureStyleNotification(this, notificationIntent, notificationPictureInfo).execute();
+                UserData pictureData = new UserData();
+                pictureData.setMessageId(chatMessage.getMsgID());
+                pictureData.setDescription(Constants.PHOTO);
+                pictureData.setSenderName(chatMessage.getSenderID());
+                if (!notificationList.contains(pictureData)) {
+                    notificationList.add(0, pictureData);//always insert new notification on top
+                }
+                new GeneratePictureStyleNotification(this, notificationIntent, notificationPictureInfo, notificationList).execute();
                 break;
             case STYLE_TEXT_WITH_ACTION:
                 NotificationBuilderObject notificationTextActionData = prepareNotificationData(chatMessage);
@@ -297,7 +308,11 @@ public class FirebaseService extends InjectedService {
         NotificationBuilderObject notificationData = new NotificationBuilderObject();
         notificationData.setNotificationTitle(chatMessage.getSenderID());
         notificationData.setNotificationSmallIcon(getNotificationIcon());
-        notificationData.setNotificationText(chatMessage.getMessage());
+        if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
+            notificationData.setNotificationText(Constants.PHOTO);
+        } else {
+            notificationData.setNotificationText(chatMessage.getMessage());
+        }
         notificationData.setNotificationLargeIconDrawable(R.mipmap.ic_launcher);
         notificationData.setNotificationInfo("3");
         notificationData.setNotificationLargeiconUrl(chatMessage.getImagePath());

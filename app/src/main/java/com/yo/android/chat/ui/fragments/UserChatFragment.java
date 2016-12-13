@@ -506,6 +506,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void sendChatMessage(@NonNull final String message, @NonNull String userId, @NonNull String type) {
 
         long timestamp = System.currentTimeMillis();
+        int msgId = (int)timestamp;
         final ChatMessage chatMessage = new ChatMessage();
         chatMessage.setType(type);
         chatMessage.setTime(timestamp);
@@ -517,7 +518,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
-        chatMessage.setMsgID(message.hashCode());
+        //chatMessage.setMsgID(message.hashCode());
+        chatMessage.setMsgID(msgId);
         if (!TextUtils.isEmpty(roomType)) {
             chatMessage.setRoomName(roomType);
         }
@@ -802,6 +804,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setTime(timestamp);
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
+
+        chatMessage.setRoomId(childRoomId);
+        //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
+        chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+        chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
+
         sendChatMessage(chatMessage);
     }
 

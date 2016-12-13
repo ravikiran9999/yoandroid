@@ -145,7 +145,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         Contact contact;
         try {
             if (appContactsListAdapter.temp != null && !appContactsListAdapter.temp.isEmpty()) {
-                contact = appContactsListAdapter.getAllItems().get(position);
+                contact = appContactsListAdapter.temp.get(position); // selected contact on performing search
             } else {
                 contact = (Contact) listView.getItemAtPosition(position);
             }
@@ -159,7 +159,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                     navigateToChatScreen(contact);
                 }
             }
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
     }

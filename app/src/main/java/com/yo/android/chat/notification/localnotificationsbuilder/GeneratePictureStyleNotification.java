@@ -13,6 +13,8 @@ import android.util.Log;
 
 import com.yo.android.chat.notification.helper.Constants;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
+import com.yo.android.chat.notification.pojo.UserData;
+import com.yo.android.model.Notification;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 
 /**
@@ -33,7 +36,8 @@ public class GeneratePictureStyleNotification extends AsyncTask<String, Void, Bi
     private String imageUrl;
     private Intent destination;
     private NotificationBuilderObject notificationBuilderObject;
-
+    List<UserData> notificationList;
+    private static final int SIX = 6;
     /**
      * Constructor
      *
@@ -41,12 +45,13 @@ public class GeneratePictureStyleNotification extends AsyncTask<String, Void, Bi
      * @param destinationAction
      * @param notificationBuilderObject
      */
-    public GeneratePictureStyleNotification(Context context, Intent destinationAction, NotificationBuilderObject notificationBuilderObject) {
+    public GeneratePictureStyleNotification(Context context, Intent destinationAction, NotificationBuilderObject notificationBuilderObject, List<UserData> notificationList) {
         super();
         this.destination = destinationAction;
         this.mContext = context;
         this.notificationBuilderObject = notificationBuilderObject;
         this.imageUrl = notificationBuilderObject.getNotificationLargeiconUrl();
+        this.notificationList = notificationList;
     }
 
     @Override
@@ -79,26 +84,14 @@ public class GeneratePictureStyleNotification extends AsyncTask<String, Void, Bi
     protected void onPostExecute(Bitmap result) {
         super.onPostExecute(result);
         if (mContext != null && notificationBuilderObject != null) {
+            Notifications notification = new Notifications();
             destination.putExtra(Constants.NOTIFICATIONS_LIST, "value");
             PendingIntent pendingIntent = PendingIntent.getActivity(mContext, Constants.NOTIFICATION_REQUEST_CODE, destination, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationCompat.Builder notif = new NotificationCompat.Builder(mContext)
-                    .setContentIntent(pendingIntent)
-                    .setContentTitle(notificationBuilderObject.getNotificationTitle())
-                    .setContentText(notificationBuilderObject.getNotificationText())
-                    .setSmallIcon(notificationBuilderObject.getNotificationSmallIcon())
-                    .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(result));
-
-            // if Large Image is from Drawable
-            if (notificationBuilderObject.getNotificationLargeIconDrawable() > 0) {
-                notif.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), notificationBuilderObject.getNotificationLargeIconDrawable()));
-            } else {
-                notif.setLargeIcon(result);
+            for (UserData userData : notificationList) {
+                userData.setBitmap(result);
             }
-
-            notificationManager.notify(1, notif.build());
+            notification.buildInboxStyleNotifications(mContext, destination, notificationBuilderObject, notificationList, SIX, false, true);
         }
-
     }
 }
 

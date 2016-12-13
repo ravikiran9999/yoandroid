@@ -53,30 +53,30 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
 
     @Override
     public void bindView(int position, AppRegisteredContactsViewHolder holder, final Contact item) {
+
         if (position == 0 && item.getVoxUserName() == null && item.getPhoneNo() == null && item.getFirebaseRoomId() == null) {
-            holder.getContactName().setVisibility(View.VISIBLE);
             holder.getContactName().setText(item.getName());
+            holder.getContactName().setVisibility(View.VISIBLE);
             holder.getContactNumber().setVisibility(View.GONE);
             holder.getContactPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.chat_group));
             holder.getInviteContact().setVisibility(View.GONE);
         } else {
             if (!TextUtils.isEmpty(item.getName())) {
-                //holder.getContactName().setVisibility(View.VISIBLE);
                 holder.getContactName().setText(item.getName());
-
+                holder.getContactName().setVisibility(View.VISIBLE);
             } else {
                 holder.getContactName().setVisibility(View.GONE);
             }
             if (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo())) {
                 holder.getContactNumber().setText(item.getPhoneNo());
-
+                holder.getContactNumber().setVisibility(View.VISIBLE);
             } else {
                 holder.getContactNumber().setVisibility(View.GONE);
             }
 
             if (!item.getYoAppUser()) {
-                holder.getInviteContact().setVisibility(View.VISIBLE);
                 holder.getInviteContact().setImageResource(R.drawable.ic_invitefriends);
+                holder.getInviteContact().setVisibility(View.VISIBLE);
             } else {
                 holder.getInviteContact().setVisibility(View.GONE);
             }
