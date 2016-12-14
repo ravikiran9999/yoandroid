@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorWindow;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -532,10 +533,11 @@ public class CallLog {
                     null,
                     null);
             if (imageCursor != null && imageCursor.moveToFirst()) {
-                String imagePath =  imageCursor.getString(0);
-                if(imageCursor != null) {
+                String imagePath = imageCursor.getString(0);
+                if (imageCursor != null) {
                     imageCursor.close();
                 }
+                return imagePath;
             }
             return null;
         }
