@@ -304,7 +304,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 });
 
-                chatRoomListAdapter.addItems(arrayOfUsers);
+                chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
 
 
             }
@@ -386,7 +386,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
 
-        chatRoomListAdapter.addItems(arrayOfUsers);
+        chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
         try {
             if (!chatRoomListAdapter.isEmpty()) {
                 dismissProgressDialog();

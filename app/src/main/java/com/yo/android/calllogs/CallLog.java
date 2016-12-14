@@ -525,19 +525,19 @@ public class CallLog {
         }
 
         public static String getImagePath(Context context, String voxUserName) {
-            try {
-                final ContentResolver resolver = context.getContentResolver();
-                Cursor imageCursor = resolver.query(
-                        YoAppContactContract.YoAppContactsEntry.CONTENT_URI,
-                        new String[]{YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE},
-                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + " = '" + voxUserName + "'",
-                        null,
-                        null);
-                if (imageCursor != null && imageCursor.moveToFirst()) {
-                    return imageCursor.getString(0);
+            final ContentResolver resolver = context.getContentResolver();
+            Cursor imageCursor = resolver.query(
+                    YoAppContactContract.YoAppContactsEntry.CONTENT_URI,
+                    new String[]{YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE},
+                    YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + " = '" + voxUserName + "'",
+                    null,
+                    null);
+            if (imageCursor != null && imageCursor.moveToFirst()) {
+                String imagePath = imageCursor.getString(0);
+                if (imageCursor != null) {
+                    imageCursor.close();
                 }
-            } catch (Exception e) {
-
+                return imagePath;
             }
             return null;
         }
