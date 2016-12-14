@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorWindow;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -524,15 +525,19 @@ public class CallLog {
         }
 
         public static String getImagePath(Context context, String voxUserName) {
-            final ContentResolver resolver = context.getContentResolver();
-            Cursor imageCursor = resolver.query(
-                    YoAppContactContract.YoAppContactsEntry.CONTENT_URI,
-                    new String[]{YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE},
-                    YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + " = '" + voxUserName + "'",
-                    null,
-                    null);
-            if (imageCursor != null && imageCursor.moveToFirst()) {
-                return imageCursor.getString(0);
+            try {
+                final ContentResolver resolver = context.getContentResolver();
+                Cursor imageCursor = resolver.query(
+                        YoAppContactContract.YoAppContactsEntry.CONTENT_URI,
+                        new String[]{YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE},
+                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + " = '" + voxUserName + "'",
+                        null,
+                        null);
+                if (imageCursor != null && imageCursor.moveToFirst()) {
+                    return imageCursor.getString(0);
+                }
+            } catch (Exception e) {
+
             }
             return null;
         }
