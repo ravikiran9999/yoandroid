@@ -125,6 +125,10 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
         listView.setOnItemClickListener(this);
+        syncContacts();
+    }
+
+    private void syncContacts() {
         /*if (CONTACT_SYNC) {
             getLoaderManager().initLoader(0, null, this);
             //Manual refresh
@@ -151,6 +155,12 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         });
 
         //}
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        syncContacts();
     }
 
     private void loadContacts(Cursor c) {

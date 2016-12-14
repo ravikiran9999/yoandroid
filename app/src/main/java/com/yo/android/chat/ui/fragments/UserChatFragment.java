@@ -43,6 +43,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
+import com.firebase.client.Query;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -128,7 +129,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private int roomCreationProgress = 0;
     private String opponentImg;
     private Contact mContact;
-
+    private int retryMessageCount = 0;
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -506,7 +507,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void sendChatMessage(@NonNull final String message, @NonNull String userId, @NonNull String type) {
 
         long timestamp = System.currentTimeMillis();
-        int msgId = (int)timestamp;
+        int msgId = (int) timestamp;
         final ChatMessage chatMessage = new ChatMessage();
         chatMessage.setType(type);
         chatMessage.setTime(timestamp);
@@ -573,7 +574,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
 
                         Activity activity = getActivity();
-                        if (activity != null) {
+                        if (retryMessageCount <= 3) {
+                            sendChatMessage(chatMessage);
+                            retryMessageCount++;
+                        } else if (activity != null) {
                             Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
                         }
                     } else {
@@ -742,10 +746,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         message.setImagePath(mPartyPicUri);
         message.setTime(System.currentTimeMillis());
 
-
-
         long timestamp = System.currentTimeMillis();
-        int msgId = (int)timestamp;
+        int msgId = (int) timestamp;
         message.setType(Constants.IMAGE);
         message.setTime(timestamp);
         message.setMsgID(msgId);
@@ -775,7 +777,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 .build();
 
         StorageReference imagesRef = storageReference.child("images/" + file.getLastPathSegment());
-        UploadTask uploadTask = imagesRef.putFile(file, metadata);
+        final UploadTask uploadTask = imagesRef.putFile(file, metadata);
 
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -809,21 +811,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void sendImage(@NonNull ChatMessage chatMessage, @NonNull String imagePathName) {
-        /*String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-        long timestamp = System.currentTimeMillis();
-        int msgId = (int)timestamp;
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setType(Constants.IMAGE);
-        chatMessage.setTime(timestamp);
-        chatMessage.setImagePath(imagePathName);
-        chatMessage.setSenderID(userId);
-        chatMessage.setMsgID(msgId);
-
-        chatMessage.setRoomId(childRoomId);
-        //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
-        chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
-        chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));*/
-
         chatMessage.setImagePath(imagePathName);
         sendChatMessage(chatMessage);
     }
@@ -940,13 +927,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         roomCreationProgress = 0;
                         roomReference = authReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
                         registerChildEventListener(roomReference);
-
+                        String roomId = room.getFirebaseRoomId();
                         if (chatForwards != null) {
                             receiveForward(chatForwards);
-                        } else if (chatMessage != null) {
-                            chatMessage.setRoomId(room.getFirebaseRoomId());
+                        } else if (chatMessage != null && roomId != null && !TextUtils.isEmpty(roomId)) {
+
+                            chatMessage.setRoomId(roomId);
                             chatMessage.setVoxUserName(room.getVoxUserName());
                             sendChatMessage(chatMessage);
+                        } else {
+                            mToastFactory.showToast(getString(R.string.room_id_not_created));
                         }
                         update(opponentNumber, room.getFirebaseRoomId());
                         EventBus.getDefault().post(Constants.CHAT_ROOM_REFRESH);
