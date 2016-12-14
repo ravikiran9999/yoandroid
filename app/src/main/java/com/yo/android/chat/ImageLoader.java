@@ -157,7 +157,7 @@ public class ImageLoader {
                         return false;
                     }
                 })
-                .priority(Priority.IMMEDIATE)
+                .priority(Priority.HIGH)
                 .override(width, height)
                 .dontAnimate()
                 .crossFade()

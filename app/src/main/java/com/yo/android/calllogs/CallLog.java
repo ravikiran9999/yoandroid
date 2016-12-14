@@ -532,7 +532,10 @@ public class CallLog {
                     null,
                     null);
             if (imageCursor != null && imageCursor.moveToFirst()) {
-                return imageCursor.getString(0);
+                String imagePath =  imageCursor.getString(0);
+                if(imageCursor != null) {
+                    imageCursor.close();
+                }
             }
             return null;
         }
