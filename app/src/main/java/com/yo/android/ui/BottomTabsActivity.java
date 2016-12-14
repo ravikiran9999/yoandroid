@@ -53,6 +53,7 @@ import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.util.FetchNewArticlesService;
+import com.yo.android.util.MagazineDashboardHelper;
 import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
@@ -193,6 +194,7 @@ public class BottomTabsActivity extends BaseActivity {
                 if (position == 0 && getFragment() instanceof MagazinesFragment) {
                     Log.d("BottomTabsActivity", "onPageSelected In update() BottomTabsActivity");
 
+                    MagazineDashboardHelper.request = 1;
                     ((MagazinesFragment) getFragment()).removeReadArticles();
                     ((MagazinesFragment) getFragment()).update();
                 }
