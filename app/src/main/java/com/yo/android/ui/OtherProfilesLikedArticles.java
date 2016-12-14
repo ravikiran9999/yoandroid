@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -30,17 +31,21 @@ import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 //import com.squareup.picasso.Picasso;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
+import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.OtherPeopleMagazineReflectListener;
 import com.yo.android.util.Util;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -67,6 +72,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
     private FrameLayout flipContainer;
     private ProgressBar mProgress;
     private boolean isFollowing;
+    private TextView tvProgressText;
 
     public static OtherProfilesLikedArticles getListener() {
         return listener;
@@ -97,6 +103,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         flipView.setAdapter(myBaseAdapter);
 
         flipContainer.setVisibility(View.GONE);
+        tvProgressText = (TextView) view.findViewById(R.id.tv_progress_text);
 
         return view;
 
@@ -121,6 +128,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 if (mProgress != null) {
                     mProgress.setVisibility(View.GONE);
                 }
+                tvProgressText.setVisibility(View.GONE);
                 if (!response.body().isEmpty()) {
                     for (int i = 0; i < response.body().size(); i++) {
                         flipContainer.setVisibility(View.VISIBLE);
@@ -143,6 +151,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 if (mProgress != null) {
                     mProgress.setVisibility(View.GONE);
                 }
+                tvProgressText.setVisibility(View.GONE);
                 flipContainer.setVisibility(View.GONE);
                 if (noArticals != null) {
                     noArticals.setVisibility(View.VISIBLE);
@@ -605,6 +614,29 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                             if (!((BaseActivity)context).hasDestroyed()) {
                                 notifyDataSetChanged();
                             }
+                            /*Type type1 = new TypeToken<List<Articles>>() {
+                            }.getType();
+                            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                            String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
+                            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type1);*/
+                            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+                            if(cachedMagazinesList != null) {
+                                List<Articles> tempList = cachedMagazinesList;
+                                for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                    if (data.getId().equals(tempList.get(i).getId())) {
+                                        tempList.get(i).setLiked(data.getLiked());
+                                    }
+                                }
+
+                                cachedMagazinesList = tempList;
+
+                                //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                                /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                                editor.commit();*/
+
+                                saveCachedMagazinesList(cachedMagazinesList);
+                            }
                             break;
                         }
                     }
@@ -679,5 +711,48 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             }
 
         }
+    }
+
+    private List<Articles> getCachedMagazinesList() {
+        Type type1 = new TypeToken<List<Articles>>() {
+        }.getType();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+
+        String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+        String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+
+        List<Articles> cachedMagazinesList = new ArrayList<>();
+        if(!TextUtils.isEmpty(sharedFollowedCachedMagazines)){
+            String cachedMagazines = sharedFollowedCachedMagazines;
+            List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+            cachedMagazinesList.addAll(cachedFollowedMagazinesList);
+        }
+        if(!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+            String cachedMagazines = sharedRandomCachedMagazines;
+            List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+            cachedMagazinesList.addAll(cachedRandomMagazinesList);
+        }
+
+        return cachedMagazinesList;
+    }
+
+    private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
+        List<Articles> followedTopicArticles = new ArrayList<>();
+        List<Articles> randomTopicArticles = new ArrayList<>();
+        for(Articles articles: cachedMagazinesList) {
+            if("true".equals(articles.getTopicFollowing())) {
+                followedTopicArticles.add(articles);
+            } else {
+                randomTopicArticles.add(articles);
+            }
+        }
+
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+        //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
+        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
+        editor.commit();
     }
 }

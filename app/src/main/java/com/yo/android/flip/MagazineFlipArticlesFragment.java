@@ -28,13 +28,17 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.LruCacheHelper;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
+import com.yo.android.model.LandingArticles;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
+import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
+import com.yo.android.util.MagazineDashboardHelper;
 
 import java.lang.reflect.Type;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -55,11 +59,11 @@ import se.emilsjolander.flipview.OverFlipMode;
 public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, FlipView.OnFlipListener {
 
     private static MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
-    private MagazineArticlesBaseAdapter myBaseAdapter;
+    public MagazineArticlesBaseAdapter myBaseAdapter;
     @Inject
     YoApi.YoService yoService;
-    private LinearLayout llNoArticles;
-    private FrameLayout flipContainer;
+    public LinearLayout llNoArticles;
+    public FrameLayout flipContainer;
     public ProgressBar mProgress;
     private Button followMoreTopics;
 
@@ -80,10 +84,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private int pageCount = 1;
     private String accessToken;
     private boolean isArticlesEndReached;
-    private TextView tvProgressText;
+    public TextView tvProgressText;
     private List<String> readArticleIds;
     private LinkedHashSet<List<String>> articlesIdsHashSet = new LinkedHashSet<>();
     private static int currentFlippedPosition;
+    private MagazineDashboardHelper magazineDashboardHelper;
+    private String followedTopicId;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -118,6 +124,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         flipView.setOnFlipListener(this);
         tvProgressText = (TextView) view.findViewById(R.id.tv_progress_text);
         readArticleIds = new ArrayList<>();
+        magazineDashboardHelper = new MagazineDashboardHelper();
 
         update();
         return view;
@@ -240,20 +247,25 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             myBaseAdapter.addItems(cachedMagazinesList);
             //removeFirstPageArticles();
             //flipView.flipTo(lastReadArticle);
-            flipView.flipTo(0);
-            articlesRootLayout.setVisibility(View.VISIBLE);
-            networkFailureText.setVisibility(View.GONE);
-            if (llNoArticles != null) {
-                llNoArticles.setVisibility(View.GONE);
-                flipContainer.setVisibility(View.VISIBLE);
-                if(myBaseAdapter.getCount()>0) {
-                    Random r = new Random();
-                    suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+            if(myBaseAdapter.getCount()>0) {
+                flipView.flipTo(0);
+                articlesRootLayout.setVisibility(View.VISIBLE);
+                networkFailureText.setVisibility(View.GONE);
+                if (llNoArticles != null) {
+                    llNoArticles.setVisibility(View.GONE);
+                    flipContainer.setVisibility(View.VISIBLE);
+                    if (myBaseAdapter.getCount() > 0) {
+                        Random r = new Random();
+                        suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                    }
                 }
+            } else {
+                flipContainer.setVisibility(View.GONE);
+                llNoArticles.setVisibility(View.VISIBLE);
             }
             return;
         } else {
-         loadArticles(null);
+            loadArticles(null);
         }
     }
 
@@ -266,24 +278,52 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 articlesRootLayout.setVisibility(View.VISIBLE);
                 networkFailureText.setVisibility(View.GONE);
             } else {*/
-            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("cached_magazines", "");
+            /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("cached_magazines", "");*/
 
-            //if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
-            if (!TextUtils.isEmpty(sharedCachedMagazines)) {
+            Type type1 = new TypeToken<List<Articles>>() {
+            }.getType();
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+
+            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+
+            List<Articles> cachedMagazinesList = new ArrayList<>();
+
+            if(!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)){
                 if (mProgress != null) {
                     mProgress.setVisibility(View.GONE);
                 }
                 tvProgressText.setVisibility(View.GONE);
                 myBaseAdapter.clear();
-                /*if (articlesRootLayout.getChildCount() > 0) {
-                    articlesRootLayout.setVisibility(View.GONE);
-                    networkFailureText.setText(getActivity().getResources().getString(R.string.unable_to_fetch));
-                    networkFailureText.setVisibility(View.VISIBLE);
-                }*/
+                if(!TextUtils.isEmpty(sharedFollowedCachedMagazines)){
+                    String cachedMagazines = sharedFollowedCachedMagazines;
+                    List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+                    cachedMagazinesList.addAll(cachedFollowedMagazinesList);
+                }
+
+                if(!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                    String cachedMagazines = sharedRandomCachedMagazines;
+                    List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+                    cachedMagazinesList.addAll(cachedRandomMagazinesList);
+                }
+
+                myBaseAdapter.addItems(cachedMagazinesList);
+                flipView.flipTo(lastReadArticle);
+                articlesRootLayout.setVisibility(View.VISIBLE);
+                networkFailureText.setVisibility(View.GONE);
+                return;
+            }
+
+            /*if (!TextUtils.isEmpty(sharedCachedMagazines)) {
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                tvProgressText.setVisibility(View.GONE);
+                myBaseAdapter.clear();
+
                 Type type = new TypeToken<List<Articles>>() {
                 }.getType();
-                //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
                 String cachedMagazines = sharedCachedMagazines;
                 List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
                 myBaseAdapter.addItems(cachedMagazinesList);
@@ -291,8 +331,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 articlesRootLayout.setVisibility(View.VISIBLE);
                 networkFailureText.setVisibility(View.GONE);
                 return;
-            }
-            //}
+            }*/
         } else {
             articlesRootLayout.setVisibility(View.VISIBLE);
             networkFailureText.setVisibility(View.GONE);
@@ -359,7 +398,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
             });*/
 
-            getArticlesWithPagination();
+            //getArticlesWithPagination();
+
+            List<String> readArticlesList = new ArrayList<>();
+            List<String> unreadArticlesList = new ArrayList<>();
+            //getDashboardArticles(readArticlesList, unreadArticlesList);
+            magazineDashboardHelper.getDashboardArticles(this, yoService, preferenceEndPoint, readArticlesList, unreadArticlesList);
 
         }
     }
@@ -405,7 +449,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 flipContainer.setVisibility(View.VISIBLE);
                 llNoArticles.setVisibility(View.GONE);
                 //loadArticles(null);
-                getCachedArticles();
+                //getCachedArticles();
+                getLandingCachedArticles();
             }
 
         }
@@ -464,7 +509,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
                 //loadArticles(null);
-                getCachedArticles();
+                //getCachedArticles();
+                getLandingCachedArticles();
             }
         }
     }
@@ -476,7 +522,17 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
                 String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
                 if (prefTags != null) {
-                    loadArticles(null);
+                    //loadArticles(null);
+                    if(myBaseAdapter.getCount()>0) {
+                        if (!TextUtils.isEmpty(followedTopicId)) {
+                            if(mProgress != null) {
+                                mProgress.setVisibility(View.GONE);
+                            }
+                            updateArticlesAfterFollowTopic(followedTopicId);
+                        }
+                    } else {
+                        loadArticles(null);
+                    }
                     //getCachedArticles();
                 }
             } else {
@@ -488,7 +544,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     flipContainer.setVisibility(View.VISIBLE);
                     llNoArticles.setVisibility(View.GONE);
                     //loadArticles(null);
-                    getCachedArticles();
+                    //getCachedArticles();
+                    getLandingCachedArticles();
                 }
             }
             if (getParentFragment() instanceof MagazinesFragment) {
@@ -505,7 +562,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (prefTags != null) {
                 lastReadArticle = 0;
                 //loadArticles(null);
-                getCachedArticles();
+                //getCachedArticles();
+                getLandingCachedArticles();
             }
         }
     }
@@ -597,15 +655,53 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             editor.commit();
         }*/
 
-        if(position+2 == myBaseAdapter.getCount()/2 && !isArticlesEndReached) {
+        /*if(position+2 == myBaseAdapter.getCount()/2 && !isArticlesEndReached) {
             pageCount++;
             getMoreArticlesWithPagination();
+        }*/
+        if(magazineDashboardHelper.currentReadArticles !=0 || currentFlippedPosition== magazineDashboardHelper.request * 100) {
+            getReadArticleIds();
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+            if(!TextUtils.isEmpty(readCachedIds)) {
+                Type type1 = new TypeToken<List<String>>() {
+                }.getType();
+                String cachedIds = readCachedIds;
+                List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+                //if(cachedReadList.size()== 100) {
+                    mLog.d("MagazineFlipArticlesFragment", "Calling service for next articles");
+                    List<Articles> allArticles = myBaseAdapter.getAllItems();
+                    //List<String> unreadArticleIds = new ArrayList<>();
+                    if(allArticles != null) {
+                                /*for (Articles articles : allArticles) {
+                                    for (String readId : cachedReadList) {
+                                        if (!articles.getId().equals(readId)) {
+                                            unreadArticleIds.add(articles.getId());
+                                        }
+                                    }
+                                }*/
+                        List<String> allArticlesIds = new ArrayList<>();
+                        for (Articles articles : allArticles) {
+                            allArticlesIds.add(articles.getId());
+                        }
+                        List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
+                        unreadArticleIds.removeAll(cachedReadList);
+                        //getMoreDashboardArticles(cachedReadList, unreadArticleIds);
+                        magazineDashboardHelper.getMoreDashboardArticles(this,yoService,preferenceEndPoint,cachedReadList,unreadArticleIds);
+                    }
+
+                //}
+
+            }
         }
+
     }
 
     public void onEventMainThread(String action) {
+        followedTopicId = action;
         if (Constants.OTHERS_MAGAZINE_ACTION.equals(action) || Constants.TOPIC_NOTIFICATION_ACTION.equals(action) || Constants.TOPIC_FOLLOWING_ACTION.equals(action)) {
-            loadArticles(null);
+            //loadArticles(null);
+            updateArticlesAfterFollowTopic(followedTopicId);
         }
     }
 
@@ -633,7 +729,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     List<Articles> articlesList = new ArrayList<Articles>(tempList);
                     //myBaseAdapter.addItems(response.body());
                     String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-                        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+                    String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
                     if(!TextUtils.isEmpty(readCachedIds)) {
                         Type type1 = new TypeToken<List<String>>() {
                         }.getType();
@@ -782,7 +878,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     }
                 } else {
                     if(response.body().isEmpty()) {
-                     isArticlesEndReached = true;
+                        isArticlesEndReached = true;
                     }
                     flipContainer.setVisibility(View.VISIBLE);
                     llNoArticles.setVisibility(View.GONE);
@@ -803,44 +899,45 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
     private void removeFirstPageArticles() {
-            String articleId1 = myBaseAdapter.getItem(0).getId();
-            String articleId2 = myBaseAdapter.secondArticle.getId();
-            String articleId3 = myBaseAdapter.thirdArticle.getId();
+        String articleId1 = myBaseAdapter.getItem(0).getId();
+        String articleId2 = myBaseAdapter.secondArticle.getId();
+        String articleId3 = myBaseAdapter.thirdArticle.getId();
 
-            Log.d("FlipArticlesFragment", "Article Id1 is " + articleId1 + "Article Id2 is " + articleId2 + " Article Id3 is " + articleId3);
-            readArticleIds.add(articleId1);
-            readArticleIds.add(articleId2);
-            readArticleIds.add(articleId3);
+        Log.d("FlipArticlesFragment", "Article Id1 is " + articleId1 + "Article Id2 is " + articleId2 + " Article Id3 is " + articleId3);
+        readArticleIds.add(articleId1);
+        readArticleIds.add(articleId2);
+        readArticleIds.add(articleId3);
 
-            articlesIdsHashSet.add(readArticleIds);
-            Iterator<List<String>> itr1 = articlesIdsHashSet.iterator();
-            List<String> tempList1 = new ArrayList<String>();
-            while(itr1.hasNext()){
-                tempList1 = itr1.next();
-            }
-            List<String> articlesList1 = new ArrayList<String>(tempList1);
-            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-            editor.putString("read_article_ids", new Gson().toJson(articlesList1));
-            editor.commit();
+        articlesIdsHashSet.add(readArticleIds);
+        Iterator<List<String>> itr1 = articlesIdsHashSet.iterator();
+        List<String> tempList1 = new ArrayList<String>();
+        while(itr1.hasNext()){
+            tempList1 = itr1.next();
+        }
+        List<String> articlesList1 = new ArrayList<String>(tempList1);
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+        editor.putString("read_article_ids", new Gson().toJson(articlesList1));
+        editor.commit();
 
-            String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("cached_magazines", "");
-            Type type = new TypeToken<List<Articles>>() {
-            }.getType();
-            String cachedMagazines = sharedCachedMagazines;
-            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-            cachedMagazinesList.remove(myBaseAdapter.getItem(0));
-            cachedMagazinesList.remove(myBaseAdapter.secondArticle);
-            cachedMagazinesList.remove(myBaseAdapter.thirdArticle);
+        String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("cached_magazines", "");
+        Type type = new TypeToken<List<Articles>>() {
+        }.getType();
+        String cachedMagazines = sharedCachedMagazines;
+        List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+        cachedMagazinesList.remove(myBaseAdapter.getItem(0));
+        cachedMagazinesList.remove(myBaseAdapter.secondArticle);
+        cachedMagazinesList.remove(myBaseAdapter.thirdArticle);
 
-            editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-            editor.commit();
+        editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+        editor.commit();
     }
 
     public void removeReadArticles() {
 
         if(currentFlippedPosition >0) {
-            String articleId2 = myBaseAdapter.secondArticle.getId();
+            //getReadArticleIds();
+            /*String articleId2 = myBaseAdapter.secondArticle.getId();
             String articleId3 = myBaseAdapter.thirdArticle.getId();
             readArticleIds.add(articleId2);
             readArticleIds.add(articleId3);
@@ -867,13 +964,25 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
             editor.putString("read_article_ids", new Gson().toJson(articlesList));
             editor.commit();
+*/
 
-
-            String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("cached_magazines", "");
+            //String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("cached_magazines", "");
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
             Type type = new TypeToken<List<Articles>>() {
             }.getType();
-            String cachedMagazines = sharedCachedMagazines;
-            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+            List<Articles> cachedMagazinesList = new ArrayList<>();
+            if(!TextUtils.isEmpty(sharedFollowedCachedMagazines)){
+                String cachedMagazines = sharedFollowedCachedMagazines;
+                List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                cachedMagazinesList.addAll(cachedFollowedMagazinesList);
+            }
+            if(!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                String cachedMagazines = sharedRandomCachedMagazines;
+                List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                cachedMagazinesList.addAll(cachedRandomMagazinesList);
+            }
             //if(currentFlippedPosition >0) {
             cachedMagazinesList.remove(myBaseAdapter.secondArticle);
             cachedMagazinesList.remove(myBaseAdapter.thirdArticle);
@@ -911,10 +1020,645 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         cachedMagazinesList.remove(myBaseAdapter.thirdArticle);
         cachedMagazinesList.remove(myBaseAdapter.getItem(position));*/
 
-            editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+            List<Articles> followedTopicArticles = new ArrayList<>();
+            List<Articles> randomTopicArticles = new ArrayList<>();
+            for(Articles articles: cachedMagazinesList) {
+                if("true".equals(articles.getTopicFollowing())) {
+                    followedTopicArticles.add(articles);
+                } else {
+                    randomTopicArticles.add(articles);
+                }
+            }
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+            editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
+            editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
             editor.commit();
             currentFlippedPosition = 0;
         }
 
     }
+
+    public void getDashboardArticles(List<String> readArticleIds, List<String> unreadArticleIds) {
+
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getDashboardArticlesAPI(accessToken,readArticleIds,unreadArticleIds).enqueue(new Callback<LandingArticles>() {
+            @Override
+            public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
+
+                if (!isAdded()) {
+                    return;
+                }
+                myBaseAdapter.clear();
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                tvProgressText.setVisibility(View.GONE);
+                LinkedHashSet<LandingArticles> articlesHashSet = new LinkedHashSet<>();
+                if (response.body() != null) {
+                    articlesHashSet.add(response.body());
+                    Iterator<LandingArticles> itr = articlesHashSet.iterator();
+                    LandingArticles tempList = new LandingArticles();
+                    while(itr.hasNext()){
+                        tempList = itr.next();
+                    }
+                    LandingArticles articlesList = tempList;
+                    List<Articles> followedTopicArticles = new ArrayList<Articles>();
+                    List<Articles> randomTopicArticles = new ArrayList<Articles>();
+                    followedTopicArticles = articlesList.getFollowed_topic_articles();
+                    randomTopicArticles = articlesList.getRandom_articles();
+                    List<Articles> totalArticles = new ArrayList<Articles>();
+                    totalArticles = followedTopicArticles;
+                    totalArticles.addAll(randomTopicArticles);
+                    List<Articles> tempArticlesList = new ArrayList<Articles>();
+                    tempArticlesList = totalArticles;
+                    String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                    String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+                    if(!TextUtils.isEmpty(readCachedIds)) {
+                        Type type1 = new TypeToken<List<String>>() {
+                        }.getType();
+                        String cachedIds = readCachedIds;
+                        List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+                        /*for (Articles article : articlesList) {
+                            for (String artId : cachedReadList) {
+                                if (article.getId().equals(artId)) {
+                                    tempList.remove(article);
+                                    break;
+                                }
+                            }
+                        }*/
+                        for (Articles article : totalArticles) {
+                            for (String artId : cachedReadList) {
+                                if (article.getId().equals(artId)) {
+                                    tempArticlesList.remove(article);
+                                    break;
+                                }
+                            }
+                        }
+                        //articlesList = tempList;
+                        totalArticles = tempArticlesList;
+                    }
+
+                    myBaseAdapter.addItems(totalArticles);
+                    mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
+                    flipView.flipTo(lastReadArticle);
+
+                    if(!isSearch) {
+
+                        List<Articles> followedTopicArticles1 = new ArrayList<>();
+                        List<Articles> randomTopicArticles1 = new ArrayList<>();
+                        for(Articles articles: totalArticles) {
+                            if("true".equals(articles.getTopicFollowing())) {
+                                followedTopicArticles1.add(articles);
+                            } else {
+                                randomTopicArticles1.add(articles);
+                            }
+                        }
+                        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+                        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles1));
+                        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles1));
+                        editor.commit();
+                    }
+                    if (llNoArticles != null) {
+                        llNoArticles.setVisibility(View.GONE);
+                        flipContainer.setVisibility(View.VISIBLE);
+                        if(myBaseAdapter.getCount()>0) {
+                            Random r = new Random();
+                            suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                            myBaseAdapter.getAllItems().add(suggestionsPosition,new Articles());
+                            myBaseAdapter.notifyDataSetChanged();
+                        }
+                    }
+                } else {
+                    flipContainer.setVisibility(View.VISIBLE);
+                    llNoArticles.setVisibility(View.GONE);
+                    //getCachedArticles();
+                    getLandingCachedArticles();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<LandingArticles> call, Throwable t) {
+                if(mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                tvProgressText.setVisibility(View.GONE);
+                flipContainer.setVisibility(View.GONE);
+                llNoArticles.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+    }
+
+    public void getLandingCachedArticles() {
+        isSearch = false;
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+        String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+
+        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+            if (mProgress != null) {
+                mProgress.setVisibility(View.GONE);
+            }
+            tvProgressText.setVisibility(View.GONE);
+            myBaseAdapter.clear();
+
+            Type type = new TypeToken<List<Articles>>() {
+            }.getType();
+            List<Articles> cachedMagazinesList = new ArrayList<>();
+            if(!TextUtils.isEmpty(sharedFollowedCachedMagazines)){
+                String cachedMagazines = sharedFollowedCachedMagazines;
+                List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                cachedMagazinesList.addAll(cachedFollowedMagazinesList);
+            }
+            if(!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                String cachedMagazines = sharedRandomCachedMagazines;
+                List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                cachedMagazinesList.addAll(cachedRandomMagazinesList);
+            }
+            myBaseAdapter.addItems(cachedMagazinesList);
+            if(myBaseAdapter.getCount()>0) {
+                flipView.flipTo(0);
+                articlesRootLayout.setVisibility(View.VISIBLE);
+                networkFailureText.setVisibility(View.GONE);
+                if (llNoArticles != null) {
+                    llNoArticles.setVisibility(View.GONE);
+                    flipContainer.setVisibility(View.VISIBLE);
+                    if (myBaseAdapter.getCount() > 0) {
+                        Random r = new Random();
+                        suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                    }
+                }
+            } else {
+                flipContainer.setVisibility(View.GONE);
+                llNoArticles.setVisibility(View.VISIBLE);
+
+            }
+            return;
+        } else {
+            loadArticles(null);
+        }
+    }
+
+    private void getReadArticleIds() {
+        if(currentFlippedPosition>0) {
+            if(currentFlippedPosition == 1) {
+                String articleId1 = myBaseAdapter.getItem(0).getId();
+                String articleId2 = myBaseAdapter.secondArticle.getId();
+                String articleId3 = myBaseAdapter.thirdArticle.getId();
+                readArticleIds.add(articleId1);
+                readArticleIds.add(articleId2);
+                readArticleIds.add(articleId3);
+            }
+
+
+            Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
+            for (int i = 0; i <= currentFlippedPosition; i++) {
+            String articleId = myBaseAdapter.getItem(i).getId();
+            Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+
+            readArticleIds.add(articleId);
+            }
+
+
+            List<String> articlesList = new ArrayList<String>(new LinkedHashSet<String>(readArticleIds));
+            /*Iterator<List<String>> itr = articlesIdsHashSet.iterator();
+            List<String> tempList = new ArrayList<String>();
+            while (itr.hasNext()) {
+                tempList = itr.next();
+            }*/
+            //List<String> articlesList = new ArrayList<String>(tempList);
+
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            /*String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+            if(!TextUtils.isEmpty(readCachedIds)) {
+                Type type1 = new TypeToken<List<String>>() {
+                }.getType();
+                String cachedIds = readCachedIds;
+                List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+                articlesList.addAll(cachedReadList);
+
+            }*/
+            List<String> articlesList1 = new ArrayList<String>(new LinkedHashSet<String>(articlesList));
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+            editor.putString("read_article_ids", new Gson().toJson(articlesList1));
+            editor.commit();
+        }
+
+    }
+
+    private void getAllReadArticleIds() {
+        if(currentFlippedPosition>0) {
+            if(currentFlippedPosition == 1) {
+                String articleId1 = myBaseAdapter.getItem(0).getId();
+                String articleId2 = myBaseAdapter.secondArticle.getId();
+                String articleId3 = myBaseAdapter.thirdArticle.getId();
+                readArticleIds.add(articleId1);
+                readArticleIds.add(articleId2);
+                readArticleIds.add(articleId3);
+            }
+
+
+            Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
+            //for (int i = 0; i <= currentFlippedPosition; i++) {
+            String articleId = myBaseAdapter.getItem(currentFlippedPosition).getId();
+            Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+
+            readArticleIds.add(articleId);
+            //}
+
+
+            List<String> articlesList = new ArrayList<String>(new LinkedHashSet<String>(readArticleIds));
+            /*Iterator<List<String>> itr = articlesIdsHashSet.iterator();
+            List<String> tempList = new ArrayList<String>();
+            while (itr.hasNext()) {
+                tempList = itr.next();
+            }*/
+            //List<String> articlesList = new ArrayList<String>(tempList);
+
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+            if(!TextUtils.isEmpty(readCachedIds)) {
+                Type type1 = new TypeToken<List<String>>() {
+                }.getType();
+                String cachedIds = readCachedIds;
+                List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+                articlesList.addAll(cachedReadList);
+
+            }
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+            editor.putString("read_article_ids", new Gson().toJson(articlesList));
+            editor.commit();
+        }
+
+    }
+
+    public void getMoreDashboardArticles(List<String> readArticleIds, List<String> unreadArticleIds) {
+
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getDashboardArticlesAPI(accessToken,readArticleIds,unreadArticleIds).enqueue(new Callback<LandingArticles>() {
+            @Override
+            public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
+
+                /*if (!isAdded()) {
+                    return;
+                }
+                myBaseAdapter.clear();*/
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                tvProgressText.setVisibility(View.GONE);
+                LinkedHashSet<LandingArticles> articlesHashSet = new LinkedHashSet<>();
+                if (response.body() != null) {
+                    articlesHashSet.add(response.body());
+                    Iterator<LandingArticles> itr = articlesHashSet.iterator();
+                    LandingArticles tempList = new LandingArticles();
+                    while(itr.hasNext()){
+                        tempList = itr.next();
+                    }
+                    LandingArticles articlesList = tempList;
+                    List<Articles> followedTopicArticles = new ArrayList<Articles>();
+                    List<Articles> randomTopicArticles = new ArrayList<Articles>();
+                    followedTopicArticles = articlesList.getFollowed_topic_articles();
+                    randomTopicArticles = articlesList.getRandom_articles();
+                    List<Articles> totalArticles = new ArrayList<Articles>();
+                    totalArticles = followedTopicArticles;
+                    totalArticles.addAll(randomTopicArticles);
+                    List<Articles> tempArticlesList = new ArrayList<Articles>();
+                    tempArticlesList = totalArticles;
+                    String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                    String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+                    if(!TextUtils.isEmpty(readCachedIds)) {
+                        Type type1 = new TypeToken<List<String>>() {
+                        }.getType();
+                        String cachedIds = readCachedIds;
+                        List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+                        /*for (Articles article : articlesList) {
+                            for (String artId : cachedReadList) {
+                                if (article.getId().equals(artId)) {
+                                    tempList.remove(article);
+                                    break;
+                                }
+                            }
+                        }*/
+                        for (Articles article : totalArticles) {
+                            for (String artId : cachedReadList) {
+                                if (article.getId().equals(artId)) {
+                                    tempArticlesList.remove(article);
+                                    break;
+                                }
+                            }
+                        }
+                        //articlesList = tempList;
+                        totalArticles = tempArticlesList;
+                    }
+
+                    myBaseAdapter.addItemsAll(totalArticles);
+                    mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
+                    flipView.flipTo(lastReadArticle);
+
+                    if(!isSearch) {
+
+                        List<Articles> followedTopicArticles1 = new ArrayList<>();
+                        List<Articles> randomTopicArticles1 = new ArrayList<>();
+                        for(Articles articles: totalArticles) {
+                            if("true".equals(articles.getTopicFollowing())) {
+                                followedTopicArticles1.add(articles);
+                            } else {
+                                randomTopicArticles1.add(articles);
+                            }
+                        }
+                        String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+                        String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+
+                        List<Articles> cachedFollowedMagazinesList = new ArrayList<>();
+                        List<Articles> cachedRandomMagazinesList = new ArrayList<>();
+                        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+
+                            Type type = new TypeToken<List<Articles>>() {
+                            }.getType();
+
+                            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
+                                String cachedMagazines = sharedFollowedCachedMagazines;
+                                cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                cachedFollowedMagazinesList.addAll(followedTopicArticles1);
+                            }
+                            if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                                String cachedMagazines = sharedRandomCachedMagazines;
+                                cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                cachedRandomMagazinesList.addAll(randomTopicArticles1);
+                            }
+                        }
+
+                        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+                        editor.putString("followed_cached_magazines", new Gson().toJson(cachedFollowedMagazinesList));
+                        editor.putString("random_cached_magazines", new Gson().toJson(cachedRandomMagazinesList));
+                        editor.commit();
+                    }
+                    if (llNoArticles != null) {
+                        llNoArticles.setVisibility(View.GONE);
+                        flipContainer.setVisibility(View.VISIBLE);
+                        if(myBaseAdapter.getCount()>0) {
+                            Random r = new Random();
+                            suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                            myBaseAdapter.getAllItems().add(suggestionsPosition,new Articles());
+                            myBaseAdapter.notifyDataSetChanged();
+                        }
+                    }
+                } else {
+                    flipContainer.setVisibility(View.VISIBLE);
+                    llNoArticles.setVisibility(View.GONE);
+                    //getCachedArticles();
+                    getLandingCachedArticles();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<LandingArticles> call, Throwable t) {
+                if(mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+                tvProgressText.setVisibility(View.GONE);
+                flipContainer.setVisibility(View.GONE);
+                llNoArticles.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+    }
+
+    public void handleDashboardResponse(List<Articles> totalArticles) {
+        mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
+        flipView.flipTo(lastReadArticle);
+
+        if(!isSearch) {
+
+            List<Articles> followedTopicArticles1 = new ArrayList<>();
+            List<Articles> randomTopicArticles1 = new ArrayList<>();
+            for(Articles articles: totalArticles) {
+                if("true".equals(articles.getTopicFollowing())) {
+                    followedTopicArticles1.add(articles);
+                } else {
+                    randomTopicArticles1.add(articles);
+                }
+            }
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+            editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles1));
+            editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles1));
+            editor.commit();
+        }
+        if (llNoArticles != null) {
+            llNoArticles.setVisibility(View.GONE);
+            flipContainer.setVisibility(View.VISIBLE);
+            if(myBaseAdapter.getCount()>0) {
+                Random r = new Random();
+                suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                myBaseAdapter.getAllItems().add(suggestionsPosition,new Articles());
+                myBaseAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    public void handleMoreDashboardResponse(List<Articles> totalArticles) {
+        mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
+        flipView.flipTo(lastReadArticle);
+
+        if(!isSearch) {
+
+            removeReadArticles();
+            magazineDashboardHelper.removeReadArticleIds(this, preferenceEndPoint);
+
+            List<Articles> followedTopicArticles1 = new ArrayList<>();
+            List<Articles> randomTopicArticles1 = new ArrayList<>();
+            for(Articles articles: totalArticles) {
+                if("true".equals(articles.getTopicFollowing())) {
+                    followedTopicArticles1.add(articles);
+                } else {
+                    randomTopicArticles1.add(articles);
+                }
+            }
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+
+            List<Articles> cachedFollowedMagazinesList = new ArrayList<>();
+            List<Articles> cachedRandomMagazinesList = new ArrayList<>();
+            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+
+                Type type = new TypeToken<List<Articles>>() {
+                }.getType();
+
+                if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
+                    String cachedMagazines = sharedFollowedCachedMagazines;
+                    cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                    cachedFollowedMagazinesList.addAll(followedTopicArticles1);
+                }
+                if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                    String cachedMagazines = sharedRandomCachedMagazines;
+                    cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                    cachedRandomMagazinesList.addAll(randomTopicArticles1);
+                }
+            }
+
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+            editor.putString("followed_cached_magazines", new Gson().toJson(cachedFollowedMagazinesList));
+            editor.putString("random_cached_magazines", new Gson().toJson(cachedRandomMagazinesList));
+            editor.commit();
+        }
+        if (llNoArticles != null) {
+            llNoArticles.setVisibility(View.GONE);
+            flipContainer.setVisibility(View.VISIBLE);
+            if(myBaseAdapter.getCount()>0) {
+                Random r = new Random();
+                suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                myBaseAdapter.getAllItems().add(suggestionsPosition,new Articles());
+                myBaseAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    public void updateArticlesAfterFollowTopic(String topicId) {
+        List<Articles> articlesList = myBaseAdapter.getAllItems();
+        //List<Articles> unreadArticles = magazineDashboardHelper.removeReadIds(articlesList, this, preferenceEndPoint);
+        List<Articles> unreadArticles = new ArrayList<>();
+        if(currentFlippedPosition>0) {
+            List<String> readIds = new ArrayList<>();
+            if (currentFlippedPosition == 1) {
+                String articleId1 = myBaseAdapter.getItem(0).getId();
+                String articleId2 = myBaseAdapter.secondArticle.getId();
+                String articleId3 = myBaseAdapter.thirdArticle.getId();
+                readIds.add(articleId1);
+                readIds.add(articleId2);
+                readIds.add(articleId3);
+            }
+
+
+            Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
+            for (int i = 0; i <= currentFlippedPosition; i++) {
+                String articleId = myBaseAdapter.getItem(i).getId();
+                Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+
+                readIds.add(articleId);
+            }
+
+
+            List<String> readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
+            List<String> allArticlesIds = new ArrayList<>();
+            for (Articles articles : articlesList) {
+                allArticlesIds.add(articles.getId());
+            }
+            List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
+            unreadArticleIds.removeAll(readIdsList);
+
+            for(Articles unreadArt: articlesList) {
+                for(String unreadId: unreadArticleIds) {
+                    if (unreadArt.getId().equals(unreadId)) {
+                        unreadArticles.add(unreadArt);
+                    }
+                }
+            }
+        }
+        List<Articles> followedArticlesList = new ArrayList<>();
+        for(Articles articles: unreadArticles) {
+            if(topicId.equals(articles.getTopicId())) {
+                followedArticlesList.add(articles);
+            }
+        }
+
+        /*for(Articles followedArticles: followedArticlesList) {
+            followedArticles.setTopicFollowing("true");
+        }*/
+
+        List<Articles> cachedMagazinesList = getCachedMagazinesList();
+        if (cachedMagazinesList != null) {
+            List<Articles> tempList = cachedMagazinesList;
+            for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                for(Articles followedArticles: followedArticlesList) {
+                    if (followedArticles.getId().equals(tempList.get(i).getId())) {
+                        tempList.get(i).setTopicFollowing("true");
+                    }
+                }
+            }
+
+            cachedMagazinesList = tempList;
+            saveCachedMagazinesList(cachedMagazinesList);
+
+            List<Articles> emptyUpdatedArticles = new ArrayList<>();
+            List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+            for(Articles updatedArticles: followedArticlesList) {
+                if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                    notEmptyUpdatedArticles.add(updatedArticles);
+                } else {
+                    emptyUpdatedArticles.add(updatedArticles);
+                }
+            }
+            Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+            Collections.reverse(notEmptyUpdatedArticles);
+            notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+            followedArticlesList = notEmptyUpdatedArticles;
+
+            for(Articles a: followedArticlesList) {
+                Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
+            }
+            //myBaseAdapter.addItems(followedArticlesList);
+            int positionToAdd = currentFlippedPosition + 10;
+            List<Articles> allArticles = myBaseAdapter.getAllItems();
+            if(allArticles.size() > positionToAdd) {
+                allArticles.addAll(positionToAdd, followedArticlesList);
+            } else {
+                allArticles.addAll(allArticles.size()-1, followedArticlesList);
+            }
+
+            myBaseAdapter.addItems(allArticles);
+        }
+
+    }
+
+    private List<Articles> getCachedMagazinesList() {
+        Type type1 = new TypeToken<List<Articles>>() {
+        }.getType();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
+
+        String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+        String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+
+        List<Articles> cachedMagazinesList = new ArrayList<>();
+        if(!TextUtils.isEmpty(sharedFollowedCachedMagazines)){
+            String cachedMagazines = sharedFollowedCachedMagazines;
+            List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+            cachedMagazinesList.addAll(cachedFollowedMagazinesList);
+        }
+        if(!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+            String cachedMagazines = sharedRandomCachedMagazines;
+            List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+            cachedMagazinesList.addAll(cachedRandomMagazinesList);
+        }
+
+        return cachedMagazinesList;
+    }
+
+    private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
+        List<Articles> followedTopicArticles = new ArrayList<>();
+        List<Articles> randomTopicArticles = new ArrayList<>();
+        for(Articles articles: cachedMagazinesList) {
+            if("true".equals(articles.getTopicFollowing())) {
+                followedTopicArticles.add(articles);
+            } else {
+                randomTopicArticles.add(articles);
+            }
+        }
+
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+        //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
+        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
+        editor.commit();
+    }
+
 }

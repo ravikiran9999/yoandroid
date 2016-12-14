@@ -2,7 +2,7 @@ package com.yo.android.pjsip;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
+import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
@@ -16,9 +16,9 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.os.Vibrator;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -34,10 +34,11 @@ import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.calllogs.CallerInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
-import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.OpponentDetails;
+import com.yo.android.networkmanager.NetworkStateChangeListener;
+import com.yo.android.networkmanager.NetworkStateListener;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -66,7 +67,6 @@ import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.pj_qos_type;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
-import org.pjsip.pjsua2.pjsip_role_e;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 import org.pjsip.pjsua2.pjsua_call_flag;
@@ -87,6 +87,7 @@ import de.greenrobot.event.EventBus;
 public class YoSipService extends InjectedService implements MyAppObserver, SipServiceHandler {
 
     private static final String TAG = "YoSipService";
+    public static final int DISCONNECT_IF_NO_ANSWER = 60 * 1000;
     private boolean created;
 
     private MyApp myApp;
@@ -109,6 +110,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private Handler mHandler;
     private String registrationStatus = "";
 
+    private boolean isCallAccepted = false;
+    private int statusCode;
+
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
@@ -118,6 +122,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     @Inject
     ConnectivityHelper mHelper;
+
+    private Intent mIntent;
 
     //New changes
 
@@ -175,6 +181,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (!created) {
             startSipService();
         }
+        NetworkStateListener.registerNetworkState(listener);
         performAction(intent);
         return START_STICKY;
     }
@@ -183,18 +190,23 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (intent == null) {
             return;
         }
+        mIntent = intent;
         if (mHelper.isConnected()) {
             if (VoipConstants.CALL_ACTION_OUT_GOING.equalsIgnoreCase(intent.getAction())) {
                 if (currentCall == null) {
                     String number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
                     Bundle bundle = intent.getBundleExtra("data");
+
                     if (bundle == null) {
                         bundle = new Bundle();
                     }
-
-                    showCallActivity(number, bundle, intent);
-
-                    makeCall(number, bundle, intent);
+                    int value = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).getCallState();
+                    if (value == 0) {
+                        showCallActivity(number, bundle, intent);
+                        makeCall(number, bundle, intent);
+                    } else {
+                        mToastFactory.showToast("Already call is in progress");
+                    }
                 } else {
                     mHandler.post(new Runnable() {
                         @Override
@@ -210,7 +222,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 stopSelf();
             }
         } else {
-            mToastFactory.showToast(getResources().getString(R.string.no_network));
+            mToastFactory.showToast(getResources().getString(R.string.calls_no_network));
         }
 
     }
@@ -323,26 +335,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     @Override
     public void notifyCallState(MyCall call) {
+
         CallInfo ci;
         try {
             ci = call.getInfo();
-            if (ci != null) {
-                //EventBus.getDefault().post(ci.getStateText());
-            }
-            Logger.warn("Call Status " + ci.toString());
-            if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY
-                    && ci.getRole() == pjsip_role_e.PJSIP_ROLE_UAC
-                    && ci.getLastReason().equals("Ringing")) {
-                startRingtone();
-            } else {
-                stopRingtone();
-            }
-
         } catch (Exception e) {
             ci = null;
         }
-
-
+        mLog.e(TAG, "notifyCallState =  " + ci.getState());
         if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
             //
@@ -366,7 +366,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     private void handlerErrorCodes(final CallInfo call, final SipCallState sipCallstate) {
-        final int statusCode = call.getLastStatusCode().swigValue();
+        statusCode = call.getLastStatusCode().swigValue();
         mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
         if (statusCode == 487) {
             callType = CallLog.Calls.MISSED_TYPE;
@@ -382,7 +382,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             public void run() {
                 String phoneNumber = sipCallstate.getMobileNumber() == null ? sipCallstate.getMobileNumber() : phone;
                 Contact contact = mContactsSyncManager.getContactByVoxUserName(phoneNumber);
+                if (!isCallAccepted) {
+                    statusCode = StatusCodes.TWO_THOUSAND_ONE;
+                }
                 OpponentDetails details = new OpponentDetails(phoneNumber, contact, statusCode);
+                if (isHangup) {
+                    details.setSelfReject(true);
+                }
                 if (statusCode == 603 && !isHangup) {
                     isHangup = !isHangup;
                 } else if (statusCode != 603) {
@@ -403,6 +409,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     private void callAccepted() {
+        isCallAccepted = true;
         callStarted = System.currentTimeMillis();
         sipCallState.setStartTime(callStarted);
         sipCallState.setCallState(SipCallState.IN_CALL);
@@ -441,7 +448,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         //Reset
         sipCallState = new SipCallState();
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
-        android.util.Log.w(TAG, "LOADING CALL LOGS AFTER ACTION " + manager);
         manager.sendBroadcast(new Intent(UserAgent.ACTION_CALL_END));
     }
 
@@ -517,7 +523,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     public void makeCall(String destination, Bundle options, Intent intent) {
         phone = destination;
-
+        isCallAccepted = false;
         if (destination != null && !destination.startsWith("sip:")) {
             destination = "sip:" + destination;
         }
@@ -555,6 +561,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 }
             });
         }
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isCallAccepted) {
+                    //After one minute there is no response/call back for answered call
+                    hangupCall(callType);
+                }
+            }
+        }, DISCONNECT_IF_NO_ANSWER);
     }
 
     private void showCallActivity(String destination, Bundle options, Intent oldintent) {
@@ -600,16 +615,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public void setHoldCall(boolean isHold) {
         if (isHold) {
             mToastFactory.showToast(R.string.hold);
+            getMediaManager().setMicrophoneMuteOn(true);
             try {
                 if (mRingTone != null && mRingTone.isPlaying()) {
                     mRingTone.pause();
                     mVibrator.cancel();
                 }
             } catch (IllegalStateException e) {
-                if (mRingTone != null) {
-                    mRingTone.stop();
-                    mRingTone.release();
-                }
                 mLog.w(TAG, e);
             }
             if (currentCall != null) {
@@ -626,6 +638,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
+                getMediaManager().setMicrophoneMuteOn(false);
                 try {
                     if (currentCall.getInfo() != null
                             && currentCall.getInfo().getState() != pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
@@ -643,6 +656,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
+    @Override
+    public void unbindService(ServiceConnection conn) {
+        super.unbindService(conn);
+        NetworkStateListener.unregisterNetworkState(listener);
+    }
+
     public CallInfo getInfo() {
         if (currentCall != null) {
             try {
@@ -654,13 +673,26 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         return null;
     }
 
+    NetworkStateChangeListener listener = new NetworkStateChangeListener() {
+        public void onNetworkStateChanged(int networkstate) {
+            mLog.w(TAG, "Network change listener and state is " + networkstate);
+
+            if (networkstate == NetworkStateListener.NETWORK_CONNECTED) {
+                // Network is connected.
+            } else {
+                hangupCall(callType);
+                OpponentDetails details = new OpponentDetails(null, null, 404);
+                EventBus.getDefault().post(details);
+            }
+        }
+    };
 
     public void acceptCall() {
         CallOpParam prm = new CallOpParam();
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
         try {
-            currentCall.answer(prm);
             stopRingtone();
+            currentCall.answer(prm);
             sipCallState.setCallState(SipCallState.IN_CALL);
         } catch (Exception e) {
             mLog.w(TAG, e);

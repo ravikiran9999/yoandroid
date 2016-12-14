@@ -2,7 +2,10 @@ package com.yo.android.ui.fragments;
 
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -47,6 +50,7 @@ import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
+import com.yo.android.util.FetchNewArticlesService;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
@@ -119,6 +123,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -217,7 +222,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onResume() {
         super.onResume();
-        profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
+        String status = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available");
+        if (status.equalsIgnoreCase("")) {
+            status = "Available";
+        }
+        profileStatus.setText(status);
     }
 
     @Override
@@ -346,6 +355,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         }
                         preferenceEndPoint.clearAll();
                         MagazineFlipArticlesFragment.lastReadArticle = 0;
+                        //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
+                        Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
+                        //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
+                        AlarmManager alarmManager = (AlarmManager) BottomTabsActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
+                        getActivity().stopService(serviceIntent);
+                        alarmManager.cancel(BottomTabsActivity.pintent);
 
                         //stop firebase service
                         //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
@@ -533,6 +548,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         RequestBody firstName =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), userName);
+        //showProgressDialog();
         yoService.updateProfile(userId, access, null, firstName, null, null, null, null, null, null, null).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
@@ -541,7 +557,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     saveUserProfileValues(response.body());
                 }
                 loadImage();
-                profileStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
+                String status = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available");
+                if (status.equalsIgnoreCase("")) {
+                    status = "Available";
+                }
+                profileStatus.setText(status);
             }
 
             @Override

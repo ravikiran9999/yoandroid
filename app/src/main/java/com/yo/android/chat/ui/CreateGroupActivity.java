@@ -121,6 +121,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         mGroupName = groupName.getText().toString();
         Intent intent = new Intent(this, GroupContactsActivity.class);
         intent.putExtra(Constants.GROUP_NAME, mGroupName);
+        intent.putParcelableArrayListExtra(Constants.SELECTED_CONTACTS, selectedContactsArrayList);
         startActivityForResult(intent, REQUEST_SELECTED_CONTACTS);
     }
 

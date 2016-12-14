@@ -174,14 +174,14 @@
 
     <string name="service_started">%s started</string>
     <string name="call_ended">Call Ended</string>
-    <string name="no_network">Unable to make the call due to low network connectivity</string>
+    <string name="calls_no_network">The call cannot be connected due to poor network connectivity. Please check the internet connection and try again</string>
     <string name="call_account_null">Unable to make the call, please try again</string>
 
     <string name="not_online">Recipient not online.</string>
     <string name="call_forwarded">Call is  being forwarded</string>
-    <string name="temporerly_unavailable">Destination was temporarily unavailable</string>
+    <string name="no_answer">Sorry there was no answer...</string>
     <string name="ringing">Ringing</string>
-    <string name="busy">Line busy</string>
+    <string name="busy">Sorry, the number was busy.</string>
     <string name="all_busy">All possible destinations are busy</string>
     <string name="invalid_voucher">Invalid Voucher.</string>
     <string name="voucher_recharge_successful">Voucher Recharge Successful</string>

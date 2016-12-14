@@ -2,6 +2,7 @@ package com.yo.android.pjsip;
 
 import android.content.Context;
 import android.content.Intent;
+import android.telephony.TelephonyManager;
 
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -35,6 +36,7 @@ public class SipHelper {
         intent.putExtra(OutGoingCallActivity.DISPLAY_NUMBER, actualNumber);
         actualNumber = null;
         mContext.startService(intent);
+
     }
 
 }

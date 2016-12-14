@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -39,17 +38,18 @@ import com.yo.android.model.Popup;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -75,7 +75,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private List<Room> listRoom;
     private List<String> roomId;
     private List<String> checkRoomIdExist;
-
+    private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss z");
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -427,11 +427,22 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             } else {
+                Date date = null;
+                try {
+                    String createdTime = roomInfo.getCreated_at();
+                    date = formatterDate.parse(createdTime);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 room = new Room();
                 room.setFirebaseRoomId(dataSnapshot.getKey());
                 room.setGroupName(roomInfo.getName());
                 room.setImage(roomInfo.getImage());
                 room.setVoxUserName(voxUserName);
+                //room.setTime(Long.parseLong(groupCreatedTime));
+                if (date != null) {
+                    room.setTime(date.getTime());
+                }
                 arrayOfUsers.add(room);
                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
@@ -484,9 +495,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             if (activity.getFragment() instanceof ChatFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                     //if (!isRemoved) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
                     if (popup != null) {
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {

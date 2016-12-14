@@ -20,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -81,6 +82,8 @@ public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsV
                         holder.getBtnFollow().setText("Following");
                         holder.getBtnFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                         item.setSelected(true);
+
+                        EventBus.getDefault().post(item.getId());
 
                         preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
                     }

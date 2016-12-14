@@ -264,15 +264,16 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 public boolean onMenuItemActionExpand(MenuItem item) {
                     mMagazineFlipArticlesFragment.lastReadArticle = 0;
 
-                    return false;
+                    return true;
                 }
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
 
                     mMagazineFlipArticlesFragment.lastReadArticle = 0;
+                    mMagazineFlipArticlesFragment.refresh();
 
-                    return false;
+                    return true;
                 }
             });
 
@@ -318,7 +319,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     if (mMagazineFlipArticlesFragment != null) {
                         mMagazineFlipArticlesFragment.lastReadArticle = 0;
                         //mMagazineFlipArticlesFragment.loadArticles(null);
-                        mMagazineFlipArticlesFragment.getCachedArticles();
+                        //mMagazineFlipArticlesFragment.getCachedArticles();
+                        mMagazineFlipArticlesFragment.getLandingCachedArticles();
 
                     }
                     return true;
@@ -499,7 +501,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error while adding topics", Toast.LENGTH_LONG).show();
+                if(getActivity() != null) {
+                    Toast.makeText(getActivity(), "Error while adding topics", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

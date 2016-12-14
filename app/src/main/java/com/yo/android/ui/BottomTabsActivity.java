@@ -53,6 +53,7 @@ import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.util.FetchNewArticlesService;
+import com.yo.android.util.MagazineDashboardHelper;
 import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
@@ -94,6 +95,8 @@ public class BottomTabsActivity extends BaseActivity {
     private ViewGroup customActionBar;
     private Context context;
     private SipBinder sipBinder;
+    private static Context mContext;
+    public static PendingIntent pintent;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -126,6 +129,7 @@ public class BottomTabsActivity extends BaseActivity {
         // toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
         context = this;
+        mContext = getApplicationContext();
 
         preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
 
@@ -177,12 +181,10 @@ public class BottomTabsActivity extends BaseActivity {
                     } else {
                         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                     }
-
-
-                    mLog.d("onPageSelected", getFragment() + "");
-
                 } catch (NullPointerException e) {
-                    mLog.w("onPageSelected", e);
+                    if (mLog != null) {
+                        mLog.w("onPageSelected", e);
+                    }
                 }
             }
 
@@ -192,6 +194,7 @@ public class BottomTabsActivity extends BaseActivity {
                 if (position == 0 && getFragment() instanceof MagazinesFragment) {
                     Log.d("BottomTabsActivity", "onPageSelected In update() BottomTabsActivity");
 
+                    MagazineDashboardHelper.request = 1;
                     ((MagazinesFragment) getFragment()).removeReadArticles();
                     ((MagazinesFragment) getFragment()).update();
                 }
@@ -204,7 +207,9 @@ public class BottomTabsActivity extends BaseActivity {
             }
         });
 
-        startServiceToFetchNewArticles();
+        if(!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
+            startServiceToFetchNewArticles();
+        }
 
         // firebase service
 
@@ -558,11 +563,15 @@ public class BottomTabsActivity extends BaseActivity {
     private void startServiceToFetchNewArticles() {
         // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
-        Intent intent = new Intent(this, FetchNewArticlesService.class);
-        PendingIntent pintent = PendingIntent.getService(this, 0, intent,
+        Intent intent = new Intent(getAppContext(), FetchNewArticlesService.class);
+        pintent = PendingIntent.getService(this, 1014, intent,
                 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                 Constants.FETCHING_NEW_ARTICLES_FREQUENCY, pintent);
+    }
+
+    public static Context getAppContext(){
+        return BottomTabsActivity.mContext;
     }
 }
