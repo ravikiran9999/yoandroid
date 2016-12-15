@@ -45,14 +45,19 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
         mLog.e("TokenAuthenticator", "start authentication");
-        synchronized (mContext) {
+        synchronized (lock) {
             refreshToken = preferenceEndPoint.getStringPreference(YoApi.REFRESH_TOKEN);
             boolean isRequestForTokens = response.request().url().toString().contains("oauth/token.json");
             boolean sessionExpire = preferenceEndPoint.getBooleanPreference(Constants.SESSION_EXPIRE, false);
             if (System.currentTimeMillis() - tokenSuccessTime < 120000) {
                 String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                 mLog.e("AccessToken Call ", accessToken);
+                mLog.e("HttpUrl Calls", response.request().url().toString());
+                if (response.request().url().toString().contains(accessToken)) {
+                    return response.request();
+                }
                 HttpUrl httpUrl = response.request().url().newBuilder().addQueryParameter(YoApi.ACCESS_TOKEN, accessToken).build();
+                mLog.e("HttpUrl Call", httpUrl.toString());
                 // Add new httpurl to rejected request and retry it
                 mLog.e("TokenAuthenticator", "finish authentication");
                 return response.request()
@@ -97,6 +102,7 @@ public class TokenAuthenticator implements Authenticator {
                         HttpUrl httpUrl = response.request().url().newBuilder().addQueryParameter(YoApi.ACCESS_TOKEN, responseBody.getAccessToken()).build();
                         mLog.e("HttpUrl ", httpUrl.toString());
                         tokenSuccessTime = System.currentTimeMillis();
+                        tokenExpireCount = 0;
                         // Add new httpurl to rejected request and retry it
                         mLog.e("TokenAuthenticator", "finish authentication");
                         return response.request()

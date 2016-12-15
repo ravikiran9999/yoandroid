@@ -216,7 +216,7 @@ public class BottomTabsActivity extends BaseActivity {
         if (myServiceConnection != null && !myServiceConnection.isServiceConnection()) {
             Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
             startService(intent);
-            bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
+            //bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
         }
 
         //
