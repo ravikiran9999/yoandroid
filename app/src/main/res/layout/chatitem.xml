@@ -72,17 +72,15 @@
 
                     <TextView
                         android:id="@+id/time"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="right|bottom"
-                        android:layout_toRightOf="@+id/time_load"
+                        android:layout_gravity="end|bottom"
                         android:background="@color/transperantDarkGray"
-                        android:gravity="right"
                         android:padding="4dp"
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        tools:text="10:00AM" />
+                        tools:text="10:00" />
                 </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>

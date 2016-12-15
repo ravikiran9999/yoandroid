@@ -325,10 +325,15 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
-                                if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber()) && userProfile.getMobileNumber().substring(3).equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+                                String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber());
+                                if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber()) && userProfile.getPhoneNumber().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                                     userProfile.setFullName(getString(R.string.you));
-                                } else if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber())) {
-                                    userProfile.setFullName(mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber()));
+                                } else if (userProfile != null && !TextUtils.isEmpty(userProfile.getPhoneNumber())) {
+                                    if (!TextUtils.isEmpty(nameFromNumber)) {
+                                        userProfile.setFullName(nameFromNumber);
+                                    } else {
+                                        userProfile.setFullName(userProfile.getMobileNumber());
+                                    }
                                 }
                                 for (Map.Entry m : groupMembersHashMap.entrySet()) {
                                     if (dataSnapshot.getRef().getParent().getKey().equals(m.getKey())) {

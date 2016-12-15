@@ -564,7 +564,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
                 }
             }
-
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
             final Firebase roomChildReference = roomReference.child(timeStp);
             roomChildReference.updateChildren(updateMessageMap, new Firebase.CompletionListener() {
@@ -584,7 +583,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         Log.w(TAG, "ONCOMPLETE success");
                         chatMessage.setSent(1);
                         userChatAdapter.notifyDataSetChanged();
-                        ;
+
                     }
                 }
             });
@@ -741,26 +740,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @NonNull
     private void updateChatWithLocalImage(String mPartyPicUri) {
         ChatMessage message = new ChatMessage();
+        long timestamp = System.currentTimeMillis();
+        int msgId = (int) timestamp;
         message.setType(Constants.IMAGE);
         message.setSenderID(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         message.setImagePath(mPartyPicUri);
         message.setTime(System.currentTimeMillis());
-
-        long timestamp = System.currentTimeMillis();
-        int msgId = (int) timestamp;
-        message.setType(Constants.IMAGE);
-        message.setTime(timestamp);
         message.setMsgID(msgId);
-        message.setRoomId(childRoomId);
-        //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
-        message.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
-        message.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
-
         userChatAdapter.UpdateItem(message);
         if (mPartyPicUri != null) {
-            uploadImage(message, mPartyPicUri);
+            uploadImage(msgId, mPartyPicUri);
         }
-        sendChatMessage(message);
+        //sendChatMessage(message);
     }
 
     /**
@@ -768,7 +759,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
      *
      * @param path
      */
-    private void uploadImage(final ChatMessage iMessage, final String path) {
+    private void uploadImage(final int messageId, final String path) {
 
         Uri file = Uri.fromFile(new File(path));
 
@@ -783,7 +774,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onFailure(@NonNull Exception e) {
                 // Handle unsuccessful uploads
-                uploadImage(iMessage, path);
+                uploadImage(messageId, path);
                 e.printStackTrace();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -792,7 +783,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 if (downloadUrl != null) {
-                    sendImage(iMessage, downloadUrl.getLastPathSegment());
+                    sendImage(messageId, downloadUrl.getLastPathSegment());
                 }
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -810,8 +801,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     }
 
-    private void sendImage(@NonNull ChatMessage chatMessage, @NonNull String imagePathName) {
+    private void sendImage(@NonNull int msgId, @NonNull String imagePathName) {
+        /*chatMessage.setImagePath(imagePathName);
+        sendChatMessage(chatMessage);*/
+
+        String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+        long timestamp = System.currentTimeMillis();
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setType(Constants.IMAGE);
+        chatMessage.setTime(timestamp);
         chatMessage.setImagePath(imagePathName);
+        chatMessage.setSenderID(userId);
+        chatMessage.setMsgID(msgId);
         sendChatMessage(chatMessage);
     }
 
