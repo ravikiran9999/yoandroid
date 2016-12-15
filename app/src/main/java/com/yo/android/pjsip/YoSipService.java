@@ -88,6 +88,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private static final String TAG = "YoSipService";
     public static final int DISCONNECT_IF_NO_ANSWER = 60 * 1000;
+    public static final int DELAY_IN_AUDIO_START = 5 * 1000;
+
     private boolean created;
 
     private MyApp myApp;
@@ -143,7 +145,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private Uri mRingtoneUri;
     Ringtone ringtone;
 
-    private boolean isMusicActivite;
+    private boolean isPlayingAudio = false;
 
     private int callType = -1;
     private String phone;
@@ -257,11 +259,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         /* Incoming call */
         CallOpParam prm = new CallOpParam();
             /* Only one call at anytime */
-        AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if (mAudioManager.isMusicActive()) {
-            isMusicActivite = true;
-            Util.sendMediaButton(this, KeyEvent.KEYCODE_MEDIA_PAUSE);
-        }
+        pausePlayingAudio();
         callType = CallLog.Calls.INCOMING_TYPE;
         // if user is already in yo call or if any default phone calls it should show missed call.
         if (currentCall != null || PhoneStateReceiver.isDefaultCall) {
@@ -296,6 +294,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             sipCallState.setMobileNumber(getPhoneNumber(call.getInfo().getRemoteUri()));
         } catch (Exception e) {
             mLog.w(TAG, e);
+        }
+    }
+
+    private void pausePlayingAudio() {
+        AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        isPlayingAudio = mAudioManager.isMusicActive();
+        if (isPlayingAudio) {
+            Util.sendMediaButton(this, KeyEvent.KEYCODE_MEDIA_PAUSE);
         }
     }
 
@@ -425,9 +431,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private void callDisconnected() {
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
-        if (isMusicActivite) {
-            Util.sendMediaButton(this, KeyEvent.KEYCODE_MEDIA_PLAY);
-        }
+        playPausedAudio();
         mediaManager.setAudioMode(AudioManager.MODE_NORMAL);
         currentCall = null;
         stopRingtone();
@@ -449,6 +453,18 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState = new SipCallState();
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.sendBroadcast(new Intent(UserAgent.ACTION_CALL_END));
+    }
+
+    private void playPausedAudio() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isPlayingAudio) {
+                    //previously playing true before attend the call
+                    Util.sendMediaButton(YoSipService.this, KeyEvent.KEYCODE_MEDIA_PLAY);
+                }
+            }
+        }, DELAY_IN_AUDIO_START);
     }
 
     @Override
@@ -542,6 +558,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             MyCall call = new MyCall(myAccount, -1);
             CallOpParam prm = new CallOpParam(true);
             try {
+                pausePlayingAudio();
                 call.isActive(finalUri, prm);
                 call.makeCall(finalUri, prm);
 
