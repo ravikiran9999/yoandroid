@@ -146,6 +146,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         try {
             if (appContactsListAdapter.temp != null && !appContactsListAdapter.temp.isEmpty()) {
                 contact = appContactsListAdapter.temp.get(position); // selected contact on performing search
+                appContactsListAdapter.temp.clear();
             } else {
                 contact = (Contact) listView.getItemAtPosition(position);
             }
