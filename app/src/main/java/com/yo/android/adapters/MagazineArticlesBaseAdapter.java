@@ -549,7 +549,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                         intent.putExtra("Topic", data);
                         intent.putExtra("Position", position);
-                        ((Activity) context).startActivityForResult(intent, 60);
+                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1170,7 +1170,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                         intent.putExtra("Topic", data);
                         intent.putExtra("Position", position);
-                        ((Activity) context).startActivityForResult(intent, 60);
+                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1472,7 +1472,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                         intent.putExtra("Topic", data);
                         intent.putExtra("Position", position);
-                        ((Activity) context).startActivityForResult(intent, 60);
+                        intent.putExtra("ArticlePlacement", "left");
+                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1797,7 +1798,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                         intent.putExtra("Topic", data);
                         intent.putExtra("Position", position);
-                        ((Activity) context).startActivityForResult(intent, 60);
+                        intent.putExtra("ArticlePlacement", "right");
+                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1966,9 +1968,18 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private TextView articleSummaryRight;
     }
 
-    public void updateTopic(boolean isFollowing, Articles topic, int position) {
-        items.remove(position);
-        items.add(position, topic);
+    public void updateTopic(boolean isFollowing, Articles topic, int position, String articlePlace) {
+        /*items.remove(position);
+        items.add(position, topic);*/
+
+        if(TextUtils.isEmpty(articlePlace)) {
+            items.remove(position);
+            items.add(position, topic);
+        } else if("left".equals(articlePlace)) {
+            secondArticle = topic;
+        } else if("right".equals(articlePlace)) {
+            thirdArticle = topic;
+        }
 
         for (ListIterator<Articles> it = items.listIterator(); it.hasNext();) {
             Articles top = it.next();

@@ -139,7 +139,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 Articles topic = data.getParcelableExtra("UpdatedTopic");
                 int pos = data.getIntExtra("Pos", 0);
                 boolean isTopicFollowing = Boolean.valueOf(topic.getTopicFollowing());
-                myBaseAdapter.updateTopic(isTopicFollowing, topic, pos);
+                String articlePlace = data.getStringExtra("ArticlePlace");
+                myBaseAdapter.updateTopic(isTopicFollowing, topic, pos,articlePlace);
             }
 
         } else if (requestCode == 500 && resultCode == getActivity().RESULT_OK) {
@@ -1524,6 +1525,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         List<Articles> articlesList = myBaseAdapter.getAllItems();
         //List<Articles> unreadArticles = magazineDashboardHelper.removeReadIds(articlesList, this, preferenceEndPoint);
         List<Articles> unreadArticles = new ArrayList<>();
+        List<String> readIdsList = new ArrayList<>();
+        List<String> unreadArticleIds = new ArrayList<>();
         if(currentFlippedPosition>0) {
             List<String> readIds = new ArrayList<>();
             if (currentFlippedPosition == 1) {
@@ -1545,12 +1548,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
 
 
-            List<String> readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
+            readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
             List<String> allArticlesIds = new ArrayList<>();
             for (Articles articles : articlesList) {
                 allArticlesIds.add(articles.getId());
             }
-            List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
+            unreadArticleIds = new ArrayList<>(allArticlesIds);
             unreadArticleIds.removeAll(readIdsList);
 
             for(Articles unreadArt: articlesList) {
@@ -1613,6 +1616,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
 
             myBaseAdapter.addItems(allArticles);
+
+            //magazineDashboardHelper.getMoreDashboardArticles(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds);
+
         }
 
     }
