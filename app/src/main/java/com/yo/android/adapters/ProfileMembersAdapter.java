@@ -31,7 +31,8 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
     @Override
     public void bindView(int position, ProfileMembersViewHolder holder, GroupMembers item) {
         String fullName = item.getUserProfile().getFullName();
-        String mobileNumber = item.getUserProfile().getMobileNumber();
+        String mobileNumber = item.getUserProfile().getPhoneNumber();
+        String countryCode = "+" + item.getUserProfile().getCountryCode();
         if (item.getUserProfile() != null && fullName != null && !fullName.replaceAll("\\s+", "").equalsIgnoreCase(mobileNumber)) {
             holder.getName().setText(fullName);
             holder.getName().setVisibility(View.VISIBLE);
@@ -39,7 +40,7 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
             holder.getName().setVisibility(View.GONE);
         }
         if (item.getUserProfile() != null && fullName != null && mobileNumber != null && !fullName.equalsIgnoreCase(mContext.getString(R.string.you))) {
-            holder.getContactNumber().setText(mobileNumber);
+            holder.getContactNumber().setText(countryCode.concat(mobileNumber));
             holder.getContactNumber().setVisibility(View.VISIBLE);
         } else {
             holder.getContactNumber().setVisibility(View.GONE);
