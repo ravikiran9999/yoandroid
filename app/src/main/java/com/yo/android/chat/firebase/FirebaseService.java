@@ -226,7 +226,7 @@ public class FirebaseService extends InjectedService {
 
     private void newPushNotification(final String roomId, final ChatMessage chatMessage) {
         if (notificationList != null && notificationList.size() == 0 && chatMessage.getImagePath() != null) {
-            ImageLoader.updateImage(chatMessage, new ImageLoader.ImageDownloadListener() {
+            ImageLoader.updateImage(context, chatMessage, new ImageLoader.ImageDownloadListener() {
 
                 @Override
                 public void onDownlaoded(File file) {

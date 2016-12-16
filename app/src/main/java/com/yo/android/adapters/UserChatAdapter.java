@@ -184,14 +184,16 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
             if (item.getSent() == 1) {
                 img = context.getResources().getDrawable(R.drawable.sent);
-                img.setBounds(0, 0, 25, 25);
+                //img.setBounds(0, 0, 25, 25);
+                img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
                 time.setCompoundDrawablePadding(10);
 
             }
             if (item.getDeliveredTime() != 0) {
                 img = context.getResources().getDrawable(R.drawable.seen);
-                img.setBounds(0, 0, 25, 25);
+                //img.setBounds(0, 0, 25, 25);
+                img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
                 time.setCompoundDrawablePadding(10);
             }
@@ -206,14 +208,14 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         holder.getLl().setTag(holder);
         PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         LinearLayout secretChatPlaceholder = new LinearLayout(context);
-        secretChatPlaceholder.setPadding(Helper.dp(context, 2), Helper.dp(context, 2), Helper.dp(context, 2), Helper.dp(context, 2));
         //secretChatPlaceholder.setOrientation(LinearLayout.VERTICAL);
         secretChatPlaceholder.setOrientation(LinearLayout.HORIZONTAL);
         boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
 
         LinearLayout linearLayout1 = new LinearLayout(context);
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
-        linearLayout1.setPadding(4, 4, 2, 4);
+        //linearLayout1.setPadding(4, 14, 2, 14);
+        linearLayout1.setPadding(Helper.dp(context, 2), Helper.dp(context, 8), Helper.dp(context, 2), Helper.dp(context, 8));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(10, 0, 20, 0);
 
@@ -230,12 +232,13 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         RelativeLayout mainLayout = (RelativeLayout) inflater.inflate(R.layout.chat_message, null);
         TextView time = (TextView) mainLayout.findViewById(R.id.time);
-        time.setGravity(Gravity.TOP);
-        time.setTextColor(context.getResources().getColor(R.color.dark_gray));
+        //time.setGravity(Gravity.BOTTOM);
+        //time.setTextColor(context.getResources().getColor(R.color.dark_gray));
 
         RelativeLayout seenLayout = (RelativeLayout) mainLayout.findViewById(R.id.seen_layout);
         TextView sent = (TextView) mainLayout.findViewById(R.id.sent_txt);
-        sent.setGravity(Gravity.TOP);
+        //sent.setGravity(Gravity.TOP);
+        sent.setGravity(Gravity.BOTTOM);
         if (!isRTL) {
             TextView senderId = new TextView(context);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_in);
@@ -267,37 +270,42 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
                 time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-                time.setGravity(Gravity.RIGHT);
+                //time.setGravity(Gravity.RIGHT);
 
             }
         } else {
             time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
             time.setGravity(Gravity.END);
+            //time.setGravity(Gravity.BOTTOM);
             sent.setVisibility(View.VISIBLE);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
             img.setBounds(0, 4, 30, 35);
             time.setCompoundDrawables(null, null, img, null);
-            time.setCompoundDrawablePadding(10);
+            //time.setCompoundDrawablePadding(10);
             String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
             time.setText(sentText);
             if (item.getSent() == 1) {
                 img = context.getResources().getDrawable(R.drawable.sent);
-                img.setBounds(0, 0, 25, 25);
+                //img.setBounds(0, 0, 25, 25);
+                img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
-                time.setCompoundDrawablePadding(10);
+                //time.setCompoundDrawablePadding(10);
+                time.setPadding(0,4,8,10);
             }
             if (item.getDeliveredTime() != 0) {
                 img = context.getResources().getDrawable(R.drawable.seen);
-                img.setBounds(0, 0, 25, 25);
+                //img.setBounds(0, 0, 25, 25);
+                img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
-                time.setCompoundDrawablePadding(10);
+                //time.setCompoundDrawablePadding(10);
+                time.setPadding(0,4,8,10);
             }
         }
         linearLayout1.addView(emojiTextView);
 
         secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, isRTL ? 0 : 7, 0, 1, 0));
-        secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, Gravity.TOP, 5, 5, 5, 0));
+        secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, Gravity.BOTTOM, 5, 2, 5, 0));
         holder.getLl().addView(secretChatPlaceholder);
         return secretChatPlaceholder;
     }
