@@ -4,6 +4,7 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
+import com.yo.android.model.LandingArticles;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.Notification;
 import com.yo.android.model.OTPResponse;
@@ -311,6 +312,10 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/magzines/{ID}/filtered_articles.json")
         Call<MagazineArticles> getRemainingArticlesInMagAPI(@Field("access_token") String access_token, @Path("ID") String ID, @Field("article_ids[]") List<String> article_ids);
+
+        @FormUrlEncoded
+        @POST("api/articles/dashboard.json")
+        Call<LandingArticles> getDashboardArticlesAPI(@Field("access_token") String access_token, @Field("read_article_ids[]") List<String> read_article_ids, @Field("unread_article_ids[]") List<String> unread_article_ids);
     }
 
     public interface YoRefreshTokenService {

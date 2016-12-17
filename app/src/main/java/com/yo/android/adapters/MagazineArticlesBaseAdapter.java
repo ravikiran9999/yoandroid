@@ -268,20 +268,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if(cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("true");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
 
                             }
@@ -298,20 +303,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if(cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("false");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                   /* SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
                             }
                         });
@@ -335,20 +345,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if(cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("false");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
 
                             }
@@ -365,20 +380,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if(cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("true");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
                             }
                         });
@@ -529,7 +549,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                         intent.putExtra("Topic", data);
                         intent.putExtra("Position", position);
-                        ((Activity) context).startActivityForResult(intent, 60);
+                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -811,22 +831,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         if (!((BaseActivity)context).hasDestroyed()) {
                             notifyDataSetChanged();
                         }
-                        Type type1 = new TypeToken<List<Articles>>() {
-                        }.getType();
-                        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-                        String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                        List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+
+                        //String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
+
+                       List<Articles> cachedMagazinesList = getCachedMagazinesList();
+
+                        //List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
                         if(cachedMagazinesList != null) {
+                            List<Articles> tempList = cachedMagazinesList;
                             for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                    cachedMagazinesList.get(i).setLiked(data.getLiked());
+                                if (data.getId().equals(tempList.get(i).getId())) {
+                                    tempList.get(i).setLiked(data.getLiked());
                                 }
                             }
+                            cachedMagazinesList = tempList;
 
                             //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
-                            editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                            editor.commit();
+
+                            //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                            saveCachedMagazinesList(cachedMagazinesList);
                         }
                         break;
                     }
@@ -906,20 +929,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("true");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
 
                             }
@@ -936,20 +964,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("false");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
                             }
                         });
@@ -973,20 +1006,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("false");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
 
                             }
@@ -1003,20 +1041,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                               /* String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("true");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
                             }
                         });
@@ -1127,7 +1170,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                         intent.putExtra("Topic", data);
                         intent.putExtra("Position", position);
-                        ((Activity) context).startActivityForResult(intent, 60);
+                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1196,20 +1239,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                               /* String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("true");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                   /* SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
 
                             }
@@ -1226,20 +1274,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("false");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                   /* SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
                             }
                         });
@@ -1263,20 +1316,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("false");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
 
                             }
@@ -1293,20 +1351,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("true");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                   /* SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
                             }
                         });
@@ -1409,7 +1472,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                         intent.putExtra("Topic", data);
                         intent.putExtra("Position", position);
-                        ((Activity) context).startActivityForResult(intent, 60);
+                        intent.putExtra("ArticlePlacement", "left");
+                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1501,20 +1565,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                               /* String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("true");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
 
                             }
@@ -1531,20 +1600,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("false");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
                             }
                         });
@@ -1568,20 +1642,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                               /* String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("false");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                    /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
 
                             }
@@ -1598,20 +1677,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 Type type = new TypeToken<List<Articles>>() {
                                 }.getType();
                                 //String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                                /*String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                                 String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
                                     for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                            cachedMagazinesList.get(i).setLiked("true");
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
                                         }
                                     }
 
+                                    cachedMagazinesList = tempList;
+
                                     //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+                                   /* SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
                                     editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                    editor.commit();
+                                    editor.commit();*/
+                                    saveCachedMagazinesList(cachedMagazinesList);
                                 }
                             }
                         });
@@ -1714,7 +1798,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                         intent.putExtra("Topic", data);
                         intent.putExtra("Position", position);
-                        ((Activity) context).startActivityForResult(intent, 60);
+                        intent.putExtra("ArticlePlacement", "right");
+                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
                     }
                 });
             } else {
@@ -1883,9 +1968,18 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private TextView articleSummaryRight;
     }
 
-    public void updateTopic(boolean isFollowing, Articles topic, int position) {
-        items.remove(position);
-        items.add(position, topic);
+    public void updateTopic(boolean isFollowing, Articles topic, int position, String articlePlace) {
+        /*items.remove(position);
+        items.add(position, topic);*/
+
+        if(TextUtils.isEmpty(articlePlace)) {
+            items.remove(position);
+            items.add(position, topic);
+        } else if("left".equals(articlePlace)) {
+            secondArticle = topic;
+        } else if("right".equals(articlePlace)) {
+            thirdArticle = topic;
+        }
 
         for (ListIterator<Articles> it = items.listIterator(); it.hasNext();) {
             Articles top = it.next();
@@ -1933,6 +2027,50 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         getAllArticles.add(1, secondArticle);
         getAllArticles.add(2, thirdArticle);
         return getAllArticles;
+    }
+
+    private List<Articles> getCachedMagazinesList() {
+        Type type1 = new TypeToken<List<Articles>>() {
+        }.getType();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
+
+        String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("followed_cached_magazines", "");
+        String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("random_cached_magazines", "");
+
+        List<Articles> cachedMagazinesList = new ArrayList<>();
+        if(!TextUtils.isEmpty(sharedFollowedCachedMagazines)){
+            String cachedMagazines = sharedFollowedCachedMagazines;
+            List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+            cachedMagazinesList.addAll(cachedFollowedMagazinesList);
+        }
+        if(!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+            String cachedMagazines = sharedRandomCachedMagazines;
+            List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+            cachedMagazinesList.addAll(cachedRandomMagazinesList);
+        }
+
+        return cachedMagazinesList;
+    }
+
+    private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
+        List<Articles> followedTopicArticles = new ArrayList<>();
+        List<Articles> randomTopicArticles = new ArrayList<>();
+        for(Articles articles: cachedMagazinesList) {
+            if("true".equals(articles.getTopicFollowing())) {
+                followedTopicArticles.add(articles);
+            } else {
+                randomTopicArticles.add(articles);
+            }
+        }
+
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+        //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
+        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
+        editor.commit();
     }
 
 }

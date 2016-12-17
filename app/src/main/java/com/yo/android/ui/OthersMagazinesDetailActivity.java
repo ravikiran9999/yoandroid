@@ -114,6 +114,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         yoService.getArticlesOfMagazineAPI(ownMagazine.getId(), accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
+                if(response.body() != null) {
                 final String id = response.body().getId();
                 if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
                     for (int i = 0; i < response.body().getArticlesList().size(); i++) {
@@ -124,7 +125,14 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         articlesList.add(response.body().getArticlesList().get(i));
                     }
                     myBaseAdapter.addItems(articlesList);
+                }
                 } else {
+                    if(response.code() == 404) {
+                        mToastFactory.showToast(getString(R.string.magazine_not_found));
+                    } else {
+                        mToastFactory.showToast(getString(R.string.magazine_general_error));
+                    }
+
                     flipContainer.setVisibility(View.GONE);
                     if (noArticals != null) {
                         noArticals.setVisibility(View.VISIBLE);
