@@ -1158,7 +1158,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
         String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
 
-        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
             if (mProgress != null) {
                 mProgress.setVisibility(View.GONE);
             }
@@ -1375,7 +1375,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
                         List<Articles> cachedFollowedMagazinesList = new ArrayList<>();
                         List<Articles> cachedRandomMagazinesList = new ArrayList<>();
-                        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
 
                             Type type = new TypeToken<List<Articles>>() {
                             }.getType();
@@ -1487,7 +1487,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             List<Articles> cachedFollowedMagazinesList = new ArrayList<>();
             List<Articles> cachedRandomMagazinesList = new ArrayList<>();
-            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
 
                 Type type = new TypeToken<List<Articles>>() {
                 }.getType();
@@ -1608,18 +1608,68 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
             //myBaseAdapter.addItems(followedArticlesList);
             int positionToAdd = currentFlippedPosition + 10;
-            List<Articles> allArticles = myBaseAdapter.getAllItems();
-            if(allArticles.size() > positionToAdd) {
-                allArticles.addAll(positionToAdd, followedArticlesList);
+            //List<Articles> allArticles = myBaseAdapter.getAllItems();
+
+            List<Articles> unreadOtherFollowedArticles = new ArrayList<>(unreadArticles);
+            unreadOtherFollowedArticles.removeAll(followedArticlesList);
+
+            if(unreadOtherFollowedArticles.size() > positionToAdd) {
+                unreadOtherFollowedArticles.addAll(positionToAdd, followedArticlesList);
             } else {
-                allArticles.addAll(allArticles.size()-1, followedArticlesList);
+                unreadOtherFollowedArticles.addAll(unreadOtherFollowedArticles.size()-1, followedArticlesList);
             }
 
-            myBaseAdapter.addItems(allArticles);
+            myBaseAdapter.addItems(unreadOtherFollowedArticles);
 
-            //magazineDashboardHelper.getMoreDashboardArticles(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds);
+
+            magazineDashboardHelper.getMoreDashboardArticlesAfterFollow(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds, unreadOtherFollowedArticles);
 
         }
+
+    }
+
+    public void performSortingAfterFollow(List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles) {
+        List<Articles> followedTopicArticles = new ArrayList<>();
+        List<Articles> randomTopicArticles = new ArrayList<>();
+        for(Articles articles: totalArticles) {
+            if("true".equals(articles.getTopicFollowing())) {
+                followedTopicArticles.add(articles);
+            } else {
+                randomTopicArticles.add(articles);
+            }
+        }
+
+        List<Articles> totalOtherUnreadFollowedArticles = new ArrayList<>();
+        totalOtherUnreadFollowedArticles.addAll(followedTopicArticles);
+        totalOtherUnreadFollowedArticles.addAll(unreadOtherFollowedArticles);
+
+        List<Articles> emptyUpdatedArticles = new ArrayList<>();
+        List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+        for(Articles updatedArticles: totalOtherUnreadFollowedArticles) {
+            if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                notEmptyUpdatedArticles.add(updatedArticles);
+            } else {
+                emptyUpdatedArticles.add(updatedArticles);
+            }
+        }
+        Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+        Collections.reverse(notEmptyUpdatedArticles);
+        notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+        totalOtherUnreadFollowedArticles = notEmptyUpdatedArticles;
+
+        for(Articles a: totalOtherUnreadFollowedArticles) {
+            Log.d("MagazineFlipFragment", "The sorted followed list is " + a.getId() + " updated " + a.getUpdated());
+        }
+
+        int positionToAdd = currentFlippedPosition + 10;
+        List<Articles> allArticles = myBaseAdapter.getAllItems();
+        if(allArticles.size() > positionToAdd) {
+            allArticles.addAll(positionToAdd, totalOtherUnreadFollowedArticles);
+        } else {
+            allArticles.addAll(allArticles.size()-1, totalOtherUnreadFollowedArticles);
+        }
+
+        myBaseAdapter.addItems(allArticles);
 
     }
 
