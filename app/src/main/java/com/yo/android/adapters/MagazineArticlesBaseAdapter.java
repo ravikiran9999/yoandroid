@@ -2029,6 +2029,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         return getAllArticles;
     }
 
+    public void removeItems(List<Articles> articlesList) {
+        items.removeAll(articlesList);
+        notifyDataSetChanged();
+    }
+
     private List<Articles> getCachedMagazinesList() {
         Type type1 = new TypeToken<List<Articles>>() {
         }.getType();

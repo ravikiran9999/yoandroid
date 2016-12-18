@@ -222,7 +222,7 @@ public class MagazineDashboardHelper {
         Log.d("MagazineDashboardHelper", "After removing read_article_ids key " + readCachedIds);
     }
 
-    public void getMoreDashboardArticlesAfterFollow(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint,List<String> readArticleIds, List<String> unreadArticleIds, final List<Articles> unreadOtherFollowedArticles) {
+    public void getMoreDashboardArticlesAfterFollow(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final List<Articles> unreadOtherFollowedArticles, final List<Articles> followedArticlesList) {
         if(magazineFlipArticlesFragment != null) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
@@ -254,7 +254,7 @@ public class MagazineDashboardHelper {
 
                         removeReadIds(totalArticles, magazineFlipArticlesFragment, preferenceEndPoint);
 
-                        magazineFlipArticlesFragment.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles);
+                        magazineFlipArticlesFragment.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList);
 
                         //magazineFlipArticlesFragment.myBaseAdapter.addItemsAll(totalArticles);
                         magazineFlipArticlesFragment.handleMoreDashboardResponse(totalArticles);
