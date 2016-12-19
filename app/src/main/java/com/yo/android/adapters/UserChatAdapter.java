@@ -33,6 +33,8 @@ import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.util.List;
+
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -358,6 +360,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
     public void UpdateItem(ChatMessage message) {
+        List ss = getAllItems();
         getAllItems().add(message);
         notifyDataSetChanged();
     }

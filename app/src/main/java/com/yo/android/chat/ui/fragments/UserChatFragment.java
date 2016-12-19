@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -562,7 +564,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     chatMessageArray.add(chatMessage);
                     userChatAdapter.addItems(chatMessageArray);
                     chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
-                }
+                } /*else if(chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)){
+                    for (int i = 0; i < chatMessageArray.size(); i++) {
+                        if (chatMessageArray.get(i).getTime() == chatMessage.getTime()) {
+                            chatMessageArray.set(i, chatMessage);
+                        }
+                    }
+                }*/
             }
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
             final Firebase roomChildReference = roomReference.child(timeStp);
@@ -597,8 +605,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private void registerChildEventListener(Firebase roomReference) {
         if (!isChildEventListenerAdd) {
-            isChildEventListenerAdd = Boolean.TRUE;
-            roomReference.addChildEventListener(this);
+            //isChildEventListenerAdd = Boolean.TRUE;
+            roomReference.orderByKey().limitToLast(100).addChildEventListener(this);
             roomReference.keepSynced(true);
         }
     }
@@ -747,11 +755,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         message.setImagePath(mPartyPicUri);
         message.setTime(System.currentTimeMillis());
         message.setMsgID(msgId);
-        userChatAdapter.UpdateItem(message);
+
+        chatMessageArray.add(message);
+        userChatAdapter.addItems(chatMessageArray);
+        chatMessageHashMap.put(message.getMsgID(), chatMessageArray);
+
         if (mPartyPicUri != null) {
-            uploadImage(msgId, mPartyPicUri);
+            uploadImage(message, mPartyPicUri);
+            //uploadImage(msgId, mPartyPicUri);
         }
-        //sendChatMessage(message);
+        sendChatMessage(message);
     }
 
     /**
@@ -759,7 +772,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
      *
      * @param path
      */
-    private void uploadImage(final int messageId, final String path) {
+    private void uploadImage(final ChatMessage imageMessage, final String path) {
+    //private void uploadImage(final int messageId, final String path) {
 
         Uri file = Uri.fromFile(new File(path));
 
@@ -774,7 +788,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onFailure(@NonNull Exception e) {
                 // Handle unsuccessful uploads
-                uploadImage(messageId, path);
+                //uploadImage(messageId, path);
+                uploadImage(imageMessage, path);
                 e.printStackTrace();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -783,7 +798,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 if (downloadUrl != null) {
-                    sendImage(messageId, downloadUrl.getLastPathSegment());
+                    updateImagePath(imageMessage, downloadUrl.getLastPathSegment());
+                    //sendImage(messageId, downloadUrl.getLastPathSegment());
                 }
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -801,10 +817,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     }
 
-    private void sendImage(@NonNull int msgId, @NonNull String imagePathName) {
-        /*chatMessage.setImagePath(imagePathName);
-        sendChatMessage(chatMessage);*/
+    private void updateImagePath(@NonNull ChatMessage chatMessage, @NonNull String imagePathName) {
 
+        String timeStamp = Long.toString(chatMessage.getTime());
+        chatMessage.setImagePath(imagePathName);
+        chatMessage.setDelivered(1);
+        chatMessage.setDeliveredTime(System.currentTimeMillis());
+        Map<String, Object> updateImagePathMap = new ObjectMapper().convertValue(chatMessage, Map.class);
+        Firebase roomChildReference = roomReference.child(timeStamp);
+        roomChildReference.updateChildren(updateImagePathMap);
+    }
+
+    /*private void sendImage(@NonNull int msgId, @NonNull String imagePathName) {
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         long timestamp = System.currentTimeMillis();
         ChatMessage chatMessage = new ChatMessage();
@@ -814,7 +838,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setSenderID(userId);
         chatMessage.setMsgID(msgId);
         sendChatMessage(chatMessage);
-    }
+    }*/
 
 
     private void forwardMessage(ArrayList<ChatMessage> message) {
@@ -872,7 +896,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 }
                 userChatAdapter.addItems(chatMessageArray);
                 listView.smoothScrollToPosition(userChatAdapter.getCount());
-
 
             } catch (Exception e) {
                 e.printStackTrace();

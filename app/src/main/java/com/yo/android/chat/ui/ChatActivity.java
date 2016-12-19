@@ -264,15 +264,20 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void callUserChat(Bundle args, UserChatFragment userChatFragment) {
-        if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
-            args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
-        }
-        userChatFragment.setArguments(args);
+        try {
+            if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
+                args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
+            }
+            userChatFragment.setArguments(args);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.content, userChatFragment)
-                .commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(android.R.id.content, userChatFragment)
+                    .commitAllowingStateLoss();
+            //.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String getOppenent(@NonNull Room room) {
