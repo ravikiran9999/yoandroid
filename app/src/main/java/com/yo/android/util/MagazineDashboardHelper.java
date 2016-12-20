@@ -343,4 +343,13 @@ public class MagazineDashboardHelper {
             });
         }
     }
+
+    public void removeArticlesFromCache(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, final PreferenceEndPoint preferenceEndPoint, String key) {
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(magazineFlipArticlesFragment.getContext(), userId);
+        editor.remove(key);
+        editor.commit();
+        String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(magazineFlipArticlesFragment.getContext(), userId).getString(key, "");
+        Log.d("MagazineDashboardHelper", "After removing " + key + " key " + cachedMagazines);
+    }
 }

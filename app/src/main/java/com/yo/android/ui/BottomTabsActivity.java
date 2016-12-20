@@ -208,7 +208,10 @@ public class BottomTabsActivity extends BaseActivity {
         });
 
         if(!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
-            startServiceToFetchNewArticles();
+            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
+            if(currentHour == 0) {
+                startServiceToFetchNewArticles();
+            }
         }
 
         // firebase service
@@ -563,7 +566,7 @@ public class BottomTabsActivity extends BaseActivity {
     private void startServiceToFetchNewArticles() {
         // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
+        //cal.setTimeInMillis(System.currentTimeMillis());
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
