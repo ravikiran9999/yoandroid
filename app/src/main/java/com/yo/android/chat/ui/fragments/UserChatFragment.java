@@ -2,6 +2,8 @@ package com.yo.android.chat.ui.fragments;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,9 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -62,6 +62,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.CompressImage;
 import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
@@ -117,6 +118,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private StorageReference storageReference;
     private Firebase authReference;
     private Firebase roomReference;
+    private Query messageQuery;
     private TextView listStickeyHeader;
     private int roomExist = 0;
     private Boolean isChildEventListenerAdd = Boolean.FALSE;
@@ -132,6 +134,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String opponentImg;
     private Contact mContact;
     private int retryMessageCount = 0;
+    private PendingIntent pendingIntent;
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -167,6 +170,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         chatMessageArray = new ArrayList<>();
         setHasOptionsMenu(true);
+
+        alarmManager();
     }
 
     @Override
@@ -238,7 +243,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             roomExist = 1;
 
             roomReference = authReference.child(Constants.ROOMS).child(childRoomId).child(Constants.CHATS);
-            registerChildEventListener(roomReference);
+            messageQuery = roomReference.orderByValue().limitToLast(100); // show only last 100 items
+            //registerChildEventListener(roomReference);
+            registerChildEventListener(messageQuery);
 
             if (chatForwards != null) {
                 forwardInt = chatForwards.size() + 1;
@@ -548,6 +555,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void sendChatMessage(final ChatMessage chatMessage) {
 
         try {
+
             if (chatMessageArray == null) {
                 chatMessageArray = new ArrayList<>();
             }
@@ -564,13 +572,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     chatMessageArray.add(chatMessage);
                     userChatAdapter.addItems(chatMessageArray);
                     chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
-                } /*else if(chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)){
-                    for (int i = 0; i < chatMessageArray.size(); i++) {
-                        if (chatMessageArray.get(i).getTime() == chatMessage.getTime()) {
-                            chatMessageArray.set(i, chatMessage);
-                        }
-                    }
-                }*/
+                }
             }
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
             final Firebase roomChildReference = roomReference.child(timeStp);
@@ -603,19 +605,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
 
-    private void registerChildEventListener(Firebase roomReference) {
+    //private void registerChildEventListener(Firebase roomReference) {
+    private void registerChildEventListener(Query chatRoomReference) {
         if (!isChildEventListenerAdd) {
             //isChildEventListenerAdd = Boolean.TRUE;
-            roomReference.orderByKey().limitToLast(100).addChildEventListener(this);
-            roomReference.keepSynced(true);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (isChildEventListenerAdd) {
-            roomReference.removeEventListener(this);
+            chatRoomReference.addChildEventListener(this);
+            chatRoomReference.keepSynced(true);
         }
     }
 
@@ -756,15 +751,19 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         message.setTime(System.currentTimeMillis());
         message.setMsgID(msgId);
 
-        chatMessageArray.add(message);
-        userChatAdapter.addItems(chatMessageArray);
-        chatMessageHashMap.put(message.getMsgID(), chatMessageArray);
 
         if (mPartyPicUri != null) {
             uploadImage(message, mPartyPicUri);
             //uploadImage(msgId, mPartyPicUri);
         }
-        sendChatMessage(message);
+
+        // if network interruption is occurred
+        if (!mHelper.isConnected()) {
+            chatMessageArray.add(message);
+            userChatAdapter.addItems(chatMessageArray);
+            chatMessageHashMap.put(message.getMsgID(), chatMessageArray);
+            sendChatMessage(message);
+        }
     }
 
     /**
@@ -773,7 +772,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
      * @param path
      */
     private void uploadImage(final ChatMessage imageMessage, final String path) {
-    //private void uploadImage(final int messageId, final String path) {
+        //private void uploadImage(final int messageId, final String path) {
 
         Uri file = Uri.fromFile(new File(path));
 
@@ -788,7 +787,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onFailure(@NonNull Exception e) {
                 // Handle unsuccessful uploads
-                //uploadImage(messageId, path);
                 uploadImage(imageMessage, path);
                 e.printStackTrace();
             }
@@ -798,8 +796,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 if (downloadUrl != null) {
-                    updateImagePath(imageMessage, downloadUrl.getLastPathSegment());
-                    //sendImage(messageId, downloadUrl.getLastPathSegment());
+                    if (!mHelper.isConnected()) {
+                        updateImagePath(imageMessage, downloadUrl.getLastPathSegment());
+                    } else {
+                        sendImage(downloadUrl.getLastPathSegment());
+                    }
                 }
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -817,6 +818,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     }
 
+    /**
+     * @param chatMessage
+     * @param imagePathName update image path of existing image message
+     */
     private void updateImagePath(@NonNull ChatMessage chatMessage, @NonNull String imagePathName) {
 
         String timeStamp = Long.toString(chatMessage.getTime());
@@ -826,19 +831,28 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Map<String, Object> updateImagePathMap = new ObjectMapper().convertValue(chatMessage, Map.class);
         Firebase roomChildReference = roomReference.child(timeStamp);
         roomChildReference.updateChildren(updateImagePathMap);
+
     }
 
-    /*private void sendImage(@NonNull int msgId, @NonNull String imagePathName) {
+    private void sendImage(@NonNull String imagePathName) {
+
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         long timestamp = System.currentTimeMillis();
+        int msgId = (int) timestamp;
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setType(Constants.IMAGE);
         chatMessage.setTime(timestamp);
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
         chatMessage.setMsgID(msgId);
+        chatMessage.setRoomId(childRoomId);
+        chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+        chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
+        if (!TextUtils.isEmpty(roomType)) {
+            chatMessage.setRoomName(roomType);
+        }
         sendChatMessage(chatMessage);
-    }*/
+    }
 
 
     private void forwardMessage(ArrayList<ChatMessage> message) {
@@ -868,7 +882,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
-                listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                listView.smoothScrollToPosition(userChatAdapter.getCount() -1) ;
 
                 if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0) && getActivity() instanceof ChatActivity) {
                     long timestamp = System.currentTimeMillis();
@@ -1045,6 +1059,21 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void afterTextChanged(Editable s) {
         // after text changed
+    }
+
+    public void onEventMainThread(String action) {
+        if (action.equalsIgnoreCase(Constants.CHAT_MESSAGE_NOTIFICATION)) {
+            registerChildEventListener(messageQuery);
+        }
+    }
+
+    private void alarmManager() {
+        Intent alarmIntent = new Intent(getActivity().getApplicationContext(), FirebaseService.class);
+        pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
+        AlarmManager manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        int interval = 2*60*1000; // 10 minutes interval
+
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
     }
 }
 
