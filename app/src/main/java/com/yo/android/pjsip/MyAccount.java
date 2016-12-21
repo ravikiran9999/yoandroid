@@ -12,6 +12,7 @@ import java.util.ArrayList;
 class MyAccount extends Account {
     public ArrayList<MyBuddy> buddyList = new ArrayList<MyBuddy>();
     public AccountConfig cfg;
+    public static final long EXPIRE = 3600;
 
     MyAccount(AccountConfig config) {
         super();
@@ -21,6 +22,7 @@ class MyAccount extends Account {
     public MyBuddy addBuddy(BuddyConfig bud_cfg) {
         /* Create Buddy */
         MyBuddy bud = new MyBuddy(bud_cfg);
+
         try {
             bud.create(this, bud_cfg);
         } catch (Exception e) {

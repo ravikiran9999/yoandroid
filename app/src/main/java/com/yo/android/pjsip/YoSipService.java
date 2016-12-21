@@ -482,6 +482,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             return myAccount;
         }
         AccountConfig accCfg = new AccountConfig();
+        if (accCfg.getRegConfig() != null) {
+            accCfg.getRegConfig().setTimeoutSec(3600);
+        } else {
+            mLog.w("Reg config is null", "Registration config is null while getting from account");
+        }
         accCfg.setIdUri("sip:localhost");
         accCfg.getNatConfig().setIceEnabled(true);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);

@@ -64,6 +64,7 @@ public class TopicsDetailActivity extends BaseActivity {
     private boolean isFollowingTopic;
     private Articles topic;
     private int position;
+    private String articlePlacement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,11 @@ public class TopicsDetailActivity extends BaseActivity {
         topicFollowing = intent.getStringExtra("TopicFollowing");*/
         topic = intent.getParcelableExtra("Topic");
         position = intent.getIntExtra("Position", 0);
+        if(intent.hasExtra("ArticlePlacement")) {
+            articlePlacement = intent.getStringExtra("ArticlePlacement");
+        } else {
+            articlePlacement = "";
+        }
 
         String title = topic.getTopicName();
 
@@ -666,6 +672,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 Intent intent = new Intent();
                 intent.putExtra("UpdatedTopic", topic);
                 intent.putExtra("Pos", position);
+                intent.putExtra("ArticlePlace", articlePlacement);
                 setResult(RESULT_OK, intent);
                 super.onOptionsItemSelected(item);
                 break;
@@ -683,6 +690,7 @@ public class TopicsDetailActivity extends BaseActivity {
         Intent intent = new Intent();
         intent.putExtra("UpdatedTopic", topic);
         intent.putExtra("Pos", position);
+        intent.putExtra("ArticlePlace", articlePlacement);
         setResult(RESULT_OK, intent);
         finish();
 
