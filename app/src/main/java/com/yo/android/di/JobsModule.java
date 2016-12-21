@@ -24,3 +24,4 @@ public class JobsModule {
     FirebaseJobDispatcher provideFirebaseJobDispatcher(Context context) {
         return new FirebaseJobDispatcher(new GooglePlayDriver(context));
     }
+}

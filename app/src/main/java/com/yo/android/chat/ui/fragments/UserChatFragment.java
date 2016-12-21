@@ -571,6 +571,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
                     chatMessageArray.add(chatMessage);
                     userChatAdapter.addItems(chatMessageArray);
+                    listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
                     chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
                 }
             }
@@ -599,7 +600,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             });
 
 
-        } catch (FirebaseException | NullPointerException e) {
+        } catch (FirebaseException | NullPointerException | IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
     }
@@ -882,7 +883,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
-                listView.smoothScrollToPosition(userChatAdapter.getCount() -1) ;
+                listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
 
                 if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0) && getActivity() instanceof ChatActivity) {
                     long timestamp = System.currentTimeMillis();
@@ -1071,7 +1072,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Intent alarmIntent = new Intent(getActivity().getApplicationContext(), FirebaseService.class);
         pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        int interval = 2*60*1000; // 10 minutes interval
+        int interval = 2 * 60 * 1000; // 10 minutes interval
 
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
     }

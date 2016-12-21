@@ -134,7 +134,7 @@ public class SelectionBuilder {
                         String having, String orderBy, String limit) {
         assertTable();
         if (columns != null) mapColumns(columns);
-        Log.v(TAG, "query(columns=" + Arrays.toString(columns) + ") " + this);
+        //Log.v(TAG, "query(columns=" + Arrays.toString(columns) + ") " + this);
         return db.query(mTable, columns, getSelection(), getSelectionArgs(), groupBy, having,
                 orderBy, limit);
     }
