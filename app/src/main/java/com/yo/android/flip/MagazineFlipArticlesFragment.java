@@ -90,6 +90,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private static int currentFlippedPosition;
     private MagazineDashboardHelper magazineDashboardHelper;
     private String followedTopicId;
+    private static int articleCountThreshold = 2000;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -525,12 +526,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 if (prefTags != null) {
                     //loadArticles(null);
                     if(myBaseAdapter.getCount()>0) {
-                        if (!TextUtils.isEmpty(followedTopicId)) {
+                        //if (!TextUtils.isEmpty(followedTopicId)) {
                             if(mProgress != null) {
                                 mProgress.setVisibility(View.GONE);
                             }
                             updateArticlesAfterFollowTopic(followedTopicId);
-                        }
+                        //}
                     } else {
                         loadArticles(null);
                     }
@@ -703,6 +704,61 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (Constants.OTHERS_MAGAZINE_ACTION.equals(action) || Constants.TOPIC_NOTIFICATION_ACTION.equals(action) || Constants.TOPIC_FOLLOWING_ACTION.equals(action)) {
             //loadArticles(null);
             updateArticlesAfterFollowTopic(followedTopicId);
+        } else if(Constants.START_FETCHING_ARTICLES_ACTION.equals(action)) {
+            getReadArticleIds();
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+            if(!TextUtils.isEmpty(readCachedIds)) {
+                Type type1 = new TypeToken<List<String>>() {
+                }.getType();
+                String cachedIds = readCachedIds;
+                List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+                //if(cachedReadList.size()== 100) {
+                mLog.d("MagazineFlipArticlesFragment", "Calling service for next articles");
+                List<Articles> allArticles = myBaseAdapter.getAllItems();
+                //List<String> unreadArticleIds = new ArrayList<>();
+                if(allArticles != null) {
+                                /*for (Articles articles : allArticles) {
+                                    for (String readId : cachedReadList) {
+                                        if (!articles.getId().equals(readId)) {
+                                            unreadArticleIds.add(articles.getId());
+                                        }
+                                    }
+                                }*/
+                    List<String> allArticlesIds = new ArrayList<>();
+                    for (Articles articles : allArticles) {
+                        allArticlesIds.add(articles.getId());
+                    }
+                    List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
+                    unreadArticleIds.removeAll(cachedReadList);
+                    //getMoreDashboardArticles(cachedReadList, unreadArticleIds);
+                    //magazineDashboardHelper.getMoreDashboardArticles(this,yoService,preferenceEndPoint,cachedReadList,unreadArticleIds);
+                    updateArticlesAfterDailyService();
+                }
+
+                //}
+
+            } else {
+                List<String> cachedReadList = new ArrayList<>();
+                List<Articles> allArticles = myBaseAdapter.getAllItems();
+                //List<String> unreadArticleIds = new ArrayList<>();
+                if(allArticles != null) {
+                                /*for (Articles articles : allArticles) {
+                                    for (String readId : cachedReadList) {
+                                        if (!articles.getId().equals(readId)) {
+                                            unreadArticleIds.add(articles.getId());
+                                        }
+                                    }
+                                }*/
+                    List<String> allArticlesIds = new ArrayList<>();
+                    for (Articles articles : allArticles) {
+                        allArticlesIds.add(articles.getId());
+                    }
+                    List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
+                    //magazineDashboardHelper.getMoreDashboardArticles(this, yoService, preferenceEndPoint, cachedReadList, unreadArticleIds);
+                    updateArticlesAfterDailyService();
+                }
+            }
         }
     }
 
@@ -1034,7 +1090,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
             editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
             editor.commit();
-            currentFlippedPosition = 0;
+            //currentFlippedPosition = 0;
         }
 
     }
@@ -1158,7 +1214,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
         String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
 
-        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
             if (mProgress != null) {
                 mProgress.setVisibility(View.GONE);
             }
@@ -1375,7 +1431,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
                         List<Articles> cachedFollowedMagazinesList = new ArrayList<>();
                         List<Articles> cachedRandomMagazinesList = new ArrayList<>();
-                        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
 
                             Type type = new TypeToken<List<Articles>>() {
                             }.getType();
@@ -1432,7 +1488,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void handleDashboardResponse(List<Articles> totalArticles) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
-        flipView.flipTo(lastReadArticle);
+        if(myBaseAdapter.getCount()>0) {
+            flipView.flipTo(lastReadArticle);
+        }
 
         if(!isSearch) {
 
@@ -1457,13 +1515,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if(myBaseAdapter.getCount()>0) {
                 Random r = new Random();
                 suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
-                myBaseAdapter.getAllItems().add(suggestionsPosition,new Articles());
+                myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
                 myBaseAdapter.notifyDataSetChanged();
             }
         }
     }
 
-    public void handleMoreDashboardResponse(List<Articles> totalArticles) {
+    public void handleMoreDashboardResponse(List<Articles> totalArticles, boolean isFromFollow) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
         flipView.flipTo(lastReadArticle);
 
@@ -1487,7 +1545,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             List<Articles> cachedFollowedMagazinesList = new ArrayList<>();
             List<Articles> cachedRandomMagazinesList = new ArrayList<>();
-            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
 
                 Type type = new TypeToken<List<Articles>>() {
                 }.getType();
@@ -1509,14 +1567,16 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             editor.putString("random_cached_magazines", new Gson().toJson(cachedRandomMagazinesList));
             editor.commit();
         }
-        if (llNoArticles != null) {
-            llNoArticles.setVisibility(View.GONE);
-            flipContainer.setVisibility(View.VISIBLE);
-            if(myBaseAdapter.getCount()>0) {
-                Random r = new Random();
-                suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
-                myBaseAdapter.getAllItems().add(suggestionsPosition,new Articles());
-                myBaseAdapter.notifyDataSetChanged();
+        if(!isFromFollow) {
+            if (llNoArticles != null) {
+                llNoArticles.setVisibility(View.GONE);
+                flipContainer.setVisibility(View.VISIBLE);
+                if (myBaseAdapter.getCount() > 0) {
+                    Random r = new Random();
+                    suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                    myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
+                    myBaseAdapter.notifyDataSetChanged();
+                }
             }
         }
     }
@@ -1529,14 +1589,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         List<String> unreadArticleIds = new ArrayList<>();
         if(currentFlippedPosition>0) {
             List<String> readIds = new ArrayList<>();
-            if (currentFlippedPosition == 1) {
-                String articleId1 = myBaseAdapter.getItem(0).getId();
+            //if (currentFlippedPosition == 1) {
+                //String articleId1 = myBaseAdapter.getItem(0).getId();
                 String articleId2 = myBaseAdapter.secondArticle.getId();
                 String articleId3 = myBaseAdapter.thirdArticle.getId();
-                readIds.add(articleId1);
+                //readIds.add(articleId1);
                 readIds.add(articleId2);
                 readIds.add(articleId3);
-            }
+            //}
 
 
             Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
@@ -1565,9 +1625,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
         }
         List<Articles> followedArticlesList = new ArrayList<>();
-        for(Articles articles: unreadArticles) {
-            if(topicId.equals(articles.getTopicId())) {
-                followedArticlesList.add(articles);
+        if(!TextUtils.isEmpty(topicId)) {
+            for (Articles articles : unreadArticles) {
+                if (topicId.equals(articles.getTopicId())) {
+                    followedArticlesList.add(articles);
+                }
             }
         }
 
@@ -1607,20 +1669,350 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
             }
             //myBaseAdapter.addItems(followedArticlesList);
-            int positionToAdd = currentFlippedPosition + 10;
-            List<Articles> allArticles = myBaseAdapter.getAllItems();
-            if(allArticles.size() > positionToAdd) {
-                allArticles.addAll(positionToAdd, followedArticlesList);
-            } else {
-                allArticles.addAll(allArticles.size()-1, followedArticlesList);
+            int positionToAdd = 10;
+            //List<Articles> allArticles = myBaseAdapter.getAllItems();
+
+            List<Articles> unreadOtherArticles = new ArrayList<>(unreadArticles);
+            unreadOtherArticles.removeAll(followedArticlesList);
+
+            List<Articles> followedUnreadTopicArticles = new ArrayList<>();
+            List<Articles> randomUnreadTopicArticles = new ArrayList<>();
+
+            for(Articles articles: unreadOtherArticles) {
+                if("true".equals(articles.getTopicFollowing())) {
+                    followedUnreadTopicArticles.add(articles);
+                } else {
+                    randomUnreadTopicArticles.add(articles);
+                }
             }
 
-            myBaseAdapter.addItems(allArticles);
+            List<Articles> unreadOtherOrderedArticles = new ArrayList<>();
 
-            //magazineDashboardHelper.getMoreDashboardArticles(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds);
+            List<Articles> followedUnreadTopicArticles1 = new ArrayList<Articles>(new LinkedHashSet<Articles>(followedUnreadTopicArticles));
+            List<Articles> randomUnreadTopicArticles1 = new ArrayList<Articles>(new LinkedHashSet<Articles>(randomUnreadTopicArticles));
+
+            unreadOtherOrderedArticles.addAll(followedUnreadTopicArticles1);
+            unreadOtherOrderedArticles.addAll(randomUnreadTopicArticles1);
+
+            if(unreadOtherOrderedArticles.size() > positionToAdd) {
+                unreadOtherOrderedArticles.addAll(positionToAdd, followedArticlesList);
+            } else {
+                if(unreadOtherOrderedArticles.size()>0) {
+                    unreadOtherOrderedArticles.addAll(unreadOtherOrderedArticles.size() - 1, followedArticlesList);
+                } else {
+                    unreadOtherOrderedArticles.addAll(0, followedArticlesList);
+                }
+            }
+
+            //List<Articles> modifiedList = new ArrayList<>();
+            articlesList.removeAll(unreadOtherOrderedArticles);
+            //myBaseAdapter.addItems(articlesList);
+            myBaseAdapter.removeItems(unreadOtherOrderedArticles);
+            myBaseAdapter.addItemsAll(unreadOtherOrderedArticles);
+
+
+            magazineDashboardHelper.getMoreDashboardArticlesAfterFollow(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds, unreadOtherOrderedArticles, followedArticlesList);
 
         }
 
+    }
+
+    public void performSortingAfterFollow(List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, List<Articles> followedArticlesList) {
+        List<Articles> followedTopicArticles = new ArrayList<>();
+        List<Articles> randomTopicArticles = new ArrayList<>();
+        for(Articles articles: totalArticles) {
+            if("true".equals(articles.getTopicFollowing())) {
+                followedTopicArticles.add(articles);
+            } else {
+                randomTopicArticles.add(articles);
+            }
+        }
+
+        List<String> readIds = new ArrayList<>();
+
+        String articleId2 = myBaseAdapter.secondArticle.getId();
+        String articleId3 = myBaseAdapter.thirdArticle.getId();
+        readIds.add(articleId2);
+        readIds.add(articleId3);
+
+        for (int i = 0; i <= currentFlippedPosition; i++) {
+            String articleId = myBaseAdapter.getItem(i).getId();
+            Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+
+            readIds.add(articleId);
+        }
+
+        List<String> readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
+        List<String> allArticlesIds = new ArrayList<>();
+        List<Articles> articlesList = myBaseAdapter.getAllItems();
+        for (Articles articles : articlesList) {
+            allArticlesIds.add(articles.getId());
+        }
+        List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
+        unreadArticleIds.removeAll(readIdsList);
+
+        List<String> followedIds = new ArrayList<>();
+        for(Articles followedArticle: followedArticlesList) {
+            followedIds.add(followedArticle.getId());
+        }
+
+        unreadArticleIds.removeAll(followedIds);
+
+        List<Articles> unreadArticles = new ArrayList<>();
+        for(Articles unreadArt: articlesList) {
+            for(String unreadId: unreadArticleIds) {
+                if (unreadArt.getId().equals(unreadId)) {
+                    unreadArticles.add(unreadArt);
+                }
+            }
+        }
+
+        List<Articles> followedUnreadTopicArticles = new ArrayList<>();
+        List<Articles> randomUnreadTopicArticles = new ArrayList<>();
+        for(Articles articles: unreadArticles) {
+            if("true".equals(articles.getTopicFollowing())) {
+                followedUnreadTopicArticles.add(articles);
+            } else {
+                randomUnreadTopicArticles.add(articles);
+            }
+        }
+
+        List<Articles> totalOtherUnreadArticles = new ArrayList<>();
+
+        List<Articles> followedUnreadTopicArticles1 = new ArrayList<Articles>(new LinkedHashSet<Articles>(followedUnreadTopicArticles));
+        List<Articles> randomUnreadTopicArticles1 = new ArrayList<Articles>(new LinkedHashSet<Articles>(randomUnreadTopicArticles));
+
+        totalOtherUnreadArticles.addAll(followedUnreadTopicArticles1);
+        totalOtherUnreadArticles.addAll(randomUnreadTopicArticles1);
+
+       /* List<Articles> emptyUpdatedArticles = new ArrayList<>();
+        List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+        for(Articles updatedArticles: totalOtherUnreadFollowedArticles) {
+            if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                notEmptyUpdatedArticles.add(updatedArticles);
+            } else {
+                emptyUpdatedArticles.add(updatedArticles);
+            }
+        }
+        Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+        Collections.reverse(notEmptyUpdatedArticles);
+        notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+        totalOtherUnreadFollowedArticles = notEmptyUpdatedArticles;
+
+        for(Articles a: totalOtherUnreadFollowedArticles) {
+            Log.d("MagazineFlipFragment", "The sorted followed list is " + a.getId() + " updated " + a.getUpdated());
+        }*/
+
+        int positionToAdd = 10;
+
+        if(totalOtherUnreadArticles.size() > positionToAdd) {
+            totalOtherUnreadArticles.addAll(positionToAdd, followedTopicArticles);
+        } else {
+            totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size()-1, followedTopicArticles);
+        }
+
+        //myBaseAdapter.addItems(totalOtherUnreadArticles);
+
+        articlesList.removeAll(totalOtherUnreadArticles);
+        //myBaseAdapter.addItems(articlesList);
+        myBaseAdapter.removeItems(totalOtherUnreadArticles);
+        myBaseAdapter.addItemsAll(totalOtherUnreadArticles);
+    }
+
+    public void updateArticlesAfterDailyService() {
+        List<Articles> articlesList = myBaseAdapter.getAllItems();
+        //List<Articles> unreadArticles = magazineDashboardHelper.removeReadIds(articlesList, this, preferenceEndPoint);
+        List<Articles> unreadArticles = new ArrayList<>();
+        List<String> readIdsList = new ArrayList<>();
+        List<String> unreadArticleIds = new ArrayList<>();
+        if(currentFlippedPosition>0) {
+            List<String> readIds = new ArrayList<>();
+            //if (currentFlippedPosition == 1) {
+            //String articleId1 = myBaseAdapter.getItem(0).getId();
+            String articleId2 = myBaseAdapter.secondArticle.getId();
+            String articleId3 = myBaseAdapter.thirdArticle.getId();
+            //readIds.add(articleId1);
+            readIds.add(articleId2);
+            readIds.add(articleId3);
+            //}
+
+
+            Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
+            for (int i = 0; i <= currentFlippedPosition; i++) {
+                String articleId = myBaseAdapter.getItem(i).getId();
+                Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+
+                readIds.add(articleId);
+            }
+
+
+            readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
+            List<String> allArticlesIds = new ArrayList<>();
+            for (Articles articles : articlesList) {
+                allArticlesIds.add(articles.getId());
+            }
+            unreadArticleIds = new ArrayList<>(allArticlesIds);
+            unreadArticleIds.removeAll(readIdsList);
+
+            for(Articles unreadArt: articlesList) {
+                for(String unreadId: unreadArticleIds) {
+                    if (unreadArt.getId().equals(unreadId)) {
+                        unreadArticles.add(unreadArt);
+                    }
+                }
+            }
+        } else {
+            unreadArticles.addAll(articlesList);
+            for(Articles articles: unreadArticles) {
+                unreadArticleIds.add(articles.getId());
+            }
+        }
+
+
+            List<Articles> unreadOtherArticles = new ArrayList<>(unreadArticles);
+
+            List<Articles> followedUnreadTopicArticles = new ArrayList<>();
+            List<Articles> randomUnreadTopicArticles = new ArrayList<>();
+
+            for(Articles articles: unreadOtherArticles) {
+                if("true".equals(articles.getTopicFollowing())) {
+                    followedUnreadTopicArticles.add(articles);
+                } else {
+                    randomUnreadTopicArticles.add(articles);
+                }
+            }
+
+            List<Articles> unreadOtherOrderedArticles = new ArrayList<>();
+
+            List<Articles> followedUnreadTopicArticles1 = new ArrayList<Articles>(new LinkedHashSet<Articles>(followedUnreadTopicArticles));
+            List<Articles> randomUnreadTopicArticles1 = new ArrayList<Articles>(new LinkedHashSet<Articles>(randomUnreadTopicArticles));
+
+            unreadOtherOrderedArticles.addAll(followedUnreadTopicArticles1);
+            unreadOtherOrderedArticles.addAll(randomUnreadTopicArticles1);
+            articlesList.removeAll(unreadOtherOrderedArticles);
+            //myBaseAdapter.addItems(articlesList);
+            myBaseAdapter.removeItems(unreadOtherOrderedArticles);
+            myBaseAdapter.addItemsAll(unreadOtherOrderedArticles);
+
+        magazineDashboardHelper.getDashboardArticlesForDailyService(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds, unreadOtherOrderedArticles);
+
+    }
+
+    public void performSortingAfterDailyService(List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles) {
+        List<Articles> followedTopicArticles = new ArrayList<>();
+        List<Articles> randomTopicArticles = new ArrayList<>();
+        for(Articles articles: totalArticles) {
+            if("true".equals(articles.getTopicFollowing())) {
+                followedTopicArticles.add(articles);
+            } else {
+                randomTopicArticles.add(articles);
+            }
+        }
+
+        List<String> readIds = new ArrayList<>();
+
+        if(myBaseAdapter.secondArticle != null) {
+            String articleId2 = myBaseAdapter.secondArticle.getId();
+            readIds.add(articleId2);
+        }
+        if(myBaseAdapter.thirdArticle != null) {
+            String articleId3 = myBaseAdapter.thirdArticle.getId();
+            readIds.add(articleId3);
+        }
+
+        if(myBaseAdapter != null) {
+            for (int i = 0; i <= currentFlippedPosition; i++) {
+                if(myBaseAdapter.getItem(i) != null) {
+                    String articleId = myBaseAdapter.getItem(i).getId();
+                    Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+
+                    readIds.add(articleId);
+                }
+            }
+        }
+
+        List<String> readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
+        List<String> allArticlesIds = new ArrayList<>();
+        List<Articles> articlesList = myBaseAdapter.getAllItems();
+        for (Articles articles : articlesList) {
+            allArticlesIds.add(articles.getId());
+        }
+        List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
+        unreadArticleIds.removeAll(readIdsList);
+
+        List<Articles> unreadArticles = new ArrayList<>();
+        for(Articles unreadArt: articlesList) {
+            for(String unreadId: unreadArticleIds) {
+                if (unreadArt.getId().equals(unreadId)) {
+                    unreadArticles.add(unreadArt);
+                }
+            }
+        }
+
+        List<Articles> followedUnreadTopicArticles = new ArrayList<>();
+        List<Articles> randomUnreadTopicArticles = new ArrayList<>();
+        for(Articles articles: unreadArticles) {
+            if("true".equals(articles.getTopicFollowing())) {
+                followedUnreadTopicArticles.add(articles);
+            } else {
+                randomUnreadTopicArticles.add(articles);
+            }
+        }
+
+        List<Articles> totalOtherUnreadArticles = new ArrayList<>();
+
+        List<Articles> followedUnreadTopicArticles1 = new ArrayList<Articles>(new LinkedHashSet<Articles>(followedUnreadTopicArticles));
+        List<Articles> randomUnreadTopicArticles1 = new ArrayList<Articles>(new LinkedHashSet<Articles>(randomUnreadTopicArticles));
+
+        totalOtherUnreadArticles.addAll(followedUnreadTopicArticles1);
+        totalOtherUnreadArticles.addAll(randomUnreadTopicArticles1);
+
+       /* List<Articles> emptyUpdatedArticles = new ArrayList<>();
+        List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+        for(Articles updatedArticles: totalOtherUnreadFollowedArticles) {
+            if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                notEmptyUpdatedArticles.add(updatedArticles);
+            } else {
+                emptyUpdatedArticles.add(updatedArticles);
+            }
+        }
+        Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+        Collections.reverse(notEmptyUpdatedArticles);
+        notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+        totalOtherUnreadFollowedArticles = notEmptyUpdatedArticles;
+
+        for(Articles a: totalOtherUnreadFollowedArticles) {
+            Log.d("MagazineFlipFragment", "The sorted followed list is " + a.getId() + " updated " + a.getUpdated());
+        }*/
+
+        int positionToAdd = 10;
+
+        if(!followedTopicArticles.isEmpty()) {
+            if (totalOtherUnreadArticles.size() > positionToAdd) {
+                totalOtherUnreadArticles.addAll(positionToAdd, followedTopicArticles);
+            } else {
+                if(totalOtherUnreadArticles.size() >0) {
+                    totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, followedTopicArticles);
+                }
+            }
+        } else {
+            if (totalOtherUnreadArticles.size() > positionToAdd) {
+                totalOtherUnreadArticles.addAll(positionToAdd, randomTopicArticles);
+            } else {
+                if(totalOtherUnreadArticles.size() >0) {
+                    totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
+                }
+            }
+        }
+
+        //myBaseAdapter.addItems(totalOtherUnreadArticles);
+
+        articlesList.removeAll(totalOtherUnreadArticles);
+        //myBaseAdapter.addItems(articlesList);
+        myBaseAdapter.removeItems(totalOtherUnreadArticles);
+        myBaseAdapter.addItemsAll(totalOtherUnreadArticles);
+
+        deleteExtraArticlesFromCache();
     }
 
     private List<Articles> getCachedMagazinesList() {
@@ -1665,6 +2057,94 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
         editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
         editor.commit();
+    }
+
+    private void deleteExtraArticlesFromCache() {
+
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+        String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+
+        List<Articles> cachedFollowedMagazinesList = new ArrayList<>();
+        List<Articles> cachedRandomMagazinesList = new ArrayList<>();
+        if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+
+            Type type = new TypeToken<List<Articles>>() {
+            }.getType();
+
+            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
+                String cachedMagazines = sharedFollowedCachedMagazines;
+                cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+            }
+            if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                String cachedMagazines = sharedRandomCachedMagazines;
+                cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type);
+            }
+
+            List<Articles> emptyUpdatedArticles = new ArrayList<>();
+            List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+            for(Articles updatedArticles: cachedFollowedMagazinesList) {
+                if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                    notEmptyUpdatedArticles.add(updatedArticles);
+                } else {
+                    emptyUpdatedArticles.add(updatedArticles);
+                }
+            }
+            Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+            //Collections.reverse(notEmptyUpdatedArticles);
+            notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+            cachedFollowedMagazinesList = notEmptyUpdatedArticles;
+
+            List<Articles> emptyUpdatedArticles1 = new ArrayList<>();
+            List<Articles> notEmptyUpdatedArticles1 = new ArrayList<>();
+            for(Articles updatedArticles: cachedRandomMagazinesList) {
+                if(!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                    notEmptyUpdatedArticles1.add(updatedArticles);
+                } else {
+                    emptyUpdatedArticles1.add(updatedArticles);
+                }
+            }
+            Collections.sort(notEmptyUpdatedArticles1, new ArticlesComparator());
+            //Collections.reverse(notEmptyUpdatedArticles1);
+            notEmptyUpdatedArticles1.addAll(emptyUpdatedArticles1);
+            cachedRandomMagazinesList = notEmptyUpdatedArticles1;
+
+//            List<Articles> totalCachedArticles = new ArrayList<>();
+//            totalCachedArticles.addAll(cachedFollowedMagazinesList);
+//            totalCachedArticles.addAll(cachedRandomMagazinesList);
+
+            int totalCachedSize = cachedFollowedMagazinesList.size() + cachedRandomMagazinesList.size();
+
+            if(totalCachedSize > articleCountThreshold) {
+                int extraArticlesCount = totalCachedSize - articleCountThreshold;
+                int cachedRandomSize = cachedRandomMagazinesList.size();
+                int cachedFollowedSize = cachedFollowedMagazinesList.size();
+                    if(cachedRandomSize <= extraArticlesCount) {
+                        //Delete all the random articles
+                        magazineDashboardHelper.removeArticlesFromCache(this, preferenceEndPoint, "random_cached_magazines");
+                        // Then get the remaining articles count after deleting the random articles
+                        int remainingArticlesCount = extraArticlesCount - cachedRandomSize;
+                        // Move to followed articles list
+                        if(cachedFollowedSize <= remainingArticlesCount) {
+                          // Delete all the followed articles
+                            magazineDashboardHelper.removeArticlesFromCache(this, preferenceEndPoint, "followed_cached_magazines");
+                        } else {
+                        // Delete the articles equal to the remaining articles count
+                            cachedFollowedMagazinesList.subList(0, remainingArticlesCount).clear();
+                            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+                            editor.putString("followed_cached_magazines", new Gson().toJson(cachedFollowedMagazinesList));
+                            editor.commit();
+                        }
+                    } else {
+                        // Delete the articles equal to the extra articles count
+                        cachedRandomMagazinesList.subList(0, extraArticlesCount).clear();
+                        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+                        editor.putString("random_cached_magazines", new Gson().toJson(cachedRandomMagazinesList));
+                        editor.commit();
+                    }
+            }
+        }
+
     }
 
 }

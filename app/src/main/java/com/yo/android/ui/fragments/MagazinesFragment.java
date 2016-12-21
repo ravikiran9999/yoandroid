@@ -497,6 +497,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }*/
 
                 preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                if(followedTopicsIdsList.isEmpty()) {
+                 mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                }
             }
 
             @Override
