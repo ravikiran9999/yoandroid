@@ -12,11 +12,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -47,6 +49,7 @@ import retrofit2.Response;
  */
 public class ChatActivity extends BaseActivity {
 
+    private static final String TAG = "ChatActivity";
     private String opponent;
     private String mOpponentImg;
     private String title;
@@ -101,7 +104,7 @@ public class ChatActivity extends BaseActivity {
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
             Util.cancelAllNotification(this);
-            callUserChat(args,userChatFragment);
+            callUserChat(args, userChatFragment);
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             final String mContactId = null;
             final Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
@@ -121,7 +124,7 @@ public class ChatActivity extends BaseActivity {
                             contact.setId(response.body().getId());
                             args.putString(Constants.OPPONENT_ID, response.body().getId());
                             args.putParcelable(Constants.CONTACT, contact);
-                            callUserChat(args,userChatFragment);
+                            callUserChat(args, userChatFragment);
                         }
 
                         @Override
@@ -135,7 +138,7 @@ public class ChatActivity extends BaseActivity {
                     String contactId = contact.getId() == null ? mContact.getId() : contact.getId();
                     args.putString(Constants.OPPONENT_ID, contactId);
                     args.putParcelable(Constants.CONTACT, contact);
-                    callUserChat(args,userChatFragment);
+                    callUserChat(args, userChatFragment);
                 }
 
 
@@ -151,14 +154,18 @@ public class ChatActivity extends BaseActivity {
             if (getIntent().hasExtra(Constants.VOX_USER_NAME)) {
 
                 opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
-                args.putString(Constants.CHAT_ROOM_ID, getIntent().getStringExtra(Constants.CHAT_ROOM_ID));
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             }
-
+            String chatRoomId = getIntent().getStringExtra(Constants.CHAT_ROOM_ID);
+            if (chatRoomId != null && !TextUtils.isEmpty(chatRoomId)) {
+                args.putString(Constants.CHAT_ROOM_ID, chatRoomId);
+            } else {
+                Log.i(TAG, getString(R.string.chat_room_id_error));
+            }
             if (getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER) != null) {
                 args.putString(Constants.TYPE, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
             }
-            callUserChat(args,userChatFragment);
+            callUserChat(args, userChatFragment);
         }
 
 
@@ -257,15 +264,20 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void callUserChat(Bundle args, UserChatFragment userChatFragment) {
-        if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
-            args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
-        }
-        userChatFragment.setArguments(args);
+        try {
+            if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
+                args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
+            }
+            userChatFragment.setArguments(args);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.content, userChatFragment)
-                .commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(android.R.id.content, userChatFragment)
+                    .commitAllowingStateLoss();
+            //.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String getOppenent(@NonNull Room room) {

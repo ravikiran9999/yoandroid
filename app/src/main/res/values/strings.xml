@@ -300,4 +300,7 @@
 
     <string name="magazine_not_found">Magazine not found</string>
     <string name="magazine_general_error">Magazine Error</string>
+
+    <string name="chat_room_id_error">Chat room doesnt exist </string>
+    <string name="room_id_not_created">Check your internet connection and try again </string>
 </resources>

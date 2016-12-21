@@ -24,27 +24,24 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 import com.yo.android.BuildConfig;
 import com.yo.android.model.ChatMessage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Created by rajesh on 1/10/16.
  */
 public class ImageLoader {
+
     public interface ImageDownloadListener {
         public void onDownlaoded(File file);
     }
 
     public static void updateImage(final Context context, final ChatMessage item, final ImageView imageView1, final ProgressBar progressBar) {
-        updateImage(item, new ImageDownloadListener() {
+        updateImage(context, item, new ImageDownloadListener() {
 
             @Override
             public void onDownlaoded(File file) {
@@ -56,7 +53,7 @@ public class ImageLoader {
         });
     }
 
-    public static void updateImage(final ChatMessage item, final ImageDownloadListener listener) {
+    public static void updateImage(final Context mContext, final ChatMessage item, final ImageDownloadListener listener) {
         File file = new File(item.getImagePath());
         if (file != null && !file.exists()) {
             file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
@@ -66,7 +63,7 @@ public class ImageLoader {
         } else {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
-            StorageReference imageRef = storageRef.child(item.getImagePath());
+            final StorageReference imageRef = storageRef.child(item.getImagePath());
             final File finalFile = file;
             imageRef.getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
@@ -77,7 +74,8 @@ public class ImageLoader {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    listener.onDownlaoded(null);
+                    //listener.onDownlaoded(null);
+                    //Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             });
@@ -139,8 +137,9 @@ public class ImageLoader {
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             height = maxWidth;
         } else {
-        height = (int) (height / ratio);
+            height = (int) (height / ratio);
         }
+
         width = maxWidth;
         Glide.with(context)
                 .load(file)

@@ -27,6 +27,7 @@ public class FetchNewArticlesService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("FetchNewArticlesService", "FetchNewArticlesService Started");
         preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
+        de.greenrobot.event.EventBus.getDefault().post(Constants.START_FETCHING_ARTICLES_ACTION);
         return START_STICKY;
     }
 

@@ -2024,9 +2024,18 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     public List<Articles> getAllItems() {
         getAllArticles = new ArrayList<>(items);
-        getAllArticles.add(1, secondArticle);
-        getAllArticles.add(2, thirdArticle);
+        if(getAllArticles.size()>=2) {
+            getAllArticles.add(1, secondArticle);
+        }
+        if(getAllArticles.size()>=3) {
+            getAllArticles.add(2, thirdArticle);
+        }
         return getAllArticles;
+    }
+
+    public void removeItems(List<Articles> articlesList) {
+        items.removeAll(articlesList);
+        notifyDataSetChanged();
     }
 
     private List<Articles> getCachedMagazinesList() {

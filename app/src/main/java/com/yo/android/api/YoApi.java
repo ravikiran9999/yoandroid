@@ -154,6 +154,9 @@ public class YoApi {
         @GET("api/user.json")
         Call<List<FindPeople>> getFindPeopleAPI(@Query("access_token") String access_token, @Query("page") int page, @Query("limit") int limit);
 
+        @GET("api/user.json")
+        Call<List<FindPeople>> getRepresentativePeopleAPI(@Query("access_token") String access_token, @Query("page") int page, @Query("limit") int limit, @Query("transferBalance") boolean transferBalance);
+
         @GET("api/user/followers.json")
         Call<List<FindPeople>> getFollowersAPI(@Query("access_token") String access_token);
 
