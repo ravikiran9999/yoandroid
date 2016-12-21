@@ -92,7 +92,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         }
 
         if (item.isImages()) {
-            holder.getChat().setText(mContext.getResources().getString(R.string.image));
+            holder.getChat().setText(mContext.getResources().getString(R.string.photo));
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
         } else if (!TextUtils.isEmpty(item.getLastChat())) {
             holder.getChat().setText(item.getLastChat());

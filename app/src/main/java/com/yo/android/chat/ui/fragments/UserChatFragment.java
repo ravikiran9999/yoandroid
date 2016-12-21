@@ -910,7 +910,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     }
                 }
                 userChatAdapter.addItems(chatMessageArray);
-                listView.smoothScrollToPosition(userChatAdapter.getCount());
+                listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -921,6 +921,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
         // this method will be triggered on child removed
+        try {
+            ChatMessage removedChatMessage = dataSnapshot.getValue(ChatMessage.class);
+            userChatAdapter.removeItem(removedChatMessage);
+            chatMessageArray.remove(removedChatMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
