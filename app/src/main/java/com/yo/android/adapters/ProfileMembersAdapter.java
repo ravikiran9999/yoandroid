@@ -33,14 +33,17 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
         String fullName = item.getUserProfile().getFullName();
         String mobileNumber = item.getUserProfile().getPhoneNumber();
         String countryCode = "+" + item.getUserProfile().getCountryCode();
+        String fullPhoneNumber = countryCode.concat(mobileNumber);
+
         if (item.getUserProfile() != null && fullName != null && !fullName.replaceAll("\\s+", "").equalsIgnoreCase(mobileNumber)) {
+
             holder.getName().setText(fullName);
             holder.getName().setVisibility(View.VISIBLE);
         } else {
             holder.getName().setVisibility(View.GONE);
         }
-        if (item.getUserProfile() != null && fullName != null && mobileNumber != null && !fullName.equalsIgnoreCase(mContext.getString(R.string.you))) {
-            holder.getContactNumber().setText(countryCode.concat(mobileNumber));
+        if (item.getUserProfile() != null && fullName != null && mobileNumber != null && !fullName.equalsIgnoreCase(mContext.getString(R.string.you)) && !fullName.replaceAll("\\s+", "").equalsIgnoreCase(fullPhoneNumber)) {
+            holder.getContactNumber().setText(fullPhoneNumber);
             holder.getContactNumber().setVisibility(View.VISIBLE);
         } else {
             holder.getContactNumber().setVisibility(View.GONE);

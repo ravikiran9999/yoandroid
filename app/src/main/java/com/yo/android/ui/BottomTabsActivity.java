@@ -214,8 +214,6 @@ public class BottomTabsActivity extends BaseActivity {
         // firebase service
 
         if (myServiceConnection != null && !myServiceConnection.isServiceConnection()) {
-            Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
-            startService(intent);
             //bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
         }
 
@@ -553,6 +551,10 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
+        startService(intent);
+
         if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) == 0) {
             notificationCount.setVisibility(View.GONE);
         } else if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) > 0) {

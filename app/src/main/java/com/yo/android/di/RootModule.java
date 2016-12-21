@@ -9,6 +9,7 @@ import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.ListenerJobService;
 import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
@@ -196,12 +197,14 @@ import dagger.Provides;
                 UserChatAdapter.class,
                 Util.class,
                 FetchNewArticlesService.class,
+                ListenerJobService.class,
         },
         includes = {
                 AppModule.class,
                 SharedPreferencesModule.class,
                 NetWorkModule.class,
-                AwsModule.class
+                AwsModule.class,
+                JobsModule.class
         }
 )
 
