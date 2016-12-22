@@ -9,14 +9,18 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.view.MenuItem;
 
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.Job.Builder;
+import com.firebase.jobdispatcher.Trigger;
 import com.orion.android.common.util.ResourcesHelper;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.firebase.FirebaseService;
+import com.yo.android.chat.firebase.ListenerJobService;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ParentActivity;
 import com.yo.android.di.AwsLogsCallBack;
-import com.yo.android.util.Constants;
+import com.yo.android.di.JobsModule;
 import com.yo.android.vox.VoxFactory;
 
 import javax.inject.Inject;
@@ -40,18 +44,22 @@ public class BaseActivity extends ParentActivity {
     @Inject
     MyServiceConnection myServiceConnection;
 
+    @Inject
+    FirebaseJobDispatcher firebaseJobDispatcher;
     private boolean enableBack;
 
     private boolean isDestroyed;
+    //private FirebaseJobDispatcher firebaseJobDispatcher;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mAwsLogsCallBack.onCalled(getBaseContext(), getIntent());
-        Intent intent = new Intent(this, FirebaseService.class);
-        startService(intent);
-
+        /*Intent intent = new Intent(this, FirebaseService.class);
+        startService(intent);*/
+        //firebaseJobDispatcher();
     }
 
     protected void enableBack() {
@@ -110,5 +118,20 @@ public class BaseActivity extends ParentActivity {
     private int getNotificationIcon() {
         boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
         return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
+    }
+
+    private void firebaseJobDispatcher() {
+        try {
+            Builder builder = firebaseJobDispatcher.newJobBuilder()
+                    .setTag("ListenerJobService")
+                    .setRecurring(true)
+                    .setService(ListenerJobService.class)
+                    .setReplaceCurrent(false)
+                    .setConstraints(Constraint.ON_ANY_NETWORK)
+                    .setTrigger(Trigger.executionWindow(0, 60));
+            firebaseJobDispatcher.mustSchedule(builder.build());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

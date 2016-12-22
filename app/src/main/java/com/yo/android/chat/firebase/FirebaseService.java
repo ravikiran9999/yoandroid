@@ -1,15 +1,11 @@
 package com.yo.android.chat.firebase;
 
 import android.app.ActivityManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,6 +14,8 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+
+import com.firebase.client.Query;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -34,11 +32,7 @@ import com.yo.android.model.NotificationCountReset;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -47,18 +41,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static android.content.ContentValues.TAG;
 
 public class FirebaseService extends InjectedService {
 
     private static String TAG = "BoundService";
-    private IBinder mBinder = new MyBinder();
     private Firebase authReference;
+    private Firebase roomReference;
+    private ChildEventListener mChildEventListener;
+    private ChildEventListener childEventListener;
+    private Query chatMessageQuery;
     private int messageCount;
     private Context context;
     private List<UserData> notificationList = new ArrayList<>();
@@ -75,6 +66,7 @@ public class FirebaseService extends InjectedService {
 
     private boolean isRunning = false;
     private int initRoomCount;
+    private int count;
 
     @Inject
     @Named("login")
@@ -88,14 +80,16 @@ public class FirebaseService extends InjectedService {
         context = this;
         authReference = new Firebase(BuildConfig.FIREBASE_URL);
         isRunning = true;
-
         EventBus.getDefault().register(this);
+        count = 0;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (isRunning) {
+        //if (isRunning && count == 0) {
+        if (isRunning ) {
+            //count = 1;
             Log.i(TAG, "Service running");
             FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                 @Override
@@ -106,6 +100,7 @@ public class FirebaseService extends InjectedService {
                 @Override
                 public void onFailed() {
                     Log.i(TAG, "Failed FirebaseAuthToken");
+                    Toast.makeText(context, "Failed FirebaseAuthToken", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -114,25 +109,13 @@ public class FirebaseService extends InjectedService {
 
     @Override
     public IBinder onBind(Intent intent) {
-        //return mBinder;
         return null;
     }
-
-    /*@Override
-    public void onRebind(Intent intent) {
-        super.onRebind(intent);
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        return true;
-    }*/
-
 
     private void getAllRooms() {
         authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
 
-        ChildEventListener mChildEventListener = new ChildEventListener() {
+        mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 getChatMessageList(dataSnapshot.getKey());
@@ -161,16 +144,18 @@ public class FirebaseService extends InjectedService {
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (!firebaseUserId.isEmpty()) {
-            authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addChildEventListener(mChildEventListener);
+            roomReference = authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS);
+            registerRoomListener();
         }
     }
 
+
     public void getChatMessageList(String roomId) {
         try {
-            authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-            Firebase roomReference = authReference.child(Constants.ROOMS).child(roomId).child(Constants.CHATS);
+            authReference = fireBaseHelper.authWithCustomToken(context, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+            Firebase chatRoomReference = authReference.child(Constants.ROOMS).child(roomId).child(Constants.CHATS);
 
-            ChildEventListener childEventListener = new ChildEventListener() {
+            childEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
@@ -210,17 +195,11 @@ public class FirebaseService extends InjectedService {
                     firebaseError.getMessage();
                 }
             };
-            roomReference.limitToLast(1).addChildEventListener(childEventListener);
+            chatMessageQuery = chatRoomReference.limitToLast(1);
+            registerChatMessageListener();
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public class MyBinder extends Binder {
-
-        public FirebaseService getService() {
-            return FirebaseService.this;
         }
     }
 
@@ -345,7 +324,7 @@ public class FirebaseService extends InjectedService {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        Toast.makeText(this, "FirebaseService killed", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "FirebaseService killed", Toast.LENGTH_LONG).show();
     }
 
     public void onEventMainThread(NotificationCountReset count) {
@@ -353,6 +332,18 @@ public class FirebaseService extends InjectedService {
             notificationList.clear();
             initRoomCount = 0;
             //init();
+        }
+    }
+
+    private void registerRoomListener() {
+        if (roomReference != null) {
+            roomReference.addChildEventListener(mChildEventListener);
+        }
+    }
+
+    private void registerChatMessageListener() {
+        if (chatMessageQuery != null) {
+            chatMessageQuery.addChildEventListener(childEventListener);
         }
     }
 }

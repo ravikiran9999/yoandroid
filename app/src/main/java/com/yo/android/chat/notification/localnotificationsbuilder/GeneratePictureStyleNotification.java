@@ -86,7 +86,7 @@ public class GeneratePictureStyleNotification extends AsyncTask<String, Void, Bi
         if (mContext != null && notificationBuilderObject != null) {
             Notifications notification = new Notifications();
             destination.putExtra(Constants.NOTIFICATIONS_LIST, "value");
-            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, Constants.NOTIFICATION_REQUEST_CODE, destination, PendingIntent.FLAG_UPDATE_CURRENT);
+            //PendingIntent pendingIntent = PendingIntent.getActivity(mContext, Constants.NOTIFICATION_REQUEST_CODE, destination, PendingIntent.FLAG_UPDATE_CURRENT);
             for (UserData userData : notificationList) {
                 userData.setBitmap(result);
             }

@@ -260,4 +260,63 @@ public class ChatMessage implements Parcelable {
         this.imageUrl = imageUrl;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChatMessage)) return false;
+
+        ChatMessage that = (ChatMessage) o;
+
+        if (msgID != that.msgID) return false;
+        if (status != that.status) return false;
+        if (time != that.time) return false;
+        if (readUnreadStatus != that.readUnreadStatus) return false;
+        if (delivered != that.delivered) return false;
+        if (sent != that.sent) return false;
+        if (deliveredTime != that.deliveredTime) return false;
+        if (selected != that.selected) return false;
+        if (message != null ? !message.equals(that.message) : that.message != null) return false;
+        if (senderID != null ? !senderID.equals(that.senderID) : that.senderID != null)
+            return false;
+        if (imagePath != null ? !imagePath.equals(that.imagePath) : that.imagePath != null)
+            return false;
+        if (stickeyHeader != null ? !stickeyHeader.equals(that.stickeyHeader) : that.stickeyHeader != null)
+            return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (roomId != null ? !roomId.equals(that.roomId) : that.roomId != null) return false;
+        if (imageUrl != null ? !imageUrl.equals(that.imageUrl) : that.imageUrl != null)
+            return false;
+        if (voxUserName != null ? !voxUserName.equals(that.voxUserName) : that.voxUserName != null)
+            return false;
+        if (youserId != null ? !youserId.equals(that.youserId) : that.youserId != null)
+            return false;
+        if (chatProfileUserName != null ? !chatProfileUserName.equals(that.chatProfileUserName) : that.chatProfileUserName != null)
+            return false;
+        return roomName != null ? roomName.equals(that.roomName) : that.roomName == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = msgID;
+        result = 31 * result + (message != null ? message.hashCode() : 0);
+        result = 31 * result + (senderID != null ? senderID.hashCode() : 0);
+        result = 31 * result + status;
+        result = 31 * result + (imagePath != null ? imagePath.hashCode() : 0);
+        result = 31 * result + (int) (time ^ (time >>> 32));
+        result = 31 * result + (readUnreadStatus ? 1 : 0);
+        result = 31 * result + delivered;
+        result = 31 * result + sent;
+        result = 31 * result + (int) (deliveredTime ^ (deliveredTime >>> 32));
+        result = 31 * result + (stickeyHeader != null ? stickeyHeader.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (roomId != null ? roomId.hashCode() : 0);
+        result = 31 * result + (selected ? 1 : 0);
+        result = 31 * result + (imageUrl != null ? imageUrl.hashCode() : 0);
+        result = 31 * result + (voxUserName != null ? voxUserName.hashCode() : 0);
+        result = 31 * result + (youserId != null ? youserId.hashCode() : 0);
+        result = 31 * result + (chatProfileUserName != null ? chatProfileUserName.hashCode() : 0);
+        result = 31 * result + (roomName != null ? roomName.hashCode() : 0);
+        return result;
+    }
 }
