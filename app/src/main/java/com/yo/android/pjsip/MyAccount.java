@@ -12,7 +12,6 @@ import java.util.ArrayList;
 class MyAccount extends Account {
     public ArrayList<MyBuddy> buddyList = new ArrayList<MyBuddy>();
     public AccountConfig cfg;
-    public static final long EXPIRE = 3600;
 
     MyAccount(AccountConfig config) {
         super();

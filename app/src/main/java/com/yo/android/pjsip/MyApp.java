@@ -179,6 +179,7 @@ class MyApp {
             my_cfg.accCfg.getVideoConfig().setAutoShowIncoming(true);
 
             MyAccount acc = addAcc(my_cfg.accCfg);
+
             if (acc == null)
                 continue;
 
@@ -254,6 +255,8 @@ class MyApp {
         accCfgs.clear();
         for (int i = 0; i < accList.size(); i++) {
             MyAccount acc = accList.get(i);
+
+
             MyAccountConfig my_acc_cfg = new MyAccountConfig();
             my_acc_cfg.accCfg = acc.cfg;
 

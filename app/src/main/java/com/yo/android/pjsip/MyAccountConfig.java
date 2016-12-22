@@ -14,9 +14,7 @@ class MyAccountConfig {
         try {
             ContainerNode acc_node = node.readContainer("Account");
             accCfg.readObject(acc_node);
-            if (accCfg.getRegConfig() != null) {
-                accCfg.getRegConfig().setTimeoutSec(MyAccount.EXPIRE);
-            }
+
             ContainerNode buddies_node = acc_node.readArray("buddies");
             buddyCfgs.clear();
             while (buddies_node.hasUnread()) {
