@@ -524,11 +524,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setSent(0); // message sent 0, read 1
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
-        chatMessage.setRoomId(childRoomId);
-        //chatMessage.setChatProfileUserName(preferenceEndPoint.getStringPreference(Constants.USER_NAME));
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
-        //chatMessage.setMsgID(message.hashCode());
         chatMessage.setMsgID(msgId);
         if (!TextUtils.isEmpty(roomType)) {
             chatMessage.setRoomName(roomType);
@@ -925,6 +922,20 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             ChatMessage removedChatMessage = dataSnapshot.getValue(ChatMessage.class);
             userChatAdapter.removeItem(removedChatMessage);
             chatMessageArray.remove(removedChatMessage);
+            if (removedChatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
+                StorageReference imageReference = storageReference.child(removedChatMessage.getImagePath());
+                imageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // File deleted successfully
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Uh-oh, an error occurred!
+                    }
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -973,13 +984,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         roomCreationProgress = 0;
                         roomReference = authReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
                         registerChildEventListener(roomReference);
-                        String roomId = room.getFirebaseRoomId();
+                        childRoomId = room.getFirebaseRoomId();
                         if (chatForwards != null) {
                             receiveForward(chatForwards);
-                        } else if (chatMessage != null && roomId != null && !TextUtils.isEmpty(roomId)) {
-
-                            chatMessage.setRoomId(roomId);
-                            chatMessage.setVoxUserName(room.getVoxUserName());
+                        } else if (chatMessage != null && childRoomId != null && !TextUtils.isEmpty(childRoomId)) {
+                            chatMessage.setRoomId(childRoomId);
                             sendChatMessage(chatMessage);
                         } else {
                             mToastFactory.showToast(getString(R.string.room_id_not_created));
