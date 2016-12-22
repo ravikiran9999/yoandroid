@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -162,26 +163,29 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     private void loadImage() {
         String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
         String localImage = preferenceEndPoint.getStringPreference(Constants.IMAGE_PATH);
-        if (!TextUtils.isEmpty(localImage)) {
-            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
-            Glide.with(getActivity()).load(new File(localImage))
-                    .dontAnimate()
-                    .placeholder(profilePic.getDrawable())
-                    .error(profilePic.getDrawable())
-                    .fitCenter()
-                    .into(profilePic);
-        } else if (!TextUtils.isEmpty(avatar)) {
-            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
-            Glide.with(getActivity()).load(avatar)
-                    .dontAnimate()
-                    .placeholder(profilePic.getDrawable())
-                    .error(profilePic.getDrawable())
-                    .fitCenter()
-                    .into(profilePic);
-        } else {
-            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
-        }
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            if (!TextUtils.isEmpty(localImage)) {
+                addOrChangePhotoText.setText(activity.getResources().getString(R.string.change_photo));
+                Glide.with(activity).load(new File(localImage))
+                        .dontAnimate()
+                        .placeholder(profilePic.getDrawable())
+                        .error(profilePic.getDrawable())
+                        .fitCenter()
+                        .into(profilePic);
+            } else if (!TextUtils.isEmpty(avatar)) {
+                addOrChangePhotoText.setText(activity.getResources().getString(R.string.change_photo));
+                Glide.with(activity).load(avatar)
+                        .dontAnimate()
+                        .placeholder(profilePic.getDrawable())
+                        .error(profilePic.getDrawable())
+                        .fitCenter()
+                        .into(profilePic);
 
+            } else {
+                addOrChangePhotoText.setText(activity.getResources().getString(R.string.add_photo));
+            }
+        }
     }
 
     //Tested and image update is working
@@ -454,9 +458,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             if (activity.getFragment() instanceof MoreFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                     //if (!isRemoved) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
                     if (popup != null) {
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {

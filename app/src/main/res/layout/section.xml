@@ -3,12 +3,12 @@
     android:id="@+id/rl_section"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeightSmall"
-    android:background="@color/bg_grey">
+    android:background="@color/white">
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/cyan"
+        android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:gravity="center_vertical"
         android:paddingTop="5dp"

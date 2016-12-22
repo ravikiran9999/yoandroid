@@ -483,7 +483,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             return myAccount;
         }
         AccountConfig accCfg = new AccountConfig();
-
+        accCfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
         accCfg.setIdUri("sip:localhost");
         accCfg.getNatConfig().setIceEnabled(true);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
@@ -506,7 +506,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (myAccount != null) {
                 configAccount(myAccount.cfg, id, registrar, proxy, username, password);
                 try {
-                    myAccount.cfg.getRegConfig().set
+                    myAccount.cfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
                     myAccount.modify(myAccount.cfg);
                 } catch (Exception e) {
                     mLog.w(TAG, e);
@@ -560,26 +560,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
         callType = CallLog.Calls.OUTGOING_TYPE;
         if (myAccount != null) {
-            try {
-                if (myAccount.getInfo() != null) {
-                    myAccount.getInfo().setRegExpiresSec(EXPIRE);
-                }
-            } catch (Exception e) {
-                mLog.e(TAG, "Failed to set expire time ");
-            }
+
             MyCall call = new MyCall(myAccount, -1);
             CallOpParam prm = new CallOpParam(true);
             try {
                 pausePlayingAudio();
                 call.isActive(finalUri, prm);
                 call.makeCall(finalUri, prm);
-                try {
-                    mLog.e(TAG, "expire time " + myAccount.getInfo().getRegExpiresSec());
-
-                } catch (Exception e) {
-                    mLog.e(TAG, "Failed to get expire time ");
-                }
-
             } catch (Exception e) {
                 mLog.w(TAG, "Exception making call " + e.getMessage());
                 call.delete();
