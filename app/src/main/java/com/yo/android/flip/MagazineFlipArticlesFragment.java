@@ -507,14 +507,15 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void update() {
         Log.d("FlipArticlesFragment", "In update() FlipArticlesFragment");
-        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+        /*if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
                 //loadArticles(null);
                 //getCachedArticles();
                 getLandingCachedArticles();
             }
-        }
+        }*/
+        getLandingCachedArticles();
     }
 
 
@@ -559,7 +560,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
 
     public void refresh() {
-        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+        /*if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
             String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
             if (prefTags != null) {
                 lastReadArticle = 0;
@@ -567,7 +568,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 //getCachedArticles();
                 getLandingCachedArticles();
             }
-        }
+        }*/
+        lastReadArticle = 0;
+        getLandingCachedArticles();
     }
 
 
