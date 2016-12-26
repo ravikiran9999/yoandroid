@@ -17,13 +17,13 @@ import butterknife.ButterKnife;
 public class ChatRoomViewHolder extends AbstractViewHolder {
 
     @Bind(R.id.tv_opponent_name)
-    protected TextView opponentName;
+    TextView opponentName;
     @Bind(R.id.tv_time_stamp)
-    protected TextView timeStamp;
+    TextView timeStamp;
     @Bind(R.id.tv_chat_message)
-    protected TextView chat;
+    TextView chat;
     @Bind(R.id.imv_chat_room_pic)
-    protected ImageView chatRoomPic;
+    ImageView chatRoomPic;
 
     public ChatRoomViewHolder(View view) {
         super(view);
