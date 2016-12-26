@@ -58,9 +58,9 @@ public class ChatActivity extends BaseActivity {
     private Contact contactfromOpponent;
     private Contact mContact;
     @Bind(R.id.progress_layout) RelativeLayout progressLayout;
-    @Bind(R.id.title_view) LinearLayout titleView;
+    /*@Bind(R.id.title_view) LinearLayout titleView;
     @Bind(R.id.tv_phone_number) TextView customTitle;
-    @Bind(R.id.imv_contact_pic) ImageView imageView;
+    @Bind(R.id.imv_contact_pic) ImageView imageView;*/
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -181,7 +181,9 @@ public class ChatActivity extends BaseActivity {
             getSupportActionBar().setDisplayShowCustomEnabled(true);
 
             View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
-            ButterKnife.bind(this, customView);
+            LinearLayout titleView = (LinearLayout) customView.findViewById(R.id.title_view);
+            TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
+            final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
 
             if (mContact != null) {
                 contactfromOpponent = mContact;
