@@ -43,7 +43,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/pick_topics"
         android:layout_above="@+id/bottom"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,7 +52,7 @@
             android:orientation="vertical">
 
             <com.cunoraz.tagview.TagView
-                android:id="@+id/tag_group"
+                android:id="@+id/tag_group_search"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginLeft="20dp"
@@ -59,6 +60,18 @@
                 android:layout_weight="1" />
         </LinearLayout>
     </ScrollView>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:cacheColorHint="@android:color/transparent"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none"
+        android:layout_below="@+id/pick_topics"
+        android:layout_above="@+id/bottom"
+        android:visibility="visible"/>
 
     <LinearLayout
         android:id="@+id/bottom"
