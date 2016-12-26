@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.chat.ImageLoader;
-import com.yo.android.chat.SquareImageView;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.UserChatViewHolder;
@@ -33,8 +32,8 @@ import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-import java.util.List;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -52,6 +51,24 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     ContactsSyncManager mContactsSyncManager;
     private LayoutInflater inflater;
+
+    @Bind(R.id.sender_id)
+    TextView senderNameOrNumber;
+    @Bind(R.id.chat_profilename_layout)
+    RelativeLayout profileNameLayout;
+    @Bind(R.id.chat_gravity_decide_layout)
+    RelativeLayout gravityLayout;
+    @Bind(R.id.profile_name)
+    TextView profileName;
+    @Bind(R.id.chat_image)
+    ImageView loadImage;
+    @Bind(R.id.extra_chat_message)
+    TextView extraText;
+    @Bind(R.id.time)
+    TextView time;
+    @Bind(R.id.progress)
+    ProgressBar progressBar;
+
 
     public UserChatAdapter(Activity context) {
         super(context);
@@ -141,15 +158,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         holder.getLl().setTag(holder);
         boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
         View view = inflater.inflate(R.layout.chatitem, null);
-        TextView senderNameOrNumber = (TextView) view.findViewById(R.id.sender_id);
-        RelativeLayout profileNameLayout = (RelativeLayout) view.findViewById(R.id.chat_profilename_layout);
-        RelativeLayout gravityLayout = (RelativeLayout) view.findViewById(R.id.chat_gravity_decide_layout);
-        TextView profileName = (TextView) view.findViewById(R.id.profile_name);
-        ImageView loadImage = (ImageView) view.findViewById(R.id.chat_image);
-        TextView extraText = (TextView) view.findViewById(R.id.extra_chat_message);
+        ButterKnife.bind(context, view);
 
-        TextView time = (TextView) view.findViewById(R.id.time);
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         extraText.setVisibility(View.GONE);
         if (!isRTL) {
             profileNameLayout.setVisibility(View.VISIBLE);
@@ -186,7 +196,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
             if (item.getSent() == 1) {
                 img = context.getResources().getDrawable(R.drawable.sent);
-                //img.setBounds(0, 0, 25, 25);
                 img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
                 time.setCompoundDrawablePadding(10);
@@ -194,7 +203,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             }
             if (item.getDeliveredTime() != 0) {
                 img = context.getResources().getDrawable(R.drawable.seen);
-                //img.setBounds(0, 0, 25, 25);
                 img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
                 time.setCompoundDrawablePadding(10);
@@ -210,13 +218,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         holder.getLl().setTag(holder);
         PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         LinearLayout secretChatPlaceholder = new LinearLayout(context);
-        //secretChatPlaceholder.setOrientation(LinearLayout.VERTICAL);
         secretChatPlaceholder.setOrientation(LinearLayout.HORIZONTAL);
         boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
 
         LinearLayout linearLayout1 = new LinearLayout(context);
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
-        //linearLayout1.setPadding(4, 14, 2, 14);
         linearLayout1.setPadding(Helper.dp(context, 2), Helper.dp(context, 8), Helper.dp(context, 2), Helper.dp(context, 8));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(10, 0, 20, 0);
@@ -234,12 +240,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         RelativeLayout mainLayout = (RelativeLayout) inflater.inflate(R.layout.chat_message, null);
         TextView time = (TextView) mainLayout.findViewById(R.id.time);
-        //time.setGravity(Gravity.BOTTOM);
-        //time.setTextColor(context.getResources().getColor(R.color.dark_gray));
 
         RelativeLayout seenLayout = (RelativeLayout) mainLayout.findViewById(R.id.seen_layout);
         TextView sent = (TextView) mainLayout.findViewById(R.id.sent_txt);
-        //sent.setGravity(Gravity.TOP);
         sent.setGravity(Gravity.BOTTOM);
         if (!isRTL) {
             TextView senderId = new TextView(context);
@@ -272,36 +275,29 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
                 time.setText(seenText);
                 time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-                //time.setGravity(Gravity.RIGHT);
 
             }
         } else {
             time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
             time.setGravity(Gravity.END);
-            //time.setGravity(Gravity.BOTTOM);
             sent.setVisibility(View.VISIBLE);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
             img.setBounds(0, 4, 30, 35);
             time.setCompoundDrawables(null, null, img, null);
-            //time.setCompoundDrawablePadding(10);
             String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
             time.setText(sentText);
             if (item.getSent() == 1) {
                 img = context.getResources().getDrawable(R.drawable.sent);
-                //img.setBounds(0, 0, 25, 25);
                 img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
-                //time.setCompoundDrawablePadding(10);
-                time.setPadding(0,4,8,10);
+                time.setPadding(0, 4, 8, 10);
             }
             if (item.getDeliveredTime() != 0) {
                 img = context.getResources().getDrawable(R.drawable.seen);
-                //img.setBounds(0, 0, 25, 25);
                 img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
-                //time.setCompoundDrawablePadding(10);
-                time.setPadding(0,4,8,10);
+                time.setPadding(0, 4, 8, 10);
             }
         }
         linearLayout1.addView(emojiTextView);
@@ -365,10 +361,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
     private class HeaderViewHolder {
+        @Bind(R.id.time_stamp_text)
         TextView text;
 
         HeaderViewHolder(View v) {
-            text = (TextView) v.findViewById(R.id.time_stamp_text);
+            ButterKnife.bind(this, v);
         }
     }
 

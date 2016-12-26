@@ -55,6 +55,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -64,8 +66,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private static final String TAG = "ChatFragment";
 
-    private ListView listView;
-    private ImageView emptyImageView;
+    @Bind(R.id.lv_chat_room)
+    ListView listView;
+    @Bind(R.id.empty_chat)
+    ImageView emptyImageView;
     private List<ChildEventListener> childEventListenersList;
     private List<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
@@ -121,8 +125,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
-        listView = (ListView) view.findViewById(R.id.lv_chat_room);
-        emptyImageView = (ImageView) view.findViewById(R.id.empty_chat);
+        ButterKnife.bind(this, view);
         listView.setOnItemClickListener(this);
         return view;
     }
