@@ -584,7 +584,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
-
+                        authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
                         Activity activity = getActivity();
                         if (retryMessageCount <= 3) {
                             sendChatMessage(chatMessage);
