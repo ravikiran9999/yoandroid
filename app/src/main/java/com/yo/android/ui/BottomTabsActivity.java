@@ -97,6 +97,7 @@ public class BottomTabsActivity extends BaseActivity {
     private SipBinder sipBinder;
     private static Context mContext;
     public static PendingIntent pintent;
+    private TextView actionBarTitle;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -155,6 +156,10 @@ public class BottomTabsActivity extends BaseActivity {
         }
 
         customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
+        getSupportActionBar().setCustomView(customActionBar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+
         notificationCount = (Button) customActionBar.findViewById(R.id.notif_count);
         notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
         notificationEnable.setOnClickListener(new View.OnClickListener() {
@@ -163,17 +168,15 @@ public class BottomTabsActivity extends BaseActivity {
                 startActivity(new Intent(context, NotificationsActivity.class));
             }
         });
+        actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 try {
                     Util.closeSearchView(getMenu());
-                    getSupportActionBar().setDisplayShowTitleEnabled(false);
-                    getSupportActionBar().setDisplayShowCustomEnabled(true);
-                    getSupportActionBar().setCustomView(customActionBar);
 
-                    TextView actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);
+
                     actionBarTitle.setText((dataList.get(position)).getTitle());
 
                     if (getFragment() instanceof MoreFragment) {
