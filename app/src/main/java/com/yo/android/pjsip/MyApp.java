@@ -55,7 +55,7 @@ class MyApp {
     private final String configName = "pjsua2.json";
     private final int SIP_PORT = 6000;
     private final int LOG_LEVEL = 5;
-    public static String AGENT_NAME = "AndroidSipService/" + BuildConfig.VERSION_CODE;
+    public static String AGENT_NAME = "Yo! rv" + BuildConfig.VERSION_NAME;
 
 
     public void init(MyAppObserver obs, String app_dir) {
