@@ -55,15 +55,21 @@ public class ImageLoader {
 
     public static void updateImage(final Context mContext, final ChatMessage item, final ImageDownloadListener listener) {
         File file = new File(item.getImagePath());
+        String firebaseImagePath;
         if (file != null && !file.exists()) {
             file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
         }
         if (file.exists()) {
             listener.onDownlaoded(file);
         } else {
+            if(item.getImagePath().contains("/YO/YOImages/")) {
+                firebaseImagePath = "images/" + file.getName();
+            } else {
+                firebaseImagePath = item.getImagePath();
+            }
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
-            final StorageReference imageRef = storageRef.child(item.getImagePath());
+            final StorageReference imageRef = storageRef.child(firebaseImagePath);
             final File finalFile = file;
             imageRef.getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override

@@ -360,7 +360,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     }
 
     public void UpdateItem(ChatMessage message) {
-        List ss = getAllItems();
         getAllItems().add(message);
         notifyDataSetChanged();
     }

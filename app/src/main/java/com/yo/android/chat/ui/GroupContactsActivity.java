@@ -3,6 +3,7 @@ package com.yo.android.chat.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
@@ -77,7 +78,7 @@ public class GroupContactsActivity extends BaseActivity {
         listView.setAdapter(groupContactsListAdapter);
         selectedContactsList = getIntent().getParcelableArrayListExtra(Constants.SELECTED_CONTACTS);
         contactsList = CreateGroupActivity.ContactsArrayList;
-        changeSelectedContactStatus(contactsList);
+        changeSelectedContactStatus(clearSelection(contactsList));
         if (contactsList.isEmpty()) {
             getYoAppUsers();
         } else {
@@ -180,6 +181,15 @@ public class GroupContactsActivity extends BaseActivity {
                 }
             }
         }
+    }
+
+    private List<Contact> clearSelection(@NonNull List<Contact> mContactList) {
+        List<Contact> allContactList = new ArrayList<>();
+        for (Contact contacts : mContactList) {
+            contacts.setSelected(false);
+            allContactList.add(contacts);
+        }
+        return allContactList;
     }
 
     private void loadInAlphabeticalOrder(List<Contact> contactList) {

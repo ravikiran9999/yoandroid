@@ -108,6 +108,7 @@ public class Constants {
     public static String EDIT_MAGAZINE_ACTION = "com.edit.magazine.EDIT";
     public static String SESSION_EXPIRE = "SESSION_EXPIRE";
     public static String CHAT_ROOM_REFRESH = "CHAT_ROOM_REFRESH";
+    public static String CHAT_MESSAGE_NOTIFICATION = "CHAT_MESSAGE_NOTIFICATION";
     public static String UPDATE_NOTIFICATIONS = "UPDATE_NOTIFICATIONS";
     public static String COUNTRY_LIST = "COUNTRY_LIST";
     public static String OTHERS_MAGAZINE_ACTION = "com.others.magazine.OTHERS";

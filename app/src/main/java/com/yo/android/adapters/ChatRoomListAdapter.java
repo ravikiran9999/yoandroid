@@ -39,7 +39,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     protected PreferenceEndPoint preferenceEndPoint;
     Context context;
     private TextDrawable.IBuilder mDrawableBuilder;
-    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+    //private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
 
     public ChatRoomListAdapter(Context context) {
         super(context);
@@ -92,7 +92,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         }
 
         if (item.isImages()) {
-            holder.getChat().setText(mContext.getResources().getString(R.string.image));
+            holder.getChat().setText(mContext.getResources().getString(R.string.photo));
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
         } else if (!TextUtils.isEmpty(item.getLastChat())) {
             holder.getChat().setText(item.getLastChat());
@@ -122,12 +122,12 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
 
-            int existingColor = mColorGenerator.getColor(shape);
+            /*int existingColor = mColorGenerator.getColor(shape);
             if (existingColor == 0) {
                 shape.setColor(mColorGenerator.getRandomColor());
             } else {
                 shape.setColor(existingColor);
-            }
+            }*/
 
         }
         holder.getChatRoomPic().setTag(Settings.imageTag, tempImage);

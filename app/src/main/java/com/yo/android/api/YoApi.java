@@ -1,6 +1,7 @@
 package com.yo.android.api;
 
 import com.yo.android.model.Articles;
+import com.yo.android.model.Categories;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
@@ -319,6 +320,9 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/articles/dashboard.json")
         Call<LandingArticles> getDashboardArticlesAPI(@Field("access_token") String access_token, @Field("read_article_ids[]") List<String> read_article_ids, @Field("unread_article_ids[]") List<String> unread_article_ids);
+
+        @GET("api/categories.json")
+        Call<List<Categories>> categoriesAPI(@Query("access_token") String access_token);
     }
 
     public interface YoRefreshTokenService {
