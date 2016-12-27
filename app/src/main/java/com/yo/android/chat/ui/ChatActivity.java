@@ -18,8 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.yo.android.R;
@@ -39,6 +37,8 @@ import com.yo.android.util.Util;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,15 +57,20 @@ public class ChatActivity extends BaseActivity {
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private Contact contactfromOpponent;
     private Contact mContact;
+    @Bind(R.id.progress_layout) RelativeLayout progressLayout;
+    /*@Bind(R.id.title_view) LinearLayout titleView;
+    @Bind(R.id.tv_phone_number) TextView customTitle;
+    @Bind(R.id.imv_contact_pic) ImageView imageView;*/
+
     @Inject
     ContactsSyncManager mContactsSyncManager;
-    private RelativeLayout progressLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading);
-        progressLayout = (RelativeLayout) findViewById(R.id.progress_layout);
+        ButterKnife.bind(this);
+
 
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancelAll();
