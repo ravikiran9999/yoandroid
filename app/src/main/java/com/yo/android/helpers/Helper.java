@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -120,16 +121,16 @@ public class Helper {
             String fruit = contact.getName();
             if (fruit != null && fruit.length() >= 1) {
                 String index = fruit.substring(0, 1).toUpperCase();
-                // Pattern p = Pattern.compile("^[a-zA-Z]");
-                // Matcher m = p.matcher(index);
-                // boolean b = m.matches();
                 i = i + 1;
-                // if (b) {
+
                 if (mapIndex.get(index) == null) {
-                    mapIndex.put(index, i);
+                    if (TextUtils.isDigitsOnly(index) || !index.matches(".*[a-zA-Z]+.*")) {
+                        mapIndex.put("#", i);
+                    } else {
+                        mapIndex.put(index, i);
+                    }
                 }
             }
-            // }
         }
         return mapIndex;
     }
@@ -345,10 +346,11 @@ public class Helper {
 
     public static String getContactName(Context context, String phoneNumber) {
         String contactName = null;
+        Cursor cursor = null;
         try {
             ContentResolver cr = context.getContentResolver();
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-            Cursor cursor = cr.query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
+            cursor = cr.query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
             if (cursor == null) {
                 return null;
             }
@@ -356,11 +358,13 @@ public class Helper {
                 contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
             }
 
+
+        } catch (RuntimeException e) {
+
+        } finally {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-        } catch (RuntimeException e) {
-
         }
         return contactName;
     }
