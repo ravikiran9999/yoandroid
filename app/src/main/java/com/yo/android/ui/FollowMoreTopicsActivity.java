@@ -203,6 +203,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         unselectedTag.layoutBorderColor = TAB_GREY;
                         unselectedTag.layoutColor = WHITE;
                         unselectedTag.tagTextColor = TAB_GREY;
+                        unselectedTag.tagTextSize = 12;
                         tagGroupSearch.updateTag(unselectedTag);
 
 
@@ -225,6 +226,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         selectedTag.layoutBorderColor = WHITE;
                         selectedTag.layoutColor = COLOR_PRIMARY;
                         selectedTag.tagTextColor = WHITE;
+                        selectedTag.tagTextSize = 12;
                         tagGroupSearch.updateTag(selectedTag);
 
                         //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
@@ -239,6 +241,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     tagDummy.layoutBorderSize = 1f;
                     tagDummy.layoutColor = WHITE;
                     tagDummy.tagTextColor = TAB_GREY;
+                    tagDummy.tagTextSize = 12;
                     //tagDummy.layoutColorPress = getResources().getColor(R.color.colorPrimary);
 
                     //tagGroup.drawTags();
@@ -452,6 +455,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tag.layoutBorderSize = 1f;
         tag.layoutColor = getResources().getColor(android.R.color.white);
         tag.tagTextColor = getResources().getColor(R.color.tab_grey);
+        tag.tagTextSize = 12;
         //tag.layoutColorPress = getResources().getColor(R.color.colorPrimary);
 
         if (topics.isSelected()) {
@@ -845,6 +849,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             tagDummy.layoutBorderSize = 1f;
             tagDummy.layoutColor = WHITE;
             tagDummy.tagTextColor = TAB_GREY;
+            tagDummy.tagTextSize = 12;
             publishProgress(tagDummy);
 
             return tagDummy;
@@ -954,6 +959,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 unselectedTag.layoutBorderColor = TAB_GREY;
                 unselectedTag.layoutColor = WHITE;
                 unselectedTag.tagTextColor = TAB_GREY;
+                unselectedTag.tagTextSize = 12;
                 tView.updateTag(unselectedTag);
 
 
@@ -979,6 +985,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 selectedTag.layoutBorderColor = WHITE;
                 selectedTag.layoutColor = COLOR_PRIMARY;
                 selectedTag.tagTextColor = WHITE;
+                selectedTag.tagTextSize = 12;
                 tView.updateTag(selectedTag);
 
                 //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
@@ -993,6 +1000,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             tagDummy.layoutBorderSize = 1f;
             tagDummy.layoutColor = WHITE;
             tagDummy.tagTextColor = TAB_GREY;
+            tagDummy.tagTextSize = 12;
             //tagDummy.layoutColorPress = getResources().getColor(R.color.colorPrimary);
 
             //tagGroup.drawTags();
