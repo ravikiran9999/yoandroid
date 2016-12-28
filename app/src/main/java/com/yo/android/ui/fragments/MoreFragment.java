@@ -142,13 +142,18 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mLog.i("MoreFragment", "DestroyView");
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
         profilePic = (CircleImageView) view.findViewById(R.id.profile_pic);
         profileStatus = (TextView) view.findViewById(R.id.profile_status);
-        cameraIntent.setActivity(getActivity());
         changePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,27 +164,30 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         callOtherInfoApi();
     }
 
-    private void loadImage() {
-        String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
-        String localImage = preferenceEndPoint.getStringPreference(Constants.IMAGE_PATH);
-        if (!TextUtils.isEmpty(localImage)) {
-            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
-            Glide.with(getActivity()).load(new File(localImage))
-                    .dontAnimate()
-                    .placeholder(profilePic.getDrawable())
-                    .error(profilePic.getDrawable())
-                    .fitCenter()
-                    .into(profilePic);
-        } else if (!TextUtils.isEmpty(avatar)) {
-            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
-            Glide.with(getActivity()).load(avatar)
-                    .dontAnimate()
-                    .placeholder(profilePic.getDrawable())
-                    .error(profilePic.getDrawable())
-                    .fitCenter()
-                    .into(profilePic);
-        } else {
-            addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
+
+    public void loadImage() {
+        if (preferenceEndPoint != null && addOrChangePhotoText != null && getActivity() != null) {
+            String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
+            String localImage = preferenceEndPoint.getStringPreference(Constants.IMAGE_PATH);
+            if (!TextUtils.isEmpty(localImage)) {
+                addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
+                Glide.with(getActivity()).load(new File(localImage))
+                        .dontAnimate()
+                        .placeholder(profilePic.getDrawable())
+                        .error(profilePic.getDrawable())
+                        .fitCenter()
+                        .into(profilePic);
+            } else if (!TextUtils.isEmpty(avatar)) {
+                addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
+                Glide.with(getActivity()).load(avatar)
+                        .dontAnimate()
+                        .placeholder(profilePic.getDrawable())
+                        .error(profilePic.getDrawable())
+                        .fitCenter()
+                        .into(profilePic);
+            } else {
+                addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
+            }
         }
 
     }
@@ -187,41 +195,43 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     //Tested and image update is working
     //Make a prompt for pick a image from gallery/camera
     private void uploadFile(final File file) {
-        if (!mHelper.isConnected()) {
+        if (mHelper != null && !mHelper.isConnected()) {
             mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
         }
+        if (preferenceEndPoint != null && yoService != null) {
+            showProgressDialog();
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            // create RequestBody instance from file
+            RequestBody requestFile =
+                    RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
-        showProgressDialog();
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        // create RequestBody instance from file
-        RequestBody requestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), file);
-
-        // MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
-        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-        yoService.updateProfile(userId, access, null, null, null, null, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
-            @Override
-            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
-                dismissProgressDialog();
-                if (response.body() != null) {
-                    preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+            // MultipartBody.Part is used to send also the actual file name
+            MultipartBody.Part body =
+                    MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
+            String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+            yoService.updateProfile(userId, access, null, null, null, null, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
+                @Override
+                public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                    dismissProgressDialog();
+                    if (response.body() != null) {
+                        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    }
+                    loadImage();
                 }
-                loadImage();
-            }
 
-            @Override
-            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
-                dismissProgressDialog();
-            }
-        });
+                @Override
+                public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+                    dismissProgressDialog();
+                }
+            });
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        cameraIntent.setActivity(getActivity());
         String status = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available");
         if (status.equalsIgnoreCase("")) {
             status = "Available";
@@ -399,7 +409,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
                     Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
                     if (imagePath != null) {
-                        preferenceEndPoint.saveStringPreference(Constants.IMAGE_PATH, imagePath.getPath());
                         uploadFile(new File(imagePath.getPath()));
                     }
                 }
@@ -408,18 +417,18 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 try {
                     String imagePath = cameraIntent.mFileTemp.getPath();
                     if (imagePath != null) {
-                        Helper.setSelectedImage(getActivity(), imagePath, true);
+                        Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true);
                     }
                 } catch (Exception e) {
-                    mLog.w("MoreFragment", e);
+                    // mLog.w("MoreFragment", e);
                 }
                 break;
 
             case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
                     try {
-                        String imagePath = ImagePickHelper.getGalleryImagePath(getActivity(), data);
-                        Helper.setSelectedImage(getActivity(), imagePath, true);
+                        String imagePath = ImagePickHelper.getGalleryImagePath(BottomTabsActivity.activity, data);
+                        Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true);
                     } catch (Exception e) {
                         mLog.w("MoreFragment", e);
                     }
@@ -454,9 +463,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             if (activity.getFragment() instanceof MoreFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                     //if (!isRemoved) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
                     if (popup != null) {
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
