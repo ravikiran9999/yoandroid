@@ -84,6 +84,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
@@ -106,8 +108,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
     private HashMap<Integer, ArrayList<ChatMessage>> chatMessageHashMap;
-    private EditText chatText;
-    private StickyListHeadersListView listView;
     private String opponentNumber;
     private String opponentName;
     private String opponentId;
@@ -119,7 +119,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private Firebase authReference;
     private Firebase roomReference;
     private Query messageQuery;
-    private TextView listStickeyHeader;
     private int roomExist = 0;
     private Boolean isChildEventListenerAdd = Boolean.FALSE;
     private String childRoomId;
@@ -128,13 +127,27 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String mobilenumber;
     private String roomType;
     private EmojiconsPopup popup;
-    private ImageView emoji;
-    private ImageView cameraView;
     private int roomCreationProgress = 0;
     private String opponentImg;
     private Contact mContact;
     private int retryMessageCount = 0;
     private PendingIntent pendingIntent;
+
+    @Bind(R.id.emojiView)
+    ImageView emoji;
+    @Bind(R.id.cameraView)
+    ImageView cameraView;
+    @Bind(R.id.chat_text)
+    EditText chatText;
+    @Bind(R.id.listView)
+    StickyListHeadersListView listView;
+    @Bind(R.id.time_stamp_header)
+    TextView listStickeyHeader;
+    @Bind(R.id.send)
+    View send;
+    @Bind(R.id.root_view)
+    View rootView;
+
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -179,19 +192,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
+        ButterKnife.bind(this, view);
 
         roomType = getArguments().getString(Constants.TYPE);
-
-        listView = (StickyListHeadersListView) view.findViewById(R.id.listView);
-        listStickeyHeader = (TextView) view.findViewById(R.id.time_stamp_header);
         listView.setDivider(null);
         listView.setDividerHeight(0);
         listView.setOnItemClickListener(this);
-        View send = view.findViewById(R.id.send);
-        emoji = (ImageView) view.findViewById(R.id.emojiView);
-        cameraView = (ImageView) view.findViewById(R.id.cameraView);
-        chatText = (EditText) view.findViewById(R.id.chat_text);
-
         chatMessageHashMap = new HashMap<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
@@ -204,7 +210,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         chatText.addTextChangedListener(this);
         listView.setOnItemClickListener(this);
-        final View rootView = view.findViewById(R.id.root_view);
         popup = new EmojiconsPopup(rootView, getActivity());
         send.setOnClickListener(this);
         popup.setSizeForSoftKeyboard();
@@ -579,7 +584,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
-
+                        authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
                         Activity activity = getActivity();
                         if (retryMessageCount <= 3) {
                             sendChatMessage(chatMessage);

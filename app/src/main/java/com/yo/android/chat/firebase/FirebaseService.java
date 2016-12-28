@@ -195,7 +195,8 @@ public class FirebaseService extends InjectedService {
                     firebaseError.getMessage();
                 }
             };
-            chatMessageQuery = chatRoomReference.limitToLast(1);
+            //chatMessageQuery = chatRoomReference.limitToLast(100);
+            chatMessageQuery = chatRoomReference;
             registerChatMessageListener();
 
         } catch (Exception e) {

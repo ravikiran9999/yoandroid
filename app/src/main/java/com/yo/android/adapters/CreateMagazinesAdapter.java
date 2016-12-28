@@ -48,6 +48,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(holder.getImageView());
 
             } else {
@@ -58,6 +59,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .fitCenter()
                             .crossFade()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .dontAnimate()
                             .into(holder.getImageView());
                 } else {
                     Glide.with(mContext)
@@ -66,6 +68,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .fitCenter()
                             .crossFade()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .dontAnimate()
                             .into(holder.getImageView());
                 }
 
@@ -88,6 +91,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(holder.getImageView());
 
             } else {
@@ -98,6 +102,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .fitCenter()
                             .crossFade()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .dontAnimate()
                             .into(holder.getImageView());
                 } else {
                     Glide.with(mContext)
@@ -106,6 +111,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .fitCenter()
                             .crossFade()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .dontAnimate()
                             .into(holder.getImageView());
                 }
             }

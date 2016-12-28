@@ -7,20 +7,24 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by rdoddapaneni on 6/30/2016.
  */
 
 public class UserChatViewHolder extends AbstractViewHolder {
 
-    private LinearLayout linearLayout;
-    private LinearLayout ll;
+    @Bind(R.id.linear)
+    LinearLayout linearLayout;
+    @Bind(R.id.linear_layout)
+    LinearLayout ll;
 
 
     public UserChatViewHolder(View view) {
         super(view);
-        linearLayout = (LinearLayout) view.findViewById(R.id.linear);
-        ll = (LinearLayout) view.findViewById(R.id.linear_layout);
+        ButterKnife.bind(this, view);
     }
 
     public LinearLayout getLinearLayout() {
