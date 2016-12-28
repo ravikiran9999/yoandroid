@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.di.Injector;
 import com.yo.android.util.ProgressDialogFactory;
@@ -33,6 +34,9 @@ public class ParentActivity extends AppCompatActivity {
 
     @Inject
     protected ProgressDialogFactory mProgressDialogFactory;
+
+    @Inject
+    protected ConnectivityHelper mHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

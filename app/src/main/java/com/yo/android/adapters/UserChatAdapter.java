@@ -360,7 +360,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         notifyDataSetChanged();
     }
 
-    private class HeaderViewHolder {
+    public class HeaderViewHolder {
         @Bind(R.id.time_stamp_text)
         TextView text;
 
