@@ -105,7 +105,7 @@ public class ContactSyncHelper {
                     setSyncMode(PROCESSING);
                 }
                 mLog.i(TAG, "detected contacts change>>>start");
-                performContactSync(cacheContacts);
+                performContactSync1(cacheContacts);
                 mLog.i(TAG, "detected contacts change>>>End");
                 setSyncMode(FINISHED);
             }
@@ -123,11 +123,14 @@ public class ContactSyncHelper {
     private void performContactSync(HashMap<Integer, Contact> cachePhoneBookHashMap) {
         HashMap<Integer, Contact> contactPhoneBookMap = readContactsFromPhoneBook();
 
+
         if (contactsBook.isEmpty()) {
             contactsBook.putAll(contactPhoneBookMap);
         }
+
         ArrayList<com.yo.android.model.Contact> toImport = new ArrayList<>();
         HashMap<String, Contact> contactShortHashMap = new HashMap<>();
+
         for (HashMap.Entry<Integer, Contact> entry : cachePhoneBookHashMap.entrySet()) {
             Contact c = entry.getValue();
             for (String sphone : c.shortPhones) {
@@ -207,6 +210,53 @@ public class ContactSyncHelper {
 
     }
 
+
+    private void performContactSync1(HashMap<Integer, Contact> cachePhoneBookHashMap) {
+        ArrayList<com.yo.android.model.Contact> currentPhoneBookContacts = new ArrayList<>();
+        ArrayList<com.yo.android.model.Contact> cachedContactsList = new ArrayList<>();
+
+        ArrayList<com.yo.android.model.Contact> contactList = readContacts();
+        currentPhoneBookContacts = contactList;
+        Map<String, com.yo.android.model.Contact> cachedYoContacts = contactsSyncManager.getCachedContacts();
+        ArrayList<com.yo.android.model.Contact> cachedYoContactsList = new ArrayList<>(cachedYoContacts.values());
+
+
+        /*Iterator<com.yo.android.model.Contact> toImportIterator1 = contactList.iterator();
+        while (toImportIterator1.hasNext()) {
+            com.yo.android.model.Contact contact1 = toImportIterator1.next();
+            com.yo.android.model.Contact contact = cachedYoContacts.get(contact1.getPhoneNo());
+            //TODO:Require to check names too
+            if (contact != null) {
+                toImportIterator1.remove();
+            }
+        }*/
+
+
+        cachedContactsList.addAll(cachedYoContactsList);
+
+        if(currentPhoneBookContacts.size() > cachedContactsList.size()) {
+            currentPhoneBookContacts.removeAll(cachedContactsList);
+            mLog.i(TAG, currentPhoneBookContacts.toString());
+        } else if(currentPhoneBookContacts.size() < cachedContactsList.size()) {
+            cachedContactsList.removeAll(currentPhoneBookContacts);
+            mLog.i(TAG, cachedContactsList.toString());
+        }
+
+
+        try {
+            if (!contactList.isEmpty()) {
+                //up to server
+                contactsSyncManager.syncContactsAPI(contactList);
+                mLog.i(TAG, "Import Size after check>>>:" + contactList.size());
+                //Call sync - get contact
+                SyncUtils.triggerRefresh();
+            }
+            //cacheContacts = contactPhoneBookMap;
+        } catch (Exception e) {
+            mLog.i(TAG, "Exception:>>", e);
+        }
+
+    }
 
     public static class Contact {
         public int id;
@@ -390,6 +440,34 @@ public class ContactSyncHelper {
             contactsMap.clear();
         }
         return contactsMap;
+    }
+
+    private ArrayList<com.yo.android.model.Contact> readContacts() {
+        ArrayList<com.yo.android.model.Contact> contactList = new ArrayList<>();
+
+        Cursor contactsCursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        if (contactsCursor != null) {
+            while (contactsCursor.moveToNext()) {
+                com.yo.android.model.Contact contact = new com.yo.android.model.Contact();
+                String contactId = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts._ID));
+                contact.setName(contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+                if (Integer.parseInt(contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                    Cursor phoneNumberCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contactId}, null);
+                    if (phoneNumberCursor != null) {
+
+                        while (phoneNumberCursor.moveToNext()) {
+                            String phoneNumber = phoneNumberCursor.getString(phoneNumberCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            contact.setPhoneNo(phoneNumber);
+                        }
+                        phoneNumberCursor.close();
+                        contactList.add(contact);
+                    }
+                }
+            }
+            contactsCursor.close();
+
+        }
+        return contactList;
     }
 
     private boolean hasContactsPermission() {

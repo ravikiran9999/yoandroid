@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import retrofit2.Response;
 @Singleton
 public class ContactsSyncManager {
 
+    private static final String TAG = "ContactsSyncManager";
     private YoApi.YoService yoService;
     private Context context;
     private List<Contact> cacheList;
@@ -81,35 +83,31 @@ public class ContactsSyncManager {
         this.loginPrefs = loginPrefs;
     }
 
+    public void checkContacts() {
+
+        syncContacts();
+    }
 
     public void syncContacts() {
-        if (!IS_CONTACT_SYNC_ON) {
+        /*if (!IS_CONTACT_SYNC_ON) {
             return;
-        }
+        }*/
         new AsyncTask<Void, Void, List<Contact>>() {
             @Override
             protected List<Contact> doInBackground(Void... params) {
-                return readContacts();
+                List<Contact> contactList = readContacts();
+                return contactList;
             }
 
             @Override
             protected void onPostExecute(List<Contact> contactsObject) {
                 super.onPostExecute(contactsObject);
-                String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+                try {
+                    syncContactsAPI(contactsObject);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                yoService.syncContactsAPI(access, contactsObject).enqueue(new Callback<List<Contact>>() {
-                    @Override
-                    public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                        if (response != null) {
-                            setContacts(response.body());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Contact>> call, Throwable t) {
-
-                    }
-                });
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
@@ -127,6 +125,7 @@ public class ContactsSyncManager {
                 e.printStackTrace();
             }
         }
+
         Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute();
         response.body();
     }
@@ -237,7 +236,8 @@ public class ContactsSyncManager {
 
     public Map<String, Contact> getCachedContacts() {
         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
-        Cursor c = context.getContentResolver().query(uri, PROJECTION, null, null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
+        //Cursor c = context.getContentResolver().query(uri, PROJECTION, null, null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
+        Cursor c = context.getContentResolver().query(uri, PROJECTION, null, null, null);
         List<Contact> contactList = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
