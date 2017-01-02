@@ -31,10 +31,17 @@ public class CategorizedList {
     /// The section items with headers.
     /// </summary>
     private List<Section> sectionItemsWithHeaders;
+
+
+
     /// <summary>
     /// The category adapter.
     /// </summary>
     CategoryAdapter categoryAdapter;
+
+    public CategoryAdapter getCategoryAdapter() {
+        return categoryAdapter;
+    }
 
     private ArrayList<Tag> initialTags;
 
@@ -45,8 +52,7 @@ public class CategorizedList {
     /// </summary>
     /// <param name="context">Context.</param>
     /// <param name="listView">List view.</param>
-    public CategorizedList (Activity context, ListView listView, ArrayList<Tag> initialTags, List<Categories> topicsList)
-    {
+    public CategorizedList(Activity context, ListView listView, ArrayList<Tag> initialTags, List<Categories> topicsList) {
         this.context = context;
         this.listView = listView;
         sectionItemsWithHeaders = new ArrayList<Section>();
@@ -59,16 +65,15 @@ public class CategorizedList {
     /// </summary>
     /// <param name="sectionItems">Section items.</param>
     /// <param name="category">Category.</param>
-    public void CreateSectionItems (TagView sectionItems, String category)
-    {
-        List<SectionItem> sectionItemsList = new ArrayList<SectionItem> ();
+    public void CreateSectionItems(TagView sectionItems, String category) {
+        List<SectionItem> sectionItemsList = new ArrayList<SectionItem>();
 
         //for(Tag sectItems : sectionItems) {
-        SectionItem sectionItem = new SectionItem ();
+        SectionItem sectionItem = new SectionItem();
         //sectionItem.categoryItem = sectItems;
-            sectionItem.setCategoryItem(sectionItems);
+        sectionItem.setCategoryItem(sectionItems);
         sectionItemsList.add(sectionItem);
-    //}
+        //}
 
         //((FollowMoreTopicsActivity)context).callTagLoader(sectionItems);
 
@@ -81,12 +86,11 @@ public class CategorizedList {
     /// </summary>
     /// <param name="sectionItemsList">Section items list.</param>
     /// <param name="header">Header.</param>
-    void SetItemsWithHeaders (List<SectionItem> sectionItemsList, String header)
-    {
-        SectionItem sectionItem = new SectionItem ();
+    void SetItemsWithHeaders(List<SectionItem> sectionItemsList, String header) {
+        SectionItem sectionItem = new SectionItem();
         //sectionItem.category = header;
         sectionItem.setCategory(header);
-        Section section = new Section ();
+        Section section = new Section();
         //section.sectionItem = sectionItem;
         section.setSectionItem(sectionItem);
         //section.layoutId = Resource.Layout.section;
@@ -95,15 +99,15 @@ public class CategorizedList {
         sectionItemsWithHeaders.add(section);
 
         for (SectionItem sectItem : sectionItemsList) {
-            Section sectionHeader = new Section ();
+            Section sectionHeader = new Section();
         /*sectionHeader.sectionItem = sectItem;
         sectionHeader.layoutId = R.layout.section_list_item;
         sectionHeader.sectionHeader = header;*/
             sectionHeader.setSectionItem(sectItem);
             sectionHeader.setLayoutId(R.layout.section_list_item);
             sectionHeader.setSectionHeader(header);
-        sectionItemsWithHeaders.add(sectionHeader);
-    }
+            sectionItemsWithHeaders.add(sectionHeader);
+        }
 
     }
 
@@ -111,10 +115,9 @@ public class CategorizedList {
     /// Loads the category adapter.
     /// </summary>
     /// <returns>The category adapter.</returns>
-    public CategoryAdapter LoadCategoryAdapter ()
-    {
+    public CategoryAdapter LoadCategoryAdapter() {
         //categoryAdapter = new CategoryAdapter (context, sectionItemsWithHeaders, initialTags, this,  topicsList);
-        categoryAdapter = new CategoryAdapter (context, sectionItemsWithHeaders);
+        categoryAdapter = new CategoryAdapter(context, sectionItemsWithHeaders);
         //listView.Adapter = categoryAdapter;
         listView.setAdapter(categoryAdapter);
         return categoryAdapter;
