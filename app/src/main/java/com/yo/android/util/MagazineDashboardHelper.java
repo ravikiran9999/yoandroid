@@ -229,9 +229,9 @@ public class MagazineDashboardHelper {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
 
-                    if (magazineFlipArticlesFragment.mProgress != null) {
+                    /*if (magazineFlipArticlesFragment.mProgress != null) {
                         magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
-                    }
+                    }*/
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     request++;
 
