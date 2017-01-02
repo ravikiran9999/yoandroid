@@ -176,6 +176,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             Collections.reverse(notEmptyUpdatedArticles);
             notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
             cachedArticlesList = notEmptyUpdatedArticles;
+            LinkedHashSet<Articles> hashSet = new LinkedHashSet<>();
+            hashSet.addAll(cachedArticlesList);
+            cachedArticlesList = new ArrayList<Articles>(hashSet);
             myBaseAdapter.addItems(cachedArticlesList);
             if(cachedArticlesList.size()==0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
@@ -298,6 +301,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             Collections.reverse(notEmptyUpdatedArticles);
             notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
             cachedArticlesList = notEmptyUpdatedArticles;
+            LinkedHashSet<Articles> hashSet = new LinkedHashSet<>();
+            hashSet.addAll(cachedArticlesList);
+            cachedArticlesList = new ArrayList<Articles>(hashSet);
             myBaseAdapter.addItems(cachedArticlesList);
             if(cachedArticlesList.size()==0) {
                 tvNoArticles.setVisibility(View.VISIBLE);

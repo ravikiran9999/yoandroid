@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.amazonaws.mobileconnectors.cognito.internal.util.StringUtils;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.yo.android.R;
 
 import java.util.List;
@@ -18,13 +20,13 @@ import java.util.List;
 public class AlphabetAdapter extends BaseAdapter {
     private Context mContext;
     private List<String> mList;
-    private LayoutInflater inflater;
+    //private LayoutInflater inflater;
 
     public AlphabetAdapter(Context context, List<String> list) {
         this.mContext = context;
         this.mList = list;
         if (mContext != null) {
-            inflater = LayoutInflater.from(mContext);
+            //inflater = LayoutInflater.from(mContext);
         }
     }
 
@@ -46,6 +48,7 @@ public class AlphabetAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         if (inflater != null) {
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.side_index_item, null);
@@ -53,15 +56,10 @@ public class AlphabetAdapter extends BaseAdapter {
                 holder.textView = (TextView) convertView.findViewById(R.id.side_list_item);
                 convertView.setTag(holder);
 
-
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            if (TextUtils.isDigitsOnly(getItem(position))) {
-                holder.textView.setText(mContext.getString(R.string.hash));
-            } else {
-                holder.textView.setText(getItem(position).substring(0, 1));
-            }
+            holder.textView.setText(getItem(position));
             return convertView;
         }
         return null;

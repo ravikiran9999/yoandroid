@@ -1569,6 +1569,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             editor.putString("followed_cached_magazines", new Gson().toJson(cachedFollowedMagazinesList));
             editor.putString("random_cached_magazines", new Gson().toJson(cachedRandomMagazinesList));
             editor.commit();
+
+            if(isFromFollow) {
+                if (mProgress != null) {
+                    mProgress.setVisibility(View.GONE);
+                }
+            }
         }
         if(!isFromFollow) {
             if (llNoArticles != null) {
