@@ -21,6 +21,7 @@ class MyAccount extends Account {
     public MyBuddy addBuddy(BuddyConfig bud_cfg) {
         /* Create Buddy */
         MyBuddy bud = new MyBuddy(bud_cfg);
+
         try {
             bud.create(this, bud_cfg);
         } catch (Exception e) {

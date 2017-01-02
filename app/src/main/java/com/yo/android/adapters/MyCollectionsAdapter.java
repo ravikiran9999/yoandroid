@@ -47,6 +47,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                     .fitCenter()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .dontAnimate()
                     .into(holder.getImageView());
 
         } else if (!TextUtils.isEmpty(item.getImage())) {
@@ -57,6 +58,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                     .fitCenter()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .dontAnimate()
                     .into(holder.getImageView());
         } else {
             if(item.getArticlesCount() == 0) {
@@ -66,6 +68,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(holder.getImageView());
             } else {
                 Glide.with(mContext)
@@ -74,6 +77,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
                         .into(holder.getImageView());
             }
         }

@@ -131,7 +131,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     private void callFindPeopleService() {
         showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
+        yoService.getRepresentativePeopleAPI(accessToken, 1, 30, true).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                 dismissProgressDialog();
@@ -264,7 +264,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         isMoreLoading = true;
         pageCount++;
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getFindPeopleAPI(accessToken, pageCount, 30).enqueue(new Callback<List<FindPeople>>() {
+        yoService.getRepresentativePeopleAPI(accessToken, pageCount, 30, true).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                 dismissProgressDialog();
