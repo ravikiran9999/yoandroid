@@ -140,8 +140,10 @@ public class Contact implements Parcelable {
         dest.writeString(countryCode);
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return " Phone Number = "+phoneNo+", voxUserName = "+voxUserName+", Country Code = "+countryCode;
-    }
+    }*/
+
+
 }
