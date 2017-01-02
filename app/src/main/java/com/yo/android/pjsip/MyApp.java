@@ -55,7 +55,7 @@ class MyApp {
     private final String configName = "pjsua2.json";
     private final int SIP_PORT = 6000;
     private final int LOG_LEVEL = 5;
-    public static String AGENT_NAME = "AndroidSipService/" + BuildConfig.VERSION_CODE;
+    public static String AGENT_NAME = "Yo! rv" + BuildConfig.VERSION_NAME;
 
 
     public void init(MyAppObserver obs, String app_dir) {
@@ -179,6 +179,7 @@ class MyApp {
             my_cfg.accCfg.getVideoConfig().setAutoShowIncoming(true);
 
             MyAccount acc = addAcc(my_cfg.accCfg);
+
             if (acc == null)
                 continue;
 
@@ -254,6 +255,8 @@ class MyApp {
         accCfgs.clear();
         for (int i = 0; i < accList.size(); i++) {
             MyAccount acc = accList.get(i);
+
+
             MyAccountConfig my_acc_cfg = new MyAccountConfig();
             my_acc_cfg.accCfg = acc.cfg;
 

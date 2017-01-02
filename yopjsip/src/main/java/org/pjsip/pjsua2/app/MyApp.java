@@ -258,6 +258,9 @@ class MyAccountConfig {
         try {
             ContainerNode acc_node = node.readContainer("Account");
             accCfg.readObject(acc_node);
+            if (accCfg.getRegConfig() != null) {
+                accCfg.getRegConfig().setTimeoutSec(3600);
+            }
             ContainerNode buddies_node = acc_node.readArray("buddies");
             buddyCfgs.clear();
             while (buddies_node.hasUnread()) {
@@ -335,7 +338,7 @@ class MyApp {
         if (f.exists()) {
             loadConfig(configPath);
         } else {
-			/* Set 'default' values */
+            /* Set 'default' values */
             sipTpConfig.setPort(SIP_PORT);
         }
 

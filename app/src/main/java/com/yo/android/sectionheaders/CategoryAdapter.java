@@ -19,6 +19,7 @@ import com.yo.android.ui.FollowMoreTopicsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by creatives on 12/20/2016.
@@ -50,8 +51,7 @@ public class CategoryAdapter extends BaseAdapter {
     /// </summary>
     /// <param name="context">Context.</param>
     /// <param name="listItemsWithHeaders">Books items with headers.</param>
-    public CategoryAdapter (Activity context, List<Section> listItemsWithHeaders)
-    {
+    public CategoryAdapter(Activity context, List<Section> listItemsWithHeaders) {
         this.context = context;
 
         this.listItemsWithHeaders = listItemsWithHeaders;
@@ -64,7 +64,7 @@ public class CategoryAdapter extends BaseAdapter {
 
         this.topicsList = topicsList;*/
 
-        layoutInflater = (LayoutInflater)context.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     }
 
@@ -74,8 +74,7 @@ public class CategoryAdapter extends BaseAdapter {
     /// </summary>
     /// <returns>Row Id.</returns>
     @Override
-    public long getItemId (int position)
-    {
+    public long getItemId(int position) {
         return position;
     }
 
@@ -84,8 +83,7 @@ public class CategoryAdapter extends BaseAdapter {
     /// </summary>
     /// <returns>The item at position.</returns>
     /// <param name="position">Position.</param>
-    public Section GetItemAtPosition (int position)
-    {
+    public Section GetItemAtPosition(int position) {
         return listItemsWithHeaders.get(position);
     }
 
@@ -93,8 +91,7 @@ public class CategoryAdapter extends BaseAdapter {
     /// Gets the item list.
     /// </summary>
     /// <returns>The item list.</returns>
-    public List<Section> GetItemList ()
-    {
+    public List<Section> GetItemList() {
         return listItemsWithHeaders;
     }
 
@@ -108,7 +105,7 @@ public class CategoryAdapter extends BaseAdapter {
     }*/
     @Override
     public Section getItem(int position) {
-            return listItemsWithHeaders.get(position);
+        return listItemsWithHeaders.get(position);
     }
 
     /// <summary>
@@ -129,8 +126,7 @@ public class CategoryAdapter extends BaseAdapter {
     /// <param name="convertView">Convert view.</param>
     /// <param name="parent">Parent.</param>
     @Override
-    public View getView (int position, View convertView, ViewGroup parent)
-    {
+    public View getView(int position, View convertView, ViewGroup parent) {
 
         View view = convertView; // re-use an existing view, if one is available
 
@@ -140,16 +136,16 @@ public class CategoryAdapter extends BaseAdapter {
         if (selectedItem.getLayoutId() == R.layout.section) { // List item is a Section
             view = layoutInflater.inflate(R.layout.section, null);
             SectionItem sectionItem = selectedItem.getSectionItem();
-            TextView title = (TextView)view.findViewById (R.id.title);
+            TextView title = (TextView) view.findViewById(R.id.title);
             title.setText(sectionItem.getCategory());
-        //} else if (selectedItem.layoutId == R.layout.section_list_item) { // List item is a Section Item
+            //} else if (selectedItem.layoutId == R.layout.section_list_item) { // List item is a Section Item
         } else if (selectedItem.getLayoutId() == R.layout.section_list_item) { // List item is a Section Item
             final TagView tagView = selectedItem.getSectionItem().getCategoryItem();
             tagView.setOnTagClickListener(new TagView.OnTagClickListener() {
                 @Override
                 public void onTagClick(Tag tag, int position) {
                     Log.d("TagClick", "Tag is clicked");
-                    ((FollowMoreTopicsActivity)context).onClickingTag(tag, position, tagView);
+                    ((FollowMoreTopicsActivity) context).onClickingTag(tag, position, tagView);
 
                 }
             });
@@ -165,39 +161,53 @@ public class CategoryAdapter extends BaseAdapter {
     /// </summary>
     /// <returns>true if the item is not a separator, false otherwise.</returns>
     @Override
-    public boolean isEnabled (int position)
-    {
+    public boolean isEnabled(int position) {
 
         //return getItem(position).getLayoutId() != R.layout.section;
         return false;
     }
 
-/*    private void displayTags(TagView tagGroup) {
-        topicsList = new ArrayList<Topics>();
-        List<Topics> dummyTopicsList = new ArrayList<>(topicsList);
-        tagGroup.setVisibility(View.GONE);
-        initialTags.clear();
-        topicsList.clear();
-        topicsList.addAll(dummyTopicsList);
-        synchronized (initialTags) {
-            for (Topics topic : topicsList) {
-                final TagSelected tag = ((FollowMoreTopicsActivity)context).prepareTag(topic);
-                initialTags.add(tag);
+    /*    private void displayTags(TagView tagGroup) {
+            topicsList = new ArrayList<Topics>();
+            List<Topics> dummyTopicsList = new ArrayList<>(topicsList);
+            tagGroup.setVisibility(View.GONE);
+            initialTags.clear();
+            topicsList.clear();
+            topicsList.addAll(dummyTopicsList);
+            synchronized (initialTags) {
+                for (Topics topic : topicsList) {
+                    final TagSelected tag = ((FollowMoreTopicsActivity)context).prepareTag(topic);
+                    initialTags.add(tag);
+                }
             }
-        }
 
-        ArrayList<Tag> tagSelected = initialTags;
+            ArrayList<Tag> tagSelected = initialTags;
 
-        tagGroup.addTags(tagSelected);
-        if (tagGroup != null) {
-            tagGroup.setVisibility(View.VISIBLE);
-        }
-      //  categorisedList.CreateSectionItems(tagSelected, "Category 1");
-      //  categorisedList.CreateSectionItems(tagSelected, "Category 2");
+            tagGroup.addTags(tagSelected);
+            if (tagGroup != null) {
+                tagGroup.setVisibility(View.VISIBLE);
+            }
+          //  categorisedList.CreateSectionItems(tagSelected, "Category 1");
+          //  categorisedList.CreateSectionItems(tagSelected, "Category 2");
 
-        //CategoryAdapter categoryAdapter = categorisedList.LoadCategoryAdapter ();
-        //categorisedList.setAdapterToListView();
-        ((FollowMoreTopicsActivity)context).dismissProgressDialog();
-    }*/
+            //CategoryAdapter categoryAdapter = categorisedList.LoadCategoryAdapter ();
+            //categorisedList.setAdapterToListView();
+            ((FollowMoreTopicsActivity)context).dismissProgressDialog();
+        }*/
+    public void filter(String charText) {
+        charText = charText.toLowerCase(Locale.getDefault());
+       /* worldpopulationlist.clear();
+        if (charText.length() == 0) {
+            worldpopulationlist.addAll(arraylist);
+        } else {
+            for (WorldPopulation wp : arraylist) {
+                if (wp.getCountry().toLowerCase(Locale.getDefault())
+                        .contains(charText)) {
+                    worldpopulationlist.add(wp);
+                }
+            }
+        }*/
+        notifyDataSetChanged();
+    }
 
 }
