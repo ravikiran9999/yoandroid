@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -61,6 +62,10 @@ import retrofit2.Response;
  */
 
 public class ContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
+
+    @Inject
+    ConnectivityHelper mHelper;
+
     /**
      * Project used when querying content provider. Returns all known fields.
      */
@@ -129,15 +134,18 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     }
 
     private void syncContacts() {
+        List<Contact> contactsList = mSyncManager.getContacts();
         /*if (CONTACT_SYNC) {
             getLoaderManager().initLoader(0, null, this);
             //Manual refresh
             SyncUtils.triggerRefresh();
         } else {*/
-        if (!mSyncManager.getContacts().isEmpty()) {
-            loadAlphabetOrder(mSyncManager.getContacts());
+
+        if (!contactsList.isEmpty()) {
+            loadAlphabetOrder(contactsList);
         }
-        if (mSyncManager.getContacts().isEmpty()) {
+
+        if (contactsList.isEmpty()) {
             showProgressDialog();
         }
         mSyncManager.loadContacts(new Callback<List<Contact>>() {
@@ -160,7 +168,12 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onResume() {
         super.onResume();
-        syncContacts();
+        if (mHelper.isConnected()) {
+            syncContacts();
+        } else if (!mHelper.isConnected()) {
+            List<Contact> cacheContactsList = mSyncManager.getCachContacts();
+            loadAlphabetOrder(cacheContactsList);
+        }
     }
 
     private void loadContacts(Cursor c) {

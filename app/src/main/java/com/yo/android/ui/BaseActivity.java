@@ -120,18 +120,4 @@ public class BaseActivity extends ParentActivity {
         return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
     }
 
-    private void firebaseJobDispatcher() {
-        try {
-            Builder builder = firebaseJobDispatcher.newJobBuilder()
-                    .setTag("ListenerJobService")
-                    .setRecurring(true)
-                    .setService(ListenerJobService.class)
-                    .setReplaceCurrent(false)
-                    .setConstraints(Constraint.ON_ANY_NETWORK)
-                    .setTrigger(Trigger.executionWindow(0, 60));
-            firebaseJobDispatcher.mustSchedule(builder.build());
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
