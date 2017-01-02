@@ -93,7 +93,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private CategorizedList categorisedList;
     private List<Categories> serverTopics;
     private TagView tagViewAdapter;
-    private TagView tagGroupSearch;
+    //private TagView tagGroupSearch;
     private LayoutInflater layoutInflater;
     private LinearLayout tagsParentLayout;
     private ArrayList<Tag> worldpopulationlist = null;
@@ -132,8 +132,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         listView = (ListView) findViewById(R.id.listView);
         View customView = getLayoutInflater().inflate(R.layout.section_list_item, null);
         tagViewAdapter = (TagView) customView.findViewById(R.id.tag_group);
-        tagGroupSearch = (TagView) findViewById(R.id.tag_group_search);
-        tagGroupSearch.setVisibility(View.GONE);
+        //tagGroupSearch = (TagView) findViewById(R.id.tag_group_search);
+        //tagGroupSearch.setVisibility(View.GONE);
         tagsParentLayout = (LinearLayout) findViewById(R.id.tagsparent);
 
         initialTags = new ArrayList<>();
@@ -144,7 +144,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         WHITE = getResources().getColor(R.color.white);
         COLOR_PRIMARY = getResources().getColor(R.color.colorPrimary);
 
-        tagGroupSearch.setVisibility(View.GONE);
+        //tagGroupSearch.setVisibility(View.GONE);
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
@@ -199,6 +199,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
 
         //set click listener
+/*
         tagGroupSearch.setOnTagClickListener(new TagView.OnTagClickListener() {
             @Override
             public void onTagClick(Tag mTag, int position) {
@@ -208,11 +209,13 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     if (!tag.getSelected()) {
                         addedTopics.remove(tag);
                         String tagId = tag.getTagId();
-                        /*for (int i = 0; i < topicsList.size(); i++) {
+                        */
+/*for (int i = 0; i < topicsList.size(); i++) {
                             if (topicsList.get(i).getId().equals(tagId)) {
                                 topicsList.get(i).setSelected(false);
                             }
-                        }*/
+                        }*//*
+
                         for (Topics topics : topicsList) {
                             if (topics.getId().equals(tagId)) {
                                 topics.setSelected(false);
@@ -232,11 +235,13 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     } else {
                         addedTopics.add(tag.text);
                         String tagId = tag.getTagId();
-                        /*for (int i = 0; i < topicsList.size(); i++) {
+                        */
+/*for (int i = 0; i < topicsList.size(); i++) {
                             if (topicsList.get(i).getId().equals(tagId)) {
                                 topicsList.get(i).setSelected(true);
                             }
-                        }*/
+                        }*//*
+
                         for (Topics topics : topicsList) {
                             if (topics.getId().equals(tagId)) {
                                 topics.setSelected(true);
@@ -274,6 +279,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
             }
         });
+*/
 
         followedTopicsIdsList = new ArrayList<String>();
         done.setOnClickListener(new View.OnClickListener() {
@@ -538,7 +544,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
         SearchView searchView;
-        tagGroupSearch.setVisibility(View.GONE);
+        //tagGroupSearch.setVisibility(View.GONE);
 
         searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
@@ -626,26 +632,43 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tagsParentLayout.setVisibility(View.VISIBLE);
 
         if (TextUtils.isEmpty(searchText.toString().trim())) {
-            if (totalTagsInView == null) {
+            /*if (totalTagsInView == null) {
                 tagsParentLayout.removeAllViews();
                 tagsParentLayout.addView(initcreateTags(initialTags));
             } else {
                 tagsParentLayout.removeAllViews();
                 tagsParentLayout.addView(totalTagsInView);
-            }
-            return;
+            }*/
+            listView.setVisibility(View.VISIBLE);
+            tagsParentLayout.setVisibility(View.GONE);
         } else {
+            listView.setVisibility(View.GONE);
+            tagsParentLayout.setVisibility(View.VISIBLE);
             searchText = searchText.toString().toLowerCase(Locale.getDefault());
-            worldpopulationlist.clear();
-            for (Tag wp : arraylist) {
-                if (wp.getText().toLowerCase(Locale.getDefault()).contains(searchText)) {
-                    worldpopulationlist.add(wp);
+            new AsyncTask<CharSequence, Void, ArrayList<Tag>>() {
+
+                @Override
+                protected ArrayList<Tag> doInBackground(CharSequence... search) {
+                    worldpopulationlist.clear();
+                    for (Tag wp : arraylist) {
+                        if (wp.getText().toLowerCase(Locale.getDefault()).contains(search[0])) {
+                            worldpopulationlist.add(wp);
+                        }
+                    }
+                    return worldpopulationlist;
                 }
-            }
-            tagsParentLayout.removeAllViews();
-            tagsParentLayout.addView(createTags(worldpopulationlist));
+
+                @Override
+                protected void onPostExecute(ArrayList<Tag> aVoid) {
+                    super.onPostExecute(aVoid);
+                    tagsParentLayout.removeAllViews();
+                    tagsParentLayout.addView(createTags(worldpopulationlist));
+                    onTagSearchClickEvent();
+                }
+            }.execute(searchText);
         }
     }
+
 
     private TagView createTags(List<Tag> tags) {
         TagView view = (TagView) layoutInflater.inflate(R.layout.section_list_item, null);
@@ -662,8 +685,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     private void setTags(CharSequence cs) {
 
-        tagGroupSearch.getTags().clear();
-        tagGroupSearch.removeAllViews();
+        //tagGroupSearch.getTags().clear();
+        //tagGroupSearch.removeAllViews();
         if (isTestSearch) {
             filterTags(cs);
         } else {
@@ -678,7 +701,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 for (Categories categories : serverTopics) {
                     topicsList.addAll(categories.getTags());
                 }
-                new TagLoaderSearch(topicsList, tagGroupSearch).execute();
+                //new TagLoaderSearch(topicsList, tagGroupSearch).execute();
 
                 // TODO: Need to uncomment this code and call TagLoader to load the tags on search
                 //new TagLoader(this, topicsList, tv, initialTags, categorisedList).execute();
@@ -689,11 +712,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             searchTags = new ArrayList<Tag>();
             for (Tag tag : initialTags) {
                 if (TextUtils.isEmpty(text) || tag.text.toLowerCase().contains(text.toLowerCase())) {
-                    tagGroupSearch.addTag(tag);
+                    //tagGroupSearch.addTag(tag);
                     searchTags.add(tag);
                 }
             }
-            if (tagGroupSearch.getTags().size() == 0) {
+            /*if (tagGroupSearch.getTags().size() == 0) {
                 noSearchResults.setVisibility(View.VISIBLE);
                 tvHelloInterests.setVisibility(View.GONE);
                 tvPickTopics.setVisibility(View.GONE);
@@ -703,7 +726,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 tvHelloInterests.setVisibility(View.VISIBLE);
                 tvPickTopics.setVisibility(View.VISIBLE);
                 isInvalidSearch = false;
-            }
+            }*/
         }
     }
 
@@ -731,7 +754,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         followedTopicsIdsList.add(String.valueOf(t.getTagId()));
                     }
                 }
-            } else if (tagGroupSearch.getVisibility() == View.VISIBLE) {
+            } /*else if (tagGroupSearch.getVisibility() == View.VISIBLE) {
                 tagGroupSearch.addTags(initialTags);
                 for (int k = 0; k < tagGroupSearch.getTags().size(); k++) {
                     TagSelected t = (TagSelected) tagGroupSearch.getTags().get(k);
@@ -739,7 +762,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         followedTopicsIdsList.add(String.valueOf(t.getTagId()));
                     }
                 }
-            }
+            }*/
 
             navigation();
 
@@ -1082,6 +1105,69 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             // tagGroup.remove(tagGroup.getTags().size() - 1);
         } catch (Exception e) {
             mLog.e("TAGS", "Exception" + e);
+        }
+    }
+
+    private void onTagSearchClickEvent() {
+        if(tagsParentLayout.getChildCount()>0 && tagsParentLayout.getChildAt(0) instanceof TagView) {
+            ((TagView) tagsParentLayout.getChildAt(0)).setOnTagClickListener(new TagView.OnTagClickListener() {
+                @Override
+                public void onTagClick(Tag mTag, int position) {
+                    try {
+                        TagSelected tag = (TagSelected) mTag;
+                        tag.toggleSelection();
+                        if (!tag.getSelected()) {
+                            addedTopics.remove(tag);
+                            String tagId = tag.getTagId();
+
+                            for (Topics topics : topicsList) {
+                                if (topics.getId().equals(tagId)) {
+                                    topics.setSelected(false);
+                                    break;
+                                }
+                            }
+
+                            Tag unselectedTag = ((TagView) tagsParentLayout.getChildAt(0)).getTags().get(position);
+                            unselectedTag.layoutBorderColor = TAB_GREY;
+                            unselectedTag.layoutColor = WHITE;
+                            unselectedTag.tagTextColor = TAB_GREY;
+                            unselectedTag.tagTextSize = 12;
+                            ((TagView) tagsParentLayout.getChildAt(0)).updateTag(unselectedTag);
+
+
+                            //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
+                        } else {
+                            addedTopics.add(tag.text);
+                            String tagId = tag.getTagId();
+
+                            for (Topics topics : topicsList) {
+                                if (topics.getId().equals(tagId)) {
+                                    topics.setSelected(true);
+                                    break;
+                                }
+                            }
+                            Tag selectedTag = ((TagView) tagsParentLayout.getChildAt(0)).getTags().get(position);
+                            selectedTag.layoutBorderColor = WHITE;
+                            selectedTag.layoutColor = COLOR_PRIMARY;
+                            selectedTag.tagTextColor = WHITE;
+                            selectedTag.tagTextSize = 12;
+                            ((TagView) tagsParentLayout.getChildAt(0)).updateTag(selectedTag);
+
+                        }
+
+                        Tag tagDummy = new Tag("Android");
+                        tagDummy.radius = 1f;
+                        tagDummy.layoutBorderColor = TAB_GREY;
+                        tagDummy.layoutBorderSize = 1f;
+                        tagDummy.layoutColor = WHITE;
+                        tagDummy.tagTextColor = TAB_GREY;
+                        tagDummy.tagTextSize = 12;
+                    } catch (Exception e) {
+                        mLog.e("TAGS", "Exception" + e);
+                    }
+
+                }
+            });
         }
     }
 
