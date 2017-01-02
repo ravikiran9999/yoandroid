@@ -52,24 +52,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     ContactsSyncManager mContactsSyncManager;
     private LayoutInflater inflater;
 
-    @Bind(R.id.sender_id)
-    TextView senderNameOrNumber;
-    @Bind(R.id.chat_profilename_layout)
-    RelativeLayout profileNameLayout;
-    @Bind(R.id.chat_gravity_decide_layout)
-    RelativeLayout gravityLayout;
-    @Bind(R.id.profile_name)
-    TextView profileName;
-    @Bind(R.id.chat_image)
-    ImageView loadImage;
-    @Bind(R.id.extra_chat_message)
-    TextView extraText;
-    @Bind(R.id.time)
-    TextView time;
-    @Bind(R.id.progress)
-    ProgressBar progressBar;
-
-
     public UserChatAdapter(Activity context) {
         super(context);
         this.context = context.getBaseContext();
@@ -158,8 +140,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         holder.getLl().setTag(holder);
         boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
         View view = inflater.inflate(R.layout.chatitem, null);
-        ButterKnife.bind(context, view);
+        TextView senderNameOrNumber = (TextView) view.findViewById(R.id.sender_id);
+        RelativeLayout profileNameLayout = (RelativeLayout) view.findViewById(R.id.chat_profilename_layout);
+        RelativeLayout gravityLayout = (RelativeLayout) view.findViewById(R.id.chat_gravity_decide_layout);
+        TextView profileName = (TextView) view.findViewById(R.id.profile_name);
+        ImageView loadImage = (ImageView) view.findViewById(R.id.chat_image);
+        TextView extraText = (TextView) view.findViewById(R.id.extra_chat_message);
 
+        TextView time = (TextView) view.findViewById(R.id.time);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         extraText.setVisibility(View.GONE);
         if (!isRTL) {
             profileNameLayout.setVisibility(View.VISIBLE);

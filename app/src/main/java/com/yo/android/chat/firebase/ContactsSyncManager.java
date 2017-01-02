@@ -256,6 +256,24 @@ public class ContactsSyncManager {
         return cacheYoAppContacts;
     }
 
+    public List<Contact> getCachContacts() {
+        Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
+        Cursor c = context.getContentResolver().query(uri, PROJECTION, null, null, null);
+        List<Contact> contactList = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                Contact contact = ContactsSyncManager.prepareContact(c);
+                contactList.add(contact);
+            } while (c.moveToNext());
+        }
+        setContacts(contactList);
+        if (c != null) {
+            c.close();
+        }
+
+        return contactList;
+    }
+
     public void loadContacts(final Callback<List<Contact>> callback) {
 
         String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);

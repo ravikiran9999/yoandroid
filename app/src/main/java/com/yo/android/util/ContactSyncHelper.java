@@ -105,7 +105,7 @@ public class ContactSyncHelper {
                     setSyncMode(PROCESSING);
                 }
                 mLog.i(TAG, "detected contacts change>>>start");
-                performContactSync1(cacheContacts);
+                performContactSync(cacheContacts);
                 mLog.i(TAG, "detected contacts change>>>End");
                 setSyncMode(FINISHED);
             }
@@ -231,16 +231,15 @@ public class ContactSyncHelper {
             }
         }*/
 
-
         cachedContactsList.addAll(cachedYoContactsList);
 
-        if(currentPhoneBookContacts.size() > cachedContactsList.size()) {
+        /*if(currentPhoneBookContacts.size() > cachedContactsList.size()) {
             currentPhoneBookContacts.removeAll(cachedContactsList);
             mLog.i(TAG, currentPhoneBookContacts.toString());
         } else if(currentPhoneBookContacts.size() < cachedContactsList.size()) {
             cachedContactsList.removeAll(currentPhoneBookContacts);
             mLog.i(TAG, cachedContactsList.toString());
-        }
+        }*/
 
 
         try {

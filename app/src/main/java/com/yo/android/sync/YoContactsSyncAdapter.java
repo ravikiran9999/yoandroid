@@ -97,7 +97,6 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int COLUMN_COUNTRY_CODE = 8;
 
 
-
     /**
      * Constructor. Obtains handle to content resolver for later use.
      */
@@ -133,6 +132,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
         Log.i(TAG, "Beginning network synchronization");
+        List<Contact> contacts = null;
         try {
             String access = loginPrefs == null ? "" : loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
             if (TextUtils.isEmpty(access)) {
@@ -140,11 +140,13 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             }
             Response<List<Contact>> list = mYoService.getContacts(access).execute();
             if (list.isSuccessful()) {
-                List<Contact> contacts = list.body();
-                //Store them in cache
-                mContactsSyncManager.setContacts(contacts);
-                updateLocalFeedData(getContext(), contacts, syncResult);
+                contacts = list.body();
+            } else {
+                contacts = mContactsSyncManager.getCachContacts();
             }
+            //Store them in cache
+            mContactsSyncManager.setContacts(contacts);
+            updateLocalFeedData(getContext(), contacts, syncResult);
 
         } catch (IOException e) {
             syncResult.stats.numIoExceptions++;
@@ -233,8 +235,8 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                         (match.firebaseRoomId != null && !match.firebaseRoomId.equals(roomId)) ||
                         (roomId != null && !roomId.equals(match.firebaseRoomId)) ||
                         (match.name != null && !match.name.equals(name)) ||
-                        (match.image != null && !match.image.equals(image))||
-                        (match.voxUserName != null && !match.voxUserName.equals(voxUserName))||
+                        (match.image != null && !match.image.equals(image)) ||
+                        (match.voxUserName != null && !match.voxUserName.equals(voxUserName)) ||
                         (match.countryCode != null && !match.countryCode.equals(countryCode))
                         ) {
                     // Update existing record
@@ -290,7 +292,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         List<Entry> list = new ArrayList<>();
         for (Contact contact : contacts) {
             Entry entry = new Entry(contact.getId(),
-                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.getYoAppUser(),contact.getVoxUserName(),contact.getCountryCode());
+                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.getYoAppUser(), contact.getVoxUserName(), contact.getCountryCode());
             list.add(entry);
         }
         return list;
@@ -311,7 +313,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         public final String voxUserName;
         public final String countryCode;
 
-        Entry(String id, String name, String phone, String image, String firebaseRoomId, boolean yoappuser,String voxUserName,String countryCode) {
+        Entry(String id, String name, String phone, String image, String firebaseRoomId, boolean yoappuser, String voxUserName, String countryCode) {
             this.entryId = id;
             this.name = name;
             this.phone = phone;
