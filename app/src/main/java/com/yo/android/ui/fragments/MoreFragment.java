@@ -284,12 +284,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // menuDataList.add(new MoreData(phone, false));
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
-        menuDataList.add(new MoreData(String.format("Yo Credit (%s %s)", currencySymbol, balance), true));
-        menuDataList.add(new MoreData("Account Details", true));
-        menuDataList.add(new MoreData("Invite Friends", true));
-        menuDataList.add(new MoreData("Notifications", true));
-        menuDataList.add(new MoreData("Settings", true));
-        menuDataList.add(new MoreData("Sign Out", false));
+        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbol, balance), true));
+        menuDataList.add(new MoreData(getString(R.string.accountdetails), true));
+        menuDataList.add(new MoreData(getString(R.string.invitefriends), true));
+        menuDataList.add(new MoreData(getString(R.string.morenotifications), true));
+        menuDataList.add(new MoreData(getString(R.string.settings), true));
+        menuDataList.add(new MoreData(getString(R.string.signout), false));
         return menuDataList;
     }
 
@@ -297,18 +297,18 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
 
-        if (name.equalsIgnoreCase("Sign Out")) {
+        if (name.equalsIgnoreCase(getString(R.string.signout))) {
             showLogoutDialog();
-        } else if (name.equalsIgnoreCase("Invite Friends")) {
+        } else if (name.equalsIgnoreCase(getString(R.string.invitefriends))) {
             startActivity(new Intent(getActivity(), InviteActivity.class));
         } else if (name.contains("Yo Credit")) {
             startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
-        } else if (name.contains("Notifications")) {
+        } else if (name.contains(getString(R.string.morenotifications))) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        } else if ("Settings".equals(name)) {
+        } else if (getString(R.string.settings).equals(name)) {
             Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
             startActivityForResult(intent, Constants.GO_TO_SETTINGS);
-        } else if (name.equalsIgnoreCase("Account Details")) {
+        } else if (name.equalsIgnoreCase(getString(R.string.accountdetails))) {
             startActivity(new Intent(getActivity(), AccountDetailsActivity.class));
         }
     }

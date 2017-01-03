@@ -79,7 +79,8 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Bind(R.id.lv_settings)
     protected ListView menuListView;
 
-
+    @Bind(R.id.txtEmpty)
+    protected TextView txtEmpty;
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
     @Override
@@ -92,6 +93,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             @Override
             public void onResponse(Call<List<Denominations>> call, Response<List<Denominations>> response) {
                 if (response.body() != null && response.body().size() > 0) {
+                    txtEmpty.setVisibility(View.GONE);
                     List<Denominations> demonimations = response.body();
                     for (Denominations item : demonimations) {
                         Log.w(TAG, "Data " + item.getProductID());
@@ -107,6 +109,8 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             @Override
             public void onFailure(Call<List<Denominations>> call, Throwable t) {
                 Log.w(TAG, "Data Failed to load currenncy");
+                txtEmpty.setVisibility(View.VISIBLE);
+
 
             }
         });

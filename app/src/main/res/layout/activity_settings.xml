@@ -8,7 +8,13 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.yo.android.ui.MainActivity"
     tools:showIn="@layout/more_fragment">
-
+    <TextView
+        android:id="@+id/txtEmpty"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="No data available." />
 
     <ListView
         android:id="@+id/lv_settings"
