@@ -1,5 +1,6 @@
 package com.yo.android.chat.ui;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.yo.android.R;
@@ -26,6 +28,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Settings;
+import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.Room;
@@ -34,6 +37,8 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -49,7 +54,7 @@ import retrofit2.Response;
  */
 public class ChatActivity extends BaseActivity {
 
-    private static final String TAG = "ChatActivity";
+    private final String TAG = ChatActivity.this.getClass().getSimpleName();
     private String opponent;
     private String mOpponentImg;
     private String title;
@@ -57,7 +62,8 @@ public class ChatActivity extends BaseActivity {
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private Contact contactfromOpponent;
     private Contact mContact;
-    @Bind(R.id.progress_layout) RelativeLayout progressLayout;
+    @Bind(R.id.progress_layout)
+    RelativeLayout progressLayout;
     /*@Bind(R.id.title_view) LinearLayout titleView;
     @Bind(R.id.tv_phone_number) TextView customTitle;
     @Bind(R.id.imv_contact_pic) ImageView imageView;*/
@@ -65,12 +71,45 @@ public class ChatActivity extends BaseActivity {
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
+    /**
+     * navigated from YoContactsFragment
+     * @param activity
+     * @param contact
+     * @param forward
+     */
+    public static void start(Activity activity, Contact contact, ArrayList<ChatMessage> forward) {
+        Intent intent = createIntent(activity, contact, forward);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+
+    /**
+     * navigated from chatFragment
+     * @param activity
+     * @param room
+     */
+    public static void start(Activity activity, Room room) {
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra(Constants.ROOM, room);
+        intent.putExtra(Constants.TYPE, Constants.ROOM);
+        activity.startActivity(intent);
+    }
+
+    private static Intent createIntent(Activity activity, Contact contact, ArrayList<ChatMessage> forward) {
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra(Constants.CONTACT, contact);
+        intent.putExtra(Constants.TYPE, Constants.CONTACT);
+        if (forward != null && forward.size() > 0) {
+            intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, forward);
+        }
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading);
         ButterKnife.bind(this);
-
 
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancelAll();
@@ -111,7 +150,6 @@ public class ChatActivity extends BaseActivity {
             Util.cancelAllNotification(this);
             callUserChat(args, userChatFragment);
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
-            final String mContactId = null;
             final Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
             if (contact != null) {
 
