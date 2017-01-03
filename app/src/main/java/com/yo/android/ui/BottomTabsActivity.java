@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -9,6 +10,7 @@ import android.content.ServiceConnection;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.TabLayout;
@@ -38,6 +40,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.Articles;
 import com.yo.android.model.FindPeople;
 import com.yo.android.model.NotificationCount;
@@ -53,11 +56,13 @@ import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.util.FetchNewArticlesService;
+import com.yo.android.util.MagazineDashboardHelper;
 import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,6 +71,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -95,7 +103,9 @@ public class BottomTabsActivity extends BaseActivity {
     private Context context;
     private SipBinder sipBinder;
     private static Context mContext;
+    public static Activity activity;
     public static PendingIntent pintent;
+    private TextView actionBarTitle;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -128,6 +138,7 @@ public class BottomTabsActivity extends BaseActivity {
         // toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
         context = this;
+        activity = this;
         mContext = getApplicationContext();
 
         preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
@@ -154,6 +165,10 @@ public class BottomTabsActivity extends BaseActivity {
         }
 
         customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
+        getSupportActionBar().setCustomView(customActionBar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+
         notificationCount = (Button) customActionBar.findViewById(R.id.notif_count);
         notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
         notificationEnable.setOnClickListener(new View.OnClickListener() {
@@ -162,17 +177,15 @@ public class BottomTabsActivity extends BaseActivity {
                 startActivity(new Intent(context, NotificationsActivity.class));
             }
         });
+        actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 try {
                     Util.closeSearchView(getMenu());
-                    getSupportActionBar().setDisplayShowTitleEnabled(false);
-                    getSupportActionBar().setDisplayShowCustomEnabled(true);
-                    getSupportActionBar().setCustomView(customActionBar);
 
-                    TextView actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);
+
                     actionBarTitle.setText((dataList.get(position)).getTitle());
 
                     if (getFragment() instanceof MoreFragment) {
@@ -193,6 +206,7 @@ public class BottomTabsActivity extends BaseActivity {
                 if (position == 0 && getFragment() instanceof MagazinesFragment) {
                     Log.d("BottomTabsActivity", "onPageSelected In update() BottomTabsActivity");
 
+                    MagazineDashboardHelper.request = 1;
                     ((MagazinesFragment) getFragment()).removeReadArticles();
                     ((MagazinesFragment) getFragment()).update();
                 }
@@ -206,7 +220,10 @@ public class BottomTabsActivity extends BaseActivity {
         });
 
         if(!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
-            startServiceToFetchNewArticles();
+            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
+            if(currentHour == 0) {
+                startServiceToFetchNewArticles();
+            }
         }
 
         // firebase service
@@ -367,9 +384,55 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (getFragment() != null) {
-            getFragment().onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Helper.CROP_ACTIVITY) {
+            if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
+                Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
+                if (imagePath != null) {
+                    preferenceEndPoint.saveStringPreference(Constants.IMAGE_PATH, imagePath.getPath());
+                    uploadFile(new File(imagePath.getPath()));
+                }
+            }
+        } else {
+            if (getFragment() != null) {
+                getFragment().onActivityResult(requestCode, resultCode, data);
+            }
         }
+    }
+
+    private void uploadFile(final File file) {
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
+
+        showProgressDialog();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        // create RequestBody instance from file
+        RequestBody requestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
+        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.updateProfile(userId, access, null, null, null, null, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
+            @Override
+            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                dismissProgressDialog();
+                if (response.body() != null) {
+                    preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                }
+                if (getFragment() != null && getFragment() instanceof MoreFragment) {
+                    ((MoreFragment) getFragment()).loadImage();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
     }
 
     public View setTabs(final String title, final Drawable drawable) {
@@ -563,6 +626,11 @@ public class BottomTabsActivity extends BaseActivity {
     private void startServiceToFetchNewArticles() {
         // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
+        //cal.setTimeInMillis(System.currentTimeMillis());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         Intent intent = new Intent(getAppContext(), FetchNewArticlesService.class);
         pintent = PendingIntent.getService(this, 1014, intent,
                 0);
@@ -571,7 +639,7 @@ public class BottomTabsActivity extends BaseActivity {
                 Constants.FETCHING_NEW_ARTICLES_FREQUENCY, pintent);
     }
 
-    public static Context getAppContext(){
+    public static Context getAppContext() {
         return BottomTabsActivity.mContext;
     }
 }

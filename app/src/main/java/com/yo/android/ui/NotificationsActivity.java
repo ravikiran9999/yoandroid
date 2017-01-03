@@ -106,6 +106,7 @@ public class NotificationsActivity extends BaseActivity {
                 final String redirectId = notificationsAdapter.getItem(position).getId();
                 String tag = notificationsAdapter.getItem(position).getTag();
                 String title = notificationsAdapter.getItem(position).getTitle();
+                lvNotifications.setEnabled(false);
 
                 if("User".equals(tag)) {
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -229,5 +230,11 @@ public class NotificationsActivity extends BaseActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        lvNotifications.setEnabled(true);
     }
 }

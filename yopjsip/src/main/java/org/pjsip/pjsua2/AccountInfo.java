@@ -9,122 +9,124 @@
 package org.pjsip.pjsua2;
 
 public class AccountInfo {
-  private long swigCPtr;
-  protected boolean swigCMemOwn;
+    private long swigCPtr;
+    protected boolean swigCMemOwn;
 
-  protected AccountInfo(long cPtr, boolean cMemoryOwn) {
-    swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
-  }
-
-  protected static long getCPtr(AccountInfo obj) {
-    return (obj == null) ? 0 : obj.swigCPtr;
-  }
-
-  protected void finalize() {
-    delete();
-  }
-
-  public synchronized void delete() {
-    if (swigCPtr != 0) {
-      if (swigCMemOwn) {
-        swigCMemOwn = false;
-        pjsua2JNI.delete_AccountInfo(swigCPtr);
-      }
-      swigCPtr = 0;
+    protected AccountInfo(long cPtr, boolean cMemoryOwn) {
+        swigCMemOwn = cMemoryOwn;
+        swigCPtr = cPtr;
     }
-  }
 
-  public void setId(int value) {
-    pjsua2JNI.AccountInfo_id_set(swigCPtr, this, value);
-  }
+    protected static long getCPtr(AccountInfo obj) {
+        return (obj == null) ? 0 : obj.swigCPtr;
+    }
 
-  public int getId() {
-    return pjsua2JNI.AccountInfo_id_get(swigCPtr, this);
-  }
+    protected void finalize() {
+        delete();
+    }
 
-  public void setIsDefault(boolean value) {
-    pjsua2JNI.AccountInfo_isDefault_set(swigCPtr, this, value);
-  }
+    public synchronized void delete() {
+        if (swigCPtr != 0) {
+            if (swigCMemOwn) {
+                swigCMemOwn = false;
+                pjsua2JNI.delete_AccountInfo(swigCPtr);
+            }
+            swigCPtr = 0;
+        }
+    }
 
-  public boolean getIsDefault() {
-    return pjsua2JNI.AccountInfo_isDefault_get(swigCPtr, this);
-  }
+    public void setId(int value) {
+        pjsua2JNI.AccountInfo_id_set(swigCPtr, this, value);
+    }
 
-  public void setUri(String value) {
-    pjsua2JNI.AccountInfo_uri_set(swigCPtr, this, value);
-  }
+    public int getId() {
+        return pjsua2JNI.AccountInfo_id_get(swigCPtr, this);
+    }
 
-  public String getUri() {
-    return pjsua2JNI.AccountInfo_uri_get(swigCPtr, this);
-  }
+    public void setIsDefault(boolean value) {
+        pjsua2JNI.AccountInfo_isDefault_set(swigCPtr, this, value);
+    }
 
-  public void setRegIsConfigured(boolean value) {
-    pjsua2JNI.AccountInfo_regIsConfigured_set(swigCPtr, this, value);
-  }
+    public boolean getIsDefault() {
+        return pjsua2JNI.AccountInfo_isDefault_get(swigCPtr, this);
+    }
 
-  public boolean getRegIsConfigured() {
-    return pjsua2JNI.AccountInfo_regIsConfigured_get(swigCPtr, this);
-  }
+    public void setUri(String value) {
+        pjsua2JNI.AccountInfo_uri_set(swigCPtr, this, value);
+    }
 
-  public void setRegIsActive(boolean value) {
-    pjsua2JNI.AccountInfo_regIsActive_set(swigCPtr, this, value);
-  }
+    public String getUri() {
+        return pjsua2JNI.AccountInfo_uri_get(swigCPtr, this);
+    }
 
-  public boolean getRegIsActive() {
-    return pjsua2JNI.AccountInfo_regIsActive_get(swigCPtr, this);
-  }
+    public void setRegIsConfigured(boolean value) {
+        pjsua2JNI.AccountInfo_regIsConfigured_set(swigCPtr, this, value);
+    }
 
-  public void setRegExpiresSec(int value) {
-    pjsua2JNI.AccountInfo_regExpiresSec_set(swigCPtr, this, value);
-  }
+    public boolean getRegIsConfigured() {
+        return pjsua2JNI.AccountInfo_regIsConfigured_get(swigCPtr, this);
+    }
 
-  public int getRegExpiresSec() {
-    return pjsua2JNI.AccountInfo_regExpiresSec_get(swigCPtr, this);
-  }
+    public void setRegIsActive(boolean value) {
+        pjsua2JNI.AccountInfo_regIsActive_set(swigCPtr, this, value);
+    }
 
-  public void setRegStatus(pjsip_status_code value) {
-    pjsua2JNI.AccountInfo_regStatus_set(swigCPtr, this, value.swigValue());
-  }
+    public boolean getRegIsActive() {
+        return pjsua2JNI.AccountInfo_regIsActive_get(swigCPtr, this);
+    }
 
-  public pjsip_status_code getRegStatus() {
-    return pjsip_status_code.swigToEnum(pjsua2JNI.AccountInfo_regStatus_get(swigCPtr, this));
-  }
+    public void setRegExpiresSec(int value) {
+        pjsua2JNI.AccountInfo_regExpiresSec_set(swigCPtr, this, value);
+    }
 
-  public void setRegStatusText(String value) {
-    pjsua2JNI.AccountInfo_regStatusText_set(swigCPtr, this, value);
-  }
+    public int getRegExpiresSec() {
+        return pjsua2JNI.AccountInfo_regExpiresSec_get(swigCPtr, this);
+    }
 
-  public String getRegStatusText() {
-    return pjsua2JNI.AccountInfo_regStatusText_get(swigCPtr, this);
-  }
+    public void setRegStatus(pjsip_status_code value) {
+        pjsua2JNI.AccountInfo_regStatus_set(swigCPtr, this, value.swigValue());
+    }
 
-  public void setRegLastErr(int value) {
-    pjsua2JNI.AccountInfo_regLastErr_set(swigCPtr, this, value);
-  }
 
-  public int getRegLastErr() {
-    return pjsua2JNI.AccountInfo_regLastErr_get(swigCPtr, this);
-  }
 
-  public void setOnlineStatus(boolean value) {
-    pjsua2JNI.AccountInfo_onlineStatus_set(swigCPtr, this, value);
-  }
+    public pjsip_status_code getRegStatus() {
+        return pjsip_status_code.swigToEnum(pjsua2JNI.AccountInfo_regStatus_get(swigCPtr, this));
+    }
 
-  public boolean getOnlineStatus() {
-    return pjsua2JNI.AccountInfo_onlineStatus_get(swigCPtr, this);
-  }
+    public void setRegStatusText(String value) {
+        pjsua2JNI.AccountInfo_regStatusText_set(swigCPtr, this, value);
+    }
 
-  public void setOnlineStatusText(String value) {
-    pjsua2JNI.AccountInfo_onlineStatusText_set(swigCPtr, this, value);
-  }
+    public String getRegStatusText() {
+        return pjsua2JNI.AccountInfo_regStatusText_get(swigCPtr, this);
+    }
 
-  public String getOnlineStatusText() {
-    return pjsua2JNI.AccountInfo_onlineStatusText_get(swigCPtr, this);
-  }
+    public void setRegLastErr(int value) {
+        pjsua2JNI.AccountInfo_regLastErr_set(swigCPtr, this, value);
+    }
 
-  public AccountInfo() {
-    this(pjsua2JNI.new_AccountInfo(), true);
-  }
+    public int getRegLastErr() {
+        return pjsua2JNI.AccountInfo_regLastErr_get(swigCPtr, this);
+    }
+
+    public void setOnlineStatus(boolean value) {
+        pjsua2JNI.AccountInfo_onlineStatus_set(swigCPtr, this, value);
+    }
+
+    public boolean getOnlineStatus() {
+        return pjsua2JNI.AccountInfo_onlineStatus_get(swigCPtr, this);
+    }
+
+    public void setOnlineStatusText(String value) {
+        pjsua2JNI.AccountInfo_onlineStatusText_set(swigCPtr, this, value);
+    }
+
+    public String getOnlineStatusText() {
+        return pjsua2JNI.AccountInfo_onlineStatusText_get(swigCPtr, this);
+    }
+
+    public AccountInfo() {
+        this(pjsua2JNI.new_AccountInfo(), true);
+    }
 
 }

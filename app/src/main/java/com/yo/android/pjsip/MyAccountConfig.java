@@ -14,6 +14,7 @@ class MyAccountConfig {
         try {
             ContainerNode acc_node = node.readContainer("Account");
             accCfg.readObject(acc_node);
+
             ContainerNode buddies_node = acc_node.readArray("buddies");
             buddyCfgs.clear();
             while (buddies_node.hasUnread()) {

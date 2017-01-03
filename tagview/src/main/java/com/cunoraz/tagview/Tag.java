@@ -7,6 +7,9 @@ import android.view.View;
 public class Tag {
 
     public int id;
+
+
+
     public String text;
     public int tagTextColor;
     public float tagTextSize;
@@ -46,7 +49,9 @@ public class Tag {
         this.layoutBorderSize = layoutBorderSize;
         this.layoutBorderColor = layoutBorderColor;
     }
-
+    public String getText() {
+        return text;
+    }
     public void setTagView(View view) {
         this.view = view;
     }

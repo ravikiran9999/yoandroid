@@ -118,10 +118,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             tagIds.add(topicId);
 
             String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("cached_magazines", "");
-            List<Articles> cachedMagazinesList = new ArrayList<Articles>();
+           /* String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("cached_magazines", "");*/
+            //List<Articles> cachedMagazinesList = new ArrayList<Articles>();
             List<Articles> cachedTopicMagazinesList = new ArrayList<Articles>();
-            if (!TextUtils.isEmpty(sharedCachedMagazines)) {
+            /*if (!TextUtils.isEmpty(sharedCachedMagazines)) {
                 Type type = new TypeToken<List<Articles>>() {
                 }.getType();
                 String cachedMagazines = sharedCachedMagazines;
@@ -131,7 +131,18 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         cachedTopicMagazinesList.add(article);
                     }
                 }
+            }*/
+            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+
+            if(cachedMagazinesList != null) {
+                for (Articles article : cachedMagazinesList) {
+                    if (article.getTopicId().equals(topicId)) {
+                        cachedTopicMagazinesList.add(article);
+                    }
+                }
             }
+
+
             cachedArticlesList.addAll(cachedTopicMagazinesList);
             List<Articles> tempArticlesList = new ArrayList<Articles>(cachedArticlesList);
             String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
@@ -165,6 +176,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             Collections.reverse(notEmptyUpdatedArticles);
             notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
             cachedArticlesList = notEmptyUpdatedArticles;
+            LinkedHashSet<Articles> hashSet = new LinkedHashSet<>();
+            hashSet.addAll(cachedArticlesList);
+            cachedArticlesList = new ArrayList<Articles>(hashSet);
             myBaseAdapter.addItems(cachedArticlesList);
             if(cachedArticlesList.size()==0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
@@ -230,10 +244,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         } else {
 
             String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("cached_magazines", "");
-            List<Articles> cachedMagazinesList = new ArrayList<Articles>();
+            /*String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("cached_magazines", "");
+            List<Articles> cachedMagazinesList = new ArrayList<Articles>();*/
             List<Articles> cachedTopicMagazinesList = new ArrayList<Articles>();
-            if (!TextUtils.isEmpty(sharedCachedMagazines)) {
+           /* if (!TextUtils.isEmpty(sharedCachedMagazines)) {
                 Type type = new TypeToken<List<Articles>>() {
                 }.getType();
                 String cachedMagazines = sharedCachedMagazines;
@@ -244,6 +258,17 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                     }
                 }
             }
+*/
+            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+
+            if(cachedMagazinesList != null) {
+                for (Articles article : cachedMagazinesList) {
+                    if (article.getTopicId().equals(topicId)) {
+                        cachedTopicMagazinesList.add(article);
+                    }
+                }
+            }
+
             cachedArticlesList.addAll(cachedTopicMagazinesList);
             List<Articles> tempArticlesList = new ArrayList<Articles>(cachedArticlesList);
             String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
@@ -276,6 +301,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             Collections.reverse(notEmptyUpdatedArticles);
             notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
             cachedArticlesList = notEmptyUpdatedArticles;
+            LinkedHashSet<Articles> hashSet = new LinkedHashSet<>();
+            hashSet.addAll(cachedArticlesList);
+            cachedArticlesList = new ArrayList<Articles>(hashSet);
             myBaseAdapter.addItems(cachedArticlesList);
             if(cachedArticlesList.size()==0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
@@ -952,11 +980,14 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             editor.commit();
 
 
-            String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("cached_magazines", "");
+            /*String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("cached_magazines", "");
             Type type = new TypeToken<List<Articles>>() {
             }.getType();
             String cachedMagazines = sharedCachedMagazines;
-            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);*/
+
+            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+
             //if(currentFlippedPosition >0) {
            /* cachedMagazinesList.remove(myBaseAdapter.secondArticle);
             cachedMagazinesList.remove(myBaseAdapter.thirdArticle);*/
@@ -999,17 +1030,19 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         cachedMagazinesList.remove(myBaseAdapter.thirdArticle);
         cachedMagazinesList.remove(myBaseAdapter.getItem(position));*/
 
-            editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-            editor.commit();
+            /*editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+            editor.commit();*/
+
+            saveCachedMagazinesList(cachedMagazinesList);
         }
 
     }
 
     private List<String> checkCachedMagazines() {
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("cached_magazines", "");
+       /* String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        String sharedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("cached_magazines", "");*/
         List<String> existingArticleIds = new ArrayList<>();
-        if (!TextUtils.isEmpty(sharedCachedMagazines)) {
+        /*if (!TextUtils.isEmpty(sharedCachedMagazines)) {
             Type type = new TypeToken<List<Articles>>() {
             }.getType();
             String cachedMagazines = sharedCachedMagazines;
@@ -1018,6 +1051,16 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                     if (article.getTopicId().equals(topicId)) {
                      existingArticleIds.add(article.getId());
                     }
+            }
+        }*/
+
+        List<Articles> cachedMagazinesList = getCachedMagazinesList();
+
+        if(cachedMagazinesList != null) {
+            for (Articles article : cachedMagazinesList) {
+                if (article.getTopicId().equals(topicId)) {
+                    existingArticleIds.add(article.getId());
+                }
             }
         }
 
@@ -1205,4 +1248,48 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             }
         });
     }
+
+    private List<Articles> getCachedMagazinesList() {
+        Type type1 = new TypeToken<List<Articles>>() {
+        }.getType();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+
+        String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("followed_cached_magazines", "");
+        String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("random_cached_magazines", "");
+
+        List<Articles> cachedMagazinesList = new ArrayList<>();
+        if(!TextUtils.isEmpty(sharedFollowedCachedMagazines)){
+            String cachedMagazines = sharedFollowedCachedMagazines;
+            List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+            cachedMagazinesList.addAll(cachedFollowedMagazinesList);
+        }
+        if(!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+            String cachedMagazines = sharedRandomCachedMagazines;
+            List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+            cachedMagazinesList.addAll(cachedRandomMagazinesList);
+        }
+
+        return cachedMagazinesList;
+    }
+
+    private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
+        List<Articles> followedTopicArticles = new ArrayList<>();
+        List<Articles> randomTopicArticles = new ArrayList<>();
+        for(Articles articles: cachedMagazinesList) {
+            if("true".equals(articles.getTopicFollowing())) {
+                followedTopicArticles.add(articles);
+            } else {
+                randomTopicArticles.add(articles);
+            }
+        }
+
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(this, userId);
+        //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
+        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
+        editor.commit();
+    }
+
 }

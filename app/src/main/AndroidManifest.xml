@@ -253,7 +253,8 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".crop.MainImageCropActivity" />
+        <activity android:name=".crop.MainImageCropActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
         <activity
             android:name=".ui.OthersMagazinesDetailActivity"
             android:screenOrientation="portrait" />

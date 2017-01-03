@@ -43,22 +43,42 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/pick_topics"
         android:layout_above="@+id/bottom"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:visibility="visible"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
 
         <LinearLayout
+            android:id="@+id/tagsparent"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.cunoraz.tagview.TagView
-                android:id="@+id/tag_group"
+            <!--<com.cunoraz.tagview.TagView
+                android:id="@+id/tag_group_search"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="20dp"
-                android:layout_weight="1" />
+                android:layout_weight="1" />-->
         </LinearLayout>
     </ScrollView>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:cacheColorHint="@android:color/transparent"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none"
+        android:layout_below="@+id/pick_topics"
+        android:layout_above="@+id/bottom"
+        android:visibility="visible"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:divider="@null"/>
 
     <LinearLayout
         android:id="@+id/bottom"

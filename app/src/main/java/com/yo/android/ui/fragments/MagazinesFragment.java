@@ -76,6 +76,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     FilterWithSpaceAdapter<String> mAdapter;
     private boolean isAlreadyShown;
     //private boolean isRemoved;
+    List<String> topicsNames;
+    private List<Topics> topicsNewList;
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
         return mMagazineFlipArticlesFragment;
@@ -179,6 +181,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }
                 topicsList.clear();
                 topicsList.addAll(response.body());
+                topicsNewList = topicsList;
                 if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
                     List<String> followedTopicsIdsList = new ArrayList<String>();
                     for (int k = 0; k < topicsList.size(); k++) {
@@ -198,6 +201,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 mAdapter.clear();
                 mAdapter.addAll(topicNamesList);
                 mAdapter.notifyDataSetChanged();
+                topicsNames = topicNamesList;
+                getActivity().invalidateOptionsMenu();
                 unSelectedTopics.clear();
 
                 for (int i = 0; i < topicsList.size(); i++) {
@@ -279,6 +284,13 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
             searchTextView.setTextColor(Color.WHITE);
             searchTextView.setThreshold(1);
+            if(!topicsNames.isEmpty() && mAdapter.getCount() == 0) {
+                mAdapter.addAll(topicsNames);
+                mAdapter.notifyDataSetChanged();
+            }
+            if(topicsList.isEmpty()) {
+                topicsList = topicsNewList;
+            }
             searchTextView.setAdapter(mAdapter);
             Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
             mCursorDrawableRes.setAccessible(true);
@@ -319,7 +331,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     if (mMagazineFlipArticlesFragment != null) {
                         mMagazineFlipArticlesFragment.lastReadArticle = 0;
                         //mMagazineFlipArticlesFragment.loadArticles(null);
-                        mMagazineFlipArticlesFragment.getCachedArticles();
+                        //mMagazineFlipArticlesFragment.getCachedArticles();
+                        mMagazineFlipArticlesFragment.getLandingCachedArticles();
 
                     }
                     return true;
@@ -496,6 +509,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }*/
 
                 preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                if(followedTopicsIdsList.isEmpty()) {
+                 mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                }
             }
 
             @Override

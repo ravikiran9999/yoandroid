@@ -298,7 +298,8 @@
     <string name="profile_failed">Failed to update profile, please try again.</string>
     <string name="balance_transfer_not_allowed">Balance transfer not allowed.</string>
     <string name="empty_field">Field should not be empty</string>
-
     <string name="chat_room_id_error">Chat room doesnt exist </string>
     <string name="room_id_not_created">Check your internet connection and try again </string>
+    <string name="magazine_not_found">Magazine not found</string>
+    <string name="magazine_general_error">Magazine Error</string>
 </resources>

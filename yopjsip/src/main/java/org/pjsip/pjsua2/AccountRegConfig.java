@@ -140,6 +140,7 @@ public class AccountRegConfig extends PersistentObject {
 		pjsua2JNI.AccountRegConfig_writeObject(swigCPtr, this,
 				ContainerNode.getCPtr(node), node);
 	}
+	
 
 	public AccountRegConfig() {
 		this(pjsua2JNI.new_AccountRegConfig(), true);
