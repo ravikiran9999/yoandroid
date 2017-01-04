@@ -164,7 +164,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         activity = getActivity();
-        if(activity != null) {
+        if (activity != null) {
             chatRoomListAdapter = new ChatRoomListAdapter(activity.getApplicationContext());
             listView.setAdapter(chatRoomListAdapter);
         }
@@ -174,7 +174,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Room room = chatRoomListAdapter.getItem(position);
-        if(activity != null) {
+        if (activity != null) {
             ChatActivity.start(activity, room);
         }
     }
@@ -446,6 +446,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             }
         }
+        if (arrayOfUsers != null && !arrayOfUsers.isEmpty() && getView() != null) {
+            dismissProgressDialog();
+        }
         return arrayOfUsers;
     }
 
@@ -471,12 +474,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                 }
                             }
                         }
-                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
-                                isAlreadyShown = true;
-                            }
-                        }*/
                     }
                 }
             }
@@ -506,15 +503,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             }
                         }
                     }
-                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
-                                isAlreadyShown = true;
-                            }
-                        }*/
-                    /*} else {
-                        isRemoved = false;
-                    }*/
 
                 }
             }

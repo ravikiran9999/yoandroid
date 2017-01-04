@@ -292,7 +292,10 @@ public class ChatActivity extends BaseActivity {
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
                     String titles = title == null ? opponent : title;
                     intent.putExtra(Constants.OPPONENT_NAME, titles);
-                    intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
+                    if(opponent != null && TextUtils.isDigitsOnly(opponent)) {
+                        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
+                    }
+
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
 
                     if (room != null) {

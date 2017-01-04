@@ -496,7 +496,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private void viewContact() {
         Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
+        if(TextUtils.isDigitsOnly(opponentNumber)) {
+            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
+        }
         intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
         intent.putExtra(Constants.OPPONENT_NAME, opponentName);
         intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
