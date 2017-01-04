@@ -1,6 +1,7 @@
 package com.yo.android.chat.ui.fragments;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -80,7 +81,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private List<String> roomId;
     private List<String> checkRoomIdExist;
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss z");
-
+    private Activity activity;
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -114,13 +115,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -143,7 +137,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         menu.clear();
         inflater.inflate(R.menu.menu_chat, menu);
         this.menu = menu;
-        Util.prepareContactsSearch(getActivity(), menu, chatRoomListAdapter, Constants.CHAT_FRAG);
+        Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -153,15 +147,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
         switch (item.getItemId()) {
             case R.id.chat_contact:
-                startActivity(new Intent(getActivity(), AppContactsActivity.class));
+                startActivity(new Intent(activity, AppContactsActivity.class));
                 break;
             case R.id.create_group:
-                startActivity(new Intent(getActivity(), CreateGroupActivity.class));
+                startActivity(new Intent(activity, CreateGroupActivity.class));
                 break;
-            /*case R.id.clear_chat_history:
-                Toast.makeText(getActivity(), "Clear chat history not yet implemented", Toast.LENGTH_SHORT).show();
-                break;*/
-
             default:
                 break;
 
@@ -173,23 +163,20 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        chatRoomListAdapter = new ChatRoomListAdapter(getActivity().getApplicationContext());
-        listView.setAdapter(chatRoomListAdapter);
-
+        activity = getActivity();
+        if (activity != null) {
+            chatRoomListAdapter = new ChatRoomListAdapter(activity.getApplicationContext());
+            listView.setAdapter(chatRoomListAdapter);
+        }
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Room room = chatRoomListAdapter.getItem(position);
-        navigateToChatScreen(room);
-    }
-
-    private void navigateToChatScreen(Room room) {
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.ROOM, room);
-        intent.putExtra(Constants.TYPE, Constants.ROOM);
-        startActivity(intent);
+        if (activity != null) {
+            ChatActivity.start(activity, room);
+        }
     }
 
     @Override
@@ -214,37 +201,44 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void isRoomsExist() {
-        showProgressDialog();
-        Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(), loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-        String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
-        if (!firebaseUserId.isEmpty()) {
-            authReference.child(Constants.USERS).child(firebaseUserId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+        try {
+            showProgressDialog();
+            if (isAdded() && activity != null) {
 
-                    if (dataSnapshot.child(Constants.MY_ROOMS).exists()) {
-                        getAllRooms();
-                        emptyImageView.setVisibility(View.INVISIBLE);
-                        listView.setVisibility(View.VISIBLE);
-                    } else {
-                        emptyImageView.setVisibility(View.VISIBLE);
-                        listView.setVisibility(View.GONE);
-                    }
-                    //dismissProgressDialog();
-                }
+                Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+                String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
+                if (!firebaseUserId.isEmpty()) {
+                    authReference.child(Constants.USERS).child(firebaseUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                    dismissProgressDialog();
-                    firebaseError.getMessage();
+                            if (dataSnapshot.child(Constants.MY_ROOMS).exists()) {
+                                getAllRooms();
+                                emptyImageView.setVisibility(View.INVISIBLE);
+                                listView.setVisibility(View.VISIBLE);
+                            } else {
+                                emptyImageView.setVisibility(View.VISIBLE);
+                                listView.setVisibility(View.GONE);
+                            }
+                            //dismissProgressDialog();
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                            dismissProgressDialog();
+                            firebaseError.getMessage();
+                        }
+                    });
+                    authReference.keepSynced(true);
                 }
-            });
-            authReference.keepSynced(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private void getAllRooms() {
-        Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(), loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -280,7 +274,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         room.setImages(false);
                     }
                     room.setTime(chatMessage.getTime());
-                    room.setTimeStamp(Util.getChatListTimeFormat(getActivity(), chatMessage.getTime()));
+                    room.setTimeStamp(Util.getChatListTimeFormat(activity, chatMessage.getTime()));
                     if (!arrayOfUsers.contains(room)) {
                         arrayOfUsers.add(room);
                     } else {
@@ -325,7 +319,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     if (dataSnapshot.hasChildren()) {
                         room.setLastChat("");
                         room.setImages(false);
-                        room.setTimeStamp(Util.getChatListTimeFormat(getActivity(), chatMessage.getTime()));
+                        room.setTimeStamp(Util.getChatListTimeFormat(activity, chatMessage.getTime()));
                     }
                     if (chatRoomListAdapter != null) {
                         chatRoomListAdapter.notifyDataSetChanged();
@@ -400,7 +394,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private List<Room> getMembersProfile(final DataSnapshot dataSnapshot) {
 
-        final Firebase authReference = fireBaseHelper.authWithCustomToken(getActivity(), loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        final Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
@@ -452,6 +446,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             }
         }
+        if (arrayOfUsers != null && !arrayOfUsers.isEmpty() && getView() != null) {
+            dismissProgressDialog();
+        }
         return arrayOfUsers;
     }
 
@@ -459,9 +456,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (getActivity() instanceof BottomTabsActivity) {
-                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
-                if (activity.getFragment() instanceof ChatFragment) {
+            if (activity instanceof BottomTabsActivity) {
+                BottomTabsActivity bottomTabsActivity = (BottomTabsActivity) activity;
+                if (bottomTabsActivity.getFragment() instanceof ChatFragment) {
                     if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
@@ -470,19 +467,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
                                     if (!isAlreadyShown) {
-                                        PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
+                                        PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
                                         isAlreadyShown = true;
                                         break;
                                     }
                                 }
                             }
                         }
-                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
-                                isAlreadyShown = true;
-                            }
-                        }*/
                     }
                 }
             }
@@ -493,9 +484,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (getActivity() instanceof BottomTabsActivity) {
-            BottomTabsActivity activity = (BottomTabsActivity) getActivity();
-            if (activity.getFragment() instanceof ChatFragment) {
+        if (activity instanceof BottomTabsActivity) {
+            BottomTabsActivity bottomTabsActivity = (BottomTabsActivity) activity;
+            if (bottomTabsActivity.getFragment() instanceof ChatFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                     //if (!isRemoved) {
                     Type type = new TypeToken<List<Popup>>() {
@@ -505,22 +496,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
                                 if (!isAlreadyShown) {
-                                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
+                                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
                                     isAlreadyShown = true;
                                     break;
                                 }
                             }
                         }
                     }
-                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, getActivity(), preferenceEndPoint, this, this);
-                                isAlreadyShown = true;
-                            }
-                        }*/
-                    /*} else {
-                        isRemoved = false;
-                    }*/
 
                 }
             }
@@ -548,5 +530,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
         //popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 }

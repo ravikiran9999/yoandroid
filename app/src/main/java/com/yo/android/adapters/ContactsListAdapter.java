@@ -8,7 +8,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.text.TextUtils;
 import android.view.View;
 
-//import com.squareup.picasso.Picasso;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
@@ -182,17 +181,6 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             holder.getContactPic().setTag(Settings.imageTag, tempImage);
         }
         holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag(Settings.imageTag));
-    }
-
-    private static void navigateToChatScreen(Context context, String roomId, String opponentPhoneNumber, String yourPhoneNumber, String opponentId) {
-        Intent intent = new Intent(context, ChatActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
-        intent.putExtra(Constants.OPPONENT_ID, opponentId);
-        intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
-        context.startActivity(intent);
-
     }
 
     private void navigateToChatScreen(Contact contact) {
