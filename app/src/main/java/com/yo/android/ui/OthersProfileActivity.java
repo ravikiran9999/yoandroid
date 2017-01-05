@@ -284,4 +284,10 @@ public class OthersProfileActivity extends BaseActivity {
         finish();
         super.onBackPressed();
     }
+
+    public void updateMagazinesCount() {
+        magazinesCount = magazinesCount - 1;
+        dataList.get(0).setCount(magazinesCount);
+        ((TextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.count)).setText(String.valueOf(magazinesCount));
+    }
 }

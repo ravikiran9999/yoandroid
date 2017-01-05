@@ -1526,7 +1526,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void handleMoreDashboardResponse(List<Articles> totalArticles, boolean isFromFollow) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
-        flipView.flipTo(lastReadArticle);
+        if(myBaseAdapter.getCount()>0) {
+            flipView.flipTo(lastReadArticle);
+        }
 
         if(!isSearch) {
 
