@@ -594,11 +594,12 @@ public class Util {
         }
     }
 
-    public static void hideKeyboard(Context context, View view) {
+    public static boolean hideKeyboard(Context context, View view) {
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            return imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+        return false;
     }
 
 
