@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -431,10 +432,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            Util.hideKeyboard(activity, chatText);
+        }
+
         switch (item.getItemId()) {
             case R.id.call:
                 if (opponentNumber != null) {
-                    SipHelper.makeCall(getActivity(), opponentNumber);
+                    SipHelper.makeCall(activity, opponentNumber);
                 }
                 break;
             case R.id.camera:
@@ -444,7 +450,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 getImageFromGallery();
                 break;
             case R.id.view_contact:
-
                 viewContact();
                 break;
             default:

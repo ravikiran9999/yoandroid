@@ -308,4 +308,5 @@
     <string name="invitefriends">Invite Friends</string>
     <string name="accountdetails">Account Details</string>
     <string name="yocredit">Yo Credit (%1$s %2$s)</string>
+    <string name="low_balance">Low balance, please add balance.</string>
 </resources>

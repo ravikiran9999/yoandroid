@@ -218,7 +218,7 @@ public class NewDailerActivity extends BaseActivity {
         double val = Double.parseDouble(balance.trim());
         if (val <= 2) {
             mLog.w(TAG, "Current balance is less than or equal to $2");
-            Util.setBigStyleNotificationForBalance(this, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
+            Util.setBigStyleNotificationForBalance(this, "Credit", getString(R.string.low_balance), "Credit", "");
         }
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
