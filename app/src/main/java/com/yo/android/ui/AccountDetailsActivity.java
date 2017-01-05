@@ -54,8 +54,9 @@ public class AccountDetailsActivity extends BaseActivity {
                 if (!flag) {
                     onBackPressed();
                 }
+            }else{
+                onBackPressed();
             }
-
 
         } else if (item.getItemId() == R.id.menu_save_settings) {
             showConfirmationDialog();
