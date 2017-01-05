@@ -30,7 +30,7 @@ public class CategoryAdapter extends BaseAdapter {
     /// <summary>
     /// The list items with headers.
     /// </summary>
-    private List<Section> listItemsWithHeaders;
+    public List<Section> listItemsWithHeaders;
     /// <summary>
     /// The context.
     /// </summary>
@@ -145,7 +145,7 @@ public class CategoryAdapter extends BaseAdapter {
                 @Override
                 public void onTagClick(Tag tag, int position) {
                     Log.d("TagClick", "Tag is clicked");
-                    ((FollowMoreTopicsActivity) context).onClickingTag(tag, position, tagView);
+                    ((FollowMoreTopicsActivity) context).onClickingTag(tag, position);
 
                 }
             });
