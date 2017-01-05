@@ -103,7 +103,18 @@ public class OthersProfileMagazines extends BaseFragment {
             if (data != null) {
                 OwnMagazine ownMagazine = data.getParcelableExtra("Magazine");
                 int pos = data.getIntExtra("Pos", 0);
-                adapter.updateMagazine(ownMagazine, pos);
+                boolean isMagazineDeleted = data.getBooleanExtra("MagazineDeleted", false);
+                if(isMagazineDeleted) {
+
+                    if(getActivity() != null) {
+                        if (getActivity() instanceof OthersProfileActivity) {
+                            ((OthersProfileActivity)getActivity()).updateMagazinesCount();
+
+                        }
+                    }
+
+                }
+                adapter.updateMagazine(ownMagazine, pos, isMagazineDeleted);
             }
 
         }

@@ -78,6 +78,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
     private boolean isFollowingMagazine;
     private OwnMagazine ownMagazine;
     private int position;
+    private boolean isMagazineDeleted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +130,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 } else {
                     if(response.code() == 404) {
                         mToastFactory.showToast(getString(R.string.magazine_not_found));
+                        isMagazineDeleted = true;
                     } else {
                         mToastFactory.showToast(getString(R.string.magazine_general_error));
                     }
@@ -734,6 +736,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 Intent intent = new Intent();
                 intent.putExtra("Magazine", ownMagazine);
                 intent.putExtra("Pos", position);
+                intent.putExtra("MagazineDeleted", isMagazineDeleted);
                 setResult(RESULT_OK, intent);
                 super.onOptionsItemSelected(item);
                 break;
@@ -793,6 +796,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         Intent intent = new Intent();
         intent.putExtra("Magazine", ownMagazine);
         intent.putExtra("Pos", position);
+        intent.putExtra("MagazineDeleted", isMagazineDeleted);
         setResult(RESULT_OK, intent);
         finish();
 
