@@ -132,7 +132,7 @@ public class Util {
         return notificationId;
     }
 
-    public static <T> void setBigStyleNotification(Context context, String title, String message, String tag, String id, boolean onGoing, boolean isDialer, Class<T> clzz, Intent intent) {
+   /* public static <T> void setBigStyleNotification(Context context, String title, String message, String tag, String id, boolean onGoing, boolean isDialer, Class<T> clzz, Intent intent) {
         Notifications notification = new Notifications();
         Intent notificationIntent = null;
         if (tag.equals("Outgoing call") || tag.equals("Incoming call")) {
@@ -154,7 +154,7 @@ public class Util {
         List<UserData> notificationList = new ArrayList<>();
         notificationList.add(data);
         notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, onGoing, isDialer);
-    }
+    }*/
 
     @NonNull
     private static NotificationBuilderObject prepareNotificationData(String title, String message) {
