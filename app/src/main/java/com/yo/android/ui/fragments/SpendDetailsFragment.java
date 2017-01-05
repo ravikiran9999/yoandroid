@@ -40,6 +40,7 @@ import retrofit2.Response;
  */
 public class SpendDetailsFragment extends BaseFragment implements Callback<ResponseBody> {
 
+    private static final String PSTN = "PSTN";
     @Bind(R.id.txtEmpty)
     TextView txtEmpty;
 
@@ -53,6 +54,8 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     BalanceHelper mBalanceHelper;
 
     private SpentDetailsAdapter adapter;
+
+    public static final String BALANCE_TRANSFER ="BalanceTransfer";
 
 
     @Override
@@ -93,7 +96,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     if (detailResponseList != null && !detailResponseList.isEmpty()) {
                         List<SubscribersList> removedFreeSpents = new ArrayList<>();
                         for (SubscribersList item : detailResponseList) {
-                            if (item.getCalltype().equals("PSTN")) {
+                            if (item.getCalltype().equals(PSTN)||item.getCalltype().equals(BALANCE_TRANSFER)) {
                                 removedFreeSpents.add(item);
                             }
                         }
