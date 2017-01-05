@@ -100,7 +100,6 @@ public class FirebaseService extends InjectedService {
                 @Override
                 public void onFailed() {
                     Log.i(TAG, "Failed FirebaseAuthToken");
-                    Toast.makeText(context, "Failed FirebaseAuthToken", Toast.LENGTH_SHORT).show();
                 }
             });
         }

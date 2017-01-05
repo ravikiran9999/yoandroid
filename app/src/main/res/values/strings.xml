@@ -302,4 +302,6 @@
     <string name="room_id_not_created">Check your internet connection and try again </string>
     <string name="magazine_not_found">Magazine not found</string>
     <string name="magazine_general_error">Magazine Error</string>
+
+    <string name="logged_in_another_device">User accessed from another device</string>
 </resources>

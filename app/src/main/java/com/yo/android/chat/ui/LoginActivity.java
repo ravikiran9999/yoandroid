@@ -89,7 +89,8 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         if (getIntent().getBooleanExtra(Constants.SESSION_EXPIRE, false)) {
-            Toast.makeText(this, "YoApp session expired.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "YoApp session expired.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.logged_in_another_device), Toast.LENGTH_LONG).show();
         }
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
