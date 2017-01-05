@@ -98,7 +98,9 @@ public class MagazineDashboardHelper {
                     totalArticles = followedTopicArticles;
                     totalArticles.addAll(randomTopicArticles);
 
-                    removeReadIds(totalArticles, magazineFlipArticlesFragment, preferenceEndPoint);
+                    if(magazineFlipArticlesFragment.getActivity() != null) {
+                        removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
+                    }
 
                     magazineFlipArticlesFragment.myBaseAdapter.addItems(totalArticles);
                     magazineFlipArticlesFragment.handleDashboardResponse(totalArticles);
@@ -127,10 +129,10 @@ public class MagazineDashboardHelper {
 
     }
 
-    public List<Articles> removeReadIds(List<Articles> totalArticles, final MagazineFlipArticlesFragment magazineFlipArticlesFragment, final PreferenceEndPoint preferenceEndPoint) {
+    public List<Articles> removeReadIds(List<Articles> totalArticles, Context context, final PreferenceEndPoint preferenceEndPoint) {
         List<Articles> tempArticlesList = new ArrayList<Articles>(totalArticles);
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(magazineFlipArticlesFragment.getContext(), userId).getString("read_article_ids", "");
+        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
         if(!TextUtils.isEmpty(readCachedIds)) {
             Type type1 = new TypeToken<List<String>>() {
             }.getType();
@@ -183,7 +185,9 @@ public class MagazineDashboardHelper {
                     totalArticles = followedTopicArticles;
                     totalArticles.addAll(randomTopicArticles);
 
-                    removeReadIds(totalArticles, magazineFlipArticlesFragment, preferenceEndPoint);
+                    if(magazineFlipArticlesFragment.getActivity() != null) {
+                        removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
+                    }
 
                     magazineFlipArticlesFragment.myBaseAdapter.addItemsAll(totalArticles);
                     magazineFlipArticlesFragment.handleMoreDashboardResponse(totalArticles, false);
@@ -252,7 +256,9 @@ public class MagazineDashboardHelper {
                         totalArticles = followedTopicArticles;
                         totalArticles.addAll(randomTopicArticles);
 
-                        removeReadIds(totalArticles, magazineFlipArticlesFragment, preferenceEndPoint);
+                        if(magazineFlipArticlesFragment.getActivity() != null) {
+                            removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
+                        }
 
                         magazineFlipArticlesFragment.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList);
 
@@ -313,7 +319,9 @@ public class MagazineDashboardHelper {
                         totalArticles = followedTopicArticles;
                         totalArticles.addAll(randomTopicArticles);
 
-                        removeReadIds(totalArticles, magazineFlipArticlesFragment, preferenceEndPoint);
+                        if(magazineFlipArticlesFragment.getActivity() != null) {
+                            removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
+                        }
 
                         magazineFlipArticlesFragment.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles);
 

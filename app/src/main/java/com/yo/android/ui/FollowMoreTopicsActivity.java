@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.Categories;
 import com.yo.android.model.Topics;
 import com.yo.android.sectionheaders.CategorizedList;
+import com.yo.android.sectionheaders.Section;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -98,6 +100,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private LinearLayout tagsParentLayout;
     private ArrayList<Tag> worldpopulationlist = null;
     private ArrayList<Tag> arraylist = null;
+    public ProgressBar progressBar;
 
     public interface TagsLoader {
         void loaded();
@@ -135,6 +138,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         //tagGroupSearch = (TagView) findViewById(R.id.tag_group_search);
         //tagGroupSearch.setVisibility(View.GONE);
         tagsParentLayout = (LinearLayout) findViewById(R.id.tagsparent);
+        progressBar = (ProgressBar) findViewById(R.id.test_progress);
 
         initialTags = new ArrayList<>();
         topicsList = new ArrayList<Topics>();
@@ -147,7 +151,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         //tagGroupSearch.setVisibility(View.GONE);
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        showProgressDialog();
+        //showProgressDialog();
+        progressBar.setVisibility(View.VISIBLE);
         serverTopics = new ArrayList<>();
        /* yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
@@ -174,11 +179,12 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             @Override
             public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {
                 if (response == null || response.body() == null) {
-                    dismissProgressDialog();
+                    //dismissProgressDialog();
+                    progressBar.setVisibility(View.GONE);
                     return;
                 }
                 //new TagLoader(response.body(), tagGroup).execute();
-                dismissProgressDialog();
+                //dismissProgressDialog();
                 serverTopics = response.body();
 
                 categorisedList = new CategorizedList(FollowMoreTopicsActivity.this, listView, initialTags, serverTopics);
@@ -194,7 +200,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<List<Categories>> call, Throwable t) {
-                dismissProgressDialog();
+                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -1030,10 +1036,31 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         });
     }
 
-    public void onClickingTag(Tag mTag, int position, TagView tView) {
+    public void onClickingTag(Tag mTag, int position) {
+        Log.d("FollowMoreTopics", "Tag " + mTag + " position " + position);
         try {
             TagSelected tag = (TagSelected) mTag;
             tag.toggleSelection();
+
+            String tagId1 = tag.getTagId();
+            List<Section> listItemsWithHeaders = categorisedList.getCategoryAdapter().listItemsWithHeaders;
+            TagView tView = null;
+            for (int i = 0; i < listItemsWithHeaders.size(); i++) {
+                if (listItemsWithHeaders.get(i).getLayoutId() == R.layout.section_list_item) {
+                    List<Tag> tagsList = listItemsWithHeaders.get(i).getSectionItem().getCategoryItem().getTags();
+                    for (int j = 0; j < tagsList.size(); j++) {
+                        TagSelected initialSel = (TagSelected) tagsList.get(j);
+                        if (initialSel.getTagId().equals(tagId1)) {
+                            //tView = categorisedList.getCategoryAdapter().getItem(position).getSectionItem().getCategoryItem();
+                            tView = categorisedList.getCategoryAdapter().getItem(i).getSectionItem().getCategoryItem();
+                        }
+                    }
+                }
+            }
+
+            //TagView tView = categorisedList.getCategoryAdapter().getItem(position).getSectionItem().getCategoryItem();
+            if(tView != null) {
+            Log.d("FollowMoreTopics", "TagView is " + tView);
             if (!tag.getSelected()) {
                 addedTopics.remove(tag);
                 String tagId = tag.getTagId();
@@ -1052,12 +1079,13 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     }
                 }
 
-                Tag unselectedTag = tView.getTags().get(position);
-                unselectedTag.layoutBorderColor = TAB_GREY;
-                unselectedTag.layoutColor = WHITE;
-                unselectedTag.tagTextColor = TAB_GREY;
-                unselectedTag.tagTextSize = 12;
-                tView.updateTag(unselectedTag);
+                    Tag unselectedTag = tView.getTags().get(position);
+                    unselectedTag.layoutBorderColor = TAB_GREY;
+                    unselectedTag.layoutColor = WHITE;
+                    unselectedTag.tagTextColor = TAB_GREY;
+                    unselectedTag.tagTextSize = 12;
+                    tView.updateTag(unselectedTag);
+
 
 
                 //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
@@ -1078,15 +1106,17 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         break;
                     }
                 }
-                Tag selectedTag = tView.getTags().get(position);
-                selectedTag.layoutBorderColor = WHITE;
-                selectedTag.layoutColor = COLOR_PRIMARY;
-                selectedTag.tagTextColor = WHITE;
-                selectedTag.tagTextSize = 12;
-                tView.updateTag(selectedTag);
+                    Tag selectedTag = tView.getTags().get(position);
+                    selectedTag.layoutBorderColor = WHITE;
+                    selectedTag.layoutColor = COLOR_PRIMARY;
+                    selectedTag.tagTextColor = WHITE;
+                    selectedTag.tagTextSize = 12;
+                    tView.updateTag(selectedTag);
+
 
                 //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
             }
+        }
 
             //tagGroup.setWillNotDraw(false);
             //tagGroup.invalidate();
@@ -1110,6 +1140,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     private void onTagSearchClickEvent() {
         if(tagsParentLayout.getChildCount()>0 && tagsParentLayout.getChildAt(0) instanceof TagView) {
+            Log.d("FollowMoreTopics", "getChildCount() " + tagsParentLayout.getChildCount() + " getChildAt(0) " + tagsParentLayout.getChildAt(0));
             ((TagView) tagsParentLayout.getChildAt(0)).setOnTagClickListener(new TagView.OnTagClickListener() {
                 @Override
                 public void onTagClick(Tag mTag, int position) {
@@ -1162,12 +1193,129 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         tagDummy.layoutColor = WHITE;
                         tagDummy.tagTextColor = TAB_GREY;
                         tagDummy.tagTextSize = 12;
+
+                        /*String tagId = tag.getTagId();
+                        boolean isBreak = false;
+                        for (int i = 0; i < listView.getAdapter().getCount(); i++) {
+                            Section section = (Section) listView.getAdapter().getItem(i);
+                            if (section.getLayoutId() == R.layout.section_list_item) {
+                                TagView tagView = section.getSectionItem().getCategoryItem();
+                                List<Tag> tagsList = tagView.getTags();
+                                for(int j=0; j<tagsList.size(); j++) {
+                                    TagSelected initialSel = (TagSelected) tagsList.get(j);
+                                    if (initialSel.getTagId().equals(tagId)) {
+                                        onUpdatingClickedTag(tag, i);
+                                        isBreak = true;
+                                        break;
+                                    }
+                                }
+                                if(isBreak){
+                                    break;
+                                }
+                            }
+                        }*/
+
                     } catch (Exception e) {
                         mLog.e("TAGS", "Exception" + e);
                     }
 
                 }
             });
+        }
+    }
+
+    private void onUpdatingClickedTag(Tag mTag, int position) {
+        Log.d("FollowMoreTopics", "Tag " + mTag + " position " + position);
+        try {
+            TagSelected tag = (TagSelected) mTag;
+            //tag.toggleSelection();
+            TagView tView = categorisedList.getCategoryAdapter().getItem(position).getSectionItem().getCategoryItem();
+            Log.d("FollowMoreTopics", "TagView is " + tView);
+            if (!tag.getSelected()) {
+                addedTopics.remove(tag);
+                String tagId = tag.getTagId();
+                        /*for (int i = 0; i < topicsList.size(); i++) {
+                            if (topicsList.get(i).getId().equals(tagId)) {
+                                topicsList.get(i).setSelected(false);
+                            }
+                        }*/
+                for (Categories categories : serverTopics) {
+                    topicsList.addAll(categories.getTags());
+                }
+                for (Topics topics : topicsList) {
+                    if (topics.getId().equals(tagId)) {
+                        topics.setSelected(false);
+                        break;
+                    }
+                }
+
+                //Tag unselectedTag = tView.getTags().get(position);
+                for(int j=0; j<tView.getTags().size(); j++) {
+                    TagSelected initialSel = (TagSelected) tView.getTags().get(j);
+                    if (initialSel.getTagId().equals(tagId)) {
+                        Tag unselectedTag = tView.getTags().get(j);
+                        unselectedTag.layoutBorderColor = TAB_GREY;
+                        unselectedTag.layoutColor = WHITE;
+                        unselectedTag.tagTextColor = TAB_GREY;
+                        unselectedTag.tagTextSize = 12;
+                        tView.updateTag(unselectedTag);
+                        break;
+                    }
+                }
+                //categorisedList.getCategoryAdapter().notifyDataSetChanged();
+
+                //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
+            } else {
+                addedTopics.add(tag.text);
+                String tagId = tag.getTagId();
+                        /*for (int i = 0; i < topicsList.size(); i++) {
+                            if (topicsList.get(i).getId().equals(tagId)) {
+                                topicsList.get(i).setSelected(true);
+                            }
+                        }*/
+                for (Categories categories : serverTopics) {
+                    topicsList.addAll(categories.getTags());
+                }
+                for (Topics topics : topicsList) {
+                    if (topics.getId().equals(tagId)) {
+                        topics.setSelected(true);
+                        break;
+                    }
+                }
+                for(int j=0; j<tView.getTags().size(); j++) {
+                    TagSelected initialSel = (TagSelected) tView.getTags().get(j);
+                    if (initialSel.getTagId().equals(tagId)) {
+                        Tag selectedTag = tView.getTags().get(j);
+                        selectedTag.layoutBorderColor = WHITE;
+                        selectedTag.layoutColor = COLOR_PRIMARY;
+                        selectedTag.tagTextColor = WHITE;
+                        selectedTag.tagTextSize = 12;
+                        tView.updateTag(selectedTag);
+                        break;
+                    }
+                }
+                //categorisedList.getCategoryAdapter().notifyDataSetChanged();
+
+                //tagGroup.getTags().get(position).layoutColorPress = getResources().getColor(R.color.colorPrimary);
+            }
+
+            //tagGroup.setWillNotDraw(false);
+            //tagGroup.invalidate();
+
+            Tag tagDummy = new Tag("Android");
+            tagDummy.radius = 1f;
+            tagDummy.layoutBorderColor = TAB_GREY;
+            tagDummy.layoutBorderSize = 1f;
+            tagDummy.layoutColor = WHITE;
+            tagDummy.tagTextColor = TAB_GREY;
+            tagDummy.tagTextSize = 12;
+            //tagDummy.layoutColorPress = getResources().getColor(R.color.colorPrimary);
+
+            //tagGroup.drawTags();
+            // tagGroup.updateTag(tagDummy);
+            // tagGroup.remove(tagGroup.getTags().size() - 1);
+        } catch (Exception e) {
+            mLog.e("TAGS", "Exception" + e);
         }
     }
 

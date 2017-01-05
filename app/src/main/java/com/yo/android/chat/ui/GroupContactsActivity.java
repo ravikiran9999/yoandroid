@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -31,6 +32,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,8 +44,11 @@ import retrofit2.Response;
 public class GroupContactsActivity extends BaseActivity {
 
     private GroupContactsListAdapter groupContactsListAdapter;
-    private ListView listView;
-    private ListView layout;
+    @Bind(R.id.lv_app_contacts)
+    ListView listView;
+    @Bind(R.id.side_index)
+    ListView layout;
+    @Bind(R.id.no_contacts)
     TextView textView;
     private String groupName;
     private Menu mMenu;
@@ -66,14 +72,12 @@ public class GroupContactsActivity extends BaseActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_yo_contacts);
+        ButterKnife.bind(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
-        listView = (ListView) findViewById(R.id.lv_app_contacts);
-        textView = (TextView) findViewById(R.id.no_contacts);
-        layout = (ListView) findViewById(R.id.side_index);
         groupContactsListAdapter = new GroupContactsListAdapter(this);
         listView.setAdapter(groupContactsListAdapter);
         selectedContactsList = getIntent().getParcelableArrayListExtra(Constants.SELECTED_CONTACTS);
@@ -142,7 +146,10 @@ public class GroupContactsActivity extends BaseActivity {
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
+                textView.setText(getString(R.string.no_contacts_found));
+                textView.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.GONE);
+                mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
             }
         });
     }
