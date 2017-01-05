@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yo.android.R;
 import com.yo.android.adapters.AppContactsListAdapter;
@@ -57,6 +59,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     ListView listView;
     @Bind(R.id.side_index)
     ListView layout;
+    @Bind(R.id.no_search_results)
+    TextView noResults;
 
     @Inject
     YoApi.YoService yoService;
@@ -173,7 +177,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void getYoAppUsers() {
-        List<Contact> contacts = mContactsSyncManager.getContacts();
+        final List<Contact> contacts = mContactsSyncManager.getContacts();
         if (!contacts.isEmpty()) {
             loadInAlphabeticalOrder(mContactsSyncManager.getContacts());
         } else if (contacts.isEmpty()) {
@@ -190,6 +194,11 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
+                if (contacts.isEmpty()) {
+                    noResults.setText(getString(R.string.no_contacts_found));
+                    noResults.setVisibility(View.VISIBLE);
+                    mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
+                }
             }
         });
 
@@ -250,7 +259,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         }
         tempList = contactList;
         appContactsListAdapter.addItems(contactList);
-
     }
 
 
