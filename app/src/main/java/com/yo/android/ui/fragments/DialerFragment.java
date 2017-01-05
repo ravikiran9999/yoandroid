@@ -350,8 +350,15 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void onEventMainThread(String action) {
         Log.w(TAG, "LOADING CALL LOGS AFTER ACTION " + action);
         if (action.equals(REFRESH_CALL_LOGS)) {
-            loadCallLogs();
-            mBalanceHelper.checkBalance(null);
+            if(getActivity() !=null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadCallLogs();
+                        mBalanceHelper.checkBalance(null);
+                    }
+                });
+            }
         }
     }
 
