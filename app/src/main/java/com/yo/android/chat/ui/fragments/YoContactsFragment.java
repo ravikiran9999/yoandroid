@@ -112,6 +112,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Util.prepareContactsSearch(activity, menu, appContactsListAdapter, Constants.Yo_CONT_FRAG,noResults);
 
         if (item.getItemId() == android.R.id.home && activity != null) {
             activity.finish();
@@ -140,7 +141,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             }
         });
         if (activity != null) {
-            Util.prepareContactsSearch(activity, menu, appContactsListAdapter, Constants.Yo_CONT_FRAG);
             Util.changeSearchProperties(menu);
         }
         super.onCreateOptionsMenu(menu, inflater);

@@ -108,10 +108,10 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
                                 Matcher m = p.matcher(title);
                                 boolean b = m.matches();
                                 if (b) {
-                                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
+                                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getPhoneNo()));
                                     holder.getContactPic().setImageDrawable(drawable);
                                 } else {
-                                    loadAvatarImage(holder);
+                                    loadAvatarImage(holder, item);
                                 }
                             }
                         } else {
@@ -127,12 +127,12 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
         }
     }
 
-    private void loadAvatarImage(AppRegisteredContactsViewHolder holder) {
+    private void loadAvatarImage(AppRegisteredContactsViewHolder holder, final Contact item) {
         Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
-            shape.setColor(mColorGenerator.getRandomColor());
+            shape.setColor(mColorGenerator.getColor(item.getPhoneNo()));
         }
         if (holder.getContactPic().getTag(Settings.imageTag) == null) {
             holder.getContactPic().setTag(Settings.imageTag, tempImage);

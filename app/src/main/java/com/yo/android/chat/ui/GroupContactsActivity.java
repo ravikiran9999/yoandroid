@@ -61,6 +61,9 @@ public class GroupContactsActivity extends BaseActivity {
     @Named("login")
     PreferenceEndPoint loginPrefs;
 
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchResult;
+
     List<Contact> contactsList = null;
     List<Contact> selectedContactsList = null;
 
@@ -96,13 +99,13 @@ public class GroupContactsActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_multiple_contacts, menu);
         mMenu = menu;
-        Util.prepareContactsSearch(this, mMenu, groupContactsListAdapter, Constants.CONT_FRAG);
         Util.changeSearchProperties(mMenu);
         return super.onCreateOptionsMenu(mMenu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Util.prepareContactsSearch(this, mMenu, groupContactsListAdapter, Constants.CONT_FRAG,noSearchResult);
 
         if (item.getItemId() == R.id.done) {
             done();

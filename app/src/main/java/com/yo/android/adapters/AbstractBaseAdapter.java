@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.model.ChatMessage;
@@ -59,7 +60,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         mList = new ArrayList<>(list);
         if (mOriginalList.size() == 0) {
             mOriginalList = new ArrayList<>(list);
-        } else if(list.size() > mOriginalList.size()) {
+        } else if (list.size() > mOriginalList.size()) {
             mOriginalList.clear();
             mOriginalList.addAll(list);
         }
@@ -112,10 +113,11 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         notifyDataSetChanged();
     }
 
-    public void performSearch(final @NonNull String key) {
+    public List<T> performSearch(final @NonNull String key) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
+            return mOriginalList;
         } else {
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
@@ -124,6 +126,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                 }
             }
             addItems(temp);
+            return temp;
         }
     }
 
@@ -160,10 +163,15 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
     }
 
-    public void performCallLogsSearch(final @NonNull String key) {
+    public void performCallLogsSearch(final @NonNull String key, TextView noSearchResult) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
+            if (mOriginalList.size() == 0) {
+                noSearchResult.setVisibility(View.VISIBLE);
+            } else {
+                noSearchResult.setVisibility(View.GONE);
+            }
         } else {
             List<T> temp = new ArrayList<>();
             for (T event : mOriginalList) {
@@ -180,14 +188,24 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                 }
 
             }
+            if (temp.size() == 0) {
+                noSearchResult.setVisibility(View.VISIBLE);
+            } else {
+                noSearchResult.setVisibility(View.GONE);
+            }
             addItems(temp);
         }
     }
 
-    public void performContactsSearch(final @NonNull String key) {
+    public void performContactsSearch(final @NonNull String key, TextView noSearchResult) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
+            if (mOriginalList.size() == 0) {
+                noSearchResult.setVisibility(View.VISIBLE);
+            } else {
+                noSearchResult.setVisibility(View.GONE);
+            }
         } else {
 
             List<T> temp = new ArrayList<>();
@@ -209,14 +227,24 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                     temp.add(event);
                 }
             }
+            if (temp.size() == 0) {
+                noSearchResult.setVisibility(View.VISIBLE);
+            } else {
+                noSearchResult.setVisibility(View.GONE);
+            }
             addItems(temp);
         }
     }
 
-    public void performYoContactsSearch(final @NonNull String key, final @NonNull String contactType) {
+    public void performYoContactsSearch(final @NonNull String key, final @NonNull String contactType, TextView noSearchResult) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
+            if (mOriginalList.size() == 0) {
+                noSearchResult.setVisibility(View.VISIBLE);
+            } else {
+                noSearchResult.setVisibility(View.GONE);
+            }
         } else {
             temp = new ArrayList<>();
             if (contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
@@ -233,6 +261,11 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
             }
 
+            if (temp.size() == 0) {
+                noSearchResult.setVisibility(View.VISIBLE);
+            } else {
+                noSearchResult.setVisibility(View.GONE);
+            }
             addItems(temp);
         }
     }
