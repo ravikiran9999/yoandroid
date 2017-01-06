@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -156,7 +157,10 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
                 noSearchResult.setVisibility(View.VISIBLE);
-                noSearchResult.setText(getResources().getString(R.string.connectivity_network_settings));
+                FragmentActivity activity = getActivity();
+                if (activity != null) {
+                    noSearchResult.setText(activity.getResources().getString(R.string.connectivity_network_settings));
+                }
             }
         });
     }

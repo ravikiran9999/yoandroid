@@ -73,6 +73,7 @@ public class ChatActivity extends BaseActivity {
 
     /**
      * navigated from YoContactsFragment
+     *
      * @param activity
      * @param contact
      * @param forward
@@ -85,6 +86,7 @@ public class ChatActivity extends BaseActivity {
 
     /**
      * navigated from chatFragment
+     *
      * @param activity
      * @param room
      */
@@ -292,7 +294,7 @@ public class ChatActivity extends BaseActivity {
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
                     String titles = title == null ? opponent : title;
                     intent.putExtra(Constants.OPPONENT_NAME, titles);
-                    if(opponent != null && TextUtils.isDigitsOnly(opponent)) {
+                    if (opponent != null && TextUtils.isDigitsOnly(opponent)) {
                         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
                     }
 
@@ -367,11 +369,8 @@ public class ChatActivity extends BaseActivity {
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
-            int existingColor = mColorGenerator.getColor(shape);
-            if (existingColor == 0) {
-                shape.setColor(mColorGenerator.getRandomColor());
-            } else {
-                shape.setColor(existingColor);
+            if (room != null) {
+                shape.setColor(mColorGenerator.getColor(room.getFirebaseRoomId()));
             }
         }
         imageview.setTag(Settings.imageTag, tempImage);
