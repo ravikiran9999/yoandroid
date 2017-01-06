@@ -10,20 +10,19 @@
         android:id="@+id/no_search_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/tab_grey"
-        android:gravity="center"
         android:layout_centerInParent="true"
+        android:gravity="center"
         android:padding="10dp"
         android:text="@string/no_result_found"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:visibility="gone" />
 
     <ListView
@@ -40,8 +39,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:background="@android:color/white"
-        android:gravity="center_horizontal"
         android:divider="@android:color/transparent"
+        android:gravity="center_horizontal"
         android:orientation="vertical" />
 
 

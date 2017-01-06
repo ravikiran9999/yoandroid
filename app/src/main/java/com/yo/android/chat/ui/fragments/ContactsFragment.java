@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -102,6 +103,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     private boolean CONTACT_SYNC = true;
     private ListView layout;
     private boolean isAlreadyShown;
+    private TextView noSearchResult;
     //private boolean isRemoved;
 
     public ContactsFragment() {
@@ -122,6 +124,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         listView = (ListView) view.findViewById(R.id.lv_contacts);
         layout = (ListView) view.findViewById(R.id.side_index);
+        noSearchResult = (TextView) view.findViewById(R.id.no_search_results);
         return view;
     }
 
@@ -135,12 +138,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     private void syncContacts() {
         List<Contact> contactsList = mSyncManager.getContacts();
-        /*if (CONTACT_SYNC) {
-            getLoaderManager().initLoader(0, null, this);
-            //Manual refresh
-            SyncUtils.triggerRefresh();
-        } else {*/
-
         if (!contactsList.isEmpty()) {
             loadAlphabetOrder(contactsList);
         }
@@ -151,18 +148,21 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         mSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                noSearchResult.setVisibility(View.GONE);
                 loadAlphabetOrder(mSyncManager.getContacts());
-
                 dismissProgressDialog();
             }
 
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
+                noSearchResult.setVisibility(View.VISIBLE);
+                FragmentActivity activity = getActivity();
+                if (activity != null) {
+                    noSearchResult.setText(activity.getResources().getString(R.string.connectivity_network_settings));
+                }
             }
         });
-
-        //}
     }
 
     @Override
@@ -209,7 +209,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         menu.clear();
         inflater.inflate(R.menu.menu_contacts, menu);
         this.menu = menu;
-        Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG);
         Util.changeSearchProperties(menu);
         MenuItem view = menu.findItem(R.id.menu_search);
         // Hide right side alphabets when search is opened.
@@ -232,6 +231,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG, noSearchResult);
         if (item.getItemId() == R.id.invite) {
             Intent i = new Intent(Intent.ACTION_INSERT);
             i.setType(ContactsContract.Contacts.CONTENT_TYPE);

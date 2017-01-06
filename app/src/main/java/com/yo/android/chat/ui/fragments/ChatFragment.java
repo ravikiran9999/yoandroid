@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -71,6 +72,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     ListView listView;
     @Bind(R.id.empty_chat)
     ImageView emptyImageView;
+
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchResult;
+
     private List<ChildEventListener> childEventListenersList;
     private List<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
@@ -137,13 +142,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         menu.clear();
         inflater.inflate(R.menu.menu_chat, menu);
         this.menu = menu;
-        Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG,noSearchResult);
 
         switch (item.getItemId()) {
             case R.id.chat_contact:

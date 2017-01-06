@@ -112,6 +112,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Util.prepareContactsSearch(activity, menu, appContactsListAdapter, Constants.Yo_CONT_FRAG, noResults);
 
         if (item.getItemId() == android.R.id.home && activity != null) {
             activity.finish();
@@ -140,7 +141,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             }
         });
         if (activity != null) {
-            Util.prepareContactsSearch(activity, menu, appContactsListAdapter, Constants.Yo_CONT_FRAG);
             Util.changeSearchProperties(menu);
         }
         super.onCreateOptionsMenu(menu, inflater);
@@ -206,6 +206,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void loadInAlphabeticalOrder(List<Contact> contactList) {
+        String newGroupTxt = "";
+        if (activity != null) {
+            newGroupTxt = activity.getResources().getString(R.string.new_group);
+        }
         if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
             List<Contact> yoList = new ArrayList<>();
 
@@ -238,24 +242,23 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         }
         if (getArguments() != null && !getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false) && !contactList.isEmpty()) {
 
-            if (!stringArrayList.contains(getResources().getString(R.string.new_group))) {
+            if (!stringArrayList.contains(newGroupTxt)) {
                 Contact createGroup = new Contact();
-                createGroup.setName(getResources().getString(R.string.new_group));
+                createGroup.setName(newGroupTxt);
                 createGroup.setVoxUserName(null);
                 createGroup.setPhoneNo(null);
                 createGroup.setFirebaseRoomId(null);
                 contactList.add(0, createGroup);
             } else {
-                Contact contact = contactList.get(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
-                if (stringArrayList.contains(getResources().getString(R.string.new_group))) {
-                    contactList.remove(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
+                Contact contact = contactList.get(stringArrayList.indexOf(newGroupTxt));
+                if (stringArrayList.contains(newGroupTxt)) {
+                    contactList.remove(stringArrayList.indexOf(newGroupTxt));
                 }
                 contactList.add(0, contact);
 
             }
-        } else if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false) && stringArrayList.contains(getResources().getString(R.string.new_group))) {
-
-            contactList.remove(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
+        } else if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false) && stringArrayList.contains(newGroupTxt)) {
+            contactList.remove(stringArrayList.indexOf(newGroupTxt));
         }
         tempList = contactList;
         appContactsListAdapter.addItems(contactList);

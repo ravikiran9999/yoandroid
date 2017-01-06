@@ -109,14 +109,14 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 Matcher m = p.matcher(title);
                 boolean b = m.matches();
                 if (b) {
-                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
+                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getPhoneNo()));
                     holder.getContactPic().setImageDrawable(drawable);
                 } else {
-                    loadAvatarImage(holder);
+                    loadAvatarImage(holder, item);
                 }
             }
         } else {
-            loadAvatarImage(holder);
+            loadAvatarImage(holder, item);
         }
 
         //holder.getContactMail().setText(item.getEmailId());
@@ -164,18 +164,12 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
     }
 
-    private void loadAvatarImage(RegisteredContactsViewHolder holder) {
+    private void loadAvatarImage(RegisteredContactsViewHolder holder, Contact item) {
         Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
-            //shape.setColor(mColorGenerator.getRandomColor());
-            int existingColor = mColorGenerator.getColor(shape);
-            if (existingColor == 0) {
-                shape.setColor(mColorGenerator.getRandomColor());
-            } else {
-                shape.setColor(existingColor);
-            }
+            shape.setColor(mColorGenerator.getColor(item.getPhoneNo()));
         }
         if (holder.getContactPic().getTag(Settings.imageTag) == null) {
             holder.getContactPic().setTag(Settings.imageTag, tempImage);

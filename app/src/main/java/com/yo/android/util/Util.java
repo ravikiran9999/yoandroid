@@ -22,6 +22,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -411,7 +412,7 @@ public class Util {
         });
     }
 
-    public static void prepareContactsSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final String roomType) {
+    public static SearchView prepareContactsSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult) {
 
         final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView;
@@ -430,17 +431,28 @@ public class Util {
                 return true;
             }
 
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
+                if (TextUtils.isEmpty(newText)) {
+                    if ((adapter != null && adapter.getCount() > 0)) {
+                        noSearchResult.setVisibility(View.GONE);
+                    } else {
+                        noSearchResult.setVisibility(View.VISIBLE);
+                        noSearchResult.setText(activity.getResources().getString(R.string.no_result_found));
+                    }
+                } else {
+                    noSearchResult.setVisibility(View.GONE);
+                }
                 if (adapter != null) {
                     if (roomType.equalsIgnoreCase(Constants.CHAT_FRAG)) {
-                        adapter.performContactsSearch(newText);
+                        adapter.performContactsSearch(newText, noSearchResult);
                     } else if (roomType.equalsIgnoreCase(Constants.DAILER_FRAG)) {
-                        adapter.performCallLogsSearch(newText);
+                        adapter.performCallLogsSearch(newText, noSearchResult);
                     } else if (roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) || roomType.equalsIgnoreCase(Constants.CONT_FRAG)) {
                         String contactType = roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ? Constants.Yo_CONT_FRAG : Constants.CONT_FRAG;
-                        adapter.performYoContactsSearch(newText, contactType);
+                        adapter.performYoContactsSearch(newText, contactType, noSearchResult);
                     }
                 }
                 return true;
@@ -452,11 +464,15 @@ public class Util {
                 if (activity != null)
                     Util.hideKeyboard(activity, activity.getCurrentFocus());
                 if (adapter != null) {
-                    adapter.performSearch("");
+                    List list = adapter.performSearch("");
+                    if (list.size() > 0) {
+                        noSearchResult.setVisibility(View.GONE);
+                    }
                 }
                 return true;
             }
         });
+        return searchView;
     }
 
     public static void changeMenuItemsVisibility(Menu menu, int menuId, boolean visibility) {
