@@ -217,12 +217,12 @@ public class MagazineDashboardHelper {
 
     }
 
-    public void removeReadArticleIds(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, final PreferenceEndPoint preferenceEndPoint) {
+    public void removeReadArticleIds(Context context, final PreferenceEndPoint preferenceEndPoint) {
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(magazineFlipArticlesFragment.getContext(), userId);
+        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
         editor.remove("read_article_ids");
         editor.commit();
-        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(magazineFlipArticlesFragment.getContext(), userId).getString("read_article_ids", "");
+        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
         Log.d("MagazineDashboardHelper", "After removing read_article_ids key " + readCachedIds);
     }
 
@@ -352,12 +352,12 @@ public class MagazineDashboardHelper {
         }
     }
 
-    public void removeArticlesFromCache(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, final PreferenceEndPoint preferenceEndPoint, String key) {
+    public void removeArticlesFromCache(Context context, final PreferenceEndPoint preferenceEndPoint, String key) {
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(magazineFlipArticlesFragment.getContext(), userId);
+        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
         editor.remove(key);
         editor.commit();
-        String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(magazineFlipArticlesFragment.getContext(), userId).getString(key, "");
+        String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString(key, "");
         Log.d("MagazineDashboardHelper", "After removing " + key + " key " + cachedMagazines);
     }
 }
