@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -82,8 +83,12 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     TextView txtEmptyCallLogs;
     @Bind(R.id.floatingDialer)
     View floatingDialer;
+
     @Bind(R.id.ll_no_calls)
     LinearLayout llNoCalls;
+
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchResult;
 
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -170,14 +175,29 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_dialer, menu);
         this.menu = menu;
-        Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG);
         Util.changeSearchProperties(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // hideDialPad(true);
+        Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG, noSearchResult);
+        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                llNoCalls.setVisibility(View.GONE);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                showEmptyText();
+                noSearchResult.setVisibility(View.GONE);
+                return true;
+            }
+        });
         String str = null;
         if (item.getItemId() == R.id.menu_all_calls) {
             str = "all calls";
@@ -192,6 +212,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     clearCallLogs();
                 }
             });
+        } else if (item.getItemId() == android.R.id.home) {
+            showEmptyText();
         }
 
         if (str != null) {
@@ -350,8 +372,15 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void onEventMainThread(String action) {
         Log.w(TAG, "LOADING CALL LOGS AFTER ACTION " + action);
         if (action.equals(REFRESH_CALL_LOGS)) {
-            loadCallLogs();
-            mBalanceHelper.checkBalance(null);
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadCallLogs();
+                        mBalanceHelper.checkBalance(null);
+                    }
+                });
+            }
         }
     }
 

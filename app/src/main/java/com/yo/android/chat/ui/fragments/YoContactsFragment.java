@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yo.android.R;
 import com.yo.android.adapters.AppContactsListAdapter;
@@ -35,6 +37,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,10 +51,16 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     private static final int CREATE_GROUP_RESULT = 100;
     private ArrayList<ChatMessage> forwardChatMessages;
     private AppContactsListAdapter appContactsListAdapter;
-    private ListView listView;
-    private ListView layout;
     private List<Contact> tempList = new ArrayList<>();
     private Menu menu;
+    private Activity activity;
+
+    @Bind(R.id.lv_app_contacts)
+    ListView listView;
+    @Bind(R.id.side_index)
+    ListView layout;
+    @Bind(R.id.no_search_results)
+    TextView noResults;
 
     @Inject
     YoApi.YoService yoService;
@@ -79,8 +89,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_yo_contacts, container, false);
-        listView = (ListView) view.findViewById(R.id.lv_app_contacts);
-        layout = (ListView) view.findViewById(R.id.side_index);
+        ButterKnife.bind(this, view);
         listView.setOnItemClickListener(this);
 
         return view;
@@ -90,20 +99,23 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        activity = getActivity();
         if (getArguments() != null) {
             forwardChatMessages = getArguments().getParcelableArrayList(Constants.CHAT_FORWARD);
         }
-
-        appContactsListAdapter = new AppContactsListAdapter(getActivity().getApplicationContext());
-        listView.setAdapter(appContactsListAdapter);
+        if (activity != null) {
+            appContactsListAdapter = new AppContactsListAdapter(activity.getApplicationContext());
+            listView.setAdapter(appContactsListAdapter);
+        }
         getYoAppUsers();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Util.prepareContactsSearch(activity, menu, appContactsListAdapter, Constants.Yo_CONT_FRAG, noResults);
 
-        if (item.getItemId() == android.R.id.home) {
-            getActivity().finish();
+        if (item.getItemId() == android.R.id.home && activity != null) {
+            activity.finish();
         }
         return super.onOptionsItemSelected(item);
 
@@ -128,8 +140,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 return true;
             }
         });
-        Util.prepareContactsSearch(getActivity(), menu, appContactsListAdapter, Constants.Yo_CONT_FRAG);
-        Util.changeSearchProperties(menu);
+        if (activity != null) {
+            Util.changeSearchProperties(menu);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -151,40 +164,20 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 contact = (Contact) listView.getItemAtPosition(position);
             }
 
-            if (position == 0 && contact.getVoxUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null) {
-                startActivityForResult(new Intent(getActivity(), CreateGroupActivity.class), CREATE_GROUP_RESULT);
-            } else {
-                if (forwardChatMessages != null && contact != null && contact.getYoAppUser()) {
-                    navigateToChatScreen(contact, forwardChatMessages);
-                } else if (contact != null && contact.getYoAppUser()) {
-                    navigateToChatScreen(contact);
-                }
+            if (position == 0 && contact.getVoxUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null && activity != null) {
+                startActivityForResult(new Intent(activity, CreateGroupActivity.class), CREATE_GROUP_RESULT);
+            } else if (activity != null) {
+
+                ChatActivity.start(activity, contact, forwardChatMessages);
+
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
     }
 
-    private void navigateToChatScreen(Contact contact, ArrayList<ChatMessage> forward) {
-
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.CONTACT, contact);
-        intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, forward);
-        intent.putExtra(Constants.TYPE, Constants.CONTACT);
-        startActivity(intent);
-        getActivity().finish();
-    }
-
-    private void navigateToChatScreen(Contact contact) {
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra(Constants.CONTACT, contact);
-        intent.putExtra(Constants.TYPE, Constants.CONTACT);
-        startActivity(intent);
-        getActivity().finish();
-    }
-
     private void getYoAppUsers() {
-        List<Contact> contacts = mContactsSyncManager.getContacts();
+        final List<Contact> contacts = mContactsSyncManager.getContacts();
         if (!contacts.isEmpty()) {
             loadInAlphabeticalOrder(mContactsSyncManager.getContacts());
         } else if (contacts.isEmpty()) {
@@ -201,6 +194,11 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
+                if (contacts.isEmpty()) {
+                    noResults.setText(getString(R.string.no_contacts_found));
+                    noResults.setVisibility(View.VISIBLE);
+                    mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
+                }
             }
         });
 
@@ -208,6 +206,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void loadInAlphabeticalOrder(List<Contact> contactList) {
+        String newGroupTxt = "";
+        if (activity != null) {
+            newGroupTxt = activity.getResources().getString(R.string.new_group);
+        }
         if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
             List<Contact> yoList = new ArrayList<>();
 
@@ -224,7 +226,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
             }
         });
-        Helper.displayIndex(getActivity(), layout, contactList, listView);
+
+        if (activity != null) {
+            Helper.displayIndex(activity, layout, contactList, listView);
+        }
         ArrayList<String> stringArrayList = new ArrayList<>();
         for (Contact contact : contactList) {
             if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
@@ -237,28 +242,26 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         }
         if (getArguments() != null && !getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false) && !contactList.isEmpty()) {
 
-            if (!stringArrayList.contains(getResources().getString(R.string.new_group))) {
+            if (!stringArrayList.contains(newGroupTxt)) {
                 Contact createGroup = new Contact();
-                createGroup.setName(getResources().getString(R.string.new_group));
+                createGroup.setName(newGroupTxt);
                 createGroup.setVoxUserName(null);
                 createGroup.setPhoneNo(null);
                 createGroup.setFirebaseRoomId(null);
                 contactList.add(0, createGroup);
             } else {
-                Contact contact = contactList.get(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
-                if (stringArrayList.contains(getResources().getString(R.string.new_group))) {
-                    contactList.remove(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
+                Contact contact = contactList.get(stringArrayList.indexOf(newGroupTxt));
+                if (stringArrayList.contains(newGroupTxt)) {
+                    contactList.remove(stringArrayList.indexOf(newGroupTxt));
                 }
                 contactList.add(0, contact);
 
             }
-        } else if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false) && stringArrayList.contains(getResources().getString(R.string.new_group))) {
-
-            contactList.remove(stringArrayList.indexOf(getResources().getString(R.string.new_group)));
+        } else if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false) && stringArrayList.contains(newGroupTxt)) {
+            contactList.remove(stringArrayList.indexOf(newGroupTxt));
         }
         tempList = contactList;
         appContactsListAdapter.addItems(contactList);
-
     }
 
 
@@ -272,8 +275,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            getActivity().finish();
+        if (resultCode == Activity.RESULT_OK && activity != null) {
+            activity.finish();
         }
     }
 

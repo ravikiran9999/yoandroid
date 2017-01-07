@@ -87,7 +87,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         setBigStyleNotification(data.get("title").toString(), data.get("message").toString(), data.get("tag").toString(), data.get("id").toString());
     }
 
-    public void createNotification(String title, String message) {
+    /*public void createNotification(String title, String message) {
 
         Intent destinationIntent = new Intent(this, NotificationsActivity.class);
 
@@ -107,7 +107,7 @@ public class PushNotificationService extends FirebaseMessagingService {
 
 
     }
-
+*/
     private int getNotificationIcon() {
         boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
         return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;

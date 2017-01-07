@@ -2,6 +2,7 @@ package com.yo.android.ui;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -219,9 +221,9 @@ public class BottomTabsActivity extends BaseActivity {
             }
         });
 
-        if(!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
+        if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
-            if(currentHour == 0) {
+            if (currentHour == 0) {
                 startServiceToFetchNewArticles();
             }
         }
@@ -245,11 +247,14 @@ public class BottomTabsActivity extends BaseActivity {
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
         EventBus.getDefault().register(this);
         List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
+        NotificationCache.get().clearNotifications();
+        NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nMgr.cancelAll();
+        Intent intent1 = getIntent();
+        String tag = intent1.getStringExtra("tag");
         if (notificationList.size() == 1) {
-            Intent intent1 = getIntent();
             String title = intent1.getStringExtra("title");
             String message = intent1.getStringExtra("message");
-            String tag = intent1.getStringExtra("tag");
             final String redirectId = intent1.getStringExtra("id");
 
             if (!("POPUP").equals(tag)) {
@@ -333,6 +338,12 @@ public class BottomTabsActivity extends BaseActivity {
                     //startActivity(new Intent(this, DialerActivity.class));
                     viewPager.setCurrentItem(2);
                 }
+            }
+        }else{
+            if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
+
+                startActivity(new Intent(this, TabsHeaderActivity.class));
+                finish();
             }
         }
 

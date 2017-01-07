@@ -246,7 +246,7 @@ public class YODialogs {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
         double val = Double.parseDouble(balance.trim());
         if (val <= 2) {
-            Util.setBigStyleNotificationForBalance(context, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
+            Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
         }
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {

@@ -2,6 +2,7 @@ package com.yo.android.helpers;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +50,7 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        ((FollowMoreTopicsActivity) context).showProgressDialog();
+        //((FollowMoreTopicsActivity) context).showProgressDialog();
         topicsList = new ArrayList<Categories>();
         tagGroup.setVisibility(View.GONE);
         initialTags.clear();
@@ -115,7 +116,11 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
 
         //tagGroup.addTags(tagSelected);
         CategoryAdapter categoryAdapter = categorisedList.LoadCategoryAdapter();
-        ((FollowMoreTopicsActivity) context).dismissProgressDialog();
+        //((FollowMoreTopicsActivity) context).dismissProgressDialog();
+
+        Handler mHandler = new Handler();
+        long DURATION = 10000L;
+        mHandler.postDelayed(runnable, DURATION);
     }
 
     private TagView createTag(List<Tag> tags) {
@@ -124,4 +129,18 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
         tv.addTags(tags);
         return view;
     }
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            ((FollowMoreTopicsActivity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //((FollowMoreTopicsActivity) context).dismissProgressDialog();
+                    ((FollowMoreTopicsActivity) context).progressBar.setVisibility(View.GONE);
+                }
+            });
+
+        }
+    };
 }

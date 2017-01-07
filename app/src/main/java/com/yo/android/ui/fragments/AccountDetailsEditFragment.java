@@ -20,6 +20,7 @@ import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.ui.AccountDetailsActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 /**
  * Created by Sindhura on 11/23/2016.
@@ -42,6 +43,9 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
 
     private String countryCode;
 
+    public EditText getEditProfile() {
+        return editProfile;
+    }
     public AccountDetailsEditFragment(final String title, final String edit, final String key, final String countryCode) {
         this.title = title;
         this.edit = edit;
@@ -85,6 +89,12 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem item = menu.getItem(0);
         item.setVisible(false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -144,6 +154,7 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
 
     /**
      * Validate phone number
+     *
      * @param phone the Phone Number
      * @return
      */
@@ -153,6 +164,7 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
 
     /**
      * Validate Email ID
+     *
      * @param email the email address
      * @return
      */

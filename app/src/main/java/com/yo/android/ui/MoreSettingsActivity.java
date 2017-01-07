@@ -54,8 +54,8 @@ public class MoreSettingsActivity extends BaseActivity {
     }
 
     private void setDataFromPreferences() {
-        syncContactsSwitch.setEnabled(preferenceEndPoint.getBooleanPreference(Constants.SYNCE_CONTACTS));
-        notificationSwitch.setEnabled(preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS));
+        syncContactsSwitch.setChecked(preferenceEndPoint.getBooleanPreference(Constants.SYNCE_CONTACTS));
+        notificationSwitch.setChecked(preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS));
         syncContactsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

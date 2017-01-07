@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.PaymentHistoryItem;
@@ -44,7 +45,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
     ProgressBar progress;
 
     @Bind(R.id.listView)
-    ListView listView;
+    NonScrollableListView listView;
     @Inject
     BalanceHelper mBalanceHelper;
     private RechargeDetailsAdapter adapter;

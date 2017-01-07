@@ -1,29 +1,22 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
-import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Room;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
-import com.yo.android.util.Constants;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,7 +32,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     protected PreferenceEndPoint preferenceEndPoint;
     Context context;
     private TextDrawable.IBuilder mDrawableBuilder;
-    //private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
 
     public ChatRoomListAdapter(Context context) {
         super(context);
@@ -69,24 +62,24 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             }
 
             Glide.with(mContext).load(item.getImage())
-                    .placeholder(loadAvatarImage(holder, false))
-                    .error(loadAvatarImage(holder, false))
+                    .placeholder(loadAvatarImage(item, holder, false))
+                    .error(loadAvatarImage(item, holder, false))
                     .dontAnimate()
                     .into(holder.getChatRoomPic());
 
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
             Glide.with(mContext).load(item.getImage())
-                    .placeholder(loadAvatarImage(holder, true))
+                    .placeholder(loadAvatarImage(item, holder, true))
                     .dontAnimate()
-                    .error(loadAvatarImage(holder, true)).
+                    .error(loadAvatarImage(item, holder, true)).
                     into(holder.getChatRoomPic());
         } else {
             holder.getOpponentName().setText("");
-            Glide.with(context).load(loadAvatarImage(holder, false))
+            Glide.with(context).load(loadAvatarImage(item, holder, false))
                     .dontAnimate()
-                    .placeholder(loadAvatarImage(holder, false))
-                    .error(loadAvatarImage(holder, false))
+                    .placeholder(loadAvatarImage(item, holder, false))
+                    .error(loadAvatarImage(item, holder, false))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.getChatRoomPic());
         }
@@ -105,7 +98,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         holder.getTimeStamp().setText(item.getTimeStamp());
     }
 
-    private Drawable loadAvatarImage(ChatRoomViewHolder holder, boolean isgroup) {
+    private Drawable loadAvatarImage(Room item, ChatRoomViewHolder holder, boolean isgroup) {
         /*if (holder.getChatRoomPic().getTag(Settings.imageTag) != null) {
             return (Drawable) holder.getChatRoomPic().getTag(Settings.imageTag);
         }*/
@@ -121,14 +114,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
-
-            /*int existingColor = mColorGenerator.getColor(shape);
-            if (existingColor == 0) {
-                shape.setColor(mColorGenerator.getRandomColor());
-            } else {
-                shape.setColor(existingColor);
-            }*/
-
+            shape.setColor(mColorGenerator.getColor(item.getFirebaseRoomId()));
         }
         holder.getChatRoomPic().setTag(Settings.imageTag, tempImage);
         return tempImage;

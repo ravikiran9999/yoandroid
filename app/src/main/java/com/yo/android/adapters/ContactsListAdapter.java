@@ -8,7 +8,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.text.TextUtils;
 import android.view.View;
 
-//import com.squareup.picasso.Picasso;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
@@ -110,14 +109,14 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 Matcher m = p.matcher(title);
                 boolean b = m.matches();
                 if (b) {
-                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
+                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getPhoneNo()));
                     holder.getContactPic().setImageDrawable(drawable);
                 } else {
-                    loadAvatarImage(holder);
+                    loadAvatarImage(holder, item);
                 }
             }
         } else {
-            loadAvatarImage(holder);
+            loadAvatarImage(holder, item);
         }
 
         //holder.getContactMail().setText(item.getEmailId());
@@ -165,34 +164,17 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
     }
 
-    private void loadAvatarImage(RegisteredContactsViewHolder holder) {
+    private void loadAvatarImage(RegisteredContactsViewHolder holder, Contact item) {
         Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
-            //shape.setColor(mColorGenerator.getRandomColor());
-            int existingColor = mColorGenerator.getColor(shape);
-            if (existingColor == 0) {
-                shape.setColor(mColorGenerator.getRandomColor());
-            } else {
-                shape.setColor(existingColor);
-            }
+            shape.setColor(mColorGenerator.getColor(item.getPhoneNo()));
         }
         if (holder.getContactPic().getTag(Settings.imageTag) == null) {
             holder.getContactPic().setTag(Settings.imageTag, tempImage);
         }
         holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag(Settings.imageTag));
-    }
-
-    private static void navigateToChatScreen(Context context, String roomId, String opponentPhoneNumber, String yourPhoneNumber, String opponentId) {
-        Intent intent = new Intent(context, ChatActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constants.CHAT_ROOM_ID, roomId);
-        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentPhoneNumber);
-        intent.putExtra(Constants.OPPONENT_ID, opponentId);
-        intent.putExtra(Constants.YOUR_PHONE_NUMBER, yourPhoneNumber);
-        context.startActivity(intent);
-
     }
 
     private void navigateToChatScreen(Contact contact) {

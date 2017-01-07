@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.google.gson.reflect.TypeToken;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.dialer.SubscribersList;
@@ -40,6 +42,7 @@ import retrofit2.Response;
  */
 public class SpendDetailsFragment extends BaseFragment implements Callback<ResponseBody> {
 
+    private static final String PSTN = "PSTN";
     @Bind(R.id.txtEmpty)
     TextView txtEmpty;
 
@@ -47,12 +50,14 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     ProgressBar progress;
 
     @Bind(R.id.listView)
-    ListView listView;
+    NonScrollableListView listView;
 
     @Inject
     BalanceHelper mBalanceHelper;
 
     private SpentDetailsAdapter adapter;
+
+    public static final String BALANCE_TRANSFER = "BalanceTransfer";
 
 
     @Override
@@ -79,6 +84,27 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         listView.setAdapter(adapter);
         showProgressDialog();
         mBalanceHelper.loadSpentDetailsHistory(this);
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                /* Check if the first item is already reached to top.*/
+                if (listView.getFirstVisiblePosition() == 0) {
+                    View firstChild = listView.getChildAt(0);
+                    int topY = 0;
+                    if (firstChild != null) {
+                        topY = firstChild.getTop();
+                    }
+
+
+                }
+            }
+        });
 
     }
 
@@ -93,8 +119,10 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     if (detailResponseList != null && !detailResponseList.isEmpty()) {
                         List<SubscribersList> removedFreeSpents = new ArrayList<>();
                         for (SubscribersList item : detailResponseList) {
-                            if (item.getCalltype().equals("PSTN")) {
-                                removedFreeSpents.add(item);
+                            if (item.getCalltype().equals(PSTN) || item.getCalltype().equals(BALANCE_TRANSFER)) {
+                                if (Float.valueOf(item.getCallcost()) != 0f) {
+                                    removedFreeSpents.add(item);
+                                }
                             }
                         }
                         adapter.addItems(removedFreeSpents);

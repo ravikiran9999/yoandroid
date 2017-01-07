@@ -1,16 +1,21 @@
 package com.yo.android.ui;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 
 import com.yo.android.R;
+import com.yo.android.ui.fragments.AccountDetailsEditFragment;
 import com.yo.android.ui.fragments.AccountDetailsFragment;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 /**
  * Created by Sindhura on 11/22/2016.
@@ -18,12 +23,13 @@ import com.yo.android.util.Constants;
 public class AccountDetailsActivity extends BaseActivity {
 
     public static final String FRAGMENT = "fragment";
+    private AccountDetailsFragment accountDetailsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setTitle(getString(R.string.account_details));
-        AccountDetailsFragment accountDetailsFragment = new AccountDetailsFragment();
+        accountDetailsFragment = new AccountDetailsFragment();
         getSupportFragmentManager().beginTransaction()
                 .add(android.R.id.content, accountDetailsFragment, FRAGMENT)
                 .commit();
@@ -40,7 +46,18 @@ public class AccountDetailsActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+            if (currentFragment instanceof AccountDetailsEditFragment) {
+                AccountDetailsEditFragment fragment = (AccountDetailsEditFragment) currentFragment;
+                boolean flag = Util.hideKeyboard(this, fragment.getEditProfile());
+                if (!flag) {
+                    onBackPressed();
+                }
+            }else{
+                onBackPressed();
+            }
+
         } else if (item.getItemId() == R.id.menu_save_settings) {
             showConfirmationDialog();
         }

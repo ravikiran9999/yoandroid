@@ -161,7 +161,6 @@ public class UpdateProfileActivity extends BaseActivity {
                                 .fitCenter()
                                 .into(profileImage);
                         addPhoto.setText(getResources().getString(R.string.change_picture));
-                        uploadFile(imgFile);
                     }
                 }
                 break;

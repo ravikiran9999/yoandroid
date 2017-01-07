@@ -45,13 +45,22 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
                 app:tabIndicatorColor="@android:color/white"
-                app:tabMode="scrollable" />
+                app:tabMode="fixed" />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/htab_viewpager"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:fillViewport="true"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/htab_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </android.support.v4.widget.NestedScrollView>
+
 </android.support.design.widget.CoordinatorLayout>

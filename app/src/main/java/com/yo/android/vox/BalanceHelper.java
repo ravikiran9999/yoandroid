@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.util.Constants;
@@ -75,7 +76,7 @@ public class BalanceHelper {
                             double val = Double.parseDouble(balance.trim());
                             if(val <=2) {
                                 mLog.w(TAG, "Current balance is less than or equal to $2");
-                                Util.setBigStyleNotificationForBalance(context, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
+                                Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
                             }
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
@@ -455,7 +456,6 @@ public class BalanceHelper {
     }
 
     public String getCurrencySymbol() {
-        String symbol = prefs.getStringPreference(Constants.CURRENCY_SYMBOL, "$");
-        return symbol;
+        return prefs.getStringPreference(Constants.CURRENCY_SYMBOL, "Rs");
     }
 }
