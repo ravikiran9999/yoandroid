@@ -192,6 +192,7 @@ public class BottomTabsActivity extends BaseActivity {
 
                     if (getFragment() instanceof MoreFragment) {
                         getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
+                        getSupportActionBar().setElevation(0);
                     } else {
                         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                     }
