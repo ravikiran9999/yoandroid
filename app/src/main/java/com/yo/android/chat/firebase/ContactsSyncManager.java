@@ -126,8 +126,10 @@ public class ContactsSyncManager {
             }
         }
 
-        Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute();
-        response.body();
+        //Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute();
+        List<Contact> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute().body();
+        response.toString();
+        //response.body();
     }
 
     private List<Contact> readContacts() {
@@ -167,7 +169,7 @@ public class ContactsSyncManager {
             Collections.sort(cacheList, new Comparator<Contact>() {
                 @Override
                 public int compare(Contact lhs, Contact rhs) {
-                    return Boolean.valueOf(rhs.getYoAppUser()).compareTo(Boolean.valueOf(lhs.getYoAppUser()));
+                    return Boolean.valueOf(rhs.getYoAppUser()).compareTo(lhs.getYoAppUser());
                 }
             });
         }

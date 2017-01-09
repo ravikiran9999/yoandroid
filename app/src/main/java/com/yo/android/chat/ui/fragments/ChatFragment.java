@@ -148,7 +148,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG,noSearchResult);
+        Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG, noSearchResult);
 
         switch (item.getItemId()) {
             case R.id.chat_contact:
@@ -298,17 +298,18 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         }
                     }
                 }
+                try {
+                    Collections.sort(arrayOfUsers, new Comparator<Room>() {
+                        @Override
+                        public int compare(Room lhs, Room rhs) {
+                            return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
+                        }
+                    });
 
-                Collections.sort(arrayOfUsers, new Comparator<Room>() {
-                    @Override
-                    public int compare(Room lhs, Room rhs) {
-                        return (int) (rhs.getTime() - lhs.getTime());
-                    }
-                });
-
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
-
-
             }
 
             @Override

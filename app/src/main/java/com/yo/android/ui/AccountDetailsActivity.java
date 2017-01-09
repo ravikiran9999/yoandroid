@@ -84,7 +84,7 @@ public class AccountDetailsActivity extends BaseActivity {
         super.onBackPressed();
         if (getSupportFragmentManager().findFragmentByTag(FRAGMENT) instanceof AccountDetailsFragment) {
             getSupportActionBar().setTitle(getString(R.string.account_details));
-            ((AccountDetailsFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT)).setUserInfoDetails();
+            //((AccountDetailsFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT)).setUserInfoDetails();
         }
     }
 
