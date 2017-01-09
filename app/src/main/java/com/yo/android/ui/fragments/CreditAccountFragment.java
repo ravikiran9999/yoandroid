@@ -101,7 +101,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                     prepareCreditAccountList(demonimations);
                     if (demonimations != null && demonimations.size() > 0) {
                         preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
-                        txt_balance.setText(String.format("%s %s", demonimations.get(0).getCurrencySymbol(), balance));
+                        txt_balance.setText(String.format("%s %s", MoreFragment.currencySymbolDollar, balance));
                     }
                 }
             }
