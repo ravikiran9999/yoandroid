@@ -105,10 +105,6 @@ public class FireBaseHelper {
                     unauth();
                     loginPrefs.removePreference(Constants.FIREBASE_TOKEN);
 
-
-                    /*if (myServiceConnection.isServiceConnection()) {
-                        firebaseService.getFirebaseAuth();
-                    }*/
                     FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                         @Override
                         public void onSuccess() {
