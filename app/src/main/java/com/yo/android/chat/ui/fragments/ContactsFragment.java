@@ -240,9 +240,15 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             startActivityForResult(i, PICK_CONTACT_REQUEST);
             return true;
         }
-
-
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_CONTACT_REQUEST) {
+           
+        }
     }
 
     @Override
