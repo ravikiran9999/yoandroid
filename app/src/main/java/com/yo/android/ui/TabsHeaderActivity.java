@@ -97,10 +97,12 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
             }.getType();
             List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
             if (popup != null) {
+                isAlreadyShown = false;
                 for (Popup p : popup) {
                     if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
                         if (!isAlreadyShown) {
-                            PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
+                            //PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
+                            PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
                             isAlreadyShown = true;
                             break;
                         }
@@ -150,7 +152,8 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
                     for (Popup p : popup) {
                         if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
                             if (!isAlreadyShown) {
-                                PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
+                                //PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
+                                PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
                                 isAlreadyShown = true;
                                 break;
                             }
@@ -178,7 +181,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
 
     @Override
     public void closePopup() {
-        isAlreadyShown = false;
+        //isAlreadyShown = false;
         //isRemoved = true;
         //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
