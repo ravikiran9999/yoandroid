@@ -99,6 +99,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     ContactsSyncManager mContactsSyncManager;
     private boolean isAlreadyShown;
     //private boolean isRemoved;
+    private boolean isSharedPreferenceShown;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -486,6 +487,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
                         if (popup != null) {
+                            Collections.reverse(popup);
                             isAlreadyShown = false;
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
@@ -493,6 +495,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                         //PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
                                         PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CHATS, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
+                                        isSharedPreferenceShown = false;
                                         break;
                                     }
                                 }
@@ -523,6 +526,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                     //PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
                                     PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CHATS, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
+                                    isSharedPreferenceShown = true;
                                     break;
                                 }
                             }
@@ -544,6 +548,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         if (popup != null) {
+            if(!isSharedPreferenceShown) {
+                Collections.reverse(popup);
+            }
             List<Popup> tempPopup = new ArrayList<>(popup);
             for (Popup p : popup) {
                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {

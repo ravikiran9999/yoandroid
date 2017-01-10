@@ -48,6 +48,7 @@ import com.yo.android.util.Util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -89,6 +90,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     protected FrameLayout layout;
 
     private List<String> topicNamesList = new ArrayList<String>();
+
+    private boolean isSharedPreferenceShown;
 
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
@@ -437,6 +440,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                                     //PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
                                     PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MAGAZINES, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
+                                    isSharedPreferenceShown = true;
                                     break;
                                 }
                             }
@@ -475,6 +479,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
                         if (popup != null) {
+                            Collections.reverse(popup);
                             isAlreadyShown = false;
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MAGAZINES) {
@@ -482,6 +487,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                                         //PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
                                         PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MAGAZINES, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
+                                        isSharedPreferenceShown = false;
                                         break;
                                     }
                                 }
@@ -510,6 +516,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         if (popup != null) {
+            if(!isSharedPreferenceShown) {
+                Collections.reverse(popup);
+            }
             List<Popup> tempPopup = new ArrayList<>(popup);
             for (Popup p : popup) {
                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MAGAZINES) {
