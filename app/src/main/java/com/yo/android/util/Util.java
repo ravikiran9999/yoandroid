@@ -412,7 +412,7 @@ public class Util {
         });
     }
 
-    public static SearchView prepareContactsSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult) {
+    public static SearchView prepareContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult) {
 
         final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView;
@@ -435,9 +435,11 @@ public class Util {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
+                boolean isFromClose = false;
                 if (TextUtils.isEmpty(newText)) {
-                    if ((adapter != null && adapter.getCount() > 0)) {
+                    if (menu.findItem(R.id.menu_search).isActionViewExpanded()) {
                         noSearchResult.setVisibility(View.GONE);
+                        isFromClose = true;
                     } else {
                         noSearchResult.setVisibility(View.VISIBLE);
                         noSearchResult.setText(activity.getResources().getString(R.string.no_result_found));
@@ -447,12 +449,12 @@ public class Util {
                 }
                 if (adapter != null) {
                     if (roomType.equalsIgnoreCase(Constants.CHAT_FRAG)) {
-                        adapter.performContactsSearch(newText, noSearchResult);
+                        adapter.performContactsSearch(newText, noSearchResult,isFromClose);
                     } else if (roomType.equalsIgnoreCase(Constants.DAILER_FRAG)) {
-                        adapter.performCallLogsSearch(newText, noSearchResult);
+                        adapter.performCallLogsSearch(newText, noSearchResult,isFromClose);
                     } else if (roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) || roomType.equalsIgnoreCase(Constants.CONT_FRAG)) {
                         String contactType = roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ? Constants.Yo_CONT_FRAG : Constants.CONT_FRAG;
-                        adapter.performYoContactsSearch(newText, contactType, noSearchResult);
+                        adapter.performYoContactsSearch(newText, contactType, noSearchResult,isFromClose);
                     }
                 }
                 return true;
