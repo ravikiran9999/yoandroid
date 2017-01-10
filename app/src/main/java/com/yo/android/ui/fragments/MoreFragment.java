@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -117,7 +118,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private TextView profileStatus;
 
-    public static final String currencySymbolDollar ="$";
+    public static final String currencySymbolDollar = "$";
 
     public MoreFragment() {
         // Required empty public constructor
@@ -338,6 +339,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
+                    if (isAdded()) {
+                        showProgressDialog();
+                    }
                     if (new ConnectivityHelper(getActivity()).isConnected()) {
 
                         //Clean contact sync
@@ -357,32 +361,45 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
+                                    preferenceEndPoint.clearAll();
+                                    MagazineFlipArticlesFragment.lastReadArticle = 0;
+                                    //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
+                                    Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
+                                    //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
+                                    AlarmManager alarmManager = (AlarmManager) BottomTabsActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
+                                    getActivity().stopService(serviceIntent);
+                                    alarmManager.cancel(BottomTabsActivity.pintent);
+
+                                    //stop firebase service
+                                    //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
+
+                                    //Stop SIP service
+                                    Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
+                                    getActivity().startService(intent);
+                                    //Start login activity
+                                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                                    getActivity().finish();
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (isAdded()) {
+                                                dismissProgressDialog();
+                                            }
+                                        }
+                                    }, 1000);
+
                                 }
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                                    mToastFactory.showToast(R.string.connectivity_network_settings);
+                                    if (isAdded()) {
+                                        dismissProgressDialog();
+                                    }
                                 }
                             });
                         }
-                        preferenceEndPoint.clearAll();
-                        MagazineFlipArticlesFragment.lastReadArticle = 0;
-                        //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
-                        Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
-                        //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
-                        AlarmManager alarmManager = (AlarmManager) BottomTabsActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
-                        getActivity().stopService(serviceIntent);
-                        alarmManager.cancel(BottomTabsActivity.pintent);
 
-                        //stop firebase service
-                        //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
-
-                        //Stop SIP service
-                        Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
-                        getActivity().startService(intent);
-                        //Start login activity
-                        startActivity(new Intent(getActivity(), LoginActivity.class));
-                        getActivity().finish();
 
                     } else {
                         mToastFactory.showToast(R.string.connectivity_network_settings);
