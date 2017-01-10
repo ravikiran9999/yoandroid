@@ -133,4 +133,21 @@ public class Popup {
     public void setYoCreditData(PopupData yoCreditData) {
         this.yoCreditData = yoCreditData;
     }*/
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Popup) {
+            Popup popup = (Popup) obj;
+            return (popup.getData().getId().equals(getData().getId()));
+        } else {
+            return false;
+        }
+
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = getData().getId().hashCode();
+        return hash;
+    }
 }
