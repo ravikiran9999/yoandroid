@@ -308,8 +308,8 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        Collections.reverse(popup);
                         if (popup != null) {
+                            Collections.reverse(popup);
                             isAlreadyShown = false;
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
@@ -389,10 +389,10 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-        if(!isSharedPreferenceShown) {
-            Collections.reverse(popup);
-        }
         if (popup != null) {
+            if(!isSharedPreferenceShown) {
+                Collections.reverse(popup);
+            }
             List<Popup> tempPopup = new ArrayList<>(popup);
             for (Popup p : popup) {
                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
