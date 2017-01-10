@@ -78,7 +78,9 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         listView.setAdapter(adapter);
-        showProgressDialog();
+        if (isAdded()) {
+            showProgressDialog();
+        }
         mBalanceHelper.loadPaymentHistory(this);
     }
 
@@ -143,7 +145,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
 
             holder.getTxtPulse().setText(item.getStatus());
             holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.dial_green));
-            holder.getTxtPrice().setText(String.format("$%s", item.getAddedCredit()));
+            holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
             holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

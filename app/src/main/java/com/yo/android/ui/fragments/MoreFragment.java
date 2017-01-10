@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -60,6 +61,7 @@ import com.yo.android.voip.VoipConstants;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -116,6 +118,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     //private boolean isRemoved;
 
     private TextView profileStatus;
+    private boolean isSharedPreferenceShown;
+
+    public static final String currencySymbolDollar = "$";
 
     public MoreFragment() {
         // Required empty public constructor
@@ -284,7 +289,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // menuDataList.add(new MoreData(phone, false));
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
-        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbol, balance), true));
+        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbolDollar, balance), true));
         menuDataList.add(new MoreData(getString(R.string.accountdetails), true));
         menuDataList.add(new MoreData(getString(R.string.invitefriends), true));
         menuDataList.add(new MoreData(getString(R.string.morenotifications), true));
@@ -336,6 +341,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
+                    if (isAdded()) {
+                        showProgressDialog();
+                    }
                     if (new ConnectivityHelper(getActivity()).isConnected()) {
 
                         //Clean contact sync
@@ -355,32 +363,45 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
+                                    preferenceEndPoint.clearAll();
+                                    MagazineFlipArticlesFragment.lastReadArticle = 0;
+                                    //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
+                                    Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
+                                    //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
+                                    AlarmManager alarmManager = (AlarmManager) BottomTabsActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
+                                    getActivity().stopService(serviceIntent);
+                                    alarmManager.cancel(BottomTabsActivity.pintent);
+
+                                    //stop firebase service
+                                    //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
+
+                                    //Stop SIP service
+                                    Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
+                                    getActivity().startService(intent);
+                                    //Start login activity
+                                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                                    getActivity().finish();
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (isAdded()) {
+                                                dismissProgressDialog();
+                                            }
+                                        }
+                                    }, 1000);
+
                                 }
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                                    mToastFactory.showToast(R.string.connectivity_network_settings);
+                                    if (isAdded()) {
+                                        dismissProgressDialog();
+                                    }
                                 }
                             });
                         }
-                        preferenceEndPoint.clearAll();
-                        MagazineFlipArticlesFragment.lastReadArticle = 0;
-                        //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
-                        Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
-                        //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
-                        AlarmManager alarmManager = (AlarmManager) BottomTabsActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
-                        getActivity().stopService(serviceIntent);
-                        alarmManager.cancel(BottomTabsActivity.pintent);
 
-                        //stop firebase service
-                        //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
-
-                        //Stop SIP service
-                        Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
-                        getActivity().startService(intent);
-                        //Start login activity
-                        startActivity(new Intent(getActivity(), LoginActivity.class));
-                        getActivity().finish();
 
                     } else {
                         mToastFactory.showToast(R.string.connectivity_network_settings);
@@ -466,12 +487,15 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     Type type = new TypeToken<List<Popup>>() {
                     }.getType();
                     List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    //Collections.reverse(popup);
                     if (popup != null) {
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
                                 if (!isAlreadyShown) {
-                                    PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                    //PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                    PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MORE, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
+                                    isSharedPreferenceShown = true;
                                     break;
                                 }
                             }
@@ -503,12 +527,16 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        Collections.reverse(popup);
                         if (popup != null) {
+                            isAlreadyShown = false;
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
                                     if (!isAlreadyShown) {
-                                        PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                        //PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                        PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MORE, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
+                                        isSharedPreferenceShown = false;
                                         break;
                                     }
                                 }
@@ -530,12 +558,15 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void closePopup() {
-        isAlreadyShown = false;
+        //isAlreadyShown = false;
         //isRemoved = true;
         //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        if(!isSharedPreferenceShown) {
+            Collections.reverse(popup);
+        }
         if (popup != null) {
             List<Popup> tempPopup = new ArrayList<>(popup);
             for (Popup p : popup) {

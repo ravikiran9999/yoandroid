@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -78,6 +81,15 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     //private boolean isRemoved;
     List<String> topicsNames;
     private List<Topics> topicsNewList;
+
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchResults;
+
+    @Bind(R.id.bottom)
+    protected FrameLayout layout;
+
+    private List<String> topicNamesList = new ArrayList<String>();
+
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
         return mMagazineFlipArticlesFragment;
@@ -109,10 +121,16 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_magazines, menu);
         this.menu = menu;
-        prepareTopicsSearch(menu);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -156,14 +174,14 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     }
 
     public void update() {
-        if(mMagazineFlipArticlesFragment != null) {
+        if (mMagazineFlipArticlesFragment != null) {
             Log.d("MagazinesFragment", "In update() MagazinesFragment");
             mMagazineFlipArticlesFragment.update();
         }
     }
 
     public void removeReadArticles() {
-        if(mMagazineFlipArticlesFragment != null) {
+        if (mMagazineFlipArticlesFragment != null) {
             Log.d("MagazinesFragment", "In removeReadArticles() MagazinesFragment");
             mMagazineFlipArticlesFragment.removeReadArticles();
         }
@@ -192,7 +210,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     }
                     preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
                 }
-                List<String> topicNamesList = new ArrayList<String>();
+                topicNamesList = new ArrayList<String>();
                 for (int i = 0; i < topicsList.size(); i++) {
                     //if (topicsList.get(i).isSelected()) {
                     topicNamesList.add(topicsList.get(i).getName());
@@ -226,6 +244,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
+        prepareTopicsSearch(menu);
 
         switch (item.getItemId()) {
             case R.id.menu_create_magazines:
@@ -268,27 +287,25 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onMenuItemActionExpand(MenuItem item) {
                     mMagazineFlipArticlesFragment.lastReadArticle = 0;
-
                     return true;
                 }
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
-
                     mMagazineFlipArticlesFragment.lastReadArticle = 0;
                     mMagazineFlipArticlesFragment.refresh();
-
+                    noSearchResults.setVisibility(View.GONE);
                     return true;
                 }
             });
 
             searchTextView.setTextColor(Color.WHITE);
             searchTextView.setThreshold(1);
-            if(!topicsNames.isEmpty() && mAdapter.getCount() == 0) {
+            if (!topicsNames.isEmpty() && mAdapter.getCount() == 0) {
                 mAdapter.addAll(topicsNames);
                 mAdapter.notifyDataSetChanged();
             }
-            if(topicsList.isEmpty()) {
+            if (topicsList.isEmpty()) {
                 topicsList = topicsNewList;
             }
             searchTextView.setAdapter(mAdapter);
@@ -296,6 +313,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             mCursorDrawableRes.setAccessible(true);
             //This sets the cursor resource ID to 0 or @null which will make it visible on white background
             mCursorDrawableRes.set(searchTextView, R.drawable.red_cursor);
+
 
             searchTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -346,6 +364,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 public boolean onQueryTextSubmit(String query) {
                     Log.i(TAG, "onQueryTextSubmit: " + query);
                     if (mAdapter.getCount() > 0) {
+
                         Log.d("Search", "The selected item is " + mAdapter.getItem(0));
                         String topicName = (String) mAdapter.getItem(0);
                         searchTextView.setText(topicName);
@@ -374,6 +393,19 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     Log.i(TAG, "onQueryTextChange: " + newText);
+                    boolean isContain = false;
+                    for (String item : topicNamesList) {
+                        if (item.toLowerCase().contains(newText.toLowerCase())) {
+                            noSearchResults.setVisibility(View.GONE);
+                            layout.setVisibility(View.VISIBLE);
+                            isContain = true;
+                            break;
+                        }
+                    }
+                    if (!isContain) {
+                        noSearchResults.setVisibility(View.VISIBLE);
+                        layout.setVisibility(View.GONE);
+                    }
                     return true;
                 }
             });
@@ -395,14 +427,15 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                     //if (!isRemoved) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    Type type = new TypeToken<List<Popup>>() {
+                    }.getType();
+                    List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
                     if (popup != null) {
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MAGAZINES) {
                                 if (!isAlreadyShown) {
-                                    PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
+                                    //PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
+                                    PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MAGAZINES, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
                                     break;
                                 }
@@ -442,10 +475,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
                         if (popup != null) {
+                            isAlreadyShown = false;
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MAGAZINES) {
                                     if (!isAlreadyShown) {
-                                        PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
+                                        //PopupHelper.getPopup(PopupHelper.PopupsEnum.MAGAZINES, popup, getActivity(), preferenceEndPoint, this, this);
+                                        PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MAGAZINES, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
                                         break;
                                     }
@@ -468,7 +503,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     @Override
     public void closePopup() {
-        isAlreadyShown = false;
+        //isAlreadyShown = false;
         //isRemoved = true;
         //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
@@ -509,19 +544,20 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }*/
 
                 preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
-                if(followedTopicsIdsList.isEmpty()) {
-                 mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                if (followedTopicsIdsList.isEmpty()) {
+                    mMagazineFlipArticlesFragment.getLandingCachedArticles();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                if(getActivity() != null) {
+                if (getActivity() != null) {
                     Toast.makeText(getActivity(), "Error while adding topics", Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
+
     @Override
     public void onOptionsMenuClosed(Menu menu) {
         super.onOptionsMenuClosed(menu);

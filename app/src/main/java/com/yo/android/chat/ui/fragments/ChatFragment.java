@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -148,8 +149,23 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG,noSearchResult);
+        Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG, noSearchResult);
+        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                emptyImageView.setVisibility(View.GONE);
+                dismissProgressDialog();
+                return true;
+            }
 
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                boolean nonEmpty = (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
+                emptyImageView.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
+                noSearchResult.setVisibility(View.GONE);
+                return true;
+            }
+        });
         switch (item.getItemId()) {
             case R.id.chat_contact:
                 startActivity(new Intent(activity, AppContactsActivity.class));
@@ -219,7 +235,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                             if (dataSnapshot.child(Constants.MY_ROOMS).exists()) {
                                 getAllRooms();
-                                emptyImageView.setVisibility(View.INVISIBLE);
+                                emptyImageView.setVisibility(View.GONE);
                                 listView.setVisibility(View.VISIBLE);
                             } else {
                                 emptyImageView.setVisibility(View.VISIBLE);
@@ -298,17 +314,18 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         }
                     }
                 }
+                try {
+                    Collections.sort(arrayOfUsers, new Comparator<Room>() {
+                        @Override
+                        public int compare(Room lhs, Room rhs) {
+                            return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
+                        }
+                    });
 
-                Collections.sort(arrayOfUsers, new Comparator<Room>() {
-                    @Override
-                    public int compare(Room lhs, Room rhs) {
-                        return (int) (rhs.getTime() - lhs.getTime());
-                    }
-                });
-
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
-
-
             }
 
             @Override
@@ -469,10 +486,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
                         if (popup != null) {
+                            isAlreadyShown = false;
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
                                     if (!isAlreadyShown) {
-                                        PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
+                                        //PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
+                                        PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CHATS, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
                                         break;
                                     }
@@ -501,7 +520,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
                                 if (!isAlreadyShown) {
-                                    PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
+                                    //PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
+                                    PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CHATS, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
                                     break;
                                 }
@@ -517,7 +537,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void closePopup() {
-        isAlreadyShown = false;
+        //isAlreadyShown = false;
         //isRemoved = true;
         //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {

@@ -163,11 +163,11 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
     }
 
-    public void performCallLogsSearch(final @NonNull String key, TextView noSearchResult) {
+    public void performCallLogsSearch(final @NonNull String key, TextView noSearchResult, boolean isFromClose) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
-            if (mOriginalList.size() == 0) {
+            if (mOriginalList.size() == 0 && !isFromClose) {
                 noSearchResult.setVisibility(View.VISIBLE);
             } else {
                 noSearchResult.setVisibility(View.GONE);
@@ -197,11 +197,11 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
     }
 
-    public void performContactsSearch(final @NonNull String key, TextView noSearchResult) {
+    public void performContactsSearch(final @NonNull String key, TextView noSearchResult, boolean isFromClose) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
-            if (mOriginalList.size() == 0) {
+            if (mOriginalList.size() == 0 && !isFromClose) {
                 noSearchResult.setVisibility(View.VISIBLE);
             } else {
                 noSearchResult.setVisibility(View.GONE);
@@ -236,11 +236,11 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
     }
 
-    public void performYoContactsSearch(final @NonNull String key, final @NonNull String contactType, TextView noSearchResult) {
+    public void performYoContactsSearch(final @NonNull String key, final @NonNull String contactType, TextView noSearchResult, boolean isFromClose) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);
-            if (mOriginalList.size() == 0) {
+            if (mOriginalList.size() == 0 && !isFromClose) {
                 noSearchResult.setVisibility(View.VISIBLE);
             } else {
                 noSearchResult.setVisibility(View.GONE);

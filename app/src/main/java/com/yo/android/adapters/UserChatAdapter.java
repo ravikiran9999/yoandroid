@@ -178,6 +178,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             gravityLayout.setBackgroundResource(R.drawable.msg_out_photo);
             Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
             img.setBounds(0, 4, 30, 35);
+            //img.setBounds(Helper.dp(context, 15), Helper.dp(context, 0), Helper.dp(context, 35), Helper.dp(context, 35));
             time.setCompoundDrawables(null, null, img, null);
             time.setCompoundDrawablePadding(10);
             String sent = Util.getTimeFormatForChat(mContext, item.getTime());

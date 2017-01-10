@@ -99,6 +99,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                     .fitCenter()
                     .placeholder(R.drawable.dynamic_profile)
                     .crossFade()
+                    .dontAnimate()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .error(R.drawable.dynamic_profile)
                     .into(holder.getContactPic());

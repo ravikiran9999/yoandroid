@@ -260,7 +260,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         /* Incoming call */
         CallOpParam prm = new CallOpParam();
             /* Only one call at anytime */
-        pausePlayingAudio();
+        //pausePlayingAudio();
         callType = CallLog.Calls.INCOMING_TYPE;
         // if user is already in yo call or if any default phone calls it should show missed call.
         if (currentCall != null || PhoneStateReceiver.isDefaultCall) {
@@ -315,7 +315,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             intent.putExtra(InComingCallActivity.CALLER, getPhoneNumber(mycall.getInfo().getRemoteUri()));
             startActivity(intent);
             lastLaunchCallHandler = currentElapsedTime;
-            startRingtone();
             if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
                 inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
 /*                inComingCallNotificationId = Notifications.NOTIFICATION_ID;
@@ -349,16 +348,20 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         } catch (Exception e) {
             ci = null;
         }
+
         mLog.e(TAG, "notifyCallState =  " + ci.getState());
-        if (ci != null
+        if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
+            pausePlayingAudio();
+        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_INCOMING) {
+            startRingtone();
+        } else if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
-            //
+            playPausedAudio();
             try {
                 int statusCode = call.getInfo().getLastStatusCode().swigValue();
                 //TODO:Handle more error codes to display proper messages to the user
                 handlerErrorCodes(call.getInfo(), sipCallState);
                 if (statusCode == 503) {
-
                     mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
                 }
                 mLog.e(TAG, "%d %s", call.getInfo().getLastStatusCode().swigValue(), call.getInfo().getLastReason());
@@ -368,6 +371,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnected();
         } else if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+            stopRingtone();
             callAccepted();
         }
     }
@@ -420,7 +424,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         callStarted = System.currentTimeMillis();
         sipCallState.setStartTime(callStarted);
         sipCallState.setCallState(SipCallState.IN_CALL);
-        stopRingtone();
         //mediaManager.stopRingTone();
         mediaManager.setAudioMode(AudioManager.MODE_IN_COMMUNICATION);
         SipCallModel callModel = new SipCallModel();
@@ -432,11 +435,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private void callDisconnected() {
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
-        playPausedAudio();
         mediaManager.setAudioMode(AudioManager.MODE_NORMAL);
         currentCall = null;
-        stopRingtone();
-        //  mediaManager.stopRingTone();
         callStarted = 0;
         if (sipCallState.getCallDir() == SipCallState.INCOMING) {
             if (sipCallState.getCallState() == SipCallState.CALL_RINGING) {
@@ -564,7 +564,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             MyCall call = new MyCall(myAccount, -1);
             CallOpParam prm = new CallOpParam(true);
             try {
-                pausePlayingAudio();
                 call.isActive(finalUri, prm);
                 call.makeCall(finalUri, prm);
             } catch (Exception e) {
@@ -599,7 +598,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState.setCallDir(SipCallState.OUTGOING);
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
-        startDefaultRingtone();
+        //For PSTN calls ringtone is playing from library but app to app calls its not playing.
+        if (!oldintent.hasExtra(VoipConstants.PSTN)) {
+            startDefaultRingtone();
+        }
         Intent intent = new Intent(this, OutGoingCallActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("data", options);
@@ -713,7 +715,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         CallOpParam prm = new CallOpParam();
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
         try {
-            stopRingtone();
             currentCall.answer(prm);
             sipCallState.setCallState(SipCallState.IN_CALL);
         } catch (Exception e) {
