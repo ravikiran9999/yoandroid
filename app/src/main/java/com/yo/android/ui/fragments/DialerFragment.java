@@ -121,6 +121,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public boolean isFromDailer = false;
     private boolean isAlreadyShown;
     //private boolean isRemoved;
+    private boolean isSharedPreferenceShown;
 
     public interface CallLogClearListener {
         public void clear();
@@ -400,6 +401,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        Collections.reverse(popup);
                         if (popup != null) {
                             isAlreadyShown = false;
                             for (Popup p : popup) {
@@ -408,6 +410,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                                         //PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
                                         PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.DIALER, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
+                                        isSharedPreferenceShown = false;
                                         break;
                                     }
                                 }
@@ -444,6 +447,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                                     //PopupHelper.getPopup(PopupHelper.PopupsEnum.DIALER, popup, getActivity(), preferenceEndPoint, this, this);
                                     PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.DIALER, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
+                                    isSharedPreferenceShown = true;
                                     break;
                                 }
                             }
@@ -472,6 +476,9 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        if(!isSharedPreferenceShown) {
+            Collections.reverse(popup);
+        }
         if (popup != null) {
             List<Popup> tempPopup = new ArrayList<>(popup);
             for (Popup p : popup) {

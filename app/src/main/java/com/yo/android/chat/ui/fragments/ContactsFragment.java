@@ -105,6 +105,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     private boolean isAlreadyShown;
     private TextView noSearchResult;
     //private boolean isRemoved;
+    private boolean isSharedPreferenceShown;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -307,6 +308,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        Collections.reverse(popup);
                         if (popup != null) {
                             isAlreadyShown = false;
                             for (Popup p : popup) {
@@ -315,6 +317,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                                         //PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
                                         PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CONTACTS, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
+                                        isSharedPreferenceShown = false;
                                         break;
                                     }
                                 }
@@ -351,6 +354,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                                     //PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
                                     PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CONTACTS, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
+                                    isSharedPreferenceShown = true;
                                     break;
                                 }
                             }
@@ -385,6 +389,9 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        if(!isSharedPreferenceShown) {
+            Collections.reverse(popup);
+        }
         if (popup != null) {
             List<Popup> tempPopup = new ArrayList<>(popup);
             for (Popup p : popup) {
