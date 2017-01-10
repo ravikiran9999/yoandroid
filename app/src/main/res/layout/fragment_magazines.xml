@@ -3,29 +3,40 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-<!--    <FrameLayout
-        android:id="@+id/top"
+    <!--    <FrameLayout
+            android:id="@+id/top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></FrameLayout>-->
+    <TextView
+        android:id="@+id/no_search_results"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></FrameLayout>-->
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/no_result_found"
+        android:textColor="@color/black"
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/bottom"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+        android:layout_height="match_parent"
+        android:visibility="visible"></FrameLayout>
 
-<!--
-    <fragment
-        android:id="@+id/topics_selection_fragment"
-        android:name="com.yo.android.flip.MagazineTopicsSelectionFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <!--
+        <fragment
+            android:id="@+id/topics_selection_fragment"
+            android:name="com.yo.android.flip.MagazineTopicsSelectionFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <fragment
-        android:id="@+id/flip_articles_fragment"
-        android:name="com.yo.android.flip.MagazineFlipArticlesFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <fragment
+            android:id="@+id/flip_articles_fragment"
+            android:name="com.yo.android.flip.MagazineFlipArticlesFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
--->
+    -->
 
 </LinearLayout>
