@@ -60,6 +60,7 @@ import com.yo.android.voip.VoipConstants;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -116,6 +117,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     //private boolean isRemoved;
 
     private TextView profileStatus;
+    private boolean isSharedPreferenceShown;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -466,12 +468,15 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     Type type = new TypeToken<List<Popup>>() {
                     }.getType();
                     List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                    //Collections.reverse(popup);
                     if (popup != null) {
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
                                 if (!isAlreadyShown) {
-                                    PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                    //PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                    PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MORE, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
+                                    isSharedPreferenceShown = true;
                                     break;
                                 }
                             }
@@ -503,12 +508,16 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();
                         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                        Collections.reverse(popup);
                         if (popup != null) {
+                            isAlreadyShown = false;
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
                                     if (!isAlreadyShown) {
-                                        PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                        //PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
+                                        PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MORE, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
+                                        isSharedPreferenceShown = false;
                                         break;
                                     }
                                 }
@@ -530,12 +539,15 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void closePopup() {
-        isAlreadyShown = false;
+        //isAlreadyShown = false;
         //isRemoved = true;
         //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+        if(!isSharedPreferenceShown) {
+            Collections.reverse(popup);
+        }
         if (popup != null) {
             List<Popup> tempPopup = new ArrayList<>(popup);
             for (Popup p : popup) {

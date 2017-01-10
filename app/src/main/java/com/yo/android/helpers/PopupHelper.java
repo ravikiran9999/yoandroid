@@ -234,4 +234,139 @@ public class PopupHelper {
         popupList.add(popup);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popupList));
     }
+
+    public static void getSinglePopup(PopupsEnum notificationType, Popup p, Activity activity, PreferenceEndPoint preferenceEndPoint, Fragment fragment, PopupDialogListener listener, List<Popup> popupList) {
+        //if (popupList != null) {
+            List<Popup> tempPopupList;
+            tempPopupList = popupList;
+            int i = -1;
+
+            //for (Iterator<Popup> it = popupList.iterator(); it.hasNext();) {
+                /*Popup popup = it.next();
+                i++;*/
+                switch (p.getPopupsEnum()) {
+                    case MAGAZINES:
+                        if(!TextUtils.isEmpty(p.getData().getLive_to())) {
+                            String liveToTime1 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
+                            Date liveToDate = Util.convertUtcToGmt(liveToTime1);
+                            long currentTime = System.currentTimeMillis();
+                            Date currentDate = new Date(currentTime);
+                            if (fragment instanceof MagazinesFragment && liveToDate.after(currentDate)) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            } else if(!liveToDate.after(currentDate)){
+                                //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+                                //tempPopupList.remove(i);
+                                //it.remove();
+                                preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
+                            }
+                        } else {
+                            if (fragment instanceof MagazinesFragment) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            }
+                        }
+                        break;
+                    case CHATS:
+                        if(!TextUtils.isEmpty(p.getData().getLive_to())) {
+                            String liveToTime2 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
+                            Date liveToDate = Util.convertUtcToGmt(liveToTime2);
+                            long currentTime = System.currentTimeMillis();
+                            Date currentDate = new Date(currentTime);
+                            if (fragment instanceof ChatFragment && liveToDate.after(currentDate)) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            } else if(!liveToDate.after(currentDate)){
+                                //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+                                //tempPopupList.remove(i);
+                                //it.remove();
+                                preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
+                            }
+                        } else {
+                            if (fragment instanceof ChatFragment) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            }
+                        }
+                        break;
+                    case DIALER:
+                        if(!TextUtils.isEmpty(p.getData().getLive_to())) {
+                            String liveToTime3 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
+                            Date liveToDate = Util.convertUtcToGmt(liveToTime3);
+                            long currentTime = System.currentTimeMillis();
+                            Date currentDate = new Date(currentTime);
+                            if (fragment instanceof DialerFragment && liveToDate.after(currentDate)) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            } else if(!liveToDate.after(currentDate)){
+                                //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+                                //tempPopupList.remove(i);
+                                //it.remove();
+                                preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
+                            }
+                        } else {
+                            if (fragment instanceof DialerFragment) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            }
+                        }
+                        break;
+                    case CONTACTS:
+                        if(!TextUtils.isEmpty(p.getData().getLive_to())) {
+                            String liveToTime4 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
+                            Date liveToDate = Util.convertUtcToGmt(liveToTime4);
+                            long currentTime = System.currentTimeMillis();
+                            Date currentDate = new Date(currentTime);
+                            if (fragment instanceof ContactsFragment && liveToDate.after(currentDate)) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            } else if(!liveToDate.after(currentDate)){
+                                //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+                                //tempPopupList.remove(i);
+                                //it.remove();
+                                preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
+                            }
+                        } else {
+                            if (fragment instanceof ContactsFragment) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            }
+                        }
+                        break;
+                    case MORE:
+                        if(!TextUtils.isEmpty(p.getData().getLive_to())) {
+                            String liveToTime5 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
+                            Date liveToDate = Util.convertUtcToGmt(liveToTime5);
+                            long currentTime = System.currentTimeMillis();
+                            Date currentDate = new Date(currentTime);
+                            if (fragment instanceof MoreFragment && liveToDate.after(currentDate)) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            } else if(!liveToDate.after(currentDate)){
+                                //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+                                //tempPopupList.remove(i);
+                                //it.remove();
+                                preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
+                            }
+                        } else {
+                            if (fragment instanceof MoreFragment) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            }
+                        }
+                        break;
+                    case YOCREDIT:
+                        if(!TextUtils.isEmpty(p.getData().getLive_to())) {
+                            String liveToTime6 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));;
+                            Date liveToDate = Util.convertUtcToGmt(liveToTime6);
+                            long currentTime = System.currentTimeMillis();
+                            Date currentDate = new Date(currentTime);
+                            if (fragment == null && liveToDate.after(currentDate)) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            } else if(!liveToDate.after(currentDate)){
+                                //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+                                //tempPopupList.remove(i);
+                                //it.remove();
+                                preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
+                            }
+                        } else {
+                            if (fragment == null) {
+                                YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                            }
+                        }
+                        break;
+                }
+            //}
+        //}
+    }
 }
