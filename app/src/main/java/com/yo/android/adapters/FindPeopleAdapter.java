@@ -3,6 +3,9 @@ package com.yo.android.adapters;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +21,19 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.FindPeopleViewHolder;
+import com.yo.android.helpers.InviteFriendsViewHolder;
+import com.yo.android.helpers.Settings;
+import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
+import com.yo.android.photo.TextDrawable;
+import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.util.Constants;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,10 +57,15 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
     protected PreferenceEndPoint preferenceEndPoint;
     private boolean isFollowingUser;
 
+    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+    private TextDrawable.IBuilder mDrawableBuilder;
+
     public FindPeopleAdapter(Context context) {
         super(context);
         this.context = context;
         Injector.obtain(context.getApplicationContext()).inject(this);
+        mDrawableBuilder = TextDrawable.builder()
+                .round();
     }
 
     @Override
@@ -72,22 +88,31 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
 
     @Override
     public void bindView(final int position, final FindPeopleViewHolder holder, final FindPeople item) {
-
-        if (item.getAvatar() == null || TextUtils.isEmpty(item.getAvatar())) {
-            Glide.with(context).load(R.drawable.dynamic_profile)
-                    .dontAnimate()
-                    .placeholder(R.drawable.dynamic_profile)
-                    .error(R.drawable.dynamic_profile)
+        if (!TextUtils.isEmpty(item.getAvatar())) {
+            Glide.with(mContext)
+                    .load(item.getAvatar())
                     .fitCenter()
-                    .into(holder.getImvFindPeoplePic());
-        } else {
-            Glide.with(context).load(item.getAvatar())
-                    .dontAnimate()
                     .placeholder(R.drawable.dynamic_profile)
+                    .crossFade()
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .error(R.drawable.dynamic_profile)
-                    .fitCenter()
                     .into(holder.getImvFindPeoplePic());
+        } else if (Settings.isTitlePicEnabled) {
+            if (item.getFirst_name() != null && item.getFirst_name().length() >= 1) {
+                String title = String.valueOf(item.getFirst_name().charAt(0)).toUpperCase();
+                Pattern p = Pattern.compile("^[a-zA-Z]");
+                Matcher m = p.matcher(title);
+                boolean b = m.matches();
+                if (b) {
+                    Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getPhone_no()));
+                    holder.getImvFindPeoplePic().setImageDrawable(drawable);
+                } else {
+                    loadAvatarImage(holder, item);
+                }
+            }
         }
+
         if (!TextUtils.isEmpty(item.getFirst_name())) {
             holder.getTvFindPeopleName().setText(item.getFirst_name() + " " + item.getLast_name());
         } else {
@@ -158,7 +183,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                         ((BaseActivity) context).dismissProgressDialog();
                                         if ((BaseActivity) context instanceof FollowingsActivity) {
                                             removeItem(item);
-                                            if(getOriginalListCount() == 0) {
+                                            if (getOriginalListCount() == 0) {
                                                 ((FollowingsActivity) context).showEmptyDataScreen();
                                             }
                                         } else {
@@ -212,6 +237,19 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
             }
         }
         return super.hasData(findPeople, key);
+    }
+
+    private void loadAvatarImage(FindPeopleViewHolder holder, FindPeople item) {
+        Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+        LayerDrawable bgDrawable = (LayerDrawable) tempImage;
+        final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
+        if (Settings.isTitlePicEnabled) {
+            shape.setColor(mColorGenerator.getColor(item.getPhone_no()));
+        }
+        if (holder.getImvFindPeoplePic().getTag(Settings.imageTag) == null) {
+            holder.getImvFindPeoplePic().setTag(Settings.imageTag, tempImage);
+        }
+        holder.getImvFindPeoplePic().setImageDrawable((Drawable) holder.getImvFindPeoplePic().getTag(Settings.imageTag));
     }
 
     private boolean containsValue(String str, String key) {
