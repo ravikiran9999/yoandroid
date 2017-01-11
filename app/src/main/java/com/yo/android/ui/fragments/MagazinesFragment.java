@@ -132,6 +132,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_magazines, menu);
         this.menu = menu;
 

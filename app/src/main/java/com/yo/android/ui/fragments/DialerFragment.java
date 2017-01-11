@@ -174,6 +174,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_dialer, menu);
         this.menu = menu;
         Util.changeSearchProperties(menu);
