@@ -385,7 +385,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         Collections.sort(arrayOfUsers, new Comparator<Room>() {
             @Override
             public int compare(Room lhs, Room rhs) {
-                return (int) (rhs.getTime() - lhs.getTime());
+                return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
             }
         });
 
@@ -411,15 +411,18 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             @Override
                             public void onDataChange(DataSnapshot profileDataSnapshot) {
                                 room = profileDataSnapshot.getValue(Room.class);
-                                room.setFirebaseRoomId(dataSnapshot.getKey());
-                                Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getVoxUserName());
-                                if (contact != null && contact.getName() != null) {
-                                    room.setFullName(contact.getName());
-                                }
+                                if (room != null) {
+                                    room.setFirebaseRoomId(dataSnapshot.getKey());
+                                    Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getVoxUserName());
+                                    if (contact != null && contact.getName() != null) {
+                                        room.setFullName(contact.getName());
+                                    }
 
-                                arrayOfUsers.add(room);
-                                Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
-                                firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+                                    arrayOfUsers.add(room);
+
+                                    Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
+                                    firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
+                                }
                             }
 
                             @Override
