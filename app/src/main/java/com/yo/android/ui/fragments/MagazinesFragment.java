@@ -299,6 +299,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     mMagazineFlipArticlesFragment.lastReadArticle = 0;
                     mMagazineFlipArticlesFragment.refresh();
                     noSearchResults.setVisibility(View.GONE);
+                    getActivity().invalidateOptionsMenu();
                     return true;
                 }
             });

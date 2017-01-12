@@ -197,6 +197,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 showEmptyText();
                 noSearchResult.setVisibility(View.GONE);
+                getActivity().invalidateOptionsMenu();
                 return true;
             }
         });

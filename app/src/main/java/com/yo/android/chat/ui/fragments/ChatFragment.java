@@ -164,6 +164,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 boolean nonEmpty = (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
                 emptyImageView.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
                 noSearchResult.setVisibility(View.GONE);
+                getActivity().invalidateOptionsMenu();
                 return true;
             }
         });
