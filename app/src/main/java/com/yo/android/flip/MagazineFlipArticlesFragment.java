@@ -1836,7 +1836,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if(totalOtherUnreadArticles.size() > positionToAdd) {
             totalOtherUnreadArticles.addAll(positionToAdd, followedTopicArticles);
         } else {
+            if(totalOtherUnreadArticles.size()>0) {
             totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size()-1, followedTopicArticles);
+            } else {
+                totalOtherUnreadArticles.addAll(0, followedArticlesList);
+            }
         }
 
         //myBaseAdapter.addItems(totalOtherUnreadArticles);
