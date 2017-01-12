@@ -100,7 +100,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private LinearLayout tagsParentLayout;
     private ArrayList<Tag> worldpopulationlist = null;
     private ArrayList<Tag> arraylist = null;
-    public ProgressBar progressBar;
+    //public ProgressBar progressBar;
 
     public interface TagsLoader {
         void loaded();
@@ -138,7 +138,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         //tagGroupSearch = (TagView) findViewById(R.id.tag_group_search);
         //tagGroupSearch.setVisibility(View.GONE);
         tagsParentLayout = (LinearLayout) findViewById(R.id.tagsparent);
-        progressBar = (ProgressBar) findViewById(R.id.test_progress);
+        //progressBar = (ProgressBar) findViewById(R.id.test_progress);
 
         initialTags = new ArrayList<>();
         topicsList = new ArrayList<Topics>();
@@ -151,8 +151,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         //tagGroupSearch.setVisibility(View.GONE);
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        //showProgressDialog();
-        progressBar.setVisibility(View.VISIBLE);
+        showProgressDialog();
+        //progressBar.setVisibility(View.VISIBLE);
         serverTopics = new ArrayList<>();
        /* yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
@@ -179,8 +179,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             @Override
             public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {
                 if (response == null || response.body() == null) {
-                    //dismissProgressDialog();
-                    progressBar.setVisibility(View.GONE);
+                    dismissProgressDialog();
+                    //progressBar.setVisibility(View.GONE);
                     return;
                 }
                 //new TagLoader(response.body(), tagGroup).execute();
@@ -200,7 +200,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<List<Categories>> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
+                dismissProgressDialog();
             }
         });
 
