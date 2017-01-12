@@ -3,6 +3,8 @@ package com.yo.android.ui.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +52,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     ProgressBar progress;
 
     @Bind(R.id.listView)
-    NonScrollableListView listView;
+    RecyclerView listView;
 
     @Inject
     BalanceHelper mBalanceHelper;
@@ -63,7 +65,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new SpentDetailsAdapter(getActivity());
+        adapter = new SpentDetailsAdapter(getActivity(), new ArrayList<SubscribersList>());
     }
 
     @Override
@@ -82,29 +84,10 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         listView.setAdapter(adapter);
+        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         showProgressDialog();
         mBalanceHelper.loadSpentDetailsHistory(this);
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                /* Check if the first item is already reached to top.*/
-                if (listView.getFirstVisiblePosition() == 0) {
-                    View firstChild = listView.getChildAt(0);
-                    int topY = 0;
-                    if (firstChild != null) {
-                        topY = firstChild.getTop();
-                    }
-
-
-                }
-            }
-        });
 
     }
 
@@ -125,7 +108,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                                 }
                             }
                         }
-                        adapter.addItems(removedFreeSpents);
+                        adapter.addItems(detailResponseList);
                     }
                 } catch (Exception e) {
                     mLog.w("SpendDetails", "onResponse", e);
@@ -145,7 +128,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     }
 
     private void showEmptyText() {
-        boolean showEmpty = adapter.getCount() == 0;
+        boolean showEmpty = adapter.getItemCount() == 0;
         txtEmpty.setVisibility(showEmpty ? View.VISIBLE : View.GONE);
     }
 
@@ -160,24 +143,33 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     }
 
 
-    public static class SpentDetailsAdapter extends AbstractBaseAdapter<SubscribersList, SpendDetailsViewHolder> {
+    public static class SpentDetailsAdapter extends RecyclerView.Adapter<SpendDetailsViewHolder> {
+        private List<SubscribersList> mSubscribersList;
+        private Context mContext;
 
-        public SpentDetailsAdapter(Context context) {
-            super(context);
+        public SpentDetailsAdapter(Context context, List<SubscribersList> list) {
+            mSubscribersList = list;
+            mContext = context;
         }
 
         @Override
-        public int getLayoutId() {
-            return R.layout.frag_spent_list_row_item;
+        public SpendDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Context context = parent.getContext();
+            LayoutInflater inflater = LayoutInflater.from(context);
+
+            // Inflate the custom layout
+            View contactView = inflater.inflate(R.layout.frag_spent_list_row_item, parent, false);
+
+            // Return a new holder instance
+            SpendDetailsViewHolder viewHolder = new SpendDetailsViewHolder(contactView);
+            return viewHolder;
         }
 
         @Override
-        public SpendDetailsViewHolder getViewHolder(View convertView) {
-            return new SpendDetailsViewHolder(convertView);
-        }
+        public void onBindViewHolder(SpendDetailsViewHolder holder, int position) {
+            final SubscribersList item = mSubscribersList.get(position);
 
-        @Override
-        public void bindView(int position, SpendDetailsViewHolder holder, final SubscribersList item) {
+            // Set item views based on your views and data model
             holder.getDate().setText(item.getTime());
             holder.getDuration().setText(item.getDuration());
             holder.getTxtPhone().setText(item.getDestination());
@@ -204,6 +196,21 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                 holder.getArrow().setImageResource(R.drawable.ic_uparrow);
                 holder.getDurationContainer().setVisibility(View.GONE);
             }
+        }
+
+        @Override
+        public int getItemCount() {
+            return mSubscribersList.size();
+        }
+
+        public void addItems(List<SubscribersList> detailResponseList) {
+            mSubscribersList.addAll(detailResponseList);
+            notifyDataSetChanged();
+        }
+
+        public void clearAll() {
+            mSubscribersList.clear();
+            notifyDataSetChanged();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.yo.android.helpers;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +14,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Ramesh on 25/7/16.
  */
-public class SpendDetailsViewHolder extends AbstractViewHolder {
+public class SpendDetailsViewHolder extends RecyclerView.ViewHolder {
 
     @Bind(R.id.imgArrow)
     ImageView arrow;
