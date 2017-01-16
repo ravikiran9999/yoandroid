@@ -177,8 +177,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             profileNameLayout.setVisibility(View.GONE);
             gravityLayout.setBackgroundResource(R.drawable.msg_out_photo);
             Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
-            img.setBounds(0, 4, 30, 35);
-            //img.setBounds(Helper.dp(context, 15), Helper.dp(context, 0), Helper.dp(context, 35), Helper.dp(context, 35));
+            //img.setBounds(10, 0, 30, 50);
+            img.setBounds(Helper.dp(context, 1), Helper.dp(context, 2), Helper.dp(context, 10), Helper.dp(context, 10));
             time.setCompoundDrawables(null, null, img, null);
             time.setCompoundDrawablePadding(10);
             String sent = Util.getTimeFormatForChat(mContext, item.getTime());
@@ -273,21 +273,22 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             sent.setVisibility(View.VISIBLE);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
-            img.setBounds(0, 4, 30, 35);
+            img.setBounds(Helper.dp(context, 1), Helper.dp(context, 2), Helper.dp(context, 10), Helper.dp(context, 10));
             time.setCompoundDrawables(null, null, img, null);
             String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
+            time.setPadding(0, 4, 8, 0);
             time.setText(sentText);
             if (item.getSent() == 1) {
                 img = context.getResources().getDrawable(R.drawable.sent);
                 img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
-                time.setPadding(0, 4, 8, 10);
+                //time.setPadding(0, 4, 8, 10);
             }
             if (item.getDeliveredTime() != 0) {
                 img = context.getResources().getDrawable(R.drawable.seen);
                 img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
-                time.setPadding(0, 4, 8, 10);
+                //time.setPadding(0, 4, 8, 10);
             }
         }
         linearLayout1.addView(emojiTextView);
