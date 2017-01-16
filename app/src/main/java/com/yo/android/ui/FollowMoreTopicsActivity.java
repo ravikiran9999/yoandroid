@@ -646,6 +646,16 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 tagsParentLayout.removeAllViews();
                 tagsParentLayout.addView(totalTagsInView);
             }*/
+            showProgressDialog();
+            listView.setAdapter(null);
+            categorisedList = new CategorizedList(FollowMoreTopicsActivity.this, listView, initialTags, serverTopics);
+            new TagLoader(FollowMoreTopicsActivity.this, new TagsLoader() {
+                @Override
+                public void loaded() {
+                    worldpopulationlist = new ArrayList<Tag>(initialTags);
+                    arraylist = new ArrayList<Tag>(initialTags);
+                }
+            }, serverTopics, tagViewAdapter, initialTags, categorisedList).execute();
             listView.setVisibility(View.VISIBLE);
             tagsParentLayout.setVisibility(View.GONE);
         } else {
@@ -1195,7 +1205,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         tagDummy.tagTextColor = TAB_GREY;
                         tagDummy.tagTextSize = 12;
 
-                        /*String tagId = tag.getTagId();
+                        String tagId = tag.getTagId();
                         boolean isBreak = false;
                         for (int i = 0; i < listView.getAdapter().getCount(); i++) {
                             Section section = (Section) listView.getAdapter().getItem(i);
@@ -1214,7 +1224,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                                     break;
                                 }
                             }
-                        }*/
+                        }
 
                     } catch (Exception e) {
                         mLog.e("TAGS", "Exception" + e);
