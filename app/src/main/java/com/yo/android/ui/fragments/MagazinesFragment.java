@@ -132,6 +132,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_magazines, menu);
         this.menu = menu;
 
@@ -298,6 +299,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     mMagazineFlipArticlesFragment.lastReadArticle = 0;
                     mMagazineFlipArticlesFragment.refresh();
                     noSearchResults.setVisibility(View.GONE);
+                    getActivity().invalidateOptionsMenu();
                     return true;
                 }
             });
