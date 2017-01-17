@@ -108,7 +108,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                                 }
                             }
                         }
-                        adapter.addItems(detailResponseList);
+                        adapter.addItems(removedFreeSpents);
                     }
                 } catch (Exception e) {
                     mLog.w("SpendDetails", "onResponse", e);

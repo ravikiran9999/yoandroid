@@ -27,8 +27,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:padding="15dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="10dp"
                 android:text="Large Text"
+                android:textSize="17sp"
                 android:visibility="visible" />
 
             <ImageView
@@ -47,10 +51,10 @@
                 android:layout_below="@+id/title"
                 android:background="@color/light_gray"
                 android:columnWidth="90dp"
-                android:paddingTop="5dp"
                 android:gravity="center"
                 android:horizontalSpacing="10dp"
                 android:numColumns="3"
+                android:paddingTop="5dp"
                 android:stretchMode="columnWidth"
                 android:verticalSpacing="10dp"
                 android:visibility="visible">

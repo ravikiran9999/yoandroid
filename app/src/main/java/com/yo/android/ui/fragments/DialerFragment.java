@@ -300,13 +300,9 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         adapter.addItemsAll(results);
         tempResults = null;
         showEmptyText();
+
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        isFromDailer = true;
-    }
 
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> prepare(String type, ArrayList<Map.Entry<String, List<CallLogsResult>>> results, ArrayList<Map.Entry<String, List<CallLogsResult>>> checkList) {
         if (!checkList.isEmpty()) {
@@ -477,7 +473,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         if (popup != null) {
-            if(!isSharedPreferenceShown) {
+            if (!isSharedPreferenceShown) {
                 Collections.reverse(popup);
             }
             List<Popup> tempPopup = new ArrayList<>(popup);
