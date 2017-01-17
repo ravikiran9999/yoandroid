@@ -101,6 +101,7 @@ public class Constants {
     public static final String DAILER = "Dialer";
     public static final String IS_CHAT_FORWARD = "is_chat_forward";
     public static int SUCCESS_CODE = 200;
+    public static final String FOLLOW_TOPIC_EVENT = "follow_topic_event";
 
     public static final int ADD_IMAGE_CAPTURE = 1;
     public static final int ADD_SELECT_PICTURE = 2;

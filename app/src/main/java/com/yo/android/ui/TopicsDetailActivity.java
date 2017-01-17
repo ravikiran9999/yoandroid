@@ -105,7 +105,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 @Override
                 public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
                     dismissProgressDialog();
-                    if (response.body().size() > 0) {
+                    if (response.body() != null && response.body().size() > 0) {
                         for (int i = 0; i < response.body().size(); i++) {
                             articlesList.add(response.body().get(i));
                         }
@@ -596,7 +596,10 @@ public class TopicsDetailActivity extends BaseActivity {
                             menuItem.setIcon(R.drawable.ic_mycollections_tick);
                             isFollowingTopic = true;
                             topic.setTopicFollowing("true");
-                            EventBus.getDefault().post(Constants.TOPIC_FOLLOWING_ACTION);
+                            //EventBus.getDefault().post(Constants.TOPIC_FOLLOWING_ACTION);
+                            if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateFollowTopicStatus(topic, Constants.FOLLOW_TOPIC_EVENT);
+                            }
 
                             preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
                         }
@@ -642,7 +645,10 @@ public class TopicsDetailActivity extends BaseActivity {
                                     menuItem.setTitle("Follow");
                                     isFollowingTopic = false;
                                     topic.setTopicFollowing("false");
-                                    EventBus.getDefault().post(Constants.TOPIC_FOLLOWING_ACTION);
+                                    //EventBus.getDefault().post(Constants.TOPIC_FOLLOWING_ACTION);
+                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateFollowTopicStatus(topic, Constants.FOLLOW_TOPIC_EVENT);
+                                    }
 
                                 }
 
