@@ -136,8 +136,8 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
             ((FollowMoreTopicsActivity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    //((FollowMoreTopicsActivity) context).dismissProgressDialog();
-                    ((FollowMoreTopicsActivity) context).progressBar.setVisibility(View.GONE);
+                    ((FollowMoreTopicsActivity) context).dismissProgressDialog();
+                    //((FollowMoreTopicsActivity) context).progressBar.setVisibility(View.GONE);
                 }
             });
 
