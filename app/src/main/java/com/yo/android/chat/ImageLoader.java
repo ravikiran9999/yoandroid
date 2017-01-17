@@ -26,6 +26,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.yo.android.BuildConfig;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.util.Constants;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,12 +41,12 @@ public class ImageLoader {
         public void onDownlaoded(File file);
     }
 
-    public static void updateImage(final Context context, final ChatMessage item, final ImageView imageView1, final ProgressBar progressBar) {
-        updateImage(context, item, new ImageDownloadListener() {
+    public static void updateImage(final Context context, final ChatMessage item, String folderName, final ImageView imageView1, final ProgressBar progressBar) {
+        updateImage(context, item, folderName, new ImageDownloadListener() {
 
             @Override
             public void onDownlaoded(File file) {
-                if (file != null) {
+                if (file != null && item != null) {
                     item.setImagePath(file.getAbsolutePath());
                     getImageHeightAndWidth(context, file, imageView1, progressBar);
                 }
@@ -53,16 +54,16 @@ public class ImageLoader {
         });
     }
 
-    public static void updateImage(final Context mContext, final ChatMessage item, final ImageDownloadListener listener) {
+    public static void updateImage(final Context mContext, final ChatMessage item, String folderName, final ImageDownloadListener listener) {
         File file = new File(item.getImagePath());
         String firebaseImagePath;
         if (file != null && !file.exists()) {
-            file = new File(Environment.getExternalStorageDirectory() + "/YO/YOImages/" + file.getName());
+            file = new File(Environment.getExternalStorageDirectory() + "/YO/" + folderName + "/" + file.getName());
         }
         if (file.exists()) {
             listener.onDownlaoded(file);
         } else {
-            if(item.getImagePath().contains("/YO/YOImages/")) {
+            if (item.getImagePath().contains("/YO/" + folderName + "/") && folderName.equalsIgnoreCase(Constants.YOIMAGES)) {
                 firebaseImagePath = "images/" + file.getName();
             } else {
                 firebaseImagePath = item.getImagePath();
@@ -91,10 +92,16 @@ public class ImageLoader {
 
     static CustomTransformation transformation = new CustomTransformation() {
         private String fileName;
+        private String folderName;
 
         @Override
         public void setFileName(String file) {
             this.fileName = file;
+        }
+
+        @Override
+        public void setFolderName(String folderName) {
+            this.folderName = folderName;
         }
 
         @Override
@@ -104,7 +111,7 @@ public class ImageLoader {
             int targetHeight = (int) (targetWidth * aspectRatio);
             Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
 
-            String filepath = CompressImage.getFilename(new File(fileName).getName());
+            String filepath = CompressImage.getFilename(new File(fileName).getName(), folderName);
             try {
                 FileOutputStream out = new FileOutputStream(filepath);
                 result.compress(Bitmap.CompressFormat.JPEG, 80, out);

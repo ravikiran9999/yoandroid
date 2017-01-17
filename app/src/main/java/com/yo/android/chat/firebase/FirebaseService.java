@@ -1,5 +1,6 @@
 package com.yo.android.chat.firebase;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -88,7 +89,7 @@ public class FirebaseService extends InjectedService {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         //if (isRunning && count == 0) {
-        if (isRunning ) {
+        if (isRunning) {
             //count = 1;
             Log.i(TAG, "Service running");
             FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
@@ -113,7 +114,8 @@ public class FirebaseService extends InjectedService {
 
     private void getAllRooms() {
         authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-
+        //Activity activity = (Activity);
+        //fireBaseHelper.signInWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -205,7 +207,7 @@ public class FirebaseService extends InjectedService {
 
     private void newPushNotification(final String roomId, final ChatMessage chatMessage) {
         if (notificationList != null && notificationList.size() == 0 && chatMessage.getImagePath() != null) {
-            ImageLoader.updateImage(context, chatMessage, new ImageLoader.ImageDownloadListener() {
+            ImageLoader.updateImage(context, chatMessage, Constants.YOIMAGES, new ImageLoader.ImageDownloadListener() {
 
                 @Override
                 public void onDownlaoded(File file) {

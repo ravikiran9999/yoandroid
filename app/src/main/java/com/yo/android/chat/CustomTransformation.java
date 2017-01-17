@@ -7,4 +7,5 @@ import com.squareup.picasso.Transformation;
  */
 public interface CustomTransformation extends Transformation {
     public void setFileName(String file);
+    public void setFolderName(String folderName);
 }

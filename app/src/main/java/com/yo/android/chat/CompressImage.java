@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.os.Environment;
 
+import com.yo.android.util.Constants;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,7 +29,7 @@ public class CompressImage {
         this.context = context;
     }
 
-    public String compressImage(String imagePath) {
+    public String compressImage(String imagePath, String iFolderName) {
         Bitmap scaledBitmap = null;
 
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -112,7 +114,12 @@ public class CompressImage {
             e.printStackTrace();
         }
         FileOutputStream out = null;
-        String filepath = getFilename(null);
+        String filepath = null;
+        if (imagePath != null) {
+            filepath = getFilename(imagePath, iFolderName);
+        } else {
+            filepath = getFilename(null, iFolderName);
+        }
         try {
             out = new FileOutputStream(filepath);
 
@@ -156,22 +163,28 @@ public class CompressImage {
         return inSampleSize;
     }
 
-    public static String getFilename(String name) {
+    public static String getFilename(String name, String folderName) {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/YO/YOImages/");
+                + "/YO/" + folderName + "/");
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             mediaStorageDir.mkdirs();
         }
-        String mImageName;
-        if (name == null) {
+        String mImageName = null;
+        if (folderName.equalsIgnoreCase(Constants.YOIMAGES)) {
 
             mImageName = "IMG_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
         } else {
-            mImageName = name;
+            try {
+                String[] strings = name.split("/");
+                name = strings[strings.length - 1];
+                mImageName = name;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
         return (mediaStorageDir.getAbsolutePath() + "/" + mImageName);
     }
-
 }

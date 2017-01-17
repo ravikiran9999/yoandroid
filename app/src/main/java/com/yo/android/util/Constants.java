@@ -20,6 +20,8 @@ public class Constants {
     public static final String IMAGE = "image";
     public static final String PHOTO = "Photo";
     public static final String IMAGE_PATH = "image_path";
+    public static final String YOIMAGES = "YOImages";
+    public static final String YO_PROFILE_PIC = "YOProfilePics";
 
     public static final String SELECTED_TEXT = "selected_text";
     public static final String GROUP_NAME = "groupName";

@@ -4,19 +4,26 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.chat.ImageLoader;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Room;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
+import com.yo.android.util.Constants;
+
+import java.io.File;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -69,11 +76,26 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
 
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
-            Glide.with(mContext).load(item.getImage())
-                    .placeholder(loadAvatarImage(item, holder, true))
-                    .dontAnimate()
-                    .error(loadAvatarImage(item, holder, true)).
-                    into(holder.getChatRoomPic());
+
+            String localFileName = new File(item.getImage()).getName();
+            String profilePicImageUri;
+            if (localFileName != null && !localFileName.isEmpty()) {
+                File file = new File(Environment.getExternalStorageDirectory() + "/YO/" + Constants.YO_PROFILE_PIC + "/" + localFileName);
+                profilePicImageUri = file.getAbsolutePath();
+            } else {
+                profilePicImageUri = item.getImage();
+            }
+            try {
+                Glide.with(mContext).load(profilePicImageUri)
+                        .placeholder(loadAvatarImage(item, holder, true))
+                        .priority(Priority.HIGH)
+                        .dontAnimate()
+                        .error(loadAvatarImage(item, holder, true))
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(holder.getChatRoomPic());
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             holder.getOpponentName().setText("");
             Glide.with(context).load(loadAvatarImage(item, holder, false))
