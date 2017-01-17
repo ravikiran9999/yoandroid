@@ -198,7 +198,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 time.setCompoundDrawablePadding(10);
             }
         }
-        ImageLoader.updateImage(context, item, loadImage, progressBar);
+        ImageLoader.updateImage(context, item, Constants.YOIMAGES, loadImage, progressBar);
         holder.getLl().addView(view);
     }
 
