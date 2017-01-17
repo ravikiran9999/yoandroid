@@ -3,18 +3,39 @@ package com.yo.android.model;
 import com.google.gson.annotations.SerializedName;
 
 public class PaymentHistoryItem {
-//    @SerializedName("CURRENT_CREDIT")
+    //    @SerializedName("CURRENT_CREDIT")
     private String current_credit;
-//    @SerializedName("PDATED_AT")
+    //    @SerializedName("PDATED_AT")
     private String updated_at;
-//    @SerializedName("ADDED_CREDIT")
+    //    @SerializedName("ADDED_CREDIT")
     private String added_credit;
-//    @SerializedName("STATUS")
+    //    @SerializedName("STATUS")
     private String status;
-//    @SerializedName("EXISTING_CREDIT")
+    //    @SerializedName("EXISTING_CREDIT")
     private String existing_credit;
 
+    private String currencySymbol;
+
+    private String convertedAddedCredit;
+
     private boolean arrowDown;
+
+    public String getConvertedAddedCredit() {
+        return convertedAddedCredit;
+    }
+
+    public void setConvertedAddedCredit(String convertedAddedCredit) {
+        this.convertedAddedCredit = convertedAddedCredit;
+    }
+
+    public String getCurrencySymbol() {
+        return currencySymbol;
+    }
+
+    public void setCurrencySymbol(String currencySymbol) {
+        this.currencySymbol = currencySymbol;
+    }
+
 
     public String getCurrent_credit() {
         return current_credit;

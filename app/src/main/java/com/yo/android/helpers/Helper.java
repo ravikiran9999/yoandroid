@@ -95,7 +95,16 @@ public class Helper {
         indexLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                listview.setSelection((Integer) mapIndex.get(indexList.get(position).substring(0, 1)));
+                if (position == 0) {
+                    listview.setSelection(0);
+                } else {
+                    try {
+                        listview.setSelection(((Integer) mapIndex.get(indexList.get(position).substring(0, 1))) + 1);
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        listview.setSelection(((Integer) mapIndex.get(indexList.get(position).substring(0, 1))));
+
+                    }
+                }
             }
         });
     }
@@ -108,7 +117,15 @@ public class Helper {
         indexLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                listview.setSelection((Integer) mapIndex.get(indexList.get(position).substring(0, 1)));
+                if (position == 0) {
+                    listview.setSelection(0);
+                } else {
+                    try {
+                        listview.setSelection(((Integer) mapIndex.get(indexList.get(position).substring(0, 1))) + 1);
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        listview.setSelection(((Integer) mapIndex.get(indexList.get(position).substring(0, 1))));
+                    }
+                }
             }
         });
     }
