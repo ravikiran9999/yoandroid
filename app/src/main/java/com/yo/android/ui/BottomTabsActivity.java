@@ -86,7 +86,6 @@ import retrofit2.Response;
  */
 public class BottomTabsActivity extends BaseActivity {
 
-    //private Toolbar toolbar;
     private TabLayout tabLayout;
     private List<TabsData> dataList;
     @Inject
@@ -137,8 +136,6 @@ public class BottomTabsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_tabs);
-        // toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
         context = this;
         activity = this;
         mContext = getApplicationContext();

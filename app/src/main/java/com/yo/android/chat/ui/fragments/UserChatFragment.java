@@ -599,6 +599,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             retryMessageCount++;
 
                         } else if (activity != null) {
+                            Log.i(TAG, "firebaseToken :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+                            Log.i(TAG, "firebase User Id :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID));
+
                             Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
                         }
                     } else {
