@@ -3,6 +3,9 @@ package com.yo.android.model;
 import com.google.gson.annotations.SerializedName;
 import com.yo.android.util.Constants;
 
+import java.util.Date;
+
+
 /**
  * Created by Ramesh on 17/7/16.
  */
@@ -42,6 +45,9 @@ public class UserProfileInfo {
 
     @SerializedName("notification_alert")
     private boolean notificationAlert;
+
+    @SerializedName("last_contacts_sync_date")
+    private Date lastContactsSyncTime;
 
     private boolean representative;
 
@@ -127,5 +133,13 @@ public class UserProfileInfo {
 
     public String getEmail() {
         return email;
+    }
+
+    public Date getLastContactsSyncTime() {
+        return lastContactsSyncTime;
+    }
+
+    public void setLastContactsSyncTime(Date lastContactsSyncTime) {
+        this.lastContactsSyncTime = lastContactsSyncTime;
     }
 }

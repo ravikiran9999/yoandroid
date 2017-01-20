@@ -126,10 +126,9 @@ public class ContactsSyncManager {
             }
         }
 
-        //Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute();
-        List<Contact> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute().body();
-        response.toString();
-        //response.body();
+        //Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute().body();
+         yoService.syncContactsWithNameAPI(access, nameAndNumber).execute();
+
     }
 
     private List<Contact> readContacts() {

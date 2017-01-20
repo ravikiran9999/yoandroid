@@ -66,8 +66,8 @@ public class OTPFragment extends BaseFragment {
     ContactsSyncManager contactsSyncManager;
     @Inject
     ConnectivityHelper mHelper;
-    @Inject
-    ContactSyncHelper mContactSyncHelper;
+    /*@Inject
+    ContactSyncHelper mContactSyncHelper;*/
 
 
     private TextView txtTimer;
