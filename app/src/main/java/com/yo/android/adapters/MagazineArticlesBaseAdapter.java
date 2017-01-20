@@ -42,6 +42,7 @@ import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
+import com.yo.android.util.AutoReflectTopicsFollowActionsListener;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
@@ -59,12 +60,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener, MagazineOtherPeopleReflectListener {
+public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener, MagazineOtherPeopleReflectListener, AutoReflectTopicsFollowActionsListener {
 
     private Context context;
     private LayoutInflater inflater;
     public static AutoReflectWishListActionsListener reflectListener;
     public static MagazineOtherPeopleReflectListener mListener;
+    public static AutoReflectTopicsFollowActionsListener reflectTopicsFollowActionsListener;
 
 
     private List<Articles> items;
@@ -93,6 +95,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         allArticles = new ArrayList<>();
         getAllArticles = new ArrayList<>();
         this.magazineFlipArticlesFragment = magazineFlipArticlesFragment;
+        reflectTopicsFollowActionsListener = this;
     }
 
     @Override
@@ -824,6 +827,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }
                 }
             } else {
+                allArticles = getAllItems();
                 for (Articles article : allArticles) {
                     if (data.getId() != null && data.getId().equals(article.getId())) {
                         article.setLiked(data.getLiked());
@@ -1895,6 +1899,59 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if(holder.tvTopicNameRight != null) {
             holder.tvTopicNameRight.setVisibility(View.GONE);
+        }
+
+    }
+
+    @Override
+    public void updateFollowTopicStatus(Articles data, String follow) {
+        if (data != null) {
+
+            /*if (Constants.FOLLOW_EVENT.equals(type)) {
+                for (Articles article : allArticles) {
+                    if (data.getId() != null && data.getId().equals(article.getId())) {
+                        article.setIsFollowing(data.getIsFollowing());
+                        article.setIsFollow(data.isFollow());
+                        if (!((BaseActivity)context).hasDestroyed()) {
+                            notifyDataSetChanged();
+                        }
+                        break;
+                    }
+                }
+            } else {*/
+                for (Articles article : allArticles) {
+                    //if (data.getId() != null && data.getId().equals(article.getId())) {
+                    if (data.getTopicId() != null && data.getTopicId().equals(article.getTopicId())) {
+                        article.setTopicFollowing(data.getTopicFollowing());
+                        //article.setIsChecked(data.isChecked());
+                        if (!((BaseActivity)context).hasDestroyed()) {
+                            notifyDataSetChanged();
+                        }
+
+                        //String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
+
+                        List<Articles> cachedMagazinesList = getCachedMagazinesList();
+
+                        //List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+                        if(cachedMagazinesList != null) {
+                            List<Articles> tempList = cachedMagazinesList;
+                            for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                if (data.getTopicId().equals(tempList.get(i).getTopicId())) {
+                                    tempList.get(i).setTopicFollowing(data.getTopicFollowing());
+                                }
+                            }
+                            cachedMagazinesList = tempList;
+
+                            //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+
+                            //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                            saveCachedMagazinesList(cachedMagazinesList);
+                        }
+                        //break;
+                    }
+
+                }
+            //}
         }
 
     }

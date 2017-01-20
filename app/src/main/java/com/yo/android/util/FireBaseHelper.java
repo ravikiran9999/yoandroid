@@ -3,12 +3,19 @@ package com.yo.android.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.annotations.NotNull;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.chat.firebase.FireBaseAuthToken;
@@ -31,18 +38,15 @@ import butterknife.ButterKnife;
 public class FireBaseHelper {
 
     private static final String TAG = "FireBaseHelper";
-
     private Map<String, ChatMessage> map = new HashMap<>();
+    private Context mContext;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Inject
     MyServiceConnection myServiceConnection;
 
-
-    /*@Inject
-    FirebaseService firebaseService;*/
-
     final Firebase ref = new Firebase(BuildConfig.FIREBASE_URL);
-
 
     @Inject
     @Named("login")
@@ -50,10 +54,9 @@ public class FireBaseHelper {
 
     @Inject
     public FireBaseHelper() {
-
+        firebaseAuth = FirebaseAuth.getInstance();
+        //authStateListener();
     }
-
-    private Context mContext;
 
     public ChatMessage getLastMessage(String roomId) {
         if (!map.containsKey(roomId)) {
@@ -80,7 +83,8 @@ public class FireBaseHelper {
                 public void onAuthenticated(AuthData authData) {
                     if (authData != null) {
                         Log.i(TAG, "Login Succeeded!");
-
+                        String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
+                        authWithCustomToken(context, newAuthToken);
                     } else {
 
                         FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
@@ -92,7 +96,7 @@ public class FireBaseHelper {
 
                             @Override
                             public void onFailed() {
-
+                                Log.i(TAG, "Login Failed!");
                             }
                         });
                         Log.i(TAG, "Login un Succeeded!");

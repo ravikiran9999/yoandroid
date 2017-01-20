@@ -133,6 +133,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private Contact mContact;
     private int retryMessageCount = 0;
     private PendingIntent pendingIntent;
+    private int falureCount=0;
 
     @Bind(R.id.emojiView)
     ImageView emoji;
@@ -596,7 +597,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         if (retryMessageCount <= 3) {
                             sendChatMessage(chatMessage);
                             retryMessageCount++;
+
                         } else if (activity != null) {
+                            Log.i(TAG, "firebaseToken :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+                            Log.i(TAG, "firebase User Id :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID));
+
                             Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
                         }
                     } else {
@@ -719,7 +724,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         @Override
                         public void run() {
                             if (mFileTemp != null && !Util.isKb(mFileTemp.length())) {
-                                String path = new CompressImage(getActivity()).compressImage(mFileTemp.getAbsolutePath());
+                                String path = new CompressImage(getActivity()).compressImage(mFileTemp.getAbsolutePath(), Constants.YOIMAGES);
                                 mFileTemp.delete();
                                 updateChatWithLocalImage(path);
                             } else {
@@ -742,7 +747,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         try {
 
             String mPartyPicUri = mFileTemp.getPath();
-            String path = new CompressImage(getActivity()).compressImage(mPartyPicUri);
+            String path = new CompressImage(getActivity()).compressImage(mPartyPicUri, Constants.YOIMAGES);
             mFileTemp.delete();
             updateChatWithLocalImage(path);
         } catch (Exception e) {
@@ -794,10 +799,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         final UploadTask uploadTask = imagesRef.putFile(file, metadata);
 
         uploadTask.addOnFailureListener(new OnFailureListener() {
+
             @Override
             public void onFailure(@NonNull Exception e) {
                 // Handle unsuccessful uploads
-                uploadImage(imageMessage, path);
+                falureCount++;
+                if(falureCount <= 2) {
+                    uploadImage(imageMessage, path);
+                }
                 e.printStackTrace();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

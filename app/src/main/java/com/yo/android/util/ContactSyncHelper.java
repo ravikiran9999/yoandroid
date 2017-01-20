@@ -263,6 +263,7 @@ public class ContactSyncHelper {
         ArrayList<String> phoneTypes = new ArrayList<>();
         ArrayList<String> shortPhones = new ArrayList<>();
         ArrayList<Integer> phoneDeleted = new ArrayList<>();
+        ArrayList<Long> changedContactTimeStamp = new ArrayList<>();
         String first_name;
         String last_name;
     }
@@ -271,7 +272,7 @@ public class ContactSyncHelper {
             ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
             ContactsContract.CommonDataKinds.Phone.NUMBER,
             ContactsContract.CommonDataKinds.Phone.TYPE,
-            ContactsContract.CommonDataKinds.Phone.LABEL
+            ContactsContract.CommonDataKinds.Phone.LABEL,
     };
 
     private String[] projectionNames = {
@@ -279,7 +280,8 @@ public class ContactSyncHelper {
             ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
             ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
             ContactsContract.Data.DISPLAY_NAME,
-            ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME
+            ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
+            ContactsContract.Contacts.CONTACT_STATUS_TIMESTAMP
     };
 
 
@@ -364,6 +366,7 @@ public class ContactSyncHelper {
                     String sname = pCur.getString(2);
                     String sname2 = pCur.getString(3);
                     String mname = pCur.getString(4);
+                    Long date = pCur.getLong(5);
                     Contact contact = contactsMap.get(id);
                     if (contact != null && contact.first_name.length() == 0 && contact.last_name.length() == 0) {
                         contact.first_name = fname;

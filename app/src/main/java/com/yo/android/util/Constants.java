@@ -20,6 +20,8 @@ public class Constants {
     public static final String IMAGE = "image";
     public static final String PHOTO = "Photo";
     public static final String IMAGE_PATH = "image_path";
+    public static final String YOIMAGES = "YOImages";
+    public static final String YO_PROFILE_PIC = "YOProfilePics";
 
     public static final String SELECTED_TEXT = "selected_text";
     public static final String GROUP_NAME = "groupName";
@@ -100,6 +102,7 @@ public class Constants {
     public static final String IS_CHAT_FORWARD = "is_chat_forward";
     public static final String COUNTRY_ID = "country_id";
     public static int SUCCESS_CODE = 200;
+    public static final String FOLLOW_TOPIC_EVENT = "follow_topic_event";
 
     public static final int ADD_IMAGE_CAPTURE = 1;
     public static final int ADD_SELECT_PICTURE = 2;

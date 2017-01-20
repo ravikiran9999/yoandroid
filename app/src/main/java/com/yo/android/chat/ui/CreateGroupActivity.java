@@ -20,6 +20,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.SelectedContactsAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.CompressImage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.ui.BaseActivity;
@@ -201,6 +202,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
             if (imgFile == null) {
                 body = null;
             } else { // create RequestBody instance from file
+                new CompressImage(this).compressImage(imgFile.getPath(), Constants.YO_PROFILE_PIC);
                 RequestBody requestFile =
                         RequestBody.create(MediaType.parse("multipart/form-data"), imgFile);
 

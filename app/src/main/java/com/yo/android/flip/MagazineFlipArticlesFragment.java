@@ -1737,6 +1737,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             //myBaseAdapter.addItems(articlesList);
             myBaseAdapter.removeItems(unreadOtherOrderedArticles);
             myBaseAdapter.addItemsAll(unreadOtherOrderedArticles);
+            myBaseAdapter.notifyDataSetChanged();
 
 
             magazineDashboardHelper.getMoreDashboardArticlesAfterFollow(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds, unreadOtherOrderedArticles, followedArticlesList);
@@ -1849,6 +1850,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         //myBaseAdapter.addItems(articlesList);
         myBaseAdapter.removeItems(totalOtherUnreadArticles);
         myBaseAdapter.addItemsAll(totalOtherUnreadArticles);
+        myBaseAdapter.notifyDataSetChanged();
     }
 
     public void updateArticlesAfterDailyService() {
