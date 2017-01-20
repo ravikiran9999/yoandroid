@@ -98,6 +98,7 @@ public class Constants {
     public static final String FROM = "from";
     public static final String DAILER = "Dialer";
     public static final String IS_CHAT_FORWARD = "is_chat_forward";
+    public static final String COUNTRY_ID = "country_id";
     public static int SUCCESS_CODE = 200;
 
     public static final int ADD_IMAGE_CAPTURE = 1;
