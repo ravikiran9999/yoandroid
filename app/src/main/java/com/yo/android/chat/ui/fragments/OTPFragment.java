@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -200,6 +201,8 @@ public class OTPFragment extends BaseFragment {
             @Override
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
                 //dismissProgressDialog();
+                FragmentActivity activity = getActivity();
+
                 if (response.isSuccessful()) {
                     preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, false);
                     //contactsSyncManager.syncContacts();
@@ -207,17 +210,22 @@ public class OTPFragment extends BaseFragment {
                     storeTokens(response, phoneNumber, password);
                     addSubscriber(response.body().getAccessToken());
                 } else {
-                    mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+                    if (activity != null) {
+                        mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<OTPResponse> call, Throwable t) {
                 dismissProgressDialog();
-                if (!mHelper.isConnected() || t instanceof SocketTimeoutException) {
-                    mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
-                } else {
-                    mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+                FragmentActivity activity = getActivity();
+                if (activity != null) {
+                    if (!mHelper.isConnected() || t instanceof SocketTimeoutException) {
+                        mToastFactory.showToast(activity.getResources().getString(R.string.connectivity_network_settings));
+                    } else {
+                        mToastFactory.showToast(activity.getResources().getString(R.string.otp_failure));
+                    }
                 }
             }
         });

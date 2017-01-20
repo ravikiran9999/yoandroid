@@ -115,8 +115,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private boolean isAlreadyShown;
 
-    //private boolean isRemoved;
-
     private TextView profileStatus;
     private boolean isSharedPreferenceShown;
 
@@ -179,19 +177,16 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
                 Glide.with(getActivity()).load(new File(localImage))
                         .dontAnimate()
-                        .placeholder(profilePic.getDrawable())
-                        .error(profilePic.getDrawable())
                         .fitCenter()
                         .into(profilePic);
             } else if (!TextUtils.isEmpty(avatar)) {
                 addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
                 Glide.with(getActivity()).load(avatar)
                         .dontAnimate()
-                        .placeholder(profilePic.getDrawable())
-                        .error(profilePic.getDrawable())
                         .fitCenter()
                         .into(profilePic);
             } else {
+                profilePic.setImageResource(R.drawable.default_avatar_40);
                 addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.add_photo));
             }
         }
@@ -565,7 +560,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         if (popup != null) {
-            if(!isSharedPreferenceShown) {
+            if (!isSharedPreferenceShown) {
                 Collections.reverse(popup);
             }
             List<Popup> tempPopup = new ArrayList<>(popup);

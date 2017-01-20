@@ -102,6 +102,18 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                     if (demonimations != null && demonimations.size() > 0) {
                         preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
                         txt_balance.setText(String.format("%s %s", MoreFragment.currencySymbolDollar, balance));
+                    } else {
+                        txtEmpty.setVisibility(View.VISIBLE);
+                        FragmentActivity activity = getActivity();
+                        if (activity != null) {
+                            txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
+                        }
+                    }
+                } else {
+                    txtEmpty.setVisibility(View.VISIBLE);
+                    FragmentActivity activity = getActivity();
+                    if (activity != null) {
+                        txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
                     }
                 }
             }

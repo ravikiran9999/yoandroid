@@ -65,32 +65,28 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 } else {
                     numberWithCountryCode = item.getPhoneNo();
                 }
-                holder.getContactNumber().setText(numberWithCountryCode);
+                holder.getContactMail().setText(numberWithCountryCode);
             } else {
-                holder.getContactNumber().setText(item.getName());
+                holder.getContactMail().setText(item.getName());
             }
-            holder.getContactNumber().setVisibility(View.VISIBLE);
-        } else {
-            holder.getContactNumber().setVisibility(View.GONE);
-        }
-
-        if (item.getPhoneNo() != null) {
-            item.setPhoneNo(item.getPhoneNo().trim());
-        }
-
-        if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo()))) {
-            String numberWithCountryCode;
-            if (item.getCountryCode() != null) {
-                numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
-            } else {
-                numberWithCountryCode = item.getPhoneNo();
-            }
-            holder.getContactMail().setText(numberWithCountryCode);
             holder.getContactMail().setVisibility(View.VISIBLE);
-
         } else {
             holder.getContactMail().setVisibility(View.GONE);
         }
+
+        if (TextUtils.isEmpty(item.getPhoneNo())) {
+            holder.getContactMail().setVisibility(View.GONE);
+        } else {
+            holder.getContactMail().setVisibility(View.VISIBLE);
+        }
+        if (TextUtils.isEmpty(item.getName())) {
+            holder.getContactNumber().setVisibility(View.GONE);
+        } else {
+            holder.getContactNumber().setVisibility(View.VISIBLE);
+            holder.getContactNumber().setText(item.getName());
+
+        }
+
 
         if (!TextUtils.isEmpty(item.getImage())) {
 
