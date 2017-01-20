@@ -827,6 +827,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }
                 }
             } else {
+                allArticles = getAllItems();
                 for (Articles article : allArticles) {
                     if (data.getId() != null && data.getId().equals(article.getId())) {
                         article.setLiked(data.getLiked());
