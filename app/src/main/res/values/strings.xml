@@ -310,4 +310,6 @@
     <string name="yocredit">Yo Credit (%1$s %2$s)</string>
     <string name="low_balance">Low balance, please add balance.</string>
     <string name="logged_in_another_device">User accessed from another device</string>
+    <string name="activity_title_yourcountry">Your Country</string>
+    <string name="plus">+</string>
 </resources>

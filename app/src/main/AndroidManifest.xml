@@ -28,7 +28,7 @@
     <!-- Pjsip needs this permission. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <!--NETWORK STATE CHANGE LISTNER PERMISSIONS-->
+    <!-- NETWORK STATE CHANGE LISTNER PERMISSIONS -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
@@ -253,8 +253,9 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".crop.MainImageCropActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity
+            android:name=".crop.MainImageCropActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity
             android:name=".ui.OthersMagazinesDetailActivity"
             android:screenOrientation="portrait" />
@@ -332,7 +333,7 @@
         <service
             android:name=".util.FetchNewArticlesService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
         <service
             android:name=".chat.firebase.ListenerJobService"
             android:exported="false">
@@ -341,6 +342,9 @@
             </intent-filter>
         </service>
 
+
+        <activity android:name=".chat.ui.CountryCodeActivity"
+            android:theme="@style/AppTheme.Switch"></activity>
     </application>
 
 </manifest>
