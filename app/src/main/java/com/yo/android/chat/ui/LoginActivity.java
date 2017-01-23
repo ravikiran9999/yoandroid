@@ -1,10 +1,19 @@
 package com.yo.android.chat.ui;
 
 import android.app.AlertDialog;
+<<<<<<< HEAD
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
+=======
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
+>>>>>>> b53f829ce179254d21042d49a95251956dfee9bc
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,6 +30,14 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.internal.LinkedTreeMap;
+<<<<<<< HEAD
+=======
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import com.orion.android.common.logger.Log;
+import com.orion.android.common.preferences.PreferenceEndPoint;
+>>>>>>> b53f829ce179254d21042d49a95251956dfee9bc
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -180,6 +197,19 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         boolean cancel = false;
         View focusView = null;
 
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        Phonenumber.PhoneNumber swissNumberProto = null;
+
+        String selectedCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+        String country = preferenceEndPoint.getStringPreference(Constants.COUNTRY_ID);
+
+
+        try {
+            swissNumberProto = phoneUtil.parse(selectedCountryCode + phoneNumber, country.toUpperCase());
+            android.util.Log.e("Login", "Country code " + swissNumberProto.toString());
+        } catch (NumberParseException e) {
+            System.err.println("NumberParseException was thrown: " + e.toString());
+        }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(phoneNumber)) {
@@ -192,7 +222,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number));
             cancel = true;
-        } else if (phoneNumber.length() != 10) {
+        } else if (swissNumberProto != null && phoneUtil.isValidNumber(swissNumberProto)) {
             Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number_error));
@@ -342,6 +372,8 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, mList.get(position).getCountryCode()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
+
+        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID, mList.get(position).getCountryID()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
 
     }
 

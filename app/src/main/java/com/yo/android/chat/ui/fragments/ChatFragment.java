@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -227,7 +228,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         try {
             showProgressDialog();
             if (isAdded() && activity != null) {
-
                 Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
                 String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
                 if (!firebaseUserId.isEmpty()) {
@@ -250,6 +250,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         public void onCancelled(FirebaseError firebaseError) {
                             dismissProgressDialog();
                             firebaseError.getMessage();
+                            emptyImageView.setVisibility(View.VISIBLE);
+                            listView.setVisibility(View.GONE);
+
+                            Log.i(TAG, "firebase Token :: " + loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+                            Log.i(TAG, "firebase User Id :: " + loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID));
                         }
                     });
                     authReference.keepSynced(true);
@@ -388,7 +393,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        getMembersProfile(dataSnapshot);
+                        List<Room> roomList = getMembersProfile(dataSnapshot);
+                        if(roomList!= null && !roomList.isEmpty()) {
+                            emptyImageView.setVisibility(View.GONE);
+                        } else {
+                            emptyImageView.setVisibility(View.VISIBLE);
+                        }
                     }
 
                     @Override

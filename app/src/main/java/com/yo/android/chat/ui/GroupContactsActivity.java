@@ -86,12 +86,19 @@ public class GroupContactsActivity extends BaseActivity {
         selectedContactsList = getIntent().getParcelableArrayListExtra(Constants.SELECTED_CONTACTS);
         contactsList = CreateGroupActivity.ContactsArrayList;
         changeSelectedContactStatus(clearSelection(contactsList));
+
         if (contactsList.isEmpty()) {
             getYoAppUsers();
         } else {
             groupContactsListAdapter.addItems(contactsList);
             Helper.displayIndex(this, layout, contactsList, listView);
         }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
@@ -119,7 +126,6 @@ public class GroupContactsActivity extends BaseActivity {
     }
 
     private void getYoAppUsers() {
-        showProgressDialog();
 
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override

@@ -4,6 +4,7 @@ package com.yo.android.chat.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.AppContactsListAdapter;
 import com.yo.android.api.YoApi;
@@ -66,6 +68,8 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     YoApi.YoService yoService;
     @Inject
     ContactsSyncManager mContactsSyncManager;
+    @Inject
+    ConnectivityHelper mHelper;
 
     private MenuItem collapseView;
 
@@ -107,7 +111,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             appContactsListAdapter = new AppContactsListAdapter(activity.getApplicationContext());
             listView.setAdapter(appContactsListAdapter);
         }
-        getYoAppUsers();
+
     }
 
     @Override
@@ -119,6 +123,24 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         }
         return super.onOptionsItemSelected(item);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mHelper.isConnected()) {
+            getYoAppUsers();
+        } else if (!mHelper.isConnected()) {
+            List<Contact> cacheContactsList = mContactsSyncManager.getCachContacts();
+            if (cacheContactsList != null && !cacheContactsList.isEmpty()) {
+                loadInAlphabeticalOrder(cacheContactsList);
+            } else {
+                noResults.setText(getString(R.string.no_contacts_found));
+                noResults.setVisibility(View.VISIBLE);
+                mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
+            }
+
+        }
     }
 
     @Override
@@ -177,9 +199,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void getYoAppUsers() {
+
         final List<Contact> contacts = mContactsSyncManager.getContacts();
         if (!contacts.isEmpty()) {
-            loadInAlphabeticalOrder(mContactsSyncManager.getContacts());
+            loadInAlphabeticalOrder(contacts);
         } else if (contacts.isEmpty()) {
             showProgressDialog();
         }
@@ -187,7 +210,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                loadInAlphabeticalOrder(mContactsSyncManager.getContacts());
+                loadInAlphabeticalOrder(response.body());
                 dismissProgressDialog();
             }
 
@@ -205,7 +228,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     }
 
-    private void loadInAlphabeticalOrder(List<Contact> contactList) {
+    private void loadInAlphabeticalOrder(@NonNull List<Contact> contactList) {
         String newGroupTxt = "";
         if (activity != null) {
             newGroupTxt = activity.getResources().getString(R.string.new_group);

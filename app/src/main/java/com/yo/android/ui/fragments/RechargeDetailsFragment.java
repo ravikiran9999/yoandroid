@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +19,13 @@ import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.PaymentHistoryItem;
+import com.yo.android.model.dialer.SubscribersList;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +49,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
     ProgressBar progress;
 
     @Bind(R.id.listView)
-    NonScrollableListView listView;
+    RecyclerView listView;
     @Inject
     BalanceHelper mBalanceHelper;
     private RechargeDetailsAdapter adapter;
@@ -59,7 +63,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new RechargeDetailsAdapter(getActivity());
+        adapter = new RechargeDetailsAdapter(getActivity(), new ArrayList<PaymentHistoryItem>());
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -78,6 +82,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         listView.setAdapter(adapter);
+        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         if (isAdded()) {
             showProgressDialog();
         }
@@ -103,7 +108,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
     }
 
     private void showEmptyText() {
-        boolean showEmpty = adapter.getCount() == 0;
+        boolean showEmpty = adapter.getItemCount() == 0;
         txtEmpty.setVisibility(showEmpty ? View.VISIBLE : View.GONE);
     }
 
@@ -117,24 +122,32 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
         progress.setVisibility(View.GONE);
     }
 
-    private static class RechargeDetailsAdapter extends AbstractBaseAdapter<PaymentHistoryItem, SpendDetailsViewHolder> {
+    private static class RechargeDetailsAdapter extends RecyclerView.Adapter<SpendDetailsViewHolder> {
+        private List<PaymentHistoryItem> mPaymentHistoryItemList;
+        private Context mContext;
 
-        public RechargeDetailsAdapter(Context context) {
-            super(context);
+        public RechargeDetailsAdapter(Context context, List<PaymentHistoryItem> list) {
+            mPaymentHistoryItemList = list;
+            mContext = context;
+        }
+
+
+        @Override
+        public SpendDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Context context = parent.getContext();
+            LayoutInflater inflater = LayoutInflater.from(context);
+
+            // Inflate the custom layout
+            View contactView = inflater.inflate(R.layout.frag_spent_list_row_item, parent, false);
+
+            // Return a new holder instance
+            SpendDetailsViewHolder viewHolder = new SpendDetailsViewHolder(contactView);
+            return viewHolder;
         }
 
         @Override
-        public int getLayoutId() {
-            return R.layout.frag_spent_list_row_item;
-        }
-
-        @Override
-        public SpendDetailsViewHolder getViewHolder(View convertView) {
-            return new SpendDetailsViewHolder(convertView);
-        }
-
-        @Override
-        public void bindView(int position, SpendDetailsViewHolder holder, final PaymentHistoryItem item) {
+        public void onBindViewHolder(SpendDetailsViewHolder holder, int position) {
+            final PaymentHistoryItem item = mPaymentHistoryItemList.get(position);
             holder.getDate().setVisibility(View.GONE);
             holder.getDuration().setVisibility(View.GONE);
             String modifiedTime = item.getUpdatedAt().substring(0, item.getUpdatedAt().lastIndexOf("."));
@@ -160,6 +173,21 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
                 holder.getArrow().setImageResource(R.drawable.ic_uparrow);
                 holder.getDurationContainer().setVisibility(View.GONE);
             }
+        }
+
+        public void addItems(List<PaymentHistoryItem> detailResponseList) {
+            mPaymentHistoryItemList.addAll(detailResponseList);
+            notifyDataSetChanged();
+        }
+
+        public void clearAll() {
+            mPaymentHistoryItemList.clear();
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemCount() {
+            return mPaymentHistoryItemList.size();
         }
     }
 

@@ -232,7 +232,7 @@
     <string name="move_and_scale">Move and Scale</string>
     <string name="exceed_message">Message exceeds maximum limit</string>
     <string name="crop_image">Crop Image</string>
-    <string name="enter_mobile_number_error">please enter a valid number </string>
+    <string name="enter_mobile_number_error">Please enter a valid number </string>
     <string name="Dialog_text">Please confirm if %s number is correct.</string>
     <string name="Cancel">Cancel</string>
     <string name="Ok">ok</string>
@@ -310,6 +310,10 @@
     <string name="yocredit">Yo Credit (%1$s %2$s)</string>
     <string name="low_balance">Low balance, please add balance.</string>
     <string name="logged_in_another_device">User accessed from another device</string>
+<<<<<<< HEAD
     <string name="activity_title_yourcountry">Your Country</string>
     <string name="plus">+</string>
+=======
+    <string name="no_denominations_for_your_country">Denominations not available for your country.</string>
+>>>>>>> b53f829ce179254d21042d49a95251956dfee9bc
 </resources>

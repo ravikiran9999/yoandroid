@@ -639,6 +639,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         tagsParentLayout.setVisibility(View.VISIBLE);
 
         if (TextUtils.isEmpty(searchText.toString().trim())) {
+
             /*if (totalTagsInView == null) {
                 tagsParentLayout.removeAllViews();
                 tagsParentLayout.addView(initcreateTags(initialTags));
@@ -680,6 +681,17 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     super.onPostExecute(aVoid);
                     tagsParentLayout.removeAllViews();
                     tagsParentLayout.addView(createTags(worldpopulationlist));
+                    if (worldpopulationlist.size() == 0) {
+                        noSearchResults.setVisibility(View.VISIBLE);
+                        tvHelloInterests.setVisibility(View.GONE);
+                        tvPickTopics.setVisibility(View.GONE);
+                        isInvalidSearch = true;
+                    } else {
+                        noSearchResults.setVisibility(View.GONE);
+                        tvHelloInterests.setVisibility(View.VISIBLE);
+                        tvPickTopics.setVisibility(View.VISIBLE);
+                        isInvalidSearch = false;
+                    }
                     onTagSearchClickEvent();
                 }
             }.execute(searchText);
