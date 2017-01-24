@@ -76,11 +76,15 @@ public class CountryCodeActivity extends ParentActivity {
                 Intent intent = getIntent();
 
                 intent.putExtra("COUNTRY_CODE", countryAdapter.getItem(i).getCountryCode());
+                intent.putExtra("COUNTRY_ID", countryAdapter.getItem(i).getCountryID());
                 intent.putExtra("COUNTRY_NAME", countryAdapter.getItem(i).getCountryName());
                 // intent.putExtra("COUNTRY_POSITION",i);
                 setResult(RESULT_OK, intent);
 
+
                 finish();
+
+
 
             }
         });

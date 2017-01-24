@@ -184,6 +184,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         // Reset errors.
         mPhoneNumberView.setError(null);
         // Store values at the time of the login attempt.
+        String countryCode=mCountryCode.getText().toString();
         String phoneNumber = mPhoneNumberView.getText().toString().trim();
 
 
@@ -200,7 +201,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
 
 
         try {
-            swissNumberProto = phoneUtil.parse(selectedCountryCode + phoneNumber, country.toUpperCase());
+            swissNumberProto = phoneUtil.parse( selectedCountryCode  + phoneNumber, country.toUpperCase());
             android.util.Log.e("Login", "Country code " + swissNumberProto.toString());
         } catch (NumberParseException e) {
             System.err.println("NumberParseException was thrown: " + e.toString());
@@ -383,14 +384,12 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == SELECTED_OK && resultCode == RESULT_OK && data != null){
             if(data.hasExtra("COUNTRY_CODE")){
-
                 String countryCode=data.getStringExtra("COUNTRY_CODE");
                 String countryName=data.getStringExtra("COUNTRY_NAME");
-
+                String countryId=data.getStringExtra("COUNTYR_ID");
                 mCountryCode.setText("+"+countryCode +" "+countryName);
-
-                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE,countryCode);
-                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME,countryName);
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM,countryCode/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID,countryId/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
             }
         }
     }
