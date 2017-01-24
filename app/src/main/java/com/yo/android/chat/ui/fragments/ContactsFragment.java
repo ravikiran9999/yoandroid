@@ -54,6 +54,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -132,6 +133,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        EventBus.getDefault().register(this);
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
         listView.setOnItemClickListener(this);
@@ -150,7 +152,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                 noSearchResult.setVisibility(View.GONE);
-                loadAlphabetOrder(mSyncManager.getContacts());
+                loadAlphabetOrder(response.body());
                 dismissProgressDialog();
             }
 
@@ -384,6 +386,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
@@ -410,5 +413,11 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         }
         //popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
+    }
+
+    public void onEventMainThread(String action) {
+        if (Constants.CONTACTS_REFRESH.equals(action)) {
+            syncContacts();
+        }
     }
 }

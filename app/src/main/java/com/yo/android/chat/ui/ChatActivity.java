@@ -285,17 +285,18 @@ public class ChatActivity extends BaseActivity {
             titleView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    String opponentTrim  = null;
                     if (opponent != null && opponent.contains(Constants.YO_USER)) {
-                        opponent = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
+                        opponentTrim = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
                     }
 
                     Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
                     String titles = title == null ? opponent : title;
                     intent.putExtra(Constants.OPPONENT_NAME, titles);
-                    if (opponent != null && TextUtils.isDigitsOnly(opponent)) {
-                        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponent);
+                    intent.putExtra(Constants.VOX_USER_NAME, opponent);
+                    if (opponentTrim != null && TextUtils.isDigitsOnly(opponentTrim)) {
+                        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentTrim);
                     }
 
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
