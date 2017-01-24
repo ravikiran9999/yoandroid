@@ -101,6 +101,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private ArrayList<Tag> worldpopulationlist = null;
     private ArrayList<Tag> arraylist = null;
     //public ProgressBar progressBar;
+    private Button skip;
+    private boolean isSkipClicked;
 
     public interface TagsLoader {
         void loaded();
@@ -139,6 +141,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         //tagGroupSearch.setVisibility(View.GONE);
         tagsParentLayout = (LinearLayout) findViewById(R.id.tagsparent);
         //progressBar = (ProgressBar) findViewById(R.id.test_progress);
+        skip = (Button) findViewById(R.id.btn_skip);
 
         initialTags = new ArrayList<>();
         topicsList = new ArrayList<Topics>();
@@ -149,6 +152,12 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         COLOR_PRIMARY = getResources().getColor(R.color.colorPrimary);
 
         //tagGroupSearch.setVisibility(View.GONE);
+
+        if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
+            skip.setVisibility(View.VISIBLE);
+        } else {
+            skip.setVisibility(View.GONE);
+        }
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
@@ -294,6 +303,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             public void onClick(View v) {
                 performDoneAction(followedTopicsIdsList);
                 done.setEnabled(false);
+                isSkipClicked = false;
             }
         });
 
@@ -302,6 +312,17 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             @Override
             public void onTagDeleted(final TagView view, final Tag tag, final int position) {
                 // do nothing
+            }
+        });
+
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FollowMoreTopicsActivity.this, TabsHeaderActivity.class);
+                intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
+                startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+                skip.setEnabled(false);
+                isSkipClicked = true;
             }
         });
 
@@ -763,6 +784,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == RESULT_OK) {
+            if(!isSkipClicked) {
             if (searchTags != null && !searchTags.isEmpty()) {
                 for (int i = 0; i < initialTags.size(); i++) {
                     for (int j = 0; j < searchTags.size(); j++) {
@@ -783,7 +805,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         followedTopicsIdsList.add(String.valueOf(t.getTagId()));
                     }
                 }
-            } /*else if (tagGroupSearch.getVisibility() == View.VISIBLE) {
+            }
+        }/*else if (tagGroupSearch.getVisibility() == View.VISIBLE) {
                 tagGroupSearch.addTags(initialTags);
                 for (int k = 0; k < tagGroupSearch.getTags().size(); k++) {
                     TagSelected t = (TagSelected) tagGroupSearch.getTags().get(k);
@@ -833,6 +856,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
         } else if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == RESULT_CANCELED) {
             done.setEnabled(true);
+            skip.setEnabled(true);
+            isSkipClicked = false;
         }
     }
 
