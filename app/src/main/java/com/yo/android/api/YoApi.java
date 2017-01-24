@@ -1,5 +1,6 @@
 package com.yo.android.api;
 
+import com.google.gson.JsonElement;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Categories;
 import com.yo.android.model.Collections;
@@ -136,7 +137,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/user/contacts_sync_with_name.json")
-        Call<List<Contact>> syncContactsWithNameAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<JSONObject> user);
+        Call<JsonElement> syncContactsWithNameAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<JSONObject> user);
 
         @FormUrlEncoded
         @POST("api/user/firebase_token.json")
