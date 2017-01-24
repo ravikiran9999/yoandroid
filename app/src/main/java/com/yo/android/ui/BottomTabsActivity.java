@@ -65,9 +65,12 @@ import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -86,6 +89,7 @@ import retrofit2.Response;
  */
 public class BottomTabsActivity extends BaseActivity {
 
+    private static final String TAG = BottomTabsActivity.class.getSimpleName();
     private TabLayout tabLayout;
     private List<TabsData> dataList;
     @Inject
@@ -107,6 +111,8 @@ public class BottomTabsActivity extends BaseActivity {
     public static Activity activity;
     public static PendingIntent pintent;
     private TextView actionBarTitle;
+    private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -204,7 +210,7 @@ public class BottomTabsActivity extends BaseActivity {
             public void onPageSelected(int position) {
 
                 if (position == 0 && getFragment() instanceof MagazinesFragment) {
-                    Log.d("BottomTabsActivity", "onPageSelected In update() BottomTabsActivity");
+                    Log.d(TAG, "onPageSelected In update() BottomTabsActivity");
 
                     MagazineDashboardHelper.request = 1;
                     ((MagazinesFragment) getFragment()).removeReadArticles();
@@ -241,7 +247,9 @@ public class BottomTabsActivity extends BaseActivity {
         updateDeviceToken();
         //contactsSyncManager.syncContacts();
         SyncUtils.createSyncAccount(this, preferenceEndPoint);
+        mContactSyncHelper.init();
         mContactSyncHelper.checkContacts();
+
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
         EventBus.getDefault().register(this);
         List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
@@ -337,7 +345,7 @@ public class BottomTabsActivity extends BaseActivity {
                     viewPager.setCurrentItem(2);
                 }
             }
-        }else{
+        } else {
             if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
 
                 startActivity(new Intent(this, TabsHeaderActivity.class));
@@ -529,6 +537,7 @@ public class BottomTabsActivity extends BaseActivity {
 
     private void loadUserProfileInfo() {
         String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+
         yoService.getUserInfo(access).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
@@ -546,7 +555,7 @@ public class BottomTabsActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<UserProfileInfo> call, Throwable t) {
-
+                Log.e(TAG, t.getMessage());
             }
         });
     }

@@ -74,6 +74,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private NonScrollListView membersList;
     private Contact contact;
     private String opponentNo;
+    private String voxUserName;
     private String opponentName;
     private String opponentImg;
     private boolean fromChatRooms;
@@ -120,6 +121,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (intent.hasExtra(Constants.OPPONENT_PHONE_NUMBER)) {
                     opponentNo = intent.getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
                 }
+                if (intent.hasExtra(Constants.VOX_USER_NAME)) {
+                    voxUserName = intent.getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+                }
                 if (intent.hasExtra(Constants.OPPONENT_CONTACT_IMAGE)) {
                     opponentImg = intent.getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
                 }
@@ -132,7 +136,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 contact.setPhoneNo(opponentNo);
                 String names = roomName == null ? opponentName : roomName;
                 contact.setName(names);
-                contact.setVoxUserName(opponentNo);
+                contact.setVoxUserName(voxUserName);
                 contact.setImage(opponentImg);
                 contact.setYoAppUser(true);
 
