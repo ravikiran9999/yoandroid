@@ -192,7 +192,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number));
             cancel = true;
-        } else if (swissNumberProto != null && phoneUtil.isValidNumber(swissNumberProto)) {
+        } else if (swissNumberProto != null && !(phoneUtil.isValidNumber(swissNumberProto))) {
             Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number_error));
