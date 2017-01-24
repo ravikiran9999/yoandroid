@@ -193,8 +193,10 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
         Phonenumber.PhoneNumber swissNumberProto = null;
 
-        String selectedCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
-        String country = preferenceEndPoint.getStringPreference(Constants.COUNTRY_ID);
+       String selectedCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+       String country = preferenceEndPoint.getStringPreference(Constants.COUNTRY_ID);
+          //String selectedCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE);
+         // String country = preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME);
 
 
         try {
@@ -215,7 +217,8 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number));
             cancel = true;
-        } else if (swissNumberProto != null && phoneUtil.isValidNumber(swissNumberProto)) {
+        } else if (swissNumberProto != null && !phoneUtil.isValidNumber(swissNumberProto)) {
+//        } else if (phoneNumber.length() != 10) {
             Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number_error));
@@ -386,6 +389,9 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                 String countryName=data.getStringExtra("COUNTRY_NAME");
 
                 mCountryCode.setText("+"+countryCode +" "+countryName);
+
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE,countryCode);
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME,countryName);
             }
         }
     }

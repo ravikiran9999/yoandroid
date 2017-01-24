@@ -38,6 +38,7 @@
         android:ems="10"
         android:imeOptions="actionDone"
         android:padding="13dp"
+        android:drawableEnd="@drawable/arrow"
         android:singleLine="true" />
 
 
