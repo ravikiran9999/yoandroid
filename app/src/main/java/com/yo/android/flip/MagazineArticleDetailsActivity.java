@@ -3,6 +3,7 @@ package com.yo.android.flip;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -179,7 +180,8 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                         if (data.getImage_filename() != null) {
                             new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
                         } else {
-                            Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                            String summary = Html.fromHtml(data.getSummary()).toString();
+                            Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
                         }
                     }
                 });

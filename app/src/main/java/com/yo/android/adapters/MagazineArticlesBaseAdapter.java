@@ -520,7 +520,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     if (data.getImage_filename() != null) {
                         new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
                     } else {
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                        String summary = Html.fromHtml(data.getSummary()).toString();
+                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
                     }
                 }
             });
@@ -1145,7 +1146,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     if (data.getImage_filename() != null) {
                         new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
                     } else {
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                        String summary = Html.fromHtml(data.getSummary()).toString();
+                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
                     }
                 }
             });
@@ -1458,7 +1460,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     if (data.getImage_filename() != null) {
                         new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
                     } else {
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                        String summary = Html.fromHtml(data.getSummary()).toString();
+                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
                     }
                 }
             });
@@ -1784,7 +1787,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     if (data.getImage_filename() != null) {
                         new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
                     } else {
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                        String summary = Html.fromHtml(data.getSummary()).toString();
+                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
                     }
                 }
             });
