@@ -410,6 +410,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     if (!isContain) {
                         noSearchResults.setVisibility(View.VISIBLE);
                         layout.setVisibility(View.GONE);
+                    }else{
+                        noSearchResults.setVisibility(View.GONE);
+                        layout.setVisibility(View.VISIBLE);
                     }
                     return true;
                 }

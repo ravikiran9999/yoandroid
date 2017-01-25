@@ -436,6 +436,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
         mediaManager.setAudioMode(AudioManager.MODE_NORMAL);
+        stopRingtone();
         currentCall = null;
         callStarted = 0;
         if (sipCallState.getCallDir() == SipCallState.INCOMING) {

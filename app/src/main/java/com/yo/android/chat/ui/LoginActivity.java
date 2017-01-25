@@ -2,19 +2,15 @@ package com.yo.android.chat.ui;
 
 import android.app.AlertDialog;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
-import android.support.v4.app.FragmentTransaction;
+
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -194,14 +190,13 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
         Phonenumber.PhoneNumber swissNumberProto = null;
 
-       String selectedCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
-       String country = preferenceEndPoint.getStringPreference(Constants.COUNTRY_ID);
-          //String selectedCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE);
-         // String country = preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME);
+        String selectedCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+        String country = preferenceEndPoint.getStringPreference(Constants.COUNTRY_ID);
 
 
         try {
-            swissNumberProto = phoneUtil.parse( selectedCountryCode  + phoneNumber, country.toUpperCase());
+            swissNumberProto = phoneUtil.parse(selectedCountryCode + phoneNumber, country.toUpperCase());
+
             android.util.Log.e("Login", "Country code " + swissNumberProto.toString());
         } catch (NumberParseException e) {
             System.err.println("NumberParseException was thrown: " + e.toString());
@@ -217,7 +212,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number));
-            cancel = true;
+
         } else if (swissNumberProto != null && !(phoneUtil.isValidNumber(swissNumberProto))) {
             Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
@@ -227,7 +222,6 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         if (cancel) {
             focusView.requestFocus();
         } else {
-
             showMessageDialog(phoneNumber);
 
         }
@@ -368,7 +362,6 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, mList.get(position).getCountryCode()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
-
         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID, mList.get(position).getCountryID()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
 
     }
