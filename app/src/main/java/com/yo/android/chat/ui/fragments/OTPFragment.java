@@ -177,7 +177,8 @@ public class OTPFragment extends BaseFragment {
     private void generateDummyOTP() {
         //Debug purpose
         Random random = new Random();
-        int duration = Math.max(0, random.nextInt(35));
+        //int duration = Math.max(0, random.nextInt(60));
+         int duration=Math.max(0,60);
         if (!BuildConfig.ORIGINAL_SMS_VERIFICATION) {
             dummyOTPHandler.removeCallbacks(dummyOTPRunnable);
             dummyOTPHandler.postDelayed(dummyOTPRunnable, duration * 1000L);
