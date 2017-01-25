@@ -18,6 +18,9 @@ android {
     compileSdkVersion 24
     buildToolsVersion "25.0.0"
     useLibrary 'org.apache.http.legacy'
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
     // Enabling multidex support.
     defaultConfig {
         applicationId "com.yo.android"
@@ -70,6 +73,9 @@ android {
     }
     lintOptions {
         abortOnError false
+    }
+    dexOptions{
+        javaMaxHeapSize "4g"
     }
     packagingOptions {
         exclude 'META-INF/LICENSE'

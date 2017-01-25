@@ -49,7 +49,7 @@ public class FollowersActivity extends BaseActivity {
 
         findPeopleAdapter = new FindPeopleAdapter(this);
         lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
-        noData = (TextView) findViewById(R.id.no_data);
+        noData = (TextView) findViewById(R.id.no_search_results);
         llNoPeople = (LinearLayout) findViewById(R.id.ll_no_people);
         imvEmptyFollowers = (ImageView) findViewById(R.id.imv_empty_followings);
         imvEmptyFollowers.setImageResource(R.drawable.ic_empty_followers);
@@ -103,7 +103,7 @@ public class FollowersActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.prepareSearch(this, menu, findPeopleAdapter);
+        Util.prepareSearch(this, menu, findPeopleAdapter, noData,lvFindPeople, null);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -118,7 +118,7 @@ public class FollowersActivity extends BaseActivity {
                 yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
                     @Override
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                        if (response.body().size() > 0) {
+                        if (response!=null && response.body()!=null && response.body().size() > 0) {
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.GONE);
                             lvFindPeople.setVisibility(View.VISIBLE);
@@ -131,7 +131,6 @@ public class FollowersActivity extends BaseActivity {
                             lvFindPeople.setVisibility(View.GONE);
                         }
                         dismissProgressDialog();
-
                     }
 
                     @Override

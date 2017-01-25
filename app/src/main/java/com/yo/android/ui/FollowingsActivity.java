@@ -49,7 +49,7 @@ public class FollowingsActivity extends BaseActivity {
 
         findPeopleAdapter = new FindPeopleAdapter(this);
         lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
-        noData = (TextView) findViewById(R.id.no_data);
+        noData = (TextView) findViewById(R.id.no_search_results);
         llNoPeople = (LinearLayout) findViewById(R.id.ll_no_people);
         imvEmptyFollowings = (ImageView) findViewById(R.id.imv_empty_followings);
         imvEmptyFollowings.setImageResource(R.drawable.ic_empty_followings);
@@ -106,7 +106,7 @@ public class FollowingsActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.prepareSearch(this, menu, findPeopleAdapter);
+        Util.prepareSearch(this, menu, findPeopleAdapter,noData, lvFindPeople, null);
         return super.onCreateOptionsMenu(menu);
     }
     @Override

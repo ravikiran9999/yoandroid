@@ -24,6 +24,8 @@ import com.yo.android.voip.SipService;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+
 /**
  * Created by Ramesh on 27/6/16.
  */
@@ -43,6 +45,9 @@ public class DialerActivity extends BaseActivity {
     @Inject
     @Named("voip_support")
     boolean isVoipSupported;
+
+    @Bind(R.id.no_search_results)
+    protected TextView noResultsFound;
 
 
     @Override
@@ -144,7 +149,7 @@ public class DialerActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_dialer, menu);
-        Util.prepareSearch(this, menu, null);
+        Util.prepareSearch(this, menu, null, noResultsFound, null, null);
         return super.onCreateOptionsMenu(menu);
     }
 
