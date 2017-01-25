@@ -7,6 +7,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.orion.android.common.logger.Log;
@@ -14,9 +15,13 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.model.Contact;
+import com.yo.android.model.UserProfileInfo;
 import com.yo.android.sync.SyncUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +32,11 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import de.greenrobot.event.EventBus;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Ramesh on 3/8/16.
@@ -53,25 +63,31 @@ public class ContactSyncHelper {
     private static final int PROCESSING = 2;
     private static final int FINISHED = 3;
     private PreferenceEndPoint loginPrefs;
+    private YoApi.YoService yoService;
+    private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private Date previousDate;
+    int i;
 
     @Inject
-    public ContactSyncHelper(Context context, Log log, ContactsSyncManager contactsSyncManager, @Named("login") PreferenceEndPoint loginPrefs) {
+    public ContactSyncHelper(Context context, YoApi.YoService yoService, Log log, ContactsSyncManager contactsSyncManager, @Named("login") PreferenceEndPoint loginPrefs) {
         this.context = context;
         mLog = log;
         this.contactsSyncManager = contactsSyncManager;
         contentObserver = new MyContentObserver();
-        context.getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contentObserver);
+        //context.getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contentObserver);
         this.loginPrefs = loginPrefs;
+        this.yoService = yoService;
     }
 
     //Call this method after validate OTP,
     public void init() {
+
         context.getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contentObserver);
     }
 
     //Clean this
     public void clean() {
-//        context.getContentResolver().unregisterContentObserver(contentObserver);
+        context.getContentResolver().unregisterContentObserver(contentObserver);
         globalQueue.cleanupQueue();
         contactsBook.clear();
         cacheContacts.clear();
@@ -89,13 +105,12 @@ public class ContactSyncHelper {
             super.onChange(selfChange);
             //Allow this if user is logged only.
             String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-            if (!TextUtils.isEmpty(access)) {
-                checkContacts();
-            }
+            checkLastSync(access);
         }
     }
 
     public void checkContacts() {
+
         globalQueue.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -104,9 +119,7 @@ public class ContactSyncHelper {
                 } else {
                     setSyncMode(PROCESSING);
                 }
-                mLog.i(TAG, "detected contacts change>>>start");
                 performContactSync(cacheContacts);
-                mLog.i(TAG, "detected contacts change>>>End");
                 setSyncMode(FINISHED);
             }
         });
@@ -122,7 +135,6 @@ public class ContactSyncHelper {
 
     private void performContactSync(HashMap<Integer, Contact> cachePhoneBookHashMap) {
         HashMap<Integer, Contact> contactPhoneBookMap = readContactsFromPhoneBook();
-
 
         if (contactsBook.isEmpty()) {
             contactsBook.putAll(contactPhoneBookMap);
@@ -199,58 +211,12 @@ public class ContactSyncHelper {
             if (!contacts.isEmpty()) {
                 //up to server
                 contactsSyncManager.syncContactsAPI(contacts);
-                mLog.i(TAG, "Import Size after check>>>:" + toImport.size());
+                mLog.i(TAG, "Uploading contacts size>>>:" + contacts.size());
                 //Call sync - get contact
                 SyncUtils.triggerRefresh();
+                EventBus.getDefault().post(Constants.CONTACTS_REFRESH);
             }
             cacheContacts = contactPhoneBookMap;
-        } catch (Exception e) {
-            mLog.i(TAG, "Exception:>>", e);
-        }
-
-    }
-
-
-    private void performContactSync1(HashMap<Integer, Contact> cachePhoneBookHashMap) {
-        ArrayList<com.yo.android.model.Contact> currentPhoneBookContacts = new ArrayList<>();
-        ArrayList<com.yo.android.model.Contact> cachedContactsList = new ArrayList<>();
-
-        ArrayList<com.yo.android.model.Contact> contactList = readContacts();
-        currentPhoneBookContacts = contactList;
-        Map<String, com.yo.android.model.Contact> cachedYoContacts = contactsSyncManager.getCachedContacts();
-        ArrayList<com.yo.android.model.Contact> cachedYoContactsList = new ArrayList<>(cachedYoContacts.values());
-
-
-        /*Iterator<com.yo.android.model.Contact> toImportIterator1 = contactList.iterator();
-        while (toImportIterator1.hasNext()) {
-            com.yo.android.model.Contact contact1 = toImportIterator1.next();
-            com.yo.android.model.Contact contact = cachedYoContacts.get(contact1.getPhoneNo());
-            //TODO:Require to check names too
-            if (contact != null) {
-                toImportIterator1.remove();
-            }
-        }*/
-
-        cachedContactsList.addAll(cachedYoContactsList);
-
-        /*if(currentPhoneBookContacts.size() > cachedContactsList.size()) {
-            currentPhoneBookContacts.removeAll(cachedContactsList);
-            mLog.i(TAG, currentPhoneBookContacts.toString());
-        } else if(currentPhoneBookContacts.size() < cachedContactsList.size()) {
-            cachedContactsList.removeAll(currentPhoneBookContacts);
-            mLog.i(TAG, cachedContactsList.toString());
-        }*/
-
-
-        try {
-            if (!contactList.isEmpty()) {
-                //up to server
-                contactsSyncManager.syncContactsAPI(contactList);
-                mLog.i(TAG, "Import Size after check>>>:" + contactList.size());
-                //Call sync - get contact
-                SyncUtils.triggerRefresh();
-            }
-            //cacheContacts = contactPhoneBookMap;
         } catch (Exception e) {
             mLog.i(TAG, "Exception:>>", e);
         }
@@ -263,7 +229,6 @@ public class ContactSyncHelper {
         ArrayList<String> phoneTypes = new ArrayList<>();
         ArrayList<String> shortPhones = new ArrayList<>();
         ArrayList<Integer> phoneDeleted = new ArrayList<>();
-        ArrayList<Long> changedContactTimeStamp = new ArrayList<>();
         String first_name;
         String last_name;
     }
@@ -272,7 +237,7 @@ public class ContactSyncHelper {
             ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
             ContactsContract.CommonDataKinds.Phone.NUMBER,
             ContactsContract.CommonDataKinds.Phone.TYPE,
-            ContactsContract.CommonDataKinds.Phone.LABEL,
+            ContactsContract.CommonDataKinds.Phone.LABEL
     };
 
     private String[] projectionNames = {
@@ -280,8 +245,7 @@ public class ContactSyncHelper {
             ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
             ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
             ContactsContract.Data.DISPLAY_NAME,
-            ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
-            ContactsContract.Contacts.CONTACT_STATUS_TIMESTAMP
+            ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME
     };
 
 
@@ -308,6 +272,7 @@ public class ContactSyncHelper {
                         if (number.length() == 0) {
                             continue;
                         }
+
                         String shortNumber = number;
 
                         if (number.startsWith("+")) {
@@ -366,7 +331,6 @@ public class ContactSyncHelper {
                     String sname = pCur.getString(2);
                     String sname2 = pCur.getString(3);
                     String mname = pCur.getString(4);
-                    Long date = pCur.getLong(5);
                     Contact contact = contactsMap.get(id);
                     if (contact != null && contact.first_name.length() == 0 && contact.last_name.length() == 0) {
                         contact.first_name = fname;
@@ -564,5 +528,28 @@ public class ContactSyncHelper {
             return matcher.group(0);
         }
         return null;
+    }
+
+    private void checkLastSync(@NonNull String access) {
+        i = i++;
+        yoService.getUserInfo(access).enqueue(new Callback<UserProfileInfo>() {
+            @Override
+            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                if (response.body() != null) {
+                    try {
+                        previousDate = formatterDate.parse(formatterDate.format(response.body().getLastContactsSyncTime()));
+                        checkContacts();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+                mLog.i(TAG, t.getMessage());
+            }
+        });
     }
 }

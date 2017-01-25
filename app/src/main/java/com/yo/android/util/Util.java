@@ -793,10 +793,12 @@ public class Util {
 
                 if (path != null) {
                     Uri uri = Uri.parse(path);
-                    shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), uri);
+                    String summary = Html.fromHtml(data.getSummary()).toString();
+                    shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, uri);
                 }
             } else {
-                shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                String summary = Html.fromHtml(data.getSummary()).toString();
+                shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
             }
 
         }

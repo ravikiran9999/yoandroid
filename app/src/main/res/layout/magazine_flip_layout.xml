@@ -44,7 +44,7 @@
     <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/magazine_image_height">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/photo"

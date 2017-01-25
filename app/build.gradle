@@ -74,6 +74,9 @@ android {
     lintOptions {
         abortOnError false
     }
+    dexOptions{
+        javaMaxHeapSize "4g"
+    }
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/LICENSE-FIREBASE.txt'

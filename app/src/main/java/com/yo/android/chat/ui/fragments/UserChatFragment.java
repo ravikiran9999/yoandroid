@@ -133,7 +133,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private Contact mContact;
     private int retryMessageCount = 0;
     private PendingIntent pendingIntent;
-    private int falureCount=0;
+    private int falureCount = 0;
 
     @Bind(R.id.emojiView)
     ImageView emoji;
@@ -501,13 +501,21 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void viewContact() {
+        String opponentNumberTrim = null;
         Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-        if(opponentNumber != null && TextUtils.isDigitsOnly(opponentNumber)) {
-            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumber);
+
+        if (opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
+            opponentNumberTrim = opponentNumber.replaceAll("[^\\d.]", "").substring(2, 12);
         }
+
+        if (opponentNumberTrim != null && TextUtils.isDigitsOnly(opponentNumberTrim)) {
+            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumberTrim);
+        }
+
         intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
         intent.putExtra(Constants.OPPONENT_NAME, opponentName);
         intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+        intent.putExtra(Constants.VOX_USER_NAME, opponentNumber);
 
         if (roomType != null) {
             intent.putExtra(Constants.CHAT_ROOM_ID, childRoomId);
@@ -554,7 +562,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             if (roomCreationProgress == 0) {
                 roomCreationProgress = 1;
                 createRoom(message, chatMessage);
-
             }
         } else {
             chatMessage.setRoomId(childRoomId);
@@ -605,7 +612,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Log.w(TAG, "ONCOMPLETE success");
                         chatMessage.setSent(1);
                         userChatAdapter.notifyDataSetChanged();
 
@@ -769,14 +775,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         if (mPartyPicUri != null) {
             uploadImage(message, mPartyPicUri);
-            //uploadImage(msgId, mPartyPicUri);
+        }
+
+        if (!chatMessageHashMap.keySet().contains(message.getMsgID())) {
+            chatMessageArray.add(message);
+            userChatAdapter.addItems(chatMessageArray);
+            chatMessageHashMap.put(message.getMsgID(), chatMessageArray);
         }
 
         // if network interruption is occurred
         if (!mHelper.isConnected()) {
-            chatMessageArray.add(message);
-            userChatAdapter.addItems(chatMessageArray);
-            chatMessageHashMap.put(message.getMsgID(), chatMessageArray);
             sendChatMessage(message);
         }
     }
@@ -804,7 +812,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             public void onFailure(@NonNull Exception e) {
                 // Handle unsuccessful uploads
                 falureCount++;
-                if(falureCount <= 2) {
+                if (falureCount <= 2) {
                     uploadImage(imageMessage, path);
                 }
                 e.printStackTrace();
@@ -818,7 +826,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     if (!mHelper.isConnected()) {
                         updateImagePath(imageMessage, downloadUrl.getLastPathSegment());
                     } else {
-                        sendImage(downloadUrl.getLastPathSegment());
+                        sendImage(imageMessage, downloadUrl.getLastPathSegment());
                     }
                 }
             }
@@ -853,17 +861,17 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     }
 
-    private void sendImage(@NonNull String imagePathName) {
+    private void sendImage(ChatMessage chatMessage, @NonNull String imagePathName) {
 
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         long timestamp = System.currentTimeMillis();
         int msgId = (int) timestamp;
-        ChatMessage chatMessage = new ChatMessage();
+        //ChatMessage chatMessage = new ChatMessage();
         chatMessage.setType(Constants.IMAGE);
         chatMessage.setTime(timestamp);
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
-        chatMessage.setMsgID(msgId);
+        //chatMessage.setMsgID(mMessageId);
         chatMessage.setRoomId(childRoomId);
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));

@@ -1,16 +1,16 @@
 package com.yo.android.chat.ui;
 
 import android.app.AlertDialog;
-import android.content.Context;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
+
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -28,14 +28,12 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
-import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.model.CountryCode;
 import com.yo.android.model.Response;
-import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.CountryCodeHelper;
 import com.yo.android.util.Util;
@@ -48,7 +46,6 @@ import java.net.SocketTimeoutException;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -65,12 +62,18 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_READ_CONTACTS = 0;
     private static final String FRAGMENT_TAG = "OTPFragment";
+    private static final String  SINGAPORE_CODE="+65 Singapore";
+
 
     @Bind(R.id.et_enter_phone)
     protected EditText mPhoneNumberView;
 
-    @Bind(R.id.spCountrySpinner)
-    protected NiceSpinner spCountrySpinner;
+//    @Bind(R.id.spCountrySpinner)
+//    protected NiceSpinner spCountrySpinner;
+//
+
+    @Bind(R.id.et_country_code)
+    protected EditText mCountryCode;
 
 
     private FirebaseAuth mAuth;
@@ -86,8 +89,10 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     private List<CountryCode> mList;
     @Inject
     ConnectivityHelper mHelper;
+    private static  final int SELECTED_OK=101;
 
 
+    private MenuItem searchMenuItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +102,8 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             //Toast.makeText(this, "YoApp session expired.", Toast.LENGTH_LONG).show();
             Toast.makeText(this, getString(R.string.logged_in_another_device), Toast.LENGTH_LONG).show();
         }
+
+        mCountryCode.setText(SINGAPORE_CODE);
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -126,17 +133,29 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                 break;
             }
         }
-        spCountrySpinner.attachDataSource(mList);
-        spCountrySpinner.setSelectedIndex(pos);
-        spCountrySpinner.setOnItemSelectedListener(this);
 
-        spCountrySpinner.setOnTouchListener(new View.OnTouchListener() {
+
+       //spCountrySpinner.attachDataSource(mList);
+
+//         spCountrySpinner.setSelectedIndex(pos);
+
+       //spCountrySpinner.setOnItemSelectedListener(this);
+
+        mCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Util.hideKeyboard(LoginActivity.this, v);
-                return false;
+            public void onClick(View view) {
+                Intent intent=new Intent(LoginActivity.this,CountryCodeActivity.class);
+                startActivityForResult(intent,SELECTED_OK);
             }
         });
+//        spCountrySpinner.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//               //Util.hideKeyboard(LoginActivity.this, v);
+//                return false;
+//            }
+//        });
         mPhoneNumberView.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -161,6 +180,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         // Reset errors.
         mPhoneNumberView.setError(null);
         // Store values at the time of the login attempt.
+        String countryCode=mCountryCode.getText().toString();
         String phoneNumber = mPhoneNumberView.getText().toString().trim();
 
 
@@ -176,6 +196,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
 
         try {
             swissNumberProto = phoneUtil.parse(selectedCountryCode + phoneNumber, country.toUpperCase());
+
             android.util.Log.e("Login", "Country code " + swissNumberProto.toString());
         } catch (NumberParseException e) {
             System.err.println("NumberParseException was thrown: " + e.toString());
@@ -191,8 +212,8 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number));
-            cancel = true;
-        } else if (swissNumberProto != null && !phoneUtil.isValidNumber(swissNumberProto)) {
+
+        } else if (swissNumberProto != null && !(phoneUtil.isValidNumber(swissNumberProto))) {
             Util.hideKeyboard(this, getCurrentFocus());
             focusView = mPhoneNumberView;
             mToastFactory.showToast(getResources().getString(R.string.enter_mobile_number_error));
@@ -206,13 +227,11 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         }
     }
 
-
     private void performLogin(String phoneNumber) {
         if (!mHelper.isConnected()) {
             mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
         }
-
         //Add subscriber
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         String yoUser = phoneNumber;
@@ -235,7 +254,6 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         callLoginService(phoneNumber);
 
     }
-
 
     public void callLoginService(final String phoneNumber) {
         showProgressDialog();
@@ -342,13 +360,31 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, mList.get(position).getCountryCode()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID, mList.get(position).getCountryID()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
+
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == SELECTED_OK && resultCode == RESULT_OK && data != null){
+            if(data.hasExtra("COUNTRY_CODE")){
+                String countryCode=data.getStringExtra("COUNTRY_CODE");
+                String countryName=data.getStringExtra("COUNTRY_NAME");
+                String countryId=data.getStringExtra("COUNTYR_ID");
+                mCountryCode.setText("+"+countryCode +" "+countryName);
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM,countryCode/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID,countryId/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
+            }
+        }
     }
 }
 

@@ -283,7 +283,6 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="phone_text_field">&lt;font color=#A9A9A9>%1$s&lt;/font> %2$s</string>
-
     <string name="account_details">Account Details</string>
     <string name="add_new">Add New %1$s</string>
     <string name="valid_phone">Enter valid phone number</string>
@@ -310,5 +309,7 @@
     <string name="yocredit">Yo Credit (%1$s %2$s)</string>
     <string name="low_balance">Low balance, please add balance.</string>
     <string name="logged_in_another_device">User accessed from another device</string>
+    <string name="activity_title_yourcountry">Your Country</string>
+    <string name="plus">+</string>
     <string name="no_denominations_for_your_country">Denominations not available for your country.</string>
 </resources>

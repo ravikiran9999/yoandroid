@@ -94,14 +94,14 @@
             android:layout_marginTop="5dp"
             android:background="@color/tab_grey" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:orientation="horizontal">
 
-            <TextView
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -110,7 +110,19 @@
                 android:gravity="center|start"
                 android:padding="10dp"
                 android:text="Follow more topics"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black" />-->
+
+            <Button
+                android:id="@+id/btn_skip"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@android:color/holo_blue_dark"
+                android:text="Skip"
+                android:textColor="@android:color/white"
+                android:layout_alignParentLeft="true"/>
 
             <Button
                 android:id="@+id/btn_done"
@@ -120,9 +132,11 @@
                 android:layout_marginTop="5dp"
                 android:background="@android:color/holo_blue_dark"
                 android:text="Done"
-                android:textColor="@android:color/white" />
+                android:layout_marginBottom="5dp"
+                android:textColor="@android:color/white"
+                android:layout_alignParentRight="true"/>
 
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <ProgressBar

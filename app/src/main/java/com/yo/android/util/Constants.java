@@ -48,6 +48,7 @@ public class Constants {
     public static final String VOX_USER_NAME = "vox_user_name";
     public static final String PASSWORD = "password";
     public static final String CALLINGCARDNUMBER = "calling_card_number";
+    public static final String LAST_CONTACTS_SYNC_TIME = "last_contacts_sync_time";
 
 
     public static final String USER_STATUS = "user_status";
@@ -101,6 +102,7 @@ public class Constants {
     public static final String DAILER = "Dialer";
     public static final String IS_CHAT_FORWARD = "is_chat_forward";
     public static final String COUNTRY_ID = "country_id";
+    public static final String COUNTRY_CODE ="country_code" ;
     public static int SUCCESS_CODE = 200;
     public static final String FOLLOW_TOPIC_EVENT = "follow_topic_event";
 
@@ -112,6 +114,7 @@ public class Constants {
     public static String EDIT_MAGAZINE_ACTION = "com.edit.magazine.EDIT";
     public static String SESSION_EXPIRE = "SESSION_EXPIRE";
     public static String CHAT_ROOM_REFRESH = "CHAT_ROOM_REFRESH";
+    public static String CONTACTS_REFRESH = "CONTACTS_REFRESH";
     public static String CHAT_MESSAGE_NOTIFICATION = "CHAT_MESSAGE_NOTIFICATION";
     public static String UPDATE_NOTIFICATIONS = "UPDATE_NOTIFICATIONS";
     public static String COUNTRY_LIST = "COUNTRY_LIST";

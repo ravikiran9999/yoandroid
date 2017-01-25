@@ -19,6 +19,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -313,6 +314,25 @@ public class TopicsDetailActivity extends BaseActivity {
 
             ImageView photoView = holder.articlePhoto;
 
+            RelativeLayout rl = (UI.<RelativeLayout>findViewById(layout, R.id.rl_top));
+            final float scale = context.getResources().getDisplayMetrics().density;
+            int height;
+            if(scale == 4.0) {
+                height = 400;
+            } else if(scale == 3.5) {
+                height = 350;
+            } else if(scale == 3.0) {
+                height = 300;
+            } else if(scale == 2.0) {
+                height = 250;
+            } else  {
+                height = 200;
+            }
+            int pixels = (int) (height * scale + 0.5f);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, pixels);
+            rl.setLayoutParams(layoutParams);
+
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
@@ -361,7 +381,8 @@ public class TopicsDetailActivity extends BaseActivity {
                     if (data.getImage_filename() != null) {
                         new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
                     } else {
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), data.getSummary(), null);
+                        String summary = Html.fromHtml(data.getSummary()).toString();
+                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
                     }
                 }
             });

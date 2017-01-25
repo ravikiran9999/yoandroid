@@ -3,6 +3,7 @@ package com.yo.android.di;
 import android.content.Context;
 
 import com.yo.android.adapters.ChatRoomListAdapter;
+import com.yo.android.adapters.CountryCodeListAdapter;
 import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.adapters.SuggestionsAdapter;
 import com.yo.android.adapters.UserChatAdapter;
@@ -14,6 +15,7 @@ import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.chat.ui.CountryCodeActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.chat.ui.GroupContactsActivity;
 import com.yo.android.chat.ui.LoginActivity;
@@ -143,6 +145,10 @@ import dagger.Provides;
                 TabsHeaderActivity.class,
                 MoreSettingsActivity.class,
                 UserProfileActivity.class,
+                CountryCodeActivity.class,
+
+
+
 
                 InviteActivity.class,
                 AccountDetailsActivity.class,
@@ -198,6 +204,7 @@ import dagger.Provides;
                 Util.class,
                 FetchNewArticlesService.class,
                 ListenerJobService.class,
+                CountryCodeListAdapter.class,
         },
         includes = {
                 AppModule.class,
