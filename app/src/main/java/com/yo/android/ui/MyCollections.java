@@ -28,6 +28,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +47,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     private GridView gridView;
     private SearchView searchView;
 
+    protected TextView noSearchFound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +62,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         getSupportActionBar().setTitle(title);
 
         gridView = (GridView) findViewById(R.id.create_magazines_gridview);
+        noSearchFound = (TextView) findViewById(R.id.no_search_results);
 
         myCollectionsAdapter = new MyCollectionsAdapter(MyCollections.this);
         showProgressDialog();
@@ -178,7 +182,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             menu.findItem(R.id.menu_search).setVisible(true);
         }
 
-        Util.prepareSearch(this, menu, myCollectionsAdapter);
+        Util.prepareSearch(this, menu, myCollectionsAdapter, noSearchFound, null, gridView);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         return super.onPrepareOptionsMenu(menu);

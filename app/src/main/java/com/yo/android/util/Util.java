@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -324,7 +325,7 @@ public class Util {
         return new SimpleDateFormat("hh:mm").format(new Date(time));
     }
 
-    public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
+    public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -336,6 +337,7 @@ public class Util {
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            public List list;
             public static final String TAG = "PrepareSearch in Util";
 
             @Override
@@ -350,7 +352,29 @@ public class Util {
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
                 if (adapter != null) {
-                    adapter.performSearch(newText);
+                   list =  adapter.performSearch(newText);
+                    if(list!=null && noData!=null && activity!=null){
+                        boolean isListEmpty = list.isEmpty();
+                        if(isListEmpty){
+                            noData.setVisibility(View.VISIBLE);
+                            if(listView!=null){
+                                listView.setVisibility(View.GONE);
+                            }
+                            if(gridView!=null){
+                                gridView.setVisibility(View.GONE);
+                            }
+                            noData.setText(activity.getResources().getString(R.string.no_result_found));
+                        }else{
+                            if(listView!=null){
+                                listView.setVisibility(View.VISIBLE);
+                            }
+                            if(gridView!=null){
+                                gridView.setVisibility(View.VISIBLE);
+                            }
+                            noData.setVisibility(View.GONE);
+                        }
+
+                    }
                 }
                 return true;
             }
