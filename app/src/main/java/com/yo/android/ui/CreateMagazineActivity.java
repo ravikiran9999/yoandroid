@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactoryImpl;
@@ -22,6 +23,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,6 +39,8 @@ public class CreateMagazineActivity extends BaseActivity {
     protected PreferenceEndPoint preferenceEndPoint;
     private GridView gridView;
     private String addArticleMagazineId = null;
+
+    protected TextView noSearchResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,8 @@ public class CreateMagazineActivity extends BaseActivity {
         }
 
         gridView = (GridView) findViewById(R.id.create_magazines_gridview);
+        noSearchResults = (TextView) findViewById(R.id.no_search_results);
+
         createMagazinesAdapter = new CreateMagazinesAdapter(CreateMagazineActivity.this);
         gridView.setAdapter(createMagazinesAdapter);
         showProgressDialog();
@@ -208,7 +214,7 @@ public class CreateMagazineActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.prepareSearch(this, menu, createMagazinesAdapter);
+        Util.prepareSearch(this, menu, createMagazinesAdapter, noSearchResults, null, gridView);
         return super.onCreateOptionsMenu(menu);
     }
 }

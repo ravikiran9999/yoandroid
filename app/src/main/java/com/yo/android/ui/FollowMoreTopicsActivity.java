@@ -33,6 +33,7 @@ import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
 import com.cunoraz.tagview.Utils;
 import com.google.gson.Gson;
+import com.orion.android.common.logging.Logger;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -103,6 +104,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     //public ProgressBar progressBar;
     private Button skip;
     private boolean isSkipClicked;
+    private LinearLayout bottomLayout;
 
     public interface TagsLoader {
         void loaded();
@@ -132,6 +134,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         //tagGroup = (TagView) findViewById(R.id.tag_group);
         done = (Button) findViewById(R.id.btn_done);
         noSearchResults = (TextView) findViewById(R.id.no_search_results);
+        bottomLayout = (LinearLayout)findViewById(R.id.bottom);
         tvHelloInterests = (TextView) findViewById(R.id.hello_interests);
         tvPickTopics = (TextView) findViewById(R.id.pick_topics);
         listView = (ListView) findViewById(R.id.listView);
@@ -654,10 +657,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     private void filterTags(CharSequence searchText) {
         noSearchResults.setVisibility(View.GONE);
-        tvHelloInterests.setVisibility(View.VISIBLE);
-        tvPickTopics.setVisibility(View.VISIBLE);
+        tvHelloInterests.setVisibility(View.GONE);
+        tvPickTopics.setVisibility(View.GONE);
         listView.setVisibility(View.GONE);
         tagsParentLayout.setVisibility(View.VISIBLE);
+        bottomLayout.setVisibility(View.GONE);
 
         if (TextUtils.isEmpty(searchText.toString().trim())) {
 
@@ -679,9 +683,15 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 }
             }, serverTopics, tagViewAdapter, initialTags, categorisedList).execute();
             listView.setVisibility(View.VISIBLE);
+            bottomLayout.setVisibility(View.VISIBLE);
             tagsParentLayout.setVisibility(View.GONE);
+            tvHelloInterests.setVisibility(View.VISIBLE);
+            tvPickTopics.setVisibility(View.VISIBLE);
         } else {
             listView.setVisibility(View.GONE);
+            bottomLayout.setVisibility(View.GONE);
+            tvHelloInterests.setVisibility(View.GONE);
+            tvPickTopics.setVisibility(View.GONE);
             tagsParentLayout.setVisibility(View.VISIBLE);
             searchText = searchText.toString().toLowerCase(Locale.getDefault());
             new AsyncTask<CharSequence, Void, ArrayList<Tag>>() {
@@ -705,10 +715,12 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                     if (worldpopulationlist.size() == 0) {
                         noSearchResults.setVisibility(View.VISIBLE);
                         tvHelloInterests.setVisibility(View.GONE);
+                        bottomLayout.setVisibility(View.GONE);
                         tvPickTopics.setVisibility(View.GONE);
                         isInvalidSearch = true;
                     } else {
                         noSearchResults.setVisibility(View.GONE);
+                        bottomLayout.setVisibility(View.VISIBLE);
                         tvHelloInterests.setVisibility(View.VISIBLE);
                         tvPickTopics.setVisibility(View.VISIBLE);
                         isInvalidSearch = false;
@@ -738,10 +750,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         //tagGroupSearch.getTags().clear();
         //tagGroupSearch.removeAllViews();
         if (isTestSearch) {
+            Log.e("Tag","search test : "+isTestSearch);
             filterTags(cs);
         } else {
-
             if (TextUtils.isEmpty(cs.toString().trim())) {
+                Log.e("Tag","search test : "+isTestSearch + " if");
                 //Util.hideKeyboard(this, getCurrentFocus());
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 noSearchResults.setVisibility(View.GONE);
@@ -756,7 +769,10 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 // TODO: Need to uncomment this code and call TagLoader to load the tags on search
                 //new TagLoader(this, topicsList, tv, initialTags, categorisedList).execute();
                 return;
+            }else {
+                Log.e("Tag","search test : "+isTestSearch + " else");
             }
+
 
             String text = cs.toString();
             searchTags = new ArrayList<Tag>();

@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.adapters.AbstractBaseAdapter;
@@ -47,6 +48,7 @@ public class CountryCodeActivity extends ParentActivity {
     private List<CountryCode> mList;
     private MenuItem searchMenuItem;
     private  CountryCodeListAdapter countryAdapter;
+    private TextView noSearchResultsTxtVw;
 
     Toolbar mToolbar;
 
@@ -60,6 +62,7 @@ public class CountryCodeActivity extends ParentActivity {
 
 
         countryList = (ListView) findViewById(R.id.countrylist_item);
+        noSearchResultsTxtVw = (TextView)findViewById(R.id.no_search_results);
         List<String> list = new ArrayList<>();
 
 
@@ -102,11 +105,9 @@ public class CountryCodeActivity extends ParentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.prepareSearch(this, menu,countryAdapter );
+        Util.prepareSearch(this, menu,countryAdapter, noSearchResultsTxtVw,countryList,null);
         return super.onCreateOptionsMenu(menu);
     }
-
-
 
 }
 
