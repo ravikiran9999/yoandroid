@@ -188,7 +188,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
             if (position == 0 && contact.getVoxUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null && activity != null) {
                 startActivityForResult(new Intent(activity, CreateGroupActivity.class), CREATE_GROUP_RESULT);
-            } else if (activity != null) {
+            } else if (activity != null && contact.getVoxUserName() != null) {
 
                 ChatActivity.start(activity, contact, forwardChatMessages);
 
