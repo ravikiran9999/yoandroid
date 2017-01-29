@@ -24,7 +24,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * Created by mtuity-desk-13 on 23/1/17.
