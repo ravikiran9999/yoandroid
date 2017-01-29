@@ -38,7 +38,7 @@ android {
 
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""
