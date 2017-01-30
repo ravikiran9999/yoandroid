@@ -43,10 +43,12 @@ import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
 import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -69,6 +71,7 @@ import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
+import com.yo.android.model.RoomInfo;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.ShowPhotoActivity;
@@ -570,7 +573,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void sendChatMessage(final ChatMessage chatMessage) {
-
         try {
 
             if (chatMessageArray == null) {
@@ -592,6 +594,26 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
                 }
             }
+
+            final Firebase roomInfoReference = roomReference.getParent().child(Constants.ROOM_INFO);
+            roomInfoReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    RoomInfo roomInfo = dataSnapshot.getValue(RoomInfo.class);
+                    if(roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_INACTIVE)) {
+                        roomInfo.setStatus(Constants.ROOM_STATUS_ACTIVE);
+                        Map<String, Object> updateRoomStatusMap = new ObjectMapper().convertValue(roomInfo, Map.class);
+                        roomInfoReference.updateChildren(updateRoomStatusMap);
+                    }
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    firebaseError.getMessage();
+
+                }
+            });
+
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
             final Firebase roomChildReference = roomReference.child(timeStp);
             roomChildReference.updateChildren(updateMessageMap, new Firebase.CompletionListener() {

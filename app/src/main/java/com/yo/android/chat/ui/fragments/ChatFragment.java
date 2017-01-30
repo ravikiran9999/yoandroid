@@ -432,7 +432,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
-            if (roomInfo.getName().isEmpty()) {
+            if (roomInfo.getName() != null && roomInfo.getName().isEmpty() && roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
                 for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
                     if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
                         authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -460,7 +460,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         });
                     }
                 }
-            } else {
+            } else if(roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)){
                 Date date = null;
                 try {
                     String createdTime = roomInfo.getCreated_at();

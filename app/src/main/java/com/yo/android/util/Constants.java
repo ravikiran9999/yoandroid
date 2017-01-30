@@ -80,6 +80,8 @@ public class Constants {
     public static final String ROOM_ID = "RoomID";
     public static final String FIREBASE_TOKEN = "firebase_token";
     public static final String ROOM_INFO = "room_info";
+    public static final String ROOM_STATUS_ACTIVE = "Active";
+    public static final String ROOM_STATUS_INACTIVE = "Inactive";
 
     public static final String MAGAZINE_ADD_ARTICLE_ID = "magazine_add_article_id";
     public static final int ADD_ARTICLES_TO_MAGAZINE = 201;
