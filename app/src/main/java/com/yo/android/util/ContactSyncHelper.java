@@ -539,7 +539,7 @@ public class ContactSyncHelper {
                     try {
                         previousDate = formatterDate.parse(formatterDate.format(response.body().getLastContactsSyncTime()));
                         checkContacts();
-                    } catch (ParseException e) {
+                    } catch (ParseException | NullPointerException e) {
                         e.printStackTrace();
                     }
 
