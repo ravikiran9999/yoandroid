@@ -57,7 +57,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
     @Override
     public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
 
-        if (!TextUtils.isEmpty(item.getName())) {
+        /*if (!TextUtils.isEmpty(item.getName())) {
             String numberWithCountryCode;
             if (TextUtils.isDigitsOnly(item.getName().replaceAll("\\s+", ""))) {
                 if (item.getCountryCode() != null) {
@@ -85,7 +85,43 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             holder.getContactNumber().setVisibility(View.VISIBLE);
             holder.getContactNumber().setText(item.getName());
 
+        }*/
+
+        if (!TextUtils.isEmpty(item.getName())) {
+            String numberWithCountryCode;
+            if (TextUtils.isDigitsOnly(item.getName().replaceAll("\\s+", ""))) {
+                if (item.getCountryCode() != null) {
+                    numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+                } else {
+                    numberWithCountryCode = item.getPhoneNo();
+                }
+                holder.getContactNumber().setText(numberWithCountryCode);
+            } else {
+                holder.getContactNumber().setText(item.getName());
+            }
+            holder.getContactNumber().setVisibility(View.VISIBLE);
+        } else {
+            holder.getContactNumber().setVisibility(View.GONE);
         }
+
+        if (item.getPhoneNo() != null) {
+            item.setPhoneNo(item.getPhoneNo().trim());
+        }
+
+        if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo()))) {
+            String numberWithCountryCode;
+            if (item.getCountryCode() != null) {
+                numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+            } else {
+                numberWithCountryCode = item.getPhoneNo();
+            }
+            holder.getContactMail().setText(numberWithCountryCode);
+            holder.getContactMail().setVisibility(View.VISIBLE);
+
+        } else {
+            holder.getContactMail().setVisibility(View.GONE);
+        }
+
 
 
         if (!TextUtils.isEmpty(item.getImage())) {
