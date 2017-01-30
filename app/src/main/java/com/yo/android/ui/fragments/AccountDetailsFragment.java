@@ -2,7 +2,10 @@ package com.yo.android.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -82,6 +85,7 @@ public class AccountDetailsFragment extends BaseFragment {
 
     public static final String emailHint = "Enter Email Id";
 
+
     public int tokenExpireCount = 0;
 
     @Override
@@ -96,7 +100,17 @@ public class AccountDetailsFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
-        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
+
+   }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
+    }
+
+    private void loadData() {
+        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.USER_STATUS,Constants.USER_STATUS));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         String email = preferenceEndPoint.getStringPreference(Constants.EMAIL, emailHint);
         if (email.equalsIgnoreCase("")) {
@@ -121,7 +135,7 @@ public class AccountDetailsFragment extends BaseFragment {
                 }
             }
         });
-        if (isValidDate(preferenceEndPoint.getStringPreference(Constants.DOB, ""))) {
+        if (isValidDate(preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, ""))) {
             saveDOBProperly();
         }
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
@@ -136,13 +150,13 @@ public class AccountDetailsFragment extends BaseFragment {
     @OnClick(R.id.account_status_card)
     protected void accountStatusClick() {
         String title = String.format(getString(R.string.add_new), getString(R.string.status_title));
-        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DESCRIPTION_TEMP, "Available"), Constants.DESCRIPTION_TEMP);
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.USER_STATUS),Constants.USER_STATUS);
     }
 
     @OnClick(R.id.account_name_card)
     protected void accountNameClick() {
         String title = String.format(getString(R.string.edit_details), getString(R.string.name));
-        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.FIRST_NAME_TEMP, ""), Constants.FIRST_NAME_TEMP);
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""), Constants.FIRST_NAME);
     }
 
     @OnClick(R.id.account_dob_card)
@@ -154,7 +168,7 @@ public class AccountDetailsFragment extends BaseFragment {
     @OnClick(R.id.account_email_card)
     protected void accountEmailClick() {
         String title = String.format(getString(R.string.edit_details), getString(R.string.email_id));
-        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, ""), Constants.EMAIL_TEMP);
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.EMAIL, ""), Constants.EMAIL);
     }
 
     private void callEditFragment(final String title, final String edit, final String key) {
@@ -226,8 +240,8 @@ public class AccountDetailsFragment extends BaseFragment {
     }
 
     public void setUserInfoDetails() {
-        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION_TEMP, "Available"));
-        accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME_TEMP, ""));
+        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.USER_STATUS, ""));
+        accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
         String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, dobHint);
         if (dob.equalsIgnoreCase("")) {
@@ -235,7 +249,7 @@ public class AccountDetailsFragment extends BaseFragment {
         }
         setTextColor(dob, accountDOB, dobHint);
         accountDOB.setText(dob);
-        String email = preferenceEndPoint.getStringPreference(Constants.EMAIL_TEMP, emailHint);
+        String email = preferenceEndPoint.getStringPreference(Constants.EMAIL, emailHint);
         if (email.equalsIgnoreCase("")) {
             email = emailHint;
         }
@@ -254,21 +268,21 @@ public class AccountDetailsFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, avatar);
         preferenceEndPoint.saveStringPreference(Constants.EMAIL, email);
         preferenceEndPoint.saveStringPreference(Constants.DESCRIPTION, description);
-        preferenceEndPoint.saveStringPreference(Constants.DOB, dob);
+        preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, dob);
         preferenceEndPoint.saveStringPreference(Constants.GENDER, gender);
         preferenceEndPoint.saveStringPreference(Constants.FIRST_NAME, firstName);
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NO, phoneNo);
         preferenceEndPoint.saveStringPreference(Constants.AVATAR_TEMP, avatar);
         preferenceEndPoint.saveStringPreference(Constants.EMAIL_TEMP, email);
         preferenceEndPoint.saveStringPreference(Constants.DESCRIPTION_TEMP, description);
-        preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, dob);
+       // preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, dob);
         preferenceEndPoint.saveStringPreference(Constants.GENDER_TEMP, gender);
         preferenceEndPoint.saveStringPreference(Constants.FIRST_NAME_TEMP, firstName);
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NO_TEMP, phoneNo);
     }
 
     private void saveDOBProperly() {
-        String dob = preferenceEndPoint.getStringPreference(Constants.DOB, "");
+        String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, "");
         if (dob != null && dob.length() > 0) {
             DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
             DateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -280,7 +294,7 @@ public class AccountDetailsFragment extends BaseFragment {
                 e.printStackTrace();
             }
             String outputDateStr = outputFormat.format(date);
-            preferenceEndPoint.saveStringPreference(Constants.DOB, outputDateStr);
+            //preferenceEndPoint.saveStringPreference(Constants.DOB, outputDateStr);
             preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, outputDateStr);
         }
     }
@@ -330,5 +344,7 @@ public class AccountDetailsFragment extends BaseFragment {
             textView.setTextColor(getResources().getColor(R.color.black));
         }
     }
+
+
 
 }
