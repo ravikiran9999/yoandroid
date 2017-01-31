@@ -261,7 +261,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
             }
 
-            if (temp.size() == 0) {
+            if (temp.size() == 0 || temp.size() == 1 && contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ) {
                 noSearchResult.setVisibility(View.VISIBLE);
             } else {
                 noSearchResult.setVisibility(View.GONE);

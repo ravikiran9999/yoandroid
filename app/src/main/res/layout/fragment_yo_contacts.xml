@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:gravity="top|center"
+        android:gravity="center_horizontal"
         android:padding="10dp"
         android:text="@string/no_result_found"
         android:textColor="@color/black"
