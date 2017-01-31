@@ -14,13 +14,14 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.ui.AccountDetailsActivity;
 import com.yo.android.util.Constants;
-import com.yo.android.util.Util;
+
+import butterknife.Bind;
 
 /**
  * Created by Sindhura on 11/23/2016.
@@ -46,6 +47,7 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
     public EditText getEditProfile() {
         return editProfile;
     }
+
     public AccountDetailsEditFragment(final String title, final String edit, final String key, final String countryCode) {
         this.title = title;
         this.edit = edit;
@@ -63,6 +65,11 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
+        accountDetailsData(view);
+    }
+
+    private void accountDetailsData(View view) {
+
         if (edit.equalsIgnoreCase("dd-mm-yyyy")) {
             edit = "";
         }
@@ -75,12 +82,28 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         okBtn = (TextView) view.findViewById(R.id.ok_edit);
         cancelBtn.setOnClickListener(this);
         okBtn.setOnClickListener(this);
-        editProfile.setText(edit);
+
         if (key.equalsIgnoreCase(Constants.DOB_TEMP)) {
             editBirth.setVisibility(View.VISIBLE);
             editBirth.setText(edit);
             editBirth.setOnClickListener(this);
             editProfile.setVisibility(View.GONE);
+            String dob=preferenceEndPoint.getStringPreference(Constants.DOB_TEMP);
+            editProfile.setText(dob);
+
+        }else if(key.equalsIgnoreCase(Constants.FIRST_NAME)){
+            String firstName=preferenceEndPoint.getStringPreference(Constants.FIRST_NAME);
+            editProfile.setText(firstName);
+        }else if(key.equalsIgnoreCase(Constants.USER_STATUS)){
+
+            String userStatus=preferenceEndPoint.getStringPreference(Constants.USER_STATUS);
+            editProfile.setText(userStatus);
+        }else if(key.equalsIgnoreCase(Constants.EMAIL)){
+
+            String email=preferenceEndPoint.getStringPreference(Constants.EMAIL);
+            editProfile.setText(email);
+        }else{
+            getActivity().onBackPressed();
         }
     }
 
@@ -122,7 +145,16 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         if (key.equalsIgnoreCase(Constants.DOB_TEMP)) {
             preferenceEndPoint.saveStringPreference(key, editBirth.getText().toString());
             getActivity().onBackPressed();
-        } else {
+        }else if(key.equalsIgnoreCase(Constants.FIRST_NAME)){
+            preferenceEndPoint.saveStringPreference(key,editProfile.getText().toString());
+            getActivity().onBackPressed();
+        }else if(key.equalsIgnoreCase(Constants.DOB)){
+            preferenceEndPoint.saveStringPreference(key,editProfile.getText().toString());
+            getActivity().onBackPressed();
+        }else if(key.equalsIgnoreCase(Constants.EMAIL)){
+            preferenceEndPoint.saveStringPreference(key,editProfile.getText().toString());
+            getActivity().onBackPressed();
+        }else {
             String text = editProfile.getText().toString();
             if (key.equalsIgnoreCase(Constants.PHONE_NO_TEMP) && !isValidMobile(text)) {
                 mToastFactory.showToast(getString(R.string.valid_phone));

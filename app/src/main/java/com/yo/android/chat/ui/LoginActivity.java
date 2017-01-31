@@ -2,11 +2,13 @@ package com.yo.android.chat.ui;
 
 import android.app.AlertDialog;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -44,6 +46,7 @@ import org.angmarch.views.NiceSpinner;
 
 import java.net.SocketTimeoutException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -93,15 +96,27 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
 
 
     private MenuItem searchMenuItem;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+      //  String simCountryCode = getUserCountry(getApplicationContext());
         if (getIntent().getBooleanExtra(Constants.SESSION_EXPIRE, false)) {
             //Toast.makeText(this, "YoApp session expired.", Toast.LENGTH_LONG).show();
             Toast.makeText(this, getString(R.string.logged_in_another_device), Toast.LENGTH_LONG).show();
         }
+
+
+//
+//        if(simCountryCode!=null){
+//
+//            mCountryCode.setText(selectedCountryCode+country);
+//        }
+
 
         mCountryCode.setText(SINGAPORE_CODE);
         mAuth = FirebaseAuth.getInstance();
@@ -180,7 +195,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         // Reset errors.
         mPhoneNumberView.setError(null);
         // Store values at the time of the login attempt.
-        String countryCode=mCountryCode.getText().toString();
+       // String countryCode=mCountryCode.getText().toString();
         String phoneNumber = mPhoneNumberView.getText().toString().trim();
 
 
@@ -386,5 +401,24 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             }
         }
     }
+
+
+//    public static String getUserCountry(Context context) {
+//        try {
+//            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//            final String simCountry = tm.getSimCountryIso();
+//            if (simCountry != null && simCountry.length() == 2) { // SIM country code is available
+//                return simCountry.toLowerCase(Locale.US);
+//            }
+//            else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) { // device is not 3G (would be unreliable)
+//                String networkCountry = tm.getNetworkCountryIso();
+//                if (networkCountry != null && networkCountry.length() == 2) { // network country code is available
+//                    return networkCountry.toLowerCase(Locale.US);
+//                }
+//            }
+//        }
+//        catch (Exception e) { }
+//        return null;
+//    }
 }
 
