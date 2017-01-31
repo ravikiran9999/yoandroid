@@ -105,7 +105,9 @@ public class ContactSyncHelper {
             super.onChange(selfChange);
             //Allow this if user is logged only.
             String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-            checkLastSync(access);
+            if (!TextUtils.isEmpty(access)) {
+                checkContacts();
+            }
         }
     }
 
@@ -528,28 +530,5 @@ public class ContactSyncHelper {
             return matcher.group(0);
         }
         return null;
-    }
-
-    private void checkLastSync(@NonNull String access) {
-        i = i++;
-        yoService.getUserInfo(access).enqueue(new Callback<UserProfileInfo>() {
-            @Override
-            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
-                if (response.body() != null) {
-                    try {
-                        previousDate = formatterDate.parse(formatterDate.format(response.body().getLastContactsSyncTime()));
-                        checkContacts();
-                    } catch (ParseException | NullPointerException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
-                mLog.i(TAG, t.getMessage());
-            }
-        });
     }
 }

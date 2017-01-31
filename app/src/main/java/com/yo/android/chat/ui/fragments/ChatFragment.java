@@ -333,6 +333,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     e.printStackTrace();
                 }
                 chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
+                try {
+                    if (!chatRoomListAdapter.isEmpty()) {
+                        dismissProgressDialog();
+                        emptyImageView.setVisibility(View.GONE);
+                    } else {
+                        emptyImageView.setVisibility(View.VISIBLE);
+                    }
+                } catch (Exception e) {
+                }
             }
 
             @Override
@@ -397,7 +406,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         if(roomList!= null && !roomList.isEmpty()) {
                             emptyImageView.setVisibility(View.GONE);
                         } else {
-                            emptyImageView.setVisibility(View.VISIBLE);
+                            //emptyImageView.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -419,10 +428,18 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
         chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
         try {
+
             if (!chatRoomListAdapter.isEmpty()) {
                 dismissProgressDialog();
+            } else {
+                emptyImageView.setVisibility(View.VISIBLE);
             }
+
         } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            dismissProgressDialog();
         }
     }
 
@@ -432,7 +449,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
-            if (roomInfo.getName().isEmpty()) {
+            if (roomInfo.getName() != null && roomInfo.getName().isEmpty() && roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
                 for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
                     if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
                         authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -460,7 +477,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         });
                     }
                 }
-            } else {
+            } else if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
                 Date date = null;
                 try {
                     String createdTime = roomInfo.getCreated_at();
@@ -485,6 +502,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
         if (arrayOfUsers != null && !arrayOfUsers.isEmpty() && getView() != null) {
             dismissProgressDialog();
+            emptyImageView.setVisibility(View.GONE);
+        } else {
+            emptyImageView.setVisibility(View.VISIBLE);
         }
         return arrayOfUsers;
     }
@@ -562,7 +582,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         if (popup != null) {
-            if(!isSharedPreferenceShown) {
+            if (!isSharedPreferenceShown) {
                 Collections.reverse(popup);
             }
             List<Popup> tempPopup = new ArrayList<>(popup);
