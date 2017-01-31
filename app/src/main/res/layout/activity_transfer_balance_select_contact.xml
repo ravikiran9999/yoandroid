@@ -10,11 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/tab_grey"
-        android:gravity="center"
-        android:layout_centerInParent="true"
-        android:padding="10dp"
+        android:gravity="center_horizontal"
+        android:padding="30dp"
         android:text="@string/no_result_found"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:visibility="gone" />
 
     <ProgressBar
@@ -54,9 +53,11 @@
             android:id="@+id/no_data"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
+            android:gravity="center_horizontal"
+            android:padding="30dp"
             android:text="@string/no_text"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:textColor="@color/black"/>
     </LinearLayout>
 
 
