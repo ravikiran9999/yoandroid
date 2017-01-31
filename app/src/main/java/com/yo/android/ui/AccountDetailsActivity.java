@@ -84,17 +84,17 @@ public class AccountDetailsActivity extends BaseActivity {
         super.onBackPressed();
         if (getSupportFragmentManager().findFragmentByTag(FRAGMENT) instanceof AccountDetailsFragment) {
             getSupportActionBar().setTitle(getString(R.string.account_details));
-            //((AccountDetailsFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT)).setUserInfoDetails();
+            ((AccountDetailsFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT)).setUserInfoDetails();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        preferenceEndPoint.saveStringPreference(Constants.DESCRIPTION_TEMP, preferenceEndPoint.getStringPreference(Constants.DESCRIPTION));
+        preferenceEndPoint.saveStringPreference(Constants.DESCRIPTION_TEMP, preferenceEndPoint.getStringPreference(Constants.USER_STATUS));
         preferenceEndPoint.saveStringPreference(Constants.FIRST_NAME_TEMP, preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NO_TEMP, preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
-        preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, preferenceEndPoint.getStringPreference(Constants.DOB));
+        preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, preferenceEndPoint.getStringPreference(Constants.DOB_TEMP));
         preferenceEndPoint.saveStringPreference(Constants.EMAIL_TEMP, preferenceEndPoint.getStringPreference(Constants.EMAIL));
-    }
+     }
 }
