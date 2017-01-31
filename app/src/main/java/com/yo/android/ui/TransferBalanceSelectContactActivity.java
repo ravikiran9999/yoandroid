@@ -212,7 +212,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         if (isRepresentative) {
             searchPeople(menu);
         } else {
-            Util.prepareTransferBalanceContactsSearch(TransferBalanceSelectContactActivity.this, menu, contactsListAdapter);
+            Util.prepareTransferBalanceContactsSearch(TransferBalanceSelectContactActivity.this, menu, contactsListAdapter, noData, listView, llNoPeople);
         }
         return super.onCreateOptionsMenu(menu);
     }
