@@ -37,8 +37,10 @@ public class OthersMagazinesAdapter extends BaseAdapter {
     public void addItems(final List<OwnMagazine> ownMagazineList) {
         this.ownMagazineList.clear();
         this.ownMagazineList.addAll(ownMagazineList);
-        if (!((BaseActivity)mContext).hasDestroyed()) {
-            notifyDataSetChanged();
+        if(mContext !=null) {
+            if (!((BaseActivity) mContext).hasDestroyed()) {
+                notifyDataSetChanged();
+            }
         }
     }
 

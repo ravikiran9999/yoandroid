@@ -65,7 +65,6 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_READ_CONTACTS = 0;
     private static final String FRAGMENT_TAG = "OTPFragment";
-    private static final String  SINGAPORE_CODE="+65 Singapore";
 
 
     @Bind(R.id.et_enter_phone)
@@ -94,9 +93,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     ConnectivityHelper mHelper;
     private static  final int SELECTED_OK=101;
 
-
     private MenuItem searchMenuItem;
-
 
 
     @Override
@@ -104,21 +101,10 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-      //  String simCountryCode = getUserCountry(getApplicationContext());
         if (getIntent().getBooleanExtra(Constants.SESSION_EXPIRE, false)) {
             //Toast.makeText(this, "YoApp session expired.", Toast.LENGTH_LONG).show();
             Toast.makeText(this, getString(R.string.logged_in_another_device), Toast.LENGTH_LONG).show();
         }
-
-
-//
-//        if(simCountryCode!=null){
-//
-//            mCountryCode.setText(selectedCountryCode+country);
-//        }
-
-
-        mCountryCode.setText(SINGAPORE_CODE);
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -145,11 +131,13 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             if (countryCode.getCountryID().equalsIgnoreCase(str)) {
                 pos = mList.indexOf(countryCode);
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, countryCode.getCountryCode());
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_DISPLAY_NAME ,countryCode.getCountryName());
                 break;
             }
         }
-
-
+         String  simCountryCode=preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+         String  simCountryName=preferenceEndPoint.getStringPreference(Constants.COUNTRY_DISPLAY_NAME);
+         mCountryCode.setText("+"+simCountryCode+simCountryName);
        //spCountrySpinner.attachDataSource(mList);
 
 //         spCountrySpinner.setSelectedIndex(pos);
@@ -204,6 +192,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
 
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
         Phonenumber.PhoneNumber swissNumberProto = null;
+
 
         String selectedCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         String country = preferenceEndPoint.getStringPreference(Constants.COUNTRY_ID);
@@ -379,6 +368,8 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, mList.get(position).getCountryCode()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID, mList.get(position).getCountryID()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
 
+       ;
+
     }
 
     @Override
@@ -394,31 +385,14 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             if(data.hasExtra("COUNTRY_CODE")){
                 String countryCode=data.getStringExtra("COUNTRY_CODE");
                 String countryName=data.getStringExtra("COUNTRY_NAME");
-                String countryId=data.getStringExtra("COUNTYR_ID");
-                mCountryCode.setText("+"+countryCode +" "+countryName);
-                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM,countryCode/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
+                String countryId=data.getStringExtra("COUNTRY_ID");
+                mCountryCode.setText("+" + countryCode + " " + countryName);
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, countryCode/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID,countryId/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
             }
         }
     }
 
 
-//    public static String getUserCountry(Context context) {
-//        try {
-//            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-//            final String simCountry = tm.getSimCountryIso();
-//            if (simCountry != null && simCountry.length() == 2) { // SIM country code is available
-//                return simCountry.toLowerCase(Locale.US);
-//            }
-//            else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) { // device is not 3G (would be unreliable)
-//                String networkCountry = tm.getNetworkCountryIso();
-//                if (networkCountry != null && networkCountry.length() == 2) { // network country code is available
-//                    return networkCountry.toLowerCase(Locale.US);
-//                }
-//            }
-//        }
-//        catch (Exception e) { }
-//        return null;
-//    }
 }
 

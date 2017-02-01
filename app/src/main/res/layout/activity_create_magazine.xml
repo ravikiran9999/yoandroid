@@ -19,9 +19,8 @@
         android:id="@+id/no_search_results"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:padding="10dp"
+        android:gravity="center_horizontal"
+        android:padding="30dp"
         android:text="@string/no_result_found"
         android:textColor="@color/black"
         android:visibility="gone" />
