@@ -34,6 +34,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -392,7 +393,7 @@ public class Util {
         });
     }
 
-    public static void prepareTransferBalanceContactsSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter) {
+    public static void prepareTransferBalanceContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final LinearLayout llNoPeople) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -419,6 +420,24 @@ public class Util {
                 Log.i(TAG, "onQueryTextChange: " + newText);
                 if (adapter != null) {
                     adapter.performTransferBalanceContactsSearch(newText);
+                 Log.i(TAG, "The list count is " + adapter.getCount());
+                    if(noData!=null && activity!=null && llNoPeople!=null){
+                        if(adapter.getCount() == 0 && menu.findItem(R.id.menu_search).isActionViewExpanded()){
+                            noData.setVisibility(View.VISIBLE);
+                            llNoPeople.setVisibility(View.VISIBLE);
+                            if(listView!=null){
+                                listView.setVisibility(View.GONE);
+                            }
+                            noData.setText(activity.getResources().getString(R.string.no_result_found));
+                        }else{
+                            if(listView!=null){
+                                listView.setVisibility(View.VISIBLE);
+                            }
+                            llNoPeople.setVisibility(View.GONE);
+                            noData.setVisibility(View.GONE);
+                        }
+
+                    }
                 }
                 return true;
             }
