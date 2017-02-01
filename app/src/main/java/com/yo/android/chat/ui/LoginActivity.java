@@ -131,12 +131,12 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             if (countryCode.getCountryID().equalsIgnoreCase(str)) {
                 pos = mList.indexOf(countryCode);
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, countryCode.getCountryCode());
-                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME,countryCode.getCountryName());
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_DISPLAY_NAME ,countryCode.getCountryName());
                 break;
             }
         }
          String  simCountryCode=preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
-         String  simCountryName=preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME);
+         String  simCountryName=preferenceEndPoint.getStringPreference(Constants.COUNTRY_DISPLAY_NAME);
          mCountryCode.setText("+"+simCountryCode+simCountryName);
        //spCountrySpinner.attachDataSource(mList);
 
@@ -385,9 +385,9 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             if(data.hasExtra("COUNTRY_CODE")){
                 String countryCode=data.getStringExtra("COUNTRY_CODE");
                 String countryName=data.getStringExtra("COUNTRY_NAME");
-                String countryId=data.getStringExtra("COUNTYR_ID");
-                mCountryCode.setText("+"+countryCode +" "+countryName);
-                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM,countryCode/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
+                String countryId=data.getStringExtra("COUNTRY_ID");
+                mCountryCode.setText("+" + countryCode + " " + countryName);
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, countryCode/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID,countryId/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
             }
         }
