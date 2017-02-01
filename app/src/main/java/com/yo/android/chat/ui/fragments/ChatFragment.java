@@ -4,6 +4,7 @@ package com.yo.android.chat.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -162,7 +163,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                boolean nonEmpty = (listView.getAdapter() != null && listView.getAdapter().getCount() > 0);
+                boolean nonEmpty = (chatRoomListAdapter != null && chatRoomListAdapter.getOriginalListCount() > 0);
                 emptyImageView.setVisibility(nonEmpty ? View.GONE : View.VISIBLE);
                 noSearchResult.setVisibility(View.GONE);
                 getActivity().invalidateOptionsMenu();
@@ -270,7 +271,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                getMembersId(dataSnapshot);
+                //getMembersId(dataSnapshot);
+                new MembersIdAsyncTask().execute(dataSnapshot);
             }
 
             @Override
@@ -402,11 +404,16 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        List<Room> roomList = getMembersProfile(dataSnapshot);
-                        if(roomList!= null && !roomList.isEmpty()) {
-                            emptyImageView.setVisibility(View.GONE);
-                        } else {
-                            //emptyImageView.setVisibility(View.VISIBLE);
+                        if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
+                            RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
+                            if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
+                                List<Room> roomList = getMembersProfile(dataSnapshot);
+                                if (roomList != null && !roomList.isEmpty()) {
+                                    emptyImageView.setVisibility(View.GONE);
+                                } else {
+                                    emptyImageView.setVisibility(View.VISIBLE);
+                                }
+                            }
                         }
                     }
 
@@ -431,17 +438,18 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             if (!chatRoomListAdapter.isEmpty()) {
                 dismissProgressDialog();
-            } else {
+            }/* else {
                 emptyImageView.setVisibility(View.VISIBLE);
-            }
+            }*/
 
         } catch (Exception e) {
             e.printStackTrace();
 
-        } finally {
+        } /*finally {
             dismissProgressDialog();
-        }
+        }*/
     }
+
 
     private List<Room> getMembersProfile(final DataSnapshot dataSnapshot) {
 
@@ -449,7 +457,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
-            if (roomInfo.getName() != null && roomInfo.getName().isEmpty() && roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
+            if (roomInfo.getName() != null && roomInfo.getName().isEmpty()) {
                 for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
                     if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
                         authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -477,7 +485,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         });
                     }
                 }
-            } else if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
+            } else {
                 Date date = null;
                 try {
                     String createdTime = roomInfo.getCreated_at();
@@ -500,12 +508,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             }
         }
-        if (arrayOfUsers != null && !arrayOfUsers.isEmpty() && getView() != null) {
+        /*if (arrayOfUsers != null && !arrayOfUsers.isEmpty() && getView() != null) {
             dismissProgressDialog();
             emptyImageView.setVisibility(View.GONE);
         } else {
-            emptyImageView.setVisibility(View.VISIBLE);
-        }
+            //emptyImageView.setVisibility(View.VISIBLE);
+        }*/
         return arrayOfUsers;
     }
 
@@ -603,5 +611,67 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    private class MembersIdAsyncTask extends AsyncTask<DataSnapshot, Void, List<Room>> {
+
+        @Override
+        protected List<Room> doInBackground(DataSnapshot... dataSnapshots) {
+
+            for (final DataSnapshot dataSnapshot1 : dataSnapshots[0].getChildren()) {
+                if (!roomId.contains(dataSnapshot1.getKey())) {
+                    roomId.add(dataSnapshot1.getKey());
+                    Firebase memberReference = dataSnapshot1.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot1.getKey());
+                    memberReference.keepSynced(true);
+                    memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
+                                RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
+                                if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
+                                    List<Room> roomList = getMembersProfile(dataSnapshot);
+                                    if (roomList != null && !roomList.isEmpty()) {
+                                        emptyImageView.setVisibility(View.GONE);
+                                    } else {
+                                        emptyImageView.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                            firebaseError.getMessage();
+                            dismissProgressDialog();
+                        }
+                    });
+                }
+            }
+            return arrayOfUsers;
+        }
+
+        @Override
+        protected void onPostExecute(@NonNull List<Room> rooms) {
+            super.onPostExecute(rooms);
+
+            Collections.sort(arrayOfUsers, new Comparator<Room>() {
+                @Override
+                public int compare(Room lhs, Room rhs) {
+                    return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
+                }
+            });
+
+            chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
+            try {
+
+                dismissProgressDialog();
+                if (arrayOfUsers.size() == 0) {
+                    emptyImageView.setVisibility(View.VISIBLE);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
