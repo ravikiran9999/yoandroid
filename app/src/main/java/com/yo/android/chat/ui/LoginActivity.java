@@ -137,7 +137,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         }
          String  simCountryCode=preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
          String  simCountryName=preferenceEndPoint.getStringPreference(Constants.COUNTRY_DISPLAY_NAME);
-         mCountryCode.setText("+"+simCountryCode+simCountryName);
+         mCountryCode.setText("+"+simCountryCode+" "+simCountryName);
        //spCountrySpinner.attachDataSource(mList);
 
 //         spCountrySpinner.setSelectedIndex(pos);

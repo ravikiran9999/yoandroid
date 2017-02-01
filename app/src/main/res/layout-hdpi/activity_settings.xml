@@ -24,8 +24,7 @@
         android:layout_height="wrap_content"
         android:divider="@android:color/transparent"
         android:layout_below="@+id/txtEmpty"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp" />
+        android:layout_alignParentEnd="true"/>
 
 
 </RelativeLayout>

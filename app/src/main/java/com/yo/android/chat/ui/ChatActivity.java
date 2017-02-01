@@ -159,6 +159,7 @@ public class ChatActivity extends BaseActivity {
                 args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
+                args.putString(Constants.OPPONENT_NAME, contact.getName());
                 mContact = mContactsSyncManager.getContactByVoxUserName(opponent);
                 if (mContact == null) {
                     //server request with opponent id
