@@ -385,7 +385,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             if(data.hasExtra("COUNTRY_CODE")){
                 String countryCode=data.getStringExtra("COUNTRY_CODE");
                 String countryName=data.getStringExtra("COUNTRY_NAME");
-                String countryId=data.getStringExtra("COUNTYR_ID");
+                String countryId=data.getStringExtra("COUNTRY_ID");
                 mCountryCode.setText("+"+countryCode +" "+countryName);
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM,countryCode/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID,countryId/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
