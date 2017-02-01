@@ -291,9 +291,9 @@ public class TransferBalanceActivity extends BaseActivity {
         builder.setView(view);
 
         TextView textView = (TextView) view.findViewById(R.id.dialog_content);
-        DecimalFormat df = new DecimalFormat("0.000");
-        String format = df.format(Double.valueOf(amount));
-        String confirmationText = "Are you sure you want to transfer $" + format + " balance to " + name + " with number " + phoneNumber + "?";
+        /*DecimalFormat df = new DecimalFormat("0.000");
+        String format = df.format(Double.valueOf(amount));*/
+        String confirmationText = "Are you sure you want to transfer $" + amount + " balance to " + name + " with number " + phoneNumber + "?";
         textView.setText(confirmationText);
 
 
