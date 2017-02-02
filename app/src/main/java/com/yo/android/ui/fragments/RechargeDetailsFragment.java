@@ -176,6 +176,8 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
         }
 
         public void addItems(List<PaymentHistoryItem> detailResponseList) {
+
+            mPaymentHistoryItemList.clear();
             mPaymentHistoryItemList.addAll(detailResponseList);
             notifyDataSetChanged();
         }
