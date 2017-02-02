@@ -44,7 +44,7 @@ public class TokenAuthenticator implements Authenticator {
 
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
-        mLog.e("TokenAuthenticator", "start authentication");
+        //mLog.e("TokenAuthenticator", "start authentication");
         synchronized (lock) {
             refreshToken = preferenceEndPoint.getStringPreference(YoApi.REFRESH_TOKEN);
             boolean isRequestForTokens = response.request().url().toString().contains("oauth/token.json");
@@ -59,7 +59,7 @@ public class TokenAuthenticator implements Authenticator {
                 HttpUrl httpUrl = response.request().url().newBuilder().addQueryParameter(YoApi.ACCESS_TOKEN, accessToken).build();
                 mLog.e("HttpUrl Call", httpUrl.toString());
                 // Add new httpurl to rejected request and retry it
-                mLog.e("TokenAuthenticator", "finish authentication");
+                //mLog.e("TokenAuthenticator", "finish authentication");
                 return response.request()
                         .newBuilder()
                         .url(httpUrl)
@@ -104,7 +104,7 @@ public class TokenAuthenticator implements Authenticator {
                         tokenSuccessTime = System.currentTimeMillis();
                         tokenExpireCount = 0;
                         // Add new httpurl to rejected request and retry it
-                        mLog.e("TokenAuthenticator", "finish authentication");
+                        //mLog.e("TokenAuthenticator", "finish authentication");
                         return response.request()
                                 .newBuilder()
                                 .url(httpUrl)
@@ -115,7 +115,7 @@ public class TokenAuthenticator implements Authenticator {
                 }
             }
         }
-        mLog.e("TokenAuthenticator", "finish authentication");
+        //mLog.e("TokenAuthenticator", "finish authentication");
         return response.request();
     }
 }
