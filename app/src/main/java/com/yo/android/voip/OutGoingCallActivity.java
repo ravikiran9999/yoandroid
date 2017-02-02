@@ -124,6 +124,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         initViews();
         callModel = new SipCallModel();
+        String xx = getIntent().getStringExtra(CALLER_NO);
         Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER_NO));
 
         if (getIntent().hasExtra(VoipConstants.PSTN) && getIntent().getBooleanExtra(VoipConstants.PSTN, false)) {

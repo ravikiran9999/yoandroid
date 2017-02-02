@@ -24,6 +24,8 @@ import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -68,12 +70,26 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                 holder.getOpponentName().setText(item.getFullName());
             }
 
-            Glide.with(mContext).load(item.getImage())
-                    .placeholder(loadAvatarImage(item, holder, false))
-                    .error(loadAvatarImage(item, holder, false))
-                    .dontAnimate()
-                    .into(holder.getChatRoomPic());
-
+            if (!TextUtils.isEmpty(item.getImage())) {
+                Glide.with(mContext).load(item.getImage())
+                        .placeholder(loadAvatarImage(item, holder, false))
+                        .error(loadAvatarImage(item, holder, false))
+                        .dontAnimate()
+                        .into(holder.getChatRoomPic());
+            }else if(Settings.isTitlePicEnabled){
+                if (item.getFullName() != null && item.getFullName().length() >= 1) {
+                    String title = String.valueOf(item.getFullName().charAt(0)).toUpperCase();
+                    Pattern p = Pattern.compile("^[a-zA-Z0-9]");
+                    Matcher m = p.matcher(title);
+                    boolean b = m.matches();
+                    if (b) {
+                        Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getMobileNumber()));
+                        holder.getChatRoomPic().setImageDrawable(drawable);
+                    } else {
+                        loadAvatarImage(item, holder, false);
+                    }
+                }
+            }
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
 
@@ -86,13 +102,28 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                 profilePicImageUri = item.getImage();
             }
             try {
-                Glide.with(mContext).load(profilePicImageUri)
-                        .placeholder(loadAvatarImage(item, holder, true))
-                        .priority(Priority.HIGH)
-                        .dontAnimate()
-                        .error(loadAvatarImage(item, holder, true))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(holder.getChatRoomPic());
+                if(!TextUtils.isEmpty(item.getImage())) {
+                    Glide.with(mContext).load(profilePicImageUri)
+                            .placeholder(loadAvatarImage(item, holder, true))
+                            .priority(Priority.HIGH)
+                            .dontAnimate()
+                            .error(loadAvatarImage(item, holder, true))
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .into(holder.getChatRoomPic());
+                }else if(Settings.isTitlePicEnabled) {
+                    if (item.getGroupName() != null && item.getGroupName().length() >= 1) {
+                        String title = String.valueOf(item.getGroupName().charAt(0)).toUpperCase();
+                        Pattern p = Pattern.compile("^[a-zA-Z0-9]");
+                        Matcher m = p.matcher(title);
+                        boolean b = m.matches();
+                        if (b) {
+                            Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getGroupName()));
+                            holder.getChatRoomPic().setImageDrawable(drawable);
+                        } else {
+                            loadAvatarImage(item, holder, false);
+                        }
+                    }
+                }
             }catch (Exception e) {
                 e.printStackTrace();
             }
