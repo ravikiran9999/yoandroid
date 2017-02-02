@@ -26,6 +26,7 @@ import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.YoSipService;
+import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
@@ -79,7 +80,7 @@ public class TransferBalanceActivity extends BaseActivity {
         id = getIntent().getStringExtra("id");
 
         tvBalance = (TextView) findViewById(R.id.txt_balance);
-        tvBalance.setText(String.format("%s%s", currencySymbol, balance));
+        tvBalance.setText(String.format("%s%s",  MoreFragment.currencySymbolDollar, balance));
 
         TextView tvPhoneNumber = (TextView) findViewById(R.id.tv_phone_number);
 
