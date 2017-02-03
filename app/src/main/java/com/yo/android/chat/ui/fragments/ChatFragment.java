@@ -265,8 +265,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             emptyImageView.setVisibility(View.VISIBLE);
                             listView.setVisibility(View.GONE);
 
-                            Log.i(TAG, "firebase Token :: " + loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-                            Log.i(TAG, "firebase User Id :: " + loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID));
+                            Log.i(TAG, "firebase Token roomExists :: " + loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+                            Log.i(TAG, "firebase User Id roomExists :: " + loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID));
                         }
                     });
                     authReference.keepSynced(true);
@@ -283,12 +283,14 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 getMembersId(dataSnapshot);
-                //new MembersIdAsyncTask().execute(dataSnapshot);
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 dismissProgressDialog();
+
+                Log.i(TAG, "firebase Token getAllRooms :: " + loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+                Log.i(TAG, "firebase User Id getAllRooms :: " + loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID));
             }
         };
         String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
@@ -296,55 +298,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addValueEventListener(valueEventListener);
             authReference.keepSynced(true);
         }
-    }
-
-    private ChildEventListener checkActiveRooms(final Firebase firebaseAuthRef, final DataSnapshot mDataSnapshot) {
-        ChildEventListener mChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                /*RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
-                if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
-                    isShowDefault = false;
-                } else if (!isShowDefault && roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_INACTIVE)) {
-                    isShowDefault = true;
-                }*/
-
-                room = dataSnapshot.getValue(Room.class);
-                if (room != null) {
-                    room.setFirebaseRoomId(mDataSnapshot.getKey());
-                    Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getVoxUserName());
-                    if (contact != null && contact.getName() != null) {
-                        room.setFullName(contact.getName());
-                    }
-
-                    arrayOfUsers.add(room);
-
-                    Firebase firebaseRoomReference = firebaseAuthRef.child(Constants.ROOMS).child(mDataSnapshot.getKey()).child(Constants.CHATS);
-                    firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                isShowDefault = false;
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        };
-        return mChildEventListener;
     }
 
     @NonNull
@@ -458,15 +411,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private void getMembersId(final DataSnapshot dataSnapshot) {
         for (final DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
             if (!roomId.contains(dataSnapshot1.getKey())) {
-                roomId.add(dataSnapshot1.getKey());
+
                 Firebase memberReference = dataSnapshot1.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot1.getKey());
                 com.firebase.client.Query query = memberReference.child(Constants.ROOM_INFO).orderByChild("status");
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot roomInfoDataSnapshot) {
                         executed = executed + 1;
-                        long childCount = dataSnapshot.getChildrenCount();
                         if (roomInfoDataSnapshot.getValue(RoomInfo.class).getStatus().equals(Constants.ROOM_STATUS_ACTIVE)) {
+                            roomId.add(dataSnapshot1.getKey());
                             activeCount = activeCount + 1;
                             isShowDefault = false;
                         } else if (dataSnapshot.getChildrenCount() == executed) {
@@ -524,9 +477,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         } catch (Exception e) {
             e.printStackTrace();
 
-        } /*finally {
-            dismissProgressDialog();
-        }*/
+        }
     }
 
 
@@ -583,18 +534,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             if (date != null) {
                 room.setTime(date.getTime());
             }
-            arrayOfUsers.add(room);
+            if(!arrayOfUsers.contains(room)) {
+                arrayOfUsers.add(room);
+            }
             Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
             firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(room));
         }
 
-
-        /*if (arrayOfUsers != null && !arrayOfUsers.isEmpty() && getView() != null) {
-            dismissProgressDialog();
-            emptyImageView.setVisibility(View.GONE);
-        } else {
-            //emptyImageView.setVisibility(View.VISIBLE);
-        }*/
         return arrayOfUsers;
     }
 
