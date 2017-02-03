@@ -589,6 +589,8 @@ public class Util {
                     } else if (roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) || roomType.equalsIgnoreCase(Constants.CONT_FRAG)) {
                         String contactType = roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ? Constants.Yo_CONT_FRAG : Constants.CONT_FRAG;
                         adapter.performYoContactsSearch(newText, contactType, noSearchResult,isFromClose);
+                    }else if(roomType.equalsIgnoreCase(Constants.INVITE_FRAG)){
+                        adapter.performContactsSearch(newText,noSearchResult,isFromClose);
                     }
                 }
                 return true;

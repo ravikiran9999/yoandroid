@@ -5,38 +5,50 @@
     android:background="@color/light_gray"
     android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center_vertical"
-        android:visibility="gone" />
+           <TextView
+               android:id="@+id/no_search_results"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:layout_gravity="center_vertical|center_horizontal"
+               android:gravity="center_horizontal"
+               android:padding="30dp"
+               android:text="@string/no_result_found"
+               android:textColor="@color/black"
+               android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/txtEmpty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone" />
 
-    <ListView
-        android:id="@+id/invite_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
-        android:layout_toLeftOf="@+id/side_index"
-        android:divider="@android:color/transparent">
+           <TextView
+               android:id="@+id/txtEmpty"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_centerInParent="true"
+               android:layout_gravity="center"
+               android:visibility="gone" />
 
-    </ListView>
-    <ListView
-        android:id="@+id/side_index"
-        android:layout_width="30dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:background="@android:color/white"
-        android:divider="@android:color/transparent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" />
+           <ListView
+               android:id="@+id/invite_list"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:layout_marginTop="5dp"
+               android:layout_toLeftOf="@+id/side_index"
+               android:divider="@android:color/transparent">
+
+          </ListView>
+          <ListView
+              android:id="@+id/side_index"
+              android:layout_width="30dp"
+              android:layout_height="match_parent"
+              android:layout_alignParentRight="true"
+              android:background="@android:color/white"
+              android:divider="@android:color/transparent"
+              android:gravity="center_horizontal"
+              android:orientation="vertical" />
+
 </RelativeLayout>

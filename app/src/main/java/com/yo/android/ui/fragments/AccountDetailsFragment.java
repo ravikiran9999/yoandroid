@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -24,12 +26,18 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.ui.AccountDetailsActivity;
 import com.yo.android.util.Constants;
+
+
+import org.pjsip.pjsua2.Account;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -88,11 +96,14 @@ public class AccountDetailsFragment extends BaseFragment {
 
     public int tokenExpireCount = 0;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.account_details_layout, container, false);
         return view;
+
+
     }
 
     @Override
@@ -187,63 +198,69 @@ public class AccountDetailsFragment extends BaseFragment {
     }
 
     public void saveDetails() {
+
+
         if (!mHelper.isConnected()) {
             mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
         }
 
-        showProgressDialog();
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-        RequestBody description =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), accountStatus.getText().toString());
-        RequestBody firstName =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), accountName.getText().toString());
-        RequestBody phoneNo =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP));
-        RequestBody email =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), accountEmail.getText().toString());
-        if (accountEmail.getText().toString().equalsIgnoreCase(emailHint)) {
-            email = null;
-        }
-        RequestBody dob =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), accountDOB.getText().toString());
-        if (accountDOB.getText().toString().equalsIgnoreCase(dobHint)) {
-            dob = null;
-        }
-        RequestBody gender =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), genderText);
-        yoService.updateProfile(userId, access, description, firstName, phoneNo, email, dob, gender, null, null, null).enqueue(new Callback<UserProfileInfo>() {
-            @Override
-            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
-                dismissProgressDialog();
-                if (response.body() != null) {
-                    saveUserProfileValues(response.body());
-                    getActivity().finish();
-                } else {
+            showProgressDialog();
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+            RequestBody description =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), accountStatus.getText().toString());
+            RequestBody firstName =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), accountName.getText().toString());
+            RequestBody phoneNo =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP));
+            RequestBody email =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), accountEmail.getText().toString());
+            if (accountEmail.getText().toString().equalsIgnoreCase(emailHint)) {
+                email = null;
+            }
+            RequestBody dob =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), accountDOB.getText().toString());
+            if (accountDOB.getText().toString().equalsIgnoreCase(dobHint)) {
+                dob = null;
+            }
+            RequestBody gender =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), genderText);
+            yoService.updateProfile(userId, access, description, firstName, phoneNo, email, dob, gender, null, null, null).enqueue(new Callback<UserProfileInfo>() {
+                @Override
+                public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                    dismissProgressDialog();
+                    if (response.body() != null) {
+                        saveUserProfileValues(response.body());
+                        getActivity().finish();
+                    } else {
+                        mToastFactory.showToast(getString(R.string.failed_update));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+                    dismissProgressDialog();
                     mToastFactory.showToast(getString(R.string.failed_update));
                 }
-            }
-
-            @Override
-            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
-                dismissProgressDialog();
-                mToastFactory.showToast(getString(R.string.failed_update));
-            }
-        });
-    }
+            });
+        }
 
     public void setUserInfoDetails() {
         accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.USER_STATUS, ""));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
         String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, dobHint);
+        String accUserName=accountName.getText().toString();
+        if(TextUtils.isEmpty(accUserName)){
+            Toast.makeText(getActivity(),getResources().getString(R.string.acc_name),Toast.LENGTH_LONG).show();
+        }
         if (dob.equalsIgnoreCase("")) {
             dob = dobHint;
         }
@@ -345,6 +362,19 @@ public class AccountDetailsFragment extends BaseFragment {
         }
     }
 
+    private boolean isValidEmail(String email) {
+        String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+     protected void accountDetailsIsEmpty(){
+
+
+     }
 
 
 }
