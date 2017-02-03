@@ -26,6 +26,7 @@ import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.YoSipService;
+import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
@@ -79,7 +80,7 @@ public class TransferBalanceActivity extends BaseActivity {
         id = getIntent().getStringExtra("id");
 
         tvBalance = (TextView) findViewById(R.id.txt_balance);
-        tvBalance.setText(String.format("%s%s", currencySymbol, balance));
+        tvBalance.setText(String.format("%s%s", MoreFragment.currencySymbolDollar, balance));
 
         TextView tvPhoneNumber = (TextView) findViewById(R.id.tv_phone_number);
 
@@ -226,7 +227,7 @@ public class TransferBalanceActivity extends BaseActivity {
                                     tvTitle.setText("Balance has been transferred successfully to " + "\"" + name + "\".");
                                     DecimalFormat df = new DecimalFormat("0.000");
                                     String format = df.format(Double.valueOf(response.body().getBalance()));
-                                    String remainingBalance = "\"Your Remaining Balance is $" + format + "\"";
+                                    String remainingBalance = "\"Your Remaining Balance is  US $" + format + "\"";
                                     final SpannableString text = new SpannableString(remainingBalance);
                                     text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                     tvDesc.setText(text);
@@ -293,7 +294,7 @@ public class TransferBalanceActivity extends BaseActivity {
         TextView textView = (TextView) view.findViewById(R.id.dialog_content);
         /*DecimalFormat df = new DecimalFormat("0.000");
         String format = df.format(Double.valueOf(amount));*/
-        String confirmationText = "Are you sure you want to transfer $" + amount + " balance to " + name + " with number " + phoneNumber + "?";
+        String confirmationText = "Are you sure you want to transfer US $" + amount + " balance to " + name + " with number " + phoneNumber + "?";
         textView.setText(confirmationText);
 
 
