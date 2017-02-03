@@ -122,7 +122,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     opponentNo = intent.getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
                 }
                 if (intent.hasExtra(Constants.VOX_USER_NAME)) {
-                    voxUserName = intent.getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+                    voxUserName = intent.getStringExtra(Constants.VOX_USER_NAME);
                 }
                 if (intent.hasExtra(Constants.OPPONENT_CONTACT_IMAGE)) {
                     opponentImg = intent.getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
