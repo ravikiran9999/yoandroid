@@ -55,7 +55,8 @@ public class AccountDetailsActivity extends BaseActivity {
                     onBackPressed();
                 }
             }else{
-                onBackPressed();
+                 onBackPressed();
+
             }
 
         } else if (item.getItemId() == R.id.menu_save_settings) {
