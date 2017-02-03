@@ -672,6 +672,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 tagsParentLayout.removeAllViews();
                 tagsParentLayout.addView(totalTagsInView);
             }*/
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             showProgressDialog();
             listView.setAdapter(null);
             categorisedList = new CategorizedList(FollowMoreTopicsActivity.this, listView, initialTags, serverTopics);

@@ -34,6 +34,7 @@ public class FollowersActivity extends BaseActivity {
     private TextView noData;
     private LinearLayout llNoPeople;
     private ImageView imvEmptyFollowers;
+    public boolean isEmptyDataSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +67,12 @@ public class FollowersActivity extends BaseActivity {
                     lvFindPeople.setVisibility(View.VISIBLE);
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItems(findPeopleList);
+                    isEmptyDataSet = false;
                 } else {
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
+                    isEmptyDataSet = true;
                 }
                 dismissProgressDialog();
             }
@@ -80,6 +83,7 @@ public class FollowersActivity extends BaseActivity {
                 noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.VISIBLE);
                 lvFindPeople.setVisibility(View.GONE);
+                isEmptyDataSet = true;
             }
         });
 
@@ -103,7 +107,7 @@ public class FollowersActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.prepareSearch(this, menu, findPeopleAdapter, noData,lvFindPeople, null);
+        Util.preparePeopleSearch(this, menu, findPeopleAdapter, noData, lvFindPeople, null, llNoPeople);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -125,10 +129,12 @@ public class FollowersActivity extends BaseActivity {
                             List<FindPeople> findPeopleList = response.body();
                             findPeopleAdapter.clearAll();
                             findPeopleAdapter.addItems(findPeopleList);
+                            isEmptyDataSet = false;
                         } else {
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.VISIBLE);
                             lvFindPeople.setVisibility(View.GONE);
+                            isEmptyDataSet = true;
                         }
                         dismissProgressDialog();
                     }
@@ -139,6 +145,7 @@ public class FollowersActivity extends BaseActivity {
                         noData.setVisibility(View.GONE);
                         llNoPeople.setVisibility(View.VISIBLE);
                         lvFindPeople.setVisibility(View.GONE);
+                        isEmptyDataSet = true;
                     }
                 });
             }
