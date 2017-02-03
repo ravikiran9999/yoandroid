@@ -92,7 +92,7 @@ public class AccountDetailsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        preferenceEndPoint.saveStringPreference(Constants.DESCRIPTION_TEMP, preferenceEndPoint.getStringPreference(Constants.USER_STATUS));
+        preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, preferenceEndPoint.getStringPreference(Constants.USER_STATUS));
         preferenceEndPoint.saveStringPreference(Constants.FIRST_NAME_TEMP, preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NO_TEMP, preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
         preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, preferenceEndPoint.getStringPreference(Constants.DOB_TEMP));
