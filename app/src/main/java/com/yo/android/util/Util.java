@@ -54,6 +54,8 @@ import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.StatusCodes;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
+import com.yo.android.ui.FollowersActivity;
+import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.vox.BalanceHelper;
 
@@ -393,6 +395,95 @@ public class Util {
         });
     }
 
+    public static void preparePeopleSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView, final LinearLayout llNoPeople) {
+        final SearchManager searchManager =
+                (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem;
+        SearchView searchView;
+        searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(activity.getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            public List list;
+            public static final String TAG = "PrepareSearch in Util";
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG, "onQueryTextChange: " + query);
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG, "onQueryTextChange: " + newText);
+                if (adapter != null) {
+                    list =  adapter.performSearch(newText);
+                    if(list!=null && noData!=null && activity!=null){
+                        boolean isListEmpty = list.isEmpty();
+                        if(isListEmpty ){
+                            if(TextUtils.isEmpty(newText) && llNoPeople.getVisibility() == View.VISIBLE) {
+                                llNoPeople.setVisibility(View.VISIBLE);
+                                noData.setVisibility(View.GONE);
+                                if (listView != null) {
+                                    listView.setVisibility(View.GONE);
+                                }
+                                if (gridView != null) {
+                                    gridView.setVisibility(View.GONE);
+                                }
+                            } else if((activity instanceof FollowersActivity && TextUtils.isEmpty(newText) && ((FollowersActivity)activity).isEmptyDataSet) || (activity instanceof FollowingsActivity && TextUtils.isEmpty(newText) && ((FollowingsActivity)activity).isEmptyDataSet)) {
+                                llNoPeople.setVisibility(View.VISIBLE);
+                                noData.setVisibility(View.GONE);
+                                if (listView != null) {
+                                    listView.setVisibility(View.GONE);
+                                }
+                                if (gridView != null) {
+                                    gridView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                noData.setVisibility(View.VISIBLE);
+                                if (listView != null) {
+                                    listView.setVisibility(View.GONE);
+                                }
+                                if (gridView != null) {
+                                    gridView.setVisibility(View.GONE);
+                                }
+                                noData.setText(activity.getResources().getString(R.string.no_result_found));
+                                llNoPeople.setVisibility(View.GONE);
+                            }
+                        }else{
+                            if(listView!=null){
+                                listView.setVisibility(View.VISIBLE);
+                            }
+                            if(gridView!=null){
+                                gridView.setVisibility(View.VISIBLE);
+                            }
+                            noData.setVisibility(View.GONE);
+                            llNoPeople.setVisibility(View.GONE);
+                        }
+
+                    }
+                }
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                if (activity != null)
+                    Util.hideKeyboard(activity, activity.getCurrentFocus());
+                if (adapter != null) {
+                    adapter.performSearch("");
+                }
+                return true;
+            }
+        });
+    }
+
     public static void prepareTransferBalanceContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final LinearLayout llNoPeople) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
@@ -498,6 +589,8 @@ public class Util {
                     } else if (roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) || roomType.equalsIgnoreCase(Constants.CONT_FRAG)) {
                         String contactType = roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ? Constants.Yo_CONT_FRAG : Constants.CONT_FRAG;
                         adapter.performYoContactsSearch(newText, contactType, noSearchResult,isFromClose);
+                    }else if(roomType.equalsIgnoreCase(Constants.INVITE_FRAG)){
+                        adapter.performContactsSearch(newText,noSearchResult,isFromClose);
                     }
                 }
                 return true;

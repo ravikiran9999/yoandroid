@@ -200,7 +200,7 @@ public class Room implements Parcelable {
         this.groupCreationTime = groupCreationTime;
     }
 
-    public boolean equals(Object obj) {
+    /*public boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }
@@ -217,5 +217,21 @@ public class Room implements Parcelable {
 
     public int hashCode() {
         return voxUserName.hashCode();
+    }*/
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Room)) return false;
+
+        Room room = (Room) o;
+
+        return firebaseRoomId != null ? firebaseRoomId.equals(room.firebaseRoomId) : room.firebaseRoomId == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return firebaseRoomId != null ? firebaseRoomId.hashCode() : 0;
     }
 }

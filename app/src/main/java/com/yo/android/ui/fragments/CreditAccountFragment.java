@@ -153,7 +153,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         NumberFormat formatter = new DecimalFormat("#0.00");
     }
 
-
     /**
      * Close current activity becasuse once balance is added it should navitate to calling activity.
      *

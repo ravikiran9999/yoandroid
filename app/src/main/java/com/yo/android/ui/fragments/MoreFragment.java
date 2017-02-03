@@ -119,7 +119,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     private TextView profileStatus;
     private boolean isSharedPreferenceShown;
 
-    public static final String currencySymbolDollar = "$";
+    public static final String currencySymbolDollar = " US $";
 
     public MoreFragment() {
         // Required empty public constructor

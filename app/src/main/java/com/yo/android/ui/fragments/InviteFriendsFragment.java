@@ -1,10 +1,19 @@
 package com.yo.android.ui.fragments;
 
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,7 +27,10 @@ import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +52,10 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
     private InviteFriendsAdapter inviteFriendsAdapter;
     private ListView layout;
     private TextView txtEmpty;
+    private TextView noSearchResultsTxtVw;
+    private Menu menu;
+    private static final int PICK_CONTACT_REQUEST = 100;
+
 
     @Inject
     ContactsSyncManager mSyncManager;
@@ -56,7 +72,9 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
         lv_invite = (ListView) view.findViewById(R.id.invite_list);
         layout = (ListView) view.findViewById(R.id.side_index);
         txtEmpty = (TextView) view.findViewById(R.id.txtEmpty);
+        noSearchResultsTxtVw=(TextView) view.findViewById(R.id.no_search_results);
 
+        setHasOptionsMenu(true);
         return view;
     }
 
@@ -85,6 +103,7 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
                 public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                     List<Contact> nonYoAppContacts = new ArrayList<Contact>();
                     List<Contact> contacts = mSyncManager.getContacts();
+
                     for (Contact con : contacts) {
                         if (!con.getYoAppUser()) {
                             nonYoAppContacts.add(con);
@@ -106,6 +125,11 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
 
                 @Override
                 public void onFailure(Call<List<Contact>> call, Throwable t) {
+                    noSearchResultsTxtVw.setVisibility(View.VISIBLE);
+                    FragmentActivity activity = getActivity();
+                    if (activity != null) {
+                        noSearchResultsTxtVw.setText(activity.getResources().getString(R.string.connectivity_network_settings));
+                    }
                     dismissProgressDialog();
                 }
             });
@@ -142,4 +166,19 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
         Contact contact = adapter.getItem(position);
         Util.inviteFriend(getActivity(), contact.getPhoneNo());
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_invite_friends, menu);
+        this.menu = menu;
+        Util.changeSearchProperties(menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Util.prepareContactsSearch(getActivity(), menu, inviteFriendsAdapter , Constants.CONT_FRAG,  noSearchResultsTxtVw);
+        return super.onOptionsItemSelected(item);
+    }
+
 }

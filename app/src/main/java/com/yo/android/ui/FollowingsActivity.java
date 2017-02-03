@@ -34,6 +34,7 @@ public class FollowingsActivity extends BaseActivity {
     private TextView noData;
     private LinearLayout llNoPeople;
     private ImageView imvEmptyFollowings;
+    public boolean isEmptyDataSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +69,12 @@ public class FollowingsActivity extends BaseActivity {
                     lvFindPeople.setVisibility(View.VISIBLE);
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItems(findPeopleList);
+                    isEmptyDataSet = false;
                 } else {
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
+                    isEmptyDataSet = true;
                 }
 
             }
@@ -83,6 +86,7 @@ public class FollowingsActivity extends BaseActivity {
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
+                isEmptyDataSet = true;
 
             }
         });
@@ -106,7 +110,7 @@ public class FollowingsActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.prepareSearch(this, menu, findPeopleAdapter,noData, lvFindPeople, null);
+        Util.preparePeopleSearch(this, menu, findPeopleAdapter, noData, lvFindPeople, null, llNoPeople);
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -129,10 +133,13 @@ public class FollowingsActivity extends BaseActivity {
                             List<FindPeople> findPeopleList = response.body();
                             findPeopleAdapter.clearAll();
                             findPeopleAdapter.addItems(findPeopleList);
+                            isEmptyDataSet = false;
                         } else {
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.VISIBLE);
                             lvFindPeople.setVisibility(View.GONE);
+                            isEmptyDataSet = true;
+                            findPeopleAdapter.clearAll();
                         }
 
                     }
@@ -141,9 +148,10 @@ public class FollowingsActivity extends BaseActivity {
                     public void onFailure(Call<List<FindPeople>> call, Throwable t) {
 
                         dismissProgressDialog();
-                            noData.setVisibility(View.GONE);
+                        noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.VISIBLE);
                             lvFindPeople.setVisibility(View.GONE);
+                        isEmptyDataSet = true;
 
                     }
                 });
@@ -156,5 +164,6 @@ public class FollowingsActivity extends BaseActivity {
         noData.setVisibility(View.GONE);
         llNoPeople.setVisibility(View.VISIBLE);
         lvFindPeople.setVisibility(View.GONE);
+        isEmptyDataSet = true;
     }
 }

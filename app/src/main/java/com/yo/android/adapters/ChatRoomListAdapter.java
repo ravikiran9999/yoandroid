@@ -24,6 +24,8 @@ import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -68,12 +70,34 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                 holder.getOpponentName().setText(item.getFullName());
             }
 
-            Glide.with(mContext).load(item.getImage())
-                    .placeholder(loadAvatarImage(item, holder, false))
-                    .error(loadAvatarImage(item, holder, false))
-                    .dontAnimate()
-                    .into(holder.getChatRoomPic());
-
+            if (!TextUtils.isEmpty(item.getImage())) {
+                Glide.with(mContext).load(item.getImage())
+                        .placeholder(loadAvatarImage(item, holder, false))
+                        .error(loadAvatarImage(item, holder, false))
+                        .dontAnimate()
+                        .into(holder.getChatRoomPic());
+            } else {
+                if (item.getFullName() != null && item.getFullName().length() >= 1 && !TextUtils.isDigitsOnly(item.getFullName())) {
+                    if (Settings.isTitlePicEnabled) {
+                        if (item.getFullName() != null && item.getFullName().length() >= 1) {
+                            String title = String.valueOf(item.getFullName().charAt(0)).toUpperCase();
+                            Pattern p = Pattern.compile("^[a-zA-Z]");
+                            Matcher m = p.matcher(title);
+                            boolean b = m.matches();
+                            if (b) {
+                                Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getMobileNumber()));
+                                holder.getChatRoomPic().setImageDrawable(drawable);
+                            } else {
+                                holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
+                            }
+                        }
+                    } else {
+                        holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
+                    }
+                } else {
+                    holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
+                }
+            }
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
 
@@ -93,7 +117,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                         .error(loadAvatarImage(item, holder, true))
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(holder.getChatRoomPic());
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
@@ -128,6 +152,8 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         if (isgroup == true) {
             tempImage = mContext.getResources().getDrawable(R.drawable.chat_group);
         } else if (isgroup == false) {
+            tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+        } else {
             tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
         }
         if (!Settings.isTitlePicEnabled) {
