@@ -33,6 +33,7 @@ import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
@@ -346,6 +347,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
                         if (getActivity() != null) {
                             Util.cancelAllNotification(getActivity());
+                            CallLog.Calls.clearCallHistory(getActivity());
                         }
                         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
                         int deleteContacts = getActivity().getContentResolver().delete(uri, null, null);
