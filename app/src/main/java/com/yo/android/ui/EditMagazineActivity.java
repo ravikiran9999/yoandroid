@@ -176,8 +176,8 @@ public class EditMagazineActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.menu_save:
 
-                final String title = etTitle.getText().toString();
-                final String description = etDesc.getText().toString();
+                final String title = etTitle.getText().toString().trim();
+                final String description = etDesc.getText().toString().trim();
 
                 if (TextUtils.isEmpty(title.trim())) {
                     Util.hideKeyboard(this, etTitle);
