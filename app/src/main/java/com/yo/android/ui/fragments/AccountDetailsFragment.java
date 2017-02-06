@@ -257,9 +257,9 @@ public class AccountDetailsFragment extends BaseFragment {
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
         String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, dobHint);
-        String accUserName=accountName.getText().toString();
-        if(TextUtils.isEmpty(accUserName)){
-            Toast.makeText(getActivity(),getResources().getString(R.string.acc_name),Toast.LENGTH_LONG).show();
+        String accUserName = accountName.getText().toString();
+        if (TextUtils.isEmpty(accUserName)) {
+            Toast.makeText(getActivity(), getResources().getString(R.string.acc_name), Toast.LENGTH_LONG).show();
         }
         if (dob.equalsIgnoreCase("")) {
             dob = dobHint;
@@ -267,11 +267,12 @@ public class AccountDetailsFragment extends BaseFragment {
         setTextColor(dob, accountDOB, dobHint);
         accountDOB.setText(dob);
         String email = preferenceEndPoint.getStringPreference(Constants.EMAIL, emailHint);
-        if (email.equalsIgnoreCase("")) {
+        if (email.equalsIgnoreCase("")){
             email = emailHint;
         }
-        setTextColor(email, accountEmail, emailHint);
-        accountEmail.setText(email);
+            setTextColor(email, accountEmail, emailHint);
+            accountEmail.setText(email);
+
     }
 
     private void saveUserProfileValues(final UserProfileInfo response) {
@@ -361,17 +362,5 @@ public class AccountDetailsFragment extends BaseFragment {
             textView.setTextColor(getResources().getColor(R.color.black));
         }
     }
-
-    private boolean isValidEmail(String email) {
-        String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
-        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-
-
 
 }

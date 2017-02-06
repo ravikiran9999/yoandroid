@@ -313,4 +313,5 @@
     <string name="plus">+</string>
     <string name="no_denominations_for_your_country">Denominations not available for your country.</string>
     <string name="acc_name">Please enter your Name</string>
+    <string name="invalid_email">Invalid Email Address</string>
 </resources>
