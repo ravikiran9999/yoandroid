@@ -371,10 +371,7 @@ public class AccountDetailsFragment extends BaseFragment {
         return matcher.matches();
     }
 
-     protected void accountDetailsIsEmpty(){
 
-
-     }
 
 
 }
