@@ -33,6 +33,7 @@ public class Constants {
     public static final String CONT_FRAG = "ContFrag";
     public static final String Yo_CONT_FRAG = "YoContFrag";
     public static final String YO_NOTIFICATION = "notification";
+    public static final String INVITE_FRAG="IviteFrag";
 
     public static final String SENT = "SENT";
     public static final String SEEN = "SEEN";

@@ -76,18 +76,26 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                         .error(loadAvatarImage(item, holder, false))
                         .dontAnimate()
                         .into(holder.getChatRoomPic());
-            }else if(Settings.isTitlePicEnabled){
-                if (item.getFullName() != null && item.getFullName().length() >= 1) {
-                    String title = String.valueOf(item.getFullName().charAt(0)).toUpperCase();
-                    Pattern p = Pattern.compile("^[a-zA-Z0-9]");
-                    Matcher m = p.matcher(title);
-                    boolean b = m.matches();
-                    if (b) {
-                        Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getMobileNumber()));
-                        holder.getChatRoomPic().setImageDrawable(drawable);
+            } else {
+                if (item.getFullName() != null && item.getFullName().length() >= 1 && !TextUtils.isDigitsOnly(item.getFullName())) {
+                    if (Settings.isTitlePicEnabled) {
+                        if (item.getFullName() != null && item.getFullName().length() >= 1) {
+                            String title = String.valueOf(item.getFullName().charAt(0)).toUpperCase();
+                            Pattern p = Pattern.compile("^[a-zA-Z]");
+                            Matcher m = p.matcher(title);
+                            boolean b = m.matches();
+                            if (b) {
+                                Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getMobileNumber()));
+                                holder.getChatRoomPic().setImageDrawable(drawable);
+                            } else {
+                                holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
+                            }
+                        }
                     } else {
-                        loadAvatarImage(item, holder, false);
+                        holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
                     }
+                } else {
+                    holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
                 }
             }
         } else if (item.getGroupName() != null) {
@@ -102,29 +110,14 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                 profilePicImageUri = item.getImage();
             }
             try {
-                if(!TextUtils.isEmpty(item.getImage())) {
-                    Glide.with(mContext).load(profilePicImageUri)
-                            .placeholder(loadAvatarImage(item, holder, true))
-                            .priority(Priority.HIGH)
-                            .dontAnimate()
-                            .error(loadAvatarImage(item, holder, true))
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .into(holder.getChatRoomPic());
-                }else if(Settings.isTitlePicEnabled) {
-                    if (item.getGroupName() != null && item.getGroupName().length() >= 1) {
-                        String title = String.valueOf(item.getGroupName().charAt(0)).toUpperCase();
-                        Pattern p = Pattern.compile("^[a-zA-Z0-9]");
-                        Matcher m = p.matcher(title);
-                        boolean b = m.matches();
-                        if (b) {
-                            Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getGroupName()));
-                            holder.getChatRoomPic().setImageDrawable(drawable);
-                        } else {
-                            loadAvatarImage(item, holder, false);
-                        }
-                    }
-                }
-            }catch (Exception e) {
+                Glide.with(mContext).load(profilePicImageUri)
+                        .placeholder(loadAvatarImage(item, holder, true))
+                        .priority(Priority.HIGH)
+                        .dontAnimate()
+                        .error(loadAvatarImage(item, holder, true))
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(holder.getChatRoomPic());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
@@ -159,6 +152,8 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
         if (isgroup == true) {
             tempImage = mContext.getResources().getDrawable(R.drawable.chat_group);
         } else if (isgroup == false) {
+            tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+        } else {
             tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
         }
         if (!Settings.isTitlePicEnabled) {
