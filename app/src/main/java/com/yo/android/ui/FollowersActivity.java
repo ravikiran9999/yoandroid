@@ -35,6 +35,8 @@ public class FollowersActivity extends BaseActivity {
     private LinearLayout llNoPeople;
     private ImageView imvEmptyFollowers;
     public boolean isEmptyDataSet;
+    private TextView networkFailureText;
+    public boolean isNetworkFailure;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class FollowersActivity extends BaseActivity {
         llNoPeople = (LinearLayout) findViewById(R.id.ll_no_people);
         imvEmptyFollowers = (ImageView) findViewById(R.id.imv_empty_followings);
         imvEmptyFollowers.setImageResource(R.drawable.ic_empty_followers);
+        networkFailureText = (TextView) findViewById(R.id.network_failure);
         lvFindPeople.setAdapter(findPeopleAdapter);
 
         showProgressDialog();
@@ -65,14 +68,18 @@ public class FollowersActivity extends BaseActivity {
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.GONE);
                     lvFindPeople.setVisibility(View.VISIBLE);
+                    networkFailureText.setVisibility(View.GONE);
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItems(findPeopleList);
                     isEmptyDataSet = false;
+                    isNetworkFailure = false;
                 } else {
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
+                    networkFailureText.setVisibility(View.GONE);
                     isEmptyDataSet = true;
+                    isNetworkFailure = false;
                 }
                 dismissProgressDialog();
             }
@@ -81,9 +88,11 @@ public class FollowersActivity extends BaseActivity {
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                 dismissProgressDialog();
                 noData.setVisibility(View.GONE);
-                llNoPeople.setVisibility(View.VISIBLE);
+                llNoPeople.setVisibility(View.GONE);
                 lvFindPeople.setVisibility(View.GONE);
-                isEmptyDataSet = true;
+                networkFailureText.setVisibility(View.VISIBLE);
+                isEmptyDataSet = false;
+                isNetworkFailure = true;
             }
         });
 
@@ -107,7 +116,7 @@ public class FollowersActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.preparePeopleSearch(this, menu, findPeopleAdapter, noData, lvFindPeople, null, llNoPeople);
+        Util.preparePeopleSearch(this, menu, findPeopleAdapter, noData, lvFindPeople, null, llNoPeople, networkFailureText);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -126,15 +135,19 @@ public class FollowersActivity extends BaseActivity {
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.GONE);
                             lvFindPeople.setVisibility(View.VISIBLE);
+                            networkFailureText.setVisibility(View.GONE);
                             List<FindPeople> findPeopleList = response.body();
                             findPeopleAdapter.clearAll();
                             findPeopleAdapter.addItems(findPeopleList);
                             isEmptyDataSet = false;
+                            isNetworkFailure = false;
                         } else {
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.VISIBLE);
                             lvFindPeople.setVisibility(View.GONE);
+                            networkFailureText.setVisibility(View.GONE);
                             isEmptyDataSet = true;
+                            isNetworkFailure = false;
                         }
                         dismissProgressDialog();
                     }
@@ -143,9 +156,11 @@ public class FollowersActivity extends BaseActivity {
                     public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                         dismissProgressDialog();
                         noData.setVisibility(View.GONE);
-                        llNoPeople.setVisibility(View.VISIBLE);
+                        llNoPeople.setVisibility(View.GONE);
                         lvFindPeople.setVisibility(View.GONE);
-                        isEmptyDataSet = true;
+                        networkFailureText.setVisibility(View.VISIBLE);
+                        isEmptyDataSet = false;
+                        isNetworkFailure = true;
                     }
                 });
             }

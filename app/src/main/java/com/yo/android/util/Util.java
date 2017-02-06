@@ -395,7 +395,7 @@ public class Util {
         });
     }
 
-    public static void preparePeopleSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView, final LinearLayout llNoPeople) {
+    public static void preparePeopleSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView, final LinearLayout llNoPeople, final TextView networkFailureText) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -429,6 +429,7 @@ public class Util {
                             if(TextUtils.isEmpty(newText) && llNoPeople.getVisibility() == View.VISIBLE) {
                                 llNoPeople.setVisibility(View.VISIBLE);
                                 noData.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.GONE);
                                 if (listView != null) {
                                     listView.setVisibility(View.GONE);
                                 }
@@ -438,6 +439,17 @@ public class Util {
                             } else if((activity instanceof FollowersActivity && TextUtils.isEmpty(newText) && ((FollowersActivity)activity).isEmptyDataSet) || (activity instanceof FollowingsActivity && TextUtils.isEmpty(newText) && ((FollowingsActivity)activity).isEmptyDataSet)) {
                                 llNoPeople.setVisibility(View.VISIBLE);
                                 noData.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.GONE);
+                                if (listView != null) {
+                                    listView.setVisibility(View.GONE);
+                                }
+                                if (gridView != null) {
+                                    gridView.setVisibility(View.GONE);
+                                }
+                            } else if((activity instanceof FollowersActivity && TextUtils.isEmpty(newText) && ((FollowersActivity)activity).isNetworkFailure) || (activity instanceof FollowingsActivity && TextUtils.isEmpty(newText) && ((FollowingsActivity)activity).isNetworkFailure)) {
+                                llNoPeople.setVisibility(View.GONE);
+                                noData.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.VISIBLE);
                                 if (listView != null) {
                                     listView.setVisibility(View.GONE);
                                 }
@@ -454,6 +466,7 @@ public class Util {
                                 }
                                 noData.setText(activity.getResources().getString(R.string.no_result_found));
                                 llNoPeople.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.GONE);
                             }
                         }else{
                             if(listView!=null){
@@ -464,6 +477,7 @@ public class Util {
                             }
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.GONE);
+                            networkFailureText.setVisibility(View.GONE);
                         }
 
                     }
