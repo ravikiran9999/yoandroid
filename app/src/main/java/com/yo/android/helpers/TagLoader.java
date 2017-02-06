@@ -119,7 +119,7 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
         //((FollowMoreTopicsActivity) context).dismissProgressDialog();
 
         Handler mHandler = new Handler();
-        long DURATION = 10000L;
+        long DURATION = 5000L;
         mHandler.postDelayed(runnable, DURATION);
     }
 
