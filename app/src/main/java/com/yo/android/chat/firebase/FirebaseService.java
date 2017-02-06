@@ -61,7 +61,8 @@ public class FirebaseService extends InjectedService {
     private static final int STYLE_PICTURE = 3;
     private static final int STYLE_TEXT_WITH_ACTION = 4;
 
-
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -114,8 +115,6 @@ public class FirebaseService extends InjectedService {
 
     private void getAllRooms() {
         authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-        //Activity activity = (Activity);
-        //fireBaseHelper.signInWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -255,7 +254,8 @@ public class FirebaseService extends InjectedService {
                 } else if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
                     data.setDescription(Constants.PHOTO);
                 }
-                data.setSenderName(chatMessage.getSenderID());
+                String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(chatMessage.getSenderID());
+                data.setSenderName(nameFromNumber);
 
                 if (!notificationList.contains(data)) {
                     notificationList.add(0, data);//always insert new notification on top

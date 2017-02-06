@@ -108,6 +108,7 @@
         <activity
             android:name=".chat.ui.ChatActivity"
             android:screenOrientation="portrait"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".chat.ui.LoginActivity"
@@ -175,7 +176,8 @@
             android:name=".chat.ui.CreateGroupActivity"
             android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:label="@string/new_group"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".chat.ui.GroupContactsActivity"
             android:label="@string/select_contact"
