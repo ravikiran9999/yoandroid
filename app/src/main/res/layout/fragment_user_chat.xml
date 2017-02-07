@@ -77,7 +77,8 @@
                     android:padding="10dp"
                     android:scrollbars="vertical"
                     android:textSize="14sp"
-                    emojicon:emojiconSize="28sp" />
+                    emojicon:emojiconSize="28sp"
+                    />
 
                 <ImageView
                     android:id="@+id/emojiView"
