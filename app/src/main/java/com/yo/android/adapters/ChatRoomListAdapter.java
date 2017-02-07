@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.chat.ImageLoader;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
 import com.yo.android.helpers.Settings;
@@ -39,6 +40,9 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
+
     Context context;
     private TextDrawable.IBuilder mDrawableBuilder;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
@@ -69,7 +73,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             } else {
                 holder.getOpponentName().setText(item.getFullName());
             }
-
             if (!TextUtils.isEmpty(item.getImage())) {
                 Glide.with(mContext).load(item.getImage())
                         .placeholder(loadAvatarImage(item, holder, false))

@@ -232,7 +232,7 @@ public class ContactsSyncManager {
                 }
             }
         }
-        return null;
+        return phoneNumber;
     }
 
     public Map<String, Contact> getCachedContacts() {

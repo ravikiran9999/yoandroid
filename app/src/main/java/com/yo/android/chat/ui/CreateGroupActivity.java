@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,7 +48,7 @@ import retrofit2.Response;
 
 public class CreateGroupActivity extends BaseActivity implements View.OnClickListener {
 
-    private TextView groupName;
+    private EditText groupName;
     private ListView selectedList;
     private ArrayList<Contact> selectedContactsArrayList;
     private String mGroupName;
@@ -75,7 +76,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         ButterKnife.bind(this);
 
         cameraIntent.setActivity(this);
-        groupName = (TextView) findViewById(R.id.et_new_chat_group_name);
+        groupName = (EditText) findViewById(R.id.et_new_chat_group_name);
         TextView addContactIcon = (TextView) findViewById(R.id.add_contact);
         selectedList = (ListView) findViewById(R.id.selected_contacts_list);
         ContactsArrayList = new ArrayList<>();

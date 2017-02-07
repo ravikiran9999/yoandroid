@@ -10,8 +10,8 @@
         android:id="@+id/row_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardPreventCornerOverlap="false"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        card_view:cardPreventCornerOverlap="false">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -30,11 +30,12 @@
                 android:layout_marginStart="16dp"
                 android:src="@drawable/dynamic_profile" />
 
-            <LinearLayout android:id="@+id/layout"
+            <LinearLayout
+                android:id="@+id/layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/tv_time_stamp"
+                android:layout_toLeftOf="@+id/time_layout"
                 android:layout_toRightOf="@+id/imv_chat_room_pic"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
@@ -74,24 +75,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/imv_chat_room_pic"
-                android:layout_toRightOf="@+id/imv_chat_room_pic"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/light_gray"
-                />
+                android:layout_toRightOf="@+id/imv_chat_room_pic"
+                android:background="@color/light_gray" />
 
-            <TextView
-                android:id="@+id/tv_time_stamp"
+            <LinearLayout
+                android:id="@+id/time_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
                 android:gravity="center_vertical"
-                android:textColor="@color/dialpad_icon_tint"
-                android:textSize="12sp"
-                tools:text="1 hours ago" />
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <TextView
+                    android:id="@+id/tv_room_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dialpad_icon_tint"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:text="1 hours ago" />
+
+                <TextView
+                    android:id="@+id/tv_time_stamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dialpad_icon_tint"
+                    android:textSize="12sp"
+                    tools:text="1 hours ago" />
+            </LinearLayout>
         </RelativeLayout>
 
 
