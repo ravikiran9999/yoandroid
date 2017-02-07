@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.yo.android.R;
@@ -88,25 +89,23 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
             editBirth.setText(edit);
             editBirth.setOnClickListener(this);
             editProfile.setVisibility(View.GONE);
-            String dob=preferenceEndPoint.getStringPreference(Constants.DOB_TEMP);
+            String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP);
             editProfile.setText(dob);
 
-        }else if(key.equalsIgnoreCase(Constants.FIRST_NAME)){
-            String firstName=preferenceEndPoint.getStringPreference(Constants.FIRST_NAME);
+        } else if (key.equalsIgnoreCase(Constants.FIRST_NAME)) {
+            String firstName = preferenceEndPoint.getStringPreference(Constants.FIRST_NAME);
             editProfile.setText(firstName);
-        }else if(key.equalsIgnoreCase(Constants.USER_STATUS)){
+        } else if (key.equalsIgnoreCase(Constants.USER_STATUS)) {
 
-            String userStatus=preferenceEndPoint.getStringPreference(Constants.USER_STATUS);
+            String userStatus = preferenceEndPoint.getStringPreference(Constants.USER_STATUS);
             editProfile.setText(userStatus);
-        }else if(key.equalsIgnoreCase(Constants.EMAIL)){
-
-            String email=preferenceEndPoint.getStringPreference(Constants.EMAIL);
+        } else if (key.equalsIgnoreCase(Constants.EMAIL)) {
+            String email = preferenceEndPoint.getStringPreference(Constants.EMAIL);
             editProfile.setText(email);
-        }else{
+        } else {
             getActivity().onBackPressed();
         }
     }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -142,20 +141,28 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
      * Save Edited Values in shared preferences
      */
     private void saveEditedValue() {
+
+        String text = editProfile.getText().toString();
+
         if (key.equalsIgnoreCase(Constants.DOB_TEMP)) {
             preferenceEndPoint.saveStringPreference(key, editBirth.getText().toString());
             getActivity().onBackPressed();
         }else if(key.equalsIgnoreCase(Constants.FIRST_NAME)){
-            preferenceEndPoint.saveStringPreference(key,editProfile.getText().toString());
+            preferenceEndPoint.saveStringPreference(key,text);
             getActivity().onBackPressed();
         }else if(key.equalsIgnoreCase(Constants.DOB)){
-            preferenceEndPoint.saveStringPreference(key,editProfile.getText().toString());
+
+            preferenceEndPoint.saveStringPreference(key,text);
             getActivity().onBackPressed();
-        }else if(key.equalsIgnoreCase(Constants.EMAIL)){
-            preferenceEndPoint.saveStringPreference(key,editProfile.getText().toString());
-            getActivity().onBackPressed();
+        }else if(key.equalsIgnoreCase(Constants.EMAIL)) {
+            if(!isValidMail(text)){
+                Toast.makeText(getActivity(),getResources().getString(R.string.invalid_email),Toast.LENGTH_LONG).show();
+            }else{
+                preferenceEndPoint.saveStringPreference(key,text);
+                getActivity().onBackPressed();
+            }
         }else {
-            String text = editProfile.getText().toString();
+
             if (key.equalsIgnoreCase(Constants.PHONE_NO_TEMP) && !isValidMobile(text)) {
                 mToastFactory.showToast(getString(R.string.valid_phone));
             } else if (key.equalsIgnoreCase(Constants.EMAIL_TEMP) && !isValidMail(text)) {
