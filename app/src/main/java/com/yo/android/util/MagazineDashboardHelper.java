@@ -121,7 +121,8 @@ public class MagazineDashboardHelper {
                 }
                 magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                 magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                //magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
 
             }
         });
@@ -209,7 +210,8 @@ public class MagazineDashboardHelper {
                 }
                 magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                 magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                //magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
 
             }
         });
@@ -282,7 +284,8 @@ public class MagazineDashboardHelper {
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                    //magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                    magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
 
                 }
             });
@@ -345,7 +348,8 @@ public class MagazineDashboardHelper {
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                    //magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                    magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
 
                 }
             });

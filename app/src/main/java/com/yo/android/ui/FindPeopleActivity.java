@@ -50,6 +50,7 @@ public class FindPeopleActivity extends BaseActivity {
     private SearchView searchView;
     private Call<List<FindPeople>> call;
     private ImageView imvEmptyFindPeople;
+    private TextView networkFailureText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class FindPeopleActivity extends BaseActivity {
         lvFindPeople.setOnScrollListener(onScrollListener());
         imvEmptyFindPeople = (ImageView) findViewById(R.id.imv_empty_followings);
         imvEmptyFindPeople.setImageResource(R.drawable.ic_empty_find_people);
+        networkFailureText = (TextView) findViewById(R.id.network_failure);
         originalList = new ArrayList<>();
 
         lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -120,11 +122,13 @@ public class FindPeopleActivity extends BaseActivity {
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.GONE);
                     originalList = response.body();
+                    networkFailureText.setVisibility(View.GONE);
 
                 } else {
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
+                    networkFailureText.setVisibility(View.GONE);
                 }
             }
 
@@ -132,8 +136,9 @@ public class FindPeopleActivity extends BaseActivity {
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                 dismissProgressDialog();
                 noData.setVisibility(View.GONE);
-                llNoPeople.setVisibility(View.VISIBLE);
+                llNoPeople.setVisibility(View.GONE);
                 lvFindPeople.setVisibility(View.GONE);
+                networkFailureText.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -250,6 +255,7 @@ public class FindPeopleActivity extends BaseActivity {
                 lvFindPeople.setVisibility(View.VISIBLE);
                 noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.GONE);
+                networkFailureText.setVisibility(View.GONE);
                 return true;
             }
         });
@@ -264,6 +270,7 @@ public class FindPeopleActivity extends BaseActivity {
             lvFindPeople.setVisibility(View.VISIBLE);
             noData.setVisibility(View.GONE);
             llNoPeople.setVisibility(View.GONE);
+            networkFailureText.setVisibility(View.GONE);
         } else {
             showProgressDialog();
             mProgressDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -283,20 +290,23 @@ public class FindPeopleActivity extends BaseActivity {
                         lvFindPeople.setVisibility(View.VISIBLE);
                         noData.setVisibility(View.GONE);
                         llNoPeople.setVisibility(View.GONE);
+                        networkFailureText.setVisibility(View.GONE);
 
                     } else {
                         noData.setVisibility(View.VISIBLE);
                         llNoPeople.setVisibility(View.VISIBLE);
                         lvFindPeople.setVisibility(View.GONE);
+                        networkFailureText.setVisibility(View.GONE);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                     dismissProgressDialog();
-                    noData.setVisibility(View.VISIBLE);
-                    llNoPeople.setVisibility(View.VISIBLE);
+                    noData.setVisibility(View.GONE);
+                    llNoPeople.setVisibility(View.GONE);
                     lvFindPeople.setVisibility(View.GONE);
+                    networkFailureText.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -321,6 +331,7 @@ public class FindPeopleActivity extends BaseActivity {
         if(originalList.size()> 0) {
             noData.setVisibility(View.GONE);
             llNoPeople.setVisibility(View.GONE);
+            networkFailureText.setVisibility(View.GONE);
         }
     }
 }

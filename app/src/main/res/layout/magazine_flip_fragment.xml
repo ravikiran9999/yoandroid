@@ -8,11 +8,11 @@
         android:id="@+id/network_failure"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:padding="10dp"
+        android:layout_gravity="center_horizontal"
+        android:padding="30dp"
         android:text="@string/connectivity_network_settings"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:textColor="@color/black"/>
 
 
     <FrameLayout
