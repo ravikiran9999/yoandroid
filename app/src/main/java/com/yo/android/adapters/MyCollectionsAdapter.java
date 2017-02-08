@@ -87,8 +87,8 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.LEFT | Gravity.TOP;
-            params.leftMargin = 5;
-            params.rightMargin = 5;
+            params.leftMargin = 10;
+            params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
 
         } else if(position == 0 && !"Follow more topics".equalsIgnoreCase(item.getName())) {
@@ -96,8 +96,8 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.LEFT | Gravity.TOP;
-            params.leftMargin = 5;
-            params.rightMargin = 5;
+            params.leftMargin = 10;
+            params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
         } else {
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.black));
