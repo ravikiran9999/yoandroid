@@ -3,10 +3,13 @@ package com.yo.android.voip;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,10 +28,12 @@ import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
+import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Util;
@@ -87,6 +92,18 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
     public static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
+    public static final String AUTHORITY = YoAppContactContract.CONTENT_AUTHORITY;
+
+    /**
+     * The default sort order for this table
+     */
+    public static final String DEFAULT_SORT_ORDER = "date DESC";
+    /**
+     * The content:// style URL for this table
+     */
+    public static final Uri CONTENT_URI =
+            Uri.parse("content://" + AUTHORITY + "/callLogs");
+
     @Inject
     ContactsSyncManager mContactsSyncManager;
     private ServiceConnection connection = new ServiceConnection() {
@@ -128,7 +145,29 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER_NO));
 
         if (getIntent().hasExtra(VoipConstants.PSTN) && getIntent().getBooleanExtra(VoipConstants.PSTN, false)) {
-            callerName.setText(getIntent().getStringExtra(DISPLAY_NUMBER));
+            String phoneName = Helper.getContactName(this, getIntent().getStringExtra(DISPLAY_NUMBER));
+            if(phoneName !=null) {
+                callerName.setText(phoneName);
+            } else {
+                final ContentResolver resolver = getContentResolver();
+                Cursor c = null;
+                try {
+                    c = resolver.query(
+                            CONTENT_URI,
+                            null,
+                            CallLog.Calls.NUMBER +" = "+ getIntent().getStringExtra(DISPLAY_NUMBER),
+                            null,
+                            DEFAULT_SORT_ORDER);
+                    if (c == null || !c.moveToFirst()) {
+
+                    } else {
+                     callerName.setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
+
+                    }
+                } finally {
+                    if (c != null) c.close();
+                }
+            }
         } else if (getIntent().getStringExtra(CALLER_NAME) != null) {
             callerName.setText(getIntent().getStringExtra(CALLER_NAME));
         } else if (contact != null && contact.getName() != null) {
@@ -143,7 +182,29 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                     mLog.e(TAG, "" + e);
                 }
             } else if (stringExtra != null) {
-                callerName.setText(stringExtra);
+                String phoneName = Helper.getContactName(this, stringExtra);
+                if(phoneName != null) {
+                    callerName.setText(phoneName);
+                } else {
+                    final ContentResolver resolver = getContentResolver();
+                    Cursor c = null;
+                    try {
+                        c = resolver.query(
+                                CONTENT_URI,
+                                null,
+                                CallLog.Calls.NUMBER +" = "+ getIntent().getStringExtra(DISPLAY_NUMBER),
+                                null,
+                                DEFAULT_SORT_ORDER);
+                        if (c == null || !c.moveToFirst()) {
+
+                        } else {
+                            callerName.setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
+
+                        }
+                    } finally {
+                        if (c != null) c.close();
+                    }
+                }
             }
         }
 
