@@ -2,6 +2,7 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -32,6 +33,7 @@ import com.yo.android.model.UserProfile;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -165,7 +167,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private void setDataFromPreferences() {
         if (contact != null) {
             getSupportActionBar().setTitle(getResources().getString(R.string.profile));
-
+            Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
 
             if (roomName != null) {
                 Glide.with(this)
@@ -178,20 +180,25 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 membersList.setVisibility(View.VISIBLE);
                 profileNumber.setVisibility(View.GONE);
             } else {
-                Glide.with(this)
-                        .load(contact.getImage())
-                        .placeholder(R.drawable.dynamic_profile)
-                        .crossFade()
-                        .dontAnimate()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(profileImage);
+                if (!TextUtils.isEmpty(contact.getImage())) {
+                    Glide.with(this)
+                            .load(contact.getImage())
+                            .placeholder(R.drawable.dynamic_profile)
+                            .crossFade()
+                            .dontAnimate()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(profileImage);
+                } else if (mContact != null && !TextUtils.isDigitsOnly(mContact.getName())) {
+                    Drawable drawable = Util.showFirstLetter(this, mContact.getName());
+                    profileImage.setImageDrawable(drawable);
+                }
                 membersList.setVisibility(View.GONE);
                 profileNumber.setVisibility(View.VISIBLE);
             }
             String name = roomName == null ? getString(R.string.name) : getString(R.string.group_name);
             String title = roomName == null ? getString(R.string.prompt_phone_number) : getString(R.string.participants);
             numberTitle.setText(title);
-            Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
+
 
             if (mContact != null) {
 
