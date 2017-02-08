@@ -23,6 +23,7 @@ import com.yo.android.model.Room;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.io.File;
 import java.util.regex.Matcher;
@@ -77,22 +78,15 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                 Glide.with(mContext).load(item.getImage())
                         .placeholder(loadAvatarImage(item, holder, false))
                         .error(loadAvatarImage(item, holder, false))
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
                         .into(holder.getChatRoomPic());
             } else {
                 if (item.getFullName() != null && item.getFullName().length() >= 1 && !TextUtils.isDigitsOnly(item.getFullName())) {
                     if (Settings.isTitlePicEnabled) {
                         if (item.getFullName() != null && item.getFullName().length() >= 1) {
-                            String title = String.valueOf(item.getFullName().charAt(0)).toUpperCase();
-                            Pattern p = Pattern.compile("^[a-zA-Z]");
-                            Matcher m = p.matcher(title);
-                            boolean b = m.matches();
-                            if (b) {
-                                Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getMobileNumber()));
-                                holder.getChatRoomPic().setImageDrawable(drawable);
-                            } else {
-                                holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
-                            }
+                            Drawable drawable = Util.showFirstLetter(mContext, item.getFullName());
+                            holder.getChatRoomPic().setImageDrawable(drawable);
                         }
                     } else {
                         holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
@@ -118,7 +112,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                         .priority(Priority.HIGH)
                         .dontAnimate()
                         .error(loadAvatarImage(item, holder, true))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .into(holder.getChatRoomPic());
             } catch (Exception e) {
                 e.printStackTrace();

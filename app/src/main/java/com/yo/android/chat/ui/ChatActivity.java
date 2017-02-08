@@ -264,23 +264,38 @@ public class ChatActivity extends BaseActivity {
                             }
                         });
             } else {
-                Glide.with(this).load(mOpponentImg)
-                        .asBitmap().centerCrop()
-                        .dontAnimate()
-                        .placeholder(loadAvatarImage(imageView, false))
-                        .error(loadAvatarImage(imageView, false))
-                        .into(new BitmapImageViewTarget(imageView) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(getResources(), resource);
-                                circularBitmapDrawable.setCircular(true);
-                                if (imageView.getTag(Settings.imageTag) != null) {
-                                    imageView.setTag(Settings.imageTag, circularBitmapDrawable);
+                if (!TextUtils.isEmpty(mOpponentImg)) {
+                    Glide.with(this).load(mOpponentImg)
+                            .asBitmap().centerCrop()
+                            .dontAnimate()
+                            .placeholder(loadAvatarImage(imageView, false))
+                            .error(loadAvatarImage(imageView, false))
+                            .into(new BitmapImageViewTarget(imageView) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    RoundedBitmapDrawable circularBitmapDrawable =
+                                            RoundedBitmapDrawableFactory.create(getResources(), resource);
+                                    circularBitmapDrawable.setCircular(true);
+                                    if (imageView.getTag(Settings.imageTag) != null) {
+                                        imageView.setTag(Settings.imageTag, circularBitmapDrawable);
+                                    }
+                                    imageView.setImageDrawable((Drawable) imageView.getTag(Settings.imageTag));
                                 }
-                                imageView.setImageDrawable((Drawable) imageView.getTag(Settings.imageTag));
+                            });
+                }else {
+                    if (title != null && title.length() >= 1 && !TextUtils.isDigitsOnly(title)) {
+                        if (Settings.isTitlePicEnabled) {
+                            if (title != null && title.length() >= 1) {
+                                Drawable drawable = Util.showFirstLetter(this, title);
+                                imageView.setImageDrawable(drawable);
                             }
-                        });
+                        } else {
+                            imageView.setImageDrawable(getResources().getDrawable(R.drawable.dynamic_profile));
+                        }
+                    } else {
+                        imageView.setImageDrawable(getResources().getDrawable(R.drawable.dynamic_profile));
+                    }
+                }
             }
 
             titleView.setOnClickListener(new View.OnClickListener() {
