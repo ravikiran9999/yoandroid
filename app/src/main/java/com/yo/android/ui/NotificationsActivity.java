@@ -134,7 +134,7 @@ public class NotificationsActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(Call<FindPeople> call, Throwable t) {
-
+                            lvNotifications.setEnabled(true);
                         }
                     });
 
@@ -162,7 +162,7 @@ public class NotificationsActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(Call<Articles> call, Throwable t) {
-
+                            lvNotifications.setEnabled(true);
                         }
                     });
 
@@ -179,6 +179,8 @@ public class NotificationsActivity extends BaseActivity {
                         startActivity(new Intent(NotificationsActivity.this, InviteActivity.class));
                     } else if (redirectId.equals("AddBalance")) {
                         startActivity(new Intent(NotificationsActivity.this, TabsHeaderActivity.class));
+                    } else {
+                        lvNotifications.setEnabled(true);
                     }
 
                 }
