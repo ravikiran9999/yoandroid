@@ -58,7 +58,7 @@ public class NotificationsActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         EventBus.getDefault().register(this);
-        preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
+
         preferenceEndPoint.saveBooleanPreference("isNotifications", true);
 
         notificationsAdapter = new NotificationsAdapter(this);
@@ -67,8 +67,6 @@ public class NotificationsActivity extends BaseActivity {
         llNoNotifications = (LinearLayout) findViewById(R.id.ll_no_notifications);
         networkFailureText = (TextView) findViewById(R.id.network_failure);
         lvNotifications.setAdapter(notificationsAdapter);
-
-        NotificationCache.clearNotifications();
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
@@ -84,6 +82,8 @@ public class NotificationsActivity extends BaseActivity {
                     return;
                 }
                 if (response != null && response.body().size() > 0) {
+                    preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
+                    NotificationCache.clearNotifications();
                     List<Notification> notificationList = response.body();
                     notificationsAdapter.addItems(notificationList);
                     lvNotifications.setVisibility(View.VISIBLE);
@@ -217,6 +217,8 @@ public class NotificationsActivity extends BaseActivity {
                         return;
                     }
                     if (response != null && response.body().size() > 0) {
+                        NotificationCache.clearNotifications();
+                        preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
                         List<Notification> notificationList = response.body();
                         notificationsAdapter.addItems(notificationList);
                         lvNotifications.setVisibility(View.VISIBLE);
