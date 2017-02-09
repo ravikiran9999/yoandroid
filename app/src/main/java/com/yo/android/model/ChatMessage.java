@@ -7,15 +7,23 @@ package com.yo.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.ServerValue;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Class name will be tablename
  */
-
+@JsonIgnoreProperties(ignoreUnknown=true)
 @IgnoreExtraProperties
 public class ChatMessage implements Parcelable {
 
@@ -49,6 +57,10 @@ public class ChatMessage implements Parcelable {
     private String chatProfileUserName;
     private String roomName;
 
+    private long serverTimeStampReceived;
+
+    private Map<String, String> serverTimeStamp = new HashMap<>();
+
 
     public ChatMessage() {
         // Default constructor required for calls to DataSnapshot.getValue(ChatMessage.class)
@@ -71,6 +83,29 @@ public class ChatMessage implements Parcelable {
         this.youserId = in.readString();
         this.chatProfileUserName = in.readString();
         this.roomName = in.readString();
+
+        /*int size = in.readInt();
+        for (int i = 0; i < size; i++) {
+            String key = in.readString();
+            String value = in.readString();
+            serverTimeStamps.put(key, value);
+        }*/
+    }
+
+    public Map<String, String> getServerTimeStamp() {
+        return serverTimeStamp;
+    }
+
+    public void setServerTimeStamp(Map<String, String> serverTimeStamp) {
+        this.serverTimeStamp = serverTimeStamp;
+    }
+
+    public long getServerTimeStampReceived() {
+        return serverTimeStampReceived;
+    }
+
+    public void setServerTimeStampReceived(long serverTimeStampReceived) {
+        this.serverTimeStampReceived = serverTimeStampReceived;
     }
 
     public int getMsgID() {
@@ -127,7 +162,7 @@ public class ChatMessage implements Parcelable {
 
     public void setTime(long time) {
         this.time = time;
-        this.stickeyHeader = Util.getChatListTimeFormat(time);
+        //this.stickeyHeader = Util.getChatListTimeFormat(time);
     }
 
     public boolean isReadUnreadStatus() {
@@ -163,8 +198,8 @@ public class ChatMessage implements Parcelable {
     }
 
 
-    public String getStickeyHeader() {
-        return stickeyHeader;
+    public static String getStickeyHeader(long time) {
+        return Util.getChatListTimeFormat(time);
     }
 
     public int getDelivered() {
@@ -237,6 +272,12 @@ public class ChatMessage implements Parcelable {
         dest.writeString(youserId);
         dest.writeString(chatProfileUserName);
         dest.writeString(roomName);
+
+        /*dest.writeInt(serverTimeStamps.size());
+        for (Map.Entry<String, String> entry : serverTimeStamps.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeString(entry.getValue());
+        }*/
     }
 
 

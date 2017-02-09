@@ -306,8 +306,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
                 room.setYouserId(chatMessage.getYouserId());
                 if (dataSnapshot.hasChildren()) {
                     room.setLastChat(chatMessage.getMessage());
@@ -368,7 +367,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 try {
 
-                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                    ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
                     if (dataSnapshot.hasChildren()) {
                         room.setLastChat("");
                         room.setImages(false);
