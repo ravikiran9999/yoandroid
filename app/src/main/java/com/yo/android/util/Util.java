@@ -40,6 +40,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
@@ -50,6 +52,7 @@ import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.model.Articles;
+import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Room;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.model.dialer.OpponentDetails;
@@ -62,6 +65,9 @@ import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.vox.BalanceHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -451,7 +457,7 @@ public class Util {
                                 if (gridView != null) {
                                     gridView.setVisibility(View.GONE);
                                 }
-                            } else if((activity instanceof FollowersActivity && TextUtils.isEmpty(newText) && ((FollowersActivity)activity).isNetworkFailure) || (activity instanceof FollowingsActivity && TextUtils.isEmpty(newText) && ((FollowingsActivity)activity).isNetworkFailure)) {
+                            } else if ((activity instanceof FollowersActivity && TextUtils.isEmpty(newText) && ((FollowersActivity) activity).isNetworkFailure) || (activity instanceof FollowingsActivity && TextUtils.isEmpty(newText) && ((FollowingsActivity) activity).isNetworkFailure)) {
                                 llNoPeople.setVisibility(View.GONE);
                                 noData.setVisibility(View.GONE);
                                 networkFailureText.setVisibility(View.VISIBLE);
@@ -671,6 +677,24 @@ public class Util {
 
     public static String getChatListTimeFormat(long time) {
         Calendar smsTime = Calendar.getInstance();
+
+        //===================================
+
+        smsTime.setTime(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+        //Here you say to java the initial timezone. This is the secret
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        //Will print in UTC
+        Log.i("Util UTC", sdf.format(smsTime.getTime()));
+
+        //Here you set to your timezone
+        sdf.setTimeZone(TimeZone.getDefault());
+        //Will print on your default Timezone
+        Log.i("Util default Timezone", sdf.format(smsTime.getTime()));
+
+        //===================================
+
         smsTime.setTimeInMillis(time);
         Calendar now = Calendar.getInstance();
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
@@ -1097,5 +1121,23 @@ public class Util {
 
         }
         return mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+    }
+
+    public static ChatMessage recreateResponse(DataSnapshot dataSnapshot) {
+        String convertToString = dataSnapshot.getValue().toString();
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(convertToString);
+            Long serverTimeStampKey = (Long) jsonObj.get("serverTimeStamp");
+
+            if (serverTimeStampKey != null) {
+                jsonObj.remove("serverTimeStamp");
+                jsonObj.put("serverTimeStampReceived", serverTimeStampKey);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return new Gson().fromJson(jsonObj.toString(), ChatMessage.class);
     }
 }
