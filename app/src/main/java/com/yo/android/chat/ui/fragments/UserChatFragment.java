@@ -114,6 +114,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
 
     private static final String TAG = "UserChatFragment";
+    private static final String DummyMsgKey = "123456";
 
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
@@ -365,7 +366,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         for (int i = selected.size() - 1; i >= 0; i--) {
                             if (selected.valueAt(i)) {
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
-                                roomReference.child(Long.toString(selectedItem.getTime())).removeValue();
+                                roomReference.child(selectedItem.getMessageKey()).removeValue();
                                 userChatAdapter.removeItem(selectedItem);
                                 chatMessageArray.remove(selectedItem);
                             }
@@ -557,6 +558,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(msgId);
+        chatMessage.setMessageKey(DummyMsgKey);
         if (!TextUtils.isEmpty(roomType)) {
             chatMessage.setRoomName(roomType);
         }
@@ -621,7 +623,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             });
 
             Map<String, Object> updateMessageMap = new ObjectMapper().convertValue(chatMessage, Map.class);
-            //final Firebase roomChildReference = roomReference.child(timeStp);
             final Firebase roomChildReference = roomReference.push();
             roomChildReference.updateChildren(updateMessageMap, new Firebase.CompletionListener() {
 
@@ -641,9 +642,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        chatMessage.setSent(1);
+                        chatMessage.setMessageKey(firebase.getKey());
+                        //chatMessage.setSent(1);
                         userChatAdapter.notifyDataSetChanged();
-
+                        Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
+                        roomChildReference.updateChildren(hashtaghMap);
                     }
                 }
             });
@@ -900,7 +903,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setTime(timestamp);
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
-        //chatMessage.setMsgID(mMessageId);
+        chatMessage.setMessageKey(DummyMsgKey);
+        chatMessage.setMsgID(msgId);
         chatMessage.setRoomId(childRoomId);
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
