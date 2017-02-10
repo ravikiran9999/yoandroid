@@ -56,6 +56,7 @@ public class ChatMessage implements Parcelable {
     private String youserId;
     private String chatProfileUserName;
     private String roomName;
+    private String messageKey;
 
     private long serverTimeStampReceived;
 
@@ -83,13 +84,21 @@ public class ChatMessage implements Parcelable {
         this.youserId = in.readString();
         this.chatProfileUserName = in.readString();
         this.roomName = in.readString();
-
+        this.messageKey = in.readString();
         /*int size = in.readInt();
         for (int i = 0; i < size; i++) {
             String key = in.readString();
             String value = in.readString();
             serverTimeStamps.put(key, value);
         }*/
+    }
+
+    public String getMessageKey() {
+        return messageKey;
+    }
+
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
     }
 
     public Map<String, String> getServerTimeStamp() {
@@ -272,7 +281,7 @@ public class ChatMessage implements Parcelable {
         dest.writeString(youserId);
         dest.writeString(chatProfileUserName);
         dest.writeString(roomName);
-
+        dest.writeString(messageKey);
         /*dest.writeInt(serverTimeStamps.size());
         for (Map.Entry<String, String> entry : serverTimeStamps.entrySet()) {
             dest.writeString(entry.getKey());
@@ -333,7 +342,9 @@ public class ChatMessage implements Parcelable {
             return false;
         if (chatProfileUserName != null ? !chatProfileUserName.equals(that.chatProfileUserName) : that.chatProfileUserName != null)
             return false;
-        return roomName != null ? roomName.equals(that.roomName) : that.roomName == null;
+        if (roomName != null ? !roomName.equals(that.roomName) : that.roomName != null)
+            return false;
+        return messageKey != null ? messageKey.equals(that.messageKey) : that.messageKey == null;
 
     }
 
@@ -358,6 +369,7 @@ public class ChatMessage implements Parcelable {
         result = 31 * result + (youserId != null ? youserId.hashCode() : 0);
         result = 31 * result + (chatProfileUserName != null ? chatProfileUserName.hashCode() : 0);
         result = 31 * result + (roomName != null ? roomName.hashCode() : 0);
+        result = 31 * result + (messageKey != null ? messageKey.hashCode() : 0);
         return result;
     }
 }

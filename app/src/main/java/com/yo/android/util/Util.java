@@ -103,6 +103,8 @@ public class Util {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     private static final int SIX = 6;
+    public static final String ServerTimeStamp = "serverTimeStamp";
+    public static final String ServerTimeStampReceived = "serverTimeStampReceived";
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         return createNotification(context, title, body, clzz, intent, true);
@@ -676,35 +678,27 @@ public class Util {
     }
 
     public static String getChatListTimeFormat(long time) {
-        Calendar smsTime = Calendar.getInstance();
+        try {
 
-        //===================================
-
-        smsTime.setTime(new Date());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-        //Here you say to java the initial timezone. This is the secret
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        //Will print in UTC
-        Log.i("Util UTC", sdf.format(smsTime.getTime()));
-
-        //Here you set to your timezone
-        sdf.setTimeZone(TimeZone.getDefault());
-        //Will print on your default Timezone
-        Log.i("Util default Timezone", sdf.format(smsTime.getTime()));
-
-        //===================================
-
-        smsTime.setTimeInMillis(time);
-        Calendar now = Calendar.getInstance();
-        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
-            return "Today";
-        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
-            return "Yesterday";
-        } else {
-            SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
-            return format.format(new Date(time));
+            Calendar smsTime = Calendar.getInstance(TimeZone.getDefault());
+            smsTime.setTimeInMillis(time);
+            Calendar now = Calendar.getInstance(TimeZone.getDefault());
+            if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
+                return "Today";
+            } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
+                return "Yesterday";
+            } else {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy");
+                simpleDateFormat.setTimeZone(TimeZone.getDefault());
+                String date = simpleDateFormat.format(new Date(time));
+                if(!date.equalsIgnoreCase("Jan 01, 1970")) {
+                    return date;
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
         }
+        return "";
     }
 
     public static void changeSearchProperties(Menu menu) {
@@ -1118,26 +1112,28 @@ public class Util {
         if (b) {
             Drawable drawable = TextDrawable.builder().round().build(title, ColorGenerator.MATERIAL.getColor(name));
             return drawable;
-
         }
         return mContext.getResources().getDrawable(R.drawable.dynamic_profile);
     }
 
     public static ChatMessage recreateResponse(DataSnapshot dataSnapshot) {
-        String convertToString = dataSnapshot.getValue().toString();
-        JSONObject jsonObj = null;
+        String toString = dataSnapshot.getValue().toString();
+        ChatMessage chatMessage = new ChatMessage();
         try {
-            jsonObj = new JSONObject(convertToString);
-            Long serverTimeStampKey = (Long) jsonObj.get("serverTimeStamp");
-
-            if (serverTimeStampKey != null) {
-                jsonObj.remove("serverTimeStamp");
-                jsonObj.put("serverTimeStampReceived", serverTimeStampKey);
+            JSONObject jsonObj = new JSONObject(toString);
+            if(jsonObj.has(ServerTimeStamp)) {
+                Long serverTimeStampKey = (Long) jsonObj.get(ServerTimeStamp);
+                if (serverTimeStampKey != null) {
+                    jsonObj.remove(ServerTimeStamp);
+                    jsonObj.put(ServerTimeStampReceived, serverTimeStampKey);
+                    chatMessage =  new Gson().fromJson(jsonObj.toString(), ChatMessage.class);
+                }
+            } else if(jsonObj.has(ServerTimeStampReceived)) {
+                chatMessage = dataSnapshot.getValue(ChatMessage.class);
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return new Gson().fromJson(jsonObj.toString(), ChatMessage.class);
+        return chatMessage;
     }
 }
