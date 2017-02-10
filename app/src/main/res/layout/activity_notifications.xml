@@ -4,6 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/network_failure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="30dp"
+        android:text="@string/connectivity_network_settings"
+        android:visibility="gone"
+        android:textColor="@color/black"/>
+
     <ListView
         android:id="@+id/lv_notifications"
         android:layout_width="match_parent"

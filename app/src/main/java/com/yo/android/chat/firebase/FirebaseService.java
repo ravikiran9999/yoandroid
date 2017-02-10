@@ -1,6 +1,5 @@
 package com.yo.android.chat.firebase;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +16,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import com.firebase.client.Query;
+import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -32,6 +32,10 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
+import com.yo.android.util.Util;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,7 +65,8 @@ public class FirebaseService extends InjectedService {
     private static final int STYLE_PICTURE = 3;
     private static final int STYLE_TEXT_WITH_ACTION = 4;
 
-
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
     @Inject
     FireBaseHelper fireBaseHelper;
 
@@ -114,8 +119,6 @@ public class FirebaseService extends InjectedService {
 
     private void getAllRooms() {
         authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-        //Activity activity = (Activity);
-        //fireBaseHelper.signInWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
         mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -160,8 +163,7 @@ public class FirebaseService extends InjectedService {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
-
-                        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                        ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
                         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
                         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
@@ -255,7 +257,8 @@ public class FirebaseService extends InjectedService {
                 } else if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
                     data.setDescription(Constants.PHOTO);
                 }
-                data.setSenderName(chatMessage.getSenderID());
+                String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(chatMessage.getSenderID());
+                data.setSenderName(nameFromNumber);
 
                 if (!notificationList.contains(data)) {
                     notificationList.add(0, data);//always insert new notification on top

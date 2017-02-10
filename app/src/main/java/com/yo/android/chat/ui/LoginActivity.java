@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -151,17 +152,18 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                 startActivityForResult(intent,SELECTED_OK);
             }
         });
-//        spCountrySpinner.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-//               //Util.hideKeyboard(LoginActivity.this, v);
-//                return false;
-//            }
-//        });
+
+        mCountryCode.setOnTouchListener(new View.OnTouchListener() {
+           @Override
+           public boolean onTouch(View v, MotionEvent event) {
+
+              Util.hideKeyboard(LoginActivity.this, v);
+              return false;
+           }
+       });
         mPhoneNumberView.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+           @Override
+           public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     //do here
                     attemptLogin();

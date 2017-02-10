@@ -152,9 +152,6 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             loadAvatarImage(holder, item);
         }
 
-        //holder.getContactMail().setText(item.getEmailId());
-
-
         holder.getMessageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

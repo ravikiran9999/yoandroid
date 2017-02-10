@@ -28,6 +28,7 @@ public class Room implements Parcelable {
     private long time;
     private String fullName;
     private String mobileNumber;
+    private String phoneNumber;
     private String voxUserName = "";
     private String youserId;
     private List<GroupMembers> groupMembers = new ArrayList<>();
@@ -133,6 +134,14 @@ public class Room implements Parcelable {
         this.groupMembers = groupMembers;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -149,6 +158,7 @@ public class Room implements Parcelable {
         dest.writeString(mobileNumber);
         dest.writeString(voxUserName);
         dest.writeString(youserId);
+        dest.writeString(phoneNumber);
     }
 
     public String getYouserId() {
@@ -170,6 +180,7 @@ public class Room implements Parcelable {
         this.mobileNumber = in.readString();
         this.voxUserName = in.readString();
         this.youserId = in.readString();
+        this.phoneNumber = in.readString();
     }
 
     public static final Parcelable.Creator<Room> CREATOR = new Parcelable.Creator<Room>() {

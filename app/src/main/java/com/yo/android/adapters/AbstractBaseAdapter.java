@@ -19,6 +19,8 @@ import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -200,6 +202,17 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
     public void performContactsSearch(final @NonNull String key, TextView noSearchResult, boolean isFromClose) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
+            try {
+                Collections.sort((ArrayList<Room>)mOriginalList, new Comparator<Room>() {
+                    @Override
+                    public int compare(Room lhs, Room rhs) {
+                        return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             addItems(mOriginalList);
             if (mOriginalList.size() == 0 && !isFromClose) {
                 noSearchResult.setVisibility(View.VISIBLE);
@@ -219,12 +232,16 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
             for (T event : mOriginalList) {
 
                 if (((Room) event).getMobileNumber() != null && ((Room) event).getMobileNumber().contains(searchKey)) {
-                    temp.add(event);
+                    if (!temp.contains(event)) {
+                        temp.add(event);
+                    }
                 }
 
                 if (((Room) event).getFullName() != null && ((Room) event).getFullName().toLowerCase().contains(searchKey.toLowerCase())
                         || ((Room) event).getGroupName() != null && ((Room) event).getGroupName().toLowerCase().contains(searchKey.toLowerCase())) {
-                    temp.add(event);
+                    if (!temp.contains(event)) {
+                        temp.add(event);
+                    }
                 }
             }
             if (temp.size() == 0) {
@@ -261,7 +278,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
             }
 
-            if (temp.size() == 0 || temp.size() == 1 && contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ) {
+            if (temp.size() == 0 || temp.size() == 1 && contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
                 noSearchResult.setVisibility(View.VISIBLE);
             } else {
                 noSearchResult.setVisibility(View.GONE);

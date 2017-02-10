@@ -58,6 +58,7 @@ public class ImagePickHelper {
                 })
                 .show();
         dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
     }
 
 

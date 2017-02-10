@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcelable;
@@ -39,6 +40,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
@@ -49,8 +52,12 @@ import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.model.Articles;
+import com.yo.android.model.ChatMessage;
+import com.yo.android.model.Room;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.model.dialer.OpponentDetails;
+import com.yo.android.photo.TextDrawable;
+import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.StatusCodes;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FindPeopleActivity;
@@ -58,6 +65,9 @@ import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.vox.BalanceHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -79,6 +89,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.greenrobot.event.EventBus;
 import retrofit2.Response;
@@ -91,7 +103,6 @@ public class Util {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     private static final int SIX = 6;
-
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         return createNotification(context, title, body, clzz, intent, true);
@@ -355,23 +366,23 @@ public class Util {
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
                 if (adapter != null) {
-                   list =  adapter.performSearch(newText);
-                    if(list!=null && noData!=null && activity!=null){
+                    list = adapter.performSearch(newText);
+                    if (list != null && noData != null && activity != null) {
                         boolean isListEmpty = list.isEmpty();
-                        if(isListEmpty){
+                        if (isListEmpty) {
                             noData.setVisibility(View.VISIBLE);
-                            if(listView!=null){
+                            if (listView != null) {
                                 listView.setVisibility(View.GONE);
                             }
-                            if(gridView!=null){
+                            if (gridView != null) {
                                 gridView.setVisibility(View.GONE);
                             }
                             noData.setText(activity.getResources().getString(R.string.no_result_found));
-                        }else{
-                            if(listView!=null){
+                        } else {
+                            if (listView != null) {
                                 listView.setVisibility(View.VISIBLE);
                             }
-                            if(gridView!=null){
+                            if (gridView != null) {
                                 gridView.setVisibility(View.VISIBLE);
                             }
                             noData.setVisibility(View.GONE);
@@ -395,7 +406,7 @@ public class Util {
         });
     }
 
-    public static void preparePeopleSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView, final LinearLayout llNoPeople) {
+    public static void preparePeopleSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView, final LinearLayout llNoPeople, final TextView networkFailureText) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -422,22 +433,34 @@ public class Util {
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
                 if (adapter != null) {
-                    list =  adapter.performSearch(newText);
-                    if(list!=null && noData!=null && activity!=null){
+                    list = adapter.performSearch(newText);
+                    if (list != null && noData != null && activity != null) {
                         boolean isListEmpty = list.isEmpty();
-                        if(isListEmpty ){
-                            if(TextUtils.isEmpty(newText) && llNoPeople.getVisibility() == View.VISIBLE) {
+                        if (isListEmpty) {
+                            if (TextUtils.isEmpty(newText) && llNoPeople.getVisibility() == View.VISIBLE) {
                                 llNoPeople.setVisibility(View.VISIBLE);
                                 noData.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.GONE);
                                 if (listView != null) {
                                     listView.setVisibility(View.GONE);
                                 }
                                 if (gridView != null) {
                                     gridView.setVisibility(View.GONE);
                                 }
-                            } else if((activity instanceof FollowersActivity && TextUtils.isEmpty(newText) && ((FollowersActivity)activity).isEmptyDataSet) || (activity instanceof FollowingsActivity && TextUtils.isEmpty(newText) && ((FollowingsActivity)activity).isEmptyDataSet)) {
+                            } else if ((activity instanceof FollowersActivity && TextUtils.isEmpty(newText) && ((FollowersActivity) activity).isEmptyDataSet) || (activity instanceof FollowingsActivity && TextUtils.isEmpty(newText) && ((FollowingsActivity) activity).isEmptyDataSet)) {
                                 llNoPeople.setVisibility(View.VISIBLE);
                                 noData.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.GONE);
+                                if (listView != null) {
+                                    listView.setVisibility(View.GONE);
+                                }
+                                if (gridView != null) {
+                                    gridView.setVisibility(View.GONE);
+                                }
+                            } else if ((activity instanceof FollowersActivity && TextUtils.isEmpty(newText) && ((FollowersActivity) activity).isNetworkFailure) || (activity instanceof FollowingsActivity && TextUtils.isEmpty(newText) && ((FollowingsActivity) activity).isNetworkFailure)) {
+                                llNoPeople.setVisibility(View.GONE);
+                                noData.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.VISIBLE);
                                 if (listView != null) {
                                     listView.setVisibility(View.GONE);
                                 }
@@ -454,16 +477,18 @@ public class Util {
                                 }
                                 noData.setText(activity.getResources().getString(R.string.no_result_found));
                                 llNoPeople.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.GONE);
                             }
-                        }else{
-                            if(listView!=null){
+                        } else {
+                            if (listView != null) {
                                 listView.setVisibility(View.VISIBLE);
                             }
-                            if(gridView!=null){
+                            if (gridView != null) {
                                 gridView.setVisibility(View.VISIBLE);
                             }
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.GONE);
+                            networkFailureText.setVisibility(View.GONE);
                         }
 
                     }
@@ -511,17 +536,17 @@ public class Util {
                 Log.i(TAG, "onQueryTextChange: " + newText);
                 if (adapter != null) {
                     adapter.performTransferBalanceContactsSearch(newText);
-                 Log.i(TAG, "The list count is " + adapter.getCount());
-                    if(noData!=null && activity!=null && llNoPeople!=null){
-                        if(adapter.getCount() == 0 && menu.findItem(R.id.menu_search).isActionViewExpanded()){
+                    Log.i(TAG, "The list count is " + adapter.getCount());
+                    if (noData != null && activity != null && llNoPeople != null) {
+                        if (adapter.getCount() == 0 && menu.findItem(R.id.menu_search).isActionViewExpanded()) {
                             noData.setVisibility(View.VISIBLE);
                             llNoPeople.setVisibility(View.VISIBLE);
-                            if(listView!=null){
+                            if (listView != null) {
                                 listView.setVisibility(View.GONE);
                             }
                             noData.setText(activity.getResources().getString(R.string.no_result_found));
-                        }else{
-                            if(listView!=null){
+                        } else {
+                            if (listView != null) {
                                 listView.setVisibility(View.VISIBLE);
                             }
                             llNoPeople.setVisibility(View.GONE);
@@ -583,14 +608,14 @@ public class Util {
                 }
                 if (adapter != null) {
                     if (roomType.equalsIgnoreCase(Constants.CHAT_FRAG)) {
-                        adapter.performContactsSearch(newText, noSearchResult,isFromClose);
+                        adapter.performContactsSearch(newText, noSearchResult, isFromClose);
                     } else if (roomType.equalsIgnoreCase(Constants.DAILER_FRAG)) {
-                        adapter.performCallLogsSearch(newText, noSearchResult,isFromClose);
+                        adapter.performCallLogsSearch(newText, noSearchResult, isFromClose);
                     } else if (roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) || roomType.equalsIgnoreCase(Constants.CONT_FRAG)) {
                         String contactType = roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ? Constants.Yo_CONT_FRAG : Constants.CONT_FRAG;
-                        adapter.performYoContactsSearch(newText, contactType, noSearchResult,isFromClose);
-                    }else if(roomType.equalsIgnoreCase(Constants.INVITE_FRAG)){
-                        adapter.performContactsSearch(newText,noSearchResult,isFromClose);
+                        adapter.performYoContactsSearch(newText, contactType, noSearchResult, isFromClose);
+                    } else if (roomType.equalsIgnoreCase(Constants.INVITE_FRAG)) {
+                        adapter.performContactsSearch(newText, noSearchResult, isFromClose);
                     }
                 }
                 return true;
@@ -652,6 +677,24 @@ public class Util {
 
     public static String getChatListTimeFormat(long time) {
         Calendar smsTime = Calendar.getInstance();
+
+        //===================================
+
+        smsTime.setTime(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+        //Here you say to java the initial timezone. This is the secret
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        //Will print in UTC
+        Log.i("Util UTC", sdf.format(smsTime.getTime()));
+
+        //Here you set to your timezone
+        sdf.setTimeZone(TimeZone.getDefault());
+        //Will print on your default Timezone
+        Log.i("Util default Timezone", sdf.format(smsTime.getTime()));
+
+        //===================================
+
         smsTime.setTimeInMillis(time);
         Calendar now = Calendar.getInstance();
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
@@ -1065,5 +1108,36 @@ public class Util {
         intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
         intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);
         context.sendOrderedBroadcast(intent, null);
+    }
+
+    public static Drawable showFirstLetter(Context mContext, String name) {
+        String title = String.valueOf(name.charAt(0)).toUpperCase();
+        Pattern p = Pattern.compile("^[a-zA-Z]");
+        Matcher m = p.matcher(title);
+        boolean b = m.matches();
+        if (b) {
+            Drawable drawable = TextDrawable.builder().round().build(title, ColorGenerator.MATERIAL.getColor(name));
+            return drawable;
+
+        }
+        return mContext.getResources().getDrawable(R.drawable.dynamic_profile);
+    }
+
+    public static ChatMessage recreateResponse(DataSnapshot dataSnapshot) {
+        String convertToString = dataSnapshot.getValue().toString();
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(convertToString);
+            Long serverTimeStampKey = (Long) jsonObj.get("serverTimeStamp");
+
+            if (serverTimeStampKey != null) {
+                jsonObj.remove("serverTimeStamp");
+                jsonObj.put("serverTimeStampReceived", serverTimeStampKey);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return new Gson().fromJson(jsonObj.toString(), ChatMessage.class);
     }
 }

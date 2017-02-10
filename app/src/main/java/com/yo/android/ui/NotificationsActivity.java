@@ -43,6 +43,7 @@ public class NotificationsActivity extends BaseActivity {
     private NotificationsAdapter notificationsAdapter;
     private TextView noData;
     private LinearLayout llNoNotifications;
+    private TextView networkFailureText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +58,15 @@ public class NotificationsActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         EventBus.getDefault().register(this);
-        preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
+
         preferenceEndPoint.saveBooleanPreference("isNotifications", true);
 
         notificationsAdapter = new NotificationsAdapter(this);
         lvNotifications = (ListView) findViewById(R.id.lv_notifications);
         noData = (TextView) findViewById(R.id.no_data);
         llNoNotifications = (LinearLayout) findViewById(R.id.ll_no_notifications);
+        networkFailureText = (TextView) findViewById(R.id.network_failure);
         lvNotifications.setAdapter(notificationsAdapter);
-
-        NotificationCache.clearNotifications();
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
@@ -78,15 +78,18 @@ public class NotificationsActivity extends BaseActivity {
                     lvNotifications.setVisibility(View.GONE);
                     noData.setVisibility(View.GONE);
                     llNoNotifications.setVisibility(View.VISIBLE);
+                    networkFailureText.setVisibility(View.GONE);
                     return;
                 }
                 if (response != null && response.body().size() > 0) {
+                    preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
+                    NotificationCache.clearNotifications();
                     List<Notification> notificationList = response.body();
                     notificationsAdapter.addItems(notificationList);
                     lvNotifications.setVisibility(View.VISIBLE);
                     noData.setVisibility(View.GONE);
                     llNoNotifications.setVisibility(View.GONE);
-
+                    networkFailureText.setVisibility(View.GONE);
                 }
             }
 
@@ -95,7 +98,8 @@ public class NotificationsActivity extends BaseActivity {
                 dismissProgressDialog();
                 lvNotifications.setVisibility(View.GONE);
                 noData.setVisibility(View.GONE);
-                llNoNotifications.setVisibility(View.VISIBLE);
+                llNoNotifications.setVisibility(View.GONE);
+                networkFailureText.setVisibility(View.VISIBLE);
             }
         });
 
@@ -130,7 +134,7 @@ public class NotificationsActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(Call<FindPeople> call, Throwable t) {
-
+                            lvNotifications.setEnabled(true);
                         }
                     });
 
@@ -158,7 +162,7 @@ public class NotificationsActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(Call<Articles> call, Throwable t) {
-
+                            lvNotifications.setEnabled(true);
                         }
                     });
 
@@ -175,6 +179,8 @@ public class NotificationsActivity extends BaseActivity {
                         startActivity(new Intent(NotificationsActivity.this, InviteActivity.class));
                     } else if (redirectId.equals("AddBalance")) {
                         startActivity(new Intent(NotificationsActivity.this, TabsHeaderActivity.class));
+                    } else {
+                        lvNotifications.setEnabled(true);
                     }
 
                 }
@@ -209,15 +215,18 @@ public class NotificationsActivity extends BaseActivity {
                         lvNotifications.setVisibility(View.GONE);
                         noData.setVisibility(View.GONE);
                         llNoNotifications.setVisibility(View.VISIBLE);
+                        networkFailureText.setVisibility(View.GONE);
                         return;
                     }
                     if (response != null && response.body().size() > 0) {
+                        NotificationCache.clearNotifications();
+                        preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
                         List<Notification> notificationList = response.body();
                         notificationsAdapter.addItems(notificationList);
                         lvNotifications.setVisibility(View.VISIBLE);
                         noData.setVisibility(View.GONE);
                         llNoNotifications.setVisibility(View.GONE);
-
+                        networkFailureText.setVisibility(View.GONE);
                     }
                 }
 
@@ -226,7 +235,8 @@ public class NotificationsActivity extends BaseActivity {
                     dismissProgressDialog();
                     lvNotifications.setVisibility(View.GONE);
                     noData.setVisibility(View.GONE);
-                    llNoNotifications.setVisibility(View.VISIBLE);
+                    llNoNotifications.setVisibility(View.GONE);
+                    networkFailureText.setVisibility(View.VISIBLE);
                 }
             });
         }

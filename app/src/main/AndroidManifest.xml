@@ -108,6 +108,7 @@
         <activity
             android:name=".chat.ui.ChatActivity"
             android:screenOrientation="portrait"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".chat.ui.LoginActivity"
@@ -166,7 +167,7 @@
         <activity
             android:name=".ui.NewMagazineActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible" />
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".ui.LoadMagazineActivity"
             android:screenOrientation="portrait"
@@ -175,7 +176,8 @@
             android:name=".chat.ui.CreateGroupActivity"
             android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:label="@string/new_group"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".chat.ui.GroupContactsActivity"
             android:label="@string/select_contact"
@@ -201,7 +203,7 @@
         <activity
             android:name=".ui.EditMagazineActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible" />
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".ui.FindPeopleActivity"
             android:screenOrientation="portrait" />
@@ -328,7 +330,7 @@
         <activity
             android:name=".ui.TransferBalanceActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible" />
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity android:name=".chat.ui.CustomWindow" />
 
         <service

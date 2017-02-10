@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yo.android.R;
@@ -258,6 +259,14 @@ public class Helper {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(getSize(context, width), getSize(context, height));
         layoutParams.setMargins(dp(context, leftMargin), dp(context, topMargin), dp(context, rightMargin), dp(context, bottomMargin));
         layoutParams.gravity = gravity;
+        return layoutParams;
+    }
+
+    public static RelativeLayout.LayoutParams createRelative(Context context, int width, int height, int gravity, int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(getSize(context, width), getSize(context, height));
+        layoutParams.setMargins(dp(context, leftMargin), dp(context, topMargin), dp(context, rightMargin), dp(context, bottomMargin));
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         return layoutParams;
     }
 

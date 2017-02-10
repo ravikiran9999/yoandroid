@@ -49,6 +49,7 @@ import com.yo.android.util.Util;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -695,16 +696,34 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             tvPickTopics.setVisibility(View.GONE);
             tagsParentLayout.setVisibility(View.VISIBLE);
             searchText = searchText.toString().toLowerCase(Locale.getDefault());
+            final CharSequence searchTextTemp = searchText;
             new AsyncTask<CharSequence, Void, ArrayList<Tag>>() {
 
                 @Override
                 protected ArrayList<Tag> doInBackground(CharSequence... search) {
                     worldpopulationlist.clear();
+                    for(Categories category : serverTopics) {
+                       String categoryName = category.getName();
+                        if(categoryName.toLowerCase(Locale.getDefault()).contains(searchTextTemp)) {
+                            for(Topics topic : category.getTags()) {
+                             for(Tag tag : arraylist) {
+                                if (tag.getText().equals(topic.getName())) {
+                                            worldpopulationlist.add(tag);
+                                }
+                            }
+                            }
+
+                        }
+                    }
+
                     for (Tag wp : arraylist) {
                         if (wp.getText().toLowerCase(Locale.getDefault()).contains(search[0])) {
                             worldpopulationlist.add(wp);
                         }
                     }
+                    LinkedHashSet<Tag> hashSet = new LinkedHashSet<>();
+                    hashSet.addAll(worldpopulationlist);
+                    worldpopulationlist = new ArrayList<Tag>(hashSet);
                     return worldpopulationlist;
                 }
 

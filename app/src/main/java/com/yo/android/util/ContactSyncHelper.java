@@ -200,9 +200,10 @@ public class ContactSyncHelper {
         while (toImportIterator1.hasNext()) {
             com.yo.android.model.Contact contact1 = toImportIterator1.next();
             com.yo.android.model.Contact contact = cachedYoContacts.get(contact1.getPhoneNo());
-            //TODO:Require to check names too
-            if (contact != null) {
+            if (contact != null && contact.getName().equalsIgnoreCase(contact1.getName())) {
                 toImportIterator1.remove();
+            } else if(contact != null) {
+                contact.setName(contact1.getName());
             }
         }
         List<com.yo.android.model.Contact> contacts = new ArrayList<>();
@@ -408,34 +409,6 @@ public class ContactSyncHelper {
             contactsMap.clear();
         }
         return contactsMap;
-    }
-
-    private ArrayList<com.yo.android.model.Contact> readContacts() {
-        ArrayList<com.yo.android.model.Contact> contactList = new ArrayList<>();
-
-        Cursor contactsCursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-        if (contactsCursor != null) {
-            while (contactsCursor.moveToNext()) {
-                com.yo.android.model.Contact contact = new com.yo.android.model.Contact();
-                String contactId = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts._ID));
-                contact.setName(contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
-                if (Integer.parseInt(contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    Cursor phoneNumberCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contactId}, null);
-                    if (phoneNumberCursor != null) {
-
-                        while (phoneNumberCursor.moveToNext()) {
-                            String phoneNumber = phoneNumberCursor.getString(phoneNumberCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            contact.setPhoneNo(phoneNumber);
-                        }
-                        phoneNumberCursor.close();
-                        contactList.add(contact);
-                    }
-                }
-            }
-            contactsCursor.close();
-
-        }
-        return contactList;
     }
 
     private boolean hasContactsPermission() {
