@@ -555,7 +555,7 @@ public class BottomTabsActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<UserProfileInfo> call, Throwable t) {
-                Log.e(TAG, t.getMessage());
+                //Log.e(TAG, t.getMessage());
             }
         });
     }
