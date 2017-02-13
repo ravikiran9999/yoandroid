@@ -377,10 +377,12 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
         if (requestCode == 2) {
             //invalidateOptionsMenu();
+            showProgressDialog();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                 @Override
                 public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                    dismissProgressDialog();
                     final List<Collections> collectionsList = new ArrayList<Collections>();
                     Collections collections = new Collections();
                     collections.setName("Follow more topics");
@@ -398,7 +400,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                 @Override
                 public void onFailure(Call<List<Collections>> call, Throwable t) {
-                    // do nothing
+                   dismissProgressDialog();
                 }
             });
 
@@ -408,11 +410,13 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             if(searchView != null) {
                 searchText = searchView.getQuery().toString();
             }
+            showProgressDialog();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             final String finalSearchText = searchText;
             yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                 @Override
                 public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                    dismissProgressDialog();
                     final List<Collections> collectionsList = new ArrayList<Collections>();
                     Collections collections = new Collections();
                     collections.setName("Follow more topics");
@@ -449,7 +453,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                 @Override
                 public void onFailure(Call<List<Collections>> call, Throwable t) {
-                 // do nothing
+                 dismissProgressDialog();
                 }
             });
         }
