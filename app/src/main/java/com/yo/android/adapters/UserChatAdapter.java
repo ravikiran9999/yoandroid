@@ -328,8 +328,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             holder = (HeaderViewHolder) convertView.getTag();
         }
         //set header text as first char in name
-        String headerTimeStamp = ((ChatMessage) getItem(position)).getStickeyHeader();
-        if (headerTimeStamp != null && holder != null) {
+        String headerTimeStamp = ChatMessage.getStickeyHeader(getItem(position).getServerTimeStampReceived());
+        if (headerTimeStamp != null && !TextUtils.isEmpty(headerTimeStamp) && holder != null) {
             String headerText = "" + headerTimeStamp;
             holder.text.setText(headerText.toUpperCase());
             return convertView;
@@ -339,7 +339,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     @Override
     public long getHeaderId(int position) {
-        String timeStamp = ((ChatMessage) getItem(position)).getStickeyHeader();
+        //String timeStamp = ((ChatMessage) getItem(position)).getStickeyHeader();
+        String timeStamp = ChatMessage.getStickeyHeader(getItem(position).getServerTimeStampReceived());
         if (timeStamp != null) {
             return timeStamp.subSequence(0, timeStamp.length()).hashCode();
         }

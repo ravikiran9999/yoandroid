@@ -1,6 +1,5 @@
 package com.yo.android.chat.firebase;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +16,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import com.firebase.client.Query;
+import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -32,6 +32,10 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
+import com.yo.android.util.Util;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -159,8 +163,7 @@ public class FirebaseService extends InjectedService {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
-
-                        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+                        ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
                         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
                         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;

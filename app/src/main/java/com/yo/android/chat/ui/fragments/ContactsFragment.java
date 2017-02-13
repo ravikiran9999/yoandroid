@@ -118,6 +118,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
         setHasOptionsMenu(true);
         setRetainInstance(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -133,7 +134,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
         listView.setOnItemClickListener(this);
@@ -196,15 +197,18 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     private void loadAlphabetOrder(List<Contact> list) {
 
-        Collections.sort(list, new Comparator<Contact>() {
-            @Override
-            public int compare(Contact lhs, Contact rhs) {
-                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
-            }
-        });
+        if(list != null) {
 
-        contactsListAdapter.addItems(list);
-        Helper.displayIndex(getActivity(), layout, list, listView);
+            Collections.sort(list, new Comparator<Contact>() {
+                @Override
+                public int compare(Contact lhs, Contact rhs) {
+                    return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
+                }
+            });
+
+            contactsListAdapter.addItems(list);
+            Helper.displayIndex(getActivity(), layout, list, listView);
+        }
     }
 
     @Override

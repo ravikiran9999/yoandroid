@@ -81,6 +81,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.TOP|Gravity.LEFT;
             params.leftMargin = 10;
+            params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
         } else if(position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) {
             if(!TextUtils.isEmpty(item.getImage())) {
@@ -123,6 +124,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.TOP|Gravity.LEFT;
             params.leftMargin = 10;
+            params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
         } else {
 
