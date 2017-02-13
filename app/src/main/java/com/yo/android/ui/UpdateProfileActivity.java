@@ -2,8 +2,10 @@ package com.yo.android.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -26,6 +28,8 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
@@ -167,11 +171,24 @@ public class UpdateProfileActivity extends BaseActivity {
             case Constants.ADD_IMAGE_CAPTURE:
                 try {
                     String imagePath = cameraIntent.mFileTemp.getPath();
-                    if (imagePath != null) {
-                        Helper.setSelectedImage(this, imagePath, true);
+                    File file = new File(imagePath);
+                    Uri uri = Uri.fromFile(file);
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                        if (imagePath != null) {
+                            if(this != null) {
+                                Helper.setSelectedImage(this, imagePath, true, bitmap, true);
+                            }
+                        }
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+
                 } catch (Exception e) {
-                    mLog.w("MoreFragment", e);
+                    // mLog.w("MoreFragment", e);
                 }
                 break;
 
@@ -179,7 +196,7 @@ public class UpdateProfileActivity extends BaseActivity {
                 if (data != null) {
                     try {
                         String imagePath = ImagePickHelper.getGalleryImagePath(this, data);
-                        Helper.setSelectedImage(this, imagePath, true);
+                        Helper.setSelectedImage(this, imagePath, true, null, false);
                     } catch (Exception e) {
                         mLog.w("MoreFragment", e);
                     }

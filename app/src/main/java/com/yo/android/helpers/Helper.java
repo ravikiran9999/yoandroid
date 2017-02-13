@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -64,6 +66,8 @@ public class Helper {
     public static final int MEDIA_DIR_DOCUMENT = 3;
     public static final int MEDIA_DIR_CACHE = 4;
     private static HashMap<Integer, File> mediaDirs = null;
+    public static Bitmap finalRotatedBitmap;
+    public static boolean IS_FROM_CAMERA_BITMAP;
 
     public static void createNewContactWithPhoneNumber(Activity activity, String phoneNumber) {
         Intent i = new Intent(Intent.ACTION_INSERT);
@@ -212,13 +216,74 @@ public class Helper {
 
     }
 
-    public static void setSelectedImage(Activity activity, String path, boolean isFromCam) {
-        Intent intent = new Intent(activity, MainImageCropActivity.class);
-        intent.putExtra(GALLERY_IMAGE_ITEM, path);
-        if (isFromCam) {
-            intent.putExtra(IS_FROM_CAMERA, IS_FROM_CAMERA);
+    public static void setSelectedImage(Activity activity, String path, boolean isFromCam, Bitmap bitmap, boolean isFromCameraBitmap) {
+        IS_FROM_CAMERA_BITMAP = isFromCameraBitmap;
+
+        ExifInterface ei = null;
+        try {
+            ei = new ExifInterface(path);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        activity.startActivityForResult(intent, CROP_ACTIVITY);
+        int orientation = 0;
+        if (ei != null) {
+            orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED);
+        }
+
+        Bitmap rotatedBitmap = null;
+
+        switch(orientation) {
+
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                rotatedBitmap = rotateImage(bitmap, 90);
+                break;
+
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                rotatedBitmap = rotateImage(bitmap, 180);
+                break;
+
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                rotatedBitmap = rotateImage(bitmap, 270);
+                break;
+
+            case ExifInterface.ORIENTATION_NORMAL:
+                rotatedBitmap = bitmap;
+                break;
+
+            default:
+                rotatedBitmap = bitmap;
+                break;
+        }
+
+
+
+        if(activity != null) {
+            Intent intent = new Intent(activity, MainImageCropActivity.class);
+            if(!isFromCameraBitmap) {
+                intent.putExtra(GALLERY_IMAGE_ITEM, path);
+                finalRotatedBitmap = null;
+            }
+            if(rotatedBitmap != null) {
+                finalRotatedBitmap = rotatedBitmap;
+            }
+            if (isFromCam) {
+                intent.putExtra(IS_FROM_CAMERA, IS_FROM_CAMERA);
+            }
+            activity.startActivityForResult(intent, CROP_ACTIVITY);
+        } else {
+            Log.d("Helper", "Activity is null");
+        }
+    }
+
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        if(source != null) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(angle);
+            return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                    matrix, true);
+        }
+        return null;
     }
 
     public static void setSelectedImage(Fragment activity, String path, boolean isFromCam) {
