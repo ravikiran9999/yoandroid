@@ -52,7 +52,7 @@ public class Constants {
     public static final String LAST_CONTACTS_SYNC_TIME = "last_contacts_sync_time";
 
 
-    public static final String USER_STATUS = "Available";
+    public static final String USER_STATUS = "user_status";
     public static final String PHONE_NUMBER = "phone";
     public static final String CURRENT_BALANCE = "current_balance";
     public static final String CURRENCY_SYMBOL = "currency_symbol";

@@ -121,7 +121,7 @@ public class AccountDetailsFragment extends BaseFragment {
     }
 
     private void loadData() {
-        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.USER_STATUS,Constants.USER_STATUS));
+        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION,"Available"));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         String email = preferenceEndPoint.getStringPreference(Constants.EMAIL, emailHint);
         if (email.equalsIgnoreCase("")) {
@@ -161,7 +161,7 @@ public class AccountDetailsFragment extends BaseFragment {
     @OnClick(R.id.account_status_card)
     protected void accountStatusClick() {
         String title = String.format(getString(R.string.add_new), getString(R.string.status_title));
-        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.USER_STATUS),Constants.USER_STATUS);
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DESCRIPTION,""),Constants.DESCRIPTION);
     }
 
     @OnClick(R.id.account_name_card)
@@ -253,7 +253,7 @@ public class AccountDetailsFragment extends BaseFragment {
         }
 
     public void setUserInfoDetails() {
-        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.USER_STATUS, ""));
+        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION,""));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
         String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, dobHint);
