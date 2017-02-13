@@ -7,6 +7,7 @@ package com.yo.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -23,7 +24,7 @@ import java.util.Map;
 /**
  * Class name will be tablename
  */
-@JsonIgnoreProperties(ignoreUnknown=true)
+
 @IgnoreExtraProperties
 public class ChatMessage implements Parcelable {
 
@@ -57,11 +58,10 @@ public class ChatMessage implements Parcelable {
     private String chatProfileUserName;
     private String roomName;
     private String messageKey;
-
+    //private Map<String, String> serverTimeStamp = new HashMap<>();
+    private Map<String, Object> timeStampMap;
+    @JsonIgnore
     private long serverTimeStampReceived;
-
-    private Map<String, String> serverTimeStamp = new HashMap<>();
-
 
     public ChatMessage() {
         // Default constructor required for calls to DataSnapshot.getValue(ChatMessage.class)
@@ -89,9 +89,26 @@ public class ChatMessage implements Parcelable {
         for (int i = 0; i < size; i++) {
             String key = in.readString();
             String value = in.readString();
-            serverTimeStamps.put(key, value);
+            serverTimeStamp.put(key, value);
         }*/
     }
+
+    public Map<String, Object> getTimeStampMap() {
+        return timeStampMap;
+    }
+
+    /*public Map<String, String> getServerTimeStamp() {
+        return serverTimeStamp;
+    }
+
+    public void setServerTimeStamp(Map<String, String> serverTimeStamp) {
+        this.serverTimeStamp = serverTimeStamp;
+    }*/
+
+    /*@JsonIgnore
+    public long getTimestampCreatedLong(){
+        return (long)serverTimeStamp.get("timestamp");
+    }*/
 
     public String getMessageKey() {
         return messageKey;
@@ -99,14 +116,6 @@ public class ChatMessage implements Parcelable {
 
     public void setMessageKey(String messageKey) {
         this.messageKey = messageKey;
-    }
-
-    public Map<String, String> getServerTimeStamp() {
-        return serverTimeStamp;
-    }
-
-    public void setServerTimeStamp(Map<String, String> serverTimeStamp) {
-        this.serverTimeStamp = serverTimeStamp;
     }
 
     public long getServerTimeStampReceived() {
@@ -171,7 +180,10 @@ public class ChatMessage implements Parcelable {
 
     public void setTime(long time) {
         this.time = time;
-        //this.stickeyHeader = Util.getChatListTimeFormat(time);
+
+        Map<String, Object> serverTimeStamp = new HashMap<>();
+        serverTimeStamp.put("serverTimeStamp", ServerValue.TIMESTAMP);
+        timeStampMap = serverTimeStamp;
     }
 
     public boolean isReadUnreadStatus() {
@@ -282,8 +294,8 @@ public class ChatMessage implements Parcelable {
         dest.writeString(chatProfileUserName);
         dest.writeString(roomName);
         dest.writeString(messageKey);
-        /*dest.writeInt(serverTimeStamps.size());
-        for (Map.Entry<String, String> entry : serverTimeStamps.entrySet()) {
+        /*dest.writeInt(serverTimeStamp.size());
+        for (Map.Entry<String, String> entry : serverTimeStamp.entrySet()) {
             dest.writeString(entry.getKey());
             dest.writeString(entry.getValue());
         }*/

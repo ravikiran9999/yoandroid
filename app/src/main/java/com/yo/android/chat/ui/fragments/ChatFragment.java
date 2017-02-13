@@ -39,6 +39,7 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Popup;
 import com.yo.android.model.Room;
@@ -306,7 +307,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
+                //ChatMessageReceived chatMessageReceived = dataSnapshot.getValue(ChatMessageReceived.class);
+                //ChatMessage  chatMessage = Util.convertToChatMessage(chatMessageReceived);
+                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                 room.setYouserId(chatMessage.getYouserId());
                 if (dataSnapshot.hasChildren()) {
                     room.setLastChat(chatMessage.getMessage());
@@ -367,7 +370,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 try {
 
-                    ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
+                    //ChatMessageReceived chatMessageReceived = dataSnapshot.getValue(ChatMessageReceived.class);
+                    //ChatMessage chatMessage = Util.convertToChatMessage(chatMessageReceived);
+                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                     if (dataSnapshot.hasChildren()) {
                         room.setLastChat("");
                         room.setImages(false);
