@@ -7,15 +7,23 @@ package com.yo.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.ServerValue;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Class name will be tablename
  */
-
+@JsonIgnoreProperties(ignoreUnknown=true)
 @IgnoreExtraProperties
 public class ChatMessage implements Parcelable {
 
@@ -48,6 +56,11 @@ public class ChatMessage implements Parcelable {
     private String youserId;
     private String chatProfileUserName;
     private String roomName;
+    private String messageKey;
+
+    private long serverTimeStampReceived;
+
+    private Map<String, String> serverTimeStamp = new HashMap<>();
 
 
     public ChatMessage() {
@@ -71,6 +84,37 @@ public class ChatMessage implements Parcelable {
         this.youserId = in.readString();
         this.chatProfileUserName = in.readString();
         this.roomName = in.readString();
+        this.messageKey = in.readString();
+        /*int size = in.readInt();
+        for (int i = 0; i < size; i++) {
+            String key = in.readString();
+            String value = in.readString();
+            serverTimeStamps.put(key, value);
+        }*/
+    }
+
+    public String getMessageKey() {
+        return messageKey;
+    }
+
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
+    }
+
+    public Map<String, String> getServerTimeStamp() {
+        return serverTimeStamp;
+    }
+
+    public void setServerTimeStamp(Map<String, String> serverTimeStamp) {
+        this.serverTimeStamp = serverTimeStamp;
+    }
+
+    public long getServerTimeStampReceived() {
+        return serverTimeStampReceived;
+    }
+
+    public void setServerTimeStampReceived(long serverTimeStampReceived) {
+        this.serverTimeStampReceived = serverTimeStampReceived;
     }
 
     public int getMsgID() {
@@ -127,7 +171,7 @@ public class ChatMessage implements Parcelable {
 
     public void setTime(long time) {
         this.time = time;
-        this.stickeyHeader = Util.getChatListTimeFormat(time);
+        //this.stickeyHeader = Util.getChatListTimeFormat(time);
     }
 
     public boolean isReadUnreadStatus() {
@@ -163,8 +207,8 @@ public class ChatMessage implements Parcelable {
     }
 
 
-    public String getStickeyHeader() {
-        return stickeyHeader;
+    public static String getStickeyHeader(long time) {
+        return Util.getChatListTimeFormat(time);
     }
 
     public int getDelivered() {
@@ -237,6 +281,12 @@ public class ChatMessage implements Parcelable {
         dest.writeString(youserId);
         dest.writeString(chatProfileUserName);
         dest.writeString(roomName);
+        dest.writeString(messageKey);
+        /*dest.writeInt(serverTimeStamps.size());
+        for (Map.Entry<String, String> entry : serverTimeStamps.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeString(entry.getValue());
+        }*/
     }
 
 
@@ -292,7 +342,9 @@ public class ChatMessage implements Parcelable {
             return false;
         if (chatProfileUserName != null ? !chatProfileUserName.equals(that.chatProfileUserName) : that.chatProfileUserName != null)
             return false;
-        return roomName != null ? roomName.equals(that.roomName) : that.roomName == null;
+        if (roomName != null ? !roomName.equals(that.roomName) : that.roomName != null)
+            return false;
+        return messageKey != null ? messageKey.equals(that.messageKey) : that.messageKey == null;
 
     }
 
@@ -317,6 +369,7 @@ public class ChatMessage implements Parcelable {
         result = 31 * result + (youserId != null ? youserId.hashCode() : 0);
         result = 31 * result + (chatProfileUserName != null ? chatProfileUserName.hashCode() : 0);
         result = 31 * result + (roomName != null ? roomName.hashCode() : 0);
+        result = 31 * result + (messageKey != null ? messageKey.hashCode() : 0);
         return result;
     }
 }

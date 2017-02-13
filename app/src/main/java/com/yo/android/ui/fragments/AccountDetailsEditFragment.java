@@ -4,7 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +27,8 @@ import com.yo.android.util.Constants;
 
 import butterknife.Bind;
 
+import static android.R.attr.id;
+
 /**
  * Created by Sindhura on 11/23/2016.
  */
@@ -38,6 +43,8 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
     private EditText editProfile;
 
     private EditText editBirth;
+
+    private TextView maxCharCount;
 
     private TextView cancelBtn;
 
@@ -79,10 +86,33 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         ((AccountDetailsActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         editProfile = (EditText) view.findViewById(R.id.edit_profile);
         editBirth = (EditText) view.findViewById(R.id.birth);
+        maxCharCount=(TextView) view.findViewById(R.id.count_txt);
         cancelBtn = (TextView) view.findViewById(R.id.cancel_edit);
         okBtn = (TextView) view.findViewById(R.id.ok_edit);
         cancelBtn.setOnClickListener(this);
         okBtn.setOnClickListener(this);
+
+        editProfile.setFilters(new InputFilter[]{
+               new InputFilter.LengthFilter(130)
+       });
+
+       editProfile.addTextChangedListener(new TextWatcher() {
+           @Override
+           public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+           }
+
+           @Override
+           public void onTextChanged(CharSequence s, int start, int before, int count){
+           }
+
+           @Override
+           public void afterTextChanged(Editable s) {
+
+                maxCharCount.setText(String.valueOf(130-editProfile.length()));
+
+           }
+       });
 
         if (key.equalsIgnoreCase(Constants.DOB_TEMP)) {
             editBirth.setVisibility(View.VISIBLE);
@@ -95,9 +125,12 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         } else if (key.equalsIgnoreCase(Constants.FIRST_NAME)) {
             String firstName = preferenceEndPoint.getStringPreference(Constants.FIRST_NAME);
             editProfile.setText(firstName);
-        } else if (key.equalsIgnoreCase(Constants.USER_STATUS)) {
+        } else if (key.equalsIgnoreCase(Constants.DESCRIPTION)){
+            String userStatus = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION);
 
-            String userStatus = preferenceEndPoint.getStringPreference(Constants.USER_STATUS);
+            if(userStatus.equalsIgnoreCase("")){
+                userStatus="Available";
+            }
             editProfile.setText(userStatus);
         } else if (key.equalsIgnoreCase(Constants.EMAIL)) {
             String email = preferenceEndPoint.getStringPreference(Constants.EMAIL);
