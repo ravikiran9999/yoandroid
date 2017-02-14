@@ -2,6 +2,7 @@ package com.yo.android.helpers;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yo.android.R;
@@ -28,6 +29,7 @@ public class CallLogsViewHolder extends AbstractViewHolder {
     private TextView creatNewContact;
     private TextView addToContact;
     private TextView info;
+    private View callLayout;
 
     public TextView getCreatNewContact() {
         return creatNewContact;
@@ -83,6 +85,7 @@ public class CallLogsViewHolder extends AbstractViewHolder {
         addToContact = (TextView) view.findViewById(R.id.add_to_contact);
         creatNewContact = (TextView) view.findViewById(R.id.create_new_contact);
         dateTimeStamp = (TextView) view.findViewById(R.id.tv_date_time);
+        callLayout = (View) view.findViewById(R.id.call_layout);
     }
 
     public TextView getMessageIcon() {
@@ -108,4 +111,6 @@ public class CallLogsViewHolder extends AbstractViewHolder {
     public TextView getDateTimeStamp() {
         return dateTimeStamp;
     }
+
+    public View getCallLayout() { return callLayout; }
 }

@@ -26,6 +26,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.yo.android.BuildConfig;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.util.Constants;
 
 import java.io.File;

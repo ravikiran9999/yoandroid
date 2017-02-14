@@ -39,6 +39,8 @@ import butterknife.ButterKnife;
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
+import static com.yo.android.util.Util.ServerTimeStamp;
+
 
 /**
  * Created by rdoddapaneni on 6/30/2016.
@@ -332,8 +334,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         //set header text as first char in name
         Map map = getItem(position).getTimeStampMap();
         try {
-            if (map != null) {
-                String headerTimeStamp = ChatMessage.getStickeyHeader((long) map.get("serverTimeStamp"));
+            if (map != null && map.get(ServerTimeStamp) instanceof Long) {
+                String headerTimeStamp = ChatMessage.getStickeyHeader((long) map.get(ServerTimeStamp));
                 if (headerTimeStamp != null && !TextUtils.isEmpty(headerTimeStamp) && holder != null) {
                     String headerText = "" + headerTimeStamp;
                     holder.text.setText(headerText.toUpperCase());
@@ -350,8 +352,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         //String timeStamp = ((ChatMessage) getItem(position)).getStickeyHeader();
         Map map = getItem(position).getTimeStampMap();
         try {
-            if (map != null) {
-                String timeStamp = ChatMessage.getStickeyHeader((long) map.get("serverTimeStamp"));
+            if (map != null && map.get(ServerTimeStamp) instanceof Long) {
+                String timeStamp = ChatMessage.getStickeyHeader((long) map.get(ServerTimeStamp));
                 if (timeStamp != null) {
                     return timeStamp.subSequence(0, timeStamp.length()).hashCode();
                 }

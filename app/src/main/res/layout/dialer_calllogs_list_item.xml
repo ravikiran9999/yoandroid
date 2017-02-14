@@ -111,6 +111,7 @@
                         android:id="@+id/iv_contact_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:padding="5dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="5dp"
                         android:src="@drawable/ic_receiver" />
