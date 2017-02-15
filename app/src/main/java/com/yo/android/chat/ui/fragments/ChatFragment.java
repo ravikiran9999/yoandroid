@@ -39,6 +39,7 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Popup;
 import com.yo.android.model.Room;
@@ -168,6 +169,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 emptyImageView.setVisibility(View.GONE);
+                Util.changeMenuItemsVisibility(menu, R.id.menu_search, false);
                 dismissProgressDialog();
                 return true;
             }
@@ -306,7 +308,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
+                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                 room.setYouserId(chatMessage.getYouserId());
                 if (dataSnapshot.hasChildren()) {
                     room.setLastChat(chatMessage.getMessage());
@@ -366,8 +368,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 try {
-
-                    ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
+                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                     if (dataSnapshot.hasChildren()) {
                         room.setLastChat("");
                         room.setImages(false);
@@ -441,7 +442,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
                             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
                             if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
-                                List<Room> roomList = getMembersProfile(dataSnapshot);
+                                getMembersProfile(dataSnapshot);
                             }
                         }
                     }
@@ -639,70 +640,5 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    private class MembersIdAsyncTask extends AsyncTask<DataSnapshot, Void, List<Room>> {
-
-        @Override
-        protected List<Room> doInBackground(DataSnapshot... dataSnapshots) {
-
-            for (final DataSnapshot dataSnapshot1 : dataSnapshots[0].getChildren()) {
-                if (!roomId.contains(dataSnapshot1.getKey())) {
-                    roomId.add(dataSnapshot1.getKey());
-                    Firebase memberReference = dataSnapshot1.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot1.getKey());
-                    memberReference.keepSynced(true);
-                    memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
-                                RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
-                                if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
-                                    List<Room> roomList = getMembersProfile(dataSnapshot);
-                                    /*if (roomList != null && !roomList.isEmpty()) {
-                                        emptyImageView.setVisibility(View.GONE);
-                                    } else {
-                                        emptyImageView.setVisibility(View.VISIBLE);
-                                    }*/
-                                } else {
-                                    executed = 1;
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-                            firebaseError.getMessage();
-                            dismissProgressDialog();
-                        }
-                    });
-                }
-            }
-            return arrayOfUsers;
-        }
-
-        @Override
-        protected void onPostExecute(@NonNull List<Room> rooms) {
-            super.onPostExecute(rooms);
-            dismissProgressDialog();
-            if (arrayOfUsers != null && arrayOfUsers.size() > 0) {
-                Collections.sort(arrayOfUsers, new Comparator<Room>() {
-                    @Override
-                    public int compare(Room lhs, Room rhs) {
-                        return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
-                    }
-                });
-
-                chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
-                emptyImageView.setVisibility(View.GONE);
-            } else {
-
-                if (executed == 0) {
-                    emptyImageView.setVisibility(View.GONE);
-                } else {
-                    emptyImageView.setVisibility(View.VISIBLE);
-                }
-            }
-
-        }
     }
 }

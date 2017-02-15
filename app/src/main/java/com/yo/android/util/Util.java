@@ -41,6 +41,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseException;
 import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -53,6 +54,7 @@ import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.model.Articles;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.model.Room;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.model.dialer.OpponentDetails;
@@ -691,11 +693,11 @@ public class Util {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy");
                 simpleDateFormat.setTimeZone(TimeZone.getDefault());
                 String date = simpleDateFormat.format(new Date(time));
-                if(!date.equalsIgnoreCase("Jan 01, 1970")) {
+                if (!date.equalsIgnoreCase("Jan 01, 1970")) {
                     return date;
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "";
@@ -1116,22 +1118,29 @@ public class Util {
         return mContext.getResources().getDrawable(R.drawable.dynamic_profile);
     }
 
-    public static ChatMessage recreateResponse(DataSnapshot dataSnapshot) {
-        String toString = dataSnapshot.getValue().toString();
+    public static ChatMessage convertToChatMessage(ChatMessageReceived chatMessageReceived) {
         ChatMessage chatMessage = new ChatMessage();
         try {
-            JSONObject jsonObj = new JSONObject(toString);
-            if(jsonObj.has(ServerTimeStamp)) {
-                Long serverTimeStampKey = (Long) jsonObj.get(ServerTimeStamp);
-                if (serverTimeStampKey != null) {
-                    jsonObj.remove(ServerTimeStamp);
-                    jsonObj.put(ServerTimeStampReceived, serverTimeStampKey);
-                    chatMessage =  new Gson().fromJson(jsonObj.toString(), ChatMessage.class);
-                }
-            } else if(jsonObj.has(ServerTimeStampReceived)) {
-                chatMessage = dataSnapshot.getValue(ChatMessage.class);
-            }
-        } catch (JSONException e) {
+            chatMessage.setMsgID(chatMessageReceived.getMsgID());
+            chatMessage.setMessage(chatMessageReceived.getMessage());
+            chatMessage.setMessageKey(chatMessageReceived.getMessageKey());
+            chatMessage.setSenderID(chatMessageReceived.getSenderID());
+            chatMessage.setStatus(chatMessageReceived.getStatus());
+            chatMessage.setImagePath(chatMessageReceived.getImagePath());
+            chatMessage.setTime(chatMessageReceived.getTime());
+            chatMessage.setType(chatMessageReceived.getType());
+            chatMessage.setImagePath(chatMessageReceived.getImagePath());
+            chatMessage.setRoomId(chatMessageReceived.getRoomId());
+            chatMessage.setSent(chatMessageReceived.getSent());
+            chatMessage.setDelivered(chatMessageReceived.getDelivered());
+            chatMessage.setDeliveredTime(chatMessageReceived.getDeliveredTime());
+            chatMessage.setVoxUserName(chatMessageReceived.getVoxUserName());
+            chatMessage.setYouserId(chatMessageReceived.getYouserId());
+            chatMessage.setChatProfileUserName(chatMessageReceived.getChatProfileUserName());
+            chatMessage.setRoomName(chatMessageReceived.getRoomName());
+            chatMessage.setServerTimeStampReceived(chatMessageReceived.getServerTimeStamp());
+            chatMessage.setSelected(chatMessageReceived.isSelected());
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return chatMessage;

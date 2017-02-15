@@ -1,19 +1,14 @@
 package com.yo.android.model;
 
 /**
- * Created by rdoddapaneni on 6/27/2016.
+ * Created by rdoddapaneni on 2/13/2017.
  */
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
-import com.google.firebase.database.ServerValue;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -24,9 +19,8 @@ import java.util.Map;
 /**
  * Class name will be tablename
  */
-
 @IgnoreExtraProperties
-public class ChatMessage implements Parcelable {
+public class ChatMessageReceived implements Parcelable {
 
     @DatabaseField(id = true)
     private int msgID;
@@ -58,17 +52,15 @@ public class ChatMessage implements Parcelable {
     private String chatProfileUserName;
     private String roomName;
     private String messageKey;
-    //private Map<String, String> serverTimeStamp = new HashMap<>();
-    private Map<String, Object> timeStampMap;
-    @JsonIgnore
-    private long serverTimeStampReceived;
 
-    public ChatMessage() {
+    private long serverTimeStamp;
+
+    public ChatMessageReceived() {
         // Default constructor required for calls to DataSnapshot.getValue(ChatMessage.class)
     }
 
 
-    private ChatMessage(Parcel in) {
+    private ChatMessageReceived(Parcel in) {
         this.msgID = in.readInt();
         this.message = in.readString();
         this.senderID = in.readString();
@@ -85,16 +77,15 @@ public class ChatMessage implements Parcelable {
         this.chatProfileUserName = in.readString();
         this.roomName = in.readString();
         this.messageKey = in.readString();
-        /*int size = in.readInt();
-        for (int i = 0; i < size; i++) {
-            String key = in.readString();
-            String value = in.readString();
-            serverTimeStamp.put(key, value);
-        }*/
+        this.serverTimeStamp = in.readLong();
     }
 
-    public Map<String, Object> getTimeStampMap() {
-        return timeStampMap;
+    public long getServerTimeStamp() {
+        return serverTimeStamp;
+    }
+
+    public void setServerTimeStamp(long serverTimeStamp) {
+        this.serverTimeStamp = serverTimeStamp;
     }
 
     public String getMessageKey() {
@@ -103,14 +94,6 @@ public class ChatMessage implements Parcelable {
 
     public void setMessageKey(String messageKey) {
         this.messageKey = messageKey;
-    }
-
-    public long getServerTimeStampReceived() {
-        return serverTimeStampReceived;
-    }
-
-    public void setServerTimeStampReceived(long serverTimeStampReceived) {
-        this.serverTimeStampReceived = serverTimeStampReceived;
     }
 
     public int getMsgID() {
@@ -167,10 +150,6 @@ public class ChatMessage implements Parcelable {
 
     public void setTime(long time) {
         this.time = time;
-
-        Map<String, Object> serverTimeStamp = new HashMap<>();
-        serverTimeStamp.put("serverTimeStamp", ServerValue.TIMESTAMP);
-        timeStampMap = serverTimeStamp;
     }
 
     public boolean isReadUnreadStatus() {
@@ -281,23 +260,19 @@ public class ChatMessage implements Parcelable {
         dest.writeString(chatProfileUserName);
         dest.writeString(roomName);
         dest.writeString(messageKey);
-        /*dest.writeInt(serverTimeStamp.size());
-        for (Map.Entry<String, String> entry : serverTimeStamp.entrySet()) {
-            dest.writeString(entry.getKey());
-            dest.writeString(entry.getValue());
-        }*/
+        dest.writeLong(serverTimeStamp);
     }
 
 
-    public static final Parcelable.Creator<ChatMessage> CREATOR = new Parcelable.Creator<ChatMessage>() {
+    public static final Creator<ChatMessageReceived> CREATOR = new Creator<ChatMessageReceived>() {
         @Override
-        public ChatMessage createFromParcel(Parcel source) {
-            return new ChatMessage(source);
+        public ChatMessageReceived createFromParcel(Parcel source) {
+            return new ChatMessageReceived(source);
         }
 
         @Override
-        public ChatMessage[] newArray(int size) {
-            return new ChatMessage[size];
+        public ChatMessageReceived[] newArray(int size) {
+            return new ChatMessageReceived[size];
         }
     };
 
@@ -312,9 +287,9 @@ public class ChatMessage implements Parcelable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ChatMessage)) return false;
+        if (!(o instanceof ChatMessageReceived)) return false;
 
-        ChatMessage that = (ChatMessage) o;
+        ChatMessageReceived that = (ChatMessageReceived) o;
 
         if (msgID != that.msgID) return false;
         if (status != that.status) return false;
@@ -324,6 +299,7 @@ public class ChatMessage implements Parcelable {
         if (sent != that.sent) return false;
         if (deliveredTime != that.deliveredTime) return false;
         if (selected != that.selected) return false;
+        if (serverTimeStamp != that.serverTimeStamp) return false;
         if (message != null ? !message.equals(that.message) : that.message != null) return false;
         if (senderID != null ? !senderID.equals(that.senderID) : that.senderID != null)
             return false;
@@ -369,6 +345,7 @@ public class ChatMessage implements Parcelable {
         result = 31 * result + (chatProfileUserName != null ? chatProfileUserName.hashCode() : 0);
         result = 31 * result + (roomName != null ? roomName.hashCode() : 0);
         result = 31 * result + (messageKey != null ? messageKey.hashCode() : 0);
+        result = 31 * result + (int) (serverTimeStamp ^ (serverTimeStamp >>> 32));
         return result;
     }
 }
