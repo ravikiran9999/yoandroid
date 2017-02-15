@@ -29,6 +29,7 @@ import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
@@ -163,7 +164,10 @@ public class FirebaseService extends InjectedService {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
-                        ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
+                        //ChatMessageReceived chatMessageReceived = dataSnapshot.getValue(ChatMessageReceived.class);
+                        //ChatMessage chatMessage = Util.convertToChatMessage(chatMessageReceived);
+                        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
                         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
                         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;

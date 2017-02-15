@@ -198,9 +198,11 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_greenarrowup, 0, 0, 0);
         }
         holder.getDateTimeStamp().setText(currentDate(item.getValue().get(0).getStime()));
-        holder.getCallIcon().setTag(item);
+        //holder.getCallIcon().setTag(item);
+        holder.getCallLayout().setTag(item);
         holder.getMessageIcon().setTag(item);
-        holder.getCallIcon().setOnClickListener(new View.OnClickListener() {
+        //holder.getCallIcon().setOnClickListener(new View.OnClickListener() {
+        holder.getCallLayout().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
