@@ -20,6 +20,8 @@ public class PaymentHistoryItem {
 
     private boolean arrowDown;
 
+    private String message;
+
     public String getConvertedAddedCredit() {
         return convertedAddedCredit;
     }
@@ -79,7 +81,7 @@ public class PaymentHistoryItem {
 
     @Override
     public String toString() {
-        return "ClassPojo [current_credit = " + current_credit + ", updated_at = " + updated_at + ", added_credit = " + added_credit + ", status = " + status + ", existing_credit = " + existing_credit + "]";
+        return "ClassPojo [current_credit = " + current_credit + ", updated_at = " + updated_at + ", added_credit = " + added_credit + ", status = " + status + ", existing_credit = " + existing_credit + ", message = " + message + "]";
     }
 
     public boolean isArrowDown() {
@@ -88,5 +90,13 @@ public class PaymentHistoryItem {
 
     public void setArrowDown(boolean arrowDown) {
         this.arrowDown = arrowDown;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
