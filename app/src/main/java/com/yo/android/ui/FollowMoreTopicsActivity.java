@@ -415,10 +415,12 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 }
             }*/
 
+            showProgressDialog();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    dismissProgressDialog();
                     if ("Magazines".equals(from)) {
                         Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, MyCollections.class);
                         startActivity(myCollectionsIntent);
@@ -446,6 +448,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    dismissProgressDialog();
                     Toast.makeText(FollowMoreTopicsActivity.this, "Error while adding topics", Toast.LENGTH_LONG).show();
                 }
             });

@@ -35,7 +35,9 @@ public class MainImageCropActivity extends BaseActivity {
         if (savedInstanceState == null) {
             MainFragment instance = MainFragment.getInstance();
             Bundle bundle = new Bundle();
-            bundle.putString(Helper.GALLERY_IMAGE_ITEM, selectedImageItem);
+            if(selectedImageItem != null && !Helper.IS_FROM_CAMERA_BITMAP) {
+                bundle.putString(Helper.GALLERY_IMAGE_ITEM, selectedImageItem);
+            }
             instance.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().add(R.id.container, instance).commit();
         }

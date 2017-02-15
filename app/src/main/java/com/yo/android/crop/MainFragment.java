@@ -49,6 +49,7 @@ public class MainFragment extends Fragment {
     private CropImageView mCropView;
     private LinearLayout mRootLayout;
     private String imagePath;
+    private Bitmap bitmap;
 
     // Note: only the system can call this constructor by reflection. 
     public MainFragment() {
@@ -84,14 +85,22 @@ public class MainFragment extends Fragment {
         if (arguments != null && arguments.containsKey(Helper.GALLERY_IMAGE_ITEM)) {
             imagePath = arguments.getString(Helper.GALLERY_IMAGE_ITEM);
         }
+        if(Helper.finalRotatedBitmap != null) {
+            bitmap = Helper.finalRotatedBitmap;
+        }
 //        mCropView.setDebug(true);
         // set bitmap to CropImageView
         if (mCropView.getDrawable() == null) {
-            File file = new File(imagePath);
-            if (file.exists()) {
-                mCropView.setImageBitmap(decodeFile(file));
-            } else {
-                Log.e("Crop", "File not exists" + imagePath);
+            if(imagePath != null && !Helper.IS_FROM_CAMERA_BITMAP) {
+                File file = new File(imagePath);
+                if (file.exists()) {
+                    mCropView.setImageBitmap(decodeFile(file));
+                } else {
+                    Log.e("Crop", "File not exists" + imagePath);
+                }
+            }
+            if(bitmap != null) {
+                mCropView.setImageBitmap(bitmap);
             }
         }
 

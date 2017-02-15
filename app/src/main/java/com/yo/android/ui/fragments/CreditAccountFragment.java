@@ -42,6 +42,7 @@ import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 import com.yo.android.voip.VoipConstants;
 import com.yo.android.BuildConfig;
 
@@ -82,6 +83,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Bind(R.id.txtEmpty)
     protected TextView txtEmpty;
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
+    private EditText voucherNumberEdit;
 
     @Override
     public void onResume() {
@@ -350,7 +352,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
             Button noBtn = (Button) view.findViewById(R.id.no_btn);
             TextView namePhoneText = (TextView) view.findViewById(R.id.dialog_content);
-            final EditText voucherNumberEdit = (EditText) view.findViewById(R.id.dialog_content_edit);
+            voucherNumberEdit = (EditText) view.findViewById(R.id.dialog_content_edit);
 
             final String userName = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
             String phonNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
@@ -440,11 +442,13 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                             @Override
                             public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
 
+                                Util.hideKeyboard(getActivity(), voucherNumberEdit);
                                 mToastFactory.showToast(R.string.invalid_voucher);
 
                             }
                         });
                     } else {
+                        Util.hideKeyboard(getActivity(), voucherNumberEdit);
                         mToastFactory.showToast("Please enter a Voucher Number");
                     }
 
@@ -461,6 +465,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     }
 
     private void showMessage(int resoureId) {
+        Util.hideKeyboard(getActivity(), voucherNumberEdit);
         mToastFactory.showToast(resoureId);
         closeActivityAddBalance(Activity.RESULT_CANCELED, null);
     }
