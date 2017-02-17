@@ -483,9 +483,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
             String balance = mBalanceHelper.getCurrentBalance();
-            String currencySymbol = mBalanceHelper.getCurrencySymbol();
+            //String currencySymbol = mBalanceHelper.getCurrencySymbol();
             if (menuAdapter != null) {
-                menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
+                //menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
+                menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbolDollar, balance));
                 menuAdapter.notifyDataSetChanged();
             }
         } else if (key.equals(Constants.USER_NAME)) {
