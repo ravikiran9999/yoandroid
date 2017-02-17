@@ -313,6 +313,8 @@
     <string name="plus">+</string>
     <string name="no_denominations_for_your_country">Denominations not available for your country.</string>
     <string name="acc_name">Please enter your Name</string>
-    <string name="invalid_email">Invalid Email Address</string>
+    <string name="invalid_email">Please enter a valid Email Id</string>
     <string name="voucher_failed">VoucherFailed</string>
+    <string name="invalid_status">Please enter a valid Status</string>
+    <string name="invalid_name">Please enter a valid Name. No special characters are allowed except - and _</string>
 </resources>
