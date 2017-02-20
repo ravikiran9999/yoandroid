@@ -4,7 +4,6 @@ package com.yo.android.chat.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,7 +27,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.google.firebase.database.Query;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -39,7 +37,6 @@ import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Popup;
 import com.yo.android.model.Room;
@@ -81,7 +78,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Bind(R.id.no_search_results)
     protected TextView noSearchResult;
 
-    private List<ChildEventListener> childEventListenersList;
     private List<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
     private Menu menu;
@@ -89,7 +85,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private String voxUserName;
     private List<Room> listRoom;
     private List<String> roomId;
-    private List<String> checkRoomIdExist;
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss z");
     private Activity activity;
     private int executed;
@@ -122,10 +117,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        childEventListenersList = new ArrayList<>();
         arrayOfUsers = new ArrayList<>();
         roomId = new ArrayList<>();
-        checkRoomIdExist = new ArrayList<>();
         EventBus.getDefault().register(this);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         executed = 0;
@@ -357,6 +350,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         emptyImageView.setVisibility(View.VISIBLE);
                     }
                 } catch (Exception e) {
+                    // catch exception
                 }
             }
 
@@ -393,12 +387,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         };
 
-    }
-
-    private void unregisterAllEventListeners() {
-        for (ChildEventListener childEventListener : childEventListenersList) {
-            //
-        }
     }
 
     public void onEventMainThread(String action) {

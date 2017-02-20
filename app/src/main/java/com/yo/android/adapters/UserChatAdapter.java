@@ -343,13 +343,14 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 }
             }
         }catch (Exception e) {
+            // catch Exception
         }
         return new View(parent.getContext());
     }
 
     @Override
     public long getHeaderId(int position) {
-        //String timeStamp = ((ChatMessage) getItem(position)).getStickeyHeader();
+        ChatMessage ccc = getItem(position);
         Map map = getItem(position).getTimeStampMap();
         try {
             if (map != null && map.get(ServerTimeStamp) instanceof Long) {

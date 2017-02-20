@@ -53,7 +53,6 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
 
     @Override
     public void bindView(int position, AppRegisteredContactsViewHolder holder, final Contact item) {
-
         if (position == 0 && item.getVoxUserName() == null && item.getPhoneNo() == null && item.getFirebaseRoomId() == null) {
             holder.getContactName().setText(item.getName());
             holder.getContactName().setVisibility(View.VISIBLE);
@@ -67,6 +66,7 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
             } else {
                 holder.getContactName().setVisibility(View.GONE);
             }
+
             if (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo())) {
                 holder.getContactNumber().setText(item.getPhoneNo());
                 holder.getContactNumber().setVisibility(View.VISIBLE);

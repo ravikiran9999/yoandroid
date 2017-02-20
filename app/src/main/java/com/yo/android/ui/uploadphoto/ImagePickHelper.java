@@ -83,6 +83,7 @@ public class ImagePickHelper {
 
                 //mImageCaptureUri = InternalStorageContentProvider.CONTENT_URI;
             }
+
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             intent.putExtra("return-data", true);
             cameraActivity.startActivityForResult(intent, Constants.ADD_IMAGE_CAPTURE);
