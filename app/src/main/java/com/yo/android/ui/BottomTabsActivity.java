@@ -42,6 +42,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
+import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.Articles;
 import com.yo.android.model.FindPeople;
@@ -215,6 +216,7 @@ public class BottomTabsActivity extends BaseActivity {
                     MagazineDashboardHelper.request = 1;
                     ((MagazinesFragment) getFragment()).removeReadArticles();
                     ((MagazinesFragment) getFragment()).update();
+                    MagazineFlipArticlesFragment.currentFlippedPosition = 0;
                 }
 
             }

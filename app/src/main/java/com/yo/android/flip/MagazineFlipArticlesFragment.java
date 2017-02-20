@@ -87,7 +87,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public TextView tvProgressText;
     private List<String> readArticleIds;
     private LinkedHashSet<List<String>> articlesIdsHashSet = new LinkedHashSet<>();
-    private static int currentFlippedPosition;
+    public static int currentFlippedPosition;
     private MagazineDashboardHelper magazineDashboardHelper;
     private String followedTopicId;
     private static int articleCountThreshold = 2000;
@@ -1003,7 +1003,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void removeReadArticles() {
 
         if(currentFlippedPosition >0) {
-            //getReadArticleIds();
+            getReadArticleIds();
             /*String articleId2 = myBaseAdapter.secondArticle.getId();
             String articleId3 = myBaseAdapter.thirdArticle.getId();
             readArticleIds.add(articleId2);
@@ -1289,7 +1289,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
             for (int i = 0; i <= currentFlippedPosition; i++) {
             String articleId = myBaseAdapter.getItem(i).getId();
-            Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+            //Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
             readArticleIds.add(articleId);
             }
