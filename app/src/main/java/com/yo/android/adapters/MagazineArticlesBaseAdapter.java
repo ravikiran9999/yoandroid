@@ -53,6 +53,7 @@ import org.w3c.dom.Text;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -2158,8 +2159,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
         SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
         //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
-        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
+        editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
+        editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
         editor.commit();
     }
 
