@@ -17,6 +17,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.helpers.RechargeDetailsViewHolder;
 import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.model.dialer.SubscribersList;
@@ -122,7 +123,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
         progress.setVisibility(View.GONE);
     }
 
-    private static class RechargeDetailsAdapter extends RecyclerView.Adapter<SpendDetailsViewHolder> {
+    private static class RechargeDetailsAdapter extends RecyclerView.Adapter<RechargeDetailsViewHolder> {
         private List<PaymentHistoryItem> mPaymentHistoryItemList;
         private Context mContext;
 
@@ -133,20 +134,22 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
 
 
         @Override
-        public SpendDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RechargeDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Context context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
 
             // Inflate the custom layout
-            View contactView = inflater.inflate(R.layout.frag_spent_list_row_item, parent, false);
+            //View contactView = inflater.inflate(R.layout.frag_spent_list_row_item, parent, false);
+            View contactView = inflater.inflate(R.layout.frag_recharge_list_row_item, parent, false);
 
             // Return a new holder instance
-            SpendDetailsViewHolder viewHolder = new SpendDetailsViewHolder(contactView);
+            //SpendDetailsViewHolder viewHolder = new SpendDetailsViewHolder(contactView);
+            RechargeDetailsViewHolder viewHolder = new RechargeDetailsViewHolder(contactView);
             return viewHolder;
         }
 
         @Override
-        public void onBindViewHolder(SpendDetailsViewHolder holder, int position) {
+        public void onBindViewHolder(RechargeDetailsViewHolder holder, int position) {
             final PaymentHistoryItem item = mPaymentHistoryItemList.get(position);
             holder.getDate().setVisibility(View.GONE);
             holder.getDuration().setVisibility(View.GONE);
@@ -158,7 +161,11 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
 
             holder.getTxtPulse().setText(item.getStatus());
             holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.dial_green));
-            holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
+            if(mContext.getResources().getString(R.string.voucher_failed).equals(item.getAddedCredit())) {
+                holder.getTxtPrice().setText(item.getMessage());
+            } else {
+                holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
+            }
             holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

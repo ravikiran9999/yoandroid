@@ -70,7 +70,6 @@
                     android:maxLines="1"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
-                    android:visibility="visible"
                     tools:text="9490590000" />
             </LinearLayout>
 

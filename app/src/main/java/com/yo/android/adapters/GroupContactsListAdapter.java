@@ -50,7 +50,7 @@ public class GroupContactsListAdapter extends AbstractBaseAdapter<Contact, Group
     @Override
     public void bindView(int position, GroupContactsViewHolder holder, Contact item) {
 
-
+        String numberWithCountryCode;
         if (!TextUtils.isEmpty(item.getName()) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo()))) {
             holder.getContactName().setText(item.getName());
             holder.getContactName().setVisibility(View.VISIBLE);
@@ -95,7 +95,12 @@ public class GroupContactsListAdapter extends AbstractBaseAdapter<Contact, Group
             e.printStackTrace();
         }
 
-        holder.getContactNumber().setText(item.getPhoneNo());
+        if (item.getCountryCode() != null) {
+            numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+        } else {
+            numberWithCountryCode = item.getPhoneNo();
+        }
+        holder.getContactNumber().setText(numberWithCountryCode);
         holder.getCheckBox().setChecked(item.isSelected());
         holder.getCheckBox().setTag(item);
 

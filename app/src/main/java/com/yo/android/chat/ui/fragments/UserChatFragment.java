@@ -70,6 +70,7 @@ import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
+import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
@@ -115,6 +116,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private static final String TAG = "UserChatFragment";
     private static final String DummyMsgKey = "123456";
+    private static final String ServerTimeStamp = "serverTimeStamp";
 
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
@@ -554,7 +556,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setSent(0); // message sent 0, read 1
         chatMessage.setDelivered(0);
         chatMessage.setDeliveredTime(0);
-        chatMessage.setServerTimeStamp(ServerValue.TIMESTAMP);
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
         chatMessage.setMsgID(msgId);
@@ -643,10 +644,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         }
                     } else {
                         chatMessage.setMessageKey(firebase.getKey());
-                        //chatMessage.setSent(1);
-                        userChatAdapter.notifyDataSetChanged();
+                        chatMessage.setSent(1);
+
                         Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
                         roomChildReference.updateChildren(hashtaghMap);
+                        userChatAdapter.notifyDataSetChanged();
                     }
                 }
             });
@@ -938,8 +940,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
         try {
 
-            ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
+            ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
             if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
+
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
                 listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
@@ -959,8 +962,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
-        ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
-
+        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
         if (getActivity() instanceof ChatActivity) {
             try {
                 for (int i = 0; i < chatMessageArray.size(); i++) {
@@ -981,7 +983,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onChildRemoved(com.firebase.client.DataSnapshot dataSnapshot) {
         // this method will be triggered on child removed
         try {
-            ChatMessage removedChatMessage = Util.recreateResponse(dataSnapshot);
+            ChatMessage removedChatMessage = dataSnapshot.getValue(ChatMessage.class);
             userChatAdapter.removeItem(removedChatMessage);
             chatMessageArray.remove(removedChatMessage);
             if (removedChatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {

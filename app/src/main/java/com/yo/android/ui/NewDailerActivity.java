@@ -91,6 +91,8 @@ public class NewDailerActivity extends BaseActivity {
 
     private LinearLayout llOptions;
 
+    public static final String currencySymbolDollar = " US $";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,7 +224,8 @@ public class NewDailerActivity extends BaseActivity {
         }
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
-                txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
+                //txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
+                txtBalance.setText(String.format("%s %s", currencySymbolDollar, mBalanceHelper.getCurrentBalance()));
             } else {
                 txtBalance.setVisibility(View.GONE);
             }

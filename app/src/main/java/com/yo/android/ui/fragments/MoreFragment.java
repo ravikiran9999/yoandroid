@@ -8,9 +8,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -60,6 +62,8 @@ import com.yo.android.util.Util;
 import com.yo.android.voip.VoipConstants;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -401,6 +405,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
 
                     } else {
+                        dismissProgressDialog();
                         mToastFactory.showToast(R.string.connectivity_network_settings);
                     }
                 }
@@ -432,21 +437,35 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 }
                 break;
             case Constants.ADD_IMAGE_CAPTURE:
-                try {
-                    String imagePath = cameraIntent.mFileTemp.getPath();
-                    if (imagePath != null) {
-                        Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true);
+                    try {
+                        String imagePath = cameraIntent.mFileTemp.getPath();
+                        File file = new File(imagePath);
+                        Uri uri = Uri.fromFile(file);
+                        Bitmap bitmap = null;
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(BottomTabsActivity.activity.getContentResolver(), uri);
+                            if (imagePath != null) {
+                                if(BottomTabsActivity.activity != null) {
+                                    Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true, bitmap, true);
+                                }
+                            }
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } catch (Exception e) {
+                        // mLog.w("MoreFragment", e);
                     }
-                } catch (Exception e) {
-                    // mLog.w("MoreFragment", e);
-                }
+                //}
                 break;
 
             case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
                     try {
                         String imagePath = ImagePickHelper.getGalleryImagePath(BottomTabsActivity.activity, data);
-                        Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true);
+                        Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true, null, false);
                     } catch (Exception e) {
                         mLog.w("MoreFragment", e);
                     }
@@ -467,9 +486,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
             String balance = mBalanceHelper.getCurrentBalance();
-            String currencySymbol = mBalanceHelper.getCurrencySymbol();
+            //String currencySymbol = mBalanceHelper.getCurrencySymbol();
             if (menuAdapter != null) {
-                menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
+                //menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
+                menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbolDollar, balance));
                 menuAdapter.notifyDataSetChanged();
             }
         } else if (key.equals(Constants.USER_NAME)) {

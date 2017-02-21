@@ -4,7 +4,6 @@ package com.yo.android.chat.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,7 +27,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.google.firebase.database.Query;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -80,7 +78,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Bind(R.id.no_search_results)
     protected TextView noSearchResult;
 
-    private List<ChildEventListener> childEventListenersList;
     private List<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
     private Menu menu;
@@ -88,7 +85,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private String voxUserName;
     private List<Room> listRoom;
     private List<String> roomId;
-    private List<String> checkRoomIdExist;
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss z");
     private Activity activity;
     private int executed;
@@ -121,10 +117,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        childEventListenersList = new ArrayList<>();
         arrayOfUsers = new ArrayList<>();
         roomId = new ArrayList<>();
-        checkRoomIdExist = new ArrayList<>();
         EventBus.getDefault().register(this);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         executed = 0;
@@ -168,6 +162,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 emptyImageView.setVisibility(View.GONE);
+                Util.changeMenuItemsVisibility(menu, R.id.menu_search, false);
                 dismissProgressDialog();
                 return true;
             }
@@ -306,7 +301,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         return new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
+                ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                 room.setYouserId(chatMessage.getYouserId());
                 if (dataSnapshot.hasChildren()) {
                     room.setLastChat(chatMessage.getMessage());
@@ -355,6 +350,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         emptyImageView.setVisibility(View.VISIBLE);
                     }
                 } catch (Exception e) {
+                    // catch exception
                 }
             }
 
@@ -366,8 +362,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 try {
-
-                    ChatMessage chatMessage = Util.recreateResponse(dataSnapshot);
+                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
                     if (dataSnapshot.hasChildren()) {
                         room.setLastChat("");
                         room.setImages(false);
@@ -392,12 +387,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         };
 
-    }
-
-    private void unregisterAllEventListeners() {
-        for (ChildEventListener childEventListener : childEventListenersList) {
-            //
-        }
     }
 
     public void onEventMainThread(String action) {
@@ -441,7 +430,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
                             RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
                             if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
-                                List<Room> roomList = getMembersProfile(dataSnapshot);
+                                getMembersProfile(dataSnapshot);
                             }
                         }
                     }
@@ -639,70 +628,5 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    private class MembersIdAsyncTask extends AsyncTask<DataSnapshot, Void, List<Room>> {
-
-        @Override
-        protected List<Room> doInBackground(DataSnapshot... dataSnapshots) {
-
-            for (final DataSnapshot dataSnapshot1 : dataSnapshots[0].getChildren()) {
-                if (!roomId.contains(dataSnapshot1.getKey())) {
-                    roomId.add(dataSnapshot1.getKey());
-                    Firebase memberReference = dataSnapshot1.getRef().getRoot().child(Constants.ROOMS).child(dataSnapshot1.getKey());
-                    memberReference.keepSynced(true);
-                    memberReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
-                                RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
-                                if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_ACTIVE)) {
-                                    List<Room> roomList = getMembersProfile(dataSnapshot);
-                                    /*if (roomList != null && !roomList.isEmpty()) {
-                                        emptyImageView.setVisibility(View.GONE);
-                                    } else {
-                                        emptyImageView.setVisibility(View.VISIBLE);
-                                    }*/
-                                } else {
-                                    executed = 1;
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-                            firebaseError.getMessage();
-                            dismissProgressDialog();
-                        }
-                    });
-                }
-            }
-            return arrayOfUsers;
-        }
-
-        @Override
-        protected void onPostExecute(@NonNull List<Room> rooms) {
-            super.onPostExecute(rooms);
-            dismissProgressDialog();
-            if (arrayOfUsers != null && arrayOfUsers.size() > 0) {
-                Collections.sort(arrayOfUsers, new Comparator<Room>() {
-                    @Override
-                    public int compare(Room lhs, Room rhs) {
-                        return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
-                    }
-                });
-
-                chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
-                emptyImageView.setVisibility(View.GONE);
-            } else {
-
-                if (executed == 0) {
-                    emptyImageView.setVisibility(View.GONE);
-                } else {
-                    emptyImageView.setVisibility(View.VISIBLE);
-                }
-            }
-
-        }
     }
 }

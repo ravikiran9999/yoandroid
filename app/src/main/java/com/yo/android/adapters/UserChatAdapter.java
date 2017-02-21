@@ -32,10 +32,14 @@ import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.util.Map;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import github.ankushsachdeva.emojicon.EmojiconTextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
+
+import static com.yo.android.util.Util.ServerTimeStamp;
 
 
 /**
@@ -328,21 +332,34 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             holder = (HeaderViewHolder) convertView.getTag();
         }
         //set header text as first char in name
-        String headerTimeStamp = ChatMessage.getStickeyHeader(getItem(position).getServerTimeStampReceived());
-        if (headerTimeStamp != null && !TextUtils.isEmpty(headerTimeStamp) && holder != null) {
-            String headerText = "" + headerTimeStamp;
-            holder.text.setText(headerText.toUpperCase());
-            return convertView;
+        Map map = getItem(position).getTimeStampMap();
+        try {
+            if (map != null && map.get(ServerTimeStamp) instanceof Long) {
+                String headerTimeStamp = ChatMessage.getStickeyHeader((long) map.get(ServerTimeStamp));
+                if (headerTimeStamp != null && !TextUtils.isEmpty(headerTimeStamp) && holder != null) {
+                    String headerText = "" + headerTimeStamp;
+                    holder.text.setText(headerText.toUpperCase());
+                    return convertView;
+                }
+            }
+        }catch (Exception e) {
+            // catch Exception
         }
         return new View(parent.getContext());
     }
 
     @Override
     public long getHeaderId(int position) {
-        //String timeStamp = ((ChatMessage) getItem(position)).getStickeyHeader();
-        String timeStamp = ChatMessage.getStickeyHeader(getItem(position).getServerTimeStampReceived());
-        if (timeStamp != null) {
-            return timeStamp.subSequence(0, timeStamp.length()).hashCode();
+        ChatMessage ccc = getItem(position);
+        Map map = getItem(position).getTimeStampMap();
+        try {
+            if (map != null && map.get(ServerTimeStamp) instanceof Long) {
+                String timeStamp = ChatMessage.getStickeyHeader((long) map.get(ServerTimeStamp));
+                if (timeStamp != null) {
+                    return timeStamp.subSequence(0, timeStamp.length()).hashCode();
+                }
+            }
+        }catch (Exception e) {
         }
         return 0;
     }

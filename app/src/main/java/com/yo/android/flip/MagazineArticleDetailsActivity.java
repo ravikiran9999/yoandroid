@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.yo.android.R;
+import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.model.Articles;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
@@ -116,6 +117,9 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                             /*if (!((BaseActivity) context).hasDestroyed()) {
                                 notifyDataSetChanged();
                             }*/
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
@@ -142,6 +146,9 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                             /*if (!((BaseActivity) context).hasDestroyed()) {
                                 notifyDataSetChanged();
                             }*/
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
                             }
 

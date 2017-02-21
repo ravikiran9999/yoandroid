@@ -266,7 +266,10 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
             temp = new ArrayList<>();
             if (contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
                 if (mOriginalList != null && mOriginalList.size() > 0) {
-                    temp.add(0, mOriginalList.get(0));
+                    Contact mContact = ((Contact)mOriginalList.get(0));
+                    if(mContact.getVoxUserName() == null && mContact.getPhoneNo() == null && mContact.getFirebaseRoomId() == null) {
+                        temp.add(0, mOriginalList.get(0));
+                    }
                 }
             }
             for (T event : mOriginalList) {
@@ -278,7 +281,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
 
             }
 
-            if (temp.size() == 0 || temp.size() == 1 && contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
+            if (temp.size() == 0 || temp.size() == 1 && ((Contact)temp.get(0)).getVoxUserName() == null && contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
                 noSearchResult.setVisibility(View.VISIBLE);
             } else {
                 noSearchResult.setVisibility(View.GONE);
