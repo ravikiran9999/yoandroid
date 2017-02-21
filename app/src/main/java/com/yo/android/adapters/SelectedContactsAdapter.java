@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.yo.android.R;
@@ -40,7 +41,23 @@ public class SelectedContactsAdapter extends AbstractBaseAdapter<Contact, Select
 
     @Override
     public void bindView(final int position, SelectedContactsViewHolder holder, final Contact item) {
-        holder.getContactNumber().setText(item.getPhoneNo());
+        if (!TextUtils.isEmpty(item.getName())) {
+            String numberWithCountryCode;
+            if (TextUtils.isDigitsOnly(item.getName().replaceAll("\\s+", ""))) {
+                if (item.getCountryCode() != null) {
+                    numberWithCountryCode = "+" + item.getCountryCode().concat(item.getPhoneNo());
+                } else {
+                    numberWithCountryCode = item.getPhoneNo();
+                }
+                holder.getContactNumber().setText(numberWithCountryCode);
+            } else {
+                holder.getContactNumber().setText(item.getName());
+            }
+            holder.getContactNumber().setVisibility(View.VISIBLE);
+        } else {
+            holder.getContactNumber().setVisibility(View.GONE);
+        }
+
         holder.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

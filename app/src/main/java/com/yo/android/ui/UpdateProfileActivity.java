@@ -22,7 +22,6 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.UserProfileInfo;
-import com.yo.android.ui.uploadphoto.ImageLoader;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
