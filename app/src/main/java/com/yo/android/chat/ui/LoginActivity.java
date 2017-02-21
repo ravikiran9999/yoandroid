@@ -166,6 +166,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     //do here
+                    Util.hideKeyboard(LoginActivity.this, mPhoneNumberView);
                     attemptLogin();
                     return true;
                 }

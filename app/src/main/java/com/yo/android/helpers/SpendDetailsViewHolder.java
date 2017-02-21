@@ -16,8 +16,8 @@ import butterknife.ButterKnife;
  */
 public class SpendDetailsViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.imgArrow)
-    ImageView arrow;
+    /*@Bind(R.id.imgArrow)
+    ImageView arrow;*/
 
     @Bind(R.id.txtPhone)
     TextView txtPhone;
@@ -25,17 +25,21 @@ public class SpendDetailsViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.txt_price)
     TextView txtPrice;
 
-    @Bind(R.id.txt_pulse)
+/*    @Bind(R.id.txt_pulse)
     TextView txtPulse;
 
     @Bind(R.id.duration_container)
-    View durationContainer;
+    View durationContainer;*/
 
-    @Bind(R.id.date)
+    @Bind(R.id.txtDate)
     TextView date;
 
-    @Bind(R.id.duration)
+    @Bind(R.id.txt_duration)
     TextView duration;
+
+    @Bind(R.id.txt_reason)
+    TextView txtReason;
+
 
     public SpendDetailsViewHolder(View view) {
         super(view);
@@ -43,25 +47,25 @@ public class SpendDetailsViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    public TextView getTxtPulse() {
+    /*public TextView getTxtPulse() {
         return txtPulse;
-    }
+    }*/
 
     public TextView getTxtPrice() {
         return txtPrice;
     }
 
-    public ImageView getArrow() {
+    /*public ImageView getArrow() {
         return arrow;
-    }
+    }*/
 
     public TextView getTxtPhone() {
         return txtPhone;
     }
 
-    public View getDurationContainer() {
+    /*public View getDurationContainer() {
         return durationContainer;
-    }
+    }*/
 
     public TextView getDate() {
         return date;
@@ -71,4 +75,7 @@ public class SpendDetailsViewHolder extends RecyclerView.ViewHolder {
         return duration;
     }
 
+    public TextView getTxtReason() {
+        return txtReason;
+    }
 }

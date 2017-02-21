@@ -403,6 +403,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
 
                     } else {
+                        dismissProgressDialog();
                         mToastFactory.showToast(R.string.connectivity_network_settings);
                     }
                 }

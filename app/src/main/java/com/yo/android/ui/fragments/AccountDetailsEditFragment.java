@@ -25,6 +25,8 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.ui.AccountDetailsActivity;
 import com.yo.android.util.Constants;
 
+import java.util.regex.Pattern;
+
 import butterknife.Bind;
 
 import static android.R.attr.id;
@@ -51,6 +53,8 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
     private TextView okBtn;
 
     private String countryCode;
+
+    private static final String NAME_REGX = "^[a-zA-Z0-9-_ ]*$";
 
     public EditText getEditProfile() {
         return editProfile;
@@ -181,12 +185,24 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
             preferenceEndPoint.saveStringPreference(key, editBirth.getText().toString());
             getActivity().onBackPressed();
         }else if(key.equalsIgnoreCase(Constants.FIRST_NAME)){
+            if (Pattern.matches(NAME_REGX, text)) {
             preferenceEndPoint.saveStringPreference(key,text);
             getActivity().onBackPressed();
+            } else {
+                mToastFactory.showToast(getResources().getString(R.string.invalid_name));
+            }
         }else if(key.equalsIgnoreCase(Constants.DOB)){
 
             preferenceEndPoint.saveStringPreference(key,text);
             getActivity().onBackPressed();
+        }else if(key.equalsIgnoreCase(Constants.DESCRIPTION)){
+            text = text.trim();
+            if(!TextUtils.isEmpty(text)) {
+                preferenceEndPoint.saveStringPreference(key, text);
+                getActivity().onBackPressed();
+            } else {
+                Toast.makeText(getActivity(),getResources().getString(R.string.invalid_status),Toast.LENGTH_LONG).show();
+            }
         }else if(key.equalsIgnoreCase(Constants.EMAIL)) {
             if(!isValidMail(text)){
                 Toast.makeText(getActivity(),getResources().getString(R.string.invalid_email),Toast.LENGTH_LONG).show();

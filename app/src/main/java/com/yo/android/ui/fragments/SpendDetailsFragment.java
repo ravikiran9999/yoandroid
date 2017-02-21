@@ -1,10 +1,16 @@
 package com.yo.android.ui.fragments;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Contacts;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,16 +24,21 @@ import com.google.gson.reflect.TypeToken;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.dialer.SubscribersList;
+import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -60,6 +71,18 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     private SpentDetailsAdapter adapter;
 
     public static final String BALANCE_TRANSFER = "BalanceTransfer";
+
+    public static final String AUTHORITY = YoAppContactContract.CONTENT_AUTHORITY;
+
+    /**
+     * The default sort order for this table
+     */
+    public static final String DEFAULT_SORT_ORDER = "date DESC";
+    /**
+     * The content:// style URL for this table
+     */
+    public static final Uri CONTENT_URI =
+            Uri.parse("content://" + AUTHORITY + "/callLogs");
 
 
     @Override
@@ -170,19 +193,70 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             final SubscribersList item = mSubscribersList.get(position);
 
             // Set item views based on your views and data model
-            holder.getDate().setText(item.getTime());
-            holder.getDuration().setText(item.getDuration());
-            holder.getTxtPhone().setText(item.getDestination());
-            holder.getTxtPrice().setText("$" + item.getCallcost());
+            //holder.getDate().setText(item.getTime());
+            String modifiedTime = item.getTime().substring(0, item.getTime().lastIndexOf("."));
+            holder.getDate().setText(modifiedTime);
+            //                Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
+            Date date = Util.convertUtcToGmt(modifiedTime);
+            holder.getDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(date));
+            if(item.getDuration() != null) {
+                String[] tokens = item.getDuration().split(":");
+                int hours = Integer.parseInt(tokens[0]);
+                int minutes = Integer.parseInt(tokens[1]);
+                int seconds = Integer.parseInt(tokens[2]);
+                String duration = "";
+                if(seconds >30) {
+                    minutes++;
+                }
+                if (hours == 0) {
+                    duration = String.format("%02d mins", minutes);
+                } else {
+                    duration = String.format("%02d hrs %02d mins", hours, minutes);
+                }
+                holder.getDuration().setText(duration);
+            } else {
+                holder.getDuration().setText(item.getDuration());
+            }
+            String phoneName = Helper.getContactName(mContext, item.getDestination());
+            if(phoneName != null) {
+                holder.getTxtPhone().setText(phoneName);
+            } else {
+                final ContentResolver resolver = mContext.getContentResolver();
+                Cursor c = null;
+                try {
+                    c = resolver.query(
+                            CONTENT_URI,
+                            null,
+                            CallLog.Calls.NUMBER +" = "+ item.getDestination(),
+                            null,
+                            DEFAULT_SORT_ORDER);
+                    if (c == null || !c.moveToFirst()) {
+                        String contactName = getContactName(item.getDestination());
+                        if(!TextUtils.isEmpty(contactName)) {
+                            holder.getTxtPhone().setText(contactName);
+                        } else {
+                            holder.getTxtPhone().setText(item.getDestination());
+                        }
+                    } else {
+                        holder.getTxtPhone().setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
+
+                    }
+                } finally {
+                    if (c != null) c.close();
+                }
+            }
+            holder.getTxtPrice().setText("US $ " + item.getCallcost());
+            holder.getTxtReason().setText(item.getCalltype());
+
             try {
                 DecimalFormat df = new DecimalFormat("0.000");
                 String format = df.format(Double.valueOf(item.getCallcost()));
-                holder.getTxtPrice().setText("$" + format);
+                holder.getTxtPrice().setText("US $ " + format);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            holder.getArrow().setOnClickListener(new View.OnClickListener() {
+            /*holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     item.setArrowDown(!item.isArrowDown());
@@ -195,7 +269,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             } else {
                 holder.getArrow().setImageResource(R.drawable.ic_uparrow);
                 holder.getDurationContainer().setVisibility(View.GONE);
-            }
+            }*/
         }
 
         @Override
@@ -212,6 +286,39 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             mSubscribersList.clear();
             notifyDataSetChanged();
         }
+
+        public String getContactName(final String phoneNumber)
+        {
+            Uri uri;
+            String[] projection;
+            Uri mBaseUri = Contacts.Phones.CONTENT_FILTER_URL;
+            projection = new String[] { android.provider.Contacts.People.NAME };
+            try {
+                Class<?> c =Class.forName("android.provider.ContactsContract$PhoneLookup");
+                mBaseUri = (Uri) c.getField("CONTENT_FILTER_URI").get(mBaseUri);
+                projection = new String[] { "display_name" };
+            }
+            catch (Exception e) {
+            }
+
+
+            uri = Uri.withAppendedPath(mBaseUri, Uri.encode(phoneNumber));
+            Cursor cursor = mContext.getContentResolver().query(uri, projection, null, null, null);
+
+            String contactName = "";
+
+            if (cursor.moveToFirst())
+            {
+                contactName = cursor.getString(0);
+            }
+
+            cursor.close();
+            cursor = null;
+
+            return contactName;
+        }
+
     }
+
 
 }
