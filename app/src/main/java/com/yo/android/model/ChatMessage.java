@@ -58,7 +58,6 @@ public class ChatMessage implements Parcelable {
     private String chatProfileUserName;
     private String roomName;
     private String messageKey;
-    //private Map<String, String> serverTimeStamp = new HashMap<>();
     private Map<String, Object> timeStampMap;
     @JsonIgnore
     private long serverTimeStampReceived;
