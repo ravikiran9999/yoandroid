@@ -178,7 +178,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(YoSipService.this, RingtoneManager.TYPE_RINGTONE);
-        mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         if (!created) {
@@ -1019,6 +1019,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
         try {
             int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+            if (volume == 0) {
+                volume = 1;
+            }
             mAudioManager.setSpeakerphoneOn(false);
             mRingTone = MediaPlayer.create(this, R.raw.calling);
             mRingTone.setVolume(volume, volume);
