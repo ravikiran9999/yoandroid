@@ -997,7 +997,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 cachedReadList1 = new Gson().fromJson(cachedIds1, type2);
             }
             articlesList.addAll(cachedReadList1);
-            editor.putString("read_article_ids", new Gson().toJson(articlesList));
+            editor.putString("read_article_ids", new Gson().toJson(new LinkedHashSet<String>(articlesList)));
             editor.commit();
 
 
@@ -1308,8 +1308,8 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
         SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(this, userId);
         //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
-        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
+        editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
+        editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
         editor.commit();
     }
 

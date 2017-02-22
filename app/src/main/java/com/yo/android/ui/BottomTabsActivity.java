@@ -243,7 +243,7 @@ public class BottomTabsActivity extends BaseActivity {
         //
         Intent in = new Intent(getApplicationContext(), SipService.class);
         startService(in);
-        balanceHelper.checkBalance(null);
+        //balanceHelper.checkBalance(null);
         //
         loadUserProfileInfo();
         updateDeviceToken();
@@ -259,6 +259,9 @@ public class BottomTabsActivity extends BaseActivity {
         NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nMgr.cancelAll();
         Intent intent1 = getIntent();
+        if(!intent1.getBooleanExtra("fromLowBalNotification", false)) {
+            balanceHelper.checkBalance(null);
+        }
         String tag = intent1.getStringExtra("tag");
         if (notificationList.size() == 1) {
             String title = intent1.getStringExtra("title");

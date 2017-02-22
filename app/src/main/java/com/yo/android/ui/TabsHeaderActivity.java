@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Contacts;
 import com.yo.android.model.Popup;
@@ -93,6 +94,9 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         });
 
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+        preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
+        NotificationCache.clearNotifications();
 
         if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
             Type type = new TypeToken<List<Popup>>() {
