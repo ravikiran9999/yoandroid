@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +55,9 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     @Bind(R.id.side_index)
     ListView layout;
 
+    @Bind(R.id.tv_title)
+    TextView countryTitle;
+
     private CountryCallRatesAdapter adapter;
     private RecentCountryCallRatesAdapter recentAdapter;
     private MenuItem searchMenuItem;
@@ -90,7 +94,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         }
         try {
             List<CallRateDetail> tempRecentCallRateDetails = gson.fromJson(preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_SELECTED), type);
-            if(recentCallRateDetails !=null) {
+            if (recentCallRateDetails != null) {
                 recentCallRateDetails.addAll(tempRecentCallRateDetails);
             }
 
@@ -136,13 +140,25 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     private void showEmptyText() {
         txtEmptyView.setText(R.string.empty_country_list_message);
         txtEmptyView.setVisibility(adapter.getCount() == 0 ? View.VISIBLE : View.GONE);
+        if(txtEmptyView.getVisibility() == View.VISIBLE) {
+            countryTitle.setVisibility(View.GONE);
+            recentTextView.setVisibility(View.GONE);
+        } else {
+            countryTitle.setVisibility(View.VISIBLE);
+            recentTextView.setVisibility(recentTextView.getVisibility());
+            if(recentAdapter.getAllItems().size()>0) {
+                recentTextView.setVisibility(View.VISIBLE);
+            } else if(recentAdapter.getCount() == 0) {
+                recentTextView.setVisibility(View.GONE);
+            }
+        }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_country_list, menu);
         prepareSearch(menu);
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -164,8 +180,8 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mLog.i(TAG, "onQueryTextChange: " + newText);
                 adapter.performCountryCodeSearch(newText);
+                recentAdapter.performCountryCodeSearch(newText);
                 showEmptyText();
                 return true;
             }
@@ -176,6 +192,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
                 Util.hideKeyboard(context, getCurrentFocus());
                 if (adapter != null) {
                     adapter.performCountryCodeSearch("");
+                    recentAdapter.performCountryCodeSearch("");
                 }
                 return true;
             }
@@ -186,11 +203,12 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Object object = parent.getAdapter().getItem(position);
         if (object instanceof CallRateDetail) {
-            gson = new Gson();
             CallRateDetail callRateDetail = (CallRateDetail) object;
             callRateDetail.setRecentSelected(true);
-            recentCallRateDetails.add(callRateDetail);
-            String json = gson.toJson(recentCallRateDetails);
+            if(!recentCallRateDetails.contains(callRateDetail)) {
+                recentCallRateDetails.add(callRateDetail);
+            }
+            String json = new Gson().toJson(recentCallRateDetails);
 
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());

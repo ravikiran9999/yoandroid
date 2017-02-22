@@ -389,7 +389,7 @@ public class CallLog {
 
                 }
             } finally {
-                if (c != null) c.close();
+                if (c != null && !c.isClosed()) c.close();
             }
         }
 
@@ -403,7 +403,6 @@ public class CallLog {
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getPSTNCallLog(Context context) {
             final ContentResolver resolver = context.getContentResolver();
             ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
-            ;
             LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
 
             Cursor c = null;
@@ -447,7 +446,7 @@ public class CallLog {
 
                 }
             } finally {
-                if (c != null) c.close();
+                if (c != null && !c.isClosed()) c.close();
             }
         }
 
@@ -502,7 +501,7 @@ public class CallLog {
 
                 }
             } finally {
-                if (c != null) c.close();
+                if (c != null && !c.isClosed()) c.close();
             }
         }
 
@@ -526,20 +525,23 @@ public class CallLog {
 
         public static String getImagePath(Context context, String voxUserName) {
             final ContentResolver resolver = context.getContentResolver();
-            Cursor imageCursor = resolver.query(
-                    YoAppContactContract.YoAppContactsEntry.CONTENT_URI,
-                    new String[]{YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE},
-                    YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + " = '" + voxUserName + "'",
-                    null,
-                    null);
-            if (imageCursor != null && imageCursor.moveToFirst()) {
-                String imagePath = imageCursor.getString(0);
-                if (imageCursor != null) {
+            Cursor imageCursor = null;
+            try {
+                imageCursor = resolver.query(
+                        YoAppContactContract.YoAppContactsEntry.CONTENT_URI,
+                        new String[]{YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE},
+                        YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + " = '" + voxUserName + "'",
+                        null,
+                        null);
+                if (imageCursor != null && imageCursor.moveToFirst()) {
+                    return imageCursor.getString(0);
+                }
+                return null;
+            }finally {
+                if (imageCursor != null && !imageCursor.isClosed()) {
                     imageCursor.close();
                 }
-                return imagePath;
             }
-            return null;
         }
     }
 }
