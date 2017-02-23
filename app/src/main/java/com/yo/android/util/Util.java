@@ -40,9 +40,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseException;
-import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
@@ -53,23 +50,18 @@ import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.model.Articles;
-import com.yo.android.model.ChatMessage;
-import com.yo.android.model.ChatMessageReceived;
-import com.yo.android.model.Room;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.StatusCodes;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.vox.BalanceHelper;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -597,7 +589,6 @@ public class Util {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.i(TAG, "onQueryTextChange: " + newText);
                 boolean isFromClose = false;
                 if (TextUtils.isEmpty(newText)) {
                     if (menu.findItem(R.id.menu_search).isActionViewExpanded()) {
@@ -1117,33 +1108,5 @@ public class Util {
             return drawable;
         }
         return mContext.getResources().getDrawable(R.drawable.dynamic_profile);
-    }
-
-    public static ChatMessage convertToChatMessage(ChatMessageReceived chatMessageReceived) {
-        ChatMessage chatMessage = new ChatMessage();
-        try {
-            chatMessage.setMsgID(chatMessageReceived.getMsgID());
-            chatMessage.setMessage(chatMessageReceived.getMessage());
-            chatMessage.setMessageKey(chatMessageReceived.getMessageKey());
-            chatMessage.setSenderID(chatMessageReceived.getSenderID());
-            chatMessage.setStatus(chatMessageReceived.getStatus());
-            chatMessage.setImagePath(chatMessageReceived.getImagePath());
-            chatMessage.setTime(chatMessageReceived.getTime());
-            chatMessage.setType(chatMessageReceived.getType());
-            chatMessage.setImagePath(chatMessageReceived.getImagePath());
-            chatMessage.setRoomId(chatMessageReceived.getRoomId());
-            chatMessage.setSent(chatMessageReceived.getSent());
-            chatMessage.setDelivered(chatMessageReceived.getDelivered());
-            chatMessage.setDeliveredTime(chatMessageReceived.getDeliveredTime());
-            chatMessage.setVoxUserName(chatMessageReceived.getVoxUserName());
-            chatMessage.setYouserId(chatMessageReceived.getYouserId());
-            chatMessage.setChatProfileUserName(chatMessageReceived.getChatProfileUserName());
-            chatMessage.setRoomName(chatMessageReceived.getRoomName());
-            chatMessage.setServerTimeStampReceived(chatMessageReceived.getServerTimeStamp());
-            chatMessage.setSelected(chatMessageReceived.isSelected());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return chatMessage;
     }
 }
