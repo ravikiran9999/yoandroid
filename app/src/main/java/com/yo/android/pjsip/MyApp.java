@@ -106,7 +106,7 @@ class MyApp {
             mEndpoint.codecSetPriority("ilbc/8000", (short) CodecPriority.PRIORITY_DISABLED);
 
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             //return;
         }
 

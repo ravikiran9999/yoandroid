@@ -132,7 +132,6 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         initViews();
         callModel = new SipCallModel();
         bus.register(this);
-        //
 
         //To display name of the user based on vox username
         Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER));
@@ -269,10 +268,12 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                     mHandler.removeCallbacks(startTimer);
                 }
                 callModel.setOnCall(false);
+                callModel.setEvent(UserAgent.CALL_STATE_END);
                 log.setCallType(VoipConstants.CALL_DIRECTION_IN);
                 bus.post(callModel);
-                bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                //bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 finish();
+                break;
             case R.id.btnAcceptCall:
                 if (sipBinder != null) {
                     sipBinder.getHandler().acceptCall();
@@ -304,7 +305,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.btnMessageIncoming).setVisibility(View.VISIBLE);
         findViewById(R.id.btnHold).setAlpha(1);
         mInComingHeader.setVisibility(View.GONE);
-        mLog.d("BUS", "ONCALLACCEPTED");
+        mLog.d("BUS", "ON CALL ACCEPTED");
         callModel.setOnCall(true);
         bus.post(callModel);
     }
@@ -320,8 +321,8 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                         || model.getEvent() == UserAgent.CALL_STATE_ERROR
                         || model.getEvent() == UserAgent.CALL_STATE_END
                         ) {
-                    finish();
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                    finish();
                 }
             }
         } else if (object instanceof OpponentDetails) {
@@ -354,16 +355,16 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
-            finish();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
             });
-
+            finish();
         }
     };
+
     boolean running;
     private Runnable startTimer = new Runnable() {
         @Override

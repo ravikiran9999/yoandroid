@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/header_outgoing_call"
     android:layout_width="match_parent"
     android:layout_height="250dp"
@@ -38,7 +39,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:text="Sandip Dave"
+            tools:text="Sandip Dave"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 

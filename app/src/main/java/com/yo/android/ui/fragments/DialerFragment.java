@@ -388,10 +388,6 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         }
     }
 
-    public void onEvent(Object object) {
-        onEventMainThread(REFRESH_CALL_LOGS);
-    }
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
