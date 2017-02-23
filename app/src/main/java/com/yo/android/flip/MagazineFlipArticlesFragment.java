@@ -1099,8 +1099,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     }
                 }
                 SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-                editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
-                editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
+                editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
+                editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
                 editor.commit();
             }
             //currentFlippedPosition = 0;
@@ -1185,8 +1185,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             }
                         }
                         SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-                        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles1));
-                        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles1));
+                        editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles1)));
+                        editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles1)));
                         editor.commit();
                     }
                     if (llNoArticles != null) {
@@ -1315,7 +1315,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }*/
             List<String> articlesList1 = new ArrayList<String>(new LinkedHashSet<String>(articlesList));
             SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-            editor.putString("read_article_ids", new Gson().toJson(articlesList1));
+            editor.putString("read_article_ids", new Gson().toJson(new LinkedHashSet<String>(articlesList1)));
             editor.commit();
         }
 
@@ -1465,8 +1465,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         }
 
                         SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-                        editor.putString("followed_cached_magazines", new Gson().toJson(cachedFollowedMagazinesList));
-                        editor.putString("random_cached_magazines", new Gson().toJson(cachedRandomMagazinesList));
+                        editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(cachedFollowedMagazinesList)));
+                        editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(cachedRandomMagazinesList)));
                         editor.commit();
                     }
                     if (llNoArticles != null) {
@@ -1521,8 +1521,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
             String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
             SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-            editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles1));
-            editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles1));
+            editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles1)));
+            editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles1)));
             editor.commit();
         }
         if (llNoArticles != null) {
@@ -1584,8 +1584,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
 
             SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-            editor.putString("followed_cached_magazines", new Gson().toJson(cachedFollowedMagazinesList));
-            editor.putString("random_cached_magazines", new Gson().toJson(cachedRandomMagazinesList));
+            editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(cachedFollowedMagazinesList)));
+            editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(cachedRandomMagazinesList)));
             editor.commit();
         }
 
@@ -2090,8 +2090,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
         SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
         //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
-        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
+        editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
+        editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
         editor.commit();
     }
 
@@ -2173,14 +2173,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         // Delete the articles equal to the remaining articles count
                         cachedFollowedMagazinesList.subList(0, remainingArticlesCount).clear();
                         SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-                        editor.putString("followed_cached_magazines", new Gson().toJson(cachedFollowedMagazinesList));
+                        editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(cachedFollowedMagazinesList)));
                         editor.commit();
                     }
                 } else {
                     // Delete the articles equal to the extra articles count
                     cachedRandomMagazinesList.subList(0, extraArticlesCount).clear();
                     SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-                    editor.putString("random_cached_magazines", new Gson().toJson(cachedRandomMagazinesList));
+                    editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(cachedRandomMagazinesList)));
                     editor.commit();
                 }
             }

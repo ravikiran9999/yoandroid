@@ -899,14 +899,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         long timestamp = System.currentTimeMillis();
-        int msgId = (int) timestamp;
+        //int msgId = (int) timestamp;
         //ChatMessage chatMessage = new ChatMessage();
         chatMessage.setType(Constants.IMAGE);
         chatMessage.setTime(timestamp);
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
         chatMessage.setMessageKey(DummyMsgKey);
-        chatMessage.setMsgID(msgId);
+        //chatMessage.setMsgID(msgId);
         chatMessage.setRoomId(childRoomId);
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));

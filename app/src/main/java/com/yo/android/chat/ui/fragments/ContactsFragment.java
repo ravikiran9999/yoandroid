@@ -14,6 +14,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -107,6 +108,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     private TextView noSearchResult;
     //private boolean isRemoved;
     private boolean isSharedPreferenceShown;
+    private SearchView searchView;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -173,7 +175,11 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onResume() {
         super.onResume();
         if (mHelper.isConnected()) {
-            syncContacts();
+            if(searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
+                searchView.setQuery(searchView.getQuery(), false);
+            } else {
+                syncContacts();
+            }
         } else if (!mHelper.isConnected()) {
             List<Contact> cacheContactsList = mSyncManager.getCachContacts();
             loadAlphabetOrder(cacheContactsList);
@@ -239,6 +245,8 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG, noSearchResult);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
         if (item.getItemId() == R.id.invite) {
             Intent i = new Intent(Intent.ACTION_INSERT);
             i.setType(ContactsContract.Contacts.CONTENT_TYPE);

@@ -81,6 +81,9 @@ import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
 
+import static android.media.AudioManager.FLAG_ALLOW_RINGER_MODES;
+import static android.media.AudioManager.FLAG_PLAY_SOUND;
+
 /**
  * Created by Ramesh on 13/8/16.
  */
@@ -178,7 +181,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(YoSipService.this, RingtoneManager.TYPE_RINGTONE);
-        mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         if (!created) {
@@ -308,7 +311,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     private void pausePlayingAudio() {
-        AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         isPlayingAudio = mAudioManager.isMusicActive();
         if (isPlayingAudio) {
             Util.sendMediaButton(this, KeyEvent.KEYCODE_MEDIA_PAUSE);
@@ -318,7 +321,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private synchronized void showInComingCall(MyCall mycall) throws Exception {
         long currentElapsedTime = SystemClock.elapsedRealtime();
         if (lastLaunchCallHandler + LAUNCH_TRIGGER_DELAY < currentElapsedTime) {
-            //Always set default speaker off
+
+            int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+            if (volume == 0) {
+                volume = 1;
+            }
+            startDefaultRingtone(volume);
             Intent intent = new Intent(this, InComingCallActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.putExtra(InComingCallActivity.CALLER, getPhoneNumber(mycall.getInfo().getRemoteUri()));
@@ -610,7 +618,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState.setMobileNumber(destination);
         //For PSTN calls ringtone is playing from library but app to app calls its not playing.
         if (!oldintent.hasExtra(VoipConstants.PSTN)) {
-            startDefaultRingtone();
+            startDefaultRingtone(1);
         }
         Intent intent = new Intent(this, OutGoingCallActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -1024,29 +1032,22 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
-    protected synchronized void startDefaultRingtone() {
+    protected synchronized void startDefaultRingtone(int volume) {
 
         try {
-            int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+
             mAudioManager.setSpeakerphoneOn(false);
             mRingTone = MediaPlayer.create(this, R.raw.calling);
             mRingTone.setVolume(volume, volume);
             mRingTone.setLooping(true);
             mAudioManager.setMode(AudioManager.RINGER_MODE_SILENT);
-            mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                }
-            });
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         mRingTone.start();
                     } catch (IllegalStateException e) {
-
+                        e.printStackTrace();
                     }
                 }
             }, 1000);

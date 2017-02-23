@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -104,6 +105,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     //private boolean isRemoved;
     private boolean isSharedPreferenceShown;
     private boolean isShowDefault;
+    private SearchView searchView;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -158,6 +160,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG, noSearchResult);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
         MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -227,7 +231,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onResume() {
         super.onResume();
-        isRoomsExist();
+        if(searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
+            searchView.setQuery(searchView.getQuery(), false);
+        } else {
+            isRoomsExist();
+        }
 
     }
 

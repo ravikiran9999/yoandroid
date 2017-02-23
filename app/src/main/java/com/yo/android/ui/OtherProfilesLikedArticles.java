@@ -47,6 +47,7 @@ import com.yo.android.util.Util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -752,8 +753,8 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
         SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
         //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-        editor.putString("followed_cached_magazines", new Gson().toJson(followedTopicArticles));
-        editor.putString("random_cached_magazines", new Gson().toJson(randomTopicArticles));
+        editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
+        editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
         editor.commit();
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,12 +45,8 @@ import com.yo.android.vox.VoxFactory;
 
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,6 +183,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public boolean onOptionsItemSelected(MenuItem item) {
         // hideDialPad(true);
         Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG, noSearchResult);
+        searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
         MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -259,7 +258,12 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     @Override
     public void onResume() {
         super.onResume();
-        loadCallLogs();
+        //getActivity().invalidateOptionsMenu();
+        if(searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
+            searchView.setQuery(searchView.getQuery(), false);
+        } else {
+            loadCallLogs();
+        }
     }
 
     AdapterView.OnItemClickListener showCallLogDetailsListener = new AdapterView.OnItemClickListener() {

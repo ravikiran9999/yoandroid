@@ -123,6 +123,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         notificationIntent.putExtra("message", message);
         notificationIntent.putExtra("tag", tag);
         notificationIntent.putExtra("id", id);
+        notificationIntent.putExtra("fromLowBalNotification", false);
 
         NotificationBuilderObject notificationsInboxData = prepareNotificationData(title, message);
         UserData data = new UserData();
