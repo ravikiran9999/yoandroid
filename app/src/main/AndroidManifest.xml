@@ -265,8 +265,7 @@
         <activity
             android:name=".ui.TabsHeaderActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode= "singleInstance"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".inapp.UnManageInAppPurchaseActivity"
             android:screenOrientation="portrait"
