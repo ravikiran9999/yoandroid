@@ -364,19 +364,23 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             startRingtone();
         } else if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+
             playPausedAudio();
+
             try {
                 int statusCode = call.getInfo().getLastStatusCode().swigValue();
                 //TODO:Handle more error codes to display proper messages to the user
                 handlerErrorCodes(call.getInfo(), sipCallState);
                 if (statusCode == 503) {
                     mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
+                } else if (statusCode == 603) {
+                    callDisconnected();
                 }
                 mLog.e(TAG, "%d %s", call.getInfo().getLastStatusCode().swigValue(), call.getInfo().getLastReason());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            callDisconnected();
+
         } else if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
             stopRingtone();
@@ -441,6 +445,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     private void callDisconnected() {
+
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
         mediaManager.setAudioMode(AudioManager.MODE_NORMAL);
@@ -724,7 +729,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         CallOpParam prm = new CallOpParam();
         prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
         try {
-            currentCall.answer(prm);
+            if (currentCall != null)
+                currentCall.answer(prm);
             sipCallState.setCallState(SipCallState.IN_CALL);
         } catch (Exception e) {
             mLog.w(TAG, e);
@@ -736,17 +742,19 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public void hangupCall(int callType) {
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
+
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
             try {
-                currentCall.hangup(prm);
+                if (currentCall != null)
+                    currentCall.hangup(prm);
                 isHangup = true;
                 sipCallState.setCallState(SipCallState.CALL_FINISHED);
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
-            callDisconnected();
+            //callDisconnected();
         }
     }
 
@@ -772,7 +780,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 String phoneNumber = mobiletemp.replace(countryCode + "", "");
                 contact = mContactsSyncManager.getContactPSTN(countryCode, phoneNumber);
             } catch (NumberParseException e) {
-                System.err.println("NumberParseException was thrown: " + e.toString());
+                mLog.e(TAG, "NumberParseException was thrown: " + e.toString());
             }
             if (contact != null && contact.getName() != null) {
                 info.name = contact.getName();
