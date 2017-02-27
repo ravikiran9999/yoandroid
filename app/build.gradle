@@ -27,7 +27,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 4
-        versionName "17.1.1.4"
+        versionName "17.1.1.6"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -37,7 +37,7 @@ android {
     productFlavors {
 
         dev {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""

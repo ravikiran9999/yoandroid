@@ -16,6 +16,7 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
@@ -348,7 +349,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     @Override
-    public void notifyCallState(MyCall call) {
+    public void notifyCallState(@NonNull MyCall call) {
 
         CallInfo ci;
         try {
@@ -368,15 +369,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             playPausedAudio();
 
             try {
-                int statusCode = call.getInfo().getLastStatusCode().swigValue();
                 //TODO:Handle more error codes to display proper messages to the user
                 handlerErrorCodes(call.getInfo(), sipCallState);
-                if (statusCode == 503) {
-                    mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
-                } else if (statusCode == 603) {
-                    callDisconnected();
-                }
-                mLog.e(TAG, "%d %s", call.getInfo().getLastStatusCode().swigValue(), call.getInfo().getLastReason());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -385,6 +380,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
             stopRingtone();
             callAccepted();
+        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
+            stopRingtone();
         }
     }
 
@@ -393,12 +390,19 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
         if (statusCode == 487) {
             callType = CallLog.Calls.MISSED_TYPE;
+            callDisconnected();
+        } else if (statusCode == 503) {
+            mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
+
+        } else if (statusCode == 603) {
+            callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
             storeCallLog(sipCallstate.getMobileNumber());
         } else if (callType == CallLog.Calls.OUTGOING_TYPE) {
             storeCallLog(phone);
         }
+
 
         mHandler.post(new Runnable() {
             @Override
@@ -750,7 +754,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 if (currentCall != null)
                     currentCall.hangup(prm);
                 isHangup = true;
-                sipCallState.setCallState(SipCallState.CALL_FINISHED);
+                mLog.i(TAG, "check : 1");
+                //sipCallState.setCallState(SipCallState.CALL_FINISHED);
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
@@ -776,8 +781,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 // phone must begin with '+'
                 Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + mobileNumber, "");
                 int countryCode = numberProto.getCountryCode();
-                String mobiletemp = mobileNumber;
-                String phoneNumber = mobiletemp.replace(countryCode + "", "");
+                String mobileTemp = mobileNumber;
+                String phoneNumber = mobileTemp.replace(countryCode + "", "");
                 contact = mContactsSyncManager.getContactPSTN(countryCode, phoneNumber);
             } catch (NumberParseException e) {
                 mLog.e(TAG, "NumberParseException was thrown: " + e.toString());

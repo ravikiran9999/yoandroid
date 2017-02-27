@@ -92,7 +92,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     private List<CountryCode> mList;
     @Inject
     ConnectivityHelper mHelper;
-    private static  final int SELECTED_OK=101;
+    private static final int SELECTED_OK = 101;
 
     private MenuItem searchMenuItem;
 
@@ -132,38 +132,38 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             if (countryCode.getCountryID().equalsIgnoreCase(str)) {
                 pos = mList.indexOf(countryCode);
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, countryCode.getCountryCode());
-                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_DISPLAY_NAME ,countryCode.getCountryName());
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_DISPLAY_NAME, countryCode.getCountryName());
                 break;
             }
         }
-         String  simCountryCode=preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
-         String  simCountryName=preferenceEndPoint.getStringPreference(Constants.COUNTRY_DISPLAY_NAME);
-         mCountryCode.setText("+"+simCountryCode+" "+simCountryName);
-       //spCountrySpinner.attachDataSource(mList);
+        String simCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+        String simCountryName = preferenceEndPoint.getStringPreference(Constants.COUNTRY_DISPLAY_NAME);
+        mCountryCode.setText("+" + simCountryCode + " " + simCountryName);
+        //spCountrySpinner.attachDataSource(mList);
 
 //         spCountrySpinner.setSelectedIndex(pos);
 
-       //spCountrySpinner.setOnItemSelectedListener(this);
+        //spCountrySpinner.setOnItemSelectedListener(this);
 
         mCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(LoginActivity.this,CountryCodeActivity.class);
-                startActivityForResult(intent,SELECTED_OK);
+                Intent intent = new Intent(LoginActivity.this, CountryCodeActivity.class);
+                startActivityForResult(intent, SELECTED_OK);
             }
         });
 
         mCountryCode.setOnTouchListener(new View.OnTouchListener() {
-           @Override
-           public boolean onTouch(View v, MotionEvent event) {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
 
-              Util.hideKeyboard(LoginActivity.this, v);
-              return false;
-           }
-       });
+                Util.hideKeyboard(LoginActivity.this, v);
+                return false;
+            }
+        });
         mPhoneNumberView.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-           @Override
-           public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     //do here
                     Util.hideKeyboard(LoginActivity.this, mPhoneNumberView);
@@ -186,7 +186,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         // Reset errors.
         mPhoneNumberView.setError(null);
         // Store values at the time of the login attempt.
-       // String countryCode=mCountryCode.getText().toString();
+        // String countryCode=mCountryCode.getText().toString();
         String phoneNumber = mPhoneNumberView.getText().toString().trim();
 
 
@@ -372,11 +372,8 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, mList.get(position).getCountryCode()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
-        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID, mList.get(position).getCountryID()/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
-
-       ;
-
+        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, mList.get(position).getCountryCode());
+        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID, mList.get(position).getCountryID());
     }
 
     @Override
@@ -388,15 +385,14 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == SELECTED_OK && resultCode == RESULT_OK && data != null){
-            if(data.hasExtra("COUNTRY_CODE")){
-                String countryCode=data.getStringExtra("COUNTRY_CODE");
-                String countryName=data.getStringExtra("COUNTRY_NAME");
-                String countryId=data.getStringExtra("COUNTRY_ID");
-;
+        if (requestCode == SELECTED_OK && resultCode == RESULT_OK && data != null) {
+            if (data.hasExtra("COUNTRY_CODE")) {
+                String countryCode = data.getStringExtra("COUNTRY_CODE");
+                String countryName = data.getStringExtra("COUNTRY_NAME");
+                String countryId = data.getStringExtra("COUNTRY_ID");
                 mCountryCode.setText("+" + countryCode + " " + countryName);
-                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, countryCode/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
-                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID,countryId/*(CountryCode) spCountrySpinner.getSelectedItem()).getCountryCode()*/);
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, countryCode);
+                preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID, countryId);
             }
         }
     }
