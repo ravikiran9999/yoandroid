@@ -719,20 +719,22 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         Type type1 = new TypeToken<List<Articles>>() {
         }.getType();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-
-        String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
-        String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
-
         List<Articles> cachedMagazinesList = new ArrayList<>();
-        if(!TextUtils.isEmpty(sharedFollowedCachedMagazines)){
-            String cachedMagazines = sharedFollowedCachedMagazines;
-            List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-            cachedMagazinesList.addAll(cachedFollowedMagazinesList);
-        }
-        if(!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-            String cachedMagazines = sharedRandomCachedMagazines;
-            List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-            cachedMagazinesList.addAll(cachedRandomMagazinesList);
+
+        if(getActivity() != null) {
+            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+
+            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
+                String cachedMagazines = sharedFollowedCachedMagazines;
+                List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+                cachedMagazinesList.addAll(cachedFollowedMagazinesList);
+            }
+            if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                String cachedMagazines = sharedRandomCachedMagazines;
+                List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+                cachedMagazinesList.addAll(cachedRandomMagazinesList);
+            }
         }
 
         return cachedMagazinesList;

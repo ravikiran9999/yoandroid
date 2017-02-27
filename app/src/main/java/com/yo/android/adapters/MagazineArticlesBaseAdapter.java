@@ -2133,20 +2133,21 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }.getType();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         //String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-
-        String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("followed_cached_magazines", "");
-        String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("random_cached_magazines", "");
-
         List<Articles> cachedMagazinesList = new ArrayList<>();
-        if(!TextUtils.isEmpty(sharedFollowedCachedMagazines)){
-            String cachedMagazines = sharedFollowedCachedMagazines;
-            List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-            cachedMagazinesList.addAll(cachedFollowedMagazinesList);
-        }
-        if(!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-            String cachedMagazines = sharedRandomCachedMagazines;
-            List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-            cachedMagazinesList.addAll(cachedRandomMagazinesList);
+        if(context != null) {
+            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("followed_cached_magazines", "");
+            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("random_cached_magazines", "");
+
+            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
+                String cachedMagazines = sharedFollowedCachedMagazines;
+                List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+                cachedMagazinesList.addAll(cachedFollowedMagazinesList);
+            }
+            if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+                String cachedMagazines = sharedRandomCachedMagazines;
+                List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
+                cachedMagazinesList.addAll(cachedRandomMagazinesList);
+            }
         }
 
         return cachedMagazinesList;
