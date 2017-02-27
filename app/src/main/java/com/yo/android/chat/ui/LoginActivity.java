@@ -270,6 +270,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         yoService.loginUserAPI(countryCode + phoneNumber, type).enqueue(new Callback<Response>() {
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                try {
                 dismissProgressDialog();
                 if (response.isSuccessful()) {
                     Response response1 = response.body();
@@ -291,6 +292,9 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                     transaction.commit();
                 } else {
                     mToastFactory.showToast("Please enter valid phone number.");
+                }
+            } catch (Exception e) {
+
                 }
 
             }
