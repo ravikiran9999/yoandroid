@@ -197,7 +197,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             }
             loadAlphabetOrder(list);
         } finally {
-            if (c != null) c.close();
+            if (c != null && !c.isClosed()) c.close();
         }
     }
 

@@ -245,7 +245,7 @@ public class FirebaseService extends InjectedService {
         notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
         notificationIntent.putExtra(Constants.OPPONENT_ID, chatMessage.getYouserId());
         if (!TextUtils.isEmpty(chatMessage.getRoomName())) {
-            notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, title);
+            notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, chatMessage.getRoomName());
         }
         switch (mode) {
             case STYLE_TEXT:
@@ -261,8 +261,12 @@ public class FirebaseService extends InjectedService {
                 } else if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
                     data.setDescription(Constants.PHOTO);
                 }
-                String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(chatMessage.getSenderID());
-                data.setSenderName(nameFromNumber);
+                if(chatMessage.getRoomName() != null) {
+                    data.setSenderName(chatMessage.getRoomName());
+                } else {
+                    String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(chatMessage.getSenderID());
+                    data.setSenderName(nameFromNumber);
+                }
 
                 if (!notificationList.contains(data)) {
                     notificationList.add(0, data);//always insert new notification on top

@@ -142,9 +142,6 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     }
 
     private Drawable loadAvatarImage(Room item, ChatRoomViewHolder holder, boolean isgroup) {
-        /*if (holder.getChatRoomPic().getTag(Settings.imageTag) != null) {
-            return (Drawable) holder.getChatRoomPic().getTag(Settings.imageTag);
-        }*/
         Drawable tempImage = null;
         if (isgroup == true) {
             tempImage = mContext.getResources().getDrawable(R.drawable.chat_group);

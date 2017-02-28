@@ -112,7 +112,7 @@ public class GroupContactsActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Util.prepareContactsSearch(this, mMenu, groupContactsListAdapter, Constants.CONT_FRAG,noSearchResult);
+        Util.prepareContactsSearch(this, mMenu, groupContactsListAdapter, Constants.CONT_FRAG, noSearchResult);
 
         if (item.getItemId() == R.id.done) {
             done();
@@ -126,7 +126,7 @@ public class GroupContactsActivity extends BaseActivity {
     }
 
     private void getYoAppUsers() {
-
+        showProgressDialog();
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {

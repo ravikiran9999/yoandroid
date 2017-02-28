@@ -161,4 +161,8 @@ public class Constants {
     public static final int FETCHING_NEW_ARTICLES_FREQUENCY = 24 * 60 * 60 * 1000;
     public static final String IS_SERVICE_RUNNING = "is_service_running";
 
+    public static final String FAILED = "FAILED";
+
+
+
 }
