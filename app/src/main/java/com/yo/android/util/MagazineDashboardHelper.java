@@ -133,21 +133,23 @@ public class MagazineDashboardHelper {
     public List<Articles> removeReadIds(List<Articles> totalArticles, Context context, final PreferenceEndPoint preferenceEndPoint) {
         List<Articles> tempArticlesList = new ArrayList<Articles>(totalArticles);
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
-        if(!TextUtils.isEmpty(readCachedIds)) {
-            Type type1 = new TypeToken<List<String>>() {
-            }.getType();
-            String cachedIds = readCachedIds;
-            List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
-            for (Articles article : totalArticles) {
-                for (String artId : cachedReadList) {
-                    if (article.getId().equals(artId)) {
-                        tempArticlesList.remove(article);
-                        break;
+        if(context != null) {
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
+            if (!TextUtils.isEmpty(readCachedIds)) {
+                Type type1 = new TypeToken<List<String>>() {
+                }.getType();
+                String cachedIds = readCachedIds;
+                List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+                for (Articles article : totalArticles) {
+                    for (String artId : cachedReadList) {
+                        if (article.getId().equals(artId)) {
+                            tempArticlesList.remove(article);
+                            break;
+                        }
                     }
                 }
+                totalArticles = tempArticlesList;
             }
-            totalArticles = tempArticlesList;
         }
         return totalArticles;
     }
@@ -221,11 +223,13 @@ public class MagazineDashboardHelper {
 
     public void removeReadArticleIds(Context context, final PreferenceEndPoint preferenceEndPoint) {
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
-        editor.remove("read_article_ids");
-        editor.commit();
-        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
-        Log.d("MagazineDashboardHelper", "After removing read_article_ids key " + readCachedIds);
+        if(context != null) {
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+            editor.remove("read_article_ids");
+            editor.commit();
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
+            Log.d("MagazineDashboardHelper", "After removing read_article_ids key " + readCachedIds);
+        }
     }
 
     public void getMoreDashboardArticlesAfterFollow(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final List<Articles> unreadOtherFollowedArticles, final List<Articles> followedArticlesList) {
@@ -358,10 +362,12 @@ public class MagazineDashboardHelper {
 
     public void removeArticlesFromCache(Context context, final PreferenceEndPoint preferenceEndPoint, String key) {
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
-        editor.remove(key);
-        editor.commit();
-        String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString(key, "");
-        Log.d("MagazineDashboardHelper", "After removing " + key + " key " + cachedMagazines);
+        if(context != null) {
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
+            editor.remove(key);
+            editor.commit();
+            String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString(key, "");
+            Log.d("MagazineDashboardHelper", "After removing " + key + " key " + cachedMagazines);
+        }
     }
 }
