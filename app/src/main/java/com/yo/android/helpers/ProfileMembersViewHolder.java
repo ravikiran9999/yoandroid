@@ -1,6 +1,7 @@
 package com.yo.android.helpers;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yo.android.R;
@@ -16,6 +17,7 @@ public class ProfileMembersViewHolder extends AbstractViewHolder {
     private TextView contactMail;
     private TextView permission;
     private TextView tvName;
+    private ImageView imageView;
 
     public ProfileMembersViewHolder(View view) {
         super(view);
@@ -23,6 +25,7 @@ public class ProfileMembersViewHolder extends AbstractViewHolder {
         contactNumber = (TextView) view.findViewById(R.id.tv_phone_number);
         permission = (TextView) view.findViewById(R.id.isadmin);
         tvName = (TextView) view.findViewById(R.id.tv_name);
+        imageView = (ImageView) view.findViewById(R.id.imv_contact_pic);
     }
 
     public TextView getContactNumber() {
@@ -39,5 +42,9 @@ public class ProfileMembersViewHolder extends AbstractViewHolder {
 
     public TextView getPermission() {
         return permission;
+    }
+
+    public ImageView getImageView() {
+        return imageView;
     }
 }

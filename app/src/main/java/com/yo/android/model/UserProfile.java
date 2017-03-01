@@ -13,16 +13,18 @@ public class UserProfile {
     private String mobileNumber;
     private String countryCode;
     private String phoneNumber;
+    private String image;
 
     public UserProfile() {
         // empty default constructor, necessary for Firebase to be able to deserialize
     }
 
-    public UserProfile(String fullName, String mobileNumber, String countryCode, String phoneNumber) {
+    public UserProfile(String fullName, String mobileNumber, String countryCode, String phoneNumber, String image) {
         this.fullName = fullName;
         this.mobileNumber = mobileNumber;
         this.countryCode = countryCode;
         this.phoneNumber = phoneNumber;
+        this.image = image;
     }
 
     public String getFullName() {
@@ -55,5 +57,9 @@ public class UserProfile {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getImage() {
+        return image;
     }
 }
