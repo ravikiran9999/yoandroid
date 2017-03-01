@@ -118,6 +118,7 @@ public class OTPFragment extends BaseFragment {
                         mHandler.post(runnable);
                         generateDummyOTP();
                     }
+
                 } else {
                     performNext();
                 }
@@ -129,9 +130,10 @@ public class OTPFragment extends BaseFragment {
                 if ("Resend".equalsIgnoreCase(reSendTextBtn.getText().toString())
                         && getActivity() instanceof LoginActivity) {
                     ((LoginActivity) getActivity()).callLoginService(phoneNumber);
-                    mHandler.post(runnable);
+                    //mHandler.post(runnable);
                     generateDummyOTP();
                 }
+
             }
         });
         mHandler.post(runnable);
