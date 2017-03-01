@@ -224,6 +224,7 @@ public class WishListActivity extends BaseActivity {
 
                                 data.setIsChecked(true);
                                 data.setLiked("true");
+                                MagazineArticlesBaseAdapter.initListener();
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
@@ -252,6 +253,7 @@ public class WishListActivity extends BaseActivity {
                                 dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
+                                MagazineArticlesBaseAdapter.initListener();
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
