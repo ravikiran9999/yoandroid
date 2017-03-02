@@ -1294,10 +1294,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
             for (int i = 0; i <= currentFlippedPosition; i++) {
-            String articleId = myBaseAdapter.getItem(i).getId();
-            //Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+                if(myBaseAdapter.getItem(i) != null) {
+                    String articleId = myBaseAdapter.getItem(i).getId();
+                    //Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
-            readArticleIds.add(articleId);
+                    readArticleIds.add(articleId);
+                }
             }
 
 
@@ -1551,7 +1553,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void handleMoreDashboardResponse(List<Articles> totalArticles, boolean isFromFollow) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
-        if(myBaseAdapter.getCount()>0) {
+        if(myBaseAdapter.getCount()<=lastReadArticle) {
             flipView.flipTo(lastReadArticle);
         }
 
