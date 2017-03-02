@@ -428,7 +428,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (response.body() != null && !response.body().isEmpty()) {
                 myBaseAdapter.addItems(response.body());
                 mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
-                flipView.flipTo(lastReadArticle);
+                if(myBaseAdapter.getCount()>0) {
+                    flipView.flipTo(lastReadArticle);
+                }
                 //lruCacheHelper.put("magazines_cache", response.body());
                 if(!isSearch) {
                     if(!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
@@ -1662,6 +1664,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         unreadArticles.add(unreadArt);
                     }
                 }
+            }
+        } else {
+            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+            if (cachedMagazinesList != null) {
+                unreadArticles.addAll(cachedMagazinesList);
             }
         }
         List<Articles> followedArticlesList = new ArrayList<>();
