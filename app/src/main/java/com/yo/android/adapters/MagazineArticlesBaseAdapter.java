@@ -82,12 +82,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     private MagazineFlipArticlesFragment magazineFlipArticlesFragment;
     private List<Articles> getAllArticles;
 
+    private static AutoReflectWishListActionsListener reflectListenerTemp;
+
     public MagazineArticlesBaseAdapter(Context context,
                                        PreferenceEndPoint preferenceEndPoint,
                                        YoApi.YoService yoService, ToastFactory mToastFactory, MagazineFlipArticlesFragment magazineFlipArticlesFragment) {
         inflater = LayoutInflater.from(context);
         this.context = context;
-        reflectListener = this;
+        //reflectListener = this;
         mListener = this;
         this.preferenceEndPoint = preferenceEndPoint;
         this.yoService = yoService;
@@ -98,6 +100,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         getAllArticles = new ArrayList<>();
         this.magazineFlipArticlesFragment = magazineFlipArticlesFragment;
         reflectTopicsFollowActionsListener = this;
+        reflectListenerTemp = this;
+    }
+
+    public static void initListener() {
+        reflectListener = reflectListenerTemp;
     }
 
     @Override

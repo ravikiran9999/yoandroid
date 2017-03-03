@@ -618,6 +618,7 @@ public class TopicsDetailActivity extends BaseActivity {
                             isFollowingTopic = true;
                             topic.setTopicFollowing("true");
                             //EventBus.getDefault().post(Constants.TOPIC_FOLLOWING_ACTION);
+                            EventBus.getDefault().post(topic.getTopicId());
                             if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
                                 MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateFollowTopicStatus(topic, Constants.FOLLOW_TOPIC_EVENT);
                             }

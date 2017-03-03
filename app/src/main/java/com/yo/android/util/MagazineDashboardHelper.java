@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
@@ -211,10 +213,13 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                 }
                 magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
-                magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
+               /* magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
                 //magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
-                magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
-
+                magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);*/
+                magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
+                magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
+                magazineFlipArticlesFragment.getLandingCachedArticles();
+                Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -287,10 +292,13 @@ public class MagazineDashboardHelper {
                         magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
+                    /*magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
                     //magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
-                    magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
-
+                    magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);*/
+                    magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
+                    magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
+                    magazineFlipArticlesFragment.getLandingCachedArticles();
+                    Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -351,10 +359,13 @@ public class MagazineDashboardHelper {
                         magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
+                    /*magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
                     //magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
-                    magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
-
+                    magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);*/
+                    magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
+                    magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
+                    magazineFlipArticlesFragment.getLandingCachedArticles();
+                    Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
                 }
             });
         }

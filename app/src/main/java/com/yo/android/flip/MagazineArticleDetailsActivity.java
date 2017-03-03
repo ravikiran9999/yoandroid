@@ -117,6 +117,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                             /*if (!((BaseActivity) context).hasDestroyed()) {
                                 notifyDataSetChanged();
                             }*/
+                                MagazineArticlesBaseAdapter.initListener();
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
@@ -146,6 +147,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                             /*if (!((BaseActivity) context).hasDestroyed()) {
                                 notifyDataSetChanged();
                             }*/
+                                MagazineArticlesBaseAdapter.initListener();
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
