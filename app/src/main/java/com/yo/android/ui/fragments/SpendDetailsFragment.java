@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Contacts;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,18 +13,13 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.yo.android.BuildConfig;
 import com.yo.android.R;
-import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.calllogs.CallLog;
-import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.SpendDetailsViewHolder;
@@ -199,13 +193,13 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             //                Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
             Date date = Util.convertUtcToGmt(modifiedTime);
             holder.getDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(date));
-            if(item.getDuration() != null) {
+            if (item.getDuration() != null) {
                 String[] tokens = item.getDuration().split(":");
                 int hours = Integer.parseInt(tokens[0]);
                 int minutes = Integer.parseInt(tokens[1]);
                 int seconds = Integer.parseInt(tokens[2]);
                 String duration = "";
-                if(seconds >30) {
+                if (seconds > 30) {
                     minutes++;
                 }
                 if (hours == 0) {
@@ -218,7 +212,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                 holder.getDuration().setText(item.getDuration());
             }
             String phoneName = Helper.getContactName(mContext, item.getDestination());
-            if(phoneName != null) {
+            if (phoneName != null) {
                 holder.getTxtPhone().setText(phoneName);
             } else {
                 final ContentResolver resolver = mContext.getContentResolver();
@@ -227,19 +221,23 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     c = resolver.query(
                             CONTENT_URI,
                             null,
-                            CallLog.Calls.NUMBER +" = "+ item.getDestination(),
+                            CallLog.Calls.NUMBER + " = " + item.getDestination(),
                             null,
                             DEFAULT_SORT_ORDER);
                     if (c == null || !c.moveToFirst()) {
                         String contactName = getContactName(item.getDestination());
-                        if(!TextUtils.isEmpty(contactName)) {
+                        if (!TextUtils.isEmpty(contactName)) {
                             holder.getTxtPhone().setText(contactName);
                         } else {
                             holder.getTxtPhone().setText(item.getDestination());
                         }
                     } else {
-                        holder.getTxtPhone().setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
-
+                        String name = c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME));
+                        if (!TextUtils.isEmpty(name)) {
+                            holder.getTxtPhone().setText(name);
+                        } else {
+                            holder.getTxtPhone().setText(item.getDestination());
+                        }
                     }
                 } finally {
                     if (c != null) c.close();
@@ -277,7 +275,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             return mSubscribersList.size();
         }
 
-        public void addItems(List<SubscribersList> detailResponseList) {
+        public void addItems(List<SubscribersList> detailResponseList){
             mSubscribersList.addAll(detailResponseList);
             notifyDataSetChanged();
         }
@@ -287,18 +285,16 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             notifyDataSetChanged();
         }
 
-        public String getContactName(final String phoneNumber)
-        {
+        public String getContactName(final String phoneNumber) {
             Uri uri;
             String[] projection;
             Uri mBaseUri = Contacts.Phones.CONTENT_FILTER_URL;
-            projection = new String[] { android.provider.Contacts.People.NAME };
+            projection = new String[]{android.provider.Contacts.People.NAME};
             try {
-                Class<?> c =Class.forName("android.provider.ContactsContract$PhoneLookup");
+                Class<?> c = Class.forName("android.provider.ContactsContract$PhoneLookup");
                 mBaseUri = (Uri) c.getField("CONTENT_FILTER_URI").get(mBaseUri);
-                projection = new String[] { "display_name" };
-            }
-            catch (Exception e) {
+                projection = new String[]{"display_name"};
+            } catch (Exception e) {
             }
 
 
@@ -307,8 +303,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
             String contactName = "";
 
-            if (cursor.moveToFirst())
-            {
+            if (cursor.moveToFirst()) {
                 contactName = cursor.getString(0);
             }
 
