@@ -100,7 +100,11 @@ public class MainFragment extends Fragment {
                 }
             }
             if(bitmap != null) {
-                mCropView.setImageBitmap(bitmap);
+                //mCropView.setImageBitmap(bitmap);
+
+                int nh = (int) ( bitmap.getHeight() * (512.0 / bitmap.getWidth()) );
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+                mCropView.setImageBitmap(scaled);
             }
         }
 
