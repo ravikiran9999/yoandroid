@@ -63,7 +63,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         } else {
             if(item.getArticlesCount() == 0) {
                 Glide.with(mContext)
-                        //.load(R.color.grey_divider)
+                       // .load(R.color.grey_divider)
                         .load(R.drawable.ic_default_magazine)
                         .fitCenter()
                         .crossFade()
