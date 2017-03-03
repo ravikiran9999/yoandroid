@@ -63,6 +63,7 @@ public class ChatActivity extends BaseActivity {
     private Contact contactfromOpponent;
     private Contact mContact;
     private String groupName;
+    private String chatRoomId;
     @Bind(R.id.progress_layout)
     RelativeLayout progressLayout;
 
@@ -200,15 +201,17 @@ public class ChatActivity extends BaseActivity {
                 opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             }
-            String chatRoomId = getIntent().getStringExtra(Constants.CHAT_ROOM_ID);
+            chatRoomId = getIntent().getStringExtra(Constants.CHAT_ROOM_ID);
             if (chatRoomId != null && !TextUtils.isEmpty(chatRoomId)) {
                 args.putString(Constants.CHAT_ROOM_ID, chatRoomId);
             } else {
                 Log.i(TAG, getString(R.string.chat_room_id_error));
             }
-            groupName = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
-            if (groupName != null) {
+            if (getIntent().hasExtra(Constants.OPPONENT_PHONE_NUMBER)) {
+                groupName = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+                mOpponentImg = getIntent().getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
                 args.putString(Constants.TYPE, groupName);
+                args.putString(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
             }
             callUserChat(args, userChatFragment);
         }
@@ -226,7 +229,7 @@ public class ChatActivity extends BaseActivity {
 
             if (mContact != null) {
                 contactfromOpponent = mContact;
-            } else if(groupName == null){
+            } else if (groupName == null) {
                 contactfromOpponent = mContactsSyncManager.getContactByVoxUserName(opponent);
             }
 
@@ -234,9 +237,9 @@ public class ChatActivity extends BaseActivity {
                 title = contactfromOpponent.getName();
             } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
                 title = room.getFullName();
-            } else if(groupName != null){
+            } else if (groupName != null) {
                 title = groupName;
-            }else if (opponent != null && opponent.contains(Constants.YO_USER)) {
+            } else if (opponent != null && opponent.contains(Constants.YO_USER)) {
                 title = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
             }
 
@@ -311,12 +314,18 @@ public class ChatActivity extends BaseActivity {
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
                     String titles = title == null ? opponent : title;
                     intent.putExtra(Constants.OPPONENT_NAME, titles);
-                    intent.putExtra(Constants.VOX_USER_NAME, opponent);
                     if (opponentTrim != null && TextUtils.isDigitsOnly(opponentTrim)) {
                         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentTrim);
                     }
 
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+
+                    if (groupName != null) {
+                        intent.putExtra(Constants.CHAT_ROOM_ID, chatRoomId);
+                        intent.putExtra(Constants.GROUP_NAME, title);
+                    } else {
+                        intent.putExtra(Constants.VOX_USER_NAME, opponent);
+                    }
 
                     if (room != null) {
                         intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
@@ -340,7 +349,6 @@ public class ChatActivity extends BaseActivity {
                     .beginTransaction()
                     .add(android.R.id.content, userChatFragment)
                     .commitAllowingStateLoss();
-            //.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }

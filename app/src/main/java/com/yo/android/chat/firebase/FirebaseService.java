@@ -246,6 +246,7 @@ public class FirebaseService extends InjectedService {
         notificationIntent.putExtra(Constants.OPPONENT_ID, chatMessage.getYouserId());
         if (!TextUtils.isEmpty(chatMessage.getRoomName())) {
             notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, chatMessage.getRoomName());
+            notificationIntent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, chatMessage.getRoomImage());
         }
         switch (mode) {
             case STYLE_TEXT:
