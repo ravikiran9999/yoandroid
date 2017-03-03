@@ -118,7 +118,6 @@ public class ChatActivity extends BaseActivity {
         //Clear all Notifications
         NotificationCache.clearNotifications();
 
-
         final UserChatFragment userChatFragment = new UserChatFragment();
         final Bundle args = new Bundle();
 
@@ -207,6 +206,7 @@ public class ChatActivity extends BaseActivity {
             } else {
                 Log.i(TAG, getString(R.string.chat_room_id_error));
             }
+
             if (getIntent().hasExtra(Constants.OPPONENT_PHONE_NUMBER)) {
                 groupName = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
                 mOpponentImg = getIntent().getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
