@@ -106,11 +106,14 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                 boolean b = m.matches();
                 if (b) {
                     Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getPhone_no()));
+                    Glide.clear(holder.getImvFindPeoplePic());
                     holder.getImvFindPeoplePic().setImageDrawable(drawable);
                 } else {
                     loadAvatarImage(holder, item);
                 }
             }
+        } else {
+            loadAvatarImage(holder, item);
         }
 
         if (!TextUtils.isEmpty(item.getFirst_name())) {
@@ -244,6 +247,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
+            Glide.clear(holder.getImvFindPeoplePic());
             shape.setColor(mColorGenerator.getColor(item.getPhone_no()));
         }
         if (holder.getImvFindPeoplePic().getTag(Settings.imageTag) == null) {
