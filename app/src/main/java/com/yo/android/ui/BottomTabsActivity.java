@@ -504,6 +504,9 @@ public class BottomTabsActivity extends BaseActivity {
     private Menu getMenu() {
         Menu menu = null;
         if (getFragment() instanceof ChatFragment) {
+            if (menu != null) {
+                menu.clear();
+            }
             menu = ((ChatFragment) getFragment()).getMenu();
         } else if (getFragment() instanceof ContactsFragment) {
             menu = ((ContactsFragment) getFragment()).getMenu();
