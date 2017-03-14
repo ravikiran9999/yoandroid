@@ -527,11 +527,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
         intent.putExtra(Constants.OPPONENT_NAME, opponentName);
         intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
-        intent.putExtra(Constants.VOX_USER_NAME, opponentNumber);
+
 
         if (roomType != null) {
             intent.putExtra(Constants.CHAT_ROOM_ID, childRoomId);
             intent.putExtra(Constants.GROUP_NAME, roomType);
+        } else {
+            intent.putExtra(Constants.VOX_USER_NAME, opponentNumber);
         }
 
         startActivity(intent);
@@ -562,6 +564,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessage.setMessageKey(DummyMsgKey);
         if (!TextUtils.isEmpty(roomType)) {
             chatMessage.setRoomName(roomType);
+            chatMessage.setRoomImage(opponentImg);
         }
 
         if (type.equals(Constants.TEXT)) {
