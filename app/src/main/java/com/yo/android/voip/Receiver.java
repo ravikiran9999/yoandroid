@@ -31,6 +31,7 @@ public class Receiver extends InjectedBroadcastReceiver {
     private String password;
     private static int call_state;
     private static String DOMAIN_ADDRESS = "209.239.120.239";
+    //private static String DOMAIN_ADDRESS = "173.82.147.172";
 
     @Inject
     protected Log mLog;

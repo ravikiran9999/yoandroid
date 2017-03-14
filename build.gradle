@@ -1,15 +1,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-ext.supportAppcompatVersion = '24.2.1'
-ext.supportDesignVersion = '24.2.1'
-ext.supportCardViewVersion = '24.2.1'
-ext.supportRecyclerViewVersion = '24.2.1'
+ext.supportAppcompatVersion = '25.0.0'
+ext.supportDesignVersion = '25.0.0'
+ext.supportCardViewVersion = '25.0.0'
+ext.supportRecyclerViewVersion = '25.0.0'
 
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.0'
         classpath 'com.google.gms:google-services:3.0.0'
         classpath "com.android.tools.build:gradle-experimental:0.7.0-alpha4"
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
