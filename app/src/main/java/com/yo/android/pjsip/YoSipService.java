@@ -165,6 +165,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState = new SipCallState();
         //TODO:Store in shared prefs and retrieve it
         domain = "209.239.120.239";
+        //domain = "173.82.147.172";
         mediaManager = new MediaManager(this);
     }
 
@@ -396,6 +397,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
         } else if (statusCode == 603) {
             callDisconnected();
+        } else if (statusCode == 200) {
+            callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
             storeCallLog(sipCallstate.getMobileNumber());
@@ -564,6 +567,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             destination = "sip:" + destination;
         }
         String finalUri = String.format("%s@%s", destination, getDomain());
+        //String finalUri = String.format("%s@%s", "sip:7032427", getDomain());
+        //String finalUri = String.format("%s@%s", "sip:64728474", getDomain());
         mLog.e(TAG, "Final uri to make a call " + finalUri);
         outgoingCallUri = finalUri;
         /* Only one call at anytime */

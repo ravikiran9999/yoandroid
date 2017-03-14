@@ -66,8 +66,13 @@ public class ReCreateService {
             String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
             SipProfile sipProfile = new SipProfile.Builder()
                     .withUserName(username)
-                    .withPassword(password)
-                    .withServer("209.239.120.239")
+                    //.withUserName("64728474")
+                    //.withUserName("7032427")
+                            .withPassword(password)
+                     //       .withPassword("534653")
+                    //.withPassword("@pa1ra2di3gm")
+                            .withServer("209.239.120.239")
+                    //.withServer("173.82.147.172")
                     .build();
             sipBinder.getHandler().addAccount(sipProfile);
         }
