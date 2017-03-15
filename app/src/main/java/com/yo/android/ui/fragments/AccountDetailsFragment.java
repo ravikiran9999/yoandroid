@@ -257,10 +257,10 @@ public class AccountDetailsFragment extends BaseFragment {
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
         String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, dobHint);
-        String accUserName = accountName.getText().toString();
-        if (TextUtils.isEmpty(accUserName)) {
-            Toast.makeText(getActivity(), getResources().getString(R.string.acc_name), Toast.LENGTH_LONG).show();
-        }
+//        String accUserName = accountName.getText().toString();
+//        if (TextUtils.isEmpty(accUserName)) {
+//            Toast.makeText(getActivity(), getResources().getString(R.string.acc_name), Toast.LENGTH_LONG).show();
+//        }
         if (dob.equalsIgnoreCase("")) {
             dob = dobHint;
         }

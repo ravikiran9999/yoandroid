@@ -55,6 +55,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             Glide.with(mContext)
                     .load(item.getImage())
                     .placeholder(R.drawable.img_placeholder)
+
                     .fitCenter()
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

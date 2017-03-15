@@ -168,6 +168,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 cameraIntent.showDialog();
             }
         });
+
         loadImage();
         callOtherInfoApi();
     }
