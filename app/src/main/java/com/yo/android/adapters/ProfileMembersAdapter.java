@@ -79,27 +79,25 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
                         .dontAnimate()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
-            } else {
-                if (fullName != null && fullName.length() >= 1 && !TextUtils.isDigitsOnly(fullName)) {
-                    if (Settings.isTitlePicEnabled) {
-                        if (fullName != null && fullName.length() >= 1) {
-                            String title = String.valueOf(fullName.charAt(0)).toUpperCase();
-                            Pattern p = Pattern.compile("^[a-zA-Z]");
-                            Matcher m = p.matcher(title);
-                            boolean b = m.matches();
-                            if (b) {
-                                Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(fullPhoneNumber));
-                                holder.getImageView().setImageDrawable(drawable);
-                            } else {
-                                loadAvatarImage(holder, fullPhoneNumber);
-                            }
+            } else if (fullName != null && fullName.length() >= 1 && !TextUtils.isDigitsOnly(fullName)) {
+                if (Settings.isTitlePicEnabled) {
+                    if (fullName != null && fullName.length() >= 1) {
+                        String title = String.valueOf(fullName.charAt(0)).toUpperCase();
+                        Pattern p = Pattern.compile("^[a-zA-Z]");
+                        Matcher m = p.matcher(title);
+                        boolean b = m.matches();
+                        if (b) {
+                            Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(fullPhoneNumber));
+                            holder.getImageView().setImageDrawable(drawable);
+                        } else {
+                            loadAvatarImage(holder, fullPhoneNumber);
                         }
-                    } else {
-                        holder.getImageView().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
                     }
                 } else {
                     holder.getImageView().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
                 }
+            } else {
+                holder.getImageView().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
             }
         } catch (Exception e) {
             e.printStackTrace();

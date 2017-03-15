@@ -101,6 +101,7 @@ public class UserAgent implements CallEvents {
         try {
             String callAddress = callData.getString("callerNo");
             callAddress = String.format("%s@209.239.120.239", callAddress);
+            //callAddress = String.format("%s@173.82.147.172", callAddress);
             mLog.d("SIP/CALLING_NUMBER", callAddress);
             call = manager.makeAudioCall(profile.getUriString(), callAddress, outgoingCallListener, TIME_OUT);
         } catch (SipException e) {

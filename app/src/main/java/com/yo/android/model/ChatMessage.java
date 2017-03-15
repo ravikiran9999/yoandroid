@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Class name will be tablename
  */
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 @IgnoreExtraProperties
 public class ChatMessage implements Parcelable {
 
@@ -57,6 +57,7 @@ public class ChatMessage implements Parcelable {
     private String youserId;
     private String chatProfileUserName;
     private String roomName;
+    private String roomImage;
     private String messageKey;
     private Map<String, Object> timeStampMap;
     @JsonIgnore
@@ -247,6 +248,14 @@ public class ChatMessage implements Parcelable {
 
     public void setRoomName(String roomName) {
         this.roomName = roomName;
+    }
+
+    public String getRoomImage() {
+        return roomImage;
+    }
+
+    public void setRoomImage(String roomImage) {
+        this.roomImage = roomImage;
     }
 
     @Override
