@@ -129,6 +129,7 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         } else if (key.equalsIgnoreCase(Constants.FIRST_NAME)) {
             String firstName = preferenceEndPoint.getStringPreference(Constants.FIRST_NAME);
             editProfile.setText(firstName);
+
         } else if (key.equalsIgnoreCase(Constants.DESCRIPTION)){
             String userStatus = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION);
 
@@ -185,7 +186,8 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
             preferenceEndPoint.saveStringPreference(key, editBirth.getText().toString());
             getActivity().onBackPressed();
         }else if(key.equalsIgnoreCase(Constants.FIRST_NAME)){
-            if (Pattern.matches(NAME_REGX, text)) {
+//            if (Pattern.matches(NAME_REGX, text))
+            if(!TextUtils.isEmpty(text)){
             preferenceEndPoint.saveStringPreference(key,text);
             getActivity().onBackPressed();
             } else {
