@@ -398,6 +398,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         } else if (statusCode == 603) {
             callDisconnected();
         } else if (statusCode == 200) {
+            /*try {
+                String dumpString = currentCall.dump(true, "");
+                mLog.d(TAG, "The dump string is " + dumpString);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
