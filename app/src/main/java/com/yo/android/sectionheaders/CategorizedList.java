@@ -1,15 +1,12 @@
 package com.yo.android.sectionheaders;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.widget.ListView;
 
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
 import com.yo.android.R;
 import com.yo.android.model.Categories;
-import com.yo.android.model.Topics;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,14 +65,9 @@ public class CategorizedList {
     public void CreateSectionItems(TagView sectionItems, String category) {
         List<SectionItem> sectionItemsList = new ArrayList<SectionItem>();
 
-        //for(Tag sectItems : sectionItems) {
         SectionItem sectionItem = new SectionItem();
-        //sectionItem.categoryItem = sectItems;
         sectionItem.setCategoryItem(sectionItems);
         sectionItemsList.add(sectionItem);
-        //}
-
-        //((FollowMoreTopicsActivity)context).callTagLoader(sectionItems);
 
         SetItemsWithHeaders(sectionItemsList, category);
 
@@ -88,21 +80,14 @@ public class CategorizedList {
     /// <param name="header">Header.</param>
     void SetItemsWithHeaders(List<SectionItem> sectionItemsList, String header) {
         SectionItem sectionItem = new SectionItem();
-        //sectionItem.category = header;
         sectionItem.setCategory(header);
         Section section = new Section();
-        //section.sectionItem = sectionItem;
         section.setSectionItem(sectionItem);
-        //section.layoutId = Resource.Layout.section;
-        //section.layoutId = R.layout.section;
         section.setLayoutId(R.layout.section);
         sectionItemsWithHeaders.add(section);
 
         for (SectionItem sectItem : sectionItemsList) {
             Section sectionHeader = new Section();
-        /*sectionHeader.sectionItem = sectItem;
-        sectionHeader.layoutId = R.layout.section_list_item;
-        sectionHeader.sectionHeader = header;*/
             sectionHeader.setSectionItem(sectItem);
             sectionHeader.setLayoutId(R.layout.section_list_item);
             sectionHeader.setSectionHeader(header);
@@ -116,12 +101,9 @@ public class CategorizedList {
     /// </summary>
     /// <returns>The category adapter.</returns>
     public CategoryAdapter LoadCategoryAdapter() {
-        //categoryAdapter = new CategoryAdapter (context, sectionItemsWithHeaders, initialTags, this,  topicsList);
         categoryAdapter = new CategoryAdapter(context, sectionItemsWithHeaders);
-        //listView.Adapter = categoryAdapter;
         listView.setAdapter(categoryAdapter);
         return categoryAdapter;
-
     }
 
     public void setAdapterToListView() {

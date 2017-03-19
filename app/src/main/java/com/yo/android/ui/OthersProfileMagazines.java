@@ -83,17 +83,12 @@ public class OthersProfileMagazines extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent intent = new Intent(getActivity(), OthersMagazinesDetailActivity.class);
-                /*intent.putExtra("MagazineTitle", adapter.getItem(position).getName());
-                intent.putExtra("MagazineId", adapter.getItem(position).getId());
-                intent.putExtra("MagazineDesc", adapter.getItem(position).getDescription());
-                intent.putExtra("MagazinePrivacy", adapter.getItem(position).getPrivacy());
-                intent.putExtra("MagazineIsFollowing", adapter.getItem(position).getIsFollowing());*/
                 intent.putExtra("OwnMagazine", adapter.getItem(position));
                 intent.putExtra("Position", position);
                 startActivityForResult(intent, 50);
             }
 
-            });
+        });
     }
 
     @Override
@@ -104,11 +99,11 @@ public class OthersProfileMagazines extends BaseFragment {
                 OwnMagazine ownMagazine = data.getParcelableExtra("Magazine");
                 int pos = data.getIntExtra("Pos", 0);
                 boolean isMagazineDeleted = data.getBooleanExtra("MagazineDeleted", false);
-                if(isMagazineDeleted) {
+                if (isMagazineDeleted) {
 
-                    if(getActivity() != null) {
+                    if (getActivity() != null) {
                         if (getActivity() instanceof OthersProfileActivity) {
-                            ((OthersProfileActivity)getActivity()).updateMagazinesCount();
+                            ((OthersProfileActivity) getActivity()).updateMagazinesCount();
 
                         }
                     }

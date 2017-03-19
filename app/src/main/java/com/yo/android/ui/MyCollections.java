@@ -28,7 +28,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -150,7 +149,6 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             }
 
         } else {
-            //invalidateOptionsMenu();
             if (position == 0 && "Follow more topics".equalsIgnoreCase(collections.getName())) {
                 Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
                 intent.putExtra("From", "MyCollections");
@@ -204,34 +202,6 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         return true;
     }
 
-    /*private void showDeleteAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.delete_topic_message));
-        builder.setCancelable(false);
-
-        builder.setPositiveButton(
-                getResources().getString(R.string.yes),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                        dialog.dismiss();
-                        deleteTopic();
-                    }
-                });
-
-        builder.setNegativeButton(
-                getResources().getString(R.string.no),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                        dialog.dismiss();
-                    }
-                });
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }*/
-
     private void showDeleteAlert() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -274,13 +244,13 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         List<String> topicIds = new ArrayList<String>();
         List<String> magazineIds = new ArrayList<>();
         for (int i = 0; i < collections.size(); i++) {
-            if("Tag".equals(collections.get(i).getType())) {
+            if ("Tag".equals(collections.get(i).getType())) {
                 topicIds.add(collections.get(i).getId());
             } else {
                 magazineIds.add(collections.get(i).getId());
             }
         }
-        if(topicIds.size() > 0) {
+        if (topicIds.size() > 0) {
             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -304,8 +274,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             gridView.setAdapter(myCollectionsAdapter);
 
                             List<String> followedTopicsIdsList = new ArrayList<String>();
-                            for(int i=0; i<collectionsList.size(); i++) {
-                               followedTopicsIdsList.add(collectionsList.get(i).getId());
+                            for (int i = 0; i < collectionsList.size(); i++) {
+                                followedTopicsIdsList.add(collectionsList.get(i).getId());
                             }
                             preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
 
@@ -313,19 +283,19 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                         @Override
                         public void onFailure(Call<List<Collections>> call, Throwable t) {
-                        // do nothing
+                            // do nothing
                         }
                     });
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                      // do nothing
+                    // do nothing
                 }
             });
         }
 
-        if(magazineIds.size() > 0) {
+        if (magazineIds.size() > 0) {
             yoService.removeMagazinesAPI(accessToken, magazineIds).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -349,7 +319,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             gridView.setAdapter(myCollectionsAdapter);
 
                             List<String> followedTopicsIdsList = new ArrayList<String>();
-                            for(int i=0; i<collectionsList.size(); i++) {
+                            for (int i = 0; i < collectionsList.size(); i++) {
                                 followedTopicsIdsList.add(collectionsList.get(i).getId());
                             }
                             preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
@@ -358,14 +328,14 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                         @Override
                         public void onFailure(Call<List<Collections>> call, Throwable t) {
-                           // do nothing
+                            // do nothing
                         }
                     });
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                           // do nothing
+                    // do nothing
                 }
             });
         }
@@ -376,7 +346,6 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 2) {
-            //invalidateOptionsMenu();
             showProgressDialog();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
@@ -400,14 +369,13 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                 @Override
                 public void onFailure(Call<List<Collections>> call, Throwable t) {
-                   dismissProgressDialog();
+                    dismissProgressDialog();
                 }
             });
 
         } else if (requestCode == 6) {
-            //invalidateOptionsMenu();
             String searchText = "";
-            if(searchView != null) {
+            if (searchView != null) {
                 searchText = searchView.getQuery().toString();
             }
             showProgressDialog();
@@ -426,9 +394,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         return;
                     }
 
-                    if(!TextUtils.isEmpty(finalSearchText.trim())) {
-                        for(int i=0 ;i <response.body().size(); i++) {
-                            if(response.body().get(i).getName().contains(finalSearchText)){
+                    if (!TextUtils.isEmpty(finalSearchText.trim())) {
+                        for (int i = 0; i < response.body().size(); i++) {
+                            if (response.body().get(i).getName().contains(finalSearchText)) {
                                 collectionsList.addAll(response.body());
                                 myCollectionsAdapter.clearAll();
                                 myCollectionsAdapter.addItems(collectionsList);
@@ -444,7 +412,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                     gridView.setAdapter(myCollectionsAdapter);
 
                     List<String> followedTopicsIdsList = new ArrayList<String>();
-                    for(int i=0; i<collectionsList.size(); i++) {
+                    for (int i = 0; i < collectionsList.size(); i++) {
                         followedTopicsIdsList.add(collectionsList.get(i).getId());
                     }
                     preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
@@ -453,7 +421,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                 @Override
                 public void onFailure(Call<List<Collections>> call, Throwable t) {
-                 dismissProgressDialog();
+                    dismissProgressDialog();
                 }
             });
         }

@@ -1,7 +1,6 @@
 package com.yo.android.ui;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +13,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -30,7 +28,6 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-//import com.squareup.picasso.Picasso;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
@@ -58,6 +55,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
+
+//import com.squareup.picasso.Picasso;
 
 /**
  * Created by root on 15/7/16.
@@ -277,7 +276,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //data.setIsChecked(isChecked);
+
                     if (isChecked) {
                         showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -287,7 +286,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
@@ -305,7 +304,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -325,7 +324,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
@@ -338,7 +337,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -371,8 +370,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        //.centerCrop()
-                                //Image size will be reduced 50%
+                        //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -452,7 +450,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
                                 }
                                 isFollowing = true;
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -464,7 +462,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                 data.setIsFollowing("false");
                                 isFollowing = false;
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
 
@@ -508,7 +506,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                             MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
                                         }
                                         isFollowing = false;
-                                        if (!((BaseActivity)context).hasDestroyed()) {
+                                        if (!((BaseActivity) context).hasDestroyed()) {
                                             notifyDataSetChanged();
                                         }
 
@@ -521,7 +519,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                         data.setIsFollowing("true");
                                         isFollowing = true;
-                                        if (!((BaseActivity)context).hasDestroyed()) {
+                                        if (!((BaseActivity) context).hasDestroyed()) {
                                             notifyDataSetChanged();
                                         }
 
@@ -541,8 +539,8 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 }
             });
 
-            LinearLayout llArticleInfo = (LinearLayout)layout.findViewById(R.id.ll_article_info);
-            if(llArticleInfo != null) {
+            LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
+            if (llArticleInfo != null) {
                 llArticleInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -556,17 +554,14 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 });
             }
 
-            if(holder.tvTopicName != null) {
-                if(!TextUtils.isEmpty(data.getTopicName())) {
+            if (holder.tvTopicName != null) {
+                if (!TextUtils.isEmpty(data.getTopicName())) {
                     holder.tvTopicName.setVisibility(View.VISIBLE);
                     holder.tvTopicName.setText(data.getTopicName());
                     holder.tvTopicName.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, TopicsDetailActivity.class);
-                            /*intent.putExtra("TopicId", data.getTopicId());
-                            intent.putExtra("TopicName", data.getTopicName());
-                            intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                             intent.putExtra("Topic", data);
                             intent.putExtra("Position", position);
                             startActivityForResult(intent, 80);
@@ -584,7 +579,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            if (!((BaseActivity)context).hasDestroyed()) {
+            if (!((BaseActivity) context).hasDestroyed()) {
                 notifyDataSetChanged();
             }
         }
@@ -602,7 +597,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         if (data.getId() != null && data.getId().equals(article.getId())) {
                             article.setIsFollowing(data.getIsFollowing());
                             article.setIsFollow(data.isFollow());
-                            if (!((BaseActivity)context).hasDestroyed()) {
+                            if (!((BaseActivity) context).hasDestroyed()) {
                                 notifyDataSetChanged();
                             }
                             break;
@@ -613,16 +608,12 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         if (data.getId() != null && data.getId().equals(article.getId())) {
                             article.setLiked(data.getLiked());
                             article.setIsChecked(data.isChecked());
-                            if (!((BaseActivity)context).hasDestroyed()) {
+                            if (!((BaseActivity) context).hasDestroyed()) {
                                 notifyDataSetChanged();
                             }
-                            /*Type type1 = new TypeToken<List<Articles>>() {
-                            }.getType();
-                            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-                            String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("cached_magazines", "");
-                            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type1);*/
+
                             List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                            if(cachedMagazinesList != null) {
+                            if (cachedMagazinesList != null) {
                                 List<Articles> tempList = cachedMagazinesList;
                                 for (int i = 0; i < cachedMagazinesList.size(); i++) {
                                     if (data.getId().equals(tempList.get(i).getId())) {
@@ -631,11 +622,6 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 }
 
                                 cachedMagazinesList = tempList;
-
-                                //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                /*SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
-                                editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                editor.commit();*/
 
                                 saveCachedMagazinesList(cachedMagazinesList);
                             }
@@ -650,10 +636,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             items.remove(position);
             items.add(position, topic);
 
-            for (ListIterator<Articles> it = items.listIterator(); it.hasNext();) {
+            for (ListIterator<Articles> it = items.listIterator(); it.hasNext(); ) {
                 Articles top = it.next();
-                if(!TextUtils.isEmpty(top.getTopicName()) && top.getTopicName().equals(topic.getTopicName())) {
-                    if(isFollowing) {
+                if (!TextUtils.isEmpty(top.getTopicName()) && top.getTopicName().equals(topic.getTopicName())) {
+                    if (isFollowing) {
                         top.setTopicFollowing("true");
                     } else {
                         top.setTopicFollowing("false");
@@ -721,7 +707,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         List<Articles> cachedMagazinesList = new ArrayList<>();
 
-        if(getActivity() != null) {
+        if (getActivity() != null) {
             String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
             String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
 
@@ -743,8 +729,8 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
     private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
         List<Articles> followedTopicArticles = new ArrayList<>();
         List<Articles> randomTopicArticles = new ArrayList<>();
-        for(Articles articles: cachedMagazinesList) {
-            if("true".equals(articles.getTopicFollowing())) {
+        for (Articles articles : cachedMagazinesList) {
+            if ("true".equals(articles.getTopicFollowing())) {
                 followedTopicArticles.add(articles);
             } else {
                 randomTopicArticles.add(articles);
@@ -752,10 +738,8 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         }
 
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
         if (getActivity() != null) {
             SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-            //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
             editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
             editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
             editor.commit();
