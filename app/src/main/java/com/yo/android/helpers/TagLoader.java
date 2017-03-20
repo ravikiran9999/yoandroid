@@ -14,7 +14,6 @@ import com.yo.android.model.Categories;
 import com.yo.android.model.Topics;
 import com.yo.android.sectionheaders.CategorizedList;
 import com.yo.android.sectionheaders.CategoryAdapter;
-import com.yo.android.sectionheaders.SectionItem;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        //((FollowMoreTopicsActivity) context).showProgressDialog();
         topicsList = new ArrayList<Categories>();
         tagGroup.setVisibility(View.GONE);
         initialTags.clear();
@@ -61,15 +59,7 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
     protected HashMap<String, ArrayList<Tag>> doInBackground(Void... params) {
         topicsList.clear();
         topicsList.addAll(dummyTopicsList);
-        /*synchronized (initialTags) {
-            for (Categories categories : topicsList) {
-                for(Topics topics : categories.getTags()) {
-                    final TagSelected tag = ((FollowMoreTopicsActivity) context).prepareTag(topics);
-                    initialTags.add(tag);
-                }
-            }
-        }
-        return initialTags;*/
+
         synchronized (categoriesHashMap) {
             for (Categories categories : topicsList) {
                 initialTags = new ArrayList<>();
@@ -95,28 +85,17 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
     @Override
     protected void onPostExecute(final HashMap<String, ArrayList<Tag>> tagSelected) {
         super.onPostExecute(tagSelected);
-        //tagGroup.addTags(tagSelected);
+
         tagsLoader.loaded();
         if (tagGroup != null) {
             tagGroup.setVisibility(View.VISIBLE);
         }
-        //ArrayList<Tag> firstTags = new ArrayList<>();
-        /*List<Tag> firstTags = tagSelected.subList(0, 30);
-        List<Tag> secondTags = tagSelected.subList(30, 60);
-        List<Tag> thirdTags = tagSelected.subList(60, 75);
-
-
-        categorisedList.CreateSectionItems(createTag(firstTags), "Category 1");
-        categorisedList.CreateSectionItems(createTag(secondTags), "Category 2");
-        categorisedList.CreateSectionItems(createTag(thirdTags), "Category 3");*/
 
         for (Categories categories : topicsList) {
             categorisedList.CreateSectionItems(createTag(tagSelected.get(categories.getName())), categories.getName());
         }
 
-        //tagGroup.addTags(tagSelected);
         CategoryAdapter categoryAdapter = categorisedList.LoadCategoryAdapter();
-        //((FollowMoreTopicsActivity) context).dismissProgressDialog();
 
         Handler mHandler = new Handler();
         long DURATION = 5000L;
@@ -137,7 +116,6 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
                 @Override
                 public void run() {
                     ((FollowMoreTopicsActivity) context).dismissProgressDialog();
-                    //((FollowMoreTopicsActivity) context).progressBar.setVisibility(View.GONE);
                 }
             });
 

@@ -1,7 +1,6 @@
 package com.yo.android.ui;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,7 +24,6 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
@@ -43,6 +40,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
+
+//import com.squareup.picasso.Picasso;
 
 public class WishListActivity extends BaseActivity {
 
@@ -215,7 +214,7 @@ public class WishListActivity extends BaseActivity {
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //data.setIsChecked(isChecked);
+
                     if (isChecked) {
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -228,7 +227,7 @@ public class WishListActivity extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
@@ -239,7 +238,7 @@ public class WishListActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -258,12 +257,12 @@ public class WishListActivity extends BaseActivity {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
 
-                                if(OthersMagazinesDetailActivity.myBaseAdapter != null) {
+                                if (OthersMagazinesDetailActivity.myBaseAdapter != null) {
                                     if (OthersMagazinesDetailActivity.myBaseAdapter.reflectListener != null) {
                                         OthersMagazinesDetailActivity.myBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                     }
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
@@ -280,7 +279,7 @@ public class WishListActivity extends BaseActivity {
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                                 dismissProgressDialog();
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -312,15 +311,15 @@ public class WishListActivity extends BaseActivity {
             RelativeLayout rl = (UI.<RelativeLayout>findViewById(layout, R.id.rl_top));
             final float scale = context.getResources().getDisplayMetrics().density;
             int height;
-            if(scale == 4.0) {
+            if (scale == 4.0) {
                 height = 400;
-            } else if(scale == 3.5) {
+            } else if (scale == 3.5) {
                 height = 350;
-            } else if(scale == 3.0) {
+            } else if (scale == 3.0) {
                 height = 300;
-            } else if(scale == 2.0) {
+            } else if (scale == 2.0) {
                 height = 250;
-            } else  {
+            } else {
                 height = 200;
             }
             int pixels = (int) (height * scale + 0.5f);
@@ -332,8 +331,7 @@ public class WishListActivity extends BaseActivity {
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        //.centerCrop()
-                                //Image size will be reduced 50%
+                        //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -408,7 +406,7 @@ public class WishListActivity extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -419,7 +417,7 @@ public class WishListActivity extends BaseActivity {
                                 finalHolder.articleFollow.setText("Follow");
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                 data.setIsFollowing("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
 
@@ -459,7 +457,7 @@ public class WishListActivity extends BaseActivity {
                                         if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                             MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
                                         }
-                                        if (!((BaseActivity)context).hasDestroyed()) {
+                                        if (!((BaseActivity) context).hasDestroyed()) {
                                             notifyDataSetChanged();
                                         }
 
@@ -475,7 +473,7 @@ public class WishListActivity extends BaseActivity {
                                         finalHolder.articleFollow.setText("Following");
                                         finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                         data.setIsFollowing("true");
-                                        if (!((BaseActivity)context).hasDestroyed()) {
+                                        if (!((BaseActivity) context).hasDestroyed()) {
                                             notifyDataSetChanged();
                                         }
 
@@ -496,8 +494,8 @@ public class WishListActivity extends BaseActivity {
                 }
             });
 
-            LinearLayout llArticleInfo = (LinearLayout)layout.findViewById(R.id.ll_article_info);
-            if(llArticleInfo != null) {
+            LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
+            if (llArticleInfo != null) {
                 llArticleInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -511,17 +509,14 @@ public class WishListActivity extends BaseActivity {
                 });
             }
 
-            if(holder.tvTopicName != null) {
-                if(!TextUtils.isEmpty(data.getTopicName())) {
+            if (holder.tvTopicName != null) {
+                if (!TextUtils.isEmpty(data.getTopicName())) {
                     holder.tvTopicName.setVisibility(View.VISIBLE);
                     holder.tvTopicName.setText(data.getTopicName());
                     holder.tvTopicName.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, TopicsDetailActivity.class);
-                            /*intent.putExtra("TopicId", data.getTopicId());
-                            intent.putExtra("TopicName", data.getTopicName());
-                            intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                             intent.putExtra("Topic", data);
                             intent.putExtra("Position", position);
                             startActivityForResult(intent, 90);
@@ -538,7 +533,7 @@ public class WishListActivity extends BaseActivity {
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            if (!((BaseActivity)context).hasDestroyed()) {
+            if (!((BaseActivity) context).hasDestroyed()) {
                 notifyDataSetChanged();
             }
         }
@@ -547,10 +542,10 @@ public class WishListActivity extends BaseActivity {
             items.remove(position);
             items.add(position, topic);
 
-            for (ListIterator<Articles> it = items.listIterator(); it.hasNext();) {
+            for (ListIterator<Articles> it = items.listIterator(); it.hasNext(); ) {
                 Articles top = it.next();
-                if(!TextUtils.isEmpty(top.getTopicName()) && top.getTopicName().equals(topic.getTopicName())) {
-                    if(isFollowing) {
+                if (!TextUtils.isEmpty(top.getTopicName()) && top.getTopicName().equals(topic.getTopicName())) {
+                    if (isFollowing) {
                         top.setTopicFollowing("true");
                     } else {
                         top.setTopicFollowing("false");
@@ -565,7 +560,7 @@ public class WishListActivity extends BaseActivity {
             items.remove(position);
             items.add(position, articles);
 
-            if(!isLiked) {
+            if (!isLiked) {
                 articlesList.clear();
                 myBaseAdapter.addItems(articlesList);
                 refreshWishList();
@@ -659,5 +654,4 @@ public class WishListActivity extends BaseActivity {
 
         }
     }
-
 }

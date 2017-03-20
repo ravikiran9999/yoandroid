@@ -3,7 +3,6 @@ package com.yo.android.ui;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
@@ -33,7 +32,6 @@ import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
-import com.yo.android.model.MagazineArticles;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -60,8 +58,6 @@ public class TopicsDetailActivity extends BaseActivity {
     protected PreferenceEndPoint preferenceEndPoint;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
-    /*private String topicId;
-    private String topicFollowing; */
     private boolean isFollowingTopic;
     private Articles topic;
     private int position;
@@ -81,12 +77,9 @@ public class TopicsDetailActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        /*topicId = intent.getStringExtra("TopicId");
-        String topicName = intent.getStringExtra("TopicName");
-        topicFollowing = intent.getStringExtra("TopicFollowing");*/
         topic = intent.getParcelableExtra("Topic");
         position = intent.getIntExtra("Position", 0);
-        if(intent.hasExtra("ArticlePlacement")) {
+        if (intent.hasExtra("ArticlePlacement")) {
             articlePlacement = intent.getStringExtra("ArticlePlacement");
         } else {
             articlePlacement = "";
@@ -98,30 +91,30 @@ public class TopicsDetailActivity extends BaseActivity {
 
         articlesList.clear();
 
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            List<String> tagIds = new ArrayList<String>();
-            tagIds.add(topic.getTopicId());
-            showProgressDialog();
-            yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
-                @Override
-                public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                    dismissProgressDialog();
-                    if (response.body() != null && response.body().size() > 0) {
-                        for (int i = 0; i < response.body().size(); i++) {
-                            articlesList.add(response.body().get(i));
-                        }
-                        myBaseAdapter.addItems(articlesList);
-                    } else {
-                        mToastFactory.showToast("No Articles");
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        List<String> tagIds = new ArrayList<String>();
+        tagIds.add(topic.getTopicId());
+        showProgressDialog();
+        yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
+            @Override
+            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
+                dismissProgressDialog();
+                if (response.body() != null && response.body().size() > 0) {
+                    for (int i = 0; i < response.body().size(); i++) {
+                        articlesList.add(response.body().get(i));
                     }
+                    myBaseAdapter.addItems(articlesList);
+                } else {
+                    mToastFactory.showToast("No Articles");
                 }
+            }
 
-                @Override
-                public void onFailure(Call<List<Articles>> call, Throwable t) {
-                    dismissProgressDialog();
-                    Toast.makeText(TopicsDetailActivity.this, "Error retrieving Articles", Toast.LENGTH_LONG).show();
-                }
-            });
+            @Override
+            public void onFailure(Call<List<Articles>> call, Throwable t) {
+                dismissProgressDialog();
+                Toast.makeText(TopicsDetailActivity.this, "Error retrieving Articles", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -225,7 +218,7 @@ public class TopicsDetailActivity extends BaseActivity {
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //data.setIsChecked(isChecked);
+
                     if (isChecked) {
                         showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -241,7 +234,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
@@ -253,7 +246,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -273,7 +266,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                                 mToastFactory.showToast("You have unliked the article " + data.getTitle());
@@ -285,7 +278,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                 Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -317,15 +310,15 @@ public class TopicsDetailActivity extends BaseActivity {
             RelativeLayout rl = (UI.<RelativeLayout>findViewById(layout, R.id.rl_top));
             final float scale = context.getResources().getDisplayMetrics().density;
             int height;
-            if(scale == 4.0) {
+            if (scale == 4.0) {
                 height = 400;
-            } else if(scale == 3.5) {
+            } else if (scale == 3.5) {
                 height = 350;
-            } else if(scale == 3.0) {
+            } else if (scale == 3.0) {
                 height = 300;
-            } else if(scale == 2.0) {
+            } else if (scale == 2.0) {
                 height = 250;
-            } else  {
+            } else {
                 height = 200;
             }
             int pixels = (int) (height * scale + 0.5f);
@@ -337,8 +330,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        //.centerCrop()
-                                //Image size will be reduced 50%
+                        //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -415,7 +407,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                 if (MagazineArticlesBaseAdapter.mListener != null) {
                                     MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
                                 }
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
                             }
@@ -426,7 +418,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                 finalHolder.articleFollow.setText("Follow");
                                 finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                 data.setIsFollowing("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
+                                if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
 
                                 }
@@ -439,8 +431,8 @@ public class TopicsDetailActivity extends BaseActivity {
                 }
             });
 
-            LinearLayout llArticleInfo = (LinearLayout)layout.findViewById(R.id.ll_article_info);
-            if(llArticleInfo != null) {
+            LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
+            if (llArticleInfo != null) {
                 llArticleInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -454,8 +446,8 @@ public class TopicsDetailActivity extends BaseActivity {
                 });
             }
 
-            if(holder.tvTopicName != null) {
-                if(!TextUtils.isEmpty(data.getTopicName())) {
+            if (holder.tvTopicName != null) {
+                if (!TextUtils.isEmpty(data.getTopicName())) {
                     holder.tvTopicName.setVisibility(View.VISIBLE);
                     holder.tvTopicName.setText(data.getTopicName());
                 } else {
@@ -539,7 +531,7 @@ public class TopicsDetailActivity extends BaseActivity {
 
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
-            if (!((BaseActivity)context).hasDestroyed()) {
+            if (!((BaseActivity) context).hasDestroyed()) {
                 notifyDataSetChanged();
             }
         }
@@ -604,7 +596,7 @@ public class TopicsDetailActivity extends BaseActivity {
                     final List<String> followedTopicsIdsList = new ArrayList<String>();
                     if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
                         String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
-                        for(int i=0; i<prefTags.length; i++) {
+                        for (int i = 0; i < prefTags.length; i++) {
                             followedTopicsIdsList.add(prefTags[i]);
                         }
                     }
@@ -617,7 +609,7 @@ public class TopicsDetailActivity extends BaseActivity {
                             menuItem.setIcon(R.drawable.ic_mycollections_tick);
                             isFollowingTopic = true;
                             topic.setTopicFollowing("true");
-                            //EventBus.getDefault().post(Constants.TOPIC_FOLLOWING_ACTION);
+
                             EventBus.getDefault().post(topic.getTopicId());
                             if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
                                 MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateFollowTopicStatus(topic, Constants.FOLLOW_TOPIC_EVENT);
@@ -667,7 +659,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                     menuItem.setTitle("Follow");
                                     isFollowingTopic = false;
                                     topic.setTopicFollowing("false");
-                                    //EventBus.getDefault().post(Constants.TOPIC_FOLLOWING_ACTION);
+
                                     if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
                                         MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateFollowTopicStatus(topic, Constants.FOLLOW_TOPIC_EVENT);
                                     }

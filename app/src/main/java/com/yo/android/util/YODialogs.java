@@ -103,7 +103,6 @@ public class YODialogs {
             if (!TextUtils.isEmpty(imageUrl)) {
                 tvDialogImage.setVisibility(View.VISIBLE);
                 Glide.with(activity)
-                        //.load(data.getImage_filename())
                         .load(imageUrl)
                         .placeholder(R.drawable.img_placeholder)
                         .centerCrop()
@@ -155,7 +154,7 @@ public class YODialogs {
                     if (listener != null) {
                         listener.closePopup();
                     }
-                    //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
+
                     if (redirectTo.equals("AddFriends")) {
                         activity.startActivity(new Intent(activity, InviteActivity.class));
                     } else if (redirectTo.equals("AddBalance")) {
@@ -171,7 +170,6 @@ public class YODialogs {
                     if (listener != null) {
                         listener.closePopup();
                     }
-                    //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
                 }
             });
         }

@@ -12,12 +12,8 @@ import android.widget.TextView;
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
 import com.yo.android.R;
-import com.yo.android.helpers.TagLoader;
-import com.yo.android.helpers.TagSelected;
-import com.yo.android.model.Topics;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,12 +36,6 @@ public class CategoryAdapter extends BaseAdapter {
     /// </summary>
     private LayoutInflater layoutInflater;
 
-    /*private ArrayList<Tag> initialTags;
-
-    private CategorizedList categorisedList;
-
-    private List<Topics> topicsList;*/
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SectionHeadersEx.CategoryAdapter"/> class.
     /// </summary>
@@ -57,12 +47,6 @@ public class CategoryAdapter extends BaseAdapter {
         this.listItemsWithHeaders = listItemsWithHeaders;
 
         Log.d("CategoryAdapter", "listItemsWithHeaders is " + listItemsWithHeaders.size());
-
-        /*this.initialTags = initialTags;
-
-        this.categorisedList = categorisedList;
-
-        this.topicsList = topicsList;*/
 
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -132,13 +116,11 @@ public class CategoryAdapter extends BaseAdapter {
 
         Section selectedItem = getItem(position);
 
-        //if (selectedItem.layoutId == R.layout.section) { // List item is a Section
         if (selectedItem.getLayoutId() == R.layout.section) { // List item is a Section
             view = layoutInflater.inflate(R.layout.section, null);
             SectionItem sectionItem = selectedItem.getSectionItem();
             TextView title = (TextView) view.findViewById(R.id.title);
             title.setText(sectionItem.getCategory());
-            //} else if (selectedItem.layoutId == R.layout.section_list_item) { // List item is a Section Item
         } else if (selectedItem.getLayoutId() == R.layout.section_list_item) { // List item is a Section Item
             final TagView tagView = selectedItem.getSectionItem().getCategoryItem();
             tagView.setOnTagClickListener(new TagView.OnTagClickListener() {
@@ -162,52 +144,10 @@ public class CategoryAdapter extends BaseAdapter {
     /// <returns>true if the item is not a separator, false otherwise.</returns>
     @Override
     public boolean isEnabled(int position) {
-
-        //return getItem(position).getLayoutId() != R.layout.section;
         return false;
     }
-
-    /*    private void displayTags(TagView tagGroup) {
-            topicsList = new ArrayList<Topics>();
-            List<Topics> dummyTopicsList = new ArrayList<>(topicsList);
-            tagGroup.setVisibility(View.GONE);
-            initialTags.clear();
-            topicsList.clear();
-            topicsList.addAll(dummyTopicsList);
-            synchronized (initialTags) {
-                for (Topics topic : topicsList) {
-                    final TagSelected tag = ((FollowMoreTopicsActivity)context).prepareTag(topic);
-                    initialTags.add(tag);
-                }
-            }
-
-            ArrayList<Tag> tagSelected = initialTags;
-
-            tagGroup.addTags(tagSelected);
-            if (tagGroup != null) {
-                tagGroup.setVisibility(View.VISIBLE);
-            }
-          //  categorisedList.CreateSectionItems(tagSelected, "Category 1");
-          //  categorisedList.CreateSectionItems(tagSelected, "Category 2");
-
-            //CategoryAdapter categoryAdapter = categorisedList.LoadCategoryAdapter ();
-            //categorisedList.setAdapterToListView();
-            ((FollowMoreTopicsActivity)context).dismissProgressDialog();
-        }*/
     public void filter(String charText) {
         charText = charText.toLowerCase(Locale.getDefault());
-       /* worldpopulationlist.clear();
-        if (charText.length() == 0) {
-            worldpopulationlist.addAll(arraylist);
-        } else {
-            for (WorldPopulation wp : arraylist) {
-                if (wp.getCountry().toLowerCase(Locale.getDefault())
-                        .contains(charText)) {
-                    worldpopulationlist.add(wp);
-                }
-            }
-        }*/
         notifyDataSetChanged();
     }
-
 }

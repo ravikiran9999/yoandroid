@@ -6,7 +6,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
-//import com.squareup.picasso.Picasso;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
@@ -15,6 +14,8 @@ import com.yo.android.model.Collections;
 
 import java.util.ArrayList;
 import java.util.List;
+
+//import com.squareup.picasso.Picasso;
 
 /**
  * Created by creatives on 7/9/2016.
@@ -64,7 +65,6 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         } else {
             if(item.getArticlesCount() == 0) {
                 Glide.with(mContext)
-                       // .load(R.color.grey_divider)
                         .load(R.drawable.ic_default_magazine)
                         .fitCenter()
                         .crossFade()
@@ -73,7 +73,6 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                         .into(holder.getImageView());
             } else {
                 Glide.with(mContext)
-                        //.load(R.color.grey_divider)
                         .load(R.drawable.img_placeholder)
                         .fitCenter()
                         .crossFade()
@@ -107,7 +106,6 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             params.gravity = Gravity.CENTER;
             holder.getTextView().setLayoutParams(params);
         }
-        //
         if (!contextualMenuEnable) {
             item.setSelect(false);
         }

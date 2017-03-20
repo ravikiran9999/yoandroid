@@ -11,7 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-//import com.squareup.picasso.Picasso;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
@@ -21,6 +20,8 @@ import com.yo.android.widgets.SquareItemLinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+//import com.squareup.picasso.Picasso;
 
 /**
  * Created by creatives on 7/19/2016.
@@ -84,7 +85,6 @@ public class OthersMagazinesAdapter extends BaseAdapter {
             } else {
                 if(ownMagazineList.get(position).getArticlesCount() == 0) {
                     Glide.with(mContext)
-                            //.load(R.color.black)
                             .load(R.drawable.ic_default_magazine)
                             .fitCenter()
                             .crossFade()
@@ -92,7 +92,6 @@ public class OthersMagazinesAdapter extends BaseAdapter {
                             .into(imageView);
                 } else {
                     Glide.with(mContext)
-                            //.load(R.color.black)
                             .load(R.drawable.img_placeholder)
                             .fitCenter()
                             .crossFade()
@@ -102,7 +101,6 @@ public class OthersMagazinesAdapter extends BaseAdapter {
             }
             textView.setTextColor(mContext.getResources().getColor(android.R.color.white));
             textViewDesc.setTextColor(mContext.getResources().getColor(android.R.color.white));
-            //squareItemLinearLayout.setBackgroundColor(mContext.getResources().getColor(android.R.color.black));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.TOP | Gravity.LEFT;

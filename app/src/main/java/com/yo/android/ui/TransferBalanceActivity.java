@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -20,19 +19,15 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
-import com.yo.android.calllogs.CallLog;
-import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
-import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -167,16 +162,6 @@ public class TransferBalanceActivity extends BaseActivity {
     }
 
     private void loadAvatarImage(CircleImageView imvProfilePic) {
-        /*Drawable tempImage = getResources().getDrawable(R.drawable.dynamic_profile);
-        LayerDrawable bgDrawable = (LayerDrawable) tempImage;
-        final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
-        if (Settings.isTitlePicEnabled) {
-            shape.setColor(mColorGenerator.getRandomColor());
-        }
-        if (imvProfilePic.getTag() == null) {
-            imvProfilePic.setTag(Settings.imageTag, tempImage);
-        }
-        imvProfilePic.setImageDrawable((Drawable) imvProfilePic.getTag(Settings.imageTag));*/
 
         Drawable tempImage = getResources().getDrawable(R.drawable.dynamic_profile);
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
@@ -292,8 +277,6 @@ public class TransferBalanceActivity extends BaseActivity {
         builder.setView(view);
 
         TextView textView = (TextView) view.findViewById(R.id.dialog_content);
-        /*DecimalFormat df = new DecimalFormat("0.000");
-        String format = df.format(Double.valueOf(amount));*/
         String confirmationText = "Are you sure you want to transfer US $" + amount + " balance to " + name + " with number " + phoneNumber + "?";
         textView.setText(confirmationText);
 
