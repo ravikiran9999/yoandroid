@@ -108,7 +108,6 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
                 for (Popup p : popup) {
                     if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
                         if (!isAlreadyShown) {
-                            //PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
                             PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
                             isAlreadyShown = true;
                             isSharedPreferenceShown = false;
@@ -117,12 +116,6 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
                     }
                 }
             }
-            /*if(popup != null && popup.size() >0  && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
-                if (!isAlreadyShown) {
-                    PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
-                    isAlreadyShown = true;
-                }
-            }*/
         }
     }
 
@@ -150,9 +143,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        //if(isMenuVisible()) {
             if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                //if(!isRemoved) {
                 Type type = new TypeToken<List<Popup>>() {
                 }.getType();
                 List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -160,7 +151,6 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
                     for (Popup p : popup) {
                         if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
                             if (!isAlreadyShown) {
-                                //PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
                                 PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
                                 isAlreadyShown = true;
                                 isSharedPreferenceShown = true;
@@ -169,17 +159,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
                         }
                     }
                 }
-                    /*if(popup != null && popup.size() >0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
-                        if (!isAlreadyShown) {
-                            PopupHelper.getPopup(PopupHelper.PopupsEnum.YOCREDIT, popup, this, preferenceEndPoint, null, this);
-                            isAlreadyShown = true;
-                        }
-                    }*/
-                /*} else {
-                    isRemoved = false;
-                }*/
             }
-        //}
     }
 
     @Override
@@ -190,9 +170,6 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
 
     @Override
     public void closePopup() {
-        //isAlreadyShown = false;
-        //isRemoved = true;
-        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -209,7 +186,6 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
             }
             popup = tempPopup;
         }
-        //popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 }

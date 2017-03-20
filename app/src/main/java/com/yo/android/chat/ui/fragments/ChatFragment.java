@@ -559,7 +559,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
                                     if (!isAlreadyShown) {
-                                        //PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
                                         PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CHATS, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
                                         isSharedPreferenceShown = false;
@@ -582,7 +581,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             BottomTabsActivity bottomTabsActivity = (BottomTabsActivity) activity;
             if (bottomTabsActivity.getFragment() instanceof ChatFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                    //if (!isRemoved) {
                     Type type = new TypeToken<List<Popup>>() {
                     }.getType();
                     List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -590,7 +588,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
                                 if (!isAlreadyShown) {
-                                    //PopupHelper.getPopup(PopupHelper.PopupsEnum.CHATS, popup, activity, preferenceEndPoint, this, this);
                                     PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CHATS, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
                                     isSharedPreferenceShown = true;
@@ -608,9 +605,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void closePopup() {
-        //isAlreadyShown = false;
-        //isRemoved = true;
-        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -627,7 +621,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
             popup = tempPopup;
         }
-        //popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 

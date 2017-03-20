@@ -248,13 +248,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         prepareSettingsList();
-
-        /*if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-            Type type = new TypeToken<List<Popup>>() {
-            }.getType();
-            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-            PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this);
-        }*/
     }
 
     /**
@@ -499,16 +492,13 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             BottomTabsActivity activity = (BottomTabsActivity) getActivity();
             if (activity.getFragment() instanceof MoreFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                    //if (!isRemoved) {
                     Type type = new TypeToken<List<Popup>>() {
                     }.getType();
                     List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                    //Collections.reverse(popup);
                     if (popup != null) {
                         for (Popup p : popup) {
                             if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
                                 if (!isAlreadyShown) {
-                                    //PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
                                     PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MORE, p, getActivity(), preferenceEndPoint, this, this, popup);
                                     isAlreadyShown = true;
                                     isSharedPreferenceShown = true;
@@ -517,15 +507,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                             }
                         }
                     }
-                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
-                                isAlreadyShown = true;
-                            }
-                        }*/
-                   /* } else {
-                        isRemoved = false;
-                    }*/
                 }
             }
         }
@@ -549,7 +530,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
                                     if (!isAlreadyShown) {
-                                        //PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
                                         PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.MORE, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
                                         isSharedPreferenceShown = false;
@@ -558,12 +538,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                 }
                             }
                         }
-                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.MORE) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getPopup(PopupHelper.PopupsEnum.MORE, popup, getActivity(), preferenceEndPoint, this, this);
-                                isAlreadyShown = true;
-                            }
-                        }*/
                     }
                 }
             }
@@ -574,9 +548,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public void closePopup() {
-        //isAlreadyShown = false;
-        //isRemoved = true;
-        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -593,7 +564,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             }
             popup = tempPopup;
         }
-        //popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 
