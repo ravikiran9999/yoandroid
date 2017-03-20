@@ -55,7 +55,7 @@
                 android:textColor="@color/black"
                 android:visibility="gone" />
 
-            <ListView
+            <com.yo.android.chat.ui.NonScrollListView
                 android:id="@+id/lv_app_contacts_recent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                 android:text="@string/all_county_code"
                 android:textColor="@color/black" />
 
-            <ListView
+            <com.yo.android.chat.ui.NonScrollListView
                 android:id="@+id/lv_app_contacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

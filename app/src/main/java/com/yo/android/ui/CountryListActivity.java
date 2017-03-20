@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.helpers.CallRatesCountryViewHolder;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.util.Constants;
@@ -41,10 +41,10 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
 
     private final static String TAG = "CountryListActivity";
     @Bind(R.id.lv_app_contacts)
-    ListView listView;
+    NonScrollListView listView;
 
     @Bind(R.id.lv_app_contacts_recent)
-    ListView listViewRecent;
+    NonScrollListView listViewRecent;
 
     @Bind(R.id.tv_recent_title)
     TextView recentTextView;
@@ -90,7 +90,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         List<CallRateDetail> callRateDetailList = gson.fromJson(preferenceEndPoint.getStringPreference(Constants.COUNTRY_LIST), type);
         if (callRateDetailList != null) {
             adapter.addItems(callRateDetailList);
-            Util.setDynamicHeight(listView);
+            //Util.setDynamicHeight(listView);
         }
         try {
             List<CallRateDetail> tempRecentCallRateDetails = gson.fromJson(preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_SELECTED), type);
@@ -102,7 +102,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
                 recentTextView.setVisibility(View.VISIBLE);
                 listViewRecent.setVisibility(View.VISIBLE);
                 recentAdapter.addItems(recentCallRateDetails);
-                Util.setDynamicHeight(listViewRecent);
+                //Util.setDynamicHeight(listViewRecent);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,8 +120,8 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
                         String json = gson.toJson(callRateDetailList);
                         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_LIST, json);
                         adapter.addItems(callRateDetailList);
-                        Util.setDynamicHeight(listView);
-                        Util.setDynamicHeight(listViewRecent);
+                        //Util.setDynamicHeight(listView);
+                        //Util.setDynamicHeight(listViewRecent);
                     }
                 } catch (Exception e) {
                     mLog.w(TAG, e);
