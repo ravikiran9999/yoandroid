@@ -362,7 +362,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                     Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
                                     //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
                                     AlarmManager alarmManager = (AlarmManager) BottomTabsActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
-                                    getActivity().stopService(serviceIntent);
+                                    if(getActivity() != null) {
+                                        getActivity().stopService(serviceIntent);
+                                    }
                                     alarmManager.cancel(BottomTabsActivity.pintent);
 
                                     //stop firebase service
