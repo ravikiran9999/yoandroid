@@ -441,7 +441,8 @@ public class NewDailerActivity extends BaseActivity {
                 String str = dialPadView.getDigits().getText().toString();
                 str = str.substring(str.indexOf(" ") + 1);
                 dialPadView.getDigits().setText(cPrefix + " " + str);
-                dialPadView.getDigits().setSelection(cPrefix.length());
+                //dialPadView.getDigits().setSelection(cPrefix.length());
+                dialPadView.getDigits().setSelection(dialPadView.getDigits().getText().length());
             }
         }
         return cPrefix;
