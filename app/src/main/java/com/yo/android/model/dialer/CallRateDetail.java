@@ -89,20 +89,32 @@ public class CallRateDetail {
 
     @Override
     public boolean equals(Object v) {
-        boolean retVal = false;
+       /* boolean retVal = false;
 
         if (v instanceof CallRateDetail) {
             CallRateDetail ptr = (CallRateDetail) v;
-            retVal = ptr.getId() == this.id;
+            //retVal = ptr.getId() == this.id;
+            retVal = ptr.getDestination() == this.getDestination();
         }
 
-        return retVal;
+        return retVal;*/
+
+        if (v instanceof CallRateDetail) {
+            CallRateDetail articles = (CallRateDetail) v;
+            return (articles.getDestination().equals(this.getDestination()));
+        } else {
+            return false;
+        }
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 17 * hash + (this.id != null ? this.id.hashCode() : 0);
+        /*int hash = 7;
+        //hash = 17 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 17 * hash + (this.getDestination() != null ? this.getDestination().hashCode() : 0);
+        return hash;*/
+
+        int hash = getDestination().hashCode();
         return hash;
     }
 
