@@ -146,6 +146,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     if (callRateDetailList != null && !callRateDetailList.isEmpty()) {
                         String json = new Gson().toJson(callRateDetailList);
                         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_LIST, json);
+                        EventBus.getDefault().post(Constants.CALL_RATE_DETAILS_ACTION);
                     }
                 } catch (Exception e) {
                     mLog.w(TAG, e);

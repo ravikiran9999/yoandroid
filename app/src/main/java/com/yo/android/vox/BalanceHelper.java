@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,6 +74,7 @@ public class BalanceHelper {
                             DecimalFormat df = new DecimalFormat("0.000");
                             String format = df.format(Double.valueOf(balance));
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                            EventBus.getDefault().post(Constants.BALANCE_UPDATED_ACTION);
                             double val = Double.parseDouble(balance.trim());
                             if(val <=2) {
                                 mLog.w(TAG, "Current balance is less than or equal to $2");
