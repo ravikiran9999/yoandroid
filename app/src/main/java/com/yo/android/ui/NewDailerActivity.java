@@ -41,6 +41,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by rajesh on 16/9/16.
@@ -102,6 +103,7 @@ public class NewDailerActivity extends BaseActivity {
         getSupportActionBar().setTitle(R.string.activity_title_dialer);
         ButterKnife.bind(this);
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
+        EventBus.getDefault().register(this);
 
         mDigits = dialPadView.getDigits();
 
@@ -416,6 +418,8 @@ public class NewDailerActivity extends BaseActivity {
                         break;
                     }
                 }
+            } else {
+                countryName.setText(getResources().getString(R.string.select_country_name));
             }
         }
 
@@ -464,6 +468,25 @@ public class NewDailerActivity extends BaseActivity {
                 dialPadView.getDigits().setSelection(cPrefix.length());
             }
         } else if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == Activity.RESULT_OK) {
+            loadCurrentBalance();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEventMainThread(String action) {
+        if(Constants.CALL_RATE_DETAILS_ACTION.equals(action)) {
+            String json = preferenceEndPoint.getStringPreference
+                    (Constants.COUNTRY_LIST);
+            callRateDetailList = new Gson().fromJson(json, new
+                    TypeToken<List<CallRateDetail>>() {
+                    }.getType());
+            setCallRateText();
+        } else if(Constants.BALANCE_UPDATED_ACTION.equals(action)) {
             loadCurrentBalance();
         }
     }
