@@ -405,6 +405,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 e.printStackTrace();
             }*/
             callDisconnected();
+        } else if (statusCode == 480 || statusCode == 486) {
+            callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
             storeCallLog(sipCallstate.getMobileNumber());
