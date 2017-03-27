@@ -394,7 +394,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnected();
         } else if (statusCode == 503) {
             mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
-
+            callDisconnected();
         } else if (statusCode == 603) {
             callDisconnected();
         } else if (statusCode == 200) {
@@ -405,7 +405,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 e.printStackTrace();
             }*/
             callDisconnected();
-        } else if (statusCode == 480 || statusCode == 486) {
+        } else if (statusCode == 480 || statusCode == 486 || statusCode == 404) {
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
