@@ -466,7 +466,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mediaManager.setAudioMode(AudioManager.MODE_NORMAL);
         stopRingtone();
         currentCall = null;
-        callStarted = 0;
+        //callStarted = 0;
         if (sipCallState.getCallDir() == SipCallState.INCOMING) {
             if (sipCallState.getCallState() == SipCallState.CALL_RINGING) {
                 mLog.e(TAG, "Missed call >>>>>" + sipCallState.getMobileNumber());
@@ -782,6 +782,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (callStarted == 0 || callType == -1) {
             callDuration = 0;
         }
+        callStarted = 0;
         int pstnorapp = 0;
         Contact contact = mContactsSyncManager.getContactByVoxUserName(mobileNumber);
         CallerInfo info = new CallerInfo();
