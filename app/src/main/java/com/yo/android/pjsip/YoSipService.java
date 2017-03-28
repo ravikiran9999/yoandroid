@@ -394,7 +394,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnected();
         } else if (statusCode == 503) {
             mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
-
+            callDisconnected();
         } else if (statusCode == 603) {
             callDisconnected();
         } else if (statusCode == 200) {
@@ -405,7 +405,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 e.printStackTrace();
             }*/
             callDisconnected();
-        } else if (statusCode == 480 || statusCode == 486) {
+        } else if (statusCode == 480 || statusCode == 486 || statusCode == 404) {
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
@@ -466,7 +466,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mediaManager.setAudioMode(AudioManager.MODE_NORMAL);
         stopRingtone();
         currentCall = null;
-        callStarted = 0;
+        //callStarted = 0;
         if (sipCallState.getCallDir() == SipCallState.INCOMING) {
             if (sipCallState.getCallState() == SipCallState.CALL_RINGING) {
                 mLog.e(TAG, "Missed call >>>>>" + sipCallState.getMobileNumber());
@@ -782,6 +782,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (callStarted == 0 || callType == -1) {
             callDuration = 0;
         }
+        callStarted = 0;
         int pstnorapp = 0;
         Contact contact = mContactsSyncManager.getContactByVoxUserName(mobileNumber);
         CallerInfo info = new CallerInfo();
