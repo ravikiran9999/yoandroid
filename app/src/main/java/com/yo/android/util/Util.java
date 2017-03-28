@@ -1033,6 +1033,7 @@ public class Util {
                     int statusCode = details.getStatusCode();
                     switch (statusCode) {
                         case StatusCodes.TWO_THOUSAND_ONE:
+                            break;
                         case 408:
                             if (!details.isSelfReject()) {
                                 mToastFactory.showToast(R.string.no_answer);
