@@ -37,7 +37,7 @@ android {
     productFlavors {
 
         dev {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "BASE_URL", "\"http://yoapp-dev.herokuapp.com/\""
@@ -50,7 +50,7 @@ android {
 
         stage {
             applicationIdSuffix ".stage"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"yobeta\""
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""

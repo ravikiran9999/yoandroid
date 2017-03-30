@@ -753,10 +753,12 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         //preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-        //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
-        editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
-        editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
-        editor.commit();
+        if (getActivity() != null) {
+            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
+            //editor.putString("cached_magazines", new Gson().toJson(cachedMagazinesList));
+            editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
+            editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
+            editor.commit();
+        }
     }
 }

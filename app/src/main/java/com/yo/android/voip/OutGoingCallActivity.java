@@ -191,7 +191,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                         c = resolver.query(
                                 CONTENT_URI,
                                 null,
-                                CallLog.Calls.NUMBER +" = "+ getIntent().getStringExtra(DISPLAY_NUMBER),
+                                CallLog.Calls.NUMBER + " = " + getIntent().getStringExtra(DISPLAY_NUMBER),
                                 null,
                                 DEFAULT_SORT_ORDER);
                         if (c == null || !c.moveToFirst()) {
@@ -200,6 +200,8 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                             callerName.setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
 
                         }
+                    }catch (Exception e) {
+                        e.printStackTrace();
                     } finally {
                         if (c != null) c.close();
                     }

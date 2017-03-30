@@ -33,6 +33,7 @@ class MyCall extends Call {
                 this.delete();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return;
         }
     }
