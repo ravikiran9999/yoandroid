@@ -151,10 +151,12 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 final ContentResolver resolver = getContentResolver();
                 Cursor c = null;
                 try {
+                    String trimmedNumber = getIntent().getStringExtra(DISPLAY_NUMBER).replace(" ", "");
                     c = resolver.query(
                             CONTENT_URI,
                             null,
-                            CallLog.Calls.NUMBER +" = "+ getIntent().getStringExtra(DISPLAY_NUMBER),
+                            //CallLog.Calls.NUMBER +" = "+ getIntent().getStringExtra(DISPLAY_NUMBER),
+                            CallLog.Calls.NUMBER +" = "+ trimmedNumber,
                             null,
                             DEFAULT_SORT_ORDER);
                     if (c == null || !c.moveToFirst()) {
@@ -188,10 +190,12 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                     final ContentResolver resolver = getContentResolver();
                     Cursor c = null;
                     try {
+                        String trimmedNumber = getIntent().getStringExtra(DISPLAY_NUMBER).replace(" ", "");
                         c = resolver.query(
                                 CONTENT_URI,
                                 null,
-                                CallLog.Calls.NUMBER + " = " + getIntent().getStringExtra(DISPLAY_NUMBER),
+                                //CallLog.Calls.NUMBER + " = " + getIntent().getStringExtra(DISPLAY_NUMBER),
+                                CallLog.Calls.NUMBER +" = "+ trimmedNumber,
                                 null,
                                 DEFAULT_SORT_ORDER);
                         if (c == null || !c.moveToFirst()) {
