@@ -405,7 +405,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 e.printStackTrace();
             }*/
             callDisconnected();
-        } else if (statusCode == 480 || statusCode == 486 || statusCode == 404 || statusCode == 403) {
+        } else if (statusCode == 480 || statusCode == 486 || statusCode == 404 || statusCode == 403 || statusCode == 408) {
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
@@ -575,8 +575,21 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             destination = "sip:" + destination;
         }
         String finalUri = String.format("%s@%s", destination, getDomain());
-        //String finalUri = String.format("%s@%s", "sip:7032427", getDomain());
-        //String finalUri = String.format("%s@%s", "sip:64728474", getDomain());
+        //String finalUri = "";
+        /*if(intent.hasExtra(VoipConstants.PSTN)) {
+            finalUri = String.format("%s@%s", destination, getDomain());
+        }*/ /*else {
+            finalUri = String.format("%s@%s", "sip:7032427", getDomain());
+        }*/
+        /*else {
+            finalUri = String.format("%s@%s", "sip:64728474", getDomain());
+        }*/
+        /*else {
+            finalUri = String.format("%s@%s", "sip:603703", getDomain());
+        }*/
+        /*else {
+            finalUri = String.format("%s@%s", "sip:64724865", getDomain());
+        }*/
         mLog.e(TAG, "Final uri to make a call " + finalUri);
         outgoingCallUri = finalUri;
         /* Only one call at anytime */
