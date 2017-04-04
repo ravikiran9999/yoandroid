@@ -199,7 +199,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             String title = roomName == null ? getString(R.string.prompt_phone_number) : getString(R.string.participants);
             numberTitle.setText(title);
 
-
             if (mContact != null) {
 
                 if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo())) {
@@ -272,7 +271,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         } else if (Constants.USER_AVATAR.equals(key)) {
             String image = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
             if (!TextUtils.isEmpty(image)) {
-
                 Glide.with(this)
                         .load(image)
                         .placeholder(R.drawable.dynamic_profile)

@@ -1,7 +1,6 @@
 package com.yo.android.ui;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,15 +24,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
-import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
@@ -58,6 +53,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 
+//import com.squareup.picasso.Picasso;
+
 public class OthersMagazinesDetailActivity extends BaseActivity {
 
     @Inject
@@ -69,11 +66,6 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
     public static MyBaseAdapter myBaseAdapter;
     private TextView noArticals;
     private FrameLayout flipContainer;
-   /* private String magazineTitle;
-    private String magazineId;
-    private String magazineDesc;
-    private String magazinePrivacy;
-    private String magazineIsFollowing;*/
     private boolean isFollowing;
     private boolean isFollowingMagazine;
     private OwnMagazine ownMagazine;
@@ -98,11 +90,6 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         EventBus.getDefault().register(this);
 
         Intent intent = getIntent();
-        /*magazineTitle = intent.getStringExtra("MagazineTitle");
-        magazineId = intent.getStringExtra("MagazineId");
-        magazineDesc = intent.getStringExtra("MagazineDesc");
-        magazinePrivacy = intent.getStringExtra("MagazinePrivacy");
-        magazineIsFollowing = intent.getStringExtra("MagazineIsFollowing");*/
         ownMagazine = intent.getParcelableExtra("OwnMagazine");
         position = intent.getIntExtra("Position", 0);
 
@@ -115,20 +102,20 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         yoService.getArticlesOfMagazineAPI(ownMagazine.getId(), accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
-                if(response.body() != null) {
-                final String id = response.body().getId();
-                if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
-                    for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                        flipContainer.setVisibility(View.VISIBLE);
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
+                if (response.body() != null) {
+                    final String id = response.body().getId();
+                    if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
+                        for (int i = 0; i < response.body().getArticlesList().size(); i++) {
+                            flipContainer.setVisibility(View.VISIBLE);
+                            if (noArticals != null) {
+                                noArticals.setVisibility(View.GONE);
+                            }
+                            articlesList.add(response.body().getArticlesList().get(i));
                         }
-                        articlesList.add(response.body().getArticlesList().get(i));
+                        myBaseAdapter.addItems(articlesList);
                     }
-                    myBaseAdapter.addItems(articlesList);
-                }
                 } else {
-                    if(response.code() == 404) {
+                    if (response.code() == 404) {
                         mToastFactory.showToast(getString(R.string.magazine_not_found));
                         isMagazineDeleted = true;
                     } else {
@@ -138,23 +125,8 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     flipContainer.setVisibility(View.GONE);
                     if (noArticals != null) {
                         noArticals.setVisibility(View.VISIBLE);
-
-                        /*noArticals.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(OthersMagazinesDetailActivity.this, LoadMagazineActivity.class);
-                                intent.putExtra("MagazineId", id);
-                                intent.putExtra("MagazineTitle", magazineTitle);
-                                intent.putExtra("MagazineDesc", magazineDesc);
-                                intent.putExtra("MagazinePrivacy", magazinePrivacy);
-                                startActivity(intent);
-                                finish();
-                            }
-                        });*/
                     }
-
                 }
-
             }
 
             @Override
@@ -191,7 +163,6 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         private MyBaseAdapter(Context context) {
             inflater = LayoutInflater.from(context);
             this.context = context;
-            //MagazineArticlesBaseAdapter.reflectListener = this;
             reflectListener = this;
 
             //Use a system resource as the placeholder
@@ -277,7 +248,6 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //data.setIsChecked(isChecked);
                     if (isChecked) {
                         showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -358,7 +328,6 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        //.centerCrop()
                         //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
@@ -503,8 +472,8 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 }
             });
 
-            LinearLayout llArticleInfo = (LinearLayout)layout.findViewById(R.id.ll_article_info);
-            if(llArticleInfo != null) {
+            LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
+            if (llArticleInfo != null) {
                 llArticleInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -518,17 +487,14 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 });
             }
 
-            if(holder.tvTopicName != null) {
-                if(!TextUtils.isEmpty(data.getTopicName())) {
+            if (holder.tvTopicName != null) {
+                if (!TextUtils.isEmpty(data.getTopicName())) {
                     holder.tvTopicName.setVisibility(View.VISIBLE);
                     holder.tvTopicName.setText(data.getTopicName());
                     holder.tvTopicName.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, TopicsDetailActivity.class);
-                            /*intent.putExtra("TopicId", data.getTopicId());
-                            intent.putExtra("TopicName", data.getTopicName());
-                            intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                             intent.putExtra("Topic", data);
                             intent.putExtra("Position", position);
                             startActivityForResult(intent, 70);
@@ -585,10 +551,10 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             items.remove(position);
             items.add(position, topic);
 
-            for (ListIterator<Articles> it = items.listIterator(); it.hasNext();) {
+            for (ListIterator<Articles> it = items.listIterator(); it.hasNext(); ) {
                 Articles top = it.next();
-                if(!TextUtils.isEmpty(top.getTopicName()) && top.getTopicName().equals(topic.getTopicName())) {
-                    if(isFollowing) {
+                if (!TextUtils.isEmpty(top.getTopicName()) && top.getTopicName().equals(topic.getTopicName())) {
+                    if (isFollowing) {
                         top.setTopicFollowing("true");
                     } else {
                         top.setTopicFollowing("false");

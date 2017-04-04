@@ -113,9 +113,9 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
             @Override
             public void onFailure(Call<UserProfileInfo> call, Throwable t) {
-                    noData.setVisibility(View.VISIBLE);
-                    llNoPeople.setVisibility(View.VISIBLE);
-                    listView.setVisibility(View.GONE);
+                noData.setVisibility(View.VISIBLE);
+                llNoPeople.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
             }
         });
     }
@@ -137,11 +137,6 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     List<FindPeople> findPeopleList = response.body();
-                    /*findPeopleAdapter.clearAll();
-                    findPeopleAdapter.addItemsAll(findPeopleList);
-                    lvFindPeople.setVisibility(View.VISIBLE);
-                    noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.GONE);*/
                     originalList = response.body();
 
                     loadAlphabetOrder(findPeopleList);
@@ -167,7 +162,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     }
 
     private void callAppUsersService() {
-        if(!isFinishing()) {
+        if (!isFinishing()) {
             showProgressDialog();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getAppUsersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
@@ -176,11 +171,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                     dismissProgressDialog();
                     if (response.body() != null && response.body().size() > 0) {
                         List<FindPeople> findPeopleList = response.body();
-                    /*findPeopleAdapter.clearAll();
-                    findPeopleAdapter.addItemsAll(findPeopleList);
-                    lvFindPeople.setVisibility(View.VISIBLE);
-                    noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.GONE);*/
+
                         originalList = response.body();
 
                         loadAlphabetOrder(findPeopleList);
@@ -230,7 +221,6 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
         contactsListAdapter.addItemsAll(list);
         invalidateOptionsMenu();
-        //originalList = list;
         originalList.addAll(list);
         Helper.displayIndexTransferBalance(this, layout, originalList, listView);
     }
@@ -244,10 +234,8 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                 int threshold = 1;
                 int count = listView.getCount();
                 if (scrollState == SCROLL_STATE_IDLE) {
-                    //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
-                    if(searchView != null) {
+                    if (searchView != null) {
                         if (isMoreLoading == false && listView.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery()) && isRepresentative) {
-                            //if (isMoreLoading==false && listView.getLastVisiblePosition() >= count - threshold && isRepresentative) {
                             doPagination();
                         }
                     }
@@ -416,5 +404,4 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
             llNoPeople.setVisibility(View.GONE);
         }
     }
-
 }

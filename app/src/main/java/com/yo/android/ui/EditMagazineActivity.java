@@ -99,34 +99,6 @@ public class EditMagazineActivity extends BaseActivity {
         });
     }
 
-    /*private void showDeleteAlert(final String title) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.delete_topic_message));
-        builder.setCancelable(false);
-
-        builder.setPositiveButton(
-                getResources().getString(R.string.yes),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                        dialog.dismiss();
-                        deleteMagazine(title);
-                    }
-                });
-
-        builder.setNegativeButton(
-                getResources().getString(R.string.no),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                        dialog.dismiss();
-                    }
-                });
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }*/
-
     private void showDeleteAlert(final String title) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 

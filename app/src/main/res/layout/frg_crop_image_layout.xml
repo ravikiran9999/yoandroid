@@ -235,7 +235,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="16dp"
+            android:padding="18dp"
             android:src="@drawable/ic_done_black_24dp" />
     </RelativeLayout>
 </LinearLayout>

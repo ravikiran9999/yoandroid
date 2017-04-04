@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -66,12 +65,10 @@ import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -131,9 +128,14 @@ public class BottomTabsActivity extends BaseActivity {
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
-                .withUserName(username == null ? "" : username)
-                .withPassword("123456")
-                .withServer("209.239.120.239")
+               // .withUserName(username == null ? "" : username)
+                .withUserName(username == null ? "" : "64728474")
+                //.withUserName(username == null ? "" : "7032427")
+               // .withPassword("123456")
+                .withPassword("534653")
+                //.withPassword("@pa1ra2di3gm")
+               // .withServer("209.239.120.239")
+                .withServer("173.82.147.172")
                 .build();
         sipBinder.getHandler().addAccount(sipProfile);
 
@@ -259,7 +261,7 @@ public class BottomTabsActivity extends BaseActivity {
         NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nMgr.cancelAll();
         Intent intent1 = getIntent();
-        if(!intent1.getBooleanExtra("fromLowBalNotification", false)) {
+        if (!intent1.getBooleanExtra("fromLowBalNotification", false)) {
             balanceHelper.checkBalance(null);
         }
         String tag = intent1.getStringExtra("tag");
@@ -504,6 +506,9 @@ public class BottomTabsActivity extends BaseActivity {
     private Menu getMenu() {
         Menu menu = null;
         if (getFragment() instanceof ChatFragment) {
+            if (menu != null) {
+                menu.clear();
+            }
             menu = ((ChatFragment) getFragment()).getMenu();
         } else if (getFragment() instanceof ContactsFragment) {
             menu = ((ContactsFragment) getFragment()).getMenu();
@@ -649,7 +654,6 @@ public class BottomTabsActivity extends BaseActivity {
     private void startServiceToFetchNewArticles() {
         // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
-        //cal.setTimeInMillis(System.currentTimeMillis());
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);

@@ -62,11 +62,10 @@ public class ChatActivity extends BaseActivity {
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private Contact contactfromOpponent;
     private Contact mContact;
+    private String groupName;
+    private String chatRoomId;
     @Bind(R.id.progress_layout)
     RelativeLayout progressLayout;
-    /*@Bind(R.id.title_view) LinearLayout titleView;
-    @Bind(R.id.tv_phone_number) TextView customTitle;
-    @Bind(R.id.imv_contact_pic) ImageView imageView;*/
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -118,7 +117,6 @@ public class ChatActivity extends BaseActivity {
 
         //Clear all Notifications
         NotificationCache.clearNotifications();
-
 
         final UserChatFragment userChatFragment = new UserChatFragment();
         final Bundle args = new Bundle();
@@ -202,18 +200,21 @@ public class ChatActivity extends BaseActivity {
                 opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             }
-            String chatRoomId = getIntent().getStringExtra(Constants.CHAT_ROOM_ID);
+            chatRoomId = getIntent().getStringExtra(Constants.CHAT_ROOM_ID);
             if (chatRoomId != null && !TextUtils.isEmpty(chatRoomId)) {
                 args.putString(Constants.CHAT_ROOM_ID, chatRoomId);
             } else {
                 Log.i(TAG, getString(R.string.chat_room_id_error));
             }
-            if (getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER) != null) {
-                args.putString(Constants.TYPE, getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER));
+
+            if (getIntent().hasExtra(Constants.OPPONENT_PHONE_NUMBER)) {
+                groupName = getIntent().getStringExtra(Constants.OPPONENT_PHONE_NUMBER);
+                mOpponentImg = getIntent().getStringExtra(Constants.OPPONENT_CONTACT_IMAGE);
+                args.putString(Constants.TYPE, groupName);
+                args.putString(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
             }
             callUserChat(args, userChatFragment);
         }
-
 
         enableBack();
 
@@ -222,13 +223,13 @@ public class ChatActivity extends BaseActivity {
             getSupportActionBar().setDisplayShowCustomEnabled(true);
 
             View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
-            LinearLayout titleView = (LinearLayout) customView.findViewById(R.id.title_view);
-            TextView customTitle = (TextView) customView.findViewById(R.id.tv_phone_number);
-            final ImageView imageView = (ImageView) customView.findViewById(R.id.imv_contact_pic);
+            LinearLayout titleView = ButterKnife.findById(customView, R.id.title_view);
+            TextView customTitle = ButterKnife.findById(customView, R.id.tv_phone_number);
+            final ImageView imageView = ButterKnife.findById(customView, R.id.imv_contact_pic);
 
             if (mContact != null) {
                 contactfromOpponent = mContact;
-            } else {
+            } else if (groupName == null) {
                 contactfromOpponent = mContactsSyncManager.getContactByVoxUserName(opponent);
             }
 
@@ -236,9 +237,12 @@ public class ChatActivity extends BaseActivity {
                 title = contactfromOpponent.getName();
             } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
                 title = room.getFullName();
+            } else if (groupName != null) {
+                title = groupName;
             } else if (opponent != null && opponent.contains(Constants.YO_USER)) {
                 title = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
             }
+
             if (title != null) {
                 customTitle.setText(title);
             } else {
@@ -282,7 +286,7 @@ public class ChatActivity extends BaseActivity {
                                     imageView.setImageDrawable((Drawable) imageView.getTag(Settings.imageTag));
                                 }
                             });
-                }else {
+                } else {
                     if (title != null && title.length() >= 1 && !TextUtils.isDigitsOnly(title)) {
                         if (Settings.isTitlePicEnabled) {
                             if (title != null && title.length() >= 1) {
@@ -301,7 +305,7 @@ public class ChatActivity extends BaseActivity {
             titleView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String opponentTrim  = null;
+                    String opponentTrim = null;
                     if (opponent != null && opponent.contains(Constants.YO_USER)) {
                         opponentTrim = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
                     }
@@ -310,12 +314,18 @@ public class ChatActivity extends BaseActivity {
                     intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
                     String titles = title == null ? opponent : title;
                     intent.putExtra(Constants.OPPONENT_NAME, titles);
-                    intent.putExtra(Constants.VOX_USER_NAME, opponent);
                     if (opponentTrim != null && TextUtils.isDigitsOnly(opponentTrim)) {
                         intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentTrim);
                     }
 
                     intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+
+                    if (groupName != null) {
+                        intent.putExtra(Constants.CHAT_ROOM_ID, chatRoomId);
+                        intent.putExtra(Constants.GROUP_NAME, title);
+                    } else {
+                        intent.putExtra(Constants.VOX_USER_NAME, opponent);
+                    }
 
                     if (room != null) {
                         intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
@@ -339,7 +349,6 @@ public class ChatActivity extends BaseActivity {
                     .beginTransaction()
                     .add(android.R.id.content, userChatFragment)
                     .commitAllowingStateLoss();
-            //.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }

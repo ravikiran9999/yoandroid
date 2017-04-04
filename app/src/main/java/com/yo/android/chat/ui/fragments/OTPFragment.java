@@ -119,6 +119,7 @@ public class OTPFragment extends BaseFragment {
                         mHandler.post(runnable);
                         generateDummyOTP();
                     }
+
                 } else {
                     performNext();
                 }
@@ -130,9 +131,10 @@ public class OTPFragment extends BaseFragment {
                 if ("Resend".equalsIgnoreCase(reSendTextBtn.getText().toString())
                         && getActivity() instanceof LoginActivity) {
                     ((LoginActivity) getActivity()).callLoginService(phoneNumber);
-                    mHandler.post(runnable);
+                    //mHandler.post(runnable);
                     generateDummyOTP();
                 }
+
             }
         });
         mHandler.post(runnable);
@@ -237,14 +239,13 @@ public class OTPFragment extends BaseFragment {
         yoService.subscribe(accessToken).enqueue(new Callback<Subscriber>() {
             @Override
             public void onResponse(Call<Subscriber> call, Response<Subscriber> response) {
-                //dismissProgressDialog();
                 if (response.isSuccessful()) {
                     preferenceEndPoint.saveStringPreference(Constants.SUBSCRIBER_ID, response.body().getDATA().getSUBSCRIBERID());
                     preferenceEndPoint.saveStringPreference(Constants.CALLINGCARDNUMBER, response.body().getDATA().getCALLINGCARDNUMBER());
                     preferenceEndPoint.saveStringPreference(Constants.VOX_USER_NAME, response.body().getDATA().getUSERNAME());
                     preferenceEndPoint.saveStringPreference(Constants.PASSWORD, response.body().getDATA().getPASSWORD());
                     finishAndNavigateToHome();
-                } else {
+                } else if(response.body().getSTATUS().equalsIgnoreCase(Constants.FAILED)){
                     mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
                 }
             }

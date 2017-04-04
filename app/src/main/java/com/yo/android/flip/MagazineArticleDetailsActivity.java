@@ -1,6 +1,5 @@
 package com.yo.android.flip;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -114,9 +113,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
 
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                            /*if (!((BaseActivity) context).hasDestroyed()) {
-                                notifyDataSetChanged();
-                            }*/
+                                MagazineArticlesBaseAdapter.initListener();
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
@@ -129,9 +126,6 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                                 Toast.makeText(MagazineArticleDetailsActivity.this, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                            /*if (!((BaseActivity) context).hasDestroyed()) {
-                                notifyDataSetChanged();
-                            }*/
                             }
                         });
                     } else {
@@ -143,9 +137,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                                 dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
-                            /*if (!((BaseActivity) context).hasDestroyed()) {
-                                notifyDataSetChanged();
-                            }*/
+                                MagazineArticlesBaseAdapter.initListener();
                                 if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                     MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                 }
@@ -158,9 +150,6 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                                 Toast.makeText(MagazineArticleDetailsActivity.this, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
-                            /*if (!((BaseActivity) context).hasDestroyed()) {
-                                notifyDataSetChanged();
-                            }*/
                             }
                         });
                     }

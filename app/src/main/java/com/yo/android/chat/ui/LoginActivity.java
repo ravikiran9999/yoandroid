@@ -148,19 +148,21 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         mCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Util.hideKeyboard(LoginActivity.this,view);
                 Intent intent = new Intent(LoginActivity.this, CountryCodeActivity.class);
                 startActivityForResult(intent, SELECTED_OK);
+
             }
         });
 
-        mCountryCode.setOnTouchListener(new View.OnTouchListener() {
+        mCountryCode.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
-                Util.hideKeyboard(LoginActivity.this, v);
+                Util.hideKeyboard(LoginActivity.this,v);
                 return false;
             }
         });
+
         mPhoneNumberView.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -170,10 +172,10 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                     attemptLogin();
                     return true;
                 }
+
                 return false;
             }
         });
-
     }
 
     /**

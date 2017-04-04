@@ -51,13 +51,8 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<FindPeopl
     @Override
     public void bindView(final int position, RegisteredContactsViewHolder holder, final FindPeople item) {
 
-        //if (!TextUtils.isEmpty(item.getFirst_name())) {
             holder.getContactNumber().setText(item.getFirst_name() + " " + item.getLast_name());
             holder.getContactNumber().setVisibility(View.VISIBLE);
-        /*} else {
-            holder.getContactNumber().setVisibility(View.GONE);
-        }*/
-       // holder.getContactNumber().setText(item.getFirst_name() + " " + item.getLast_name());
         if (item.getPhone_no() != null) {
             item.setPhone_no(item.getPhone_no().trim());
         }

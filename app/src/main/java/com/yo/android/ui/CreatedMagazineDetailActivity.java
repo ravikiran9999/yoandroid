@@ -22,13 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aphidmobile.flip.FlipViewController;
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-//import com.squareup.picasso.Picasso;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
@@ -50,6 +48,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
+
+//import com.squareup.picasso.Picasso;
 
 public class CreatedMagazineDetailActivity extends BaseActivity {
 
@@ -255,7 +255,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    //data.setIsChecked(isChecked);
+
                     if (isChecked) {
                         showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -336,8 +336,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .placeholder(R.drawable.img_placeholder)
-                        //.centerCrop()
-                                //Image size will be reduced 50%
+                        //Image size will be reduced 50%
                         .thumbnail(0.5f)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -406,9 +405,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, TopicsDetailActivity.class);
-                            /*intent.putExtra("TopicId", data.getTopicId());
-                            intent.putExtra("TopicName", data.getTopicName());
-                            intent.putExtra("TopicFollowing", data.getTopicFollowing());*/
                             intent.putExtra("Topic", data);
                             intent.putExtra("Position", position);
                             startActivityForResult(intent, 100);
@@ -557,7 +553,6 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 boolean isLiked = Boolean.valueOf(articles.getLiked());
                 myBaseAdapter.updateArticle(isLiked, articles, pos, articlePlace);
             }
-
         }
     }
 }

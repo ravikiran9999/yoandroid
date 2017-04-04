@@ -129,6 +129,8 @@ public class Constants {
     public static String BALANCE_TRANSFER_NOTIFICATION_ACTION = "com.notification.balance.TRANSFER";
     public static String STOP_FETCHING_ARTICLES_ACTION = "com.stop.articles.FETCH";
     public static String START_FETCHING_ARTICLES_ACTION = "com.start.articles.FETCH";
+    public static String BALANCE_UPDATED_ACTION = "com.balance.BALANCEUPDATED";
+    public static String CALL_RATE_DETAILS_ACTION = "com.callrates.CALLRATEDETAILS";
 
     // Contacts
     public static final String NUMBER = "number";
@@ -160,5 +162,9 @@ public class Constants {
 
     public static final int FETCHING_NEW_ARTICLES_FREQUENCY = 24 * 60 * 60 * 1000;
     public static final String IS_SERVICE_RUNNING = "is_service_running";
+
+    public static final String FAILED = "FAILED";
+
+
 
 }

@@ -197,7 +197,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             }
             loadAlphabetOrder(list);
         } finally {
-            if (c != null) c.close();
+            if (c != null && !c.isClosed()) c.close();
         }
     }
 
@@ -334,7 +334,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                             for (Popup p : popup) {
                                 if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
                                     if (!isAlreadyShown) {
-                                        //PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
                                         PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CONTACTS, p, getActivity(), preferenceEndPoint, this, this, popup);
                                         isAlreadyShown = true;
                                         isSharedPreferenceShown = false;
@@ -343,12 +342,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                                 }
                             }
                         }
-                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
-                                isAlreadyShown = true;
-                            }
-                        }*/
                     }
                 }
             }
@@ -363,7 +356,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             BottomTabsActivity activity = (BottomTabsActivity) getActivity();
             if (activity.getFragment() instanceof ContactsFragment) {
                 if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                    //if (!isRemoved) {
                     Type type = new TypeToken<List<Popup>>() {
                     }.getType();
                     List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -380,15 +372,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
                             }
                         }
                     }
-                        /*if (popup != null && popup.size() > 0 && popup.get(0).getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getPopup(PopupHelper.PopupsEnum.CONTACTS, popup, getActivity(), preferenceEndPoint, this, this);
-                                isAlreadyShown = true;
-                            }
-                        }*/
-                    /*} else {
-                        isRemoved = false;
-                    }*/
                 }
             }
         }
@@ -404,9 +387,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public void closePopup() {
-        //isAlreadyShown = false;
-        //isRemoved = true;
-        //preferenceEndPoint.removePreference(Constants.POPUP_NOTIFICATION);
         Type type = new TypeToken<List<Popup>>() {
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -423,7 +403,6 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
             }
             popup = tempPopup;
         }
-        //popup.remove(0);
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 

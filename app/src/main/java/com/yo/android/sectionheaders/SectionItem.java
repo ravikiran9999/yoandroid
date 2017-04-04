@@ -1,10 +1,6 @@
 package com.yo.android.sectionheaders;
 
-import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
-import com.yo.android.model.Topics;
-
-import java.util.List;
 
 /**
  * Created by creatives on 12/20/2016.

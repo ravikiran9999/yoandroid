@@ -96,27 +96,27 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         cancelBtn.setOnClickListener(this);
         okBtn.setOnClickListener(this);
 
-        editProfile.setFilters(new InputFilter[]{
-               new InputFilter.LengthFilter(130)
-       });
-
-       editProfile.addTextChangedListener(new TextWatcher() {
-           @Override
-           public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-           }
-
-           @Override
-           public void onTextChanged(CharSequence s, int start, int before, int count){
-           }
-
-           @Override
-           public void afterTextChanged(Editable s) {
-
-                maxCharCount.setText(String.valueOf(130-editProfile.length()));
-
-           }
-       });
+//        editProfile.setFilters(new InputFilter[]{
+//               new InputFilter.LengthFilter(130)
+//       });
+//
+//       editProfile.addTextChangedListener(new TextWatcher() {
+//           @Override
+//           public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//           }
+//
+//           @Override
+//           public void onTextChanged(CharSequence s, int start, int before, int count){
+//           }
+//
+//           @Override
+//           public void afterTextChanged(Editable s) {
+//
+//                maxCharCount.setText(String.valueOf(130-editProfile.length()));
+//
+//           }
+//       });
 
         if (key.equalsIgnoreCase(Constants.DOB_TEMP)) {
             editBirth.setVisibility(View.VISIBLE);
@@ -129,6 +129,7 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         } else if (key.equalsIgnoreCase(Constants.FIRST_NAME)) {
             String firstName = preferenceEndPoint.getStringPreference(Constants.FIRST_NAME);
             editProfile.setText(firstName);
+
         } else if (key.equalsIgnoreCase(Constants.DESCRIPTION)){
             String userStatus = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION);
 
@@ -185,7 +186,8 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
             preferenceEndPoint.saveStringPreference(key, editBirth.getText().toString());
             getActivity().onBackPressed();
         }else if(key.equalsIgnoreCase(Constants.FIRST_NAME)){
-            if (Pattern.matches(NAME_REGX, text)) {
+//            if (Pattern.matches(NAME_REGX, text))
+            if(!TextUtils.isEmpty(text)){
             preferenceEndPoint.saveStringPreference(key,text);
             getActivity().onBackPressed();
             } else {
