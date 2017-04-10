@@ -198,6 +198,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                 showEmptyText();
                 noSearchResult.setVisibility(View.GONE);
                 getActivity().invalidateOptionsMenu();
+                loadCallLogs();
                 return true;
             }
         });
@@ -307,7 +308,6 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         adapter.addItemsAll(results);
         tempResults = null;
         showEmptyText();
-
     }
 
 

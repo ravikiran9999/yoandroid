@@ -39,6 +39,7 @@ import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
 
+import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -180,7 +181,7 @@ public class OTPFragment extends BaseFragment {
         //Debug purpose
         Random random = new Random();
         //int duration = Math.max(0, random.nextInt(60));
-         int duration=Math.max(0,60);
+        int duration = Math.max(0, 60);
         if (!BuildConfig.ORIGINAL_SMS_VERIFICATION) {
             dummyOTPHandler.removeCallbacks(dummyOTPRunnable);
             dummyOTPHandler.postDelayed(dummyOTPRunnable, duration * 1000L);
@@ -224,7 +225,7 @@ public class OTPFragment extends BaseFragment {
                 dismissProgressDialog();
                 FragmentActivity activity = getActivity();
                 if (activity != null) {
-                    if (!mHelper.isConnected() || t instanceof SocketTimeoutException) {
+                    if (!mHelper.isConnected() || t instanceof SocketTimeoutException || t instanceof ProtocolException) {
                         mToastFactory.showToast(activity.getResources().getString(R.string.connectivity_network_settings));
                     } else {
                         mToastFactory.showToast(activity.getResources().getString(R.string.otp_failure));

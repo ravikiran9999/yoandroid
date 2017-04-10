@@ -31,11 +31,11 @@ public class ReCreateService {
     private static ReCreateService reCreateServiceIns;
     private Context context;
 
-    public static ReCreateService getInstance(Context context){
-        if(reCreateServiceIns == null){
+    public static ReCreateService getInstance(Context context) {
+        if (reCreateServiceIns == null) {
             reCreateServiceIns = new ReCreateService();
-            preferenceEndPoint =new PreferenceEndPointImpl(context, "login");
-           reCreateServiceIns.context = context;
+            preferenceEndPoint = new PreferenceEndPointImpl(context, "login");
+            reCreateServiceIns.context = context;
         }
         return reCreateServiceIns;
     }
@@ -56,12 +56,14 @@ public class ReCreateService {
             sipBinder = null;
         }
     };
-    public void start(Context context){
+
+    public void start(Context context) {
         context.bindService(new Intent(context, YoSipService.class), connection, context.BIND_AUTO_CREATE);
     }
+
     private static void addAccount(Context context) {
-        Log.e("YOService-Recreate",preferenceEndPoint+"");
-        if(preferenceEndPoint!=null) {
+        Log.e("YOService-Recreate", preferenceEndPoint + "");
+        if (preferenceEndPoint != null) {
             String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
             String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
             SipProfile sipProfile = new SipProfile.Builder()

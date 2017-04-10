@@ -154,6 +154,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                     String trimmedNumber = getIntent().getStringExtra(DISPLAY_NUMBER).replace(" ", "");
                     c = resolver.query(
                             CONTENT_URI,
+
                             null,
                             //CallLog.Calls.NUMBER +" = "+ getIntent().getStringExtra(DISPLAY_NUMBER),
                             CallLog.Calls.NUMBER +" = "+ trimmedNumber,
@@ -193,6 +194,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                         String trimmedNumber = getIntent().getStringExtra(DISPLAY_NUMBER).replace(" ", "");
                         c = resolver.query(
                                 CONTENT_URI,
+
                                 null,
                                 //CallLog.Calls.NUMBER + " = " + getIntent().getStringExtra(DISPLAY_NUMBER),
                                 CallLog.Calls.NUMBER +" = "+ trimmedNumber,
