@@ -128,13 +128,18 @@ public class BottomTabsActivity extends BaseActivity {
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
-               // .withUserName(username == null ? "" : username)
+
+                //.withUserName(username == null ? "" : username)
                 .withUserName(username == null ? "" : "64728474")
                 //.withUserName(username == null ? "" : "7032427")
-               // .withPassword("123456")
+                //.withUserName(username == null ? "" : "64724865")
+                //.withUserName(username == null ? "" : "603703")
+                //.withPassword("123456")
                 .withPassword("534653")
                 //.withPassword("@pa1ra2di3gm")
-               // .withServer("209.239.120.239")
+                //.withPassword("823859")
+                //.withPassword("@pa1ra2di3gm")
+                //.withServer("209.239.120.239")
                 .withServer("173.82.147.172")
                 .build();
         sipBinder.getHandler().addAccount(sipProfile);

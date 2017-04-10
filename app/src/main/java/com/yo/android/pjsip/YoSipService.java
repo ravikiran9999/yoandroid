@@ -164,7 +164,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mHandler = new Handler(Looper.getMainLooper());
         sipCallState = new SipCallState();
         //TODO:Store in shared prefs and retrieve it
-       // domain = "209.239.120.239";
+        //domain = "209.239.120.239";
         domain = "173.82.147.172";
         mediaManager = new MediaManager(this);
     }
@@ -414,7 +414,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 e.printStackTrace();
             }*/
             callDisconnected();
-        } else if (statusCode == 480 || statusCode == 486 || statusCode == 404 || statusCode == 403) {
+        } else if (statusCode == 480 || statusCode == 486 || statusCode == 404 || statusCode == 403 || statusCode == 408) {
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
@@ -583,15 +583,22 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (destination != null && !destination.startsWith("sip:")) {
             destination = "sip:" + destination;
         }
-        String finalUri = String.format("%s@%s", destination, getDomain());
+        //String finalUri = String.format("%s@%s", destination, getDomain());
+        String finalUri = "";
         if(intent.hasExtra(VoipConstants.PSTN)) {
             finalUri = String.format("%s@%s", destination, getDomain());
-        } else {
+        } /*else {
             finalUri = String.format("%s@%s", "sip:7032427", getDomain());
+        }*/
+        /*else {
+            finalUri = String.format("%s@%s", "sip:64728474", getDomain());
+        }*/
+        else {
+            finalUri = String.format("%s@%s", "sip:603703", getDomain());
         }
-
-        //String finalUri = String.format("%s@%s", "sip:7032427", getDomain());
-        //String finalUri = String.format("%s@%s", "sip:64728474", getDomain());
+        /*else {
+            finalUri = String.format("%s@%s", "sip:64724865", getDomain());
+        }*/
         mLog.e(TAG, "Final uri to make a call " + finalUri);
         outgoingCallUri = finalUri;
         /* Only one call at anytime */
@@ -610,7 +617,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             MyCall call = new MyCall(myAccount, -1);
             CallOpParam prm = new CallOpParam(true);
             try {
-                call.isActive(finalUri, prm);
+                //call.isActive(finalUri, prm);
+                call.isActive();
                 call.makeCall(finalUri, prm);
             } catch (Exception e) {
                 mLog.w(TAG, "Exception making call " + e.getMessage());
