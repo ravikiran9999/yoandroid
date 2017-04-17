@@ -54,6 +54,7 @@ class MyAccount extends Account {
 
     @Override
     public void onRegState(OnRegStateParam prm) {
+        System.out.println("*** On registration state: " + prm.getCode() + prm.getReason());
         MyApp.observer.notifyRegState(prm.getCode(), prm.getReason(),
                 prm.getExpiration());
     }

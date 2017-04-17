@@ -127,6 +127,7 @@ class MyAccount extends Account
     public ArrayList<MyBuddy> buddyList = new ArrayList<MyBuddy>();
     public AccountConfig cfg;
 
+
     MyAccount(AccountConfig config)
     {
 	super();
@@ -171,7 +172,8 @@ class MyAccount extends Account
     @Override
     public void onRegState(OnRegStateParam prm)
     {
-        MyApp.observer.notifyRegState(prm.getCode(), prm.getReason(),
+		System.out.println("*** On registration state: " + prm.getCode() + prm.getReason());
+		MyApp.observer.notifyRegState(prm.getCode(), prm.getReason(),
 				      prm.getExpiration());
     }
 
@@ -401,7 +403,7 @@ class MyApp {
 	    MyAccountConfig my_cfg = accCfgs.get(i);
 
 	    /* Customize account config */
-	    my_cfg.accCfg.getNatConfig().setIceEnabled(true);
+	    my_cfg.accCfg.getNatConfig().setIceEnabled(false);
 	    my_cfg.accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
 	    my_cfg.accCfg.getVideoConfig().setAutoShowIncoming(true);
 

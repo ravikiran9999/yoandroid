@@ -284,7 +284,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                 YoAppContactContract.YoAppContactsEntry.CONTENT_URI, // URI where data was modified
                 null,                           // No local observer
                 false);                         // IMPORTANT: Do not sync to network
-        // This sample doesn't support uploads, but if *your* code does, make sure you set
+        // This Sample doesn't support uploads, but if *your* code does, make sure you set
         // syncToNetwork=false in the line above to prevent duplicate syncs.
     }
 
