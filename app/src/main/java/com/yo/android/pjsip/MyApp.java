@@ -172,7 +172,7 @@ class MyApp {
             MyAccountConfig my_cfg = accCfgs.get(i);
 
 			/* Customize account config */
-            my_cfg.accCfg.getNatConfig().setIceEnabled(true);
+            my_cfg.accCfg.getNatConfig().setIceEnabled(false);
             my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
             my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
             my_cfg.accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
