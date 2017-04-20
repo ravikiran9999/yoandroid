@@ -165,7 +165,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState = new SipCallState();
         //TODO:Store in shared prefs and retrieve it
         //domain = "209.239.120.239";
-        domain = "173.82.147.172:5060";
+        domain = "173.82.147.172";
         mediaManager = new MediaManager(this);
     }
 
