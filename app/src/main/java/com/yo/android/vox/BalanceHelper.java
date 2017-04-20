@@ -11,10 +11,12 @@ import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -69,7 +71,8 @@ public class BalanceHelper {
                     try {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
-                        String balance = jsonObject.getString("CREDIT");
+                        String balance = jsonObject.getString("Balance");
+                        //String balance = jsonObject.getString("CREDIT");
                         try {
                             DecimalFormat df = new DecimalFormat("0.000");
                             String format = df.format(Double.valueOf(balance));
@@ -83,7 +86,8 @@ public class BalanceHelper {
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
-                        String subscriberId = jsonObject.getString("SUBSCRIBERID");
+                        //String subscriberId = jsonObject.getString("SUBSCRIBERID");
+                        String subscriberId = jsonObject.getString("Subscriber");
                         prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);
                         mLog.i(TAG, "loadBalance: balance -  %s", balance);
                         if (callback != null) {
@@ -134,7 +138,8 @@ public class BalanceHelper {
                     try {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
-                        String balance = jsonObject.getJSONObject("DATA").getString("CURRENTCREDIT");
+                        String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString("Balance");
+
                         try {
                             DecimalFormat df = new DecimalFormat("0.000");
                             String format = df.format(Double.valueOf(balance));
