@@ -35,7 +35,6 @@ import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.util.Constants;
-import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.voip.IncomingSmsReceiver;
 import com.yo.android.voip.VoipConstants;
 
@@ -243,12 +242,12 @@ public class OTPFragment extends BaseFragment {
             @Override
             public void onResponse(Call<Subscriber> call, Response<Subscriber> response) {
                 if (response.isSuccessful()) {
-                    preferenceEndPoint.saveStringPreference(Constants.SUBSCRIBER_ID, response.body().getDATA().getSUBSCRIBERID());
-                    preferenceEndPoint.saveStringPreference(Constants.CALLINGCARDNUMBER, response.body().getDATA().getCALLINGCARDNUMBER());
-                    preferenceEndPoint.saveStringPreference(Constants.VOX_USER_NAME, response.body().getDATA().getUSERNAME());
-                    preferenceEndPoint.saveStringPreference(Constants.PASSWORD, response.body().getDATA().getPASSWORD());
+                    preferenceEndPoint.saveStringPreference(Constants.SUBSCRIBER_ID, response.body().getNexge_subscriber_id());
+                    preferenceEndPoint.saveStringPreference(Constants.CALLINGCARDNUMBER, response.body().getNexge_subscriber_telID());
+                    preferenceEndPoint.saveStringPreference(Constants.VOX_USER_NAME, response.body().getNexge_subscriber_username());
+                    preferenceEndPoint.saveStringPreference(Constants.PASSWORD, response.body().getNexge_subscriber_password());
                     finishAndNavigateToHome();
-                } else if(response.body().getSTATUS().equalsIgnoreCase(Constants.FAILED)){
+                } else {
                     mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
                 }
             }

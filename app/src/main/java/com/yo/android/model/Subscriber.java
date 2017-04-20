@@ -7,88 +7,44 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Subscriber {
 
-    @SerializedName("STATUS")
-    private String STATUS;
+    @SerializedName("nexge_subscriber_id")
+    private String nexge_subscriber_id;
+    @SerializedName("nexge_subscriber_username")
+    private String nexge_subscriber_username;
+    @SerializedName("nexge_subscriber_password")
+    private String nexge_subscriber_password;
+    @SerializedName("nexge_subscriber_telID")
+    private String nexge_subscriber_telID;
 
-    @SerializedName("DATA")
-    private DATA DATA;
-
-    public String getSTATUS() {
-        return STATUS;
+    public String getNexge_subscriber_id() {
+        return nexge_subscriber_id;
     }
 
-    public void setSTATUS(String STATUS) {
-        this.STATUS = STATUS;
+    public void setNexge_subscriber_id(String nexge_subscriber_id) {
+        this.nexge_subscriber_id = nexge_subscriber_id;
     }
 
-    public DATA getDATA() {
-        return DATA;
+    public String getNexge_subscriber_username() {
+        return nexge_subscriber_username;
     }
 
-    public void setDATA(DATA DATA) {
-        this.DATA = DATA;
+    public void setNexge_subscriber_username(String nexge_subscriber_username) {
+        this.nexge_subscriber_username = nexge_subscriber_username;
     }
 
-    public static class DATA {
-        @SerializedName("SUBSCRIBERID")
-        private String SUBSCRIBERID;
-        @SerializedName("USERNAME")
-        private String USERNAME;
-        @SerializedName("PASSWORD")
-        private String PASSWORD;
-        @SerializedName("CREDIT")
-        private String CREDIT;
-        @SerializedName("CALLINGCARDNUMBER")
-        private String CALLINGCARDNUMBER;
-        @SerializedName("MESSAGE")
-        private String MESSAGE;
+    public String getNexge_subscriber_password() {
+        return nexge_subscriber_password;
+    }
 
-        public String getSUBSCRIBERID() {
-            return SUBSCRIBERID;
-        }
+    public void setNexge_subscriber_password(String nexge_subscriber_password) {
+        this.nexge_subscriber_password = nexge_subscriber_password;
+    }
 
-        public void setSUBSCRIBERID(String SUBSCRIBERID) {
-            this.SUBSCRIBERID = SUBSCRIBERID;
-        }
+    public String getNexge_subscriber_telID() {
+        return nexge_subscriber_telID;
+    }
 
-        public String getUSERNAME() {
-            return USERNAME;
-        }
-
-        public void setUSERNAME(String USERNAME) {
-            this.USERNAME = USERNAME;
-        }
-
-        public String getPASSWORD() {
-            return PASSWORD;
-        }
-
-        public void setPASSWORD(String PASSWORD) {
-            this.PASSWORD = PASSWORD;
-        }
-
-        public String getCREDIT() {
-            return CREDIT;
-        }
-
-        public void setCREDIT(String CREDIT) {
-            this.CREDIT = CREDIT;
-        }
-
-        public String getCALLINGCARDNUMBER() {
-            return CALLINGCARDNUMBER;
-        }
-
-        public void setCALLINGCARDNUMBER(String CALLINGCARDNUMBER) {
-            this.CALLINGCARDNUMBER = CALLINGCARDNUMBER;
-        }
-
-        public String getMESSAGE() {
-            return MESSAGE;
-        }
-
-        public void setMESSAGE(String MESSAGE) {
-            this.MESSAGE = MESSAGE;
-        }
+    public void setNexge_subscriber_telID(String nexge_subscriber_telID) {
+        this.nexge_subscriber_telID = nexge_subscriber_telID;
     }
 }
