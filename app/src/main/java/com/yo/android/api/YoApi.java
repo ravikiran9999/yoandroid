@@ -74,7 +74,7 @@ public class YoApi {
                 @Field("otp") String otp
         );
 
-        @POST("api/user/vox_subscribe.json")
+        @POST("api/user/nexge_subscribe.json")
         Call<Subscriber> subscribe(@Query("access_token") String access_token);
 
         @GET("api/tags.json")

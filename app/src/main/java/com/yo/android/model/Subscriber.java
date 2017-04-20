@@ -30,15 +30,15 @@ public class Subscriber {
     }
 
     public static class DATA {
-        @SerializedName("SUBSCRIBERID")
+        @SerializedName("nexge_subscriber_id")
         private String SUBSCRIBERID;
-        @SerializedName("USERNAME")
+        @SerializedName("nexge_subscriber_username")
         private String USERNAME;
-        @SerializedName("PASSWORD")
+        @SerializedName("nexge_subscriber_password")
         private String PASSWORD;
         @SerializedName("CREDIT")
         private String CREDIT;
-        @SerializedName("CALLINGCARDNUMBER")
+        @SerializedName("nexge_subscriber_telID")
         private String CALLINGCARDNUMBER;
         @SerializedName("MESSAGE")
         private String MESSAGE;
