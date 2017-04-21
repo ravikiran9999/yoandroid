@@ -211,9 +211,9 @@ public class OTPFragment extends BaseFragment {
                     //contactsSyncManager.syncContacts();
                     count++;
                     storeTokens(response, phoneNumber, password);
-                    finishAndNavigateToHome();
+                    //finishAndNavigateToHome();
                     //Todo Remove this line
-                    //addSubscriber(response.body().getAccessToken());
+                    addSubscriber(response.body().getAccessToken());
                 } else {
                     if (activity != null) {
                         mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));

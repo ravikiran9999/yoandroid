@@ -210,12 +210,14 @@ public class TransferBalanceActivity extends BaseActivity {
                                     TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
 
                                     tvTitle.setText("Balance has been transferred successfully to " + "\"" + name + "\".");
-                                    DecimalFormat df = new DecimalFormat("0.000");
-                                    String format = df.format(Double.valueOf(response.body().getBalance()));
-                                    String remainingBalance = "\"Your Remaining Balance is  US $" + format + "\"";
-                                    final SpannableString text = new SpannableString(remainingBalance);
-                                    text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    tvDesc.setText(text);
+                                    if(response.body().getBalance() != null) {
+                                        DecimalFormat df = new DecimalFormat("0.000");
+                                        String format = df.format(Double.valueOf(response.body().getBalance()));
+                                        String remainingBalance = "\"Your Remaining Balance is  US $" + format + "\"";
+                                        final SpannableString text = new SpannableString(remainingBalance);
+                                        text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                        tvDesc.setText(text);
+                                    }
 
                                     final AlertDialog alertDialog = builder.create();
                                     alertDialog.setCancelable(false);
@@ -232,16 +234,31 @@ public class TransferBalanceActivity extends BaseActivity {
 
                                     break;
                                 case 606:
-                                    mToastFactory.showToast(R.string.invalid_request);
+                                    mToastFactory.showToast(response.body().getData().toString());
                                     break;
                                 case 607:
-                                    mToastFactory.showToast(R.string.invalid_pin_request);
+                                    mToastFactory.showToast(response.body().getData().toString());
                                     break;
                                 case 608:
-                                    mToastFactory.showToast(R.string.insufficient_amount);
+                                    mToastFactory.showToast(response.body().getData().toString());
                                     break;
                                 case 609:
-                                    mToastFactory.showToast(R.string.unsuccessful_amount_transfer);
+                                    mToastFactory.showToast(response.body().getData().toString());
+                                    break;
+                                case 610:
+                                    mToastFactory.showToast(response.body().getData().toString());
+                                    break;
+                                case 611:
+                                    mToastFactory.showToast(response.body().getData().toString());
+                                    break;
+                                case 612:
+                                    mToastFactory.showToast(response.body().getData().toString());
+                                    break;
+                                case 613:
+                                    mToastFactory.showToast(response.body().getData().toString());
+                                    break;
+                                case 614:
+                                    mToastFactory.showToast(response.body().getData().toString());
                                     break;
                                 default:
                                     mToastFactory.showToast(R.string.transfer_balance_failed);
