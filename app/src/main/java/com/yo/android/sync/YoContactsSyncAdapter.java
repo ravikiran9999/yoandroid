@@ -292,7 +292,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         List<Entry> list = new ArrayList<>();
         for (Contact contact : contacts) {
             Entry entry = new Entry(contact.getId(),
-                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.getYoAppUser(), contact.getVoxUserName(), contact.getCountryCode());
+                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.getYoAppUser(), contact.getNexgieUserName(), contact.getCountryCode());
             list.add(entry);
         }
         return list;

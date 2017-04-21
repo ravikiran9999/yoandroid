@@ -211,8 +211,7 @@ public class OTPFragment extends BaseFragment {
                     //contactsSyncManager.syncContacts();
                     count++;
                     storeTokens(response, phoneNumber, password);
-                    //finishAndNavigateToHome();
-                    //Todo Remove this line
+                    finishAndNavigateToHome();
                     addSubscriber(response.body().getAccessToken());
                 } else {
                     if (activity != null) {
@@ -236,7 +235,6 @@ public class OTPFragment extends BaseFragment {
         });
     }
 
-    // Todo delete this method
     private void addSubscriber(String accessToken) {
         yoService.subscribe(accessToken).enqueue(new Callback<Subscriber>() {
             @Override

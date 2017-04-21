@@ -13,7 +13,7 @@ public class Contact implements Parcelable {
     private boolean yoAppUser;
     private boolean selected;
     private String firebaseRoomId;
-    private String voxUserName;
+    private String nexgeUserName;
     private String countryCode;
 
 
@@ -26,14 +26,13 @@ public class Contact implements Parcelable {
     }
 
 
-    public String getVoxUserName() {
-        return voxUserName;
+    public String getNexgieUserName() {
+        return nexgeUserName;
     }
 
-    public void setVoxUserName(String voxUserName) {
-        this.voxUserName = voxUserName;
+    public void setNexgieUserName(String nexgieUserName) {
+        this.nexgeUserName = nexgieUserName;
     }
-
 
     public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
         @Override
@@ -63,7 +62,7 @@ public class Contact implements Parcelable {
         this.phoneNo = in.readString();
         this.firebaseRoomId = in.readString();
         this.yoAppUser = in.readInt() == 0;
-        this.voxUserName = in.readString();
+        this.nexgeUserName = in.readString();
         this.countryCode = in.readString();
     }
 
@@ -136,14 +135,7 @@ public class Contact implements Parcelable {
         dest.writeString(phoneNo);
         dest.writeString(firebaseRoomId);
         dest.writeInt(yoAppUser ? 0 : 1);
-        dest.writeString(voxUserName);
+        dest.writeString(nexgeUserName);
         dest.writeString(countryCode);
     }
-
-    /*@Override
-    public String toString() {
-        return " Phone Number = "+phoneNo+", voxUserName = "+voxUserName+", Country Code = "+countryCode;
-    }*/
-
-
 }

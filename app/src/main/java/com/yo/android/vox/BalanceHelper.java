@@ -152,6 +152,7 @@ public class BalanceHelper {
                         mLog.w(TAG, "loadBalance", e);
                     } catch (JSONException e) {
                         mLog.w(TAG, "loadBalance", e);
+
                     }
                 }
                 if (callback != null) {

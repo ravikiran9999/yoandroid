@@ -218,7 +218,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                 if (contact == null) {
                     contact = new Contact();
                     contact.setPhoneNo(item.getValue().get(0).getDialnumber());
-                    contact.setVoxUserName(item.getValue().get(0).getDialnumber());
+                    contact.setNexgieUserName(item.getValue().get(0).getDialnumber());
                     contact.setImage(item.getValue().get(0).getImage());
                 }
                 intent.putExtra(Constants.CONTACT, contact);

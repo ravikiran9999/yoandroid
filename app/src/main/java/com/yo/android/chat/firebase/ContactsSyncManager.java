@@ -319,7 +319,7 @@ public class ContactsSyncManager {
         contact.setFirebaseRoomId(roomId);
         contact.setYoAppUser(yoAppUser);
         contact.setCountryCode(countryCode);
-        contact.setVoxUserName(voxUserName);
+        contact.setNexgieUserName(voxUserName);
         return contact;
     }
 }
