@@ -212,8 +212,7 @@ public class OTPFragment extends BaseFragment {
                     count++;
                     storeTokens(response, phoneNumber, password);
                     finishAndNavigateToHome();
-                    //Todo Remove this line
-                    //addSubscriber(response.body().getAccessToken());
+                    addSubscriber(response.body().getAccessToken());
                 } else {
                     if (activity != null) {
                         mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
@@ -236,7 +235,6 @@ public class OTPFragment extends BaseFragment {
         });
     }
 
-    // Todo delete this method
     private void addSubscriber(String accessToken) {
         yoService.subscribe(accessToken).enqueue(new Callback<Subscriber>() {
             @Override

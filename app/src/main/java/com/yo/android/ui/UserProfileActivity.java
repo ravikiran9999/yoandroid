@@ -138,7 +138,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 contact.setPhoneNo(opponentNo);
                 String names = roomName == null ? opponentName : roomName;
                 contact.setName(names);
-                contact.setVoxUserName(voxUserName);
+                contact.setNexgieUserName(voxUserName);
                 contact.setImage(opponentImg);
                 contact.setYoAppUser(true);
 
@@ -167,7 +167,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private void setDataFromPreferences() {
         if (contact != null) {
             getSupportActionBar().setTitle(getResources().getString(R.string.profile));
-            Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getVoxUserName());
+            Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getNexgieUserName());
 
             if (roomName != null) {
                 Glide.with(this)
@@ -284,8 +284,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     @OnClick(R.id.profile_call)
     public void callUser() {
         //do nothing...
-        if (contact != null && contact.getVoxUserName() != null) {
-            SipHelper.makeCall(this, contact.getVoxUserName());
+        if (contact != null && contact.getNexgieUserName() != null) {
+            SipHelper.makeCall(this, contact.getNexgieUserName());
         }
     }
 

@@ -186,9 +186,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 contact = (Contact) listView.getItemAtPosition(position);
             }
 
-            if (position == 0 && contact.getVoxUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null && activity != null) {
+            if (position == 0 && contact.getNexgieUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null && activity != null) {
                 startActivityForResult(new Intent(activity, CreateGroupActivity.class), CREATE_GROUP_RESULT);
-            } else if (activity != null && contact.getVoxUserName() != null) {
+            } else if (activity != null && contact.getNexgieUserName() != null) {
 
                 ChatActivity.start(activity, contact, forwardChatMessages);
 
@@ -268,7 +268,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             if (!stringArrayList.contains(newGroupTxt)) {
                 Contact createGroup = new Contact();
                 createGroup.setName(newGroupTxt);
-                createGroup.setVoxUserName(null);
+                createGroup.setNexgieUserName(null);
                 createGroup.setPhoneNo(null);
                 createGroup.setFirebaseRoomId(null);
                 contactList.add(0, createGroup);

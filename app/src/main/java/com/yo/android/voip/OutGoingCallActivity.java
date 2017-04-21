@@ -217,7 +217,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
         //To display name of the user based on vox username
         if (contact != null) {
-            Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getVoxUserName()))
+            Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getNexgieUserName()))
                     .placeholder(R.drawable.ic_contacts)
                     .dontAnimate()
                     .error(R.drawable.ic_contacts).

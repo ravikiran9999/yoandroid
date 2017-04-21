@@ -140,7 +140,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             public void onClick(View v) {
                 //Registration registration = getAllItems().get(position);
                 //String opponentPhoneNumber = registration.getPhoneNumber();
-                String opponentPhoneNumber = item.getVoxUserName();
+                String opponentPhoneNumber = item.getNexgieUserName();
 
                 if (opponentPhoneNumber != null) {
                     SipHelper.makeCall(mContext, opponentPhoneNumber);

@@ -97,9 +97,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 if (response.body() != null && response.body().size() > 0) {
                     txtEmpty.setVisibility(View.GONE);
                     List<Denominations> demonimations = response.body();
-                    for (Denominations item : demonimations) {
-                        Log.w(TAG, "Data " + item.getProductID());
-                    }
                     prepareCreditAccountList(demonimations);
                     if (demonimations != null && demonimations.size() > 0) {
                         preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());

@@ -153,7 +153,7 @@ public class ChatActivity extends BaseActivity {
             final Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
             if (contact != null) {
 
-                opponent = contact.getVoxUserName();
+                opponent = contact.getNexgieUserName();
                 args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
