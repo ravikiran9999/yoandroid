@@ -211,7 +211,7 @@ public class OTPFragment extends BaseFragment {
                     //contactsSyncManager.syncContacts();
                     count++;
                     storeTokens(response, phoneNumber, password);
-                    finishAndNavigateToHome();
+                    //finishAndNavigateToHome();
                     addSubscriber(response.body().getAccessToken());
                 } else {
                     if (activity != null) {
