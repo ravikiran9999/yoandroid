@@ -40,6 +40,7 @@ android {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+
             // Todo remote url
             buildConfigField "String", "BASE_URL", "\"http://34.198.165.8:3000/\""
             buildConfigField "String", "CLIENT_ID", "\"687b5afaed84f6af4619c64b0e3955050239608d0c33cb40b31f20b83a8caf58\""
