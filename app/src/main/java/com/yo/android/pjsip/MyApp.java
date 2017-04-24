@@ -8,6 +8,7 @@ import com.yo.android.vox.CodecPriority;
 
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.BuddyConfig;
+import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.ContainerNode;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 
 class MyApp {
 
+
+    private static final String TAG = MyApp.class.getSimpleName();
 
     static {
         try {
@@ -93,9 +96,12 @@ class MyApp {
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
             mEndpoint.libStart();
-
-            mEndpoint.codecSetPriority("G729/8000", (short) (CodecPriority.PRIORITY_MAX - 1));
-            mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_DISABLED));
+            CodecInfoVector vector = mEndpoint.codecEnum();
+            for (int index = 0; index < vector.size(); index++) {
+                android.util.Log.e(TAG, "Codec " + vector.get(index).getCodecId());
+            }
+            mEndpoint.codecSetPriority("PCMA/8000", (short) (CodecPriority.PRIORITY_MAX - 1));
+            mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_MAX - 2));
             mEndpoint.codecSetPriority("speex/8000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("speex/16000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("speex/32000", (short) CodecPriority.PRIORITY_DISABLED);

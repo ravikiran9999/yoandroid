@@ -129,13 +129,13 @@ public class BottomTabsActivity extends BaseActivity {
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
 
-                //.withUserName(username == null ? "" : username)
-                .withUserName(username == null ? "" : "64728474")
+                .withUserName(username == null ? "" : username)
+                //.withUserName(username == null ? "" : "64728474")
                 //.withUserName(username == null ? "" : "7032427")
                 //.withUserName(username == null ? "" : "64724865")
                 //.withUserName(username == null ? "" : "603703")
-                //.withPassword("123456")
-                .withPassword("534653")
+                .withPassword(password)
+                //.withPassword("534653")
                 //.withPassword("@pa1ra2di3gm")
                 //.withPassword("823859")
                 //.withPassword("@pa1ra2di3gm")
