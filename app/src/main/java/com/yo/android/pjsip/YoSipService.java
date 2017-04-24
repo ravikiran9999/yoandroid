@@ -583,19 +583,19 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (destination != null && !destination.startsWith("sip:")) {
             destination = "sip:" + destination;
         }
-        //String finalUri = String.format("%s@%s", destination, getDomain());
-        String finalUri = "";
+        String finalUri = String.format("%s@%s", destination, getDomain());
+        /*String finalUri = "";
         if(intent.hasExtra(VoipConstants.PSTN)) {
             finalUri = String.format("%s@%s", destination, getDomain());
-        } /*else {
+        } *//*else {
             finalUri = String.format("%s@%s", "sip:7032427", getDomain());
-        }*/
-        /*else {
+        }*//*
+        *//*else {
             finalUri = String.format("%s@%s", "sip:64728474", getDomain());
-        }*/
+        }*//*
         else {
             finalUri = String.format("%s@%s", "sip:603703", getDomain());
-        }
+        }*/
         /*else {
             finalUri = String.format("%s@%s", "sip:64724865", getDomain());
         }*/

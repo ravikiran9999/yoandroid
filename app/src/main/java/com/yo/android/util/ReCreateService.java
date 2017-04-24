@@ -67,13 +67,13 @@ public class ReCreateService {
             String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
             String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
             SipProfile sipProfile = new SipProfile.Builder()
-                    //.withUserName(username)
-                    .withUserName("64728474")
+                    .withUserName(username)
+                    //.withUserName("64728474")
                     //.withUserName("7032427")
                     //.withUserName("64724865")
                     //.withUserName("603703")
-                     //       .withPassword(password)
-                            .withPassword("534653")
+                            .withPassword(password)
+                      //      .withPassword("534653")
                     //.withPassword("@pa1ra2di3gm")
                     //.withPassword("823859")
                     //.withPassword("@pa1ra2di3gm")
