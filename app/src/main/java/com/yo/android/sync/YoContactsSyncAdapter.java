@@ -264,7 +264,6 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
 
         // Add new items
         for (Entry e : entryMap.values()) {
-            Log.i(TAG, "Scheduling insert: phone=" + e.phone);
             batch.add(ContentProviderOperation.newInsert(YoAppContactContract.YoAppContactsEntry.CONTENT_URI)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_USER_ID, e.entryId)
 
@@ -278,7 +277,6 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                     .build());
             syncResult.stats.numInserts++;
         }
-        Log.i(TAG, "Merge solution ready. Applying batch update");
         mContentResolver.applyBatch(YoAppContactContract.CONTENT_AUTHORITY, batch);
         mContentResolver.notifyChange(
                 YoAppContactContract.YoAppContactsEntry.CONTENT_URI, // URI where data was modified
