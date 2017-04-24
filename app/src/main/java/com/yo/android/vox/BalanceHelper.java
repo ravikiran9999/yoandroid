@@ -71,7 +71,7 @@ public class BalanceHelper {
                     try {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
-                        String balance = jsonObject.getString("Balance");
+                        String balance = jsonObject.getString(Constants.BALANCE);
                         //String balance = jsonObject.getString("CREDIT");
                         try {
                             DecimalFormat df = new DecimalFormat("0.000");
@@ -138,7 +138,7 @@ public class BalanceHelper {
                     try {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
-                        String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString("Balance");
+                        String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.BALANCE);
 
                         try {
                             DecimalFormat df = new DecimalFormat("0.000");
@@ -194,7 +194,6 @@ public class BalanceHelper {
                         }
                     }
                 });
-
     }
 
 

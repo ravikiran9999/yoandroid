@@ -164,7 +164,7 @@ public class Constants {
     public static final String IS_SERVICE_RUNNING = "is_service_running";
 
     public static final String FAILED = "FAILED";
-
+    public static final String BALANCE = "Balance";
 
 
 }
