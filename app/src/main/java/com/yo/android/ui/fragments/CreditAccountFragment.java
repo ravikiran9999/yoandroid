@@ -405,19 +405,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                                                     });
                                                     break;
                                                 case 600:
-                                                    showMessage(R.string.invalid_voucher);
-                                                    break;
-                                                case 601:
-                                                    showMessage(R.string.invalid_pin_request);
-                                                    break;
-                                                case 602:
-                                                    showMessage(R.string.voucher_used);
-                                                    break;
-                                                case 603:
-                                                    showMessage(R.string.voucher_expired);
-                                                    break;
-                                                case 604:
-                                                    showMessage(R.string.unsuccessful_recharge);
+                                                    Util.hideKeyboard(getActivity(), voucherNumberEdit);
+                                                    mToastFactory.showToast(response.body().getData().toString());
+                                                    closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                     break;
                                                 default:
                                                     showMessage(R.string.invalid_voucher);
