@@ -583,20 +583,28 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private void getReadArticleIds() {
         if (currentFlippedPosition > 0) {
             if (currentFlippedPosition == 1) {
-                String articleId1 = myBaseAdapter.getItem(0).getId();
-                String articleId2 = myBaseAdapter.secondArticle.getId();
-                String articleId3 = myBaseAdapter.thirdArticle.getId();
-                readArticleIds.add(articleId1);
-                readArticleIds.add(articleId2);
-                readArticleIds.add(articleId3);
+                if (myBaseAdapter.getItem(0) != null) {
+                    String articleId1 = myBaseAdapter.getItem(0).getId();
+                    readArticleIds.add(articleId1);
+                }
+                if (myBaseAdapter.secondArticle != null) {
+                    String articleId2 = myBaseAdapter.secondArticle.getId();
+                    readArticleIds.add(articleId2);
+                }
+                if (myBaseAdapter.thirdArticle != null) {
+                    String articleId3 = myBaseAdapter.thirdArticle.getId();
+                    readArticleIds.add(articleId3);
+                }
             }
 
 
-            Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
-            for (int i = 0; i <= currentFlippedPosition; i++) {
-                if (myBaseAdapter.getItem(i) != null) {
-                    String articleId = myBaseAdapter.getItem(i).getId();
-                    readArticleIds.add(articleId);
+            if (myBaseAdapter != null) {
+                Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
+                for (int i = 0; i <= currentFlippedPosition; i++) {
+                    if (myBaseAdapter.getItem(i) != null) {
+                        String articleId = myBaseAdapter.getItem(i).getId();
+                        readArticleIds.add(articleId);
+                    }
                 }
             }
 
@@ -733,19 +741,24 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         List<String> unreadArticleIds = new ArrayList<>();
         if (currentFlippedPosition > 0) {
             List<String> readIds = new ArrayList<>();
-            String articleId2 = myBaseAdapter.secondArticle.getId();
-            String articleId3 = myBaseAdapter.thirdArticle.getId();
-            readIds.add(articleId2);
-            readIds.add(articleId3);
-
-            Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
-            for (int i = 0; i <= currentFlippedPosition; i++) {
-                String articleId = myBaseAdapter.getItem(i).getId();
-                Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(i).getTitle() + " Articles size " + myBaseAdapter.getCount());
-
-                readIds.add(articleId);
+            if (myBaseAdapter.secondArticle != null) {
+                String articleId2 = myBaseAdapter.secondArticle.getId();
+                readIds.add(articleId2);
+            }
+            if (myBaseAdapter.thirdArticle != null) {
+                String articleId3 = myBaseAdapter.thirdArticle.getId();
+                readIds.add(articleId3);
             }
 
+            if (myBaseAdapter != null) {
+                Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
+                for (int i = 0; i <= currentFlippedPosition; i++) {
+                    String articleId = myBaseAdapter.getItem(i).getId();
+                    Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(i).getTitle() + " Articles size " + myBaseAdapter.getCount());
+
+                    readIds.add(articleId);
+                }
+            }
 
             readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
             List<String> allArticlesIds = new ArrayList<>();
@@ -867,16 +880,22 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         List<String> readIds = new ArrayList<>();
 
-        String articleId2 = myBaseAdapter.secondArticle.getId();
-        String articleId3 = myBaseAdapter.thirdArticle.getId();
-        readIds.add(articleId2);
-        readIds.add(articleId3);
+        if (myBaseAdapter.secondArticle != null) {
+            String articleId2 = myBaseAdapter.secondArticle.getId();
+            readIds.add(articleId2);
+        }
+        if (myBaseAdapter.thirdArticle != null) {
+            String articleId3 = myBaseAdapter.thirdArticle.getId();
+            readIds.add(articleId3);
+        }
 
-        for (int i = 0; i <= currentFlippedPosition; i++) {
-            String articleId = myBaseAdapter.getItem(i).getId();
-            Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+        if (myBaseAdapter != null) {
+            for (int i = 0; i <= currentFlippedPosition; i++) {
+                String articleId = myBaseAdapter.getItem(i).getId();
+                Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
-            readIds.add(articleId);
+                readIds.add(articleId);
+            }
         }
 
         List<String> readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
@@ -947,17 +966,23 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         List<String> unreadArticleIds = new ArrayList<>();
         if (currentFlippedPosition > 0) {
             List<String> readIds = new ArrayList<>();
-            String articleId2 = myBaseAdapter.secondArticle.getId();
-            String articleId3 = myBaseAdapter.thirdArticle.getId();
-            readIds.add(articleId2);
-            readIds.add(articleId3);
+            if (myBaseAdapter.secondArticle != null) {
+                String articleId2 = myBaseAdapter.secondArticle.getId();
+                readIds.add(articleId2);
+            }
+            if (myBaseAdapter.thirdArticle != null) {
+                String articleId3 = myBaseAdapter.thirdArticle.getId();
+                readIds.add(articleId3);
+            }
 
-            Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
-            for (int i = 0; i <= currentFlippedPosition; i++) {
-                String articleId = myBaseAdapter.getItem(i).getId();
-                Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+            if (myBaseAdapter != null) {
+                Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
+                for (int i = 0; i <= currentFlippedPosition; i++) {
+                    String articleId = myBaseAdapter.getItem(i).getId();
+                    Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
-                readIds.add(articleId);
+                    readIds.add(articleId);
+                }
             }
 
             readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
