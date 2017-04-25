@@ -59,6 +59,7 @@ import org.pjsip.pjsua2.AuthCredInfoVector;
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallOpParam;
+import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.Media;
@@ -584,21 +585,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             destination = "sip:" + destination;
         }
         String finalUri = String.format("%s@%s", destination, getDomain());
-        /*String finalUri = "";
-        if(intent.hasExtra(VoipConstants.PSTN)) {
-            finalUri = String.format("%s@%s", destination, getDomain());
-        } *//*else {
-            finalUri = String.format("%s@%s", "sip:7032427", getDomain());
-        }*//*
-        *//*else {
-            finalUri = String.format("%s@%s", "sip:64728474", getDomain());
-        }*//*
-        else {
-            finalUri = String.format("%s@%s", "sip:603703", getDomain());
-        }*/
-        /*else {
-            finalUri = String.format("%s@%s", "sip:64724865", getDomain());
-        }*/
         mLog.e(TAG, "Final uri to make a call " + finalUri);
         outgoingCallUri = finalUri;
         /* Only one call at anytime */
@@ -620,6 +606,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 //call.isActive(finalUri, prm);
                 call.isActive();
                 call.makeCall(finalUri, prm);
+
             } catch (Exception e) {
                 mLog.w(TAG, "Exception making call " + e.getMessage());
                 call.delete();
@@ -945,9 +932,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
             mEndpoint.libStart();
-
-            mEndpoint.codecSetPriority("G729/8000", (short) (CodecPriority.PRIORITY_MAX - 1));
-            mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_DISABLED));
+           mEndpoint.codecSetPriority("PCMA/8000", (short) (CodecPriority.PRIORITY_MAX - 1));
+            mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_MAX - 2));
             mEndpoint.codecSetPriority("speex/8000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("speex/16000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("speex/32000", (short) CodecPriority.PRIORITY_DISABLED);
@@ -956,6 +942,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             mEndpoint.codecSetPriority("G7221/16000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("G7221/32000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("ilbc/8000", (short) CodecPriority.PRIORITY_DISABLED);
+
 
 
             Logger.warn("PJSIP started!");

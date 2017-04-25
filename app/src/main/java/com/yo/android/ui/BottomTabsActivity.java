@@ -134,7 +134,7 @@ public class BottomTabsActivity extends BaseActivity {
                 //.withUserName(username == null ? "" : "7032427")
                 //.withUserName(username == null ? "" : "64724865")
                 //.withUserName(username == null ? "" : "603703")
-                .withPassword("123456")
+                .withPassword(password)
                 //.withPassword("534653")
                 //.withPassword("@pa1ra2di3gm")
                 //.withPassword("823859")
