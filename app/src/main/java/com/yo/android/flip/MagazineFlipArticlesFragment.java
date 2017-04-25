@@ -277,7 +277,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (response.body() != null && !response.body().isEmpty()) {
                 myBaseAdapter.addItems(response.body());
                 mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
-                if (myBaseAdapter.getCount() > 0) {
+                if (myBaseAdapter.getCount() > lastReadArticle) {
                     flipView.flipTo(lastReadArticle);
                 }
 
@@ -617,7 +617,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void handleDashboardResponse(List<Articles> totalArticles) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
-        if (myBaseAdapter.getCount() > 0) {
+        if (myBaseAdapter.getCount() > lastReadArticle) {
             flipView.flipTo(lastReadArticle);
         }
 
@@ -654,7 +654,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void handleMoreDashboardResponse(List<Articles> totalArticles, boolean isFromFollow) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
-        if (myBaseAdapter.getCount() <= lastReadArticle) {
+        if (myBaseAdapter.getCount() > lastReadArticle) {
             flipView.flipTo(lastReadArticle);
         }
 
