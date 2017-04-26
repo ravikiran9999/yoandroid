@@ -317,4 +317,5 @@
     <string name="voucher_failed">VoucherFailed</string>
     <string name="invalid_status">Please enter a valid Status</string>
     <string name="invalid_name">Please enter a valid Name. No special characters are allowed except - and _</string>
+    <string name="self_number">You can\'t call your own phone number</string>
 </resources>
