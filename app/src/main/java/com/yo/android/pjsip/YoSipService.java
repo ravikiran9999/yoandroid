@@ -198,7 +198,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private void performAction(Intent intent) {
         if (intent == null) {
             return;
-        }
+        } 
         mIntent = intent;
         if (mHelper.isConnected()) {
             if (VoipConstants.CALL_ACTION_OUT_GOING.equalsIgnoreCase(intent.getAction())) {
@@ -210,15 +210,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                         bundle = new Bundle();
                     }
                     int value = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).getCallState();
-                    if (intent.hasExtra(VoipConstants.PSTN)) {
-                        String voxUserName = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME);
-                        if (voxUserName != null) {
-                            if (voxUserName.contains(number)) {
-                                mToastFactory.showToast("Self call not possible");
-                                return;
-                            }
-                        }
-                    }
                     if (value == 0) {
                         showCallActivity(number, bundle, intent);
                         makeCall(number, bundle, intent);

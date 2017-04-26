@@ -466,9 +466,14 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 dismissProgressDialog();
             } else if (isShowDefault) {
                 emptyImageView.setVisibility(View.VISIBLE);
-            } else {
+            } else  {
                 emptyImageView.setVisibility(View.GONE);
             }
+
+            /*if (arrayOfUsers.isEmpty()) {
+                dismissProgressDialog();
+                emptyImageView.setVisibility(View.VISIBLE);
+            }*/
 
         } catch (Exception e) {
             e.printStackTrace();
