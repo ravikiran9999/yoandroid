@@ -2,11 +2,13 @@ package com.yo.android.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -316,15 +318,19 @@ public class NewDailerActivity extends BaseActivity {
                 if (cPrefix != null) {
                     cPrefix = cPrefix.replace("+", "");
                 }
+                String voxUserName = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME);
                 mLog.i(TAG, "Dialing number after normalized: " + number);
                 //End Normalizing PSTN number
                 if (!mConnectivityHelper.isConnected()) {
                     mToastFactory.showToast(getString(R.string.connectivity_network_settings));
                 } else if (number.length() == 0) {
                     mToastFactory.showToast("Please enter number.");
-                } else {
+                } else if(!voxUserName.contains(number)) {
+
                     SipHelper.makeCall(NewDailerActivity.this, number);
                     finish();
+                } else {
+                    alertMessage(R.string.self_number);
                 }
             }
         };
@@ -492,5 +498,17 @@ public class NewDailerActivity extends BaseActivity {
         }
     }
 
+    private void alertMessage(int message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
 }

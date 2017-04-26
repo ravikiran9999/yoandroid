@@ -144,30 +144,6 @@ public class Util {
         return notificationId;
     }
 
-   /* public static <T> void setBigStyleNotification(Context context, String title, String message, String tag, String id, boolean onGoing, boolean isDialer, Class<T> clzz, Intent intent) {
-        Notifications notification = new Notifications();
-        Intent notificationIntent = null;
-        if (tag.equals("Outgoing call") || tag.equals("Incoming call")) {
-            notificationIntent = intent;
-        } else {
-            notificationIntent = new Intent(context, BottomTabsActivity.class);
-            notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
-            notificationIntent.putExtra("title", title);
-            notificationIntent.putExtra("message", message);
-            notificationIntent.putExtra("tag", tag);
-            notificationIntent.putExtra("id", id);
-        }
-
-        NotificationBuilderObject notificationsInboxData = prepareNotificationData(title, message);
-        UserData data = new UserData();
-        data.setDescription(message);
-        //List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
-        List<UserData> notificationList = new ArrayList<>();
-        notificationList.add(data);
-        notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, onGoing, isDialer);
-    }*/
-
     @NonNull
     private static NotificationBuilderObject prepareNotificationData(String title, String message) {
         NotificationBuilderObject notificationData = new NotificationBuilderObject();

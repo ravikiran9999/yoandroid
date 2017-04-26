@@ -72,7 +72,6 @@ public class BalanceHelper {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
                         String balance = jsonObject.getString(Constants.BALANCE);
-                        //String balance = jsonObject.getString("CREDIT");
                         try {
                             DecimalFormat df = new DecimalFormat("0.000");
                             String format = df.format(Double.valueOf(balance));
@@ -86,7 +85,6 @@ public class BalanceHelper {
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
-                        //String subscriberId = jsonObject.getString("SUBSCRIBERID");
                         String subscriberId = jsonObject.getString("Subscriber");
                         prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);
                         mLog.i(TAG, "loadBalance: balance -  %s", balance);
