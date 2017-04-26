@@ -30,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
@@ -260,6 +261,12 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 if (!hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if (MagazineArticlesBaseAdapter.mListener != null) {
+                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
+                                }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
@@ -283,6 +290,12 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if (MagazineArticlesBaseAdapter.mListener != null) {
+                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
+                                }
                                 if (!hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }

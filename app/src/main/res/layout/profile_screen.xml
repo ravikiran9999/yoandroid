@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_username"
                     android:drawablePadding="16dp"
-                    android:hint="@string/user_name"
+                    android:hint="@string/name"
                     android:imeOptions="actionDone"
                     android:inputType=""
                     android:maxLines="1"
