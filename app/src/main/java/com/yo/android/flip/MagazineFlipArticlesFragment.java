@@ -753,10 +753,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (myBaseAdapter != null) {
                 Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
                 for (int i = 0; i <= currentFlippedPosition; i++) {
-                    String articleId = myBaseAdapter.getItem(i).getId();
-                    Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(i).getTitle() + " Articles size " + myBaseAdapter.getCount());
+                    if(myBaseAdapter.getItem(i) != null) {
+                        String articleId = myBaseAdapter.getItem(i).getId();
+                        Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(i).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
-                    readIds.add(articleId);
+                        readIds.add(articleId);
+                    }
                 }
             }
 
@@ -891,10 +893,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         if (myBaseAdapter != null) {
             for (int i = 0; i <= currentFlippedPosition; i++) {
-                String articleId = myBaseAdapter.getItem(i).getId();
-                Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+                if(myBaseAdapter.getItem(i) != null) {
+                    String articleId = myBaseAdapter.getItem(i).getId();
+                    Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
-                readIds.add(articleId);
+                    readIds.add(articleId);
+                }
             }
         }
 
@@ -978,10 +982,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (myBaseAdapter != null) {
                 Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
                 for (int i = 0; i <= currentFlippedPosition; i++) {
-                    String articleId = myBaseAdapter.getItem(i).getId();
-                    Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+                    if(myBaseAdapter.getItem(i) != null) {
+                        String articleId = myBaseAdapter.getItem(i).getId();
+                        Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
-                    readIds.add(articleId);
+                        readIds.add(articleId);
+                    }
                 }
             }
 
