@@ -20,10 +20,6 @@ public class SipHelper {
     }
 
     public static void makeCall(Context mContext, String number) {
-//        Intent intent = new Intent(mContext, OutGoingCallActivity.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
-//        mContext.startActivity(intent);
 
         Intent intent = new Intent(VoipConstants.CALL_ACTION_OUT_GOING, null, mContext, YoSipService.class);
         if (mContext instanceof NewDailerActivity) {
@@ -34,9 +30,8 @@ public class SipHelper {
             actualNumber = number;
         }
         intent.putExtra(OutGoingCallActivity.DISPLAY_NUMBER, actualNumber);
-        actualNumber = null;
+        //actualNumber = null;
         mContext.startService(intent);
 
     }
-
 }

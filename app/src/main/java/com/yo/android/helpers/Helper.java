@@ -457,7 +457,7 @@ public class Helper {
                 cursor.close();
             }
         }
-        return contactName;
+        return contactName != null? contactName:phoneNumber;
     }
 
     private static void scaleAndSaveImageInternal(Bitmap bitmap, int w, int h, float photoW, float photoH, float scaleFactor, int quality, boolean cache, boolean scaleAnyway) throws Exception {
