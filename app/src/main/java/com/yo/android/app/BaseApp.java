@@ -1,11 +1,11 @@
 package com.yo.android.app;
 
+import android.content.Intent;
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
-import com.bumptech.glide.request.target.ViewTarget;
 import com.firebase.client.Firebase;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.di.RootModule;
 import com.yo.android.util.Constants;

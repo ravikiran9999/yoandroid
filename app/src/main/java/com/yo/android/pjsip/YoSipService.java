@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -399,6 +400,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private void handlerErrorCodes(final CallInfo call, final SipCallState sipCallstate) {
         statusCode = call.getLastStatusCode().swigValue();
         mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mToastFactory.showToast(call.getLastReason());
+            }
+        });
+
         if (statusCode == 487) {
             callType = CallLog.Calls.MISSED_TYPE;
             callDisconnected();
@@ -824,6 +832,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         super.onTaskRemoved(rootIntent);
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
+        android.util.Log.d("debug", "Service Killed");
+        Toast.makeText(this, "OnReceive from killed service - YouWillNeverKillMe", Toast.LENGTH_SHORT).show();
+
+        sendBroadcast(new Intent("YouWillNeverKillMe"));
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
@@ -932,11 +944,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
             mEndpoint.libStart();
-           mEndpoint.codecSetPriority("PCMA/8000", (short) (CodecPriority.PRIORITY_MAX - 1));
+            CodecInfoVector vector = mEndpoint.codecEnum();
+            for (int index = 0; index < vector.size(); index++) {
+                android.util.Log.e(TAG, "Codec " + vector.get(index).getCodecId());
+            }
+            mEndpoint.codecSetPriority("PCMA/8000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_MAX - 2));
             mEndpoint.codecSetPriority("speex/8000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("speex/16000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("speex/32000", (short) CodecPriority.PRIORITY_DISABLED);
+            mEndpoint.codecSetPriority("speex/32000", (short) (CodecPriority.PRIORITY_MAX - 1));
             mEndpoint.codecSetPriority("GSM/8000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("G722/16000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("G7221/16000", (short) CodecPriority.PRIORITY_DISABLED);
@@ -1132,6 +1148,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             }
         }
     }
+
 
     protected synchronized AudDevManager getAudDevManager() {
         return mEndpoint.audDevManager();

@@ -354,6 +354,11 @@
             </intent-filter>
         </service>
 
+        <receiver android:name="com.yo.android.app.RestartServiceReceiver">
+            <intent-filter>
+                <action android:name="YouWillNeverKillMe"></action>
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".chat.ui.CountryCodeActivity"
