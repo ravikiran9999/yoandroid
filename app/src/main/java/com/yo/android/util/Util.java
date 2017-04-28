@@ -1001,6 +1001,20 @@ public class Util {
         notification.buildInboxStyleNotifications(context, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
     }
 
+    public static void showLowBalanceNotification(Context context, PreferenceEndPoint preferenceEndPoint) {
+        long currentTime = System.currentTimeMillis();
+        if(preferenceEndPoint.getLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, 0) == 0) {
+            Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
+            preferenceEndPoint.saveLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, currentTime);
+        } else {
+            long lastShownTime = preferenceEndPoint.getLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, 0);
+                 if(currentTime - lastShownTime >= Constants.LOW_BALANCE_NOTIFICATION_FREQUENCY) {
+                     Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
+                     preferenceEndPoint.saveLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, currentTime);
+                 }
+        }
+    }
+
     public static void showErrorMessages(final EventBus bus, final OpponentDetails details, final Context context, final ToastFactory mToastFactory, final BalanceHelper mBalanceHelper, final PreferenceEndPoint mPreferenceEndPoint, final ConnectivityHelper mHelper) {
         if (context instanceof Activity) {
             ((Activity) context).runOnUiThread(new Runnable() {

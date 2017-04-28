@@ -81,6 +81,7 @@ public class BalanceHelper {
                             if(val <=2) {
                                 mLog.w(TAG, "Current balance is less than or equal to $2");
                                 Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
+                                //Util.showLowBalanceNotification(context, prefs);
                             }
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
