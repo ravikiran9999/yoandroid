@@ -65,8 +65,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         this.mPrefs = prefs;
         this.contactsSyncManager = contactsSyncManager;
         // mDrawableBuilder = TextDrawable.builder().rect();
-        mDrawableBuilder = TextDrawable.builder()
-                .round();
+        mDrawableBuilder = TextDrawable.builder().round();
     }
 
 
@@ -84,6 +83,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     public void bindView(int position, CallLogsViewHolder holder, Map.Entry<String, List<CallLogsResult>> item) {
         Drawable drawable = null;
         String destination_name = item.getValue().get(0).getDestination_name();
+        //if(destination_name)
         holder.getInfo().setVisibility(View.VISIBLE);
         holder.getMessageIcon().setVisibility(View.VISIBLE);
         if (destination_name != null && destination_name.length() >= 1) {

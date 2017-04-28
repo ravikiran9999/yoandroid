@@ -198,7 +198,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private void performAction(Intent intent) {
         if (intent == null) {
             return;
-        } 
+        }
         mIntent = intent;
         if (mHelper.isConnected()) {
             if (VoipConstants.CALL_ACTION_OUT_GOING.equalsIgnoreCase(intent.getAction())) {
@@ -410,7 +410,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
-            storeCallLog(sipCallstate.getMobileNumber());
+            storeCallLog("+"+sipCallstate.getMobileNumber());
         } else if (callType == CallLog.Calls.OUTGOING_TYPE) {
             storeCallLog(phone);
         }
