@@ -9,6 +9,8 @@ public class SipCallModel {
     public static final int IDLE = 0;
     public static final int BUSY = 1;
     public static final int IN_CALL = 2;
+    public static final int RECONNECTING = 3;
+
 
     public SipCallModel() {
 

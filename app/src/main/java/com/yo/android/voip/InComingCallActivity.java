@@ -314,15 +314,19 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     public void onEvent(Object object) {
         if (object instanceof SipCallModel) {
             SipCallModel model = (SipCallModel) object;
-            if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
-                //
-            } else if (!model.isOnCall()) {
-                if (model.getEvent() == UserAgent.CALL_STATE_BUSY
-                        || model.getEvent() == UserAgent.CALL_STATE_ERROR
-                        || model.getEvent() == UserAgent.CALL_STATE_END
-                        ) {
-                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                    finish();
+            if (model.getEvent() == 3) {
+                //callStatusTextView.setText("Reconnecting...");
+            } else {
+                if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
+                    //
+                } else if (!model.isOnCall()) {
+                    if (model.getEvent() == UserAgent.CALL_STATE_BUSY
+                            || model.getEvent() == UserAgent.CALL_STATE_ERROR
+                            || model.getEvent() == UserAgent.CALL_STATE_END
+                            ) {
+                        bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                        finish();
+                    }
                 }
             }
         } else if (object instanceof OpponentDetails) {
