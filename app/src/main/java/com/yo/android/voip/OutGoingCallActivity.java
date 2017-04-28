@@ -1,21 +1,16 @@
 package com.yo.android.voip;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -69,7 +64,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private TextView callerName;
     private TextView callerNumber;
     private String diplayNumber;
-    private TextView callDuration;
+    private TextView connectionStatusTextView;
     int sec = 0, min = 0, hr = 0;
     private Handler handler;
     private EventBus bus = EventBus.getDefault();
@@ -80,7 +75,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
     private SipBinder sipBinder;
 
-    private TextView callStatusTextView;
+    private TextView callDurationTextView;
 
 
     @Inject
@@ -228,7 +223,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
 
 
-        callDuration.setText(getResources().getString(R.string.calling));
+        connectionStatusTextView.setText(getResources().getString(R.string.calling));
         callModel.setOnCall(true);
         //CallLogs Model
         mobile = getIntent().getStringExtra(CALLER_NO);
@@ -248,10 +243,10 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.imv_speaker).setOnClickListener(this);
         findViewById(R.id.imv_mic_off).setOnClickListener(this);
         findViewById(R.id.btnEndCall).setOnClickListener(this);
-        callStatusTextView = (TextView)findViewById(R.id.tv_call_duration) ;
+        callDurationTextView = (TextView)findViewById(R.id.tv_call_duration) ;
         callerName = (TextView) findViewById(R.id.tv_caller_name);
         callerNumber = (TextView) findViewById(R.id.tv_caller_number);
-        callDuration = (TextView) findViewById(R.id.tv_dialing);
+        connectionStatusTextView = (TextView) findViewById(R.id.tv_dialing);
         callerImageView = (ImageView) findViewById(R.id.imv_caller_pic);
 
     }
@@ -319,17 +314,17 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         if (object instanceof SipCallModel) {
             SipCallModel model = (SipCallModel) object;
             if (model.getEvent() == 3) {
-                callStatusTextView.setText("Reconnecting...");
+                connectionStatusTextView.setText(getResources().getString(R.string.connecting_status));
+               // callDurationTextView.setText("Reconnecting...");
             }else {
                 if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
+                    connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
                     running = true;
                     mHandler.post(startTimer);
                 } else if (!model.isOnCall()) {
                     if (model.getEvent() == UserAgent.CALL_STATE_BUSY
                             || model.getEvent() == UserAgent.CALL_STATE_ERROR
-                            || model.getEvent() == UserAgent.CALL_STATE_END
-                            ) {
-
+                            || model.getEvent() == UserAgent.CALL_STATE_END) {
                         bus.post(DialerFragment.REFRESH_CALL_LOGS);
                         finish();
                     }
@@ -337,17 +332,18 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             }
         } else if (object instanceof OpponentDetails) {
             Util.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
-        } else if (object instanceof Integer) {
-        } else if (object instanceof Integer) {
+        }else if (object instanceof Integer) {
             // while outgoing call is going on if default incoming call comes should put on hold
             int hold = (int) object;
             if (hold == KEEP_ON_HOLD) {
                 if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(true);
+                    connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
                 }
             } else if (hold == KEEP_ON_HOLD_RESUME) {
                 if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(false);
+                    connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
                 }
             }
         }
@@ -362,13 +358,14 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 mHandler.postDelayed(this, 1000);
             }
             if (sipBinder != null) {
+                callDurationTextView.setVisibility(View.VISIBLE);
                 long start = sipBinder.getHandler().getCallStartDuration();
                 long now = System.currentTimeMillis();
                 long seconds = now - start;
                 seconds /= 1000;
                 StringBuilder mRecycle = new StringBuilder(8);
                 String text = DateUtils.formatElapsedTime(mRecycle, seconds);
-                callDuration.setText(text);
+                callDurationTextView.setText(text);
             }
 
         }
