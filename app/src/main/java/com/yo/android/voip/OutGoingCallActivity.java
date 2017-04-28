@@ -80,6 +80,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
     private SipBinder sipBinder;
 
+    private TextView callStatusTextView;
+
+
     @Inject
     protected BalanceHelper mBalanceHelper;
 
@@ -245,6 +248,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.imv_speaker).setOnClickListener(this);
         findViewById(R.id.imv_mic_off).setOnClickListener(this);
         findViewById(R.id.btnEndCall).setOnClickListener(this);
+        callStatusTextView = (TextView)findViewById(R.id.tv_call_duration) ;
         callerName = (TextView) findViewById(R.id.tv_caller_name);
         callerNumber = (TextView) findViewById(R.id.tv_caller_number);
         callDuration = (TextView) findViewById(R.id.tv_dialing);
@@ -314,17 +318,21 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     public void onEvent(Object object) {
         if (object instanceof SipCallModel) {
             SipCallModel model = (SipCallModel) object;
-            if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
-                running = true;
-                mHandler.post(startTimer);
-            } else if (!model.isOnCall()) {
-                if (model.getEvent() == UserAgent.CALL_STATE_BUSY
-                        || model.getEvent() == UserAgent.CALL_STATE_ERROR
-                        || model.getEvent() == UserAgent.CALL_STATE_END
-                        ) {
+            if (model.getEvent() == 3) {
+                callStatusTextView.setText("Reconnecting...");
+            }else {
+                if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
+                    running = true;
+                    mHandler.post(startTimer);
+                } else if (!model.isOnCall()) {
+                    if (model.getEvent() == UserAgent.CALL_STATE_BUSY
+                            || model.getEvent() == UserAgent.CALL_STATE_ERROR
+                            || model.getEvent() == UserAgent.CALL_STATE_END
+                            ) {
 
-                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                    finish();
+                        bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                        finish();
+                    }
                 }
             }
         } else if (object instanceof OpponentDetails) {

@@ -53,6 +53,17 @@
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
+        <TextView
+            android:id="@+id/connection_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tv_call_duration"
+            android:layout_marginRight="20dp"
+            android:text="05:45"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
 
     </RelativeLayout>
 
