@@ -648,6 +648,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     };
     private static long currentBytes;
     int count;
+    boolean isAlreadyInReconnecting;
 
     private void updateStatus(final MyCall call) {
         mHandler.post(new Runnable() {
@@ -660,7 +661,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     } else {
                         count++;
                     }
-                    if (count <= 5) {
+                    if (count >= 5 && !isAlreadyInReconnecting) {
+                        isAlreadyInReconnecting = true;
                         SipCallModel callModel = new SipCallModel();
                         callModel.setEvent(SipCallModel.RECONNECTING);
                         EventBus.getDefault().post(callModel);
@@ -668,6 +670,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     if (count > 200) {
                         callDisconnected();
                         count = 0;
+                        isAlreadyInReconnecting = false;
                     }
 
                 } catch (Exception e) {
