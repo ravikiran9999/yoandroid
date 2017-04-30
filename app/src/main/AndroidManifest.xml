@@ -346,6 +346,7 @@
             android:name=".util.FetchNewArticlesService"
             android:enabled="true"
             android:exported="true" />
+        <service android:name="com.yo.android.util.ReCreateService" />
         <service
             android:name=".chat.firebase.ListenerJobService"
             android:exported="false">
