@@ -225,6 +225,7 @@ public class NewDailerActivity extends BaseActivity {
         if (val <= 2) {
             mLog.w(TAG, "Current balance is less than or equal to $2");
             Util.setBigStyleNotificationForBalance(this, "Credit", getString(R.string.low_balance), "Credit", "");
+            //Util.showLowBalanceNotification(this, preferenceEndPoint);
         }
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {

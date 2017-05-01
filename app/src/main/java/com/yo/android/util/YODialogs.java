@@ -245,6 +245,7 @@ public class YODialogs {
         double val = Double.parseDouble(balance.trim());
         if (val <= 2) {
             Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
+            //Util.showLowBalanceNotification(context, preferenceEndPoint);
         }
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
