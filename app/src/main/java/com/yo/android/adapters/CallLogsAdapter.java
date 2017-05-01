@@ -55,6 +55,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     private TextDrawable.IBuilder mDrawableBuilder;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private static int updateViewPosition = -1;
+    Context mContext;
 
     protected DateFormat dateFormat1 = new SimpleDateFormat("MM/dd");
     protected DateFormat dateFormat2 = new SimpleDateFormat("EEE");
@@ -66,6 +67,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         this.contactsSyncManager = contactsSyncManager;
         // mDrawableBuilder = TextDrawable.builder().rect();
         mDrawableBuilder = TextDrawable.builder().round();
+        mContext = context;
     }
 
 
@@ -82,12 +84,16 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     @Override
     public void bindView(int position, CallLogsViewHolder holder, Map.Entry<String, List<CallLogsResult>> item) {
         Drawable drawable = null;
+
         String destination_name = item.getValue().get(0).getDestination_name();
-        //if(destination_name)
+        String formattedString = destination_name;
+
+                //if(destination_name)
         holder.getInfo().setVisibility(View.VISIBLE);
         holder.getMessageIcon().setVisibility(View.VISIBLE);
         if (destination_name != null && destination_name.length() >= 1) {
-            holder.getOpponentName().setText(destination_name);
+            String numericValue = Util.numericValueFromString(formattedString);
+            holder.getOpponentName().setText(String.format(mContext.getResources().getString(R.string.plus_number), numericValue));
             String title = String.valueOf(destination_name.charAt(0)).toUpperCase();
             Pattern p = Pattern.compile("^[a-zA-Z]");
             Matcher m = p.matcher(title);

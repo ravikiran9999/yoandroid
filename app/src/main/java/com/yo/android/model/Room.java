@@ -29,18 +29,17 @@ public class Room implements Parcelable {
     private String fullName;
     private String mobileNumber;
     private String phoneNumber;
-    private String voxUserName = "";
+    private String nexgeUserName = "";
     private String youserId;
     private List<GroupMembers> groupMembers = new ArrayList<>();
 
-    public String getVoxUserName() {
-        return voxUserName;
+    public String getNexgeUserName() {
+        return nexgeUserName;
     }
 
-    public void setVoxUserName(String voxUserName) {
-        this.voxUserName = voxUserName;
+    public void setNexgeUserName(String nexgeUserName) {
+        this.nexgeUserName = nexgeUserName;
     }
-
 
     public Room() {
         // empty default constructor, necessary for Firebase to be able to deserialize
@@ -156,7 +155,7 @@ public class Room implements Parcelable {
         dest.writeTypedList(members);
         dest.writeString(fullName);
         dest.writeString(mobileNumber);
-        dest.writeString(voxUserName);
+        dest.writeString(nexgeUserName);
         dest.writeString(youserId);
         dest.writeString(phoneNumber);
     }
@@ -178,7 +177,7 @@ public class Room implements Parcelable {
         in.readTypedList(members, Members.CREATOR);
         this.fullName = in.readString();
         this.mobileNumber = in.readString();
-        this.voxUserName = in.readString();
+        this.nexgeUserName = in.readString();
         this.youserId = in.readString();
         this.phoneNumber = in.readString();
     }
