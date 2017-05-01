@@ -343,6 +343,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
                     //
                     mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
+                    callDuration.setVisibility(View.VISIBLE);
                 } else if (!model.isOnCall()) {
                     if (model.getEvent() == UserAgent.CALL_STATE_BUSY
                             || model.getEvent() == UserAgent.CALL_STATE_ERROR
@@ -403,7 +404,6 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 mHandler.postDelayed(this, 1000);
             }
             if (sipBinder != null) {
-                callDuration.setVisibility(View.VISIBLE);
                 long start = sipBinder.getHandler().getCallStartDuration();
                 long now = System.currentTimeMillis();
                 long seconds = now - start;

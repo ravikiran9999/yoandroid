@@ -223,7 +223,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
 
 
-        connectionStatusTextView.setText(getResources().getString(R.string.calling));
+        connectionStatusTextView.setText(getResources().getString(R.string.connecting_status));
         callModel.setOnCall(true);
         //CallLogs Model
         mobile = getIntent().getStringExtra(CALLER_NO);
@@ -315,7 +315,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             SipCallModel model = (SipCallModel) object;
             if (model.getEvent() == 3) {
                 connectionStatusTextView.setText(getResources().getString(R.string.connecting_status));
-               // callDurationTextView.setText("Reconnecting...");
             }else {
                 if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
                     connectionStatusTextView.setText(getResources().getString(R.string.connected_status));

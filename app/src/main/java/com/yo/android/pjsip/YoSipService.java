@@ -706,19 +706,23 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     if (currentBytes != stats.getRtcp().getRxStat().getBytes()) {
                         count = 0;
                         currentBytes = stats.getRtcp().getRxStat().getBytes();
+                        SipCallModel callModel = new SipCallModel();
+                        callModel.setEvent(OutGoingCallActivity.CALL_ACCEPTED_START_TIMER);
+                        callModel.setOnCall(true);
+                        EventBus.getDefault().post(callModel);
                     } else {
                         count++;
                     }
 
                     mLog.w(TAG, "UpdateStatus get bytes:  " + stats.getRtcp().getRxStat().getBytes());
                     mLog.w(TAG, "UpdateStatus Count:  " + count);
-                    if (count <= 5 && count > 3) {
+                    if (count > 5 && count <= 20) {
                         SipCallModel callModel = new SipCallModel();
                         callModel.setEvent(SipCallModel.RECONNECTING);
                         EventBus.getDefault().post(callModel);
                     }
                     if (count > 500) {
-                        //callDisconnected();
+                        callDisconnected();
                         count = 0;
                         isAlreadyInReconnecting = false;
                     }
@@ -930,9 +934,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
         android.util.Log.d("debug", "Service Killed");
-        Toast.makeText(this, "OnReceive from killed service - YouWillNeverKillMe", Toast.LENGTH_SHORT).show();
 
-        sendBroadcast(new Intent("YouWillNeverKillMe"));
+        //sendBroadcast(new Intent("YouWillNeverKillMe"));
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);

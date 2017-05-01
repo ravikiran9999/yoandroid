@@ -50,6 +50,7 @@
             android:layout_below="@+id/tv_caller_name"
             android:layout_marginRight="20dp"
             android:text="05:45"
+            android:gravity="right"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
