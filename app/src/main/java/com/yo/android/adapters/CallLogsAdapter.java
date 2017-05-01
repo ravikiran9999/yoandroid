@@ -105,7 +105,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                 holder.getContactPic().setImageDrawable(drawable);
                 //}
             } else {
-                holder.getOpponentName().setText("+" + destination_name);
+
                 Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
                 LayerDrawable bgDrawable = (LayerDrawable) tempImage;
                 final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
