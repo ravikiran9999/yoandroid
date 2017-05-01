@@ -211,25 +211,6 @@ public class Room implements Parcelable {
         this.groupCreationTime = groupCreationTime;
     }
 
-    /*public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (!(obj instanceof Room)) {
-            return false;
-        }
-        Room other = (Room) obj;
-        if (this.voxUserName != null) {
-            return this.voxUserName.equals(other.voxUserName);
-        } else {
-            return false;
-        }
-    }
-
-    public int hashCode() {
-        return voxUserName.hashCode();
-    }*/
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
