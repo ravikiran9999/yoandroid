@@ -417,7 +417,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
-            storeCallLog("+"+sipCallstate.getMobileNumber());
+            String numericValue = Util.numericValueFromString(sipCallstate.getMobileNumber());
+            storeCallLog("+" + numericValue);
         } else if (callType == CallLog.Calls.OUTGOING_TYPE) {
             storeCallLog(phone);
         }
