@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.common.eventbus.Subscribe;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
@@ -66,6 +67,8 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private TextView callerNumber;
     private TextView callerNumber2;
     private TextView callDuration;
+    private TextView mReceivedConnectionStatus;
+    // private TextView mInComingHeaderConnectionStatus;
     private ImageView callerImageView;
     @Bind(R.id.dialPadView)
     DialPadView dialPadView;
@@ -107,6 +110,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             sipBinder = null;
         }
     };
+
 
     private void updateState() {
         if (sipBinder != null) {
@@ -164,7 +168,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 callerName2.setText(stringExtra);
             }
         }
-        callDuration.setText("Connecting...");
+        //callDuration.setText("Connecting...");
+        // mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.connecting_status));
+        mReceivedConnectionStatus.setText(getResources().getString(R.string.connecting_status));
         callModel.setOnCall(true);
         //CallLogs Model
         log = new CallLogsModel();
@@ -196,6 +202,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         callerNumber2 = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_number);
         callDuration = (TextView) mReceivedCallHeader.findViewById(R.id.tv_call_duration);
         callerImageView = (ImageView) mReceivedCallHeader.findViewById(R.id.imv_caller_pic);
+        mReceivedConnectionStatus = (TextView) mReceivedCallHeader.findViewById(R.id.connection_status);
+        // mInComingHeaderConnectionStatus = (TextView) mReceivedCallHeader.findViewById(R.id.connection_status);
+
     }
 
     @Override
@@ -310,15 +319,31 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         bus.post(callModel);
     }
 
-    //    @Subscribe
+    @Subscribe
     public void onEvent(Object object) {
         if (object instanceof SipCallModel) {
             SipCallModel model = (SipCallModel) object;
             if (model.getEvent() == 3) {
                 //callStatusTextView.setText("Reconnecting...");
+                mReceivedConnectionStatus.setText(getResources().getString(R.string.connecting_status));
+                // mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.reconnecting_status));
+            } else if (model.getEvent() == HOLD_ON) {
+                if (sipBinder != null) {
+                    sipBinder.getHandler().setHoldCall(true);
+                    //  mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
+                    mReceivedConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
+                }
+            } else if (model.getEvent() == HOLD_OFF) {
+                if (sipBinder != null) {
+                    sipBinder.getHandler().setHoldCall(false);
+                    // mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.connected_status));
+                    mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
+                }
             } else {
                 if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
                     //
+                    mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
+                    callDuration.setVisibility(View.VISIBLE);
                 } else if (!model.isOnCall()) {
                     if (model.getEvent() == UserAgent.CALL_STATE_BUSY
                             || model.getEvent() == UserAgent.CALL_STATE_ERROR
@@ -340,10 +365,12 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             if (hold == KEEP_ON_HOLD) {
                 if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(true);
+                    mReceivedConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
                 }
             } else if (hold == KEEP_ON_HOLD_RESUME) {
                 if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(false);
+                    mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
                 }
             }
         }
@@ -383,6 +410,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 seconds /= 1000;
                 StringBuilder mRecycle = new StringBuilder(8);
                 String text = DateUtils.formatElapsedTime(mRecycle, seconds);
+                //mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.connected_status));
                 callDuration.setText(text);
             }
 

@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.yo.android.api.YoApi;
 import com.yo.android.pjsip.YoSipService;
+import com.yo.android.util.Constants;
 import com.yo.android.util.ReCreateService;
 
 /**
@@ -22,7 +23,10 @@ public class RestartServiceReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.e(TAG, "onReceive");
         Toast.makeText(context, "OnReceive from killed service", Toast.LENGTH_SHORT).show();
-        context.startService(new Intent(context.getApplicationContext(), YoSipService.class));
+        Intent service = new Intent(context.getApplicationContext(), ReCreateService.class);
+        service.putExtra(Constants.VOX_USER_NAME,intent.getStringExtra(Constants.VOX_USER_NAME));
+        service.putExtra(Constants.PASSWORD,intent.getStringExtra(Constants.PASSWORD));
+        context.startService(service);
     }
 
 }
