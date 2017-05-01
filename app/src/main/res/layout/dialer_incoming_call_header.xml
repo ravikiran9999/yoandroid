@@ -41,6 +41,7 @@
             android:layout_marginTop="10dp"
             android:textColor="@android:color/white"
             android:textSize="26sp" />
+
         <TextView
             android:id="@+id/tv_caller_number"
             android:layout_width="wrap_content"
@@ -50,6 +51,18 @@
             android:text=""
             android:textColor="@android:color/white"
             android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/connection_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_caller_number"
+            android:layout_centerHorizontal="true"
+            android:padding="10dp"
+            android:text="@string/connecting_status"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
     </RelativeLayout>
 

@@ -61,7 +61,7 @@
             android:text="05:45"
             android:textColor="@android:color/white"
             android:textSize="14sp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
     </LinearLayout>
 
