@@ -1100,4 +1100,13 @@ public class Util {
         }
         return mContext.getResources().getDrawable(R.drawable.dynamic_profile);
     }
+
+    public static String numericValueFromString(String string) {
+        try {
+
+            return string.replaceAll("[^0-9]", "");
+        }catch (NumberFormatException e) {
+            return string;
+        }
+    }
 }
