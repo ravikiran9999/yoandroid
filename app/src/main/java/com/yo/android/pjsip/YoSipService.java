@@ -185,10 +185,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(YoSipService.this, RingtoneManager.TYPE_RINGTONE);
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
+        //created = preferenceEndPoint.getBooleanPreference(Constants.CREATED);
+        mLog.e(TAG, created + ".....");
         if (!created) {
             startSipService();
+            // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
         }
+        addAccount();
+
         NetworkStateListener.registerNetworkState(listener);
         performAction(intent);
         return START_STICKY;
@@ -227,6 +231,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             } else if (VoipConstants.ACCOUNT_LOGOUT.equalsIgnoreCase(intent.getAction())) {
                 myApp.deinit();
                 created = false;
+                // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
                 stopSelf();
             }
         } else {
@@ -240,6 +245,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         myApp = new MyApp();
         myApp.init(this, getFilesDir().getAbsolutePath());
         created = true;
+        // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
+
     }
 
     @Override
@@ -417,7 +424,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
-            storeCallLog("+"+sipCallstate.getMobileNumber());
+            storeCallLog("+" + sipCallstate.getMobileNumber());
         } else if (callType == CallLog.Calls.OUTGOING_TYPE) {
             storeCallLog(phone);
         }
@@ -535,6 +542,29 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
         return myApp.addAcc(accCfg);
     }
+
+    private void addAccount() {
+        String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
+        String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
+        SipProfile sipProfile = new SipProfile.Builder()
+
+                .withUserName(username == null ? "" : username)
+                //.withUserName(username == null ? "" : "64728474")
+                //.withUserName(username == null ? "" : "7032427")
+                //.withUserName(username == null ? "" : "64724865")
+                //.withUserName(username == null ? "" : "603703")
+                .withPassword(password)
+                //.withPassword("534653")
+                //.withPassword("@pa1ra2di3gm")
+                //.withPassword("823859")
+                //.withPassword("@pa1ra2di3gm")
+                //.withServer("209.239.120.239")
+                .withServer("173.82.147.172")
+                .build();
+        addAccount(sipProfile);
+
+    }
+
 
     public void addAccount(SipProfile sipProfile) {
         try {
