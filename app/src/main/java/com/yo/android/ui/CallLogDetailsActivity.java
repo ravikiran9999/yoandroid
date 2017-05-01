@@ -91,7 +91,7 @@ public class CallLogDetailsActivity extends BaseActivity {
                     } catch (StringIndexOutOfBoundsException e) {
                     }
                 }
-                opponentNumber.setText(number);
+                opponentNumber.setText("+" + number);
             } else if (!TextUtils.isEmpty(number)) {
                 opponentName.setVisibility(View.GONE);
                 if (number != null && number.contains(Constants.YO_USER)) {
@@ -101,7 +101,7 @@ public class CallLogDetailsActivity extends BaseActivity {
                     } catch (StringIndexOutOfBoundsException e) {
                     }
                 }
-                opponentNumber.setText(number);
+                opponentNumber.setText("+" + number);
             }
             CallLogDetailsAdapter adapter = new CallLogDetailsAdapter(this, callLogsDetails);
             callLogHistoryListview.setAdapter(adapter);

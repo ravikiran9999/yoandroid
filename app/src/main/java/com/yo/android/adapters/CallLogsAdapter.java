@@ -65,8 +65,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         this.mPrefs = prefs;
         this.contactsSyncManager = contactsSyncManager;
         // mDrawableBuilder = TextDrawable.builder().rect();
-        mDrawableBuilder = TextDrawable.builder()
-                .round();
+        mDrawableBuilder = TextDrawable.builder().round();
     }
 
 
@@ -84,6 +83,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     public void bindView(int position, CallLogsViewHolder holder, Map.Entry<String, List<CallLogsResult>> item) {
         Drawable drawable = null;
         String destination_name = item.getValue().get(0).getDestination_name();
+        //if(destination_name)
         holder.getInfo().setVisibility(View.VISIBLE);
         holder.getMessageIcon().setVisibility(View.VISIBLE);
         if (destination_name != null && destination_name.length() >= 1) {
@@ -105,7 +105,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
                 holder.getContactPic().setImageDrawable(drawable);
                 //}
             } else {
-
+                holder.getOpponentName().setText("+" + destination_name);
                 Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
                 LayerDrawable bgDrawable = (LayerDrawable) tempImage;
                 final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);

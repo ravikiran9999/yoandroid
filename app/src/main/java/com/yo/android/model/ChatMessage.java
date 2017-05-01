@@ -85,12 +85,6 @@ public class ChatMessage implements Parcelable {
         this.chatProfileUserName = in.readString();
         this.roomName = in.readString();
         this.messageKey = in.readString();
-        /*int size = in.readInt();
-        for (int i = 0; i < size; i++) {
-            String key = in.readString();
-            String value = in.readString();
-            serverTimeStamp.put(key, value);
-        }*/
     }
 
     public Map<String, Object> getTimeStampMap() {
@@ -289,11 +283,6 @@ public class ChatMessage implements Parcelable {
         dest.writeString(chatProfileUserName);
         dest.writeString(roomName);
         dest.writeString(messageKey);
-        /*dest.writeInt(serverTimeStamp.size());
-        for (Map.Entry<String, String> entry : serverTimeStamp.entrySet()) {
-            dest.writeString(entry.getKey());
-            dest.writeString(entry.getValue());
-        }*/
     }
 
 
@@ -352,7 +341,6 @@ public class ChatMessage implements Parcelable {
         if (roomName != null ? !roomName.equals(that.roomName) : that.roomName != null)
             return false;
         return messageKey != null ? messageKey.equals(that.messageKey) : that.messageKey == null;
-
     }
 
     @Override

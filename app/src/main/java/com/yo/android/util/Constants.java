@@ -165,6 +165,6 @@ public class Constants {
 
     public static final String FAILED = "FAILED";
     public static final String BALANCE = "Balance";
-
-
+    public static final String LOW_BALANCE_NOTIFICATION_TIME = "low_bal_time";
+    public static final long LOW_BALANCE_NOTIFICATION_FREQUENCY = 24 * 60 * 60 * 1000;
 }
