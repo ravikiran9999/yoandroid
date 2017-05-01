@@ -417,7 +417,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
-            storeCallLog("+"+sipCallstate.getMobileNumber());
+            storeCallLog("+" + sipCallstate.getMobileNumber());
         } else if (callType == CallLog.Calls.OUTGOING_TYPE) {
             storeCallLog(phone);
         }
@@ -469,6 +469,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     private void callDisconnected() {
+
+        mLog.e(TAG, "disconnected call >>>>>");
         stopRepeatingTask();
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
@@ -670,19 +672,23 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             public void run() {
                 try {
                     final StreamStat stats = call.getStreamStat(0);
+
                     if (currentBytes != stats.getRtcp().getRxStat().getBytes()) {
+                        count = 0;
                         currentBytes = stats.getRtcp().getRxStat().getBytes();
                     } else {
                         count++;
                     }
-                    if (count >= 5 && !isAlreadyInReconnecting) {
-                        isAlreadyInReconnecting = true;
+
+                    mLog.w(TAG, "UpdateStatus get bytes:  " + stats.getRtcp().getRxStat().getBytes());
+                    mLog.w(TAG, "UpdateStatus Count:  " + count);
+                    if (count <= 5 && count > 3) {
                         SipCallModel callModel = new SipCallModel();
                         callModel.setEvent(SipCallModel.RECONNECTING);
                         EventBus.getDefault().post(callModel);
                     }
-                    if (count > 200) {
-                        callDisconnected();
+                    if (count > 500) {
+                        //callDisconnected();
                         count = 0;
                         isAlreadyInReconnecting = false;
                     }
@@ -761,9 +767,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             }
             if (currentCall != null) {
                 CallOpParam prm = new CallOpParam(true);
-                prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UPDATE_CONTACT.swigValue());
+                prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
                 try {
-
                     currentCall.setHold(prm);
                 } catch (Exception e) {
                     mLog.w(TAG, e);
