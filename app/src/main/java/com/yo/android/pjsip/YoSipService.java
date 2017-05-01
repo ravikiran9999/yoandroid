@@ -553,6 +553,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     }
 
+    @Override
+    public void createSipService(SipProfile sipProfile) {
+
+    }
+
     private void configAccount(AccountConfig accCfg, String acc_id, String registrar, String proxy,
                                String username, String password) {
         accCfg.setIdUri(acc_id);
