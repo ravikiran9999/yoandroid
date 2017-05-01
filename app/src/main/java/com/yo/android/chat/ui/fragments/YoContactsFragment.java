@@ -189,9 +189,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             if (position == 0 && contact.getNexgieUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null && activity != null) {
                 startActivityForResult(new Intent(activity, CreateGroupActivity.class), CREATE_GROUP_RESULT);
             } else if (activity != null && contact.getNexgieUserName() != null) {
-
                 ChatActivity.start(activity, contact, forwardChatMessages);
-
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             e.printStackTrace();
@@ -224,8 +222,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 }
             }
         });
-
-
     }
 
     private void loadInAlphabeticalOrder(@NonNull List<Contact> contactList) {

@@ -53,13 +53,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private Context context;
     private SparseBooleanArray mSelectedItemsIds;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
-    ContactsSyncManager mContactsSyncManager;
+    private ContactsSyncManager mContactsSyncManager;
     private LayoutInflater inflater;
 
     public UserChatAdapter(Activity context) {
         super(context);
         this.context = context.getBaseContext();
-
     }
 
     public UserChatAdapter(Activity context, String userId, String type,
@@ -286,13 +285,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 img = context.getResources().getDrawable(R.drawable.sent);
                 img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
-                //time.setPadding(0, 4, 8, 10);
             }
             if (item.getDeliveredTime() != 0) {
                 img = context.getResources().getDrawable(R.drawable.seen);
                 img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
                 time.setCompoundDrawables(null, null, img, null);
-                //time.setPadding(0, 4, 8, 10);
             }
         }
         linearLayout1.addView(emojiTextView);
@@ -350,7 +347,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
     @Override
     public long getHeaderId(int position) {
-        ChatMessage ccc = getItem(position);
         Map map = getItem(position).getTimeStampMap();
         try {
             if (map != null && map.get(ServerTimeStamp) instanceof Long) {
@@ -377,5 +373,4 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             ButterKnife.bind(this, v);
         }
     }
-
 }

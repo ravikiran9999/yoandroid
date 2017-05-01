@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,7 +13,6 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
-import com.yo.android.chat.ImageLoader;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.Injector;
 import com.yo.android.helpers.ChatRoomViewHolder;
@@ -26,8 +24,6 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;

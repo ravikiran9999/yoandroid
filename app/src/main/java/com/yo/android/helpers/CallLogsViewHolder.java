@@ -8,29 +8,41 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class CallLogsViewHolder extends AbstractViewHolder {
 
-    private TextView opponentName;
+    @Bind(R.id.tv_phone_number)
+    TextView opponentName;
+    @Bind(R.id.header)
+    TextView header;
+    @Bind(R.id.tv_time_stamp)
+    TextView timeStamp;
+    @Bind(R.id.tv_date_time)
+    TextView dateTimeStamp;
+    @Bind(R.id.iv_message_type)
+    TextView messageIcon;
+    @Bind(R.id.iv_contact_type)
+    ImageView callIcon;
+    @Bind(R.id.imv_contact_pic)
+    ImageView contactPic;
+    @Bind(R.id.row_container)
+    View rowContainer;
+    @Bind(R.id.row_container_details)
+    View rowContainerdetails;
+    @Bind(R.id.create_new_contact)
+    TextView creatNewContact;
+    @Bind(R.id.add_to_contact)
+    TextView addToContact;
+    @Bind(R.id.info)
+    TextView info;
+    @Bind(R.id.call_layout)
+    View callLayout;
 
     public TextView getHeader() {
         return header;
     }
-
-    private TextView header;
-    private TextView timeStamp;
-    private TextView dateTimeStamp;
-
-    private TextView messageIcon;
-
-    private ImageView callIcon;
-    private ImageView contactPic;
-    private View rowContainer;
-    private View rowContainerdetails;
-    private TextView creatNewContact;
-    private TextView addToContact;
-    private TextView info;
-    private View callLayout;
-
     public TextView getCreatNewContact() {
         return creatNewContact;
     }
@@ -72,20 +84,7 @@ public class CallLogsViewHolder extends AbstractViewHolder {
 
     public CallLogsViewHolder(View view) {
         super(view);
-        opponentName = (TextView) view.findViewById(R.id.tv_phone_number);
-        header = (TextView) view.findViewById(R.id.header);
-        rowContainer = view.findViewById(R.id.row_container);
-        timeStamp = (TextView) view.findViewById(R.id.tv_time_stamp);
-        timeStamp = (TextView) view.findViewById(R.id.tv_time_stamp);
-        messageIcon = (TextView) view.findViewById(R.id.iv_message_type);
-        callIcon = (ImageView) view.findViewById(R.id.iv_contact_type);
-        contactPic = (ImageView) view.findViewById(R.id.imv_contact_pic);
-        rowContainerdetails = view.findViewById(R.id.row_container_details);
-        info = (TextView) view.findViewById(R.id.info);
-        addToContact = (TextView) view.findViewById(R.id.add_to_contact);
-        creatNewContact = (TextView) view.findViewById(R.id.create_new_contact);
-        dateTimeStamp = (TextView) view.findViewById(R.id.tv_date_time);
-        callLayout = (View) view.findViewById(R.id.call_layout);
+        ButterKnife.bind(this, view);
     }
 
     public TextView getMessageIcon() {

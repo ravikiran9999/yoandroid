@@ -79,7 +79,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Bind(R.id.no_search_results)
     protected TextView noSearchResult;
 
-    private List<Room> arrayOfUsers;
+    private ArrayList<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
     private Menu menu;
     private Room room;
@@ -258,7 +258,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                 emptyImageView.setVisibility(View.VISIBLE);
                                 listView.setVisibility(View.GONE);
                             }
-                            //dismissProgressDialog();
                         }
 
                         @Override
@@ -338,34 +337,25 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         }
                     }
                 }
-                try {
-                    Collections.sort(arrayOfUsers, new Comparator<Room>() {
-                        @Override
-                        public int compare(Room lhs, Room rhs) {
-                            return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
+                if(!arrayOfUsers.isEmpty()) {
+                    try {
+                        chatRoomListAdapter.addChatRoomItems(sortedList(arrayOfUsers));
+                        if (!chatRoomListAdapter.isEmpty()) {
+                            dismissProgressDialog();
+                            emptyImageView.setVisibility(View.GONE);
+                        } else {
+                            emptyImageView.setVisibility(View.VISIBLE);
                         }
-                    });
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
-                try {
-                    if (!chatRoomListAdapter.isEmpty()) {
-                        dismissProgressDialog();
-                        emptyImageView.setVisibility(View.GONE);
-                    } else {
-                        emptyImageView.setVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    // catch exception
+                } else {
+                    showEmptyImage();
                 }
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -385,9 +375,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -446,41 +434,30 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     @Override
                     public void onCancelled(FirebaseError firebaseError) {
                         firebaseError.getMessage();
-                        dismissProgressDialog();
+                        showEmptyImage();
                     }
                 });
             }
         }
 
-        Collections.sort(arrayOfUsers, new Comparator<Room>() {
-            @Override
-            public int compare(Room lhs, Room rhs) {
-                return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
+        if(!arrayOfUsers.isEmpty()) {
+            chatRoomListAdapter.addChatRoomItems(sortedList(arrayOfUsers));
+            try {
+                if (!chatRoomListAdapter.isEmpty()) {
+                    dismissProgressDialog();
+                } else if (isShowDefault) {
+                    emptyImageView.setVisibility(View.VISIBLE);
+                } else {
+                    emptyImageView.setVisibility(View.GONE);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
-
-        chatRoomListAdapter.addChatRoomItems(arrayOfUsers);
-        try {
-
-            if (!chatRoomListAdapter.isEmpty()) {
-                dismissProgressDialog();
-            } else if (isShowDefault) {
-                emptyImageView.setVisibility(View.VISIBLE);
-            } else  {
-                emptyImageView.setVisibility(View.GONE);
-            }
-
-            /*if (arrayOfUsers.isEmpty()) {
-                dismissProgressDialog();
-                emptyImageView.setVisibility(View.VISIBLE);
-            }*/
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
+        } else {
+            showEmptyImage();
         }
     }
-
 
     private List<Room> getMembersProfile(final DataSnapshot dataSnapshot) {
 
@@ -545,6 +522,21 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
 
         return arrayOfUsers;
+    }
+
+    private void showEmptyImage() {
+        dismissProgressDialog();
+        emptyImageView.setVisibility(View.VISIBLE);
+    }
+
+    private ArrayList<Room> sortedList(ArrayList<Room> mSortedList) {
+        Collections.sort(mSortedList, new Comparator<Room>() {
+            @Override
+            public int compare(Room lhs, Room rhs) {
+                return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
+            }
+        });
+        return mSortedList;
     }
 
     @Override

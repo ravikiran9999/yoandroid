@@ -52,7 +52,7 @@ import retrofit2.Response;
 /**
  * Created by Ramesh on 3/7/16.
  */
-public class ChatActivity extends BaseActivity {
+public class ChatActivity extends BaseActivity implements View.OnClickListener{
 
     private final String TAG = ChatActivity.this.getClass().getSimpleName();
     private String opponent;
@@ -125,7 +125,7 @@ public class ChatActivity extends BaseActivity {
             room = getIntent().getParcelableExtra(Constants.ROOM);
 
             args.putString(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
-            opponent = getOppenent(room);
+            opponent = getOpponent(room);
 
             String opponentImg = room.getImage();
             if (opponentImg != null) {
@@ -184,7 +184,6 @@ public class ChatActivity extends BaseActivity {
                     args.putParcelable(Constants.CONTACT, contact);
                     callUserChat(args, userChatFragment);
                 }
-
 
                 Util.cancelAllNotification(this);
 
@@ -302,40 +301,40 @@ public class ChatActivity extends BaseActivity {
                 }
             }
 
-            titleView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String opponentTrim = null;
-                    if (opponent != null && opponent.contains(Constants.YO_USER)) {
-                        opponentTrim = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
-                    }
-
-                    Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
-                    intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
-                    String titles = title == null ? opponent : title;
-                    intent.putExtra(Constants.OPPONENT_NAME, titles);
-                    if (opponentTrim != null && TextUtils.isDigitsOnly(opponentTrim)) {
-                        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentTrim);
-                    }
-
-                    intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
-
-                    if (groupName != null) {
-                        intent.putExtra(Constants.CHAT_ROOM_ID, chatRoomId);
-                        intent.putExtra(Constants.GROUP_NAME, title);
-                    } else {
-                        intent.putExtra(Constants.VOX_USER_NAME, opponent);
-                    }
-
-                    if (room != null) {
-                        intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
-                        intent.putExtra(Constants.GROUP_NAME, room.getGroupName());
-                    }
-                    startActivity(intent);
-                }
-            });
+            titleView.setOnClickListener(this);
             getSupportActionBar().setCustomView(customView);
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        String opponentTrim = null;
+        if (opponent != null && opponent.contains(Constants.YO_USER)) {
+            opponentTrim = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
+        }
+
+        Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
+        intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
+        String titles = title == null ? opponent : title;
+        intent.putExtra(Constants.OPPONENT_NAME, titles);
+        if (opponentTrim != null && TextUtils.isDigitsOnly(opponentTrim)) {
+            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentTrim);
+        }
+
+        intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+
+        if (groupName != null) {
+            intent.putExtra(Constants.CHAT_ROOM_ID, chatRoomId);
+            intent.putExtra(Constants.GROUP_NAME, title);
+        } else {
+            intent.putExtra(Constants.VOX_USER_NAME, opponent);
+        }
+
+        if (room != null) {
+            intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
+            intent.putExtra(Constants.GROUP_NAME, room.getGroupName());
+        }
+        startActivity(intent);
     }
 
     private void callUserChat(Bundle args, UserChatFragment userChatFragment) {
@@ -354,7 +353,7 @@ public class ChatActivity extends BaseActivity {
         }
     }
 
-    private String getOppenent(@NonNull Room room) {
+    private String getOpponent(@NonNull Room room) {
 
         if (room.getGroupName() == null) {
             if (!TextUtils.isEmpty(room.getVoxUserName())) {
@@ -371,10 +370,6 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void clearNotification(String opponent) {
-
-        //long opp = Long.parseLong(opponent.replaceAll("[^\\d.]", "").substring(2, 12));
-        //int opponentInt = (int) opp;
-        //Util.cancelReadNotification(this, opponentInt);
         Util.cancelAllNotification(this);
     }
 

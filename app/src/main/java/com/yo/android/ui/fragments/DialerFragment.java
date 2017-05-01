@@ -332,11 +332,11 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
             final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, "all calls");
             if (filter.equalsIgnoreCase("all calls")) {
                 txtEmptyCallLogs.setVisibility(View.GONE);
-                txtEmptyCallLogs.setText("No call logs history available.");
+                txtEmptyCallLogs.setText(R.string.no_call_history);
                 llNoCalls.setVisibility(View.VISIBLE);
             } else {
                 txtEmptyCallLogs.setVisibility(View.GONE);
-                txtEmptyCallLogs.setText(String.format("No %s history available.", filter));
+                txtEmptyCallLogs.setText(String.format(getResources().getString(R.string.no_history), filter));
                 llNoCalls.setVisibility(View.VISIBLE);
             }
             noSearchResult.setVisibility(View.GONE);

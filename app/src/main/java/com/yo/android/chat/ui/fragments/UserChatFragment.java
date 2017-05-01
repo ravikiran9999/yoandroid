@@ -22,7 +22,9 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseArray;
 import android.util.SparseBooleanArray;
+import android.util.SparseIntArray;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -51,7 +53,6 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
@@ -70,7 +71,6 @@ import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
@@ -83,15 +83,10 @@ import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.inject.Inject;
 
@@ -137,14 +132,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String childRoomId;
     List<ChatMessage> chatForwards;
     private int forwardInt = 0;
-    private String mobilenumber;
+    private String mobileNumber;
     private String roomType;
     private EmojiconsPopup popup;
     private int roomCreationProgress = 0;
     private String opponentImg;
     private Contact mContact;
     private int retryMessageCount = 0;
-    private PendingIntent pendingIntent;
     private int falureCount = 0;
 
     @Bind(R.id.emojiView)
@@ -187,7 +181,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
         opponentName = bundle.getString(Constants.OPPONENT_NAME);
-        mobilenumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+        mobileNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
         mContact = bundle.getParcelable(Constants.CONTACT);
@@ -263,7 +257,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             roomReference = authReference.child(Constants.ROOMS).child(childRoomId).child(Constants.CHATS);
             messageQuery = roomReference.orderByValue().limitToLast(100); // show only last 100 items
-            //registerChildEventListener(roomReference);
             registerChildEventListener(messageQuery);
 
             if (chatForwards != null) {
@@ -330,7 +323,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         if (selectedItem.getType().equalsIgnoreCase(Constants.IMAGE)) {
                             imageSelected = true;
                         }
-                        if (!selectedItem.getSenderID().equals(mobilenumber)) {
+                        if (!selectedItem.getSenderID().equals(mobileNumber)) {
                             canDelete = false;
                         }
                     }
@@ -410,7 +403,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                 chatMessageArrayList.add(selectedItem);
                             }
                         }
-                        forwardMessage(chatMessageArrayList);
+                        AppContactsActivity.start(getActivity(), chatMessageArrayList);
                         mode.finish();
                         break;
 
@@ -491,7 +484,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     changeEmojiKeyboardIcon(emoji, R.drawable.ic_action_keyboard);
                 }
 
-                //else, open the text keyboard first and immediately after that show the emoji popup
+                //open the text keyboard first and immediately after that show the emoji popup
                 else {
                     chatText.setFocusableInTouchMode(true);
                     chatText.requestFocus();
@@ -662,8 +655,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-
-    //private void registerChildEventListener(Firebase roomReference) {
     private void registerChildEventListener(Query chatRoomReference) {
         if (!isChildEventListenerAdd) {
             //isChildEventListenerAdd = Boolean.TRUE;
@@ -788,7 +779,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private void addImageCapture(Intent data) {
         try {
-
             String mPartyPicUri = mFileTemp.getPath();
             String path = new CompressImage(getActivity()).compressImage(mPartyPicUri, Constants.YOIMAGES);
             mFileTemp.delete();
@@ -917,16 +907,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             chatMessage.setRoomName(roomType);
         }
         sendChatMessage(chatMessage);
-    }
-
-
-    private void forwardMessage(ArrayList<ChatMessage> message) {
-        Intent intent = new Intent(getActivity(), AppContactsActivity.class);
-        intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, message);
-        intent.putExtra(Constants.IS_CHAT_FORWARD, true);
-
-        startActivity(intent);
-        getActivity().finish();
     }
 
     @Override
@@ -1153,7 +1133,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private void alarmManager() {
         Intent alarmIntent = new Intent(getActivity().getApplicationContext(), FirebaseService.class);
-        pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         int interval = 2 * 60 * 1000; // 10 minutes interval
 
