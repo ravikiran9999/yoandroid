@@ -512,7 +512,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Intent intent = new Intent(getActivity(), UserProfileActivity.class);
 
         if (opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
-            opponentNumberTrim = opponentNumber.replaceAll("[^\\d.]", "").substring(2, 12);
+            opponentNumberTrim = Util.numericValueFromString(opponentNumberTrim);
         }
 
         if (opponentNumberTrim != null && TextUtils.isDigitsOnly(opponentNumberTrim)) {
