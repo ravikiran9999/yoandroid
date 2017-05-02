@@ -24,10 +24,6 @@ import com.yo.android.util.Util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by rdoddapaneni on 6/29/2016.
- */
-
 public class ContactsListAdapter extends AbstractBaseAdapter<Contact, RegisteredContactsViewHolder> {
 
     private Context context;
