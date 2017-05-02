@@ -121,6 +121,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     private boolean isAlreadyShown;
     //private boolean isRemoved;
     private boolean isSharedPreferenceShown;
+    public static final int REFRESH_CALL_LOGS_TIME = 5000;
 
     public interface CallLogClearListener {
         public void clear();
@@ -266,6 +267,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
             searchView.setQuery(searchView.getQuery(), false);
         } else {
             loadCallLogs();
+            refreshCallLogsIfNotUpdated();
         }
     }
 
@@ -384,12 +386,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     @Override
                     public void run() {
                         loadCallLogs();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                    loadCallLogs();
-                            }
-                        }, 5000);
+                        refreshCallLogsIfNotUpdated();
                         mBalanceHelper.checkBalance(null);
                     }
                 });
@@ -476,5 +473,14 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
             popup = tempPopup;
         }
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
+    }
+
+    private void refreshCallLogsIfNotUpdated() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadCallLogs();
+            }
+        }, REFRESH_CALL_LOGS_TIME);
     }
 }
