@@ -53,7 +53,7 @@ public class ChatMessage implements Parcelable {
     private boolean selected;
     //For caching the image
     private String imageUrl;
-    private String voxUserName;
+    private String nexgeUserName;
     private String youserId;
     private String chatProfileUserName;
     private String roomName;
@@ -80,7 +80,7 @@ public class ChatMessage implements Parcelable {
         this.stickeyHeader = in.readString();
         this.sent = in.readInt();
         this.delivered = in.readInt();
-        this.voxUserName = in.readString();
+        this.nexgeUserName = in.readString();
         this.youserId = in.readString();
         this.chatProfileUserName = in.readString();
         this.roomName = in.readString();
@@ -229,11 +229,11 @@ public class ChatMessage implements Parcelable {
     }
 
     public String getVoxUserName() {
-        return voxUserName;
+        return nexgeUserName;
     }
 
-    public void setVoxUserName(String voxUserName) {
-        this.voxUserName = voxUserName;
+    public void setVoxUserName(String nexgeUserName) {
+        this.nexgeUserName = nexgeUserName;
     }
 
     public String getRoomName() {
@@ -278,7 +278,7 @@ public class ChatMessage implements Parcelable {
         dest.writeString(stickeyHeader);
         dest.writeInt(sent);
         dest.writeInt(delivered);
-        dest.writeString(voxUserName);
+        dest.writeString(nexgeUserName);
         dest.writeString(youserId);
         dest.writeString(chatProfileUserName);
         dest.writeString(roomName);
@@ -332,7 +332,7 @@ public class ChatMessage implements Parcelable {
         if (roomId != null ? !roomId.equals(that.roomId) : that.roomId != null) return false;
         if (imageUrl != null ? !imageUrl.equals(that.imageUrl) : that.imageUrl != null)
             return false;
-        if (voxUserName != null ? !voxUserName.equals(that.voxUserName) : that.voxUserName != null)
+        if (nexgeUserName != null ? !nexgeUserName.equals(that.nexgeUserName) : that.nexgeUserName != null)
             return false;
         if (youserId != null ? !youserId.equals(that.youserId) : that.youserId != null)
             return false;
@@ -360,7 +360,7 @@ public class ChatMessage implements Parcelable {
         result = 31 * result + (roomId != null ? roomId.hashCode() : 0);
         result = 31 * result + (selected ? 1 : 0);
         result = 31 * result + (imageUrl != null ? imageUrl.hashCode() : 0);
-        result = 31 * result + (voxUserName != null ? voxUserName.hashCode() : 0);
+        result = 31 * result + (nexgeUserName != null ? nexgeUserName.hashCode() : 0);
         result = 31 * result + (youserId != null ? youserId.hashCode() : 0);
         result = 31 * result + (chatProfileUserName != null ? chatProfileUserName.hashCode() : 0);
         result = 31 * result + (roomName != null ? roomName.hashCode() : 0);

@@ -33,7 +33,7 @@ public class Constants {
     public static final String CONT_FRAG = "ContFrag";
     public static final String Yo_CONT_FRAG = "YoContFrag";
     public static final String YO_NOTIFICATION = "notification";
-    public static final String INVITE_FRAG="IviteFrag";
+    public static final String INVITE_FRAG = "IviteFrag";
 
     public static final String SENT = "SENT";
     public static final String SEEN = "SEEN";
@@ -105,8 +105,9 @@ public class Constants {
     public static final String DAILER = "Dialer";
     public static final String IS_CHAT_FORWARD = "is_chat_forward";
     public static final String COUNTRY_ID = "country_id";
-    public static final String COUNTRY_CODE ="country_code" ;
+    public static final String COUNTRY_CODE = "country_code";
     public static final String COUNTRY_DISPLAY_NAME = "country_display_name";
+    public static final String CREATED = "created";
     public static int SUCCESS_CODE = 200;
     public static final String FOLLOW_TOPIC_EVENT = "follow_topic_event";
 

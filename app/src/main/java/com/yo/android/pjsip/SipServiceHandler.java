@@ -10,6 +10,7 @@ import org.pjsip.pjsua2.CallInfo;
  */
 public interface SipServiceHandler {
     void addAccount(SipProfile sipProfile);
+    void createSipService(SipProfile sipProfile);
 
     MediaManager getMediaManager();
 

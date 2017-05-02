@@ -474,7 +474,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             room = profileDataSnapshot.getValue(Room.class);
                             if (room != null) {
                                 room.setFirebaseRoomId(dataSnapshot.getKey());
-                                Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getVoxUserName());
+                                Contact contact = mContactsSyncManager.getContactByVoxUserName(room.getNexgeUserName());
                                 if (contact != null && contact.getName() != null) {
                                     room.setFullName(contact.getName());
                                 } else if (contact == null && room != null) {
@@ -509,7 +509,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             room.setFirebaseRoomId(dataSnapshot.getKey());
             room.setGroupName(roomInfo.getName());
             room.setImage(roomInfo.getImage());
-            room.setVoxUserName(voxUserName);
+            room.setNexgeUserName(voxUserName);
             //room.setTime(Long.parseLong(groupCreatedTime));
             if (date != null) {
                 room.setTime(date.getTime());

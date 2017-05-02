@@ -117,6 +117,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private ArrayList<ChatMessage> chatMessageArray;
     private HashMap<Integer, ArrayList<ChatMessage>> chatMessageHashMap;
     private String opponentNumber;
+    private String sipAccountUserName;
     private String opponentName;
     private String opponentId;
     private static File mFileTemp;
@@ -178,6 +179,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Bundle bundle = this.getArguments();
         childRoomId = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
+        sipAccountUserName = opponentNumber;
         opponentId = bundle.getString(Constants.OPPONENT_ID);
         opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
         opponentName = bundle.getString(Constants.OPPONENT_NAME);
@@ -445,8 +447,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         switch (item.getItemId()) {
             case R.id.call:
-                if (opponentNumber != null) {
-                    SipHelper.makeCall(activity, opponentNumber);
+                if (sipAccountUserName != null) {
+                    SipHelper.makeCall(activity, sipAccountUserName);
                 }
                 break;
             case R.id.camera:

@@ -115,7 +115,7 @@ public class BottomTabsActivity extends BaseActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
-            addAccount();
+            //addAccount();
         }
 
         @Override
@@ -124,7 +124,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
     };
 
-    private void addAccount() {
+   /* private void addAccount() {
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
@@ -144,7 +144,7 @@ public class BottomTabsActivity extends BaseActivity {
                 .build();
         sipBinder.getHandler().addAccount(sipProfile);
 
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
