@@ -1003,15 +1003,15 @@ public class Util {
 
     public static void showLowBalanceNotification(Context context, PreferenceEndPoint preferenceEndPoint) {
         long currentTime = System.currentTimeMillis();
-        if(preferenceEndPoint.getLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, 0) == 0) {
+        if (preferenceEndPoint.getLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, 0) == 0) {
             Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
             preferenceEndPoint.saveLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, currentTime);
         } else {
             long lastShownTime = preferenceEndPoint.getLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, 0);
-                 if(currentTime - lastShownTime >= Constants.LOW_BALANCE_NOTIFICATION_FREQUENCY) {
-                     Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
-                     preferenceEndPoint.saveLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, currentTime);
-                 }
+            if (currentTime - lastShownTime >= Constants.LOW_BALANCE_NOTIFICATION_FREQUENCY) {
+                Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
+                preferenceEndPoint.saveLongPreference(Constants.LOW_BALANCE_NOTIFICATION_TIME, currentTime);
+            }
         }
     }
 
@@ -1101,11 +1101,24 @@ public class Util {
         return mContext.getResources().getDrawable(R.drawable.dynamic_profile);
     }
 
-    public static String numericValueFromString(String string) {
+    public static String numericValueFromString(Context context, String string) {
         try {
+            if (string.contains(Constants.YO_USER)) {
+                return String.format(context.getResources().getString(R.string.plus_number), string.replaceAll("[^0-9]", ""));
+            } else if(TextUtils.isDigitsOnly(string)){
+                return String.format(context.getResources().getString(R.string.plus_number), string);
+            } else {
+                return string;
+            }
+        } catch (NumberFormatException e) {
+            return string;
+        }
+    }
 
+    public static String numberFromVoxFormat(String string) {
+        try {
             return string.replaceAll("[^0-9]", "");
-        }catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return string;
         }
     }
