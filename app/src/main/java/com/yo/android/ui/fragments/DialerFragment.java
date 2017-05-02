@@ -3,6 +3,7 @@ package com.yo.android.ui.fragments;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -33,6 +34,7 @@ import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.util.Constants;
@@ -382,6 +384,12 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     @Override
                     public void run() {
                         loadCallLogs();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                    loadCallLogs();
+                            }
+                        }, 5000);
                         mBalanceHelper.checkBalance(null);
                     }
                 });
