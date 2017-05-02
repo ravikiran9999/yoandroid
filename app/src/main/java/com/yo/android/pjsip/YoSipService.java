@@ -192,7 +192,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
         }
         addAccount();
-
         NetworkStateListener.registerNetworkState(listener);
         performAction(intent);
         return START_STICKY;
@@ -934,7 +933,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
         android.util.Log.d("debug", "Service Killed");
-
         //sendBroadcast(new Intent("YouWillNeverKillMe"));
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
@@ -1048,16 +1046,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             for (int index = 0; index < vector.size(); index++) {
                 android.util.Log.e(TAG, "Codec " + vector.get(index).getCodecId());
             }
-            mEndpoint.codecSetPriority("PCMA/8000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_MAX - 2));
+            mEndpoint.codecSetPriority("PCMA/8000", (short) (CodecPriority.PRIORITY_MAX - 2));
+            mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_MAX - 1));
             mEndpoint.codecSetPriority("speex/8000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("speex/16000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("speex/32000", (short) (CodecPriority.PRIORITY_MAX - 1));
+            mEndpoint.codecSetPriority("speex/32000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("GSM/8000", (short) CodecPriority.PRIORITY_DISABLED);
             mEndpoint.codecSetPriority("G722/16000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("G7221/16000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("G7221/32000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("ilbc/8000", (short) CodecPriority.PRIORITY_DISABLED);
 
 
             Logger.warn("PJSIP started!");
