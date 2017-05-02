@@ -49,9 +49,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by Ramesh on 3/7/16.
- */
 public class ChatActivity extends BaseActivity implements View.OnClickListener{
 
     private final String TAG = ChatActivity.this.getClass().getSimpleName();
@@ -239,7 +236,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
             } else if (groupName != null) {
                 title = groupName;
             } else if (opponent != null && opponent.contains(Constants.YO_USER)) {
-                title = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
+                title = Util.numericValueFromString(opponent);
             }
 
             if (title != null) {
@@ -310,7 +307,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
     public void onClick(View v) {
         String opponentTrim = null;
         if (opponent != null && opponent.contains(Constants.YO_USER)) {
-            opponentTrim = opponent.replaceAll("[^\\d.]", "").substring(2, 12);
+            opponentTrim = Util.numericValueFromString(opponent);
         }
 
         Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);

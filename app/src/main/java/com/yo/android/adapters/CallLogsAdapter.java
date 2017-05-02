@@ -88,12 +88,17 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         String destination_name = item.getValue().get(0).getDestination_name();
         String formattedString = destination_name;
 
-                //if(destination_name)
         holder.getInfo().setVisibility(View.VISIBLE);
         holder.getMessageIcon().setVisibility(View.VISIBLE);
         if (destination_name != null && destination_name.length() >= 1) {
+
             String numericValue = Util.numericValueFromString(formattedString);
-            holder.getOpponentName().setText(String.format(mContext.getResources().getString(R.string.plus_number), numericValue));
+            if(!TextUtils.isEmpty(numericValue)) {
+                holder.getOpponentName().setText(String.format(mContext.getResources().getString(R.string.plus_number), numericValue));
+            } else {
+                holder.getOpponentName().setText(formattedString);
+            }
+
             String title = String.valueOf(destination_name.charAt(0)).toUpperCase();
             Pattern p = Pattern.compile("^[a-zA-Z]");
             Matcher m = p.matcher(title);
