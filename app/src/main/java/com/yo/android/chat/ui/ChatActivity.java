@@ -356,8 +356,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
     private String getOpponent(@NonNull Room room) {
 
         if (room.getGroupName() == null) {
-            if (!TextUtils.isEmpty(room.getVoxUserName())) {
-                return room.getVoxUserName();
+            if (!TextUtils.isEmpty(room.getNexgeUserName())) {
+                return room.getNexgeUserName();
             } else if (!TextUtils.isEmpty(room.getMobileNumber())) {
                 return room.getMobileNumber();
             }
