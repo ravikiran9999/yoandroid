@@ -236,7 +236,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
             } else if (groupName != null) {
                 title = groupName;
             } else if (opponent != null && opponent.contains(Constants.YO_USER)) {
-                title = Util.numericValueFromString(opponent);
+                title = Util.numberFromVoxFormat(opponent);
             }
 
             if (title != null) {
@@ -307,7 +307,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
     public void onClick(View v) {
         String opponentTrim = null;
         if (opponent != null && opponent.contains(Constants.YO_USER)) {
-            opponentTrim = Util.numericValueFromString(opponent);
+            opponentTrim = Util.numberFromVoxFormat(opponent);
         }
 
         Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
