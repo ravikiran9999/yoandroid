@@ -72,10 +72,14 @@ public class Notifications {
                             .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(userData.getBitmap()));
 
                 } else {
-                    NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-                    inboxStyle.setBigContentTitle(pushNotificationList.size() + " " + newMessage);
-                    setSummaryText(mContext, maxNotifications, pushNotificationList, inboxStyle);
-                    mBuilder.setStyle(inboxStyle);
+                    if(pushNotificationList.size() == 1) {
+                        mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(userData.getDescription()));
+                    } else {
+                        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+                        inboxStyle.setBigContentTitle(pushNotificationList.size() + " " + newMessage);
+                        setSummaryText(mContext, maxNotifications, pushNotificationList, inboxStyle);
+                        mBuilder.setStyle(inboxStyle);
+                    }
                 }
 
                 mBuilder.setNumber(pushNotificationList.size());
