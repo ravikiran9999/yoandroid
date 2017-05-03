@@ -37,6 +37,10 @@
     <string name="copy_messages">Messages Copied</string>
     <string name="add_contact">Add Contact</string>
     <string name="new_group">New Group</string>
+    <plurals name="copy_message">
+        <item quantity="one">Message Copied</item>
+        <item quantity="other">%1$s Messages Copied</item>
+    </plurals>
 
 
     <string name="not_sender">You dont have permission to delete message </string>

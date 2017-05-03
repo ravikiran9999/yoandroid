@@ -374,11 +374,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     case R.id.copy:
                         StringBuilder builder = new StringBuilder();
                         selected = userChatAdapter.getSelectedIds();
-                        if (selected.size() > 1) {
-                            Toast.makeText(getActivity(), selected.size() + " " + getString(R.string.copy_messages), Toast.LENGTH_SHORT).show();
-                        } else if (selected.size() == 1) {
-                            Toast.makeText(getActivity(), getString(R.string.copy_message), Toast.LENGTH_SHORT).show();
-                        }
+
+                        Toast.makeText(getActivity(), getResources().getQuantityString(R.plurals.copy_message, selected.size(), selected.size()), Toast.LENGTH_SHORT).show();
 
                         for (int i = 0; i < selected.size(); i++) {
                             if (selected.valueAt(i)) {
