@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -7,10 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import com.yo.android.adapters.ProfileMembersAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.NonScrollListView;
-import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.GroupMembers;
 import com.yo.android.model.RoomInfo;
@@ -39,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -90,6 +87,37 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     @Inject
     FireBaseHelper fireBaseHelper;
+
+    public static void start(Activity activity, String opponentNumberTrim, String opponentNumber, String opponentImg, String opponentName, String fromChat) {
+        Intent intent = createIntent(activity, opponentNumberTrim, opponentNumber, opponentImg, opponentName, fromChat);
+        activity.startActivity(intent);
+    }
+
+    public static void startGroup(Activity activity, String childRoomId, String roomType, String opponentImg, String opponentName, String fromChat) {
+        Intent intent = createGroupIntent(activity, childRoomId, roomType, opponentImg, opponentName, fromChat);
+        activity.startActivity(intent);
+    }
+
+    private static Intent createIntent(Activity activity, String opponentNumberTrim, String opponentNumber, String opponentImg, String opponentName, String fromChat) {
+        Intent intent = new Intent(activity, UserProfileActivity.class);
+        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumberTrim);
+        intent.putExtra(Constants.VOX_USER_NAME, opponentNumber);
+        intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
+        intent.putExtra(Constants.OPPONENT_NAME, opponentName);
+        intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+        return intent;
+    }
+
+    private static Intent createGroupIntent(Activity activity, String childRoomId, String roomType, String opponentImg, String opponentName, String fromChat) {
+        Intent intent = new Intent(activity, UserProfileActivity.class);
+        intent.putExtra(Constants.CHAT_ROOM_ID, childRoomId);
+        intent.putExtra(Constants.GROUP_NAME, roomType);
+        intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
+        intent.putExtra(Constants.OPPONENT_NAME, opponentName);
+        intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+        return intent;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
