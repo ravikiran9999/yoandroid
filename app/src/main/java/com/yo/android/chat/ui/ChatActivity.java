@@ -67,25 +67,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
-    /**
-     * navigated from YoContactsFragment
-     *
-     * @param activity
-     * @param contact
-     * @param forward
-     */
     public static void start(Activity activity, Contact contact, ArrayList<ChatMessage> forward) {
         Intent intent = createIntent(activity, contact, forward);
         activity.startActivity(intent);
         activity.finish();
     }
 
-    /**
-     * navigated from chatFragment
-     *
-     * @param activity
-     * @param room
-     */
     public static void start(Activity activity, Room room) {
         Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra(Constants.ROOM, room);
@@ -151,10 +138,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
             if (contact != null) {
 
                 opponent = contact.getNexgieUserName();
-                args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
-                args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
-                args.putString(Constants.OPPONENT_NAME, contact.getName());
+
                 mContact = mContactsSyncManager.getContactByVoxUserName(opponent);
                 if (mContact == null) {
                     //server request with opponent id
@@ -162,8 +147,15 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
                         @Override
                         public void onResponse(Call<YOUserInfo> call, Response<YOUserInfo> response) {
                             //update new data into database
-                            contact.setId(response.body().getId());
-                            args.putString(Constants.OPPONENT_ID, response.body().getId());
+                            YOUserInfo yoUserInfo = response.body();
+                            contact.setId(yoUserInfo.getId());
+                            contact.setFirebaseRoomId(yoUserInfo.getFirebaseRoomId());
+                            contact.setImage(yoUserInfo.getAvatar());
+                            contact.setName(yoUserInfo.getFirst_name());
+
+                            args.putString(Constants.CHAT_ROOM_ID, yoUserInfo.getFirebaseRoomId());
+                            args.putString(Constants.OPPONENT_CONTACT_IMAGE, yoUserInfo.getAvatar());
+                            args.putString(Constants.OPPONENT_ID, yoUserInfo.getId());
                             args.putParcelable(Constants.CONTACT, contact);
                             callUserChat(args, userChatFragment);
                         }
@@ -176,8 +168,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
                     });
 
                 } else {
+
                     String contactId = contact.getId() == null ? mContact.getId() : contact.getId();
                     args.putString(Constants.OPPONENT_ID, contactId);
+                    args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
+                    args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                     args.putParcelable(Constants.CONTACT, contact);
                     callUserChat(args, userChatFragment);
                 }
@@ -315,10 +310,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
         String titles = title == null ? opponent : title;
         intent.putExtra(Constants.OPPONENT_NAME, titles);
         if (opponentTrim != null && TextUtils.isDigitsOnly(opponentTrim)) {
-            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentTrim);
+            String mOpponentNumber = String.format(getResources().getString(R.string.plus_number), opponentTrim);
+            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, mOpponentNumber);
         }
-
-        intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
 
         if (groupName != null) {
             intent.putExtra(Constants.CHAT_ROOM_ID, chatRoomId);
@@ -331,6 +325,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
             intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
             intent.putExtra(Constants.GROUP_NAME, room.getGroupName());
         }
+
+        intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
         startActivity(intent);
     }
 
@@ -352,14 +348,14 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
 
     private String getOpponent(@NonNull Room room) {
 
-        if (room.getGroupName() == null) {
+        if (room.getGroupName() == null) { // group not exists
             if (!TextUtils.isEmpty(room.getNexgeUserName())) {
                 return room.getNexgeUserName();
             } else if (!TextUtils.isEmpty(room.getMobileNumber())) {
                 return room.getMobileNumber();
             }
 
-        } else if (room.getGroupName() != null) {
+        } else if (room.getGroupName() != null) { // group exists
             return room.getGroupName();
         }
 

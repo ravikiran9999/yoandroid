@@ -17,6 +17,7 @@ public class YOUserInfo {
     private String last_name;
     @SerializedName("avatar")
     private String avatar;
+    private String firebaseRoomId;
 
     public String getId() {
         return id;
@@ -56,5 +57,13 @@ public class YOUserInfo {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getFirebaseRoomId() {
+        return firebaseRoomId;
+    }
+
+    public void setFirebaseRoomId(String firebaseRoomId) {
+        this.firebaseRoomId = firebaseRoomId;
     }
 }
