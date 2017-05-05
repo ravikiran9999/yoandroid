@@ -1115,9 +1115,13 @@ public class Util {
         }
     }
 
-    public static String numberFromVoxFormat(String string) {
+    public static String numberFromNexgeFormat(String string) {
         try {
-            return string.replaceAll("[^0-9]", "");
+            if(string != null) {
+                return string.replaceAll("[^0-9]", "");
+            } else {
+                return "123456";
+            }
         } catch (NumberFormatException e) {
             return string;
         }

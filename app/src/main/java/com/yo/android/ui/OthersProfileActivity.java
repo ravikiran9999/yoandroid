@@ -135,7 +135,6 @@ public class OthersProfileActivity extends BaseActivity {
                             followersCount = followersCount + 1;
                             dataList.get(1).setCount(followersCount);
                             ((TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));
-                            ;
                             if (mAdapter.getCount() >= 2) {
                                 if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
                                     ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
@@ -184,7 +183,6 @@ public class OthersProfileActivity extends BaseActivity {
                                     followersCount = followersCount - 1;
                                     dataList.get(1).setCount(followersCount);
                                     ((TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));
-                                    ;
                                     if (mAdapter.getCount() >= 2) {
                                         if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
                                             ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
@@ -237,7 +235,7 @@ public class OthersProfileActivity extends BaseActivity {
         ((TextView) view.findViewById(R.id.count)).setText(String.valueOf(count));
         ((TextView) view.findViewById(R.id.tab_name)).setText(title);
         if (isLast) {
-            ((View) view.findViewById(R.id.divider)).setVisibility(View.GONE);
+            view.findViewById(R.id.divider).setVisibility(View.GONE);
         }
 
         return view;

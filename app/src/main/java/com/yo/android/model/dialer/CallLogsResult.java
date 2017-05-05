@@ -185,8 +185,8 @@ public class CallLogsResult implements Comparable<CallLogsResult>, Parcelable {
     public int compareTo(CallLogsResult another) {
         DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         try {
-            Date startDate = (Date) formatter.parse(getStime());
-            Date endDate = (Date) formatter.parse(another.getStime());
+            Date startDate = formatter.parse(getStime());
+            Date endDate = formatter.parse(another.getStime());
             return startDate.compareTo(endDate);
 
         } catch (ParseException e) {

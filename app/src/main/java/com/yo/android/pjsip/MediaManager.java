@@ -68,11 +68,11 @@ public class MediaManager {
     }
 
     public boolean isSilentMode() {
-        return audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT ? true : false;
+        return audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT;
     }
 
     public boolean isVibrationMode() {
-        return audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE ? true : false;
+        return audioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE;
     }
 
     public void setAudioMode(int mode) {

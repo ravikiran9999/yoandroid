@@ -109,7 +109,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private static final String TAG = "UserChatFragment";
     private static final String DummyMsgKey = "123456";
-    private static final String ServerTimeStamp = "serverTimeStamp";
 
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
@@ -136,7 +135,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private EmojiconsPopup popup;
     private int roomCreationProgress = 0;
     private String opponentImg;
-    private Contact mContact;
     private int retryMessageCount = 0;
     private int falureCount = 0;
 
@@ -184,7 +182,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         mobileNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
-        mContact = bundle.getParcelable(Constants.CONTACT);
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
@@ -507,8 +504,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if (roomType != null) {
             UserProfileActivity.startGroup(getActivity(), childRoomId, roomType, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS);
         } else if(opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
-            String opponentNumberTrim = Util.numberFromVoxFormat(opponentNumber);
-            UserProfileActivity.start(getActivity(), opponentNumberTrim, opponentNumber, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS);
+            String opponentNumberTrim = Util.numberFromNexgeFormat(opponentNumber);
+            UserProfileActivity.start(getActivity(), opponentNumberTrim, opponentNumber, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS, null);
         }
     }
 
