@@ -60,6 +60,7 @@ import org.pjsip.pjsua2.AuthCredInfoVector;
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallOpParam;
+import org.pjsip.pjsua2.CallSetting;
 import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
@@ -130,6 +131,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     ConnectivityHelper mHelper;
 
     private Intent mIntent;
+    private CallDisconnectedListner callDisconnectedListner;
 
     //New changes
 
@@ -156,6 +158,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private static ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_VOICE_CALL, 100);
     public static final int EXPIRE = 3600;
+    private boolean isOnGoingCall = false;
 
 
     @Override
@@ -303,6 +306,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             sipCallState.setCallDir(SipCallState.INCOMING);
             sipCallState.setCallState(SipCallState.CALL_RINGING);
             showInComingCall(call);
+            isOnGoingCall = true;
             sipCallState.setMobileNumber(getPhoneNumber(call.getInfo().getRemoteUri()));
         } catch (Exception e) {
             mLog.w(TAG, e);
@@ -475,7 +479,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     private void callDisconnected() {
-
+        isOnGoingCall = false;
+        if (callDisconnectedListner != null) {
+            callDisconnectedListner.callDisconnected();
+        }
         mLog.e(TAG, "disconnected call >>>>>");
         stopRepeatingTask();
         Util.cancelNotification(this, inComingCallNotificationId);
@@ -645,6 +652,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             CallOpParam prm = new CallOpParam(true);
             try {
                 call.makeCall(finalUri, prm);
+                isOnGoingCall = true;
             } catch (Exception e) {
                 mLog.w(TAG, "Exception making call " + e.getMessage());
                 call.delete();
@@ -700,30 +708,36 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             @Override
             public void run() {
                 try {
-                    final StreamStat stats = call.getStreamStat(0);
+                    if (!localHold) {
+                        final StreamStat stats = call.getStreamStat(0);
 
-                    if (currentBytes != stats.getRtcp().getRxStat().getBytes()) {
-                        count = 0;
-                        currentBytes = stats.getRtcp().getRxStat().getBytes();
-                        SipCallModel callModel = new SipCallModel();
-                        callModel.setEvent(OutGoingCallActivity.CALL_ACCEPTED_START_TIMER);
-                        callModel.setOnCall(true);
-                        EventBus.getDefault().post(callModel);
-                    } else {
-                        count++;
-                    }
+                        if (currentBytes != stats.getRtcp().getRxStat().getBytes()) {
+                            count = 0;
+                            currentBytes = stats.getRtcp().getRxStat().getBytes();
+                            SipCallModel callModel = new SipCallModel();
+                            callModel.setEvent(OutGoingCallActivity.CALL_ACCEPTED_START_TIMER);
+                            callModel.setOnCall(true);
+                            EventBus.getDefault().post(callModel);
+                        } else {
+                            count++;
+                        }
 
-                    mLog.w(TAG, "UpdateStatus get bytes:  " + stats.getRtcp().getRxStat().getBytes());
-                    mLog.w(TAG, "UpdateStatus Count:  " + count);
-                    if (count > 5 && count <= 20) {
-                        SipCallModel callModel = new SipCallModel();
-                        callModel.setEvent(SipCallModel.RECONNECTING);
-                        EventBus.getDefault().post(callModel);
-                    }
-                    if (count > 500) {
-                        callDisconnected();
-                        count = 0;
-                        isAlreadyInReconnecting = false;
+                        mLog.w(TAG, "UpdateStatus get bytes:  " + stats.getRtcp().getRxStat().getBytes());
+                        mLog.w(TAG, "UpdateStatus Count:  " + count);
+                        if (count > 5 && count <= 20) {
+                            SipCallModel callModel = new SipCallModel();
+                            callModel.setEvent(SipCallModel.RECONNECTING);
+                            EventBus.getDefault().post(callModel);
+                        }
+                        if (count > 300) {
+                            if (currentCall != null) {
+                                hangupCall(callType);
+                            }
+                            callDisconnected();
+
+                            count = 0;
+                            isAlreadyInReconnecting = false;
+                        }
                     }
 
                 } catch (Exception e) {
@@ -759,7 +773,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         intent.putExtra(VoipConstants.PSTN, oldintent.hasExtra(VoipConstants.PSTN));
         intent.putExtra(OutGoingCallActivity.DISPLAY_NUMBER, oldintent.getStringExtra(OutGoingCallActivity.DISPLAY_NUMBER));
 
-
         startActivity(intent);
         destination = parseVoxUser(destination);
         if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
@@ -787,21 +800,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     public void setHoldCall(boolean isHold) {
+        CallOpParam prm = new CallOpParam();
+        localHold = isHold;
         if (isHold) {
             mToastFactory.showToast(R.string.hold);
-            getMediaManager().setMicrophoneMuteOn(true);
-            try {
-                if (mRingTone != null && mRingTone.isPlaying()) {
-                    mRingTone.pause();
-                    mVibrator.cancel();
-                }
-            } catch (IllegalStateException e) {
-                mLog.w(TAG, e);
-            }
+
             if (currentCall != null) {
-                CallOpParam prm = new CallOpParam(true);
-                prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
                 try {
+                    CallSetting opt = prm.getOpt();
+                    opt.setFlag(pjsua_call_flag.PJSUA_CALL_UPDATE_CONTACT.swigValue());
                     currentCall.setHold(prm);
                 } catch (Exception e) {
                     mLog.w(TAG, e);
@@ -809,17 +816,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             }
         } else {
             if (currentCall != null) {
-                CallOpParam prm = new CallOpParam(true);
-                prm.getOpt().setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
-                getMediaManager().setMicrophoneMuteOn(false);
                 try {
-                    if (currentCall.getInfo() != null
-                            && currentCall.getInfo().getState() != pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
-                        if (mRingTone != null) {
-                            mRingTone.start();
-                            mVibrator.vibrate(VIBRATOR_PATTERN, 0);
-                        }
-                    }
+                    CallSetting opt = prm.getOpt();
+                    opt.setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
                     currentCall.reinvite(prm);
                     mToastFactory.showToast(R.string.unhold);
                 } catch (Exception e) {
@@ -961,6 +960,16 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Override
     public String getRegistrationStatus() {
         return registrationStatus;
+    }
+
+    @Override
+    public boolean isOnGOingCall() {
+        return isOnGoingCall;
+    }
+
+    @Override
+    public void disconnectCallBack(CallDisconnectedListner listner) {
+        callDisconnectedListner = listner;
     }
 
 

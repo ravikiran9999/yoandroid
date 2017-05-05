@@ -115,6 +115,9 @@ public class BottomTabsActivity extends BaseActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
+            if (!sipBinder.getHandler().isOnGOingCall()) {
+                clearNotifications();
+            }
             //addAccount();
         }
 
@@ -262,9 +265,7 @@ public class BottomTabsActivity extends BaseActivity {
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
         EventBus.getDefault().register(this);
         List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
-        NotificationCache.get().clearNotifications();
-        NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        nMgr.cancelAll();
+
         Intent intent1 = getIntent();
         if (!intent1.getBooleanExtra("fromLowBalNotification", false)) {
             balanceHelper.checkBalance(null);
@@ -371,6 +372,12 @@ public class BottomTabsActivity extends BaseActivity {
                 viewPager.setCurrentItem(2);
             }
         }
+    }
+
+    private void clearNotifications() {
+        NotificationCache.get().clearNotifications();
+        NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nMgr.cancelAll();
     }
 
     @Override

@@ -295,7 +295,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         if (activity != null) {
             if (name.equalsIgnoreCase(activity.getString(R.string.add_balance_from_voucher))) {
                 Bundle arguments = getArguments();
-                if (!BuildConfig.INTERNAL_MTUITY_RELEASE || arguments.getBoolean(Constants.OPEN_ADD_BALANCE)) {
+                if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
                     showVoucherDialog();
                 } else {
                     showInternalBuildMessage();
@@ -326,7 +326,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         @Override
         public void onClick(View v) {
             Bundle arguments = getArguments();
-            if (!BuildConfig.INTERNAL_MTUITY_RELEASE || arguments.getBoolean(Constants.OPEN_ADD_BALANCE)) {
+            if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
                 Denominations item = (Denominations) v.getTag(R.id.btn1);
                 addGooglePlayBalance("android.test.purchased", item.getDenomination());
             } else {
