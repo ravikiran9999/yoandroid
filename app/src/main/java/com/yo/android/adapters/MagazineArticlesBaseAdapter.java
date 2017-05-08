@@ -142,75 +142,75 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder = new ViewHolder();
 
             holder.articleTitle = UI.
-                    <TextView>findViewById(layout, R.id.tv_article_title);
+                    findViewById(layout, R.id.tv_article_title);
 
             holder.articleShortDesc = UI
-                    .<TextView>findViewById(layout, R.id.tv_article_short_desc);
+                    .findViewById(layout, R.id.tv_article_short_desc);
 
             holder.articlePhoto = UI.findViewById(layout, R.id.photo);
 
-            holder.magazineLike = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like);
+            holder.magazineLike = UI.findViewById(layout, R.id.cb_magazine_like);
 
-            holder.magazineAdd = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add);
+            holder.magazineAdd = UI.findViewById(layout, R.id.imv_magazine_add);
 
-            holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
+            holder.magazineShare = UI.findViewById(layout, R.id.imv_magazine_share);
 
-            holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
+            holder.articleFollow = UI.findViewById(layout, R.id.imv_magazine_follow);
 
             holder.articleTitleTop = UI.
-                    <TextView>findViewById(layout, R.id.tv_article_title_top);
+                    findViewById(layout, R.id.tv_article_title_top);
 
             holder.articlePhotoTop = UI.findViewById(layout, R.id.photo_top);
 
-            holder.magazineLikeTop = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like_top);
+            holder.magazineLikeTop = UI.findViewById(layout, R.id.cb_magazine_like_top);
 
-            holder.magazineAddTop = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add_top);
+            holder.magazineAddTop = UI.findViewById(layout, R.id.imv_magazine_add_top);
 
-            holder.magazineShareTop = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share_top);
+            holder.magazineShareTop = UI.findViewById(layout, R.id.imv_magazine_share_top);
 
-            holder.articleFollowTop = UI.<Button>findViewById(layout, R.id.imv_magazine_follow_top);
+            holder.articleFollowTop = UI.findViewById(layout, R.id.imv_magazine_follow_top);
 
             holder.articleTitleLeft = UI.
-                    <TextView>findViewById(layout, R.id.tv_article_title_left);
+                    findViewById(layout, R.id.tv_article_title_left);
 
             holder.articlePhotoLeft = UI.findViewById(layout, R.id.photo_left);
 
-            holder.magazineLikeLeft = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like_left);
+            holder.magazineLikeLeft = UI.findViewById(layout, R.id.cb_magazine_like_left);
 
-            holder.magazineAddLeft = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add_left);
+            holder.magazineAddLeft = UI.findViewById(layout, R.id.imv_magazine_add_left);
 
-            holder.magazineShareLeft = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share_left);
+            holder.magazineShareLeft = UI.findViewById(layout, R.id.imv_magazine_share_left);
 
-            holder.articleFollowLeft = UI.<Button>findViewById(layout, R.id.imv_magazine_follow_left);
+            holder.articleFollowLeft = UI.findViewById(layout, R.id.imv_magazine_follow_left);
 
             holder.articleTitleRight = UI.
-                    <TextView>findViewById(layout, R.id.tv_article_title_right);
+                    findViewById(layout, R.id.tv_article_title_right);
 
             holder.articlePhotoRight = UI.findViewById(layout, R.id.photo_right);
 
-            holder.magazineLikeRight = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like_right);
+            holder.magazineLikeRight = UI.findViewById(layout, R.id.cb_magazine_like_right);
 
-            holder.magazineAddRight = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add_right);
+            holder.magazineAddRight = UI.findViewById(layout, R.id.imv_magazine_add_right);
 
-            holder.magazineShareRight = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share_right);
+            holder.magazineShareRight = UI.findViewById(layout, R.id.imv_magazine_share_right);
 
-            holder.articleFollowRight = UI.<Button>findViewById(layout, R.id.imv_magazine_follow_right);
+            holder.articleFollowRight = UI.findViewById(layout, R.id.imv_magazine_follow_right);
 
-            holder.lvSuggestions = UI.<ListView>findViewById(layout, R.id.lv_suggestions);
+            holder.lvSuggestions = UI.findViewById(layout, R.id.lv_suggestions);
 
-            holder.tvFollowMoreTopics = UI.<TextView>findViewById(layout, R.id.tv_follow_more_topics);
+            holder.tvFollowMoreTopics = UI.findViewById(layout, R.id.tv_follow_more_topics);
 
-            holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
+            holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
 
-            holder.tvTopicNameTop = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic_top);
+            holder.tvTopicNameTop = UI.findViewById(layout, R.id.imv_magazine_topic_top);
 
-            holder.tvTopicNameLeft = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic_left);
+            holder.tvTopicNameLeft = UI.findViewById(layout, R.id.imv_magazine_topic_left);
 
-            holder.tvTopicNameRight = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic_right);
+            holder.tvTopicNameRight = UI.findViewById(layout, R.id.imv_magazine_topic_right);
 
-            holder.articleSummaryLeft = UI.<TextView>findViewById(layout, R.id.tv_article_short_desc_summary);
+            holder.articleSummaryLeft = UI.findViewById(layout, R.id.tv_article_short_desc_summary);
 
-            holder.articleSummaryRight = UI.<TextView>findViewById(layout, R.id.tv_article_short_desc_summary_right);
+            holder.articleSummaryRight = UI.findViewById(layout, R.id.tv_article_short_desc_summary_right);
 
             layout.setTag(holder);
         } else {
@@ -413,7 +413,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhoto != null) {
             ImageView photoView = holder.articlePhoto;
 
-            RelativeLayout rl = (UI.<RelativeLayout>findViewById(layout, R.id.rl_top));
+            RelativeLayout rl = (UI.findViewById(layout, R.id.rl_top));
             final float scale = context.getResources().getDisplayMetrics().density;
             int height;
             if (scale == 4.0) {

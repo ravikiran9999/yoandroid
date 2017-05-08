@@ -39,7 +39,7 @@ import java.io.FileOutputStream;
 public class ImageLoader {
 
     public interface ImageDownloadListener {
-        public void onDownlaoded(File file);
+        void onDownlaoded(File file);
     }
 
     public static void updateImage(final Context context, final ChatMessage item, String folderName, final ImageView imageView1, final ProgressBar progressBar) {

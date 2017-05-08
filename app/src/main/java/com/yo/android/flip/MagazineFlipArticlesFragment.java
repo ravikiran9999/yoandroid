@@ -396,7 +396,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
         currentFlippedPosition = position;
 
-        if (magazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition == magazineDashboardHelper.request * 100) {
+        if (MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition == MagazineDashboardHelper.request * 100) {
             getReadArticleIds();
             String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
             if (getActivity() != null) {

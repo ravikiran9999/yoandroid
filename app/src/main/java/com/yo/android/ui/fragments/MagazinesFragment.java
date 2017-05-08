@@ -285,13 +285,13 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
                 @Override
                 public boolean onMenuItemActionExpand(MenuItem item) {
-                    mMagazineFlipArticlesFragment.lastReadArticle = 0;
+                    MagazineFlipArticlesFragment.lastReadArticle = 0;
                     return true;
                 }
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
-                    mMagazineFlipArticlesFragment.lastReadArticle = 0;
+                    MagazineFlipArticlesFragment.lastReadArticle = 0;
                     mMagazineFlipArticlesFragment.refresh();
                     noSearchResults.setVisibility(View.GONE);
                     getActivity().invalidateOptionsMenu();
@@ -335,7 +335,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     List<String> tagIds = new ArrayList<String>();
                     tagIds.add(topicId);
                     if (mMagazineFlipArticlesFragment != null) {
-                        mMagazineFlipArticlesFragment.lastReadArticle = 0;
+                        MagazineFlipArticlesFragment.lastReadArticle = 0;
                         mMagazineFlipArticlesFragment.loadArticles(tagIds);
                     }
 
@@ -347,7 +347,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
-                        mMagazineFlipArticlesFragment.lastReadArticle = 0;
+                        MagazineFlipArticlesFragment.lastReadArticle = 0;
                         mMagazineFlipArticlesFragment.getLandingCachedArticles();
 
                     }
@@ -364,7 +364,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     if (mAdapter.getCount() > 0) {
 
                         Log.d("Search", "The selected item is " + mAdapter.getItem(0));
-                        String topicName = (String) mAdapter.getItem(0);
+                        String topicName = mAdapter.getItem(0);
                         searchTextView.setText(topicName);
                         searchTextView.setSelection(topicName.trim().length());
                         String topicId = "";
@@ -381,7 +381,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         List<String> tagIds = new ArrayList<String>();
                         tagIds.add(topicId);
                         if (mMagazineFlipArticlesFragment != null) {
-                            mMagazineFlipArticlesFragment.lastReadArticle = 0;
+                            MagazineFlipArticlesFragment.lastReadArticle = 0;
                             mMagazineFlipArticlesFragment.loadArticles(tagIds);
                         }
                     }

@@ -39,9 +39,9 @@ public class FireBaseAuthToken {
     private static FireBaseAuthToken fireBaseAuthToken;
 
     public interface FireBaseAuthListener {
-        public void onSuccess();
+        void onSuccess();
 
-        public void onFailed();
+        void onFailed();
 
     }
 

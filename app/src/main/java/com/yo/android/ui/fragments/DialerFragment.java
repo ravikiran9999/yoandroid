@@ -124,7 +124,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public static final int REFRESH_CALL_LOGS_TIME = 5000;
 
     public interface CallLogClearListener {
-        public void clear();
+        void clear();
     }
 
 

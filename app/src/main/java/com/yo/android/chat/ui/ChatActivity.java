@@ -57,7 +57,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
     private String title;
     private Room room;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
-    private Contact contactfromOpponent;
+    private Contact contactFromOpponent;
     private Contact mContact;
     private String groupName;
     private String chatRoomId;
@@ -173,7 +173,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
                     args.putString(Constants.OPPONENT_ID, contactId);
                     args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
                     args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
-                    args.putParcelable(Constants.CONTACT, contact);
+                    //args.putParcelable(Constants.CONTACT, contact);
                     callUserChat(args, userChatFragment);
                 }
 
@@ -187,10 +187,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
             }
 
             if (getIntent().hasExtra(Constants.VOX_USER_NAME)) {
-
                 opponent = getIntent().getStringExtra(Constants.VOX_USER_NAME);
                 args.putString(Constants.OPPONENT_PHONE_NUMBER, opponent);
             }
+
             chatRoomId = getIntent().getStringExtra(Constants.CHAT_ROOM_ID);
             if (chatRoomId != null && !TextUtils.isEmpty(chatRoomId)) {
                 args.putString(Constants.CHAT_ROOM_ID, chatRoomId);
@@ -219,19 +219,19 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
             final ImageView imageView = ButterKnife.findById(customView, R.id.imv_contact_pic);
 
             if (mContact != null) {
-                contactfromOpponent = mContact;
+                contactFromOpponent = mContact;
             } else if (groupName == null) {
-                contactfromOpponent = mContactsSyncManager.getContactByVoxUserName(opponent);
+                contactFromOpponent = mContactsSyncManager.getContactByVoxUserName(opponent);
             }
 
-            if (contactfromOpponent != null && !TextUtils.isEmpty(contactfromOpponent.getName())) {
-                title = contactfromOpponent.getName();
+            if (contactFromOpponent != null && !TextUtils.isEmpty(contactFromOpponent.getName())) {
+                title = contactFromOpponent.getName();
             } else if (room != null && !TextUtils.isEmpty(room.getFullName())) {
                 title = room.getFullName();
             } else if (groupName != null) {
                 title = groupName;
             } else if (opponent != null && opponent.contains(Constants.YO_USER)) {
-                title = Util.numberFromVoxFormat(opponent);
+                title = Util.numberFromNexgeFormat(opponent);
             }
 
             if (title != null) {
@@ -302,7 +302,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
     public void onClick(View v) {
         String opponentTrim = null;
         if (opponent != null && opponent.contains(Constants.YO_USER)) {
-            opponentTrim = Util.numberFromVoxFormat(opponent);
+            opponentTrim = Util.numberFromNexgeFormat(opponent);
         }
 
         Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
@@ -317,16 +317,17 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
         if (groupName != null) {
             intent.putExtra(Constants.CHAT_ROOM_ID, chatRoomId);
             intent.putExtra(Constants.GROUP_NAME, title);
-        } else {
+        } else if(room != null){
             intent.putExtra(Constants.VOX_USER_NAME, opponent);
-        }
-
-        if (room != null) {
             intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
             intent.putExtra(Constants.GROUP_NAME, room.getGroupName());
+        } else if(getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
+            intent.putExtra(Constants.VOX_USER_NAME, contactFromOpponent.getNexgieUserName());
+            intent.putExtra(Constants.CHAT_ROOM_ID, contactFromOpponent.getFirebaseRoomId());
         }
 
         intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
+
         startActivity(intent);
     }
 
@@ -336,7 +337,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
                 args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
             }
             userChatFragment.setArguments(args);
-
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(android.R.id.content, userChatFragment)
@@ -362,9 +362,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
         return null;
     }
 
-    private void clearNotification(String opponent) {
+    /*private void clearNotification(String opponent) {
         Util.cancelAllNotification(this);
-    }
+    }*/
 
     private Drawable loadAvatarImage(ImageView imageview, boolean isgroup) {
         if (imageview.getTag() != null) {

@@ -434,7 +434,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
             case Constants.ADD_IMAGE_CAPTURE:
                     try {
-                        String imagePath = cameraIntent.mFileTemp.getPath();
+                        String imagePath = ImagePickHelper.mFileTemp.getPath();
                         File file = new File(imagePath);
                         Uri uri = Uri.fromFile(file);
                         Bitmap bitmap = null;
