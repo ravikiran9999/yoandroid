@@ -48,7 +48,7 @@ public class EmojiconGridView{
 	        if (emojicons== null) {
 	            mData = People.DATA;
 	        } else {
-	            Object[] o = (Object[]) emojicons;
+	            Object[] o = emojicons;
 	            mData = Arrays.asList(o).toArray(new Emojicon[o.length]);
 	        }
 	        EmojiAdapter mAdapter = new EmojiAdapter(rootView.getContext(), mData);
