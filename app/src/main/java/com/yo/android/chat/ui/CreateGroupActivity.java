@@ -142,7 +142,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
             case Constants.ADD_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     try {
-                        String imagePath = cameraIntent.mFileTemp.getPath();
+                        String imagePath = ImagePickHelper.mFileTemp.getPath();
                         imgFile = new File(imagePath);
                         //new ImageLoader(groupImage, imgFile, this).execute();
                         Glide.with(this)

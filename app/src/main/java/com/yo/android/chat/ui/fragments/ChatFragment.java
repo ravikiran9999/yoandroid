@@ -478,7 +478,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                 if (contact != null && contact.getName() != null) {
                                     room.setFullName(contact.getName());
                                 } else if (contact == null && room != null) {
-                                    room.setFullName(room.getPhoneNumber());
+                                    //room.setFullName(room.getPhoneNumber());
+                                    room.setFullName(room.getMobileNumber()); // phone number with country code
                                 }
 
                                 arrayOfUsers.add(room);

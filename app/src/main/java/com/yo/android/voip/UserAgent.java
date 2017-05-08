@@ -45,7 +45,7 @@ public class UserAgent implements CallEvents {
 
     public UserAgent(Log log, SipManager manager, SipAudioCall call, Context context, Intent intent, SipProfile profile) {
         this.manager = manager;
-        this.call = call;
+        UserAgent.call = call;
         this.context = context;
         this.intent = intent;
         this.profile = profile;

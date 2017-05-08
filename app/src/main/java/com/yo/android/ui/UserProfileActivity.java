@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -7,10 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import com.yo.android.adapters.ProfileMembersAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.NonScrollListView;
-import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.GroupMembers;
 import com.yo.android.model.RoomInfo;
@@ -39,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,9 +47,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * Created by kalyani on 25/7/16.
- */
 public class UserProfileActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, ValueEventListener {
 
     private static final String TAG = UserProfileActivity.class.getSimpleName();
@@ -90,6 +84,39 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     @Inject
     FireBaseHelper fireBaseHelper;
+
+    public static void start(Activity activity, String opponentNumberTrim, String opponentNumber, String opponentImg, String opponentName, String fromChat, String chatRoomId) {
+        Intent intent = createIntent(activity, opponentNumberTrim, opponentNumber, opponentImg, opponentName, fromChat, chatRoomId);
+        activity.startActivity(intent);
+    }
+
+    public static void startGroup(Activity activity, String childRoomId, String roomType, String opponentImg, String opponentName, String fromChat) {
+        Intent intent = createGroupIntent(activity, childRoomId, roomType, opponentImg, opponentName, fromChat);
+        activity.startActivity(intent);
+    }
+
+    private static Intent createIntent(Activity activity, String opponentNumberTrim, String opponentNumber, String opponentImg, String opponentName, String fromChat, String chatRoomId) {
+        Intent intent = new Intent(activity, UserProfileActivity.class);
+        intent.putExtra(Constants.OPPONENT_NAME, opponentName);
+        intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
+        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumberTrim);
+        intent.putExtra(Constants.VOX_USER_NAME, opponentNumber);
+        intent.putExtra(Constants.FROM_CHAT_ROOMS, fromChat);
+        intent.putExtra(Constants.CHAT_ROOM_ID, chatRoomId);
+        return intent;
+    }
+
+    private static Intent createGroupIntent(Activity activity, String chatRoomId, String roomType, String opponentImg, String opponentName, String fromChat) {
+        Intent intent = new Intent(activity, UserProfileActivity.class);
+        intent.putExtra(Constants.GROUP_NAME, roomType);
+        intent.putExtra(Constants.OPPONENT_NAME, opponentName);
+        intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
+        intent.putExtra(Constants.CHAT_ROOM_ID, chatRoomId);
+        intent.putExtra(Constants.FROM_CHAT_ROOMS, fromChat);
+
+        return intent;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,11 +173,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
                 if (intent.hasExtra(Constants.CHAT_ROOM_ID)) {
                     String firebaseRoomId = intent.getStringExtra(Constants.CHAT_ROOM_ID);
-                    Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
-                    if (roomName != null) {
-                        roomInfo.addListenerForSingleValueEvent(this);
-                        roomInfo.keepSynced(true);
-                        profileCall.setVisibility(View.GONE);
+                    if (firebaseRoomId != null) {
+                        Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
+                        if (roomName != null) {
+                            roomInfo.addListenerForSingleValueEvent(this);
+                            roomInfo.keepSynced(true);
+                            profileCall.setVisibility(View.GONE);
+                        }
                     }
                 }
             }
@@ -200,11 +229,12 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             numberTitle.setText(title);
 
             if (mContact != null) {
-
-                if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !mContact.getName().replaceAll("\\s+", "").equalsIgnoreCase(mContact.getPhoneNo())) {
+                String numberTrim = numberFromNexgeFormat(mContact.getNexgieUserName(), mContact.getPhoneNo());
+                String mName = mContact.getName().replaceAll("\\s+", "");
+                if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
-                    profileName.setText(mContact.getName());
+                    profileName.setText(checkPlusSign(mContact.getName()));
                 } else {
                     cardView.setVisibility(View.GONE);
                 }
@@ -218,10 +248,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     profileNumber.setVisibility(View.GONE);
                 }
             } else if (contact != null) {
-                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !contact.getName().replaceAll("\\s+", "").equalsIgnoreCase(contact.getPhoneNo())) {
+                String numberTrim = numberFromNexgeFormat(contact.getNexgieUserName(), contact.getPhoneNo());
+                String mName = contact.getName().replaceAll("\\s+", "");
+                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
+
                     profileNameTitle.setText(name);
-                    profileName.setText(contact.getName());
+                    profileName.setText(checkPlusSign(contact.getName()));
                 } else {
                     cardView.setVisibility(View.GONE);
                 }
@@ -249,14 +282,16 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private void removeYoUserFromPhoneNumber(String countrycode, String phoneNo, TextView profileNumber) {
         String phoneNumber = phoneNo;
         if (phoneNumber != null && phoneNumber.contains(Constants.YO_USER)) {
-            try {
+            // Todo this logic is not executed
+            /*try {
                 phoneNumber = phoneNumber.substring(phoneNumber.indexOf(Constants.YO_USER) + 6, phoneNumber.length() - 1);
                 String finalNumber = countrycode == null ? phoneNumber : countrycode + phoneNumber;
                 profileNumber.setText(finalNumber);
             } catch (StringIndexOutOfBoundsException e) {
-            }
+            }*/
         } else if (phoneNumber != null) {
-            profileNumber.setText(phoneNumber);
+            String finalNumber = countrycode == null ? phoneNumber : countrycode + phoneNumber;
+            profileNumber.setText(checkPlusSign(finalNumber));
         }
     }
 
@@ -398,5 +433,28 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         }
 
         profileMembersAdapter.addItems(list);
+    }
+
+    private String checkPlusSign(String phoneNumber) {
+        if (TextUtils.isDigitsOnly(phoneNumber)) {
+            return phoneNumber.startsWith("+") ? phoneNumber : String.format(getResources().getString(R.string.plus_number), phoneNumber);
+        } else {
+            return phoneNumber;
+        }
+    }
+
+    private boolean isSame(String name, String phoneNumber) {
+        if (TextUtils.isDigitsOnly(phoneNumber) && !phoneNumber.startsWith("+")) {
+            return name.equalsIgnoreCase(String.format(getResources().getString(R.string.plus_number), phoneNumber));
+        } else if (TextUtils.isDigitsOnly(name) && !name.startsWith("+")) {
+            return String.format(getResources().getString(R.string.plus_number), name).equalsIgnoreCase(phoneNumber);
+        } else {
+            return name.equalsIgnoreCase(phoneNumber);
+        }
+    }
+
+    private String numberFromNexgeFormat(String nexgeFormat, String phoneNumber) {
+        String number = nexgeFormat != null ? nexgeFormat : phoneNumber;
+        return Util.numberFromNexgeFormat(number);
     }
 }

@@ -305,7 +305,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/user/other_user_info.json")
-        Call<YOUserInfo> getYOUserInfoBYYOName(@Field("vox_user_name") String vox_user_name);
+        Call<YOUserInfo> getYOUserInfoBYYOName(@Field("nexge_subscriber_username") String vox_user_name);
 
         @FormUrlEncoded
         @POST("api/tags/{ID}/filtered_articles.json")

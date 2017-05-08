@@ -303,22 +303,22 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 holder = new ViewHolder();
 
                 holder.articleTitle = UI.
-                        <TextView>findViewById(layout, R.id.tv_article_title);
+                        findViewById(layout, R.id.tv_article_title);
 
                 holder.articleShortDesc = UI
-                        .<TextView>findViewById(layout, R.id.tv_article_short_desc);
+                        .findViewById(layout, R.id.tv_article_short_desc);
 
                 holder.articlePhoto = UI.findViewById(layout, R.id.photo);
 
-                holder.magazineLike = UI.<CheckBox>findViewById(layout, R.id.cb_magazine_like);
+                holder.magazineLike = UI.findViewById(layout, R.id.cb_magazine_like);
 
-                holder.magazineAdd = UI.<ImageView>findViewById(layout, R.id.imv_magazine_add);
+                holder.magazineAdd = UI.findViewById(layout, R.id.imv_magazine_add);
 
-                holder.magazineShare = UI.<ImageView>findViewById(layout, R.id.imv_magazine_share);
+                holder.magazineShare = UI.findViewById(layout, R.id.imv_magazine_share);
 
-                holder.articleFollow = UI.<Button>findViewById(layout, R.id.imv_magazine_follow);
+                holder.articleFollow = UI.findViewById(layout, R.id.imv_magazine_follow);
 
-                holder.tvTopicName = UI.<TextView>findViewById(layout, R.id.imv_magazine_topic);
+                holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
 
                 layout.setTag(holder);
             } else {
@@ -441,7 +441,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             ImageView photoView = holder.articlePhoto;
 
-            RelativeLayout rl = (UI.<RelativeLayout>findViewById(layout, R.id.rl_top));
+            RelativeLayout rl = (UI.findViewById(layout, R.id.rl_top));
             final float scale = context.getResources().getDisplayMetrics().density;
             int height;
             if (scale == 4.0) {

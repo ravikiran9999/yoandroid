@@ -22,9 +22,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.SparseArray;
 import android.util.SparseBooleanArray;
-import android.util.SparseIntArray;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -111,7 +109,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     private static final String TAG = "UserChatFragment";
     private static final String DummyMsgKey = "123456";
-    private static final String ServerTimeStamp = "serverTimeStamp";
 
     private UserChatAdapter userChatAdapter;
     private ArrayList<ChatMessage> chatMessageArray;
@@ -138,7 +135,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private EmojiconsPopup popup;
     private int roomCreationProgress = 0;
     private String opponentImg;
-    private Contact mContact;
     private int retryMessageCount = 0;
     private int falureCount = 0;
 
@@ -186,7 +182,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         mobileNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
-        mContact = bundle.getParcelable(Constants.CONTACT);
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
@@ -374,11 +369,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     case R.id.copy:
                         StringBuilder builder = new StringBuilder();
                         selected = userChatAdapter.getSelectedIds();
-                        if (selected.size() > 1) {
-                            Toast.makeText(getActivity(), selected.size() + " " + getString(R.string.copy_messages), Toast.LENGTH_SHORT).show();
-                        } else if (selected.size() == 1) {
-                            Toast.makeText(getActivity(), getString(R.string.copy_message), Toast.LENGTH_SHORT).show();
-                        }
+
+                        Toast.makeText(getActivity(), getResources().getQuantityString(R.plurals.copy_message, selected.size(), selected.size()), Toast.LENGTH_SHORT).show();
 
                         for (int i = 0; i < selected.size(); i++) {
                             if (selected.valueAt(i)) {
@@ -508,30 +500,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void viewContact() {
-        String opponentNumberTrim = null;
-        Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-
-        if (opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
-            opponentNumberTrim = Util.numericValueFromString(opponentNumberTrim);
-        }
-
-        if (opponentNumberTrim != null && TextUtils.isDigitsOnly(opponentNumberTrim)) {
-            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentNumberTrim);
-        }
-
-        intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, opponentImg);
-        intent.putExtra(Constants.OPPONENT_NAME, opponentName);
-        intent.putExtra(Constants.FROM_CHAT_ROOMS, Constants.FROM_CHAT_ROOMS);
-
 
         if (roomType != null) {
-            intent.putExtra(Constants.CHAT_ROOM_ID, childRoomId);
-            intent.putExtra(Constants.GROUP_NAME, roomType);
-        } else {
-            intent.putExtra(Constants.VOX_USER_NAME, opponentNumber);
+            UserProfileActivity.startGroup(getActivity(), childRoomId, roomType, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS);
+        } else if(opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
+            String opponentNumberTrim = Util.numberFromNexgeFormat(opponentNumber);
+            UserProfileActivity.start(getActivity(), opponentNumberTrim, opponentNumber, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS, null);
         }
-
-        startActivity(intent);
     }
 
     private void sendChatMessage(String chatMessage, String type) {
@@ -1017,6 +992,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         forwardInt = 0;
     }
 
+    // Todo remove this method as we are not creating
     private void createRoom(final String message, final ChatMessage chatMessage) {
         String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         List<String> selectedUsers = new ArrayList<>();
@@ -1142,4 +1118,3 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
     }
 }
-

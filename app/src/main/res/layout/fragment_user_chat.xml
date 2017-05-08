@@ -1,117 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/activity_main"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/background"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-
-            <TextView
-                android:id="@+id/no_chat_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:padding="8dp"
-                android:textColor="@color/tab_grey"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:visibility="invisible" />
-
-            <se.emilsjolander.stickylistheaders.StickyListHeadersListView
-                android:id="@+id/listView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/time_stamp_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/msg_out_photo"
-                android:gravity="center"
-                android:padding="8dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:visibility="gone" />
-        </FrameLayout>
-
-        <LinearLayout
-            android:id="@+id/edit_text_layout"
+        <TextView
+            android:id="@+id/no_chat_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="2dp"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/tab_grey"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="invisible" />
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+        <se.emilsjolander.stickylistheaders.StickyListHeadersListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/time_stamp_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/msg_out_photo"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/edit_text_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/grey_divider">
+
+            <github.ankushsachdeva.emojicon.EmojiconEditText
+                android:id="@+id/chat_text"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/grey_divider">
-
-                <github.ankushsachdeva.emojicon.EmojiconEditText
-                    android:id="@+id/chat_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/cameraView"
-                    android:layout_toRightOf="@+id/emojiView"
-                    android:background="@color/grey_divider"
-                    android:ems="10"
-                    android:hint="@string/type_a_message"
-                    android:inputType="textCapSentences|textMultiLine"
-                    android:maxHeight="100dp"
-                    android:minHeight="50dp"
-                    android:padding="10dp"
-                    android:scrollbars="vertical"
-                    android:textSize="14sp"
-                    emojicon:emojiconSize="28sp"
-                    />
-
-                <ImageView
-                    android:id="@+id/emojiView"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignBottom="@+id/chat_text"
-                    android:layout_alignTop="@+id/chat_text"
-                    android:padding="10dp"
-                    android:scaleType="fitEnd"
-                    android:src="@drawable/ic_emoji" />
-
-                <ImageView
-                    android:id="@+id/cameraView"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignBottom="@+id/chat_text"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignTop="@+id/chat_text"
-                    android:padding="10dp"
-                    android:scaleType="fitEnd"
-                    android:src="@drawable/ic_photo" />
-            </RelativeLayout>
+                android:layout_toLeftOf="@+id/cameraView"
+                android:layout_toRightOf="@+id/emojiView"
+                android:background="@color/grey_divider"
+                android:ems="10"
+                android:hint="@string/type_a_message"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxHeight="100dp"
+                android:minHeight="50dp"
+                android:padding="10dp"
+                android:scrollbars="vertical"
+                android:textSize="14sp"
+                emojicon:emojiconSize="28sp" />
 
             <ImageView
-                android:id="@+id/send"
+                android:id="@+id/emojiView"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_gravity="bottom"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_send" />
+                android:layout_alignBottom="@+id/chat_text"
+                android:layout_alignTop="@+id/chat_text"
+                android:padding="10dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/ic_emoji" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/cameraView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignBottom="@+id/chat_text"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/chat_text"
+                android:padding="10dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/ic_photo" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_send" />
 
     </LinearLayout>
-</RelativeLayout>
+
+</LinearLayout>

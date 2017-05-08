@@ -184,7 +184,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                         ((BaseActivity) context).dismissProgressDialog();
-                                        if ((BaseActivity) context instanceof FollowingsActivity) {
+                                        if (context instanceof FollowingsActivity) {
                                             removeItem(item);
                                             if (getOriginalListCount() == 0) {
                                                 ((FollowingsActivity) context).showEmptyDataScreen();

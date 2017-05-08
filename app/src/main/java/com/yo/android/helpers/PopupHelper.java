@@ -187,7 +187,6 @@ public class PopupHelper {
             case YOCREDIT:
                 if (!TextUtils.isEmpty(p.getData().getLive_to())) {
                     String liveToTime6 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
-                    ;
                     Date liveToDate = Util.convertUtcToGmt(liveToTime6);
                     long currentTime = System.currentTimeMillis();
                     Date currentDate = new Date(currentTime);
