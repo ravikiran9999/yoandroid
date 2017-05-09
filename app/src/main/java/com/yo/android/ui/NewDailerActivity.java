@@ -148,7 +148,7 @@ public class NewDailerActivity extends BaseActivity {
             public void onClick(View v) {
                 if (!BuildConfig.DISABLE_ADD_BALANCE) {
                     Intent intent = new Intent(NewDailerActivity.this, TabsHeaderActivity.class);
-                    intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
+                   // intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
                     startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
                 } else {
                     mToastFactory.showToast(R.string.disabled);

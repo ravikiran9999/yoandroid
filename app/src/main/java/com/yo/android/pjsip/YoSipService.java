@@ -542,7 +542,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         AccountConfig accCfg = new AccountConfig();
         accCfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
         accCfg.setIdUri("sip:localhost");
-        accCfg.getNatConfig().setIceEnabled(true);
+        accCfg.getNatConfig().setIceEnabled(false);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
         accCfg.getVideoConfig().setAutoShowIncoming(true);
         if (myApp == null) {
@@ -621,7 +621,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
 
 		/* Enable ICE */
-        accCfg.getNatConfig().setIceEnabled(true);
+        accCfg.getNatConfig().setIceEnabled(false);
     }
 
     public void makeCall(String destination, Bundle options, Intent intent) {
@@ -729,7 +729,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                             callModel.setEvent(SipCallModel.RECONNECTING);
                             EventBus.getDefault().post(callModel);
                         }
-                        if (count > 300) {
+                        if (count > 600) {
                             if (currentCall != null) {
                                 hangupCall(callType);
                             }
@@ -803,28 +803,35 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         CallOpParam prm = new CallOpParam();
         localHold = isHold;
         if (isHold) {
-            mToastFactory.showToast(R.string.hold);
-
             if (currentCall != null) {
-                try {
-                    CallSetting opt = prm.getOpt();
-                    opt.setFlag(pjsua_call_flag.PJSUA_CALL_UPDATE_CONTACT.swigValue());
-                    currentCall.setHold(prm);
-                } catch (Exception e) {
-                    mLog.w(TAG, e);
-                }
+                mToastFactory.showToast(R.string.hold);
+                holdCall();
             }
         } else {
             if (currentCall != null) {
-                try {
-                    CallSetting opt = prm.getOpt();
-                    opt.setFlag(pjsua_call_flag.PJSUA_CALL_UNHOLD.swigValue());
-                    currentCall.reinvite(prm);
-                    mToastFactory.showToast(R.string.unhold);
-                } catch (Exception e) {
-                    mLog.w(TAG, e);
-                }
+                mToastFactory.showToast(R.string.unhold);
+                unHoldCall();
             }
+        }
+    }
+
+    public void holdCall() {
+        CallOpParam prm = new CallOpParam(true);
+
+        try {
+            currentCall.setHold(prm);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void unHoldCall() {
+        CallOpParam prm = new CallOpParam(true);
+        prm.getOpt().setFlag(1);
+        try {
+            currentCall.reinvite(prm);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
