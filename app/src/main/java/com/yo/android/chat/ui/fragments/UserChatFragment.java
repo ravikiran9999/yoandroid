@@ -72,6 +72,7 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
+import com.yo.android.model.Share;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.ShowPhotoActivity;
@@ -137,6 +138,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String opponentImg;
     private int retryMessageCount = 0;
     private int falureCount = 0;
+    private Share share;
+
 
     @Bind(R.id.emojiView)
     ImageView emoji;
@@ -184,6 +187,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
+        share = bundle.getParcelable(Constants.CHAT_SHARE);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         chatMessageArray = new ArrayList<>();
@@ -264,6 +268,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         if ((childRoomId == null) && (chatForwards != null)) {
             createRoom("Message", null);
+        }
+
+        if(share != null && share.getType().equals(Constants.IMAGE)) {
+            addSelectPicture(share.getUri());
+        } else if(share != null && share.getType().equals(Constants.TEXT)) {
+            sendChatMessage(share.getText(), share.getType());
         }
 
         return view;
@@ -697,7 +707,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             case ADD_SELECT_PICTURE:
                 if (data != null) {
-                    addSelectPicture(data);
+                    addSelectPicture(data.getData());
                 }
 
                 break;
@@ -706,8 +716,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    private void addSelectPicture(Intent data) {
-        Uri targetUri = data.getData();
+    private void addSelectPicture(Uri targetUri) {
+        //Uri targetUri = data.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         try {
             Cursor cursor = getActivity().getContentResolver().query(targetUri,
