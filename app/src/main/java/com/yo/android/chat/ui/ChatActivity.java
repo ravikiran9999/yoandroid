@@ -348,10 +348,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
 
     private void callUserChat(Bundle args, UserChatFragment userChatFragment) {
         try {
+            Share share = getIntent().getParcelableExtra(Constants.CHAT_SHARE);
             if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
                 args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
-            } else if (getIntent().getParcelableExtra(Constants.CHAT_SHARE) != null) {
-                args.putParcelable(Constants.CHAT_SHARE, getIntent().getParcelableExtra(Constants.CHAT_SHARE));
+            } else if (share != null) {
+                args.putParcelable(Constants.CHAT_SHARE, share);
             }
             userChatFragment.setArguments(args);
             getSupportFragmentManager()

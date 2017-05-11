@@ -18,6 +18,7 @@ public class Constants {
     public static final String LOGED_IN_USER_ID = "logedInUserId";
     public static final String TYPE = "type";
     public static final String TEXT = "text";
+    public static final String TEXT_PLAIN = "text/plain";
     public static final String IMAGE = "image";
     public static final String PHOTO = "Photo";
     public static final String IMAGE_PATH = "image_path";

@@ -263,6 +263,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             if (chatForwards != null) {
                 forwardInt = chatForwards.size() + 1;
                 receiveForward(chatForwards);
+            }else if(share != null && share.getType().equals(Constants.IMAGE)) {
+                addSelectPicture(share.getUri());
+            } else if(share != null && share.getType().equals(Constants.TEXT)) {
+                sendChatMessage(share.getText(), share.getType());
             }
         }
 
@@ -270,11 +274,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             createRoom("Message", null);
         }
 
-        if(share != null && share.getType().equals(Constants.IMAGE)) {
-            addSelectPicture(share.getUri());
-        } else if(share != null && share.getType().equals(Constants.TEXT)) {
-            sendChatMessage(share.getText(), share.getType());
-        }
+
 
         return view;
     }

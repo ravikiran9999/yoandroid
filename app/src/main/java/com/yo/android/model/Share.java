@@ -56,7 +56,7 @@ public class Share implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(text);
-        dest.writeString(text);
+        dest.writeString(type);
         dest.writeParcelable(uri, flags);
     }
 
