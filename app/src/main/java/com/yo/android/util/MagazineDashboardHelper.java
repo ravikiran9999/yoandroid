@@ -2,6 +2,7 @@ package com.yo.android.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -101,7 +102,7 @@ public class MagazineDashboardHelper {
     }
 
     public List<Articles> removeReadIds(List<Articles> totalArticles, Context context, final PreferenceEndPoint preferenceEndPoint) {
-        List<Articles> tempArticlesList = new ArrayList<Articles>(totalArticles);
+        List<Articles> tempArticlesList = new ArrayList<>(totalArticles);
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         if (context != null) {
             String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
@@ -124,13 +125,15 @@ public class MagazineDashboardHelper {
         return totalArticles;
     }
 
-    public void getMoreDashboardArticles(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds) {
+    public void getMoreDashboardArticles(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final SwipeRefreshLayout swipeRefreshContainer) {
         if (magazineFlipArticlesFragment != null) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
-
+                    if(swipeRefreshContainer != null) {
+                        swipeRefreshContainer.setRefreshing(false);
+                    }
                     if (magazineFlipArticlesFragment.mProgress != null) {
                         magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                     }

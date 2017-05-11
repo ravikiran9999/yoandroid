@@ -3,6 +3,7 @@ package com.yo.android.ui;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -28,13 +29,23 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MyCollections extends BaseActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
+public class MyCollections extends BaseActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
+    @Bind(R.id.create_magazines_gridview)
+    protected GridView gridView;
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchFound;
+    @Bind(R.id.swipeContainer)
+    protected SwipeRefreshLayout swipeRefreshContainer;
+
+    protected SearchView searchView;
     @Inject
     YoApi.YoService yoService;
 
@@ -43,16 +54,14 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     protected PreferenceEndPoint preferenceEndPoint;
     MyCollectionsAdapter myCollectionsAdapter;
     private boolean contextualMenu;
-    private GridView gridView;
-    private SearchView searchView;
 
-    protected TextView noSearchFound;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_magazine);
-
+        ButterKnife.bind(this);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -60,16 +69,31 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
         getSupportActionBar().setTitle(title);
 
-        gridView = (GridView) findViewById(R.id.create_magazines_gridview);
-        noSearchFound = (TextView) findViewById(R.id.no_search_results);
 
         myCollectionsAdapter = new MyCollectionsAdapter(MyCollections.this);
-        showProgressDialog();
+
+        myCollections(null);
+        swipeRefreshContainer.setOnRefreshListener(this);
+        gridView.setOnItemLongClickListener(this);
+        gridView.setOnItemClickListener(this);
+    }
+
+    private void myCollections(final SwipeRefreshLayout swipeRefreshContainer) {
+        if(swipeRefreshContainer != null) {
+            swipeRefreshContainer.setRefreshing(false);
+        } else {
+            showProgressDialog();
+        }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
-                dismissProgressDialog();
+
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
                 final List<Collections> collectionsList = new ArrayList<Collections>();
                 Collections collections = new Collections();
                 collections.setName("Follow more topics");
@@ -86,11 +110,13 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
             @Override
             public void onFailure(Call<List<Collections>> call, Throwable t) {
-                dismissProgressDialog();
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
             }
         });
-        gridView.setOnItemLongClickListener(this);
-        gridView.setOnItemClickListener(this);
     }
 
     @Override
@@ -425,5 +451,10 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 }
             });
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        myCollections(swipeRefreshContainer);
     }
 }

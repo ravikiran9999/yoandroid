@@ -344,18 +344,20 @@ public class CallLog {
          * string if none exist yet.
          */
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getCallLog(Context context) {
-            final ContentResolver resolver = context.getContentResolver();
-            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
 
+            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
             LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
             Cursor c = null;
-            try {
+            if (context != null) {
+                final ContentResolver resolver = context.getContentResolver();
                 c = resolver.query(
                         CONTENT_URI,
                         null,
                         null,
                         null,
                         DEFAULT_SORT_ORDER);
+            }
+            try {
                 if (c == null || !c.moveToFirst()) {
                     return callerInfos;
                 } else {
@@ -401,18 +403,19 @@ public class CallLog {
          * string if none exist yet.
          */
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getPSTNCallLog(Context context) {
-            final ContentResolver resolver = context.getContentResolver();
             ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
             LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
-
             Cursor c = null;
-            try {
+            if (context != null) {
+                final ContentResolver resolver = context.getContentResolver();
                 c = resolver.query(
                         CONTENT_URI,
                         null,
                         Calls.APP_OR_PSTN + " = " + APP_TO_PSTN_CALL,
                         null,
                         DEFAULT_SORT_ORDER);
+            }
+            try {
                 if (c == null || !c.moveToFirst()) {
                     return callerInfos;
                 } else {
@@ -458,17 +461,20 @@ public class CallLog {
          * string if none exist yet.
          */
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getAppToAppCallLog(Context context) {
-            final ContentResolver resolver = context.getContentResolver();
+            Cursor c = null;
             ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<>();
             LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
-            Cursor c = null;
-            try {
+
+            if (context != null) {
+                final ContentResolver resolver = context.getContentResolver();
                 c = resolver.query(
                         CONTENT_URI,
                         null,
                         Calls.APP_OR_PSTN + " = " + APP_TO_APP_CALL,
                         null,
                         DEFAULT_SORT_ORDER);
+            }
+            try {
                 if (c == null || !c.moveToFirst()) {
                     return callerInfos;
                 } else {
@@ -537,7 +543,7 @@ public class CallLog {
                     return imageCursor.getString(0);
                 }
                 return null;
-            }finally {
+            } finally {
                 if (imageCursor != null && !imageCursor.isClosed()) {
                     imageCursor.close();
                 }
