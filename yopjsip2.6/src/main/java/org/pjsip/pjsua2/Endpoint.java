@@ -187,7 +187,6 @@ public class Endpoint {
   }
 
   public void transportSetEnable(int id, boolean enabled) throws java.lang.Exception {
-    pjsua2JNI.Endpoint_transportSetEnable(swigCPtr, this, id, enabled);
   }
 
   public void transportClose(int id) throws java.lang.Exception {

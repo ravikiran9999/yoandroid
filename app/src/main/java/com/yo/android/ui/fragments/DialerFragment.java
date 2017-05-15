@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.app.ListNets;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
@@ -47,6 +49,7 @@ import com.yo.android.vox.VoxFactory;
 
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -137,6 +140,11 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        try {
+            ListNets.main(null);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
         bus.register(this);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<ResponseBody>() {
@@ -288,10 +296,13 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void loadCallLogs() {
         appCalls.clear();
         paidCalls.clear();
-        appCalls = CallLog.Calls.getAppToAppCallLog(getActivity());
-        paidCalls = CallLog.Calls.getPSTNCallLog(getActivity());
-        showEmptyText();
-        showDataOnFilter();
+        FragmentActivity activity = getActivity();
+        if(activity !=null) {
+            appCalls = CallLog.Calls.getAppToAppCallLog(activity);
+            paidCalls = CallLog.Calls.getPSTNCallLog(activity);
+            showEmptyText();
+            showDataOnFilter();
+        }
     }
 
     private void showDataOnFilter() {

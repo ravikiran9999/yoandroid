@@ -76,6 +76,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         return R.layout.dialer_calllogs_list_item;
     }
 
+
     @Override
     public CallLogsViewHolder getViewHolder(View convertView) {
         return new CallLogsViewHolder(convertView);
@@ -86,13 +87,23 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         Drawable drawable = null;
 
         String destination_name = item.getValue().get(0).getDestination_name();
+
+        try {
+            if (item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_APP_CALL) {
+                holder.getCallIcon().setImageResource(R.drawable.yo_call_free);
+            } else {
+                holder.getCallIcon().setImageResource(R.drawable.ic_receiver);
+            }
+        } catch (Exception e) {
+
+        }
         String formattedString = destination_name;
 
         holder.getInfo().setVisibility(View.VISIBLE);
         holder.getMessageIcon().setVisibility(View.VISIBLE);
         if (destination_name != null && destination_name.length() >= 1) {
 
-            String numericValue = Util.numericValueFromString(mContext,formattedString);
+            String numericValue = Util.numericValueFromString(mContext, formattedString);
             holder.getOpponentName().setText(numericValue);
 
             String title = String.valueOf(destination_name.charAt(0)).toUpperCase();

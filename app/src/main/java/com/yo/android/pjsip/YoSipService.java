@@ -556,6 +556,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
 
+
                 .withUserName(username == null ? "" : username)
                 //.withUserName(username == null ? "" : "64728474")
                 //.withUserName(username == null ? "" : "7032427")
@@ -799,18 +800,45 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         return domain;
     }
 
+
     public void setHoldCall(boolean isHold) {
-        CallOpParam prm = new CallOpParam();
-        localHold = isHold;
         if (isHold) {
+            mToastFactory.showToast(R.string.hold);
+            getMediaManager().setMicrophoneMuteOn(true);
+            try {
+                if (mRingTone != null && mRingTone.isPlaying()) {
+                    mRingTone.pause();
+                    mVibrator.cancel();
+                }
+            } catch (IllegalStateException e) {
+                mLog.w(TAG, e);
+            }
             if (currentCall != null) {
-                mToastFactory.showToast(R.string.hold);
-                holdCall();
+                CallOpParam prm = new CallOpParam(true);
+                try {
+                    currentCall.setHold(prm);
+                } catch (Exception e) {
+                    mLog.w(TAG, e);
+                }
             }
         } else {
             if (currentCall != null) {
-                mToastFactory.showToast(R.string.unhold);
-                unHoldCall();
+                CallOpParam prm = new CallOpParam(true);
+                prm.getOpt().setFlag(1);
+                getMediaManager().setMicrophoneMuteOn(false);
+                try {
+                    if (currentCall.getInfo() != null
+                            && currentCall.getInfo().getState() != pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+                        if (mRingTone != null) {
+                            mRingTone.start();
+                            mVibrator.vibrate(VIBRATOR_PATTERN, 0);
+                        }
+                    }
+                    currentCall.reinvite(prm);
+                    mToastFactory.showToast(R.string.unhold);
+                } catch (Exception e) {
+                    mLog.w(TAG, e);
+                }
             }
         }
     }
@@ -1058,17 +1086,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
             mEndpoint.libStart();
-            CodecInfoVector vector = mEndpoint.codecEnum();
-            for (int index = 0; index < vector.size(); index++) {
-                android.util.Log.e(TAG, "Codec " + vector.get(index).getCodecId());
-            }
-            mEndpoint.codecSetPriority("PCMA/8000", (short) (CodecPriority.PRIORITY_MAX - 2));
-            mEndpoint.codecSetPriority("PCMU/8000", (short) (CodecPriority.PRIORITY_MAX - 1));
-            mEndpoint.codecSetPriority("speex/8000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("speex/16000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("speex/32000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("GSM/8000", (short) CodecPriority.PRIORITY_DISABLED);
-            mEndpoint.codecSetPriority("G722/16000", (short) CodecPriority.PRIORITY_DISABLED);
+
+            mEndpoint.codecSetPriority("PCMA/8000", (short) 128);
+            mEndpoint.codecSetPriority("PCMU/8000", (short) 128);
+            mEndpoint.codecSetPriority("G722/8000", (short) 0);
+
 
 
             Logger.warn("PJSIP started!");
