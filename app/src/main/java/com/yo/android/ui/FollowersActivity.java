@@ -2,6 +2,7 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,28 +22,39 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FollowersActivity extends BaseActivity {
+public class FollowersActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+
+    @Bind(R.id.lv_find_people)
+    protected ListView lvFindPeople;
+    @Bind(R.id.no_search_results)
+    protected TextView noData;
+    @Bind(R.id.ll_no_people)
+    protected LinearLayout llNoPeople;
+    @Bind(R.id.imv_empty_followings)
+    protected ImageView imvEmptyFollowers;
+    @Bind(R.id.network_failure)
+    protected TextView networkFailureText;
+    @Bind(R.id.swipeContainer)
+    protected SwipeRefreshLayout swipeRefreshContainer;
+
+    public boolean isNetworkFailure;
+    private FindPeopleAdapter findPeopleAdapter;
+    public boolean isEmptyDataSet;
 
     @Inject
     YoApi.YoService yoService;
-    private ListView lvFindPeople;
-    private FindPeopleAdapter findPeopleAdapter;
-    private TextView noData;
-    private LinearLayout llNoPeople;
-    private ImageView imvEmptyFollowers;
-    public boolean isEmptyDataSet;
-    private TextView networkFailureText;
-    public boolean isNetworkFailure;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_people);
-
+        ButterKnife.bind(this);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -51,15 +63,33 @@ public class FollowersActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         findPeopleAdapter = new FindPeopleAdapter(this);
-        lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
-        noData = (TextView) findViewById(R.id.no_search_results);
-        llNoPeople = (LinearLayout) findViewById(R.id.ll_no_people);
-        imvEmptyFollowers = (ImageView) findViewById(R.id.imv_empty_followings);
         imvEmptyFollowers.setImageResource(R.drawable.ic_empty_followers);
-        networkFailureText = (TextView) findViewById(R.id.network_failure);
         lvFindPeople.setAdapter(findPeopleAdapter);
+        swipeRefreshContainer.setOnRefreshListener(this);
+        followers(null);
+        lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent otherProfileIntent = new Intent(FollowersActivity.this, OthersProfileActivity.class);
+                otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
+                otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
+                otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
+                otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
+                otherProfileIntent.putExtra("MagazinesCount", findPeopleAdapter.getItem(position).getMagzinesCount());
+                otherProfileIntent.putExtra("FollowersCount", findPeopleAdapter.getItem(position).getFollowersCount());
+                otherProfileIntent.putExtra("LikedArticlesCount", findPeopleAdapter.getItem(position).getLikedArticlesCount());
+                startActivityForResult(otherProfileIntent, 9);
+            }
+        });
 
-        showProgressDialog();
+    }
+
+    private void followers(final SwipeRefreshLayout swipeRefreshContainer) {
+        if(swipeRefreshContainer != null) {
+            swipeRefreshContainer.setRefreshing(false);
+        } else {
+            showProgressDialog();
+        }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
             @Override
@@ -81,12 +111,21 @@ public class FollowersActivity extends BaseActivity {
                     isEmptyDataSet = true;
                     isNetworkFailure = false;
                 }
-                dismissProgressDialog();
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
+
             }
 
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
-                dismissProgressDialog();
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
                 noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.GONE);
                 lvFindPeople.setVisibility(View.GONE);
@@ -95,22 +134,6 @@ public class FollowersActivity extends BaseActivity {
                 isNetworkFailure = true;
             }
         });
-
-        lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent otherProfileIntent = new Intent(FollowersActivity.this, OthersProfileActivity.class);
-                otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
-                otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
-                otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
-                otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
-                otherProfileIntent.putExtra("MagazinesCount", findPeopleAdapter.getItem(position).getMagzinesCount());
-                otherProfileIntent.putExtra("FollowersCount", findPeopleAdapter.getItem(position).getFollowersCount());
-                otherProfileIntent.putExtra("LikedArticlesCount", findPeopleAdapter.getItem(position).getLikedArticlesCount());
-                startActivityForResult(otherProfileIntent, 9);
-            }
-        });
-
     }
 
     @Override
@@ -131,7 +154,7 @@ public class FollowersActivity extends BaseActivity {
                 yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
                     @Override
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                        if (response!=null && response.body()!=null && response.body().size() > 0) {
+                        if (response != null && response.body() != null && response.body().size() > 0) {
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.GONE);
                             lvFindPeople.setVisibility(View.VISIBLE);
@@ -166,5 +189,10 @@ public class FollowersActivity extends BaseActivity {
             }
 
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        followers(swipeRefreshContainer);
     }
 }

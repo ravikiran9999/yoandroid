@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -31,32 +32,43 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FindPeopleActivity extends BaseActivity {
+public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    private ListView lvFindPeople;
+    @Bind(R.id.lv_find_people)
+    protected ListView lvFindPeople;
+    @Bind(R.id.no_data)
+    protected TextView noData;
+    @Bind(R.id.ll_no_people)
+    protected LinearLayout llNoPeople;
+    @Bind(R.id.imv_empty_followings)
+    protected ImageView imvEmptyFindPeople;
+    @Bind(R.id.network_failure)
+    protected TextView networkFailureText;
+    @Bind(R.id.swipeContainer)
+    protected SwipeRefreshLayout swipeRefreshContainer;
+
     private FindPeopleAdapter findPeopleAdapter;
-    @Inject
-    YoApi.YoService yoService;
     private int pageCount = 1;
-    private TextView noData;
-    private LinearLayout llNoPeople;
     private List<FindPeople> originalList;
     private Menu menu1;
     private int pos;
     private SearchView searchView;
     private Call<List<FindPeople>> call;
-    private ImageView imvEmptyFindPeople;
-    private TextView networkFailureText;
+
+    @Inject
+    YoApi.YoService yoService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_people);
-
+        ButterKnife.bind(this);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -65,16 +77,11 @@ public class FindPeopleActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         findPeopleAdapter = new FindPeopleAdapter(this);
-        lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
-        noData = (TextView) findViewById(R.id.no_data);
-        llNoPeople = (LinearLayout) findViewById(R.id.ll_no_people);
         lvFindPeople.setAdapter(findPeopleAdapter);
         lvFindPeople.setOnScrollListener(onScrollListener());
-        imvEmptyFindPeople = (ImageView) findViewById(R.id.imv_empty_followings);
         imvEmptyFindPeople.setImageResource(R.drawable.ic_empty_find_people);
-        networkFailureText = (TextView) findViewById(R.id.network_failure);
         originalList = new ArrayList<>();
-
+        swipeRefreshContainer.setOnRefreshListener(this);
         lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -98,22 +105,30 @@ public class FindPeopleActivity extends BaseActivity {
         if(searchView != null) {
             if (searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                 pageCount = 1;
-                callFindPeopleService();
+                callFindPeopleService(null);
             } else {
                 callSearchingService(searchView.getQuery().toString());
             }
         } else {
-            callFindPeopleService();
+            callFindPeopleService(null);
         }
     }
 
-    private void callFindPeopleService() {
-        showProgressDialog();
+    private void callFindPeopleService(final SwipeRefreshLayout swipeRefreshContainer) {
+        if(swipeRefreshContainer != null) {
+            swipeRefreshContainer.setRefreshing(false);
+        } else {
+            showProgressDialog();
+        }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                dismissProgressDialog();
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
                 if (response.body() != null && response.body().size() > 0) {
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.clearAll();
@@ -134,7 +149,11 @@ public class FindPeopleActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
-                dismissProgressDialog();
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
                 noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.GONE);
                 lvFindPeople.setVisibility(View.GONE);
@@ -323,7 +342,7 @@ public class FindPeopleActivity extends BaseActivity {
     }
 
     public void refresh() {
-        callFindPeopleService();
+        callFindPeopleService(null);
         pageCount = 1;
         findPeopleAdapter.clearAll();
         findPeopleAdapter.addItemsAll(originalList);
@@ -333,5 +352,10 @@ public class FindPeopleActivity extends BaseActivity {
             llNoPeople.setVisibility(View.GONE);
             networkFailureText.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        callFindPeopleService(swipeRefreshContainer);
     }
 }
