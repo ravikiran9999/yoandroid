@@ -121,7 +121,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     private boolean isAlreadyShown;
     //private boolean isRemoved;
     private boolean isSharedPreferenceShown;
-    public static final int REFRESH_CALL_LOGS_TIME = 5000;
+    public static final int REFRESH_CALL_LOGS_TIME = 1000;
 
     public interface CallLogClearListener {
         void clear();
