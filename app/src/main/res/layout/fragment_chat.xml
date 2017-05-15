@@ -1,47 +1,54 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/light_gray"
-    android:orientation="vertical"
-    tools:context="com.yo.android.chat.ui.fragments.ContactsFragment">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/no_search_results"
+    <FrameLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:gravity="center_horizontal"
-        android:padding="30dp"
-        android:text="@string/no_result_found"
-        android:textColor="@color/black"
-        android:visibility="gone" />
+        android:background="@color/light_gray"
+        android:orientation="vertical"
+        tools:context="com.yo.android.chat.ui.fragments.ContactsFragment">
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/no_search_results"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:gravity="center_horizontal"
+            android:padding="30dp"
+            android:text="@string/no_result_found"
+            android:textColor="@color/black"
+            android:visibility="gone" />
 
-    <ListView
-        android:id="@+id/lv_chat_room"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:divider="@android:color/transparent" />
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/empty_chat"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/ic_empty_chat"
-        android:visibility="gone"
+        <ListView
+            android:id="@+id/lv_chat_room"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:divider="@android:color/transparent" />
 
-        />
-    <!--<FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>-->
+        <ImageView
+            android:id="@+id/empty_chat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_empty_chat"
+            android:visibility="gone"
 
-</FrameLayout>
+            />
+        <!--<FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>-->
+
+    </FrameLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

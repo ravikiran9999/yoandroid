@@ -62,11 +62,12 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         mList = new ArrayList<>(list);
         if (mOriginalList.size() == 0) {
             mOriginalList = new ArrayList<>(list);
+            notifyDataSetChanged();
         } else if (list.size() > mOriginalList.size()) {
             mOriginalList.clear();
             mOriginalList.addAll(list);
+            notifyDataSetChanged();
         }
-        notifyDataSetChanged();
     }
 
     /*public boolean toggleSelection(int position) {

@@ -121,9 +121,9 @@ public class YODialogs {
 
             if (!TextUtils.isEmpty(popup.getData().getLive_from()) && !TextUtils.isEmpty(popup.getData().getLive_to())) {
                 String liveFromTime = popup.getData().getLive_from().substring(0, popup.getData().getLive_from().lastIndexOf("."));
-                Date liveFromDate = Util.convertUtcToGmt(liveFromTime);
+                Date liveFromDate = DateUtil.convertUtcToGmt(liveFromTime);
                 String liveToTime = popup.getData().getLive_to().substring(0, popup.getData().getLive_to().lastIndexOf("."));
-                Date liveToDate = Util.convertUtcToGmt(liveToTime);
+                Date liveToDate = DateUtil.convertUtcToGmt(liveToTime);
                 tvLiveFrom.setVisibility(View.VISIBLE);
                 tvLiveTo.setVisibility(View.VISIBLE);
                 tvLiveFrom.setText("Live From: " + liveFromDate);

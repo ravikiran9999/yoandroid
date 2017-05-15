@@ -22,6 +22,7 @@ import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.model.dialer.SubscribersList;
 import com.yo.android.util.Constants;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
@@ -156,7 +157,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
             String modifiedTime = item.getUpdatedAt().substring(0, item.getUpdatedAt().lastIndexOf("."));
             holder.getTxtPhone().setText(modifiedTime);
             //                Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
-            Date date = Util.convertUtcToGmt(modifiedTime);
+            Date date = DateUtil.convertUtcToGmt(modifiedTime);
             holder.getTxtPhone().setText(new SimpleDateFormat("dd/MM/yyyy hh:mm a").format(date));
 
             holder.getTxtPulse().setText(item.getStatus());
