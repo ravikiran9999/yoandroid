@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,20 +51,19 @@ public class GroupContactsActivity extends BaseActivity {
     ListView layout;
     @Bind(R.id.no_contacts)
     TextView textView;
-    private String groupName;
-    private Menu mMenu;
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchResult;
+
     @Inject
     YoApi.YoService yoService;
     @Inject
     ContactsSyncManager mContactsSyncManager;
-
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
 
-    @Bind(R.id.no_search_results)
-    protected TextView noSearchResult;
-
+    private String groupName;
+    private Menu mMenu;
     List<Contact> contactsList = null;
     List<Contact> selectedContactsList = null;
 

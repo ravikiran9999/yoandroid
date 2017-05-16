@@ -1,6 +1,9 @@
 package com.yo.android.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -9,7 +12,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +53,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserProfileActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, ValueEventListener {
+public class UserProfileActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, ValueEventListener, AdapterView.OnItemClickListener {
 
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     @Bind(R.id.profile_image)
@@ -138,6 +144,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         membersList = (NonScrollListView) findViewById(R.id.members);
         profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
         membersList.setAdapter(profileMembersAdapter);
+        membersList.setOnItemClickListener(this);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -418,10 +425,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     return lhs.getUserProfile().getFullName().toLowerCase().compareTo(rhs.getUserProfile().getFullName().toLowerCase());
                 }
             });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
             for (GroupMembers groupMembers : list) {
                 if (groupMembers.getUserProfile().getFullName().equalsIgnoreCase(getString(R.string.you))) {
                     list.add(list.size(), groupMembers);
@@ -456,5 +459,34 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private String numberFromNexgeFormat(String nexgeFormat, String phoneNumber) {
         String number = nexgeFormat != null ? nexgeFormat : phoneNumber;
         return Util.numberFromNexgeFormat(number);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String name = ((TextView) view.findViewById(R.id.tv_name)).getText().toString();
+        ArrayAdapter<String> userAdapter = createAdapter(name);
+        userActionFromGroup(userAdapter);
+    }
+
+    public void userActionFromGroup(final ArrayAdapter<String> displayUserAdapter) {
+        // Creating and Building the Dialog
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(this);
+        builderSingle.setAdapter(displayUserAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String strName = displayUserAdapter.getItem(which);
+            }
+        });
+        builderSingle.show();
+    }
+
+    private ArrayAdapter<String> createAdapter(String selectedUser) {
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item);
+        arrayAdapter.add(String.format(getString(R.string.format_message), selectedUser));
+        arrayAdapter.add(String.format(getString(R.string.format_call), selectedUser));
+        if (TextUtils.isDigitsOnly(selectedUser)) {
+            arrayAdapter.add(getString(R.string.format_add));
+        }
+        return arrayAdapter;
     }
 }
