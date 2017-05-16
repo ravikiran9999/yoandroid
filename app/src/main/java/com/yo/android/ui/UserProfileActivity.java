@@ -376,7 +376,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
-                                String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber());
+                                 String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber());
                                 if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber()) && userProfile.getPhoneNumber().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                                     userProfile.setFullName(getString(R.string.you));
                                 } else if (userProfile != null && !TextUtils.isEmpty(userProfile.getPhoneNumber())) {
