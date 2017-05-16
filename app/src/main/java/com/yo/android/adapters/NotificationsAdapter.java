@@ -7,6 +7,7 @@ import android.view.View;
 import com.yo.android.R;
 import com.yo.android.helpers.NotificationsViewHolder;
 import com.yo.android.model.Notification;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 
 import java.util.Calendar;
@@ -42,7 +43,7 @@ public class NotificationsAdapter extends AbstractBaseAdapter<Notification, Noti
 
         long time = 0;
         String modifiedTime = item.getUpdated_at().substring(0, item.getUpdated_at().lastIndexOf("."));
-        Date date = Util.convertUtcToGmt(modifiedTime);
+        Date date = DateUtil.convertUtcToGmt(modifiedTime);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         time = calendar.getTimeInMillis();

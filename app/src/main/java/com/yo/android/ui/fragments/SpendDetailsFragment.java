@@ -25,6 +25,7 @@ import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.dialer.SubscribersList;
 import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
@@ -191,7 +192,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             String modifiedTime = item.getTime().substring(0, item.getTime().lastIndexOf("."));
             holder.getDate().setText(modifiedTime);
             //                Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
-            Date date = Util.convertUtcToGmt(modifiedTime);
+            Date date = DateUtil.convertUtcToGmt(modifiedTime);
             holder.getDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(date));
             if (item.getDuration() != null) {
                 String[] tokens = item.getDuration().split(":");

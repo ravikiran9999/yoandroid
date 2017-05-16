@@ -31,7 +31,7 @@ import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
-import com.yo.android.util.Util;
+import com.yo.android.util.ErrorCode;
 import com.yo.android.vox.BalanceHelper;
 
 import org.pjsip.pjsua2.CallInfo;
@@ -330,7 +330,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         } else if (object instanceof OpponentDetails) {
-            Util.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
+            ErrorCode.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
         }else if (object instanceof Integer) {
             // while outgoing call is going on if default incoming call comes should put on hold
             int hold = (int) object;

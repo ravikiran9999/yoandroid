@@ -16,6 +16,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.TimeZoneUtils;
 import com.yo.android.util.Util;
 
@@ -368,7 +369,7 @@ public class CallLog {
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
-                        String tempDate = Util.getDate(c.getString(c.getColumnIndex(Calls.DATE)));
+                        String tempDate = DateUtil.getDate(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
                         if (phoneName != null) {
@@ -488,7 +489,7 @@ public class CallLog {
                         info.setStime(date);
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
                         info.setDuration(duration);
-                        String tempDate = Util.getDate(date);
+                        String tempDate = DateUtil.getDate(date);
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
                         info.setImage(getImagePath(context, voxuser));

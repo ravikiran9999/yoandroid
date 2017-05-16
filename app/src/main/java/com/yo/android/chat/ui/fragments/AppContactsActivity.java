@@ -65,7 +65,5 @@ public class AppContactsActivity extends BaseActivity {
                 .add(android.R.id.content, yoContactsFragment)
                 .commit();
         enableBack();
-
-
     }
 }

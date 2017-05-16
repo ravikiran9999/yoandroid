@@ -34,7 +34,7 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Constants;
-import com.yo.android.util.Util;
+import com.yo.android.util.ErrorCode;
 import com.yo.android.vox.BalanceHelper;
 
 import org.pjsip.pjsua2.CallInfo;
@@ -358,7 +358,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             OpponentDetails object1 = (OpponentDetails) object;
             object1.setSelfReject(selfReject);
             selfReject = false;
-            Util.showErrorMessages(bus, object1, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
+            ErrorCode.showErrorMessages(bus, object1, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
         } else if (object instanceof Integer) {
             // while incoming call is going on if default incoming call comes should put on hold
             int hold = (int) object;
