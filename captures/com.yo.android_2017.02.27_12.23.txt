@@ -1,0 +1,54 @@
+Applications Memory Usage (kB):
+Uptime: 41387258 Realtime: 188921112
+
+** MEMINFO in pid 31613 [com.yo.android] **
+                   Pss  Private  Private  Swapped     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------
+  Native Heap    10902    10412        0     5452    27176    26459      716
+  Dalvik Heap    36499    36472        0    15108    60601    57822     2779
+ Dalvik Other     2789     2788        0      296                           
+        Stack      460      460        0       28                           
+       Cursor        8        8        0        0                           
+       Ashmem        2        0        0        0                           
+      Gfx dev    15654    14876        0        0                           
+    Other dev        6        0        4        0                           
+     .so mmap     1033      176       96     1672                           
+    .apk mmap      173        0       36        0                           
+    .dex mmap      542        4      536       12                           
+    .oat mmap     1163        0      288        4                           
+    .art mmap     1542     1084       32      248                           
+   Other mmap       16        8        4        0                           
+   EGL mtrack    20768    20768        0        0                           
+      Unknown      864      860        0      392                           
+        TOTAL    92421    87916      996    23212    87777    84281     3495
+ 
+ App Summary
+                       Pss(KB)
+                        ------
+           Java Heap:    37588
+         Native Heap:    10412
+                Code:     1136
+               Stack:      460
+            Graphics:    35644
+       Private Other:     3672
+              System:     3509
+ 
+               TOTAL:    92421      TOTAL SWAP (KB):    23212
+ 
+ Objects
+               Views:     2561         ViewRootImpl:        2
+         AppContexts:       12           Activities:        8
+              Assets:        3        AssetManagers:        3
+       Local Binders:       28        Proxy Binders:       50
+       Parcel memory:        7         Parcel count:       30
+    Death Recipients:        1      OpenSSL Sockets:        1
+ 
+ SQL
+         MEMORY_USED:        0
+  PAGECACHE_OVERFLOW:      207          MALLOC_SIZE:        0
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b)          cache  Dbname
+         4      320             95   5274/1663/15  /data/user/0/com.yo.android/databases/yoandroid-a0b48.firebaseio.com_default
+         4       20            234      155/26/12  /data/user/0/com.yo.android/databases/yoappcontacts.db
