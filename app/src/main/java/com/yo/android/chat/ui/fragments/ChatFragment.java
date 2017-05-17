@@ -231,7 +231,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onResume() {
         super.onResume();
-        if(searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
+        if (searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
             searchView.setQuery(searchView.getQuery(), false);
         } else {
             isRoomsExist();
@@ -337,7 +337,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         }
                     }
                 }
-                if(!arrayOfUsers.isEmpty()) {
+                if (!arrayOfUsers.isEmpty()) {
                     try {
                         chatRoomListAdapter.addChatRoomItems(sortedList(arrayOfUsers));
                         if (!chatRoomListAdapter.isEmpty()) {
@@ -355,7 +355,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -375,7 +376,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -402,7 +404,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     @Override
                     public void onDataChange(DataSnapshot roomInfoDataSnapshot) {
                         executed = executed + 1;
-                        if (roomInfoDataSnapshot.getValue(RoomInfo.class).getStatus().equals(Constants.ROOM_STATUS_ACTIVE)) {
+                        // checking null value
+                        RoomInfo roomInfo = roomInfoDataSnapshot.getValue(RoomInfo.class);
+                        if (roomInfo != null && roomInfo.getStatus().equals(Constants.ROOM_STATUS_ACTIVE)) {
                             roomId.add(dataSnapshot1.getKey());
                             activeCount = activeCount + 1;
                             isShowDefault = false;
@@ -440,7 +444,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         }
 
-        if(!arrayOfUsers.isEmpty()) {
+        if (!arrayOfUsers.isEmpty()) {
             chatRoomListAdapter.addChatRoomItems(sortedList(arrayOfUsers));
             try {
                 if (!chatRoomListAdapter.isEmpty()) {
