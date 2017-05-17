@@ -402,7 +402,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     @Override
                     public void onDataChange(DataSnapshot roomInfoDataSnapshot) {
                         executed = executed + 1;
-                        if (roomInfoDataSnapshot.getValue(RoomInfo.class).getStatus().equals(Constants.ROOM_STATUS_ACTIVE)) {
+                        RoomInfo roomInfo = roomInfoDataSnapshot.getValue(RoomInfo.class);
+                        if (roomInfo != null && roomInfo.getStatus().equals(Constants.ROOM_STATUS_ACTIVE)) {
                             roomId.add(dataSnapshot1.getKey());
                             activeCount = activeCount + 1;
                             isShowDefault = false;
