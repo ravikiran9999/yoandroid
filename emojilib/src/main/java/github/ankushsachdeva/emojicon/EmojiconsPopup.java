@@ -329,13 +329,13 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
 			View v = views.get(position).rootView;
-			((ViewPager)container).addView(v, 0);
+			container.addView(v, 0);
 			return v;
 		}
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object view) {
-			((ViewPager)container).removeView((View)view);
+			container.removeView((View)view);
 		}
 
 		@Override
