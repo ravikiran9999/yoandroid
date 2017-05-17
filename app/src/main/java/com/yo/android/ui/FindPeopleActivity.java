@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
@@ -22,6 +24,8 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.FindPeopleAdapter;
+import com.yo.android.adapters.MagazinesTabHeaderAdapter;
+import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.FindPeople;
 import com.yo.android.util.Constants;
@@ -38,7 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, ViewPager.OnPageChangeListener {
 
     @Bind(R.id.lv_find_people)
     protected ListView lvFindPeople;
@@ -52,6 +56,10 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
     protected TextView networkFailureText;
     @Bind(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
+    @Bind(R.id.viewpager)
+    protected ViewPager viewPager;
+    @Bind(R.id.tablayout)
+    TabLayout tabLayout;
 
     private FindPeopleAdapter findPeopleAdapter;
     private int pageCount = 1;
@@ -97,6 +105,16 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
                 startActivityForResult(otherProfileIntent, 8);
             }
         });
+    }
+
+    private void setupTabPager() {
+        String[] titles = getResources().getStringArray(R.array.yo_people_tabs_titles);
+        MagazinesTabHeaderAdapter viewPagerAdapter =
+                new MagazinesTabHeaderAdapter(getSupportFragmentManager(), titles);
+        viewPager.addOnPageChangeListener(this);
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(2);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -357,5 +375,21 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
     @Override
     public void onRefresh() {
         callFindPeopleService(swipeRefreshContainer);
+    }
+
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

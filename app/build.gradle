@@ -64,30 +64,25 @@ android {
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
             buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
-            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
         }
 
-        /*enhancement {
+        enhancement {
             applicationIdSuffix ".enhancement"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
 
-            // Todo remote url
-            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8:3000/\""
-            buildConfigField "String", "CLIENT_ID", "\"687b5afaed84f6af4619c64b0e3955050239608d0c33cb40b31f20b83a8caf58\""
-            buildConfigField "String", "CLIENT_SECRET", "\"a3d1f44ac7e2aa1851402b5cc2e6b8e038f66c26daa154b0e3e5e6887402d7f1\""
+            // Todo heroku dev url
+            buildConfigField "String", "BASE_URL", "\"https://yoapp-dev.herokuapp.com/\""
+            buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""
+            buildConfigField "String", "CLIENT_SECRET", "\"1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49\""
 
-            // Todo local url
-            //buildConfigField "String", "BASE_URL", "\"http://34.198.165.8:3000/\""
-            //buildConfigField "String", "CLIENT_ID", "\"a70a4e734979149144ab4979dc0cef4d5d944586be37e647b08f00c9c0a9bee3\""
-            //buildConfigField "String", "CLIENT_SECRET", "\"7ace43ae6f77651ff13745391e991ba255e9d028b10c10c163ccbffc87a93ff9\""
-
-            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
-            buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-enhancements.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-enhancements.firebaseio.com\""
             minSdkVersion 18
-        }*/
+        }
 
     }
     buildTypes {
