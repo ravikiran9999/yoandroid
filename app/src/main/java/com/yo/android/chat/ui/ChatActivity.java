@@ -2,13 +2,17 @@ package com.yo.android.chat.ui;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -33,6 +37,9 @@ import com.yo.android.model.Contact;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.Room;
 import com.yo.android.photo.util.ColorGenerator;
+import com.yo.android.pjsip.CallDisconnectedListner;
+import com.yo.android.pjsip.SipBinder;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
@@ -49,7 +56,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatActivity extends BaseActivity implements View.OnClickListener{
+public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
     private final String TAG = ChatActivity.this.getClass().getSimpleName();
     private String opponent;
@@ -63,6 +70,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
     private String chatRoomId;
     @Bind(R.id.progress_layout)
     RelativeLayout progressLayout;
+
+    private SipBinder sipBinder;
+
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -84,6 +94,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
         Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra(Constants.CONTACT, contact);
         intent.putExtra(Constants.TYPE, Constants.CONTACT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         if (forward != null && forward.size() > 0) {
             intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, forward);
         }
@@ -95,13 +106,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading);
         ButterKnife.bind(this);
-
-        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancelAll();
-
-        //Clear all Notifications
-        NotificationCache.clearNotifications();
-
         final UserChatFragment userChatFragment = new UserChatFragment();
         final Bundle args = new Bundle();
 
@@ -131,7 +135,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
 
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
-            Util.cancelAllNotification(this);
+            // Util.cancelAllNotification(this);
             callUserChat(args, userChatFragment);
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             final Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
@@ -177,7 +181,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
                     callUserChat(args, userChatFragment);
                 }
 
-                Util.cancelAllNotification(this);
+                // Util.cancelAllNotification(this);
 
             }
 
@@ -298,6 +302,16 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
+    private void clearNotifications() {
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (sipBinder != null) {
+            if (!sipBinder.getHandler().isOnGOingCall()) {
+                mNotificationManager.cancelAll();
+                NotificationCache.clearNotifications();
+            }
+        }
+    }
+
     @Override
     public void onClick(View v) {
         String opponentTrim = null;
@@ -317,11 +331,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
         if (groupName != null) {
             intent.putExtra(Constants.CHAT_ROOM_ID, chatRoomId);
             intent.putExtra(Constants.GROUP_NAME, title);
-        } else if(room != null){
+        } else if (room != null) {
             intent.putExtra(Constants.VOX_USER_NAME, opponent);
             intent.putExtra(Constants.CHAT_ROOM_ID, room.getFirebaseRoomId());
             intent.putExtra(Constants.GROUP_NAME, room.getGroupName());
-        } else if(getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
+        } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             intent.putExtra(Constants.VOX_USER_NAME, contactFromOpponent.getNexgieUserName());
             intent.putExtra(Constants.CHAT_ROOM_ID, contactFromOpponent.getFirebaseRoomId());
         }
@@ -346,6 +360,43 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindCallService();
+
+    }
+
+    ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            sipBinder = (SipBinder) service;
+            clearNotifications();
+            sipBinder.getHandler().disconnectCallBack(new CallDisconnectedListner() {
+                @Override
+                public void callDisconnected() {
+                    Log.w("ChatActivity", "ChatActivity Service.....Disconnected");
+                    clearNotifications();
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            sipBinder = null;
+            Log.w("ChatActivity", "Chat Activity Disconnected.");
+
+        }
+    };
+
+    private void bindCallService() {
+
+
+        bindService(new Intent(this, YoSipService.class), connection, Context.BIND_AUTO_CREATE);
+
+    }
+
+
     private String getOpponent(@NonNull Room room) {
 
         if (room.getGroupName() == null) { // group not exists
@@ -361,6 +412,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
 
         return null;
     }
+
 
     /*private void clearNotification(String opponent) {
         Util.cancelAllNotification(this);
@@ -401,5 +453,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener{
     protected void onPause() {
         super.onPause();
         progressLayout.setVisibility(View.GONE);
+        unbindService(connection);
     }
 }

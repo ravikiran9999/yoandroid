@@ -27,11 +27,12 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 4
-        versionName "17.2.1.0"
+        versionName "17.2.1.1"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
         buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+        buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
         multiDexEnabled true
     }
     productFlavors {
@@ -40,7 +41,7 @@ android {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
-
+            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "true"
             // Todo remote url
             buildConfigField "String", "BASE_URL", "\"http://34.198.165.8:3000/\""
             buildConfigField "String", "CLIENT_ID", "\"687b5afaed84f6af4619c64b0e3955050239608d0c33cb40b31f20b83a8caf58\""
@@ -61,6 +62,7 @@ android {
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"yobeta\""
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
             buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
             buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""

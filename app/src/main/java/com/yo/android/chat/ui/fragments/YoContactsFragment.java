@@ -187,7 +187,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             }
 
             if (position == 0 && contact.getNexgieUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null && activity != null) {
-                startActivityForResult(new Intent(activity, CreateGroupActivity.class), CREATE_GROUP_RESULT);
+                Intent intent = new Intent(activity, CreateGroupActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivityForResult(intent, CREATE_GROUP_RESULT);
             } else if (activity != null && contact.getNexgieUserName() != null) {
                 ChatActivity.start(activity, contact, forwardChatMessages);
             }

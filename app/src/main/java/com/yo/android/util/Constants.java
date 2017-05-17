@@ -108,6 +108,7 @@ public class Constants {
     public static final String COUNTRY_CODE = "country_code";
     public static final String COUNTRY_DISPLAY_NAME = "country_display_name";
     public static final String CREATED = "created";
+    public static final String ON_GOING_CALL = "on_going_call";
     public static int SUCCESS_CODE = 200;
     public static final String FOLLOW_TOPIC_EVENT = "follow_topic_event";
 

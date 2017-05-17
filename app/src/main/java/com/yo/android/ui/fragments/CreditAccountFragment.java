@@ -294,7 +294,12 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         FragmentActivity activity = getActivity();
         if (activity != null) {
             if (name.equalsIgnoreCase(activity.getString(R.string.add_balance_from_voucher))) {
-                showVoucherDialog();
+                Bundle arguments = getArguments();
+                if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
+                    showVoucherDialog();
+                } else {
+                    showInternalBuildMessage();
+                }
             } else if (name.equalsIgnoreCase(activity.getString(R.string.transfer_balance))) {
                 //TODO: Need to implement allow balance transfer even in out going call.
                 if (YoSipService.currentCall != null && YoSipService.outgoingCallUri != null) {
@@ -312,12 +317,21 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         }
     }
 
+    private void showInternalBuildMessage() {
+        mToastFactory.showToast(R.string.internal_build_cant_add_balance);
+    }
+
     private OnClickListener payBtnListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            Denominations item = (Denominations) v.getTag(R.id.btn1);
-            addGooglePlayBalance("android.test.purchased", item.getDenomination());
+            Bundle arguments = getArguments();
+            if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
+                Denominations item = (Denominations) v.getTag(R.id.btn1);
+                addGooglePlayBalance("android.test.purchased", item.getDenomination());
+            } else {
+                showInternalBuildMessage();
+            }
 
             //Bundle arguments = getArguments();
             //if (arguments != null) {

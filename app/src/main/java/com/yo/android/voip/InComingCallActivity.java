@@ -221,9 +221,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.btnHold:
                 isHoldOn = !isHoldOn;
-                if (sipBinder != null) {
+                /*if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(isHoldOn);
-                }
+                }*/
                 if (isHoldOn) {
                     callModel.setEvent(HOLD_ON);
                     v.setBackgroundResource(R.drawable.ic_play);

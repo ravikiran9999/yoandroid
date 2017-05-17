@@ -112,7 +112,7 @@
 //                    "sip:209.239.120.239:5060", "sip:209.239.120.239:5060",
 //                    "789", "123456");
 //            // accCfg.setIdUri("sip:localhost");
-//            accCfg.getNatConfig().setIceEnabled(true);
+//            accCfg.getNatConfig().setIceEnabled(false);
 //            accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
 //            accCfg.getVideoConfig().setAutoShowIncoming(true);
 //            account = app.addAcc(accCfg);
@@ -354,7 +354,7 @@
 //        }
 //
 //		/* Enable ICE */
-//        accCfg.getNatConfig().setIceEnabled(true);
+//        accCfg.getNatConfig().setIceEnabled(false);
 //    }
 //
 //    public void makeCall(View view) {
