@@ -43,9 +43,9 @@ android {
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "true"
             // Todo remote url
-            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8:3000/\""
-            buildConfigField "String", "CLIENT_ID", "\"687b5afaed84f6af4619c64b0e3955050239608d0c33cb40b31f20b83a8caf58\""
-            buildConfigField "String", "CLIENT_SECRET", "\"a3d1f44ac7e2aa1851402b5cc2e6b8e038f66c26daa154b0e3e5e6887402d7f1\""
+            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
+            buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
+            buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
 
             // Todo local url
             //buildConfigField "String", "BASE_URL", "\"http://34.198.165.8:3000/\""
