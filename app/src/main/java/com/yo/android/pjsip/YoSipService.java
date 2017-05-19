@@ -281,7 +281,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
             try {
                 String source = getPhoneNumber(call.getInfo().getRemoteUri());
-                call.answer(prm);
+                //call.answer(prm);
+                call.hangup(prm);
                 source = parseVoxUser(source);
                 Util.createNotification(this, source, getResources().getString(R.string.missed_call), BottomTabsActivity.class, new Intent(), false);
                 //Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
@@ -291,7 +292,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 mLog.w(TAG, e);
             }
             // TODO: set status code
-            call.delete();
             //call.delete();
 
             return;
@@ -723,8 +723,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                             count++;
                         }
 
-                        mLog.w(TAG, "UpdateStatus get bytes:  " + stats.getRtcp().getRxStat().getBytes());
-                        mLog.w(TAG, "UpdateStatus Count:  " + count);
+                        //mLog.w(TAG, "UpdateStatus get bytes:  " + stats.getRtcp().getRxStat().getBytes());
+                        //mLog.w(TAG, "UpdateStatus Count:  " + count);
                         if (count > 5 && count <= 20) {
                             SipCallModel callModel = new SipCallModel();
                             callModel.setEvent(SipCallModel.RECONNECTING);

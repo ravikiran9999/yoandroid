@@ -204,7 +204,7 @@ public class TagView extends RelativeLayout {
             final Tag tag = item;
 
             // inflate tag layout
-            View tagLayout = (View) mInflater.inflate(R.layout.tagview_item, null);
+            View tagLayout = mInflater.inflate(R.layout.tagview_item, null);
             tagLayout.setId(listIndex);
             item.setTagView(tagLayout);
             tagLayout.setBackgroundDrawable(getSelector(tag));
