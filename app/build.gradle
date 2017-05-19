@@ -37,7 +37,7 @@ android {
     productFlavors {
 
         dev {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
 
@@ -70,7 +70,7 @@ android {
 
         enhancement {
             applicationIdSuffix ".enhancement"
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
 
@@ -133,8 +133,6 @@ dependencies {
     compile project(':emojilib')
     //Butter knife - view injector
     compile "com.android.support:support-v4:${supportAppcompatVersion}"
-    testCompile 'junit:junit:4.12'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile "com.android.support:palette-v7:${supportAppcompatVersion}"
     compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '7.0.3'
     compile "com.github.hotchemi:permissionsdispatcher:${permissionsDispatcherVersion}"
@@ -166,6 +164,9 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.isseiaoki:simplecropview:1.1.4'
+    compile 'com.android.support:support-v4:25.3.1'
+    testCompile 'junit:junit:4.12'
+    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
 }
 apply plugin: 'com.google.gms.google-services'
 

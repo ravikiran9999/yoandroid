@@ -83,6 +83,9 @@ import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
+import com.yo.android.ui.fragments.findpeople.FindPeopleFragment;
+import com.yo.android.ui.fragments.findpeople.FollowersFragment;
+import com.yo.android.ui.fragments.findpeople.FollowingsFragment;
 import com.yo.android.util.FetchNewArticlesService;
 import com.yo.android.util.ReCreateService;
 import com.yo.android.util.Util;
@@ -181,6 +184,9 @@ import dagger.Provides;
                 CreditAccountFragment.class,
                 SpendDetailsFragment.class,
                 RechargeDetailsFragment.class,
+                FindPeopleFragment.class,
+                FollowersFragment.class,
+                FollowingsFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,
