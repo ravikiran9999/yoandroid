@@ -401,7 +401,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                mToastFactory.showToast(call.getLastReason());
+                pjsip_status_code lastStatusCode = call.getLastStatusCode();
+                if(lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE || lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
+                    mToastFactory.showToast(R.string.call_ended);
+                } else if(lastStatusCode == pjsip_status_code.PJSIP_SC_BUSY_HERE || lastStatusCode == pjsip_status_code.PJSIP_SC_INTERNAL_SERVER_ERROR) {
+                    mToastFactory.showToast(R.string.busy);
+                } else {
+                    mToastFactory.showToast(call.getLastReason());
+                }
             }
         });
 
