@@ -32,11 +32,11 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
 
     public String BASE_64_KEY_FOR_IN_APP_PURCHASE = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvN0nwJTxnfciBYiwTrZ2pzevIKGAB09Kulx0akR8Lzrd8bju2kCpe/PGeLQQ9BQWpvz3p81vl3N9sT7k0pfcJp10MMrtzyfYAR1t9U5R7manRzzRM2j1BNHnPneOaJ9WrQDUWpXqvDaeDgiS0rrSfWCHtTqDaoQV8RCbMLtanTJlBQgvYmObvhzLwtSSsD558UPUb7bEZtoFKgzSCqIS4pGFhFqVESxdRt95LpKbagVZSGEo4Nd2UoqDJ6gkG5cRLwHcl3ob2Nr+GRK3ybvNotCuGz3/cdVnqZjoWH73PP2qkG4iOopxhLW7ifZVtYVAW0hJFlM1Mf1TwPZ1AfICxQIDAQAB";
     private IabHelper mHelper;
-    private static String ITEM_SKU = "com.yo.test.hundred";
+    private static String ITEM_SKU;
     private static float ITEM_PRICE;
     private static final int REQUEST_CODE = 585;
     //Can be userid
-    private String emailAddress = "ramesh.akula@mtuity.com";
+    private String emailAddress = "rajesh.polamarasetti@mtuity.com";
     @Inject
     BalanceHelper mBalanceHelper;
 
@@ -46,18 +46,16 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
         Injector.obtain(getApplication()).inject(this);
         ITEM_SKU = getIntent().getStringExtra("sku");
         ITEM_PRICE = getIntent().getFloatExtra("price", 0f);
-        ITEM_SKU = "android.test.purchased";
+       // ITEM_SKU = "android.test.purchased";
         //ITEM_SKU = ITEM_SKU.toLowerCase();
         //developer payload
         emailAddress = getIntent().getStringExtra(Constants.USER_ID);
         mHelper = new IabHelper(this, BASE_64_KEY_FOR_IN_APP_PURCHASE);
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
-
                 if (mHelper == null) {
                     return;
                 }
-
                 if (!result.isSuccess()) {
                     logError("onStart:In App Purchase Setup Failed: " + result.getMessage());
                 } else {
