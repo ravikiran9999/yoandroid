@@ -83,6 +83,7 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<FindPeopl
                 boolean b = m.matches();
                 if (b) {
                     Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
+                    Glide.clear(holder.getContactPic());
                     holder.getContactPic().setImageDrawable(drawable);
                 } else {
                     loadAvatarImage(holder);

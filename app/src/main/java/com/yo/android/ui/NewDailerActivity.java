@@ -331,7 +331,17 @@ public class NewDailerActivity extends BaseActivity {
                     SipHelper.makeCall(NewDailerActivity.this, number);
                     finish();
                 } else {
-                    alertMessage(R.string.self_number);
+                    String stringExtra = voxUserName;
+                    String onlyNumber = "";
+                    try {
+                        stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
+                        onlyNumber = stringExtra;
+                    } catch (StringIndexOutOfBoundsException e) {
+                        mLog.e(TAG, "" + e);
+                    }
+                    if (onlyNumber.equals(number)) {
+                        alertMessage(R.string.self_number);
+                    }
                 }
             }
         };
