@@ -324,16 +324,19 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         if (object instanceof SipCallModel) {
             SipCallModel model = (SipCallModel) object;
             if (model.getEvent() == 3) {
-                //callStatusTextView.setText("Reconnecting...");
                 mReceivedConnectionStatus.setText(getResources().getString(R.string.connecting_status));
-                // mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.reconnecting_status));
+                mHandler.removeCallbacks(startTimer);
+                callDuration.setVisibility(View.GONE);
+
             } else if (model.getEvent() == HOLD_ON) {
                 if (sipBinder != null) {
+                    mHandler.removeCallbacks(startTimer);
                     sipBinder.getHandler().setHoldCall(true);
                     //  mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
                     mReceivedConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
                 }
             } else if (model.getEvent() == HOLD_OFF) {
+                mHandler.post(startTimer);
                 if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(false);
                     // mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.connected_status));
@@ -342,6 +345,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             } else {
                 if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
                     //
+                    mHandler.post(startTimer);
                     mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
                     callDuration.setVisibility(View.VISIBLE);
                 } else if (!model.isOnCall()) {
