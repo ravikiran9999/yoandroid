@@ -26,6 +26,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.OpponentDetails;
+import com.yo.android.networkmanager.NetworkStateListener;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
@@ -41,6 +42,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
+
+import static com.yo.android.pjsip.YoSipService.DISCONNECT_IF_NO_ANSWER;
 
 
 /**
@@ -76,7 +79,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private SipBinder sipBinder;
 
     private TextView callDurationTextView;
-
+    private int networkCheck;
 
     @Inject
     protected BalanceHelper mBalanceHelper;
@@ -143,7 +146,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
         if (getIntent().hasExtra(VoipConstants.PSTN) && getIntent().getBooleanExtra(VoipConstants.PSTN, false)) {
             String phoneName = Helper.getContactName(this, getIntent().getStringExtra(DISPLAY_NUMBER));
-            if(phoneName !=null) {
+            if (phoneName != null) {
                 callerName.setText(phoneName);
             } else {
                 final ContentResolver resolver = getContentResolver();
@@ -155,13 +158,13 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
                             null,
                             //CallLog.Calls.NUMBER +" = "+ getIntent().getStringExtra(DISPLAY_NUMBER),
-                            CallLog.Calls.NUMBER +" = "+ trimmedNumber,
+                            CallLog.Calls.NUMBER + " = " + trimmedNumber,
                             null,
                             DEFAULT_SORT_ORDER);
                     if (c == null || !c.moveToFirst()) {
 
                     } else {
-                     callerName.setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
+                        callerName.setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
 
                     }
                 } finally {
@@ -183,7 +186,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 }
             } else if (stringExtra != null) {
                 String phoneName = Helper.getContactName(this, stringExtra);
-                if(phoneName != null) {
+                if (phoneName != null) {
                     callerName.setText(phoneName);
                 } else {
                     final ContentResolver resolver = getContentResolver();
@@ -195,7 +198,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
                                 null,
                                 //CallLog.Calls.NUMBER + " = " + getIntent().getStringExtra(DISPLAY_NUMBER),
-                                CallLog.Calls.NUMBER +" = "+ trimmedNumber,
+                                CallLog.Calls.NUMBER + " = " + trimmedNumber,
                                 null,
                                 DEFAULT_SORT_ORDER);
                         if (c == null || !c.moveToFirst()) {
@@ -204,7 +207,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                             callerName.setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
 
                         }
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
                         if (c != null) c.close();
@@ -243,7 +246,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         findViewById(R.id.imv_speaker).setOnClickListener(this);
         findViewById(R.id.imv_mic_off).setOnClickListener(this);
         findViewById(R.id.btnEndCall).setOnClickListener(this);
-        callDurationTextView = (TextView)findViewById(R.id.tv_call_duration) ;
+        callDurationTextView = (TextView) findViewById(R.id.tv_call_duration);
         callerName = (TextView) findViewById(R.id.tv_caller_name);
         callerNumber = (TextView) findViewById(R.id.tv_caller_number);
         connectionStatusTextView = (TextView) findViewById(R.id.tv_dialing);
@@ -315,7 +318,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             SipCallModel model = (SipCallModel) object;
             if (model.getEvent() == 3) {
                 connectionStatusTextView.setText(getResources().getString(R.string.connecting_status));
-            }else {
+                networkCheck = model.getNetwork_availability();
+                callDurationTextView.setVisibility(View.GONE);
+            } else {
                 if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
                     connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
                     running = true;
@@ -331,16 +336,18 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             }
         } else if (object instanceof OpponentDetails) {
             Util.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
-        }else if (object instanceof Integer) {
+        } else if (object instanceof Integer) {
             // while outgoing call is going on if default incoming call comes should put on hold
             int hold = (int) object;
             if (hold == KEEP_ON_HOLD) {
                 if (sipBinder != null) {
+                    mHandler.removeCallbacks(startTimer);
                     sipBinder.getHandler().setHoldCall(true);
                     connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
                 }
             } else if (hold == KEEP_ON_HOLD_RESUME) {
                 if (sipBinder != null) {
+                    mHandler.post(startTimer);
                     sipBinder.getHandler().setHoldCall(false);
                     connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
                 }
@@ -349,11 +356,13 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     }
 
 
-
     private Runnable startTimer = new Runnable() {
         @Override
         public void run() {
-            if (running) {
+            if (networkCheck == NetworkStateListener.NO_NETWORK_CONNECTIVITY) {
+                mHandler.postDelayed(this, DISCONNECT_IF_NO_ANSWER);
+
+            } else if (running) {
                 mHandler.postDelayed(this, 1000);
             }
             if (sipBinder != null) {
