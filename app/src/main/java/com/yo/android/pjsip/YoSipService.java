@@ -403,9 +403,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             @Override
             public void run() {
                 pjsip_status_code lastStatusCode = call.getLastStatusCode();
-                if(lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE || lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
+                if (lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE || lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
                     mToastFactory.showToast(R.string.call_ended);
-                } else if(lastStatusCode == pjsip_status_code.PJSIP_SC_BUSY_HERE || lastStatusCode == pjsip_status_code.PJSIP_SC_INTERNAL_SERVER_ERROR) {
+                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_BUSY_HERE || lastStatusCode == pjsip_status_code.PJSIP_SC_INTERNAL_SERVER_ERROR) {
                     mToastFactory.showToast(R.string.busy);
                 } else {
                     mToastFactory.showToast(call.getLastReason());
@@ -705,9 +705,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 mHandler.postDelayed(mStatusChecker, 100);
             }
         }
-
-
     };
+
     private static long currentBytes;
     int count;
     boolean isAlreadyInReconnecting;
@@ -889,11 +888,16 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     NetworkStateChangeListener listener = new NetworkStateChangeListener() {
-        public void onNetworkStateChanged(int networkstate) {
+        public void onNetworkStateChanged(final int networkstate) {
             mLog.w(TAG, "Network change listener and state is " + networkstate);
 
             if (networkstate == NetworkStateListener.NETWORK_CONNECTED) {
                 // Network is connected.
+            } else if (networkstate == NetworkStateListener.NO_NETWORK_CONNECTIVITY) {
+                SipCallModel callModel = new SipCallModel();
+                callModel.setEvent(SipCallModel.RECONNECTING);
+                callModel.setNetwork_availability(NetworkStateListener.NO_NETWORK_CONNECTIVITY);
+                EventBus.getDefault().post(callModel);
             } else {
                 hangupCall(callType);
                 OpponentDetails details = new OpponentDetails(null, null, 404);
@@ -1098,7 +1102,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             mEndpoint.codecSetPriority("PCMA/8000", (short) 128);
             mEndpoint.codecSetPriority("PCMU/8000", (short) 128);
             mEndpoint.codecSetPriority("G722/8000", (short) 0);
-
 
 
             Logger.warn("PJSIP started!");
