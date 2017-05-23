@@ -292,7 +292,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 mLog.w(TAG, e);
             }
             // TODO: set status code
-            call.delete();
             //call.delete();
 
             return;
