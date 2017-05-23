@@ -907,7 +907,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             for (int i = 0; i <= currentFlippedPosition; i++) {
                 if(myBaseAdapter.getItem(i) != null) {
                     String articleId = myBaseAdapter.getItem(i).getId();
-                    Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+                    //Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
                     readIds.add(articleId);
                 }
