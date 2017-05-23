@@ -515,7 +515,8 @@ public class NewDailerActivity extends BaseActivity {
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        finish();
+                        dialog.dismiss();
+                       // finish();
                     }
                 });
         AlertDialog alert = builder.create();

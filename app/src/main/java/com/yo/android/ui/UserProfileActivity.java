@@ -444,7 +444,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     }
 
     private boolean isSame(String name, String phoneNumber) {
-        if (TextUtils.isDigitsOnly(phoneNumber) && !phoneNumber.startsWith("+")) {
+        if (TextUtils.isDigitsOnly(name) && TextUtils.isDigitsOnly(phoneNumber)) {
+            return name.equalsIgnoreCase(phoneNumber);
+        } else if (TextUtils.isDigitsOnly(phoneNumber) && !phoneNumber.startsWith("+")) {
             return name.equalsIgnoreCase(String.format(getResources().getString(R.string.plus_number), phoneNumber));
         } else if (TextUtils.isDigitsOnly(name) && !name.startsWith("+")) {
             return String.format(getResources().getString(R.string.plus_number), name).equalsIgnoreCase(phoneNumber);
