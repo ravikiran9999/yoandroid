@@ -4,7 +4,10 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,7 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CreateGroupActivity extends BaseActivity implements View.OnClickListener {
+public class CreateGroupActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
 
     private EditText groupName;
     private ListView selectedList;
@@ -82,6 +85,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         ContactsArrayList = new ArrayList<>();
         selectedContactsArrayList = new ArrayList<>();
         addContactIcon.setOnClickListener(this);
+        groupName.addTextChangedListener(this);
         enableBack();
 
         groupImage.setOnClickListener(new View.OnClickListener() {
@@ -248,5 +252,24 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         if (!ContactsArrayList.isEmpty()) {
             ContactsArrayList.clear();
         }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if(count == 1) {
+          if(TextUtils.isDigitsOnly(s)) {
+             groupName.setText("");
+          }
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
     }
 }
