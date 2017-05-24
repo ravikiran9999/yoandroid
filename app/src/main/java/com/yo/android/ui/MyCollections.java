@@ -374,6 +374,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             });
 
         } else if (requestCode == 6) {
+            if (!searchView.isIconified()) {
+                invalidateOptionsMenu();
+            }
             String searchText = "";
             if (searchView != null) {
                 searchText = searchView.getQuery().toString();
@@ -394,7 +397,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         return;
                     }
 
-                    if (!TextUtils.isEmpty(finalSearchText.trim())) {
+                    /*if (!TextUtils.isEmpty(finalSearchText.trim())) {
                         for (int i = 0; i < response.body().size(); i++) {
                             if (response.body().get(i).getName().contains(finalSearchText)) {
                                 collectionsList.addAll(response.body());
@@ -407,7 +410,11 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         collectionsList.addAll(response.body());
                         myCollectionsAdapter.clearAll();
                         myCollectionsAdapter.addItems(collectionsList);
-                    }
+                    }*/
+
+                    collectionsList.addAll(response.body());
+                    myCollectionsAdapter.clearAll();
+                    myCollectionsAdapter.addItems(collectionsList);
 
                     gridView.setAdapter(myCollectionsAdapter);
 
