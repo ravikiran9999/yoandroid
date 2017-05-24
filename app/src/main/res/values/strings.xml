@@ -330,4 +330,6 @@
     <string name="call_on_hold_status">Call is on hold</string>
     <string name="internal_build_cant_add_balance">You can\'t add more balance as its test build.</string>
     <string name="not_valid_pstn_number">Not a valid phone number.</string>
+    <string name="not_supported_country">This country is not supported by your app</string>
+    <string name="enter_vocher_number">Please enter a Voucher Number</string>
 </resources>

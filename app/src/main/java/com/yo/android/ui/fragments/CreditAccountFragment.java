@@ -450,7 +450,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                         });
                     } else {
                         Util.hideKeyboard(getActivity(), voucherNumberEdit);
-                        mToastFactory.showToast("Please enter a Voucher Number");
+                        mToastFactory.showToast(getString(R.string.enter_vocher_number));
                     }
 
                 }
