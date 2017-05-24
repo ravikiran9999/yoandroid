@@ -223,7 +223,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                         } else {
                             mToastFactory.showToast("Already call is in progress");
                         }
-                    }else{
+                    } else {
                         storeCallLog(number);
                     }
                 } else {
@@ -412,7 +412,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_BUSY_HERE || lastStatusCode == pjsip_status_code.PJSIP_SC_INTERNAL_SERVER_ERROR) {
                     mToastFactory.showToast(R.string.busy);
                 } else {
-                    mToastFactory.showToast(call.getLastReason());
+                    if (statusCode != 503) {
+                        mToastFactory.showToast(call.getLastReason());
+                    }
                 }
             }
         });
@@ -423,6 +425,21 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         } else if (statusCode == 503) {
             mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
             callDisconnected();
+            if (!sipCallstate.getMobileNumber().contains(BuildConfig.RELEASE_USER_TYPE)) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mToastFactory.showToast(getString(R.string.not_supported_country));
+                    }
+                });
+            }else{
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mToastFactory.showToast(getString(R.string.not_online));
+                    }
+                });
+            }
         } else if (statusCode == 603) {
             callDisconnected();
         } /*else if (statusCode == 200) {
@@ -778,14 +795,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (!oldintent.hasExtra(VoipConstants.PSTN)) {
             startDefaultRingtone(1);
         }
-
+        String displayName = parseVoxUser(destination);
 
         Intent intent = new Intent(this, OutGoingCallActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("data", options);
         intent.putExtra(OutGoingCallActivity.CALLER_NO, destination);
         intent.putExtra(VoipConstants.PSTN, oldintent.hasExtra(VoipConstants.PSTN));
-        intent.putExtra(OutGoingCallActivity.DISPLAY_NUMBER, oldintent.getStringExtra(OutGoingCallActivity.DISPLAY_NUMBER));
+        intent.putExtra(OutGoingCallActivity.DISPLAY_NUMBER, displayName);
 
         startActivity(intent);
         destination = parseVoxUser(destination);
@@ -802,9 +819,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (oldintent.hasExtra(VoipConstants.PSTN)) {
             PhoneNumberUtil util = PhoneNumberUtil.getInstance();
             TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            String countryCode = tm.getSimCountryIso();
             try {
-                validNumber = PhoneNumberUtil.getInstance().isValidNumber(util.parse(destination,tm.getNetworkCountryIso().toUpperCase()));
+                Phonenumber.PhoneNumber numberProto = util.parse("+" + destination, "");
+                int countryCode = numberProto.getCountryCode();
+
+                validNumber = PhoneNumberUtil.getInstance().isValidNumber(util.parse(destination, tm.getNetworkCountryIso().toUpperCase()));
             } catch (NumberParseException e) {
                 e.printStackTrace();
             }
