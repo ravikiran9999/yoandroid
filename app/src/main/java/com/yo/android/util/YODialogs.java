@@ -221,7 +221,7 @@ public class YODialogs {
                     if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
                         try {
                             stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
-                            SipHelper.makeCall(activity, stringExtra);
+                            SipHelper.makeCall(activity, stringExtra,true);
                         } catch (StringIndexOutOfBoundsException e) {
                         }
                     }
