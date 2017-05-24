@@ -313,7 +313,8 @@ public class ContactsSyncManager {
         //
         Contact contact = new Contact();
         contact.setId(entryId);
-        contact.setName(name);
+        //contact.setName(name);
+        contact.setName(getName(name, phone));
         contact.setPhoneNo(phone);
         contact.setImage(image);
         contact.setFirebaseRoomId(roomId);
@@ -321,5 +322,13 @@ public class ContactsSyncManager {
         contact.setCountryCode(countryCode);
         contact.setNexgieUserName(voxUserName);
         return contact;
+    }
+
+    private static String getName(String name, String number) {
+        String formatedName = name.replaceAll("\\s+", "");
+        if(!formatedName.equalsIgnoreCase(number)) {
+            return name;
+        }
+        return "";
     }
 }

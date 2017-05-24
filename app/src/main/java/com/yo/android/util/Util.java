@@ -1120,7 +1120,7 @@ public class Util {
             if(string != null) {
                 return string.replaceAll("[^0-9]", "");
             } else {
-                return "123456";
+                return "1234567890";
             }
         } catch (NumberFormatException e) {
             return string;

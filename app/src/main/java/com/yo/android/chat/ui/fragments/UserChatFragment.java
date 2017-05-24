@@ -359,6 +359,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             if (selected.valueAt(i)) {
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
                                 roomReference.child(selectedItem.getMessageKey()).removeValue();
+
                                 userChatAdapter.removeItem(selectedItem);
                                 chatMessageArray.remove(selectedItem);
                             }
@@ -503,7 +504,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         if (roomType != null) {
             UserProfileActivity.startGroup(getActivity(), childRoomId, roomType, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS);
-        } else if(opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
+        } else if (opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
             String opponentNumberTrim = Util.numberFromNexgeFormat(opponentNumber);
             UserProfileActivity.start(getActivity(), opponentNumberTrim, opponentNumber, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS, null);
         }
@@ -952,11 +953,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         // File deleted successfully
+                        userChatAdapter.notifyDataSetChanged();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // Uh-oh, an error occurred!
+                        e.getMessage();
                     }
                 });
             }
