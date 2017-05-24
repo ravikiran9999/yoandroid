@@ -26,8 +26,8 @@ android {
         applicationId "com.yo.android"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 4
-        versionName "17.2.2.2"
+        versionCode 5
+        versionName "17.2.2.3"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -39,19 +39,13 @@ android {
 
         dev {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "true"
-            // Todo remote url
+            buildConfigField "boolean", "DISABLE_ADD_BALANCE", "true"
             buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
             buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
             buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
-
-            // Todo local url
-            //buildConfigField "String", "BASE_URL", "\"http://34.198.165.8:3000/\""
-            //buildConfigField "String", "CLIENT_ID", "\"a70a4e734979149144ab4979dc0cef4d5d944586be37e647b08f00c9c0a9bee3\""
-            //buildConfigField "String", "CLIENT_SECRET", "\"7ace43ae6f77651ff13745391e991ba255e9d028b10c10c163ccbffc87a93ff9\""
-
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
             minSdkVersion 18
@@ -76,8 +70,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
-            // productFlavors.dev.signingConfig signingConfigs.devconfig
-            // productFlavors.stage.signingConfig signingConfigs.stageconfig
+             productFlavors.dev.signingConfig signingConfigs.devconfig
+             productFlavors.stage.signingConfig signingConfigs.stageconfig
         }
 
     }

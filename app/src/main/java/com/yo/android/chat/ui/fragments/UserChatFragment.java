@@ -441,7 +441,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         switch (item.getItemId()) {
             case R.id.call:
                 if (sipAccountUserName != null) {
-                    SipHelper.makeCall(activity, sipAccountUserName);
+                    SipHelper.makeCall(activity, sipAccountUserName,false);
                 }
                 break;
             case R.id.camera:

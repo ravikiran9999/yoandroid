@@ -115,7 +115,8 @@ public class CallLogDetailsActivity extends BaseActivity {
             callImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SipHelper.makeCall(CallLogDetailsActivity.this, callLogsDetails.get(0).getDialnumber());
+                    boolean isPSTN =callLogsDetails.get(0).getAppOrPstn() == CallLog.Calls.APP_TO_PSTN_CALL ? true : false;
+                    SipHelper.makeCall(CallLogDetailsActivity.this, callLogsDetails.get(0).getDialnumber(),isPSTN);
                 }
             });
         }

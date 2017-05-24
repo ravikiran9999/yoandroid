@@ -77,6 +77,7 @@ import org.pjsip.pjsua2.pjsip_transport_type_e;
 import org.pjsip.pjsua2.pjsua_call_flag;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -210,16 +211,20 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 if (currentCall == null) {
                     String number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
                     Bundle bundle = intent.getBundleExtra("data");
+                    if (isValidPhoneNumberForPstnCalls(number, intent)) {
 
-                    if (bundle == null) {
-                        bundle = new Bundle();
-                    }
-                    int value = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).getCallState();
-                    if (value == 0) {
-                        showCallActivity(number, bundle, intent);
-                        makeCall(number, bundle, intent);
-                    } else {
-                        mToastFactory.showToast("Already call is in progress");
+                        if (bundle == null) {
+                            bundle = new Bundle();
+                        }
+                        int value = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).getCallState();
+                        if (value == 0) {
+                            showCallActivity(number, bundle, intent);
+                            makeCall(number, bundle, intent);
+                        } else {
+                            mToastFactory.showToast("Already call is in progress");
+                        }
+                    }else{
+                        storeCallLog(number);
                     }
                 } else {
                     mHandler.post(new Runnable() {
@@ -292,7 +297,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 mLog.w(TAG, e);
             }
             // TODO: set status code
-            call.delete();
             //call.delete();
 
             return;
@@ -774,6 +778,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (!oldintent.hasExtra(VoipConstants.PSTN)) {
             startDefaultRingtone(1);
         }
+
+
         Intent intent = new Intent(this, OutGoingCallActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("data", options);
@@ -788,6 +794,32 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             /*outGoingCallNotificationId = Notifications.NOTIFICATION_ID;
             Util.setBigStyleNotification(this, destination, "Outgoing call", "Outgoing call", "", true, true, OutGoingCallActivity.class, intent);*/
         }
+    }
+
+    private boolean isValidPhoneNumberForPstnCalls(String destination, Intent oldintent) {
+        boolean validNumber = false;
+
+        if (oldintent.hasExtra(VoipConstants.PSTN)) {
+            PhoneNumberUtil util = PhoneNumberUtil.getInstance();
+            TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            String countryCode = tm.getSimCountryIso();
+            try {
+                validNumber = PhoneNumberUtil.getInstance().isValidNumber(util.parse(destination,tm.getNetworkCountryIso().toUpperCase()));
+            } catch (NumberParseException e) {
+                e.printStackTrace();
+            }
+            android.util.Log.e(TAG, "Is Valid Phonenumber " + validNumber);
+
+            if (!validNumber) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mToastFactory.showToast(getString(R.string.not_valid_pstn_number));
+                    }
+                });
+            }
+        }
+        return validNumber;
     }
 
     private String parseVoxUser(String destination) {

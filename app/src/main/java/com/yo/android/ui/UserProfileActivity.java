@@ -320,7 +320,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     public void callUser() {
         //do nothing...
         if (contact != null && contact.getNexgieUserName() != null) {
-            SipHelper.makeCall(this, contact.getNexgieUserName());
+            SipHelper.makeCall(this, contact.getNexgieUserName(),false);
         }
     }
 

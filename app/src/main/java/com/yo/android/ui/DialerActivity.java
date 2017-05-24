@@ -111,7 +111,7 @@ public class DialerActivity extends BaseActivity {
                 } else if (number.length() == 0) {
                     mToastFactory.showToast("Please enter number.");
                 } else {
-                    SipHelper.makeCall(DialerActivity.this, number);
+                    SipHelper.makeCall(DialerActivity.this, number,false);
                 }
             }
         });

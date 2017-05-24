@@ -208,7 +208,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         } else if (item.getValue().get(0).getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_outgoing_holo_dark, 0, 0, 0);
             holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
-        } else if (item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
+        } else if (item.getValue().get(0).getDialedstatus()!=null && item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
             holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
         } else {
@@ -224,7 +224,8 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             @Override
             public void onClick(View v) {
                 Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
-                SipHelper.makeCall(mContext, item.getValue().get(0).getDialnumber());
+                boolean isPSTN = item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_PSTN_CALL ? true : false;
+                SipHelper.makeCall(mContext, item.getValue().get(0).getDialnumber(), isPSTN);
             }
         });
         holder.getMessageIcon().setOnClickListener(new View.OnClickListener() {

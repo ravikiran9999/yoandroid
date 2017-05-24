@@ -328,7 +328,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             Bundle arguments = getArguments();
             if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
                 Denominations item = (Denominations) v.getTag(R.id.btn1);
-                addGooglePlayBalance("android.test.purchased", item.getDenomination());
+                addGooglePlayBalance(item.getProductID(), item.getDenomination());
             } else {
                 showInternalBuildMessage();
             }
