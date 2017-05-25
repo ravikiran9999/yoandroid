@@ -124,6 +124,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     private boolean isSharedPreferenceShown;
 
     public static final String currencySymbolDollar = " US $";
+    private static final String currencySymbolDollarNoSpace = "US $";
 
     public MoreFragment() {
         // Required empty public constructor
@@ -283,7 +284,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // menuDataList.add(new MoreData(phone, false));
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
-        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbolDollar, balance), true));
+        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbolDollarNoSpace, balance), true));
         menuDataList.add(new MoreData(getString(R.string.accountdetails), true));
         menuDataList.add(new MoreData(getString(R.string.invitefriends), true));
         menuDataList.add(new MoreData(getString(R.string.morenotifications), true));
@@ -485,7 +486,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             //String currencySymbol = mBalanceHelper.getCurrencySymbol();
             if (menuAdapter != null) {
                 //menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
-                menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbolDollar, balance));
+                menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbolDollarNoSpace, balance));
                 menuAdapter.notifyDataSetChanged();
             }
         } else if (key.equals(Constants.USER_NAME)) {
