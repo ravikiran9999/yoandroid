@@ -92,6 +92,8 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
                         } else {
                             loadAvatarImage(holder, fullPhoneNumber);
                         }
+                    }else{
+                        holder.getImageView().setImageDrawable(null);//To aviod loading previous image
                     }
                 } else {
                     holder.getImageView().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
