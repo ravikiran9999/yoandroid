@@ -9,6 +9,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.media.ToneGenerator;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -211,8 +212,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 if (currentCall == null) {
                     String number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
                     Bundle bundle = intent.getBundleExtra("data");
-                    if (isValidPhoneNumberForPstnCalls(number, intent)) {
-
+                    boolean validPhoneNumberForPstnCalls = isValidPhoneNumberForPstnCalls(number, intent);
+                    if (validPhoneNumberForPstnCalls || number.contains(BuildConfig.RELEASE_USER_TYPE)) {
                         if (bundle == null) {
                             bundle = new Bundle();
                         }
@@ -225,6 +226,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                         }
                     } else {
                         storeCallLog(number);
+                        if (!validPhoneNumberForPstnCalls) {
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mToastFactory.showToast(getString(R.string.not_valid_pstn_number));
+                                }
+                            });
+                        }
                     }
                 } else {
                     mHandler.post(new Runnable() {
@@ -432,7 +441,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                         mToastFactory.showToast(getString(R.string.not_supported_country));
                     }
                 });
-            }else{
+            } else {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -763,7 +772,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                                 hangupCall(callType);
                             }
                             callDisconnected();
-
                             count = 0;
                             isAlreadyInReconnecting = false;
                         }
@@ -822,21 +830,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             try {
                 Phonenumber.PhoneNumber numberProto = util.parse("+" + destination, "");
                 int countryCode = numberProto.getCountryCode();
-
-                validNumber = PhoneNumberUtil.getInstance().isValidNumber(util.parse(destination, tm.getNetworkCountryIso().toUpperCase()));
+                validNumber = PhoneNumberUtil.getInstance().isValidNumber(util.parse("+" + destination, PhoneCountryISOCodes.getISOCodes(countryCode)));
             } catch (NumberParseException e) {
                 e.printStackTrace();
             }
             android.util.Log.e(TAG, "Is Valid Phonenumber " + validNumber);
 
-            if (!validNumber) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mToastFactory.showToast(getString(R.string.not_valid_pstn_number));
-                    }
-                });
-            }
+
         }
         return validNumber;
     }
@@ -1347,5 +1347,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     protected synchronized AudDevManager getAudDevManager() {
         return mEndpoint.audDevManager();
     }
+
 
 }
