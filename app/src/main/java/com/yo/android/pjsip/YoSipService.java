@@ -1348,4 +1348,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         return mEndpoint.audDevManager();
     }
 
+    public String getCountryISOCode(String countryCode){
+       return PhoneCountryISOCodes.getISOCodes(countryCode);
+    }
+
+
+
 }
