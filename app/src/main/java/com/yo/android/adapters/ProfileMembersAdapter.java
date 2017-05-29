@@ -10,12 +10,9 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
-import com.yo.android.helpers.GroupContactsViewHolder;
 import com.yo.android.helpers.ProfileMembersViewHolder;
 import com.yo.android.helpers.Settings;
-import com.yo.android.model.Contact;
 import com.yo.android.model.GroupMembers;
-import com.yo.android.model.Room;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 
@@ -81,7 +78,7 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
                         .into(holder.getImageView());
             } else if (fullName != null && fullName.length() >= 1 && !TextUtils.isDigitsOnly(fullName)) {
                 if (Settings.isTitlePicEnabled) {
-                    if (fullName != null && fullName.length() >= 1) {
+                    if (fullName.length() >= 1) {
                         String title = String.valueOf(fullName.charAt(0)).toUpperCase();
                         Pattern p = Pattern.compile("^[a-zA-Z]");
                         Matcher m = p.matcher(title);
@@ -99,19 +96,14 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
                     holder.getImageView().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
                 }
             } else {
+                holder.getImageView().setImageDrawable(null);//To aviod loading previous image
                 holder.getImageView().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (item.getAdmin() != null && Boolean.valueOf(item.getAdmin())) {
-            holder.getPermission().setText(R.string.admin);
-            holder.getPermission().setVisibility(View.VISIBLE);
-            holder.getPermission().setTextColor(mContext.getResources().getColor(R.color.black));
-        } else {
-            holder.getPermission().setVisibility(View.GONE);
-        }
+        setAdmin(holder, item.getAdmin());
     }
 
     private void loadAvatarImage(ProfileMembersViewHolder holder, final String phoneNumber) {
@@ -125,5 +117,15 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
             holder.getImageView().setTag(Settings.imageTag, tempImage);
         }
         holder.getImageView().setImageDrawable((Drawable) holder.getImageView().getTag(Settings.imageTag));
+    }
+
+    private void setAdmin(ProfileMembersViewHolder holder, String admin) {
+        if (admin != null && Boolean.valueOf(admin)) {
+            holder.getPermission().setText(R.string.admin);
+            holder.getPermission().setVisibility(View.VISIBLE);
+            holder.getPermission().setTextColor(mContext.getResources().getColor(R.color.black));
+        } else {
+            holder.getPermission().setVisibility(View.GONE);
+        }
     }
 }

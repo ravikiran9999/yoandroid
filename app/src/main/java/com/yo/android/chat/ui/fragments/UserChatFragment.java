@@ -263,7 +263,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
 
         if ((childRoomId == null) && (chatForwards != null)) {
-            createRoom("Message", null);
+            //createRoom("Message", null);
         }
 
         return view;
@@ -547,7 +547,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if (roomExist == 0 && TextUtils.isEmpty(childRoomId)) {
             if (roomCreationProgress == 0) {
                 roomCreationProgress = 1;
-                createRoom(message, chatMessage);
+                //createRoom(message, chatMessage);
             }
         } else {
             chatMessage.setRoomId(childRoomId);
