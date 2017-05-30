@@ -332,4 +332,5 @@
     <string name="not_valid_pstn_number">Not a valid phone number.</string>
     <string name="not_supported_country">This country is not supported by your app</string>
     <string name="enter_vocher_number">Please enter a Voucher Number</string>
+    <string name="not_online_unavailable">Recipient not online or unavailable.</string>
 </resources>
