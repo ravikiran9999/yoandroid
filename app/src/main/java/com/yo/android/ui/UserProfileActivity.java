@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -136,7 +137,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
         membersList = (NonScrollListView) findViewById(R.id.members);
-        profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
+        profileMembersAdapter = new ProfileMembersAdapter(this);
         membersList.setAdapter(profileMembersAdapter);
 
         Intent intent = getIntent();
@@ -174,10 +175,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (intent.hasExtra(Constants.CHAT_ROOM_ID)) {
                     String firebaseRoomId = intent.getStringExtra(Constants.CHAT_ROOM_ID);
                     if (firebaseRoomId != null) {
-                        Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
                         if (roomName != null) {
+                            /*Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
                             roomInfo.addListenerForSingleValueEvent(this);
-                            roomInfo.keepSynced(true);
+                            roomInfo.keepSynced(true);*/
+                            //new GroupMembersTask().execute(roomName, firebaseRoomId);
                             profileCall.setVisibility(View.GONE);
                         }
                     }

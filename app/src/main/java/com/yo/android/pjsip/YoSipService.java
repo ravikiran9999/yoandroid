@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -437,9 +438,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             public void run() {
                 pjsip_status_code lastStatusCode = call.getLastStatusCode();
                 if (lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE || lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
-                    mToastFactory.showToast(R.string.call_ended);
+                    //mToastFactory.showToast(R.string.call_ended);
                 } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_BUSY_HERE || lastStatusCode == pjsip_status_code.PJSIP_SC_INTERNAL_SERVER_ERROR) {
-                    mToastFactory.showToast(R.string.busy);
+                    //mToastFactory.showToast(R.string.busy);
+                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_NOT_FOUND) {
+                    mToastFactory.showToast(R.string.not_online);
                 } else {
                     if (statusCode != 503) {
                         mToastFactory.showToast(call.getLastReason());
@@ -865,7 +868,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Contact contact = mContactsSyncManager.getContactByVoxUserName(destination);
         CallerInfo info = new CallerInfo();
         if (contact != null) {
-            if (contact.getName() != null) {
+            if (!TextUtils.isEmpty(contact.getName()) ) {
                 destination = contact.getName();
             } else if (contact.getPhoneNo() != null) {
                 destination = contact.getPhoneNo();
