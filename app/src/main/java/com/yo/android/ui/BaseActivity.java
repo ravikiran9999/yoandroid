@@ -16,7 +16,6 @@ import com.firebase.jobdispatcher.Trigger;
 import com.orion.android.common.util.ResourcesHelper;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.firebase.ListenerJobService;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ParentActivity;
 import com.yo.android.di.AwsLogsCallBack;

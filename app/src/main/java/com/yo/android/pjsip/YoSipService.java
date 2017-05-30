@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -845,7 +846,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Contact contact = mContactsSyncManager.getContactByVoxUserName(destination);
         CallerInfo info = new CallerInfo();
         if (contact != null) {
-            if (contact.getName() != null) {
+            if (!TextUtils.isEmpty(contact.getName()) ) {
                 destination = contact.getName();
             } else if (contact.getPhoneNo() != null) {
                 destination = contact.getPhoneNo();
