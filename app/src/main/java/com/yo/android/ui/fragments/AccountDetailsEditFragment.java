@@ -185,6 +185,7 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
                 Bundle bundle = new Bundle();
                 newFragment.setDateFragmentView(editBirth);
                 bundle.putBoolean(SelectDateFragment.FLAG, true);
+                newFragment.setArguments(bundle);
                 newFragment.show(getActivity().getSupportFragmentManager(), "DatePicker");
                 break;
         }

@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -38,13 +39,16 @@ import com.yo.android.calllogs.CallLog;
 import com.yo.android.calllogs.CallerInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.InjectedService;
+import com.yo.android.di.Injector;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.networkmanager.NetworkStateChangeListener;
 import com.yo.android.networkmanager.NetworkStateListener;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.voip.CallEvents;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.PhoneStateReceiver;
@@ -91,7 +95,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Ramesh on 13/8/16.
  */
-public class YoSipService extends InjectedService implements MyAppObserver, SipServiceHandler {
+public class YoSipService extends InjectedService implements MyAppObserver, SipServiceHandler, CallEvents {
 
     private static final String TAG = "YoSipService";
     public static final int DISCONNECT_IF_NO_ANSWER = 60 * 1000;
@@ -187,6 +191,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
         mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(YoSipService.this, RingtoneManager.TYPE_RINGTONE);
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -286,12 +293,23 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public void notifyIncomingCall(MyCall call, OnIncomingCallParam prms) {
         outgoingCallUri = null;
         /* Incoming call */
+        try {
+            String sources = getPhoneNumber(call.getInfo().getRemoteUri());
+            mLog.e("YoSipService", "notifyIncomingCall>>>> %s", sources);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         CallOpParam prm = new CallOpParam();
             /* Only one call at anytime */
         //pausePlayingAudio();
         callType = CallLog.Calls.INCOMING_TYPE;
         // if user is already in yo call or if any default phone calls it should show missed call.
-        if (currentCall != null || PhoneStateReceiver.isDefaultCall) {
+        if (currentCall != null) {
+
+
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
             try {
                 String source = getPhoneNumber(call.getInfo().getRemoteUri());
@@ -305,17 +323,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
-            // TODO: set status code
-            //call.delete();
+
+            // Dont remove below logic.
+            call.delete();
 
             return;
         }
         currentCall = call;
-        /*try {
-            currentCall.answer(prm);
-        } catch (Exception e) {
-            mLog.w(TAG, e);
-        }*/
+        setHoldCall(false);
+
         try {
             sipCallState.setCallDir(SipCallState.INCOMING);
             sipCallState.setCallState(SipCallState.CALL_RINGING);
@@ -387,6 +403,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             pausePlayingAudio();
         } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_INCOMING) {
             startRingtone();
+        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
+            if (mIntent != null && !mIntent.hasExtra(VoipConstants.PSTN)) {
+                startDefaultRingtone(1);
+            }
         } else if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
 
@@ -860,6 +880,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
 
     public void setHoldCall(boolean isHold) {
+        localHold = !localHold;
         if (isHold) {
             mToastFactory.showToast(R.string.hold);
             getMediaManager().setMicrophoneMuteOn(true);
@@ -1027,6 +1048,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
+        EventBus.getDefault().unregister(this);
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
         android.util.Log.d("debug", "Service Killed");
@@ -1348,5 +1370,18 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         return mEndpoint.audDevManager();
     }
 
+    //    @Subscribe
+    public void onEvent(Object object) {
+        if (object instanceof Integer) {
+            // while outgoing call is going on if default incoming call comes should put on hold
+            int hold = (int) object;
+            if (hold == 100) {
+                setHoldCall(true);
+            } else if (hold == 101) {
+                setHoldCall(false);
+
+            }
+        }
+    }
 
 }

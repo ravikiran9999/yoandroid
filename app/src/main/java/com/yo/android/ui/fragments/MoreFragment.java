@@ -346,7 +346,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
                         if (getActivity() != null) {
                             Util.cancelAllNotification(getActivity());
-                            CallLog.Calls.clearCallHistory(getActivity());
+                            //  23	Data is missing in dialer screen once user logouts & login again  - Fixed
+                            //  CallLog.Calls.clearCallHistory(getActivity());
                         }
                         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
                         int deleteContacts = getActivity().getContentResolver().delete(uri, null, null);
@@ -365,7 +366,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                     Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
                                     //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
                                     AlarmManager alarmManager = (AlarmManager) BottomTabsActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
-                                    if(getActivity() != null) {
+                                    if (getActivity() != null) {
                                         getActivity().stopService(serviceIntent);
                                     }
                                     alarmManager.cancel(BottomTabsActivity.pintent);
@@ -434,27 +435,27 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 }
                 break;
             case Constants.ADD_IMAGE_CAPTURE:
+                try {
+                    String imagePath = ImagePickHelper.mFileTemp.getPath();
+                    File file = new File(imagePath);
+                    Uri uri = Uri.fromFile(file);
+                    Bitmap bitmap = null;
                     try {
-                        String imagePath = ImagePickHelper.mFileTemp.getPath();
-                        File file = new File(imagePath);
-                        Uri uri = Uri.fromFile(file);
-                        Bitmap bitmap = null;
-                        try {
-                            bitmap = MediaStore.Images.Media.getBitmap(BottomTabsActivity.activity.getContentResolver(), uri);
-                            if (imagePath != null) {
-                                if(BottomTabsActivity.activity != null) {
-                                    Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true, bitmap, true);
-                                }
+                        bitmap = MediaStore.Images.Media.getBitmap(BottomTabsActivity.activity.getContentResolver(), uri);
+                        if (imagePath != null) {
+                            if (BottomTabsActivity.activity != null) {
+                                Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true, bitmap, true);
                             }
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
-
-                    } catch (Exception e) {
-                        // mLog.w("MoreFragment", e);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+
+                } catch (Exception e) {
+                    // mLog.w("MoreFragment", e);
+                }
                 //}
                 break;
 
