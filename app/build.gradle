@@ -73,12 +73,9 @@ android {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
-
-            // Todo heroku dev url
-            buildConfigField "String", "BASE_URL", "\"https://yoapp-dev.herokuapp.com/\""
-            buildConfigField "String", "CLIENT_ID", "\"83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60\""
-            buildConfigField "String", "CLIENT_SECRET", "\"1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49\""
-
+            buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""
+            buildConfigField "String", "CLIENT_ID", "\"385e29bdabe89c20ec32cae501b556554a8ece1605142b58ab6966cfee0635be\""
+            buildConfigField "String", "CLIENT_SECRET", "\"5262628e450e5e356561753f712196d678acc0a994058935bc2dcbc351aa2fee\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-enhancements.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-enhancements.firebaseio.com\""
             minSdkVersion 18
