@@ -437,12 +437,16 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             @Override
             public void run() {
                 pjsip_status_code lastStatusCode = call.getLastStatusCode();
-                if (lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE || lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
+                if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
                     //mToastFactory.showToast(R.string.call_ended);
+                } else if(lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE) {
+                    mToastFactory.showToast(R.string.call_ended);
                 } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_BUSY_HERE || lastStatusCode == pjsip_status_code.PJSIP_SC_INTERNAL_SERVER_ERROR) {
-                    //mToastFactory.showToast(R.string.busy);
+                    mToastFactory.showToast(R.string.busy);
                 } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_NOT_FOUND) {
-                    mToastFactory.showToast(R.string.not_online);
+                    mToastFactory.showToast(R.string.not_online_unavailable);
+                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_TEMPORARILY_UNAVAILABLE) {
+                    mToastFactory.showToast(R.string.busy);
                 } else {
                     if (statusCode != 503) {
                         mToastFactory.showToast(call.getLastReason());
