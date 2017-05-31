@@ -9,7 +9,6 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.media.ToneGenerator;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -23,8 +22,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.Toast;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -40,23 +37,19 @@ import com.yo.android.calllogs.CallLog;
 import com.yo.android.calllogs.CallerInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.InjectedService;
-import com.yo.android.di.Injector;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.networkmanager.NetworkStateChangeListener;
 import com.yo.android.networkmanager.NetworkStateListener;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.CallEvents;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
-import com.yo.android.voip.PhoneStateReceiver;
 import com.yo.android.voip.SipCallModel;
 import com.yo.android.voip.UserAgent;
 import com.yo.android.voip.VoipConstants;
-import com.yo.android.vox.CodecPriority;
 
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AudDevManager;
@@ -66,8 +59,6 @@ import org.pjsip.pjsua2.AuthCredInfoVector;
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallOpParam;
-import org.pjsip.pjsua2.CallSetting;
-import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.Media;
@@ -80,10 +71,8 @@ import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
-import org.pjsip.pjsua2.pjsua_call_flag;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -447,6 +436,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     mToastFactory.showToast(R.string.not_online_unavailable);
                 } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_TEMPORARILY_UNAVAILABLE) {
                     mToastFactory.showToast(R.string.busy);
+                }else if (lastStatusCode == pjsip_status_code.PJSIP_SC_FORBIDDEN) {
+                    EventBus.getDefault().post(Constants.BALANCE_RECHARGE_ACTION);
                 } else {
                     if (statusCode != 503) {
                         mToastFactory.showToast(call.getLastReason());

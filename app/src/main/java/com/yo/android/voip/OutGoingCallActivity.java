@@ -317,12 +317,23 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         if (object instanceof SipCallModel) {
             SipCallModel model = (SipCallModel) object;
             if (model.getEvent() == 3) {
-                connectionStatusTextView.setText(getResources().getString(R.string.connecting_status));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectionStatusTextView.setText(getResources().getString(R.string.connecting_status));
+                        callDurationTextView.setVisibility(View.GONE);
+                    }
+                });
                 networkCheck = model.getNetwork_availability();
-                callDurationTextView.setVisibility(View.GONE);
             } else {
                 if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
-                    connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
+                        }
+                    });
+                    //connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
                     running = true;
                     mHandler.post(startTimer);
                 } else if (!model.isOnCall()) {
@@ -343,13 +354,23 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 if (sipBinder != null) {
                     mHandler.removeCallbacks(startTimer);
                     sipBinder.getHandler().setHoldCall(true);
-                    connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
+                        }
+                    });
                 }
             } else if (hold == KEEP_ON_HOLD_RESUME) {
                 if (sipBinder != null) {
                     mHandler.post(startTimer);
                     sipBinder.getHandler().setHoldCall(false);
-                    connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
+                        }
+                    });
                 }
             }
         }
