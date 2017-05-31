@@ -71,7 +71,7 @@ import de.greenrobot.event.EventBus;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, SwipeRefreshLayout.OnRefreshListener {
+public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
     private static final String TAG = "ChatFragment";
 
@@ -81,8 +81,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     ImageView emptyImageView;
     @Bind(R.id.no_search_results)
     protected TextView noSearchResult;
-    @Bind(R.id.swipeContainer)
-    protected SwipeRefreshLayout swipeRefreshContainer;
+    /*@Bind(R.id.swipeContainer)
+    protected SwipeRefreshLayout swipeRefreshContainer;*/
 
     private ArrayList<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
@@ -144,7 +144,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         getActiveSavedRooms();
         listView.setOnItemClickListener(this);
         emptyImageView.setVisibility(View.GONE);
-        swipeRefreshContainer.setOnRefreshListener(this);
+        //swipeRefreshContainer.setOnRefreshListener(this);
         return view;
     }
 
@@ -310,7 +310,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //getMembersId(dataSnapshot);
-                new FirebaseAsync().execute(dataSnapshot, swipeRefreshContainer, allRoomsRefreshContainer);
+                //new FirebaseAsync().execute(dataSnapshot, swipeRefreshContainer, allRoomsRefreshContainer);
+                new FirebaseAsync().execute(dataSnapshot, null, allRoomsRefreshContainer);
             }
 
             @Override
@@ -421,10 +422,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     }
 
-    @Override
+    /*@Override
     public void onRefresh() {
         isRoomsExist(swipeRefreshContainer);
-    }
+    }*/
 
     private class FirebaseAsync extends AsyncTask<Object, Void, List<String>> {
         Firebase databaseReference = null;
@@ -432,7 +433,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
         @Override
         protected List<String> doInBackground(final Object... params) {
-            swipeRefreshContainer = (SwipeRefreshLayout) params[1];
+            //swipeRefreshContainer = (SwipeRefreshLayout) params[1];
             for (final DataSnapshot dataSnapshot1 : ((DataSnapshot) params[0]).getChildren()) {
                 final String roomId = dataSnapshot1.getKey();
                 databaseReference = dataSnapshot1.getRef();
