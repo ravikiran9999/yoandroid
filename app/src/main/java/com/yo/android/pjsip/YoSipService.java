@@ -439,7 +439,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 pjsip_status_code lastStatusCode = call.getLastStatusCode();
                 if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
                     //mToastFactory.showToast(R.string.call_ended);
-                } else if(lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE) {
+                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE) {
                     mToastFactory.showToast(R.string.call_ended);
                 } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_BUSY_HERE || lastStatusCode == pjsip_status_code.PJSIP_SC_INTERNAL_SERVER_ERROR) {
                     mToastFactory.showToast(R.string.busy);
@@ -872,7 +872,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Contact contact = mContactsSyncManager.getContactByVoxUserName(destination);
         CallerInfo info = new CallerInfo();
         if (contact != null) {
-            if (!TextUtils.isEmpty(contact.getName()) ) {
+            if (!TextUtils.isEmpty(contact.getName())) {
                 destination = contact.getName();
             } else if (contact.getPhoneNo() != null) {
                 destination = contact.getPhoneNo();
@@ -887,28 +887,29 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
 
     public void setHoldCall(boolean isHold) {
-        localHold = !localHold;
-        if (isHold) {
-            mToastFactory.showToast(R.string.hold);
-            getMediaManager().setMicrophoneMuteOn(true);
-            try {
-                if (mRingTone != null && mRingTone.isPlaying()) {
-                    mRingTone.pause();
-                    mVibrator.cancel();
-                }
-            } catch (IllegalStateException e) {
-                mLog.w(TAG, e);
-            }
-            if (currentCall != null) {
-                CallOpParam prm = new CallOpParam(true);
+
+        if (currentCall != null) {
+            localHold = !localHold;
+            if (isHold) {
+                mToastFactory.showToast(R.string.hold);
+                getMediaManager().setMicrophoneMuteOn(true);
                 try {
-                    currentCall.setHold(prm);
-                } catch (Exception e) {
+                    if (mRingTone != null && mRingTone.isPlaying()) {
+                        mRingTone.pause();
+                        mVibrator.cancel();
+                    }
+                } catch (IllegalStateException e) {
                     mLog.w(TAG, e);
                 }
-            }
-        } else {
-            if (currentCall != null) {
+                if (currentCall != null) {
+                    CallOpParam prm = new CallOpParam(true);
+                    try {
+                        currentCall.setHold(prm);
+                    } catch (Exception e) {
+                        mLog.w(TAG, e);
+                    }
+                }
+            } else {
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(1);
                 getMediaManager().setMicrophoneMuteOn(false);
