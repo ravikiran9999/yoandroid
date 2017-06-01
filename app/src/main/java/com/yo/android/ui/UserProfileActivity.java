@@ -176,9 +176,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     String firebaseRoomId = intent.getStringExtra(Constants.CHAT_ROOM_ID);
                     if (firebaseRoomId != null) {
                         if (roomName != null) {
-                            /*Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
+                            Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
                             roomInfo.addListenerForSingleValueEvent(this);
-                            roomInfo.keepSynced(true);*/
+                            roomInfo.keepSynced(true);
                             //new GroupMembersTask().execute(roomName, firebaseRoomId);
                             profileCall.setVisibility(View.GONE);
                         }
