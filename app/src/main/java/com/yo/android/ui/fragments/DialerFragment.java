@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -39,6 +41,7 @@ import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NewDailerActivity;
+import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
@@ -402,6 +405,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     }
                 });
             }
+        } else if(action.equals(Constants.BALANCE_RECHARGE_ACTION)) {
+            showRechargeDialog();
         }
     }
 
@@ -493,5 +498,44 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                 loadCallLogs();
             }
         }, REFRESH_CALL_LOGS_TIME);
+    }
+
+    private void showRechargeDialog() {
+        if (this != null) {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+            builder.setView(view);
+
+            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+            Button noBtn = (Button) view.findViewById(R.id.no_btn);
+            TextView tvRechargeText = (TextView) view.findViewById(R.id.dialog_content);
+
+            yesBtn.setText(getString(R.string.recharge));
+            tvRechargeText.setText(getString(R.string.no_sufficient_bal_recharge));
+
+
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
+                }
+            });
+
+
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+        }
     }
 }

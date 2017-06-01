@@ -134,6 +134,7 @@ public class Constants {
     public static String START_FETCHING_ARTICLES_ACTION = "com.start.articles.FETCH";
     public static String BALANCE_UPDATED_ACTION = "com.balance.BALANCEUPDATED";
     public static String CALL_RATE_DETAILS_ACTION = "com.callrates.CALLRATEDETAILS";
+    public static String BALANCE_RECHARGE_ACTION = "com.balance.BALANCERECHARGE";
 
     // Contacts
     public static final String NUMBER = "number";
