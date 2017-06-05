@@ -177,7 +177,7 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Util.prepareContactsSearch(getActivity(), menu, inviteFriendsAdapter , Constants.CONT_FRAG,  noSearchResultsTxtVw);
+        Util.prepareContactsSearch(getActivity(), menu, inviteFriendsAdapter , Constants.CONT_FRAG,  noSearchResultsTxtVw, null);
         return super.onOptionsItemSelected(item);
     }
 

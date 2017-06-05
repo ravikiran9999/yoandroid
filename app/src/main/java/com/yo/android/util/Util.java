@@ -543,7 +543,7 @@ public class Util {
         });
     }
 
-    public static SearchView prepareContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult) {
+    public static SearchView prepareContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult, final TextView noContactsFound) {
 
         final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView;
@@ -571,6 +571,9 @@ public class Util {
                         noSearchResult.setVisibility(View.GONE);
                         isFromClose = true;
                     } else {
+                        if(noContactsFound != null) {
+                            noContactsFound.setVisibility(View.GONE);
+                        }
                         noSearchResult.setVisibility(View.VISIBLE);
                         noSearchResult.setText(activity.getResources().getString(R.string.no_result_found));
                     }
@@ -584,7 +587,7 @@ public class Util {
                         adapter.performCallLogsSearch(newText, noSearchResult, isFromClose);
                     } else if (roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) || roomType.equalsIgnoreCase(Constants.CONT_FRAG)) {
                         String contactType = roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ? Constants.Yo_CONT_FRAG : Constants.CONT_FRAG;
-                        adapter.performYoContactsSearch(newText, contactType, noSearchResult, isFromClose);
+                        adapter.performYoContactsSearch(newText, contactType, noSearchResult, isFromClose, noContactsFound);
                     } else if (roomType.equalsIgnoreCase(Constants.INVITE_FRAG)) {
                         adapter.performContactsSearch(newText, noSearchResult, isFromClose);
                     }
