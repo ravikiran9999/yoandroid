@@ -1,6 +1,5 @@
 package com.yo.android.chat.ui;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,8 +48,6 @@ import retrofit2.Response;
 
 public class CreateGroupActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
 
-    private EditText groupName;
-    private ListView selectedList;
     private ArrayList<Contact> selectedContactsArrayList;
     private String mGroupName;
 
@@ -60,15 +57,22 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     public static List<Contact> ContactsArrayList;
     File imgFile;
 
+    @Bind(R.id.imv_new_chat_group)
+    ImageView groupImage;
+    @Bind(R.id.et_new_chat_group_name)
+    EditText groupName;
+    @Bind(R.id.add_contact)
+    TextView addContactIcon;
+    @Bind(R.id.selected_contacts_list)
+    ListView selectedList;
+
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
-
     @Inject
     ImagePickHelper cameraIntent;
 
-    @Bind(R.id.imv_new_chat_group)
-    ImageView groupImage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +81,6 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         ButterKnife.bind(this);
 
         cameraIntent.setActivity(this);
-        groupName = (EditText) findViewById(R.id.et_new_chat_group_name);
-        TextView addContactIcon = (TextView) findViewById(R.id.add_contact);
-        selectedList = (ListView) findViewById(R.id.selected_contacts_list);
         ContactsArrayList = new ArrayList<>();
         selectedContactsArrayList = new ArrayList<>();
         addContactIcon.setOnClickListener(this);
@@ -225,7 +226,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         if (!ContactsArrayList.isEmpty()) {
                             ContactsArrayList.clear();
                         }
-                        setResult(Activity.RESULT_OK);
+                        //setResult(Activity.RESULT_OK);
+                        ChatActivity.start(CreateGroupActivity.this, response.body());
                         finish();
                     } else {
                         Toast.makeText(CreateGroupActivity.this, getResources().getString(R.string.group_creation_error), Toast.LENGTH_SHORT).show();
