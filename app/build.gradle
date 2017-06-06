@@ -25,9 +25,9 @@ android {
     defaultConfig {
         applicationId "com.yo.android"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 25
         versionCode 5
-        versionName "17.2.3.0"
+        versionName "1.0"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -38,10 +38,10 @@ android {
     productFlavors {
 
         dev {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
-            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "true"
+            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
             buildConfigField "boolean", "DISABLE_ADD_BALANCE", "true"
             buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
             buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
