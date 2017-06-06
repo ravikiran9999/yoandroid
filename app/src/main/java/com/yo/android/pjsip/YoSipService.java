@@ -812,6 +812,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void showCallActivity(String destination, Bundle options, Intent oldintent) {
         //Always set default speaker off
+        mAudioManager.setSpeakerphoneOn(false);
         sipCallState.setCallDir(SipCallState.OUTGOING);
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
