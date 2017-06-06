@@ -116,7 +116,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Util.prepareContactsSearch(activity, menu, appContactsListAdapter, Constants.Yo_CONT_FRAG, noResults);
+        Util.prepareContactsSearch(activity, menu, appContactsListAdapter, Constants.Yo_CONT_FRAG, noResults, null);
 
         if (item.getItemId() == android.R.id.home && activity != null) {
             activity.finish();
@@ -137,7 +137,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             } else {
                 noResults.setText(getString(R.string.no_contacts_found));
                 noResults.setVisibility(View.VISIBLE);
-                mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
+                //mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
             }
 
         }
@@ -220,7 +220,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 if (contacts.isEmpty()) {
                     noResults.setText(getString(R.string.no_contacts_found));
                     noResults.setVisibility(View.VISIBLE);
-                    mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
+                    //mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
                 }
             }
         });

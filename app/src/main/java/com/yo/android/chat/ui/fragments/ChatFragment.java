@@ -184,7 +184,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG, noSearchResult);
+        Util.prepareContactsSearch(activity, menu, chatRoomListAdapter, Constants.CHAT_FRAG, noSearchResult, null);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
@@ -445,7 +445,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         @Override
                         public void onDataChange(DataSnapshot roomInfoDataSnapshot) {
                             executed = executed + 1;
-                            if (roomInfoDataSnapshot.getValue(RoomInfo.class).getStatus().equals(Constants.ROOM_STATUS_ACTIVE)) {
+                            RoomInfo roomInfo = roomInfoDataSnapshot.getValue(RoomInfo.class);
+                            if (roomInfo != null && roomInfo.getStatus().equals(Constants.ROOM_STATUS_ACTIVE)) {
                                 roomIdList.add(roomId);
                                 activeCount = activeCount + 1;
                                 isShowDefault = false;
