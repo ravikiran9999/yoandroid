@@ -434,9 +434,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     mToastFactory.showToast(R.string.busy);
                 } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_NOT_FOUND) {
                     mToastFactory.showToast(R.string.not_online_unavailable);
-                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_TEMPORARILY_UNAVAILABLE) {
-                    mToastFactory.showToast(R.string.busy);
-                }else if (lastStatusCode == pjsip_status_code.PJSIP_SC_FORBIDDEN) {
+                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_FORBIDDEN) {
                     EventBus.getDefault().post(Constants.BALANCE_RECHARGE_ACTION);
                 } else {
                     if (statusCode != 503) {
@@ -814,6 +812,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void showCallActivity(String destination, Bundle options, Intent oldintent) {
         //Always set default speaker off
+        mAudioManager.setSpeakerphoneOn(false);
         sipCallState.setCallDir(SipCallState.OUTGOING);
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
