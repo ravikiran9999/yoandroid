@@ -73,7 +73,6 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     ImagePickHelper cameraIntent;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,13 +107,15 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.create) {
-            if (!TextUtils.isEmpty(groupName.getText().toString())) {
-                mGroupName = groupName.getText().toString();
-                createGroup();
+            mGroupName = groupName.getText().toString();
+            String temp = mGroupName;
+            if (temp.trim().length() > 0) {
+                createGroup(mGroupName);
             } else {
                 Util.hideKeyboard(this, getCurrentFocus());
                 Toast.makeText(this, getString(R.string.enter_group_name), Toast.LENGTH_SHORT).show();
             }
+
         } else if (item.getItemId() == android.R.id.home) {
             finish();
         }
@@ -190,7 +191,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-    private void createGroup() {
+    private void createGroup(String groupName) {
 
         if (!selectedContactsArrayList.isEmpty()) {
             showProgressDialog();
@@ -215,7 +216,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
             }
 
-            RequestBody groupDescription = RequestBody.create(MediaType.parse("room[group_name]"), mGroupName);
+            RequestBody groupDescription = RequestBody.create(MediaType.parse("room[group_name]"), groupName);
 
             String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             yoService.createGroupAPI(access, selectedUsers, groupDescription, body).enqueue(new Callback<Room>() {
@@ -261,10 +262,10 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if(count == 1) {
-          if(TextUtils.isDigitsOnly(s)) {
-             groupName.setText("");
-          }
+        if (count == 1) {
+            if (TextUtils.isDigitsOnly(s)) {
+                groupName.setText("");
+            }
         }
     }
 
