@@ -197,7 +197,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // hideDialPad(true);
-        Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG, noSearchResult);
+        Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG, noSearchResult, null);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
