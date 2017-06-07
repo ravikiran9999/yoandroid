@@ -434,6 +434,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                     mToastFactory.showToast(R.string.busy);
                 } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_NOT_FOUND) {
                     mToastFactory.showToast(R.string.not_online_unavailable);
+                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TIMEOUT || lastStatusCode == pjsip_status_code.PJSIP_SC_TEMPORARILY_UNAVAILABLE) {
+                    mToastFactory.showToast(R.string.not_in_coverage_area);
                 } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_FORBIDDEN) {
                     EventBus.getDefault().post(Constants.BALANCE_RECHARGE_ACTION);
                 } else {
