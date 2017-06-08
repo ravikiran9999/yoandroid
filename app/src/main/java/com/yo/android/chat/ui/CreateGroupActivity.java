@@ -83,7 +83,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         ContactsArrayList = new ArrayList<>();
         selectedContactsArrayList = new ArrayList<>();
         addContactIcon.setOnClickListener(this);
-        groupName.addTextChangedListener(this);
+        //groupName.addTextChangedListener(this);
         enableBack();
 
         groupImage.setOnClickListener(new View.OnClickListener() {
