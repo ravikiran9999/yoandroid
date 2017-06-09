@@ -200,18 +200,28 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     int minutes = Integer.parseInt(tokens[1]);
                     int seconds = Integer.parseInt(tokens[2]);
                     String duration = "";
-                    if (seconds > 30) {
+                    /*if (seconds > 30) {
                         minutes++;
                     }
                     if (hours == 0) {
                         duration = String.format("%02d mins", minutes);
                     } else {
                         duration = String.format("%02d hrs %02d mins", hours, minutes);
+                    }*/
+
+                    if(hours == 0 && minutes == 0) {
+                        duration = String.format("%02d secs", seconds);
+                    } else if (hours == 0 && seconds == 0) {
+                        duration = String.format("%02d mins", minutes, seconds);
+                    } else if (hours == 0) {
+                        duration = String.format("%02d mins %02d secs", minutes, seconds);
+                    }  else {
+                        duration = String.format("%02d hrs %02d mins %02d secs", hours, minutes, seconds);
                     }
                     holder.getDuration().setText(duration);
                 } else {
                     String duration = "";
-                    duration = convertSecToHMmSs(Long.parseLong(item.getDuration()));
+                    duration = Util.convertSecToHMmSs(Long.parseLong(item.getDuration()));
                     holder.getDuration().setText(duration);
                 }
             } else {
@@ -320,20 +330,5 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         }
 
     }
-
-    private static String convertSecToHMmSs(long totalSecs) {
-
-        long hours = totalSecs / 3600;
-        long minutes = (totalSecs % 3600) / 60;
-        long seconds = totalSecs % 60;
-        if (minutes == 0) {
-            return String.format("%02d secs", seconds);
-        }
-        if (hours == 0) {
-            return String.format("%02d mins %02d secs", minutes, seconds);
-        }
-        return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
-    }
-
 
 }
