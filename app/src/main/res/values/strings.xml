@@ -128,7 +128,7 @@
     <string name="title_activity_load_magazine">LoadMagazineActivity</string>
     <string name="zero">0</string>
     <string name="group_creation_error">Group not created. Please try again</string>
-    <string name="enter_group_name">Please enter group name</string>
+    <string name="enter_group_name">Provide a group subject</string>
     <string name="create_group">Create group</string>
     <string name="clear_chat_history">Clear chat history</string>
     <string name="delete">Delete</string>

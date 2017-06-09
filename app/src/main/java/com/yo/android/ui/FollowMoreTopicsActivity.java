@@ -51,6 +51,8 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,46 +60,57 @@ import retrofit2.Response;
 
 public class FollowMoreTopicsActivity extends BaseActivity {
 
-    @Inject
-    YoApi.YoService yoService;
-
-    @Inject
-    @Named("login")
-    protected PreferenceEndPoint preferenceEndPoint;
-    private String from;
-    private List<Topics> topicsList;
-    private List<String> addedTopics;
-    public ArrayList<Tag> initialTags;
-    private ArrayList<Tag> searchTags;
-    private boolean isInvalidSearch;
-    private TextView noSearchResults;
-    private List<String> followedTopicsIdsList;
-    private Button done;
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
-    private TextView tvHelloInterests;
-    private TextView tvPickTopics;
     private static int TAB_GREY;
     private static int WHITE;
     private static int COLOR_PRIMARY;
 
+    @Inject
+    YoApi.YoService yoService;
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
 
+
+    @Bind(R.id.no_search_results)
+    TextView noSearchResults;
+    @Bind(R.id.btn_done)
+    Button done;
+    @Bind(R.id.hello_interests)
+    TextView tvHelloInterests;
+    @Bind(R.id.pick_topics)
+    TextView tvPickTopics;
+    @Bind(R.id.listView)
+    ListView listView;
+    @Bind(R.id.tagsparent)
+    LinearLayout tagsParentLayout;
+    @Bind(R.id.btn_skip)
+    Button skip;
+    @Bind(R.id.bottom)
+    LinearLayout bottomLayout;
+
+    private List<String> followedTopicsIdsList;
     private int lineMargin;
     private int tagMargin;
     private int textPaddingLeft;
     private int textPaddingRight;
     private int textPaddingTop;
     private int texPaddingBottom;
-    private ListView listView;
+
+    private String from;
+    private List<Topics> topicsList;
+    private List<String> addedTopics;
+    public ArrayList<Tag> initialTags;
+    private ArrayList<Tag> searchTags;
+    private boolean isInvalidSearch;
     private CategorizedList categorisedList;
     private List<Categories> serverTopics;
     private TagView tagViewAdapter;
     private LayoutInflater layoutInflater;
-    private LinearLayout tagsParentLayout;
     private ArrayList<Tag> worldpopulationlist = null;
     private ArrayList<Tag> arraylist = null;
-    private Button skip;
     private boolean isSkipClicked;
-    private LinearLayout bottomLayout;
+
 
     public interface TagsLoader {
         void loaded();
@@ -108,7 +121,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follow_more_topics);
-
+        ButterKnife.bind(this);
         String title = "Follow more topics";
 
         getSupportActionBar().setTitle(title);
@@ -124,16 +137,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         getSupportActionBar().setHomeButtonEnabled(backBtn);
         getSupportActionBar().setDisplayHomeAsUpEnabled(backBtn);
 
-        done = (Button) findViewById(R.id.btn_done);
-        noSearchResults = (TextView) findViewById(R.id.no_search_results);
-        bottomLayout = (LinearLayout) findViewById(R.id.bottom);
-        tvHelloInterests = (TextView) findViewById(R.id.hello_interests);
-        tvPickTopics = (TextView) findViewById(R.id.pick_topics);
-        listView = (ListView) findViewById(R.id.listView);
         View customView = getLayoutInflater().inflate(R.layout.section_list_item, null);
         tagViewAdapter = (TagView) customView.findViewById(R.id.tag_group);
-        tagsParentLayout = (LinearLayout) findViewById(R.id.tagsparent);
-        skip = (Button) findViewById(R.id.btn_skip);
 
         initialTags = new ArrayList<>();
         topicsList = new ArrayList<Topics>();

@@ -166,6 +166,7 @@ public class BottomTabsActivity extends BaseActivity {
         mAdapter.addFragment(new DialerFragment(), null);
         mAdapter.addFragment(new ContactsFragment(), null);
         mAdapter.addFragment(new MoreFragment(), null);
+        viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(mAdapter);
 
         preferenceEndPoint.saveBooleanPreference("isNotifications", false);

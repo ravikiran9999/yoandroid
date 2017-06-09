@@ -73,6 +73,7 @@ public class Constants {
     public static final String APP_USERS = "AppUsers";
     public static final String ROOMS = "Rooms";
     public static final String FIRE_BASE_ROOMS = "total_firebase_rooms";
+    public static final String FIRE_BASE_ROOMS_REFERENCE = "firebase_rooms_reference";
     public static final String MY_ROOMS = "rooms";
     public static final String USERS = "Users";
     public static final String PROFILE = "profile";

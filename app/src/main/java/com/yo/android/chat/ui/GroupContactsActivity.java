@@ -126,16 +126,17 @@ public class GroupContactsActivity extends BaseActivity {
     }
 
     private void getYoAppUsers() {
+        /*List<Contact> contactList = new ArrayList<>();
         List<Contact> mContactsList = mContactsSyncManager.getContacts();
         if (!mContactsList.isEmpty()) {
             for(Contact contact : mContactsList)
-                contactsList.add(contact);
-            loadInAlphabeticalOrder(contactsList);
+                contactList.add(contact);
+            loadInAlphabeticalOrder(contactList);
         }
 
         if (mContactsList.isEmpty()) {
             showProgressDialog();
-        }
+        }*/
 
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override

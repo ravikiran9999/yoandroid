@@ -80,6 +80,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
 
     @Inject
     VoxFactory voxFactory;
+
     @Bind(R.id.listView)
     ListView listView;
     @Bind(R.id.progress)
@@ -88,10 +89,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     TextView txtEmptyCallLogs;
     @Bind(R.id.floatingDialer)
     View floatingDialer;
-
     @Bind(R.id.ll_no_calls)
     LinearLayout llNoCalls;
-
     @Bind(R.id.no_search_results)
     protected TextView noSearchResult;
 
