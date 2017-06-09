@@ -59,6 +59,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     private static final int KEEP_ON_HOLD_RESUME = 101;
 
     public static final String DISPLAY_NUMBER = "displaynumber";
+    public static final int DISCONNECTED = 1000;
 
     private SipCallModel callModel;
     private CallLogsModel log;
@@ -353,7 +354,8 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             if (hold == KEEP_ON_HOLD) {
                 if (sipBinder != null) {
                     mHandler.removeCallbacks(startTimer);
-                    sipBinder.getHandler().setHoldCall(true);
+                    //its handled in sip because if this activity is not in active state these wont work
+                    //sipBinder.getHandler().setHoldCall(true);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -364,7 +366,8 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             } else if (hold == KEEP_ON_HOLD_RESUME) {
                 if (sipBinder != null) {
                     mHandler.post(startTimer);
-                    sipBinder.getHandler().setHoldCall(false);
+                    //sipBinder.getHandler().setHoldCall(false);
+                    //its handled in sip because if this activity is not in active state these wont work
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -372,6 +375,11 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                         }
                     });
                 }
+            } else if (hold == DISCONNECTED) {
+                if (bus != null) {
+                    bus.post(DialerFragment.REFRESH_CALL_LOGS);
+                }
+                finish();
             }
         }
     }

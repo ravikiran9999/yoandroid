@@ -52,26 +52,16 @@ import com.yo.android.voip.UserAgent;
 import com.yo.android.voip.VoipConstants;
 
 import org.pjsip.pjsua2.AccountConfig;
-import org.pjsip.pjsua2.AudDevManager;
-import org.pjsip.pjsua2.AudioMedia;
 import org.pjsip.pjsua2.AuthCredInfo;
 import org.pjsip.pjsua2.AuthCredInfoVector;
 import org.pjsip.pjsua2.CallInfo;
-import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.Endpoint;
-import org.pjsip.pjsua2.EpConfig;
-import org.pjsip.pjsua2.Media;
 import org.pjsip.pjsua2.OnIncomingCallParam;
 import org.pjsip.pjsua2.StreamStat;
 import org.pjsip.pjsua2.StringVector;
-import org.pjsip.pjsua2.TransportConfig;
-import org.pjsip.pjsua2.pj_qos_type;
-import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
-import org.pjsip.pjsua2.pjsip_transport_type_e;
-import org.pjsip.pjsua2.pjsua_call_media_status;
 
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -155,6 +145,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private static ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_VOICE_CALL, 100);
     public static final int EXPIRE = 3600;
     private boolean isOnGoingCall = false;
+    private boolean mySelfEndCall = false;
 
 
     @Override
@@ -298,13 +289,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         callType = CallLog.Calls.INCOMING_TYPE;
         // if user is already in yo call or if any default phone calls it should show missed call.
         if (currentCall != null) {
-
-
-            prm.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
             try {
                 String source = getPhoneNumber(call.getInfo().getRemoteUri());
-                //call.answer(prm);
-                call.hangup(prm);
+                sendBusyHereToIncomingCall();
                 source = parseVoxUser(source);
                 Util.createNotification(this, source, getResources().getString(R.string.missed_call), BottomTabsActivity.class, new Intent(), false);
                 //Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
@@ -320,7 +307,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             return;
         }
         currentCall = call;
-        setHoldCall(false);
 
         try {
             sipCallState.setCallDir(SipCallState.INCOMING);
@@ -404,8 +390,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
             try {
                 //TODO:Handle more error codes to display proper messages to the user
-                handleErrorCodes(call.getInfo(), sipCallState);
-
+                statusCode = call.getInfo().getLastStatusCode().swigValue();
+                handleErrorCodes(sipCallState, call.getInfo().getLastReason(), call.getInfo().getLastStatusCode());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -419,32 +405,29 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
-    private void handleErrorCodes(final CallInfo call, final SipCallState sipCallstate) {
-        statusCode = call.getLastStatusCode().swigValue();
-        mLog.e(TAG, sipCallstate.getMobileNumber() + ",Call Object " + call.toString());
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                pjsip_status_code lastStatusCode = call.getLastStatusCode();
-                if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
-                    //mToastFactory.showToast(R.string.call_ended);
-                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE) {
-                    mToastFactory.showToast(R.string.call_ended);
-                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_BUSY_HERE || lastStatusCode == pjsip_status_code.PJSIP_SC_INTERNAL_SERVER_ERROR) {
-                    mToastFactory.showToast(R.string.busy);
-                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_NOT_FOUND) {
-                    mToastFactory.showToast(R.string.not_online_unavailable);
-                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TIMEOUT || lastStatusCode == pjsip_status_code.PJSIP_SC_TEMPORARILY_UNAVAILABLE) {
-                    mToastFactory.showToast(R.string.not_in_coverage_area);
-                } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_FORBIDDEN) {
-                    EventBus.getDefault().post(Constants.BALANCE_RECHARGE_ACTION);
-                } else {
-                    if (statusCode != 503) {
-                        mToastFactory.showToast(call.getLastReason());
-                    }
+
+    private void handleErrorCodes(final SipCallState sipCallstate, String message, pjsip_status_code code) {
+        if (!mySelfEndCall) {
+            pjsip_status_code lastStatusCode = code;
+            if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
+                //mToastFactory.showToast(R.string.call_ended);
+            } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE) {
+                showFailedToast(getString(R.string.call_ended));
+            } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_BUSY_HERE || lastStatusCode == pjsip_status_code.PJSIP_SC_INTERNAL_SERVER_ERROR) {
+                showFailedToast(getString(R.string.busy));
+            } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_NOT_FOUND) {
+                showFailedToast(getString(R.string.not_online_unavailable));
+            } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TIMEOUT || lastStatusCode == pjsip_status_code.PJSIP_SC_TEMPORARILY_UNAVAILABLE) {
+                showFailedToast(getString(R.string.not_in_coverage_area));
+            } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_FORBIDDEN) {
+                EventBus.getDefault().post(Constants.BALANCE_RECHARGE_ACTION);
+            } else {
+                if (statusCode != 503) {
+                    showFailedToast(message);
                 }
             }
-        });
+
+        }
 
         if (statusCode == 487) {
             callType = CallLog.Calls.MISSED_TYPE;
@@ -453,33 +436,13 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
             callDisconnected();
             if (!sipCallstate.getMobileNumber().contains(BuildConfig.RELEASE_USER_TYPE)) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mToastFactory.showToast(getString(R.string.not_supported_country));
-                    }
-                });
+                showFailedToast(getString(R.string.not_supported_country));
             } else {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mToastFactory.showToast(getString(R.string.not_online));
-                    }
-                });
+                showFailedToast(getString(R.string.not_online));
             }
         } else if (statusCode == 603) {
             callDisconnected();
-        } /*else if (statusCode == 200) {
-            *//*try {
-                String dumpString = currentCall.dump(true, "");
-                mLog.d(TAG, "The dump string is " + dumpString);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*//*
-            callDisconnected();
-        } else if (statusCode == 480 || statusCode == 486 || statusCode == 404 || statusCode == 403 || statusCode == 408) {
-            callDisconnected();
-        }*/ else {
+        } else {
             callDisconnected();
         }
         if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
@@ -518,6 +481,20 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         //603 Allocated Channels Busy -Lines are busy
         // 487 missed call
 
+    }
+
+    private void showFailedToast(final String message) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!mySelfEndCall) {
+                    mToastFactory.showToast(message);
+                } else {
+                    mySelfEndCall = !mySelfEndCall;
+                }
+
+            }
+        });
     }
 
     private void callAccepted(MyCall ci) {
@@ -563,6 +540,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState = new SipCallState();
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.sendBroadcast(new Intent(UserAgent.ACTION_CALL_END));
+        EventBus.getDefault().post(OutGoingCallActivity.DISCONNECTED);
     }
 
     private void playPausedAudio() {
@@ -577,6 +555,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }, DELAY_IN_AUDIO_START);
     }
 
+
     @Override
     public void notifyCallMediaState(MyCall call) {
         try {
@@ -588,6 +567,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     @Override
     public void notifyBuddyState(MyBuddy buddy) {
+        if (buddy != null) {
+            buddy.getStatusText();
+        }
 
     }
 
@@ -765,33 +747,34 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             public void run() {
                 try {
                     if (!localHold) {
-                        final StreamStat stats = call.getStreamStat(0);
-
-                        if (currentBytes != stats.getRtcp().getRxStat().getBytes()) {
-                            count = 0;
-                            currentBytes = stats.getRtcp().getRxStat().getBytes();
-                            SipCallModel callModel = new SipCallModel();
-                            callModel.setEvent(OutGoingCallActivity.CALL_ACCEPTED_START_TIMER);
-                            callModel.setOnCall(true);
-                            EventBus.getDefault().post(callModel);
-                        } else {
-                            count++;
-                        }
-
-                        //mLog.w(TAG, "UpdateStatus get bytes:  " + stats.getRtcp().getRxStat().getBytes());
-                        //mLog.w(TAG, "UpdateStatus Count:  " + count);
-                        if (count > 5 && count <= 20) {
-                            SipCallModel callModel = new SipCallModel();
-                            callModel.setEvent(SipCallModel.RECONNECTING);
-                            EventBus.getDefault().post(callModel);
-                        }
-                        if (count > 600) {
-                            if (currentCall != null) {
-                                hangupCall(callType);
+                        if (call != null && call.isActive()) {
+                            final StreamStat stats = call.getStreamStat(0);
+                            if (currentBytes != stats.getRtcp().getRxStat().getBytes()) {
+                                count = 0;
+                                currentBytes = stats.getRtcp().getRxStat().getBytes();
+                                SipCallModel callModel = new SipCallModel();
+                                callModel.setEvent(OutGoingCallActivity.CALL_ACCEPTED_START_TIMER);
+                                callModel.setOnCall(true);
+                                EventBus.getDefault().post(callModel);
+                            } else {
+                                count++;
                             }
-                            callDisconnected();
-                            count = 0;
-                            isAlreadyInReconnecting = false;
+
+                            //mLog.w(TAG, "UpdateStatus get bytes:  " + stats.getRtcp().getRxStat().getBytes());
+                            //mLog.w(TAG, "UpdateStatus Count:  " + count);
+                            if (count > 5 && count <= 20) {
+                                SipCallModel callModel = new SipCallModel();
+                                callModel.setEvent(SipCallModel.RECONNECTING);
+                                EventBus.getDefault().post(callModel);
+                            }
+                            if (count > 600) {
+                                if (currentCall != null) {
+                                    hangupCall(callType);
+                                }
+                                callDisconnected();
+                                count = 0;
+                                isAlreadyInReconnecting = false;
+                            }
                         }
                     }
 
@@ -885,13 +868,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (isHold) {
                 mToastFactory.showToast(R.string.hold);
                 getMediaManager().setMicrophoneMuteOn(true);
-                try {
-                    if (mRingTone != null && mRingTone.isPlaying()) {
-                        mRingTone.pause();
-                        mVibrator.cancel();
-                    }
-                } catch (IllegalStateException e) {
-                    mLog.w(TAG, e);
+                if (mEndpoint != null && mEndpoint.audDevManager() != null) {
+                    mEndpoint.audDevManager().setNoDev();
                 }
                 if (currentCall != null) {
                     CallOpParam prm = new CallOpParam(true);
@@ -905,15 +883,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 CallOpParam prm = new CallOpParam(true);
                 prm.getOpt().setFlag(1);
                 getMediaManager().setMicrophoneMuteOn(false);
+
                 try {
-                    if (currentCall.getInfo() != null
-                            && currentCall.getInfo().getState() != pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
-                        if (mRingTone != null) {
-                            mRingTone.start();
-                            mVibrator.vibrate(VIBRATOR_PATTERN, 0);
-                        }
-                    }
                     currentCall.reinvite(prm);
+                    mEndpoint.audDevManager().setPlaybackDev(0);
+                    mEndpoint.audDevManager().setCaptureDev(0);
                     mToastFactory.showToast(R.string.unhold);
                 } catch (Exception e) {
                     mLog.w(TAG, e);
@@ -979,36 +953,24 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     };
 
     public void acceptCall() {
-        CallOpParam prm = new CallOpParam();
-        prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
-        try {
-            if (currentCall != null)
-                currentCall.answer(prm);
-            sipCallState.setCallState(SipCallState.IN_CALL);
-        } catch (Exception e) {
-            mLog.w(TAG, e);
-        }
+        acceptIncomingCall();
     }
 
     private boolean isHangup;
 
     public void hangupCall(int callType) {
+        mySelfEndCall = true;
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
-
         if (currentCall != null) {
-            CallOpParam prm = new CallOpParam();
-            prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
-            try {
-                if (currentCall != null)
-                    currentCall.hangup(prm);
-                isHangup = true;
-                mLog.i(TAG, "check : 1");
-                //sipCallState.setCallState(SipCallState.CALL_FINISHED);
-            } catch (Exception e) {
-                mLog.w(TAG, e);
+            if (isCallAccepted) {
+                hangUp();
+            } else if (callType == CallLog.Calls.INCOMING_TYPE) {
+                sendBusyHereToIncomingCall();
+            } else {
+                hangUp();
             }
-            //callDisconnected();
+            isHangup = true;
         }
     }
 
@@ -1052,7 +1014,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
         android.util.Log.d("debug", "Service Killed");
-        //sendBroadcast(new Intent("YouWillNeverKillMe"));
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
@@ -1060,7 +1021,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 currentCall.hangup(prm);
                 isHangup = true;
                 sipCallState.setCallState(SipCallState.CALL_FINISHED);
-                //ReCreateService.getInstance(this).start(this);
             } catch (Exception e) {
                 mLog.w(TAG, e);
             }
@@ -1090,206 +1050,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Override
     public void disconnectCallBack(CallDisconnectedListner listner) {
         callDisconnectedListner = listner;
-    }
-
-
-    //New changes
-
-    public void initService(YoSipService srv) {
-        //  pjService = srv;
-        // notificationManager = pjService.service.notificationManager;
-
-        /*if (handlerThread == null) {
-            handlerThread = new HandlerThread("UAStateAsyncWorker");
-            handlerThread.start();
-        }
-        if (msgHandler == null) {
-            msgHandler = new WorkerHandler(handlerThread.getLooper(), this);
-        }*/
-
-        if (eventLock == null) {
-            PowerManager pman = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            eventLock = pman.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                    "com.csipsimple.inEventLock");
-            eventLock.setReferenceCounted(true);
-
-        }
-        if (ongoingCallLock == null) {
-            PowerManager pman = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            ongoingCallLock = pman.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                    "com.csipsimple.ongoingCallLock");
-            ongoingCallLock.setReferenceCounted(false);
-        }
-    }
-
-    public void stopService() {
-
-      /*  Threading.stopHandlerThread(handlerThread, true);
-        handlerThread = null;
-        msgHandler = null;
-*/
-        // Ensure lock is released since this lock is a ref counted one.
-        if (eventLock != null) {
-            while (eventLock.isHeld()) {
-                eventLock.release();
-            }
-        }
-        if (ongoingCallLock != null) {
-            if (ongoingCallLock.isHeld()) {
-                ongoingCallLock.release();
-            }
-        }
-    }
-
-    /**
-     * Starts PJSIP Stack.
-     */
-    private void startStack() {
-
-        //if (mStarted) return;
-
-        try {
-            Logger.warn("Starting PJSIP");
-            mEndpoint = new Endpoint();
-            mEndpoint.libCreate();
-
-            EpConfig epConfig = new EpConfig();
-            epConfig.getUaConfig().setUserAgent(AGENT_NAME);
-            epConfig.getMedConfig().setHasIoqueue(true);
-            epConfig.getMedConfig().setClockRate(16000);
-            epConfig.getMedConfig().setQuality(10);
-            epConfig.getMedConfig().setEcOptions(1);
-            epConfig.getMedConfig().setEcTailLen(200);
-            epConfig.getMedConfig().setThreadCnt(2);
-            mEndpoint.libInit(epConfig);
-
-            TransportConfig udpTransport = new TransportConfig();
-            udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-            TransportConfig tcpTransport = new TransportConfig();
-            tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
-            mEndpoint.libStart();
-
-            mEndpoint.codecSetPriority("PCMA/8000", (short) 128);
-            mEndpoint.codecSetPriority("PCMU/8000", (short) 128);
-            mEndpoint.codecSetPriority("G722/8000", (short) 0);
-
-
-            Logger.warn("PJSIP started!");
-            // mStarted = true;
-            // mBroadcastEmitter.stackStatus(true);
-
-        } catch (Exception exc) {
-            Logger.warn("Error while starting PJSIP");
-            //mStarted = false;
-        }
-    }
-
-    /**
-     * Shuts down PJSIP Stack
-     *
-     * @throws Exception if an error occurs while trying to shut down the stack
-     */
-    private void stopStack() {
-
-        // if (!mStarted) return;
-
-        try {
-            Logger.warn("Stopping PJSIP");
-
-            //  removeAllActiveAccounts();
-
-            // try to force GC to do its job before destroying the library, since it's
-            // recommended to do that by PJSUA examples
-            Runtime.getRuntime().gc();
-
-            mEndpoint.libDestroy();
-            mEndpoint.delete();
-            mEndpoint = null;
-
-            Logger.warn("PJSIP stopped");
-            // mBroadcastEmitter.stackStatus(false);
-
-        } catch (Exception exc) {
-            Logger.warn("Error while stopping PJSIP");
-
-        } finally {
-            // mStarted = false;
-            mEndpoint = null;
-        }
-    }
-
-    /**
-     * Utility method to mute/unmute the device microphone during a call.
-     *
-     * @param mute true to mute the microphone, false to un-mute it
-     */
-    public void setMute(boolean mute) {
-        // return immediately if we are not changing the current state
-        if ((localMute && mute) || (!localMute && !mute)) return;
-
-        CallInfo info;
-        try {
-            info = getInfo();
-        } catch (Exception exc) {
-            Logger.warn("setMute: error while getting call info");
-            return;
-        }
-
-        for (int i = 0; i < info.getMedia().size(); i++) {
-            Media media = null;// getMedia(i);
-            CallMediaInfo mediaInfo = info.getMedia().get(i);
-
-            if (mediaInfo.getType() == pjmedia_type.PJMEDIA_TYPE_AUDIO
-                    && media != null
-                    && mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE) {
-                AudioMedia audioMedia = AudioMedia.typecastFromMedia(media);
-
-                // connect or disconnect the captured audio
-                try {
-                    AudDevManager mgr = null;//account.getService().getAudDevManager();
-
-                    if (mute) {
-                        mgr.getCaptureDevMedia().stopTransmit(audioMedia);
-                        localMute = true;
-                    } else {
-                        mgr.getCaptureDevMedia().startTransmit(audioMedia);
-                        localMute = false;
-                    }
-
-                } catch (Exception exc) {
-                    Logger.warn("setMute: error while connecting audio media to sound device");
-                }
-            }
-        }
-    }
-
-    public boolean isLocalMute() {
-        return localMute;
-    }
-
-    public boolean toggleMute() {
-        if (localMute) {
-            setMute(false);
-            return !localHold;
-        }
-
-        setMute(true);
-        return localHold;
-    }
-
-    private void startRingBack() {
-        if (toneGenerator != null) {
-            toneGenerator.startTone(ToneGenerator.TONE_CDMA_NETWORK_USA_RINGBACK, 1000);
-        }
-    }
-
-    private void stopRingBack() {
-        if (toneGenerator != null) {
-            toneGenerator.stopTone();
-        }
     }
 
     protected synchronized void startDefaultRingtone(int volume) {
@@ -1366,8 +1126,55 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
 
-    protected synchronized AudDevManager getAudDevManager() {
-        return mEndpoint.audDevManager();
+    public void acceptIncomingCall() {
+        CallOpParam param = new CallOpParam();
+        param.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
+        try {
+            if (currentCall != null) {
+                currentCall.answer(param);
+            }
+        } catch (Exception exc) {
+            mLog.e(TAG, "Failed to accept incoming call", exc);
+        }
+    }
+
+    public void sendBusyHereToIncomingCall() {
+        CallOpParam param = new CallOpParam();
+        param.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
+
+        try {
+            if (currentCall != null) {
+                currentCall.answer(param);
+            }
+        } catch (Exception exc) {
+            mLog.e(TAG, "Failed to send busy here", exc);
+        }
+    }
+
+    public void declineIncomingCall() {
+        CallOpParam param = new CallOpParam();
+        param.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+
+        try {
+            if (currentCall != null) {
+                currentCall.answer(param);
+            }
+        } catch (Exception exc) {
+            mLog.e(TAG, "Failed to decline incoming call", exc);
+        }
+    }
+
+    public void hangUp() {
+        CallOpParam param = new CallOpParam();
+        param.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+
+        try {
+            if (currentCall != null) {
+                currentCall.hangup(param);
+            }
+        } catch (Exception exc) {
+            mLog.e(TAG, "Failed to hangUp call" + exc);
+        }
     }
 
     //    @Subscribe

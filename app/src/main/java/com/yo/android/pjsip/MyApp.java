@@ -105,7 +105,7 @@ class MyApp {
             Log.e(TAG, "SIP STATCK STARTED");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             //return;
         }
 

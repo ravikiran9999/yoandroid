@@ -1,13 +1,16 @@
 package com.yo.android.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -15,8 +18,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -110,6 +116,7 @@ public class BottomTabsActivity extends BaseActivity {
     public static PendingIntent pintent;
     private TextView actionBarTitle;
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private static final int REQUEST_AUDIO_RECORD = 200;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -156,6 +163,10 @@ public class BottomTabsActivity extends BaseActivity {
         context = this;
         activity = this;
         mContext = getApplicationContext();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO_RECORD);
+        }
 
         preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
 
@@ -381,11 +392,37 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_AUDIO_RECORD) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //start audio recording or whatever you planned to do
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(BottomTabsActivity.this, Manifest.permission.RECORD_AUDIO)) {
+                    //Show an explanation to the user *asynchronously*
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("This permission is important to record audio.")
+                            .setTitle("Important permission required");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(BottomTabsActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO_RECORD);
+                        }
+                    });
+                    ActivityCompat.requestPermissions(BottomTabsActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO_RECORD);
+                } else {
+                    //Never ask again and handle your app without permission.
+                }
+            }
+        }
+    }
+
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(connection);
         EventBus.getDefault().unregister(this);
     }
+
 
     @Override
     public void onBackPressed() {
