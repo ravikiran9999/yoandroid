@@ -233,7 +233,10 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (mContact != null) {
                 String numberTrim = numberFromNexgeFormat(mContact.getNexgieUserName(), mContact.getPhoneNo());
                 String mName = mContact.getName().replaceAll("\\s+", "");
-                if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !isSame(mName, numberTrim)) {
+                if(name.equalsIgnoreCase(getString(R.string.group_name))) {
+                    profileNameTitle.setText(name);
+                    profileName.setText(contact.getName());
+                } else if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(checkPlusSign(mContact.getName()));
@@ -252,9 +255,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             } else if (contact != null) {
                 String numberTrim = numberFromNexgeFormat(contact.getNexgieUserName(), contact.getPhoneNo());
                 String mName = contact.getName().replaceAll("\\s+", "");
-                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !isSame(mName, numberTrim)) {
+                if (name.equalsIgnoreCase(getString(R.string.group_name))) {
+                    profileNameTitle.setText(name);
+                    profileName.setText(contact.getName());
+                } else if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
-
                     profileNameTitle.setText(name);
                     profileName.setText(checkPlusSign(contact.getName()));
                 } else {
@@ -322,7 +327,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     public void callUser() {
         //do nothing...
         if (contact != null && contact.getNexgieUserName() != null) {
-            SipHelper.makeCall(this, contact.getNexgieUserName(),false);
+            SipHelper.makeCall(this, contact.getNexgieUserName(), false);
         }
     }
 
