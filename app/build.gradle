@@ -25,9 +25,9 @@ android {
     defaultConfig {
         applicationId "com.yo.android"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 25
         versionCode 5
-        versionName "17.2.2.4"
+        versionName "1.2Beta"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
