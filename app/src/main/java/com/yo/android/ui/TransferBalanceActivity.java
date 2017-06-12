@@ -1,6 +1,7 @@
 package com.yo.android.ui;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -143,10 +144,12 @@ public class TransferBalanceActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(amount.trim())) {
                     double val = Double.parseDouble(amount.trim());
                     if (val != 0) {
-                        if (Double.parseDouble(mBalanceHelper.getCurrentBalance()) >= Double.parseDouble(amount)) {
+                        if (Double.parseDouble(mBalanceHelper.getCurrentBalance()) > Double.parseDouble(amount)) {
 
                             showMessageDialog(amount, phoneNo);
 
+                        } else if(Double.parseDouble(mBalanceHelper.getCurrentBalance()) == Double.parseDouble(amount)) {
+                            showBalanceDialog();
                         } else {
                             mToastFactory.showToast(R.string.insufficient_amount);
                         }
@@ -366,5 +369,18 @@ public class TransferBalanceActivity extends BaseActivity {
                 });
             }
         }
+    }
+
+    private void showBalanceDialog() {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setMessage(R.string.cannot_transfer_full_balance)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        android.support.v7.app.AlertDialog alert = builder.create();
+        alert.show();
     }
 }
