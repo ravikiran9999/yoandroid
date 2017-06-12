@@ -623,6 +623,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             String username = sipProfile.getUsername();
             String password = sipProfile.getPassword();
             if (myAccount != null) {
+                String displayname = username.substring(username.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, username.length() - 1);
+                mLog.w(TAG, "Display Name " + displayname);
+
                 configAccount(myAccount.cfg, id, registrar, proxy, username, password);
                 try {
                     myAccount.cfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
@@ -646,6 +649,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void configAccount(AccountConfig accCfg, String acc_id, String registrar, String proxy,
                                String username, String password) {
+
         accCfg.setIdUri(acc_id);
         accCfg.getRegConfig().setRegistrarUri(registrar);
         AuthCredInfoVector creds = accCfg.getSipConfig().getAuthCreds();
@@ -713,7 +717,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             public void run() {
                 if (!isCallAccepted) {
                     //After one minute there is no response/call back for answered call
-                    hangupCall(callType);
+                    //hangupCall(callType);
                 }
             }
         }, DISCONNECT_IF_NO_ANSWER);
@@ -801,11 +805,18 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState.setCallDir(SipCallState.OUTGOING);
         sipCallState.setCallState(SipCallState.CALL_RINGING);
         sipCallState.setMobileNumber(destination);
+        String displayName = parseVoxUser(destination);
+
         //For PSTN calls ringtone is playing from library but app to app calls its not playing.
         if (!oldintent.hasExtra(VoipConstants.PSTN)) {
             startDefaultRingtone(1);
+        } else {
+            if (myAccount != null) {
+                String currentUserName = parseVoxUser(destination);
+
+                myAccount.cfg.setIdUri(displayName);
+            }
         }
-        String displayName = parseVoxUser(destination);
 
         Intent intent = new Intent(this, OutGoingCallActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -945,7 +956,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 callModel.setNetwork_availability(NetworkStateListener.NO_NETWORK_CONNECTIVITY);
                 EventBus.getDefault().post(callModel);
             } else {
-                hangupCall(callType);
+                // hangupCall(callType);
                 OpponentDetails details = new OpponentDetails(null, null, 404);
                 EventBus.getDefault().post(details);
             }
