@@ -1129,4 +1129,28 @@ public class Util {
             return string;
         }
     }
+
+    public static String convertSecToHMmSs(long totalSecs) {
+
+        long hours = totalSecs / 3600;
+        long minutes = (totalSecs % 3600) / 60;
+        long seconds = totalSecs % 60;
+        /*if (minutes == 0) {
+            return String.format("%02d secs", seconds);
+        }
+        if (hours == 0) {
+            return String.format("%02d mins %02d secs", minutes, seconds);
+        }
+        return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);*/
+
+        if(hours == 0 && minutes == 0) {
+            return String.format("%02d secs", seconds);
+        } else if (hours == 0 && seconds == 0) {
+            return String.format("%02d mins", minutes, seconds);
+        } else if (hours == 0) {
+            return String.format("%02d mins %02d secs", minutes, seconds);
+        }  else {
+            return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
+        }
+    }
 }
