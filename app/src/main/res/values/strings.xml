@@ -336,4 +336,5 @@
     <string name="recharge">Recharge</string>
     <string name="no_sufficient_bal_recharge">You don\'t have sufficient balance to call. Please recharge.</string>
     <string name="not_in_coverage_area">Recipient not in coverage area.</string>
+    <string name="cannot_transfer_full_balance">You cannot transfer your whole balance. Please maintain atleast US $ 0.001</string>
 </resources>
