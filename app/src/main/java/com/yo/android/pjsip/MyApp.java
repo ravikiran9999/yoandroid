@@ -102,6 +102,8 @@ class MyApp {
             mEndpoint.codecSetPriority("G722/8000", (short) 1);
             mEndpoint.codecSetPriority("G711/8000", (short) 1);
             mEndpoint.audDevManager().setOutputVolume(60);
+            //Disabling VAD to get around NAT
+            mEndpoint.audDevManager().setVad(false);
             Log.e(TAG, "SIP STATCK STARTED");
 
         } catch (Exception e) {
