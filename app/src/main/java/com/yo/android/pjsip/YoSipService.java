@@ -146,6 +146,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public static final int EXPIRE = 3600;
     private boolean isOnGoingCall = false;
     private boolean mySelfEndCall = false;
+    private boolean isCallDeleted;
 
 
     @Override
@@ -207,6 +208,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                         }
                         int value = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).getCallState();
                         if (value == 0) {
+                            isCallDeleted = false;
                             showCallActivity(number, bundle, intent);
                             makeCall(number, bundle, intent);
                         } else {
@@ -302,6 +304,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             }
 
             // Dont remove below logic.
+            isCallDeleted = true;
             call.delete();
 
             return;
@@ -522,7 +525,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Util.cancelNotification(this, outGoingCallNotificationId);
         mediaManager.setAudioMode(AudioManager.MODE_NORMAL);
         stopRingtone();
+        isCallDeleted = true;
         currentCall = null;
+        isCallDeleted = true;
         //callStarted = 0;
         if (sipCallState.getCallDir() == SipCallState.INCOMING) {
             if (sipCallState.getCallState() == SipCallState.CALL_RINGING) {
@@ -617,15 +622,17 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         try {
             //startStack();
             myAccount = buildAccount();
-            String id = String.format("sip:%s@%s", sipProfile.getUsername(), sipProfile.getDomain());
+
+            String usernameDisplayName= sipProfile.getUsername();
+            String displayname = usernameDisplayName.substring(usernameDisplayName.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, usernameDisplayName.length() - 1);
+
+            String id = String.format("\"%s\"<sip:%s@%s>", displayname,usernameDisplayName, sipProfile.getDomain());
             String registrar = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
             String proxy = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
-            String username = sipProfile.getUsername();
+            String username = usernameDisplayName;
             String password = sipProfile.getPassword();
             if (myAccount != null) {
-                String displayname = username.substring(username.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, username.length() - 1);
-                mLog.w(TAG, "Display Name " + displayname);
-
+                mLog.w(TAG, "Display Name " + id);
                 configAccount(myAccount.cfg, id, registrar, proxy, username, password);
                 try {
                     myAccount.cfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
@@ -698,6 +705,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 isOnGoingCall = true;
             } catch (Exception e) {
                 mLog.w(TAG, "Exception making call " + e.getMessage());
+                isCallDeleted = true;
                 call.delete();
                 return;
             }
@@ -723,13 +731,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }, DISCONNECT_IF_NO_ANSWER);
     }
 
-    MyCall info;
     Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
             try {
-                if (info != null) {
-                    updateStatus(info); //this function can change value of mInterval.
+                if (currentCall != null && !isCallDeleted) {
+                    updateStatus(currentCall); //this function can change value of mInterval.
                 } else {
                     mLog.w(TAG, "Call status update reconnecting .. else info null");
                 }
@@ -751,8 +758,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             public void run() {
                 try {
                     if (!localHold) {
-                        if (call != null && call.isActive()) {
-                            final StreamStat stats = call.getStreamStat(0);
+                        if (currentCall!=null && !isCallDeleted) {
+                            final StreamStat stats = currentCall.getStreamStat(0);
                             if (currentBytes != stats.getRtcp().getRxStat().getBytes()) {
                                 count = 0;
                                 currentBytes = stats.getRtcp().getRxStat().getBytes();
@@ -790,7 +797,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     void startRepeatingTask(MyCall ci) {
-        info = ci;
         mStatusChecker.run();
     }
 
