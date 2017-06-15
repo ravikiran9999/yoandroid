@@ -28,7 +28,8 @@
         <se.emilsjolander.stickylistheaders.StickyListHeadersListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:listSelector="@android:color/transparent" />
 
         <TextView
             android:id="@+id/time_stamp_header"
