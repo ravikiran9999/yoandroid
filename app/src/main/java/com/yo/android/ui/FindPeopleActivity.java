@@ -95,15 +95,20 @@ public class FindPeopleActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 pos = position;
-                Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
-                otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
-                otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
-                otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
-                otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
-                otherProfileIntent.putExtra("MagazinesCount", findPeopleAdapter.getItem(position).getMagzinesCount());
-                otherProfileIntent.putExtra("FollowersCount", findPeopleAdapter.getItem(position).getFollowersCount());
-                otherProfileIntent.putExtra("LikedArticlesCount", findPeopleAdapter.getItem(position).getLikedArticlesCount());
-                startActivityForResult(otherProfileIntent, 8);
+                if(findPeopleAdapter.getCount() > position) {
+                    FindPeople item = findPeopleAdapter.getItem(position);
+                    if(item != null) {
+                        Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
+                        otherProfileIntent.putExtra(Constants.USER_ID, item.getId());
+                        otherProfileIntent.putExtra("PersonName", item.getFirst_name() + " " + item.getLast_name());
+                        otherProfileIntent.putExtra("PersonPic", item.getAvatar());
+                        otherProfileIntent.putExtra("PersonIsFollowing", item.getIsFollowing());
+                        otherProfileIntent.putExtra("MagazinesCount", item.getMagzinesCount());
+                        otherProfileIntent.putExtra("FollowersCount", item.getFollowersCount());
+                        otherProfileIntent.putExtra("LikedArticlesCount", item.getLikedArticlesCount());
+                        startActivityForResult(otherProfileIntent, 8);
+                    }
+                }
             }
         });*/
     }

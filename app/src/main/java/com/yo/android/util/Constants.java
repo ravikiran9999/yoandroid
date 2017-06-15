@@ -75,6 +75,7 @@ public class Constants {
     public static final String APP_USERS = "AppUsers";
     public static final String ROOMS = "Rooms";
     public static final String FIRE_BASE_ROOMS = "total_firebase_rooms";
+    public static final String FIRE_BASE_ROOMS_REFERENCE = "firebase_rooms_reference";
     public static final String MY_ROOMS = "rooms";
     public static final String USERS = "Users";
     public static final String PROFILE = "profile";
@@ -111,6 +112,7 @@ public class Constants {
     public static final String COUNTRY_CODE = "country_code";
     public static final String COUNTRY_DISPLAY_NAME = "country_display_name";
     public static final String CREATED = "created";
+    public static final String ON_GOING_CALL = "on_going_call";
     public static int SUCCESS_CODE = 200;
     public static final String FOLLOW_TOPIC_EVENT = "follow_topic_event";
 
@@ -135,6 +137,7 @@ public class Constants {
     public static String START_FETCHING_ARTICLES_ACTION = "com.start.articles.FETCH";
     public static String BALANCE_UPDATED_ACTION = "com.balance.BALANCEUPDATED";
     public static String CALL_RATE_DETAILS_ACTION = "com.callrates.CALLRATEDETAILS";
+    public static String BALANCE_RECHARGE_ACTION = "com.balance.BALANCERECHARGE";
 
     // Contacts
     public static final String NUMBER = "number";

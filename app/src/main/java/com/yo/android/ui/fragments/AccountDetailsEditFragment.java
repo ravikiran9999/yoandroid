@@ -36,6 +36,11 @@ import static android.R.attr.id;
  */
 public class AccountDetailsEditFragment extends BaseFragment implements View.OnClickListener {
 
+    public static final java.lang.String EDIT = "edit";
+    public static final java.lang.String TITLE = "title";
+    public static final java.lang.String KEY = "key";
+    public static final java.lang.String COUNTRY_COODE = "country_code";
+
     private String title;
 
     private String edit;
@@ -60,11 +65,17 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         return editProfile;
     }
 
-    public AccountDetailsEditFragment(final String title, final String edit, final String key, final String countryCode) {
-        this.title = title;
-        this.edit = edit;
-        this.key = key;
-        this.countryCode = countryCode;
+    public AccountDetailsEditFragment() {
+
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.title = getArguments().getString(TITLE);
+        this.edit = getArguments().getString(EDIT);
+        this.key = getArguments().getString(KEY);
+        this.countryCode = getArguments().getString(COUNTRY_COODE);
     }
 
     @Override
@@ -90,7 +101,7 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         ((AccountDetailsActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         editProfile = (EditText) view.findViewById(R.id.edit_profile);
         editBirth = (EditText) view.findViewById(R.id.birth);
-        maxCharCount=(TextView) view.findViewById(R.id.count_txt);
+        maxCharCount = (TextView) view.findViewById(R.id.count_txt);
         cancelBtn = (TextView) view.findViewById(R.id.cancel_edit);
         okBtn = (TextView) view.findViewById(R.id.ok_edit);
         cancelBtn.setOnClickListener(this);
@@ -130,11 +141,11 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
             String firstName = preferenceEndPoint.getStringPreference(Constants.FIRST_NAME);
             editProfile.setText(firstName);
 
-        } else if (key.equalsIgnoreCase(Constants.DESCRIPTION)){
+        } else if (key.equalsIgnoreCase(Constants.DESCRIPTION)) {
             String userStatus = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION);
 
-            if(userStatus.equalsIgnoreCase("")){
-                userStatus="Available";
+            if (userStatus.equalsIgnoreCase("")) {
+                userStatus = "Available";
             }
             editProfile.setText(userStatus);
         } else if (key.equalsIgnoreCase(Constants.EMAIL)) {
@@ -144,6 +155,7 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
             getActivity().onBackPressed();
         }
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -169,7 +181,11 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
                 saveEditedValue();
                 break;
             case R.id.birth:
-                DialogFragment newFragment = new SelectDateFragment(editBirth, true);
+                SelectDateFragment newFragment = new SelectDateFragment();
+                Bundle bundle = new Bundle();
+                newFragment.setDateFragmentView(editBirth);
+                bundle.putBoolean(SelectDateFragment.FLAG, true);
+                newFragment.setArguments(bundle);
                 newFragment.show(getActivity().getSupportFragmentManager(), "DatePicker");
                 break;
         }
@@ -185,34 +201,34 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         if (key.equalsIgnoreCase(Constants.DOB_TEMP)) {
             preferenceEndPoint.saveStringPreference(key, editBirth.getText().toString());
             getActivity().onBackPressed();
-        }else if(key.equalsIgnoreCase(Constants.FIRST_NAME)){
+        } else if (key.equalsIgnoreCase(Constants.FIRST_NAME)) {
 //            if (Pattern.matches(NAME_REGX, text))
-            if(!TextUtils.isEmpty(text)){
-            preferenceEndPoint.saveStringPreference(key,text);
-            getActivity().onBackPressed();
-            } else {
-                mToastFactory.showToast(getResources().getString(R.string.invalid_name));
-            }
-        }else if(key.equalsIgnoreCase(Constants.DOB)){
-
-            preferenceEndPoint.saveStringPreference(key,text);
-            getActivity().onBackPressed();
-        }else if(key.equalsIgnoreCase(Constants.DESCRIPTION)){
-            text = text.trim();
-            if(!TextUtils.isEmpty(text)) {
+            if (!TextUtils.isEmpty(text)) {
                 preferenceEndPoint.saveStringPreference(key, text);
                 getActivity().onBackPressed();
             } else {
-                Toast.makeText(getActivity(),getResources().getString(R.string.invalid_status),Toast.LENGTH_LONG).show();
+                mToastFactory.showToast(getResources().getString(R.string.invalid_name));
             }
-        }else if(key.equalsIgnoreCase(Constants.EMAIL)) {
-            if(!isValidMail(text)){
-                Toast.makeText(getActivity(),getResources().getString(R.string.invalid_email),Toast.LENGTH_LONG).show();
-            }else{
-                preferenceEndPoint.saveStringPreference(key,text);
+        } else if (key.equalsIgnoreCase(Constants.DOB)) {
+
+            preferenceEndPoint.saveStringPreference(key, text);
+            getActivity().onBackPressed();
+        } else if (key.equalsIgnoreCase(Constants.DESCRIPTION)) {
+            text = text.trim();
+            if (!TextUtils.isEmpty(text)) {
+                preferenceEndPoint.saveStringPreference(key, text);
+                getActivity().onBackPressed();
+            } else {
+                Toast.makeText(getActivity(), getResources().getString(R.string.invalid_status), Toast.LENGTH_LONG).show();
+            }
+        } else if (key.equalsIgnoreCase(Constants.EMAIL)) {
+            if (!isValidMail(text)) {
+                Toast.makeText(getActivity(), getResources().getString(R.string.invalid_email), Toast.LENGTH_LONG).show();
+            } else {
+                preferenceEndPoint.saveStringPreference(key, text);
                 getActivity().onBackPressed();
             }
-        }else {
+        } else {
 
             if (key.equalsIgnoreCase(Constants.PHONE_NO_TEMP) && !isValidMobile(text)) {
                 mToastFactory.showToast(getString(R.string.valid_phone));

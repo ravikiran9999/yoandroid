@@ -77,6 +77,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         return R.layout.dialer_calllogs_list_item;
     }
 
+
     @Override
     public CallLogsViewHolder getViewHolder(View convertView) {
         return new CallLogsViewHolder(convertView);
@@ -87,13 +88,23 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         Drawable drawable = null;
 
         String destination_name = item.getValue().get(0).getDestination_name();
+
+        try {
+            if (item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_APP_CALL) {
+                holder.getCallIcon().setImageResource(R.drawable.yo_call_free);
+            } else {
+                holder.getCallIcon().setImageResource(R.drawable.ic_receiver);
+            }
+        } catch (Exception e) {
+
+        }
         String formattedString = destination_name;
 
         holder.getInfo().setVisibility(View.VISIBLE);
         holder.getMessageIcon().setVisibility(View.VISIBLE);
         if (destination_name != null && destination_name.length() >= 1) {
 
-            String numericValue = Util.numericValueFromString(mContext,formattedString);
+            String numericValue = Util.numericValueFromString(mContext, formattedString);
             holder.getOpponentName().setText(numericValue);
 
             String title = String.valueOf(destination_name.charAt(0)).toUpperCase();
@@ -200,6 +211,9 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
         } else if (item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
             holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+        } else if (item.getValue().get(0).getDialedstatus()!=null && item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
         } else {
             holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
@@ -214,7 +228,8 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             @Override
             public void onClick(View v) {
                 Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
-                SipHelper.makeCall(mContext, item.getValue().get(0).getDialnumber());
+                boolean isPSTN = item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_PSTN_CALL ? true : false;
+                SipHelper.makeCall(mContext, item.getValue().get(0).getDialnumber(), isPSTN);
             }
         });
         holder.getMessageIcon().setOnClickListener(new View.OnClickListener() {

@@ -30,4 +30,7 @@ public interface SipServiceHandler {
 
     String getRegistrationStatus();
 
+    boolean isOnGOingCall();
+    void disconnectCallBack(CallDisconnectedListner listner);
+
 }

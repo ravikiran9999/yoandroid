@@ -467,7 +467,7 @@ public class Util {
         });
     }
 
-    public static SearchView prepareContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult) {
+    public static SearchView prepareContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult, final TextView noContactsFound) {
 
         final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView;
@@ -495,6 +495,9 @@ public class Util {
                         noSearchResult.setVisibility(View.GONE);
                         isFromClose = true;
                     } else {
+                        if(noContactsFound != null) {
+                            noContactsFound.setVisibility(View.GONE);
+                        }
                         noSearchResult.setVisibility(View.VISIBLE);
                         noSearchResult.setText(activity.getResources().getString(R.string.no_result_found));
                     }
@@ -508,7 +511,7 @@ public class Util {
                         adapter.performCallLogsSearch(newText, noSearchResult, isFromClose);
                     } else if (roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) || roomType.equalsIgnoreCase(Constants.CONT_FRAG)) {
                         String contactType = roomType.equalsIgnoreCase(Constants.Yo_CONT_FRAG) ? Constants.Yo_CONT_FRAG : Constants.CONT_FRAG;
-                        adapter.performYoContactsSearch(newText, contactType, noSearchResult, isFromClose);
+                        adapter.performYoContactsSearch(newText, contactType, noSearchResult, isFromClose, noContactsFound);
                     } else if (roomType.equalsIgnoreCase(Constants.INVITE_FRAG)) {
                         adapter.performContactsSearch(newText, noSearchResult, isFromClose);
                     }
@@ -615,6 +618,7 @@ public class Util {
             template.setType("image/*");
             List<ResolveInfo> candidates = view.getContext().getPackageManager().
                     queryIntentActivities(template, 0);
+
             for (ResolveInfo candidate : candidates) {
                 String packageName = candidate.activityInfo.packageName;
                 if (packageName.equals("com.skype.raider")) {
@@ -919,10 +923,34 @@ public class Util {
             if(string != null) {
                 return string.replaceAll("[^0-9]", "");
             } else {
-                return "123456";
+                return "1234567890";
             }
         } catch (NumberFormatException e) {
             return string;
+        }
+    }
+
+    public static String convertSecToHMmSs(long totalSecs) {
+
+        long hours = totalSecs / 3600;
+        long minutes = (totalSecs % 3600) / 60;
+        long seconds = totalSecs % 60;
+        /*if (minutes == 0) {
+            return String.format("%02d secs", seconds);
+        }
+        if (hours == 0) {
+            return String.format("%02d mins %02d secs", minutes, seconds);
+        }
+        return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);*/
+
+        if(hours == 0 && minutes == 0) {
+            return String.format("%02d secs", seconds);
+        } else if (hours == 0 && seconds == 0) {
+            return String.format("%02d mins", minutes, seconds);
+        } else if (hours == 0) {
+            return String.format("%02d mins %02d secs", minutes, seconds);
+        }  else {
+            return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
         }
     }
 }

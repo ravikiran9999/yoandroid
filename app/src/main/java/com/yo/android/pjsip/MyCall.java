@@ -1,10 +1,12 @@
 package com.yo.android.pjsip;
 
+import android.util.Log;
+
+import org.pjsip.pjsua2.AudDevManager;
 import org.pjsip.pjsua2.AudioMedia;
 import org.pjsip.pjsua2.Call;
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
-import org.pjsip.pjsua2.CallMediaInfoVector;
 import org.pjsip.pjsua2.Media;
 import org.pjsip.pjsua2.OnCallMediaStateParam;
 import org.pjsip.pjsua2.OnCallStateParam;
@@ -12,8 +14,9 @@ import org.pjsip.pjsua2.VideoPreview;
 import org.pjsip.pjsua2.VideoWindow;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
-import org.pjsip.pjsua2.pjsua2;
 import org.pjsip.pjsua2.pjsua_call_media_status;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 class MyCall extends Call {
     public VideoWindow vidWin;
@@ -40,39 +43,40 @@ class MyCall extends Call {
 
     @Override
     public void onCallMediaState(OnCallMediaStateParam prm) {
-        CallInfo ci;
+        CallInfo info;
         try {
-            ci = getInfo();
-        } catch (Exception e) {
+            info = getInfo();
+        } catch (Exception exc) {
+            Log.e(TAG, "onCallMediaState: error while getting call info", exc);
             return;
         }
 
-        CallMediaInfoVector cmiv = ci.getMedia();
+        for (int i = 0; i < info.getMedia().size(); i++) {
+            Media media = getMedia(i);
+            CallMediaInfo mediaInfo = info.getMedia().get(i);
 
-        for (int i = 0; i < cmiv.size(); i++) {
-            CallMediaInfo cmi = cmiv.get(i);
-            if (cmi.getType() == pjmedia_type.PJMEDIA_TYPE_AUDIO
-                    && (cmi.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE || cmi
-                    .getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_REMOTE_HOLD)) {
-                // unfortunately, on Java too, the returned Media cannot be
-                // downcasted to AudioMedia
-                Media m = getMedia(i);
-                AudioMedia am = AudioMedia.typecastFromMedia(m);
+            if (mediaInfo.getType() == pjmedia_type.PJMEDIA_TYPE_AUDIO
+                    && media != null
+                    && mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE) {
+                AudioMedia audioMedia = AudioMedia.typecastFromMedia(media);
 
-                // connect ports
+
+                // connect the call audio media to sound device
                 try {
-                    MyApp.mEndpoint.audDevManager().getCaptureDevMedia()
-                            .startTransmit(am);
-                    am.startTransmit(MyApp.mEndpoint.audDevManager()
-                            .getPlaybackDevMedia());
-                } catch (Exception e) {
-                    continue;
+                    AudDevManager mgr = MyApp.mEndpoint.audDevManager();
+
+                    try {
+                        audioMedia.adjustRxLevel((float) 1.5);
+                        audioMedia.adjustTxLevel((float) 1.5);
+                    } catch (Exception exc) {
+                        Log.e(TAG, "Error while adjusting levels", exc);
+                    }
+
+                    audioMedia.startTransmit(mgr.getPlaybackDevMedia());
+                    mgr.getCaptureDevMedia().startTransmit(audioMedia);
+                } catch (Exception exc) {
+                    Log.e(TAG, "Error while connecting audio media to sound device", exc);
                 }
-            } else if (cmi.getType() == pjmedia_type.PJMEDIA_TYPE_VIDEO
-                    && cmi.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE
-                    && cmi.getVideoIncomingWindowId() != pjsua2.INVALID_ID) {
-                vidWin = new VideoWindow(cmi.getVideoIncomingWindowId());
-                vidPrev = new VideoPreview(cmi.getVideoCapDev());
             }
         }
 

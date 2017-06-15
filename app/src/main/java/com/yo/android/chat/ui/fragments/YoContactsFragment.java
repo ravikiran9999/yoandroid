@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
@@ -120,7 +119,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Util.prepareContactsSearch(activity, menu, appContactsListAdapter, Constants.Yo_CONT_FRAG, noResults);
+        Util.prepareContactsSearch(activity, menu, appContactsListAdapter, Constants.Yo_CONT_FRAG, noResults, null);
 
         if (item.getItemId() == android.R.id.home && activity != null) {
             activity.finish();
@@ -141,7 +140,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             } else {
                 noResults.setText(getString(R.string.no_contacts_found));
                 noResults.setVisibility(View.VISIBLE);
-                mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
+                //mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
             }
 
         }
@@ -192,7 +191,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
             if (position == 0 && contact.getNexgieUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null && activity != null) {
                 startActivityForResult(new Intent(activity, CreateGroupActivity.class), CREATE_GROUP_RESULT);
-            } else if (activity != null && contact.getNexgieUserName() != null && forwardChatMessages != null) {
+                /*Intent intent = new Intent(activity, CreateGroupActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivityForResult(intent, CREATE_GROUP_RESULT);*/
+            } else if (activity != null && contact.getNexgieUserName() != null) {
                 ChatActivity.start(activity, contact, forwardChatMessages);
             } else {
                 ChatActivity.start(activity, contact, share);
@@ -224,7 +226,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 if (contacts.isEmpty()) {
                     noResults.setText(getString(R.string.no_contacts_found));
                     noResults.setVisibility(View.VISIBLE);
-                    mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
+                    //mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
                 }
             }
         });

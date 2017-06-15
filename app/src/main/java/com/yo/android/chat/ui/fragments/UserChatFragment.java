@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -206,7 +207,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         roomType = getArguments().getString(Constants.TYPE);
         listView.setDivider(null);
         listView.setDividerHeight(0);
-        listView.setOnItemClickListener(this);
+        //listView.setOnItemClickListener(this);
         chatMessageHashMap = new HashMap<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
@@ -271,7 +272,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
 
         if ((childRoomId == null) && (chatForwards != null)) {
-            createRoom("Message", null);
+            //createRoom("Message", null);
         }
 
 
@@ -315,9 +316,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+
                 ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
                 final int checkedCount = listView.getCheckedItemCount();
                 mode.setTitle(Integer.toString(checkedCount));
+
                 userChatAdapter.toggleSelection(position);
                 boolean imageSelected = false;
                 SparseBooleanArray selected = userChatAdapter.getSelectedIds();
@@ -369,6 +372,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             if (selected.valueAt(i)) {
                                 final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
                                 roomReference.child(selectedItem.getMessageKey()).removeValue();
+
                                 userChatAdapter.removeItem(selectedItem);
                                 chatMessageArray.remove(selectedItem);
                             }
@@ -450,7 +454,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         switch (item.getItemId()) {
             case R.id.call:
                 if (sipAccountUserName != null) {
-                    SipHelper.makeCall(activity, sipAccountUserName);
+                    SipHelper.makeCall(activity, sipAccountUserName,false);
                 }
                 break;
             case R.id.camera:
@@ -513,7 +517,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         if (roomType != null) {
             UserProfileActivity.startGroup(getActivity(), childRoomId, roomType, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS);
-        } else if(opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
+        } else if (opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
             String opponentNumberTrim = Util.numberFromNexgeFormat(opponentNumber);
             UserProfileActivity.start(getActivity(), opponentNumberTrim, opponentNumber, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS, null);
         }
@@ -556,7 +560,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if (roomExist == 0 && TextUtils.isEmpty(childRoomId)) {
             if (roomCreationProgress == 0) {
                 roomCreationProgress = 1;
-                createRoom(message, chatMessage);
+                //createRoom(message, chatMessage);
             }
         } else {
             chatMessage.setRoomId(childRoomId);
@@ -962,11 +966,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         // File deleted successfully
+                        userChatAdapter.notifyDataSetChanged();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // Uh-oh, an error occurred!
+                        e.getMessage();
                     }
                 });
             }

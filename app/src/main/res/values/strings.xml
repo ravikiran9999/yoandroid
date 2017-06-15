@@ -130,7 +130,7 @@
     <string name="title_activity_load_magazine">LoadMagazineActivity</string>
     <string name="zero">0</string>
     <string name="group_creation_error">Group not created. Please try again</string>
-    <string name="enter_group_name">Please enter group name</string>
+    <string name="enter_group_name">Provide a group subject</string>
     <string name="create_group">Create group</string>
     <string name="clear_chat_history">Clear chat history</string>
     <string name="delete">Delete</string>
@@ -313,7 +313,7 @@
     <string name="morenotifications">Notifications</string>
     <string name="invitefriends">Invite Friends</string>
     <string name="accountdetails">Account Details</string>
-    <string name="yocredit">Yo Credit (%1$s %2$s)</string>
+    <string name="yocredit">Yo Credit (%1$s)</string>
     <string name="low_balance">Low balance, please add balance.</string>
     <string name="logged_in_another_device">User accessed from another device</string>
     <string name="activity_title_yourcountry">Select Country</string>
@@ -336,4 +336,13 @@
         <item>Followings</item>
         <item>Followers</item>
     </string-array>
+    <string name="internal_build_cant_add_balance">You can\'t add more balance as its test build.</string>
+    <string name="not_valid_pstn_number">Not a valid phone number.</string>
+    <string name="not_supported_country">This country is not supported by your app</string>
+    <string name="enter_vocher_number">Please enter a Voucher Number</string>
+    <string name="not_online_unavailable">Recipient not online or unavailable.</string>
+    <string name="recharge">Recharge</string>
+    <string name="no_sufficient_bal_recharge">You don\'t have sufficient balance to call. Please recharge.</string>
+    <string name="not_in_coverage_area">Recipient not in coverage area.</string>
+    <string name="cannot_transfer_full_balance">You cannot transfer your whole balance. Please maintain atleast US $ 0.001</string>
 </resources>

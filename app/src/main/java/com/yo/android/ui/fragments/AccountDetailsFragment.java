@@ -112,7 +112,7 @@ public class AccountDetailsFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
 
-   }
+    }
 
     @Override
     public void onResume() {
@@ -121,7 +121,7 @@ public class AccountDetailsFragment extends BaseFragment {
     }
 
     private void loadData() {
-        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION,"Available"));
+        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available"));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         String email = preferenceEndPoint.getStringPreference(Constants.EMAIL, emailHint);
         if (email.equalsIgnoreCase("")) {
@@ -161,7 +161,7 @@ public class AccountDetailsFragment extends BaseFragment {
     @OnClick(R.id.account_status_card)
     protected void accountStatusClick() {
         String title = String.format(getString(R.string.add_new), getString(R.string.status_title));
-        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DESCRIPTION,""),Constants.DESCRIPTION);
+        callEditFragment(title, preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, ""), Constants.DESCRIPTION);
     }
 
     @OnClick(R.id.account_name_card)
@@ -183,7 +183,13 @@ public class AccountDetailsFragment extends BaseFragment {
     }
 
     private void callEditFragment(final String title, final String edit, final String key) {
-        AccountDetailsEditFragment accountDetailsFragment = new AccountDetailsEditFragment(title, edit, key, getCountryCode(preferenceEndPoint.getStringPreference(Constants.PHONE_NO)));
+        AccountDetailsEditFragment accountDetailsFragment = new AccountDetailsEditFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(AccountDetailsEditFragment.TITLE, title);
+        bundle.putString(AccountDetailsEditFragment.EDIT, edit);
+        bundle.putString(AccountDetailsEditFragment.KEY, key);
+        bundle.putString(AccountDetailsEditFragment.COUNTRY_COODE, getCountryCode(preferenceEndPoint.getStringPreference(Constants.PHONE_NO)));
+        accountDetailsFragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction()
                 .add(android.R.id.content, accountDetailsFragment, "FRAGMENT")
                 .addToBackStack(null)
@@ -205,55 +211,55 @@ public class AccountDetailsFragment extends BaseFragment {
             return;
         }
 
-            showProgressDialog();
-            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-            RequestBody description =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), accountStatus.getText().toString());
-            RequestBody firstName =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), accountName.getText().toString());
-            RequestBody phoneNo =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP));
-            RequestBody email =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), accountEmail.getText().toString());
-            if (accountEmail.getText().toString().equalsIgnoreCase(emailHint)) {
-                email = null;
-            }
-            RequestBody dob =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), accountDOB.getText().toString());
-            if (accountDOB.getText().toString().equalsIgnoreCase(dobHint)) {
-                dob = null;
-            }
-            RequestBody gender =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), genderText);
-            yoService.updateProfile(userId, access, description, firstName, phoneNo, email, dob, gender, null, null, null).enqueue(new Callback<UserProfileInfo>() {
-                @Override
-                public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
-                    dismissProgressDialog();
-                    if (response.body() != null) {
-                        saveUserProfileValues(response.body());
-                        getActivity().finish();
-                    } else {
-                        mToastFactory.showToast(getString(R.string.failed_update));
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<UserProfileInfo> call, Throwable t) {
-                    dismissProgressDialog();
+        showProgressDialog();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        RequestBody description =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), accountStatus.getText().toString());
+        RequestBody firstName =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), accountName.getText().toString());
+        RequestBody phoneNo =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP));
+        RequestBody email =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), accountEmail.getText().toString());
+        if (accountEmail.getText().toString().equalsIgnoreCase(emailHint)) {
+            email = null;
+        }
+        RequestBody dob =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), accountDOB.getText().toString());
+        if (accountDOB.getText().toString().equalsIgnoreCase(dobHint)) {
+            dob = null;
+        }
+        RequestBody gender =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), genderText);
+        yoService.updateProfile(userId, access, description, firstName, phoneNo, email, dob, gender, null, null, null).enqueue(new Callback<UserProfileInfo>() {
+            @Override
+            public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                dismissProgressDialog();
+                if (response.body() != null) {
+                    saveUserProfileValues(response.body());
+                    getActivity().finish();
+                } else {
                     mToastFactory.showToast(getString(R.string.failed_update));
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+                dismissProgressDialog();
+                mToastFactory.showToast(getString(R.string.failed_update));
+            }
+        });
+    }
 
     public void setUserInfoDetails() {
-        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION,""));
+        accountStatus.setText(preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, ""));
         accountName.setText(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME, ""));
         accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO_TEMP, ""));
         String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, dobHint);
@@ -267,11 +273,11 @@ public class AccountDetailsFragment extends BaseFragment {
         setTextColor(dob, accountDOB, dobHint);
         accountDOB.setText(dob);
         String email = preferenceEndPoint.getStringPreference(Constants.EMAIL, emailHint);
-        if (email.equalsIgnoreCase("")){
+        if (email.equalsIgnoreCase("")) {
             email = emailHint;
         }
-            setTextColor(email, accountEmail, emailHint);
-            accountEmail.setText(email);
+        setTextColor(email, accountEmail, emailHint);
+        accountEmail.setText(email);
 
     }
 
@@ -293,7 +299,7 @@ public class AccountDetailsFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference(Constants.AVATAR_TEMP, avatar);
         preferenceEndPoint.saveStringPreference(Constants.EMAIL_TEMP, email);
         preferenceEndPoint.saveStringPreference(Constants.DESCRIPTION_TEMP, description);
-       // preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, dob);
+        // preferenceEndPoint.saveStringPreference(Constants.DOB_TEMP, dob);
         preferenceEndPoint.saveStringPreference(Constants.GENDER_TEMP, gender);
         preferenceEndPoint.saveStringPreference(Constants.FIRST_NAME_TEMP, firstName);
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NO_TEMP, phoneNo);

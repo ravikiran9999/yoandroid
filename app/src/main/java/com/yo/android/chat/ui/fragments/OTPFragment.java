@@ -225,7 +225,7 @@ public class OTPFragment extends BaseFragment {
                 dismissProgressDialog();
                 FragmentActivity activity = getActivity();
                 if (activity != null) {
-                    if (!mHelper.isConnected() || t instanceof SocketTimeoutException || t instanceof ProtocolException) {
+                    if (!mHelper.isConnected() || t instanceof SocketTimeoutException ) {
                         mToastFactory.showToast(activity.getResources().getString(R.string.connectivity_network_settings));
                     } else {
                         mToastFactory.showToast(activity.getResources().getString(R.string.otp_failure));

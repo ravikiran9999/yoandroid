@@ -139,10 +139,10 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                 String opponentPhoneNumber = item.getNexgieUserName();
 
                 if (opponentPhoneNumber != null) {
-                    SipHelper.makeCall(mContext, opponentPhoneNumber);
+                    SipHelper.makeCall(mContext, opponentPhoneNumber,false);
                 } else {
                     if (item.getCountryCode() != null && item.getPhoneNo() != null) {
-                        SipHelper.makeCall(mContext, item.getCountryCode() + item.getPhoneNo());
+                        SipHelper.makeCall(mContext, item.getCountryCode() + item.getPhoneNo(),true);
                     } else {
                         //TODO: Think about it
                     }

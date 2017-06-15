@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -142,7 +143,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
         membersList = (NonScrollListView) findViewById(R.id.members);
-        profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
+        profileMembersAdapter = new ProfileMembersAdapter(this);
         membersList.setAdapter(profileMembersAdapter);
         membersList.setOnItemClickListener(this);
 
@@ -181,10 +182,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (intent.hasExtra(Constants.CHAT_ROOM_ID)) {
                     String firebaseRoomId = intent.getStringExtra(Constants.CHAT_ROOM_ID);
                     if (firebaseRoomId != null) {
-                        Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
                         if (roomName != null) {
+                            Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
                             roomInfo.addListenerForSingleValueEvent(this);
                             roomInfo.keepSynced(true);
+                            //new GroupMembersTask().execute(roomName, firebaseRoomId);
                             profileCall.setVisibility(View.GONE);
                         }
                     }
@@ -238,7 +240,10 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (mContact != null) {
                 String numberTrim = numberFromNexgeFormat(mContact.getNexgieUserName(), mContact.getPhoneNo());
                 String mName = mContact.getName().replaceAll("\\s+", "");
-                if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !isSame(mName, numberTrim)) {
+                if(name.equalsIgnoreCase(getString(R.string.group_name))) {
+                    profileNameTitle.setText(name);
+                    profileName.setText(contact.getName());
+                } else if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(checkPlusSign(mContact.getName()));
@@ -257,9 +262,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             } else if (contact != null) {
                 String numberTrim = numberFromNexgeFormat(contact.getNexgieUserName(), contact.getPhoneNo());
                 String mName = contact.getName().replaceAll("\\s+", "");
-                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !isSame(mName, numberTrim)) {
+                if (name.equalsIgnoreCase(getString(R.string.group_name))) {
+                    profileNameTitle.setText(name);
+                    profileName.setText(contact.getName());
+                } else if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
-
                     profileNameTitle.setText(name);
                     profileName.setText(checkPlusSign(contact.getName()));
                 } else {
@@ -327,7 +334,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     public void callUser() {
         //do nothing...
         if (contact != null && contact.getNexgieUserName() != null) {
-            SipHelper.makeCall(this, contact.getNexgieUserName());
+            SipHelper.makeCall(this, contact.getNexgieUserName(), false);
         }
     }
 
@@ -447,7 +454,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     }
 
     private boolean isSame(String name, String phoneNumber) {
-        if (TextUtils.isDigitsOnly(phoneNumber) && !phoneNumber.startsWith("+")) {
+        if (TextUtils.isDigitsOnly(name) && TextUtils.isDigitsOnly(phoneNumber)) {
+            return name.equalsIgnoreCase(phoneNumber);
+        } else if (TextUtils.isDigitsOnly(phoneNumber) && !phoneNumber.startsWith("+")) {
             return name.equalsIgnoreCase(String.format(getResources().getString(R.string.plus_number), phoneNumber));
         } else if (TextUtils.isDigitsOnly(name) && !name.startsWith("+")) {
             return String.format(getResources().getString(R.string.plus_number), name).equalsIgnoreCase(phoneNumber);

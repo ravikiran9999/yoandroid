@@ -244,7 +244,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG, noSearchResult);
+        Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG, noSearchResult, null);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         if (item.getItemId() == R.id.invite) {

@@ -195,20 +195,36 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             Date date = DateUtil.convertUtcToGmt(modifiedTime);
             holder.getDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(date));
             if (item.getDuration() != null) {
-                String[] tokens = item.getDuration().split(":");
-                int hours = Integer.parseInt(tokens[0]);
-                int minutes = Integer.parseInt(tokens[1]);
-                int seconds = Integer.parseInt(tokens[2]);
-                String duration = "";
-                if (seconds > 30) {
-                    minutes++;
-                }
-                if (hours == 0) {
-                    duration = String.format("%02d mins", minutes);
+                if(item.getDuration().contains(":")) {
+                    String[] tokens = item.getDuration().split(":");
+                    int hours = Integer.parseInt(tokens[0]);
+                    int minutes = Integer.parseInt(tokens[1]);
+                    int seconds = Integer.parseInt(tokens[2]);
+                    String duration = "";
+                    /*if (seconds > 30) {
+                        minutes++;
+                    }
+                    if (hours == 0) {
+                        duration = String.format("%02d mins", minutes);
+                    } else {
+                        duration = String.format("%02d hrs %02d mins", hours, minutes);
+                    }*/
+
+                    if(hours == 0 && minutes == 0) {
+                        duration = String.format("%02d secs", seconds);
+                    } else if (hours == 0 && seconds == 0) {
+                        duration = String.format("%02d mins", minutes, seconds);
+                    } else if (hours == 0) {
+                        duration = String.format("%02d mins %02d secs", minutes, seconds);
+                    }  else {
+                        duration = String.format("%02d hrs %02d mins %02d secs", hours, minutes, seconds);
+                    }
+                    holder.getDuration().setText(duration);
                 } else {
-                    duration = String.format("%02d hrs %02d mins", hours, minutes);
+                    String duration = "";
+                    duration = Util.convertSecToHMmSs(Long.parseLong(item.getDuration()));
+                    holder.getDuration().setText(duration);
                 }
-                holder.getDuration().setText(duration);
             } else {
                 holder.getDuration().setText(item.getDuration());
             }
@@ -315,6 +331,5 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         }
 
     }
-
 
 }

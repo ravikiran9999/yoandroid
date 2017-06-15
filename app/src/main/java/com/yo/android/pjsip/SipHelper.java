@@ -19,12 +19,11 @@ public class SipHelper {
         actualNumber = number;
     }
 
-    public static void makeCall(Context mContext, String number) {
+    public static void makeCall(Context mContext, String number, boolean isPSTN) {
 
         Intent intent = new Intent(VoipConstants.CALL_ACTION_OUT_GOING, null, mContext, YoSipService.class);
-        if (mContext instanceof NewDailerActivity) {
-            intent.putExtra(VoipConstants.PSTN, true);
-        }
+        intent.putExtra(VoipConstants.PSTN, isPSTN);
+
         intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
         if (actualNumber == null) {
             actualNumber = number;

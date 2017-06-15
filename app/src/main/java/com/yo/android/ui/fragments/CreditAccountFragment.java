@@ -100,7 +100,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                     prepareCreditAccountList(demonimations);
                     if (demonimations != null && demonimations.size() > 0) {
                         preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
-                        txt_balance.setText(String.format("%s %s", MoreFragment.currencySymbolDollar, balance));
+                         //Todo remove this line
+                        //txt_balance.setText(String.format("%s %s", MoreFragment.currencySymbolDollar, balance));
+                        txt_balance.setText(String.format("%s", balance));
                     } else {
                         txtEmpty.setVisibility(View.VISIBLE);
                         FragmentActivity activity = getActivity();
@@ -294,7 +296,12 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         FragmentActivity activity = getActivity();
         if (activity != null) {
             if (name.equalsIgnoreCase(activity.getString(R.string.add_balance_from_voucher))) {
-                showVoucherDialog();
+                Bundle arguments = getArguments();
+                if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
+                    showVoucherDialog();
+                } else {
+                    showInternalBuildMessage();
+                }
             } else if (name.equalsIgnoreCase(activity.getString(R.string.transfer_balance))) {
                 //TODO: Need to implement allow balance transfer even in out going call.
                 if (YoSipService.currentCall != null && YoSipService.outgoingCallUri != null) {
@@ -312,12 +319,21 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         }
     }
 
+    private void showInternalBuildMessage() {
+        mToastFactory.showToast(R.string.internal_build_cant_add_balance);
+    }
+
     private OnClickListener payBtnListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            Denominations item = (Denominations) v.getTag(R.id.btn1);
-            addGooglePlayBalance("android.test.purchased", item.getDenomination());
+            Bundle arguments = getArguments();
+            if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
+                Denominations item = (Denominations) v.getTag(R.id.btn1);
+                addGooglePlayBalance(item.getProductID(), item.getDenomination());
+            } else {
+                showInternalBuildMessage();
+            }
 
             //Bundle arguments = getArguments();
             //if (arguments != null) {
@@ -436,7 +452,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                         });
                     } else {
                         Util.hideKeyboard(getActivity(), voucherNumberEdit);
-                        mToastFactory.showToast("Please enter a Voucher Number");
+                        mToastFactory.showToast(getString(R.string.enter_vocher_number));
                     }
 
                 }
