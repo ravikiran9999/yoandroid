@@ -121,9 +121,11 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                         List<SubscribersList> removedFreeSpents = new ArrayList<>();
                         for (SubscribersList item : detailResponseList) {
                             if (item.getCalltype().equals(PSTN) || item.getCalltype().equals(BALANCE_TRANSFER)) {
-                                if (Float.valueOf(item.getCallcost()) != 0f) {
+                                /*if (Float.valueOf(item.getCallcost()) != 0f) {
                                     removedFreeSpents.add(item);
-                                }
+                                }*/
+                                if (!TextUtils.isEmpty(item.getCallcost()))
+                                    removedFreeSpents.add(item);
                             }
                         }
                         adapter.addItems(removedFreeSpents);
@@ -195,7 +197,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             Date date = DateUtil.convertUtcToGmt(modifiedTime);
             holder.getDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(date));
             if (item.getDuration() != null) {
-                if(item.getDuration().contains(":")) {
+                if (item.getDuration().contains(":")) {
                     String[] tokens = item.getDuration().split(":");
                     int hours = Integer.parseInt(tokens[0]);
                     int minutes = Integer.parseInt(tokens[1]);
@@ -210,13 +212,13 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                         duration = String.format("%02d hrs %02d mins", hours, minutes);
                     }*/
 
-                    if(hours == 0 && minutes == 0) {
+                    if (hours == 0 && minutes == 0) {
                         duration = String.format("%02d secs", seconds);
                     } else if (hours == 0 && seconds == 0) {
                         duration = String.format("%02d mins", minutes, seconds);
                     } else if (hours == 0) {
                         duration = String.format("%02d mins %02d secs", minutes, seconds);
-                    }  else {
+                    } else {
                         duration = String.format("%02d hrs %02d mins %02d secs", hours, minutes, seconds);
                     }
                     holder.getDuration().setText(duration);
@@ -260,16 +262,18 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     if (c != null) c.close();
                 }
             }
-            holder.getTxtPrice().setText("US $ " + item.getCallcost());
+            //holder.getTxtPrice().setText("US $ " + item.getCallcost());
+            holder.getTxtPrice().setText(item.getCallcost());
             holder.getTxtReason().setText(item.getCalltype());
 
-            try {
+            //Todo remove this block
+            /*try {
                 DecimalFormat df = new DecimalFormat("0.000");
                 String format = df.format(Double.valueOf(item.getCallcost()));
                 holder.getTxtPrice().setText("US $ " + format);
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
 
             /*holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -292,7 +296,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             return mSubscribersList.size();
         }
 
-        public void addItems(List<SubscribersList> detailResponseList){
+        public void addItems(List<SubscribersList> detailResponseList) {
             mSubscribersList.addAll(detailResponseList);
             notifyDataSetChanged();
         }

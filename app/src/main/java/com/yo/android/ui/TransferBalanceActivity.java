@@ -76,7 +76,8 @@ public class TransferBalanceActivity extends BaseActivity {
         id = getIntent().getStringExtra("id");
 
         tvBalance = (TextView) findViewById(R.id.txt_balance);
-        tvBalance.setText(String.format("%s%s", MoreFragment.currencySymbolDollar, balance));
+        //tvBalance.setText(String.format("%s%s", MoreFragment.currencySymbolDollar, balance));
+        tvBalance.setText(String.format("%s", balance));
 
         TextView tvPhoneNumber = (TextView) findViewById(R.id.tv_phone_number);
 
@@ -144,7 +145,7 @@ public class TransferBalanceActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(amount.trim())) {
                     double val = Double.parseDouble(amount.trim());
                     if (val != 0) {
-                        if (Double.parseDouble(mBalanceHelper.getCurrentBalance()) > Double.parseDouble(amount)) {
+                        if (Double.parseDouble(Util.numberFromNexgeFormat(mBalanceHelper.getCurrentBalance())) > Double.parseDouble(Util.numberFromNexgeFormat(amount))) {
 
                             showMessageDialog(amount, phoneNo);
 

@@ -73,8 +73,8 @@ public class BalanceHelper {
                         JSONObject jsonObject = new JSONObject(str);
                         String balance = jsonObject.getString(Constants.BALANCE);
                         try {
-                            DecimalFormat df = new DecimalFormat("0.000");
-                            String format = df.format(Double.valueOf(balance));
+                            /*DecimalFormat df = new DecimalFormat("0.000");
+                            String format = df.format(Double.valueOf(balance));*/
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
                             EventBus.getDefault().post(Constants.BALANCE_UPDATED_ACTION);
                             double val = Double.parseDouble(balance.trim());
@@ -451,13 +451,13 @@ public class BalanceHelper {
 
     public String getCurrentBalance() {
         String balance = prefs.getStringPreference(Constants.CURRENT_BALANCE, "0");
-        try {
+        /*try {
             DecimalFormat df = new DecimalFormat("0.000");
             String format = df.format(Double.valueOf(balance));
             return format;
         } catch (IllegalArgumentException e) {
             mLog.w(TAG, "getCurrentBalance", e);
-        }
+        }*/
 
         return balance;
     }

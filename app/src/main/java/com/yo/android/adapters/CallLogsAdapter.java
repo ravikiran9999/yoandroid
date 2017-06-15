@@ -211,9 +211,9 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
         } else if (item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
             holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
-            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
         } else if (item.getValue().get(0).getDialedstatus()!=null && item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
-            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
         } else {
             holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
