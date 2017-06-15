@@ -140,8 +140,9 @@ public class BalanceHelper {
                         String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.BALANCE);
 
                         try {
-                            DecimalFormat df = new DecimalFormat("0.000");
-                            String format = df.format(Double.valueOf(balance));
+                            // Todo remove these two lines as rounding to 3 decimals is done in server
+                            /*DecimalFormat df = new DecimalFormat("0.000");
+                            String format = df.format(Double.valueOf(balance));*/
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);

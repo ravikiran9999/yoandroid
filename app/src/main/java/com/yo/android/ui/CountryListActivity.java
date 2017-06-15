@@ -255,7 +255,8 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             } else {
                 pulse = "sec";
             }
-            holder.getCallRateView().setText("$ " + rate + "/" + pulse);
+            //holder.getCallRateView().setText("$ " + rate + "/" + pulse);
+            holder.getCallRateView().setText(rate + "/" + pulse);
         }
     }
 
@@ -294,7 +295,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             } else {
                 pulse = "sec";
             }
-            holder.getCallRateView().setText("$ " + rate + "/" + pulse);
+            holder.getCallRateView().setText(rate + "/" + pulse);
         }
     }
 }

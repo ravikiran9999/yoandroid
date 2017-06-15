@@ -221,7 +221,8 @@ public class NewDailerActivity extends BaseActivity {
 
     private void loadCurrentBalance() {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        double val = Double.parseDouble(balance.trim());
+        //double val = Double.parseDouble(balance.trim());
+        double val = Double.parseDouble(Util.numberFromNexgeFormat(balance.trim()));
         if (val <= 2) {
             mLog.w(TAG, "Current balance is less than or equal to $2");
             Util.setBigStyleNotificationForBalance(this, "Credit", getString(R.string.low_balance), "Credit", "");
@@ -230,7 +231,8 @@ public class NewDailerActivity extends BaseActivity {
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
                 //txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
-                txtBalance.setText(String.format("%s %s", currencySymbolDollar, mBalanceHelper.getCurrentBalance()));
+                //txtBalance.setText(String.format("%s %s", currencySymbolDollar, mBalanceHelper.getCurrentBalance()));
+                txtBalance.setText(String.format("%s", mBalanceHelper.getCurrentBalance()));
             } else {
                 txtBalance.setVisibility(View.GONE);
             }
@@ -455,8 +457,8 @@ public class NewDailerActivity extends BaseActivity {
             if (cName != null) {
                 countryName.setText(cName);
             }
-            preferenceEndPoint.saveStringPreference(Constants.CALL_RATE, "$" + cRate + "/" + pulse);
-            txtCallRate.setText("$" + cRate + "/" + pulse);
+            preferenceEndPoint.saveStringPreference(Constants.CALL_RATE, cRate + "/" + pulse);
+            txtCallRate.setText(cRate + "/" + pulse);
             if (TextUtils.isEmpty(dialPadView.getDigits().getText().toString())) {
                 //TODO: Need to improve the logic
                 String str = dialPadView.getDigits().getText().toString();

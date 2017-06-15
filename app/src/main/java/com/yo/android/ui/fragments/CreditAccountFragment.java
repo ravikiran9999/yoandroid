@@ -100,7 +100,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                     prepareCreditAccountList(demonimations);
                     if (demonimations != null && demonimations.size() > 0) {
                         preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
-                        txt_balance.setText(String.format("%s %s", MoreFragment.currencySymbolDollar, balance));
+                         //Todo remove this line
+                        //txt_balance.setText(String.format("%s %s", MoreFragment.currencySymbolDollar, balance));
+                        txt_balance.setText(String.format("%s", balance));
                     } else {
                         txtEmpty.setVisibility(View.VISIBLE);
                         FragmentActivity activity = getActivity();
