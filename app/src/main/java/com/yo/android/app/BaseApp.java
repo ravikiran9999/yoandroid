@@ -36,8 +36,6 @@ public class BaseApp extends MultiDexApplication {
         Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
         // ReCreateService.getInstance(this).start(this);
-
-
     }
 
 

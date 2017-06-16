@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -27,6 +30,7 @@ import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
 import com.yo.android.api.YoApi;
+import com.yo.android.app.ListNets;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
@@ -37,6 +41,7 @@ import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NewDailerActivity;
+import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
@@ -47,6 +52,7 @@ import com.yo.android.vox.VoxFactory;
 
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -74,6 +80,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
 
     @Inject
     VoxFactory voxFactory;
+
     @Bind(R.id.listView)
     ListView listView;
     @Bind(R.id.progress)
@@ -82,10 +89,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     TextView txtEmptyCallLogs;
     @Bind(R.id.floatingDialer)
     View floatingDialer;
-
     @Bind(R.id.ll_no_calls)
     LinearLayout llNoCalls;
-
     @Bind(R.id.no_search_results)
     protected TextView noSearchResult;
 
@@ -121,7 +126,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     private boolean isAlreadyShown;
     //private boolean isRemoved;
     private boolean isSharedPreferenceShown;
-    public static final int REFRESH_CALL_LOGS_TIME = 5000;
+    public static final int REFRESH_CALL_LOGS_TIME = 1000;
 
     public interface CallLogClearListener {
         void clear();
@@ -137,6 +142,11 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        try {
+            ListNets.main(null);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
         bus.register(this);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<ResponseBody>() {
@@ -186,7 +196,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // hideDialPad(true);
-        Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG, noSearchResult);
+        Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG, noSearchResult, null);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), new MenuItemCompat.OnActionExpandListener() {
@@ -288,10 +298,13 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void loadCallLogs() {
         appCalls.clear();
         paidCalls.clear();
-        appCalls = CallLog.Calls.getAppToAppCallLog(getActivity());
-        paidCalls = CallLog.Calls.getPSTNCallLog(getActivity());
-        showEmptyText();
-        showDataOnFilter();
+        FragmentActivity activity = getActivity();
+        if(activity !=null) {
+            appCalls = CallLog.Calls.getAppToAppCallLog(activity);
+            paidCalls = CallLog.Calls.getPSTNCallLog(activity);
+            showEmptyText();
+            showDataOnFilter();
+        }
     }
 
     private void showDataOnFilter() {
@@ -391,6 +404,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     }
                 });
             }
+        } else if(action.equals(Constants.BALANCE_RECHARGE_ACTION)) {
+            showRechargeDialog();
         }
     }
 
@@ -482,5 +497,44 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                 loadCallLogs();
             }
         }, REFRESH_CALL_LOGS_TIME);
+    }
+
+    private void showRechargeDialog() {
+        if (this != null) {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+            builder.setView(view);
+
+            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+            Button noBtn = (Button) view.findViewById(R.id.no_btn);
+            TextView tvRechargeText = (TextView) view.findViewById(R.id.dialog_content);
+
+            yesBtn.setText(getString(R.string.recharge));
+            tvRechargeText.setText(getString(R.string.no_sufficient_bal_recharge));
+
+
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+
+            yesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
+                }
+            });
+
+
+            noBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+        }
     }
 }

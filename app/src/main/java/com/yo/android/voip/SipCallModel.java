@@ -10,6 +10,7 @@ public class SipCallModel {
     public static final int BUSY = 1;
     public static final int IN_CALL = 2;
     public static final int RECONNECTING = 3;
+    private int network_availability;
 
 
     public SipCallModel() {
@@ -54,5 +55,11 @@ public class SipCallModel {
         this.event = event;
     }
 
+    public int getNetwork_availability() {
+        return network_availability;
+    }
 
+    public void setNetwork_availability(int network_availability) {
+        this.network_availability = network_availability;
+    }
 }

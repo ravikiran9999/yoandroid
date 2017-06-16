@@ -254,7 +254,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         }
     }
 
-    public void performYoContactsSearch(final @NonNull String key, final @NonNull String contactType, TextView noSearchResult, boolean isFromClose) {
+    public void performYoContactsSearch(final @NonNull String key, final @NonNull String contactType, TextView noSearchResult, boolean isFromClose, TextView noContactsFound) {
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             addItems(mOriginalList);

@@ -116,7 +116,8 @@ public class CallLogDetailsActivity extends BaseActivity {
             callImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SipHelper.makeCall(CallLogDetailsActivity.this, callLogsDetails.get(0).getDialnumber());
+                    boolean isPSTN =callLogsDetails.get(0).getAppOrPstn() == CallLog.Calls.APP_TO_PSTN_CALL ? true : false;
+                    SipHelper.makeCall(CallLogDetailsActivity.this, callLogsDetails.get(0).getDialnumber(),isPSTN);
                 }
             });
         }
@@ -190,7 +191,7 @@ public class CallLogDetailsActivity extends BaseActivity {
                 }
                 holder.date.setText(mDate);
                 holder.time.setText(dateFormat.format(formatterDate.parse(item.getStime())));
-                holder.duration.setText(convertSecToHMmSs(Long.valueOf(item.getDuration())));
+                holder.duration.setText(Util.convertSecToHMmSs(Long.valueOf(item.getDuration())));
             } catch (ParseException e) {
                 mLog.w("", e);
             }
@@ -214,20 +215,6 @@ public class CallLogDetailsActivity extends BaseActivity {
             public TextView time;
             ImageView ioIcon;
             TextView date;
-        }
-
-        private String convertSecToHMmSs(long totalSecs) {
-
-            long hours = totalSecs / 3600;
-            long minutes = (totalSecs % 3600) / 60;
-            long seconds = totalSecs % 60;
-            if (minutes == 0) {
-                return String.format("%02d secs", seconds);
-            }
-            if (hours == 0) {
-                return String.format("%02d mins %02d secs", minutes, seconds);
-            }
-            return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
         }
 
         private long convertDateFormatLong(String dateString) {

@@ -78,22 +78,19 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     @Bind(R.id.et_country_code)
     protected EditText mCountryCode;
 
-
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     @Inject
     VoxFactory voxFactory;
     @Inject
     YoApi.YoService yoService;
-
     @Inject
     CountryCodeHelper mCountryCodeHelper;
-
-    private List<CountryCode> mList;
     @Inject
     ConnectivityHelper mHelper;
-    private static final int SELECTED_OK = 101;
 
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final int SELECTED_OK = 101;
+    private List<CountryCode> mList;
     private MenuItem searchMenuItem;
 
 

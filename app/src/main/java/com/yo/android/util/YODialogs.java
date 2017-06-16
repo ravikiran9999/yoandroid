@@ -3,6 +3,7 @@ package com.yo.android.util;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -221,7 +222,7 @@ public class YODialogs {
                     if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
                         try {
                             stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
-                            SipHelper.makeCall(activity, stringExtra);
+                            SipHelper.makeCall(activity, stringExtra,true);
                         } catch (StringIndexOutOfBoundsException e) {
                         }
                     }
@@ -259,4 +260,5 @@ public class YODialogs {
             txtBalance.setVisibility(View.GONE);
         }
     }
+
 }

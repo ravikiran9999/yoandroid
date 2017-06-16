@@ -102,8 +102,9 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             } else {
                 profilePicImageUri = item.getImage();
             }
+
             try {
-                Glide.with(mContext).load(profilePicImageUri)
+                Glide.with(mContext).load(item.getImage())
                         .placeholder(loadAvatarImage(item, holder, true))
                         .priority(Priority.HIGH)
                         .dontAnimate()

@@ -10,7 +10,6 @@ import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.firebase.FirebaseService;
-import com.yo.android.chat.firebase.ListenerJobService;
 import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
@@ -83,6 +82,9 @@ import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
+import com.yo.android.ui.fragments.findpeople.FindPeopleFragment;
+import com.yo.android.ui.fragments.findpeople.FollowersFragment;
+import com.yo.android.ui.fragments.findpeople.FollowingsFragment;
 import com.yo.android.util.FetchNewArticlesService;
 import com.yo.android.util.ReCreateService;
 import com.yo.android.util.Util;
@@ -181,6 +183,9 @@ import dagger.Provides;
                 CreditAccountFragment.class,
                 SpendDetailsFragment.class,
                 RechargeDetailsFragment.class,
+                FindPeopleFragment.class,
+                FollowersFragment.class,
+                FollowingsFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,
@@ -203,7 +208,6 @@ import dagger.Provides;
                 UserChatAdapter.class,
                 Util.class,
                 FetchNewArticlesService.class,
-                ListenerJobService.class,
                 CountryCodeListAdapter.class,
         },
         includes = {

@@ -4,30 +4,31 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.FindPeopleAdapter;
+import com.yo.android.adapters.MagazinesTabHeaderAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.FindPeople;
-import com.yo.android.util.Constants;
+import com.yo.android.widgets.ScrollTabHolder;
 import com.yo.android.util.Util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,20 +39,22 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class FindPeopleActivity extends BaseActivity {
 
-    @Bind(R.id.lv_find_people)
-    protected ListView lvFindPeople;
-    @Bind(R.id.no_data)
-    protected TextView noData;
-    @Bind(R.id.ll_no_people)
-    protected LinearLayout llNoPeople;
-    @Bind(R.id.imv_empty_followings)
-    protected ImageView imvEmptyFindPeople;
-    @Bind(R.id.network_failure)
-    protected TextView networkFailureText;
-    @Bind(R.id.swipeContainer)
-    protected SwipeRefreshLayout swipeRefreshContainer;
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.viewpager)
+    protected ViewPager viewPager;
+    @Bind(R.id.tablayout)
+    TabLayout tabLayout;
+    /*@Bind(R.id.header)
+    LinearLayout headerLayout;*/
+    @Bind(R.id.collapse_toolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;
+
+    @Inject
+    YoApi.YoService yoService;
 
     private FindPeopleAdapter findPeopleAdapter;
     private int pageCount = 1;
@@ -60,23 +63,29 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
     private int pos;
     private SearchView searchView;
     private Call<List<FindPeople>> call;
+    public int mMinHeaderTranslation;
+    public int mHeaderHeight;
 
-    @Inject
-    YoApi.YoService yoService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_people);
         ButterKnife.bind(this);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = getString(R.string.find_people);
+        initToolbar();
+        setupTabPager();
 
-        getSupportActionBar().setTitle(title);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
-        findPeopleAdapter = new FindPeopleAdapter(this);
+        collapsingToolbarLayout.setTitleEnabled(false);
+
+        /*mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.header_full_height);
+        mMinHeaderTranslation = -mHeaderHeight + getResources().getDimensionPixelSize(R.dimen.tablayout_height);*/
+
+
+        /*findPeopleAdapter = new FindPeopleAdapter(this);
         lvFindPeople.setAdapter(findPeopleAdapter);
         lvFindPeople.setOnScrollListener(onScrollListener());
         imvEmptyFindPeople.setImageResource(R.drawable.ic_empty_find_people);
@@ -86,23 +95,46 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 pos = position;
-                Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
-                otherProfileIntent.putExtra(Constants.USER_ID, findPeopleAdapter.getItem(position).getId());
-                otherProfileIntent.putExtra("PersonName", findPeopleAdapter.getItem(position).getFirst_name() + " " + findPeopleAdapter.getItem(position).getLast_name());
-                otherProfileIntent.putExtra("PersonPic", findPeopleAdapter.getItem(position).getAvatar());
-                otherProfileIntent.putExtra("PersonIsFollowing", findPeopleAdapter.getItem(position).getIsFollowing());
-                otherProfileIntent.putExtra("MagazinesCount", findPeopleAdapter.getItem(position).getMagzinesCount());
-                otherProfileIntent.putExtra("FollowersCount", findPeopleAdapter.getItem(position).getFollowersCount());
-                otherProfileIntent.putExtra("LikedArticlesCount", findPeopleAdapter.getItem(position).getLikedArticlesCount());
-                startActivityForResult(otherProfileIntent, 8);
+                if(findPeopleAdapter.getCount() > position) {
+                    FindPeople item = findPeopleAdapter.getItem(position);
+                    if(item != null) {
+                        Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
+                        otherProfileIntent.putExtra(Constants.USER_ID, item.getId());
+                        otherProfileIntent.putExtra("PersonName", item.getFirst_name() + " " + item.getLast_name());
+                        otherProfileIntent.putExtra("PersonPic", item.getAvatar());
+                        otherProfileIntent.putExtra("PersonIsFollowing", item.getIsFollowing());
+                        otherProfileIntent.putExtra("MagazinesCount", item.getMagzinesCount());
+                        otherProfileIntent.putExtra("FollowersCount", item.getFollowersCount());
+                        otherProfileIntent.putExtra("LikedArticlesCount", item.getLikedArticlesCount());
+                        startActivityForResult(otherProfileIntent, 8);
+                    }
+                }
             }
-        });
+        });*/
+    }
+
+    private void initToolbar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.find_people);
+        }
+    }
+
+    private void setupTabPager() {
+        String[] titles = getResources().getStringArray(R.array.yo_people_tabs_titles);
+        MagazinesTabHeaderAdapter viewPagerAdapter =
+                new MagazinesTabHeaderAdapter(getSupportFragmentManager(), titles);
+        //viewPager.addOnPageChangeListener(this);
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(2);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(searchView != null) {
+        /*if(searchView != null) {
             if (searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                 pageCount = 1;
                 callFindPeopleService(null);
@@ -111,11 +143,11 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
             }
         } else {
             callFindPeopleService(null);
-        }
+        }*/
     }
 
     private void callFindPeopleService(final SwipeRefreshLayout swipeRefreshContainer) {
-        if(swipeRefreshContainer != null) {
+        if (swipeRefreshContainer != null) {
             swipeRefreshContainer.setRefreshing(false);
         } else {
             showProgressDialog();
@@ -124,7 +156,7 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
         yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                if(swipeRefreshContainer != null) {
+                if (swipeRefreshContainer != null) {
                     swipeRefreshContainer.setRefreshing(false);
                 } else {
                     dismissProgressDialog();
@@ -133,31 +165,31 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.clearAll();
                     findPeopleAdapter.addItemsAll(findPeopleList);
-                    lvFindPeople.setVisibility(View.VISIBLE);
+                    /*lvFindPeople.setVisibility(View.VISIBLE);
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.GONE);
                     originalList = response.body();
-                    networkFailureText.setVisibility(View.GONE);
+                    networkFailureText.setVisibility(View.GONE);*/
 
                 } else {
-                    noData.setVisibility(View.GONE);
+                    /*noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
-                    networkFailureText.setVisibility(View.GONE);
+                    networkFailureText.setVisibility(View.GONE);*/
                 }
             }
 
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
-                if(swipeRefreshContainer != null) {
+                if (swipeRefreshContainer != null) {
                     swipeRefreshContainer.setRefreshing(false);
                 } else {
                     dismissProgressDialog();
                 }
-                noData.setVisibility(View.GONE);
+                /*noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.GONE);
                 lvFindPeople.setVisibility(View.GONE);
-                networkFailureText.setVisibility(View.VISIBLE);
+                networkFailureText.setVisibility(View.VISIBLE);*/
             }
         });
     }
@@ -165,23 +197,24 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        menu1 = menu;
-        searchPeople(menu);
+        /*menu1 = menu;
+        searchPeople(menu);*/
         return super.onCreateOptionsMenu(menu);
     }
 
-    private boolean isMoreLoading=false;
+    private boolean isMoreLoading = false;
+
     private AbsListView.OnScrollListener onScrollListener() {
         return new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                int threshold = 1;
+                /*int threshold = 1;
                 int count = lvFindPeople.getCount();
                 if (scrollState == SCROLL_STATE_IDLE) {
                     if (isMoreLoading==false && lvFindPeople.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                         doPagination();
                     }
-                }
+                }*/
             }
 
             @Override
@@ -193,7 +226,7 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
     }
 
     private void doPagination() {
-        isMoreLoading=true;
+        isMoreLoading = true;
         pageCount++;
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getFindPeopleAPI(accessToken, pageCount, 30).enqueue(new Callback<List<FindPeople>>() {
@@ -220,8 +253,8 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 8 && resultCode == RESULT_OK) {
-            if(data!= null) {
-                if("Following".equals(data.getStringExtra("FollowState"))) {
+            if (data != null) {
+                if ("Following".equals(data.getStringExtra("FollowState"))) {
                     findPeopleAdapter.getItem(pos).setIsFollowing("true");
                     if (!hasDestroyed()) {
                         findPeopleAdapter.notifyDataSetChanged();
@@ -271,10 +304,10 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
                 Util.hideKeyboard(FindPeopleActivity.this, FindPeopleActivity.this.getCurrentFocus());
                 findPeopleAdapter.clearAll();
                 findPeopleAdapter.addItemsAll(originalList);
-                lvFindPeople.setVisibility(View.VISIBLE);
+                /*lvFindPeople.setVisibility(View.VISIBLE);
                 noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.GONE);
-                networkFailureText.setVisibility(View.GONE);
+                networkFailureText.setVisibility(View.GONE);*/
                 return true;
             }
         });
@@ -286,15 +319,15 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
         if (searchKey.isEmpty()) {
             findPeopleAdapter.clearAll();
             findPeopleAdapter.addItemsAll(originalList);
-            lvFindPeople.setVisibility(View.VISIBLE);
+            /*lvFindPeople.setVisibility(View.VISIBLE);
             noData.setVisibility(View.GONE);
             llNoPeople.setVisibility(View.GONE);
-            networkFailureText.setVisibility(View.GONE);
+            networkFailureText.setVisibility(View.GONE);*/
         } else {
             showProgressDialog();
             mProgressDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            if(call != null) {
+            if (call != null) {
                 call.cancel();
             }
             call = yoService.searchInFindPeople(accessToken, searchKey, 1, 100);
@@ -306,26 +339,26 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
                         List<FindPeople> findPeopleList = response.body();
                         findPeopleAdapter.clearAll();
                         findPeopleAdapter.addItemsAll(findPeopleList);
-                        lvFindPeople.setVisibility(View.VISIBLE);
+                        /*lvFindPeople.setVisibility(View.VISIBLE);
                         noData.setVisibility(View.GONE);
                         llNoPeople.setVisibility(View.GONE);
-                        networkFailureText.setVisibility(View.GONE);
+                        networkFailureText.setVisibility(View.GONE);*/
 
                     } else {
-                        noData.setVisibility(View.VISIBLE);
+                        /*noData.setVisibility(View.VISIBLE);
                         llNoPeople.setVisibility(View.VISIBLE);
                         lvFindPeople.setVisibility(View.GONE);
-                        networkFailureText.setVisibility(View.GONE);
+                        networkFailureText.setVisibility(View.GONE);*/
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                     dismissProgressDialog();
-                    noData.setVisibility(View.GONE);
+                    /*noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.GONE);
                     lvFindPeople.setVisibility(View.GONE);
-                    networkFailureText.setVisibility(View.VISIBLE);
+                    networkFailureText.setVisibility(View.VISIBLE);*/
                 }
             });
         }
@@ -342,7 +375,7 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
     }
 
     public void refresh() {
-        callFindPeopleService(null);
+        /*callFindPeopleService(null);
         pageCount = 1;
         findPeopleAdapter.clearAll();
         findPeopleAdapter.addItemsAll(originalList);
@@ -351,11 +384,11 @@ public class FindPeopleActivity extends BaseActivity implements SwipeRefreshLayo
             noData.setVisibility(View.GONE);
             llNoPeople.setVisibility(View.GONE);
             networkFailureText.setVisibility(View.GONE);
-        }
+        }*/
     }
 
-    @Override
+    //@Override
     public void onRefresh() {
-        callFindPeopleService(swipeRefreshContainer);
+        //callFindPeopleService(swipeRefreshContainer);
     }
 }

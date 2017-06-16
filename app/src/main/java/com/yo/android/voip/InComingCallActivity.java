@@ -221,9 +221,9 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.btnHold:
                 isHoldOn = !isHoldOn;
-                if (sipBinder != null) {
+                /*if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(isHoldOn);
-                }
+                }*/
                 if (isHoldOn) {
                     callModel.setEvent(HOLD_ON);
                     v.setBackgroundResource(R.drawable.ic_play);
@@ -324,26 +324,50 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         if (object instanceof SipCallModel) {
             SipCallModel model = (SipCallModel) object;
             if (model.getEvent() == 3) {
-                //callStatusTextView.setText("Reconnecting...");
-                mReceivedConnectionStatus.setText(getResources().getString(R.string.connecting_status));
-                // mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.reconnecting_status));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mReceivedConnectionStatus.setText(getResources().getString(R.string.connecting_status));
+                        callDuration.setVisibility(View.GONE);
+                    }
+                });
+                mHandler.removeCallbacks(startTimer);
+
             } else if (model.getEvent() == HOLD_ON) {
                 if (sipBinder != null) {
+                    mHandler.removeCallbacks(startTimer);
                     sipBinder.getHandler().setHoldCall(true);
                     //  mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
-                    mReceivedConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mReceivedConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
+                        }
+                    });
                 }
             } else if (model.getEvent() == HOLD_OFF) {
+                mHandler.post(startTimer);
                 if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(false);
                     // mInComingHeaderConnectionStatus.setText(getResources().getString(R.string.connected_status));
-                    mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
+                        }
+                    });
                 }
             } else {
                 if (model.isOnCall() && model.getEvent() == CALL_ACCEPTED_START_TIMER) {
                     //
-                    mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
-                    callDuration.setVisibility(View.VISIBLE);
+                    mHandler.post(startTimer);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
+                            callDuration.setVisibility(View.VISIBLE);
+                        }
+                    });
                 } else if (!model.isOnCall()) {
                     if (model.getEvent() == UserAgent.CALL_STATE_BUSY
                             || model.getEvent() == UserAgent.CALL_STATE_ERROR
@@ -365,12 +389,22 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             if (hold == KEEP_ON_HOLD) {
                 if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(true);
-                    mReceivedConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mReceivedConnectionStatus.setText(getResources().getString(R.string.call_on_hold_status));
+                        }
+                    });
                 }
             } else if (hold == KEEP_ON_HOLD_RESUME) {
                 if (sipBinder != null) {
                     sipBinder.getHandler().setHoldCall(false);
-                    mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mReceivedConnectionStatus.setText(getResources().getString(R.string.connected_status));
+                        }
+                    });
                 }
             }
         }

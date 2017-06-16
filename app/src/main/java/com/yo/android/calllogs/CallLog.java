@@ -372,7 +372,7 @@ public class CallLog {
                         String tempDate = DateUtil.getDate(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
-                        if (phoneName != null) {
+                        if (phoneName != null && !phoneName.equalsIgnoreCase(voxuser)) {
                             info.setDestination_name(phoneName);
                         }
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
@@ -430,7 +430,7 @@ public class CallLog {
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
-                        if (phoneName != null) {
+                        if (phoneName != null && !phoneName.equalsIgnoreCase(voxuser)) {
                             info.setDestination_name(phoneName);
                         }
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));

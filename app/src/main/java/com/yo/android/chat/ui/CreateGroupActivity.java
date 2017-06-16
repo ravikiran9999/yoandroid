@@ -1,10 +1,11 @@
 package com.yo.android.chat.ui;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +26,6 @@ import com.yo.android.chat.CompressImage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.ui.BaseActivity;
-import com.yo.android.ui.uploadphoto.ImageLoader;
 import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -46,10 +46,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CreateGroupActivity extends BaseActivity implements View.OnClickListener {
+public class CreateGroupActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
 
-    private EditText groupName;
-    private ListView selectedList;
     private ArrayList<Contact> selectedContactsArrayList;
     private String mGroupName;
 
@@ -59,15 +57,21 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     public static List<Contact> ContactsArrayList;
     File imgFile;
 
+    @Bind(R.id.imv_new_chat_group)
+    ImageView groupImage;
+    @Bind(R.id.et_new_chat_group_name)
+    EditText groupName;
+    @Bind(R.id.add_contact)
+    TextView addContactIcon;
+    @Bind(R.id.selected_contacts_list)
+    ListView selectedList;
+
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
-
     @Inject
     ImagePickHelper cameraIntent;
 
-    @Bind(R.id.imv_new_chat_group)
-    ImageView groupImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,12 +80,10 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         ButterKnife.bind(this);
 
         cameraIntent.setActivity(this);
-        groupName = (EditText) findViewById(R.id.et_new_chat_group_name);
-        TextView addContactIcon = (TextView) findViewById(R.id.add_contact);
-        selectedList = (ListView) findViewById(R.id.selected_contacts_list);
         ContactsArrayList = new ArrayList<>();
         selectedContactsArrayList = new ArrayList<>();
         addContactIcon.setOnClickListener(this);
+        //groupName.addTextChangedListener(this);
         enableBack();
 
         groupImage.setOnClickListener(new View.OnClickListener() {
@@ -105,13 +107,15 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.create) {
-            if (!TextUtils.isEmpty(groupName.getText().toString())) {
-                mGroupName = groupName.getText().toString();
-                createGroup();
+            mGroupName = groupName.getText().toString();
+            String temp = mGroupName;
+            if (temp.trim().length() > 0) {
+                createGroup(mGroupName);
             } else {
                 Util.hideKeyboard(this, getCurrentFocus());
                 Toast.makeText(this, getString(R.string.enter_group_name), Toast.LENGTH_SHORT).show();
             }
+
         } else if (item.getItemId() == android.R.id.home) {
             finish();
         }
@@ -187,7 +191,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-    private void createGroup() {
+    private void createGroup(String groupName) {
 
         if (!selectedContactsArrayList.isEmpty()) {
             showProgressDialog();
@@ -212,7 +216,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
             }
 
-            RequestBody groupDescription = RequestBody.create(MediaType.parse("room[group_name]"), mGroupName);
+            RequestBody groupDescription = RequestBody.create(MediaType.parse("room[group_name]"), groupName);
 
             String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             yoService.createGroupAPI(access, selectedUsers, groupDescription, body).enqueue(new Callback<Room>() {
@@ -223,7 +227,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         if (!ContactsArrayList.isEmpty()) {
                             ContactsArrayList.clear();
                         }
-                        setResult(Activity.RESULT_OK);
+                        //setResult(Activity.RESULT_OK);
+                        ChatActivity.start(CreateGroupActivity.this, response.body());
                         finish();
                     } else {
                         Toast.makeText(CreateGroupActivity.this, getResources().getString(R.string.group_creation_error), Toast.LENGTH_SHORT).show();
@@ -248,5 +253,24 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         if (!ContactsArrayList.isEmpty()) {
             ContactsArrayList.clear();
         }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if (count == 1) {
+            if (TextUtils.isDigitsOnly(s)) {
+                groupName.setText("");
+            }
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
     }
 }

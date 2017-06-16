@@ -25,32 +25,27 @@ android {
     defaultConfig {
         applicationId "com.yo.android"
         minSdkVersion 15
-        targetSdkVersion 22
-        versionCode 4
-        versionName "17.2.1.0"
+        targetSdkVersion 25
+        versionCode 5
+        versionName "1.2Beta"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
         buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+        buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
         multiDexEnabled true
     }
     productFlavors {
 
         dev {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
-
-            // Todo remote url
-            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8:3000/\""
-            buildConfigField "String", "CLIENT_ID", "\"687b5afaed84f6af4619c64b0e3955050239608d0c33cb40b31f20b83a8caf58\""
-            buildConfigField "String", "CLIENT_SECRET", "\"a3d1f44ac7e2aa1851402b5cc2e6b8e038f66c26daa154b0e3e5e6887402d7f1\""
-
-            // Todo local url
-            //buildConfigField "String", "BASE_URL", "\"http://34.198.165.8:3000/\""
-            //buildConfigField "String", "CLIENT_ID", "\"a70a4e734979149144ab4979dc0cef4d5d944586be37e647b08f00c9c0a9bee3\""
-            //buildConfigField "String", "CLIENT_SECRET", "\"7ace43ae6f77651ff13745391e991ba255e9d028b10c10c163ccbffc87a93ff9\""
-
+            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "true"
+            buildConfigField "boolean", "DISABLE_ADD_BALANCE", "true"
+            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
+            buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
+            buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
             minSdkVersion 18
@@ -67,6 +62,20 @@ android {
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
         }
+
+        enhancement {
+            applicationIdSuffix ".enhancement"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+            buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""
+            buildConfigField "String", "CLIENT_ID", "\"385e29bdabe89c20ec32cae501b556554a8ece1605142b58ab6966cfee0635be\""
+            buildConfigField "String", "CLIENT_SECRET", "\"5262628e450e5e356561753f712196d678acc0a994058935bc2dcbc351aa2fee\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-enhancements.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-enhancements.firebaseio.com\""
+            minSdkVersion 18
+        }
+
     }
     buildTypes {
         release {
@@ -74,8 +83,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
-            // productFlavors.dev.signingConfig signingConfigs.devconfig
-            // productFlavors.stage.signingConfig signingConfigs.stageconfig
+             productFlavors.dev.signingConfig signingConfigs.devconfig
+             productFlavors.stage.signingConfig signingConfigs.stageconfig
         }
 
     }
@@ -149,6 +158,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.isseiaoki:simplecropview:1.1.4'
+    compile 'com.android.support:support-v4:25.3.1'
 }
 apply plugin: 'com.google.gms.google-services'
 

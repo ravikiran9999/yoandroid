@@ -10,8 +10,10 @@ import com.yo.android.BuildConfig;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.OTPResponse;
+import com.yo.android.pjsip.YoSipService;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.voip.VoipConstants;
 
 import java.io.IOException;
 
@@ -76,6 +78,9 @@ public class TokenAuthenticator implements Authenticator {
                     mLog.e("TokenAuthenticator", "Final TokenExpireCount -" + tokenExpireCount);
                     preferenceEndPoint.clearAll();
                     Intent intent = new Intent(mContext, LoginActivity.class);
+                    //To Stop calls when logout
+                    Intent intents = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, mContext, YoSipService.class);
+                    mContext.startService(intent);
                     if (mContext != null) {
                         Util.cancelAllNotification(mContext);
                     }

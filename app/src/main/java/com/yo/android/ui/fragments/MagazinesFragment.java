@@ -65,6 +65,11 @@ import retrofit2.Response;
  */
 public class MagazinesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchResults;
+    @Bind(R.id.bottom)
+    protected FrameLayout layout;
+
     @Inject
     YoApi.YoService yoService;
     @Inject
@@ -72,22 +77,13 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     protected PreferenceEndPoint preferenceEndPoint;
 
     private List<Topics> topicsList;
-
     private Menu menu;
     public static List<Topics> unSelectedTopics;
     FilterWithSpaceAdapter<String> mAdapter;
     private boolean isAlreadyShown;
     List<String> topicsNames;
     private List<Topics> topicsNewList;
-
-    @Bind(R.id.no_search_results)
-    protected TextView noSearchResults;
-
-    @Bind(R.id.bottom)
-    protected FrameLayout layout;
-
     private List<String> topicNamesList = new ArrayList<String>();
-
     private boolean isSharedPreferenceShown;
 
 

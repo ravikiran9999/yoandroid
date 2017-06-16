@@ -24,21 +24,25 @@ import java.util.Date;
  */
 public class SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
+    public static final String FLAG = "flag";
     protected View view;
 
     protected boolean isDateOfBirth;
 
     public static final String stringDate = "dd-mm-yyyy";
 
-    public SelectDateFragment(View view, boolean isDateOfBirth) {
+    public SelectDateFragment() {
+    }
+
+    public void setDateFragmentView(View view) {
         this.view = view;
-        this.isDateOfBirth = isDateOfBirth;
     }
 
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Calendar calendar = Calendar.getInstance();
+        this.isDateOfBirth = getArguments().getBoolean(FLAG);
 
         if (view instanceof EditText) {
             String dateValue = ((EditText) view).getText().toString().trim();
@@ -65,13 +69,13 @@ public class SelectDateFragment extends DialogFragment implements DatePickerDial
                 int yy = Integer.parseInt(parts[2]);
                 int mm = Integer.parseInt(parts[1]);
                 int dd = Integer.parseInt(parts[0]);
-                return new DatePickerDialog(getActivity(), this, yy, mm-1, dd);
+                return new DatePickerDialog(getActivity(), this, yy, mm - 1, dd);
             } catch (Exception e) {
                 e.printStackTrace();
                 int yy = calendar.get(Calendar.YEAR);
                 int mm = calendar.get(Calendar.MONTH);
                 int dd = calendar.get(Calendar.DAY_OF_MONTH);
-                return new DatePickerDialog(getActivity(), this, yy, mm-1, dd);
+                return new DatePickerDialog(getActivity(), this, yy, mm - 1, dd);
             }
         } else {
             int yy = calendar.get(Calendar.YEAR);

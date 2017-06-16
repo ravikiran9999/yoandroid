@@ -148,7 +148,7 @@ public class NewDailerActivity extends BaseActivity {
             public void onClick(View v) {
                 if (!BuildConfig.DISABLE_ADD_BALANCE) {
                     Intent intent = new Intent(NewDailerActivity.this, TabsHeaderActivity.class);
-                    intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
+                    // intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
                     startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
                 } else {
                     mToastFactory.showToast(R.string.disabled);
@@ -221,7 +221,8 @@ public class NewDailerActivity extends BaseActivity {
 
     private void loadCurrentBalance() {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        double val = Double.parseDouble(balance.trim());
+        //double val = Double.parseDouble(balance.trim());
+        double val = Double.parseDouble(Util.numberFromNexgeFormat(balance.trim()));
         if (val <= 2) {
             mLog.w(TAG, "Current balance is less than or equal to $2");
             Util.setBigStyleNotificationForBalance(this, "Credit", getString(R.string.low_balance), "Credit", "");
@@ -230,7 +231,8 @@ public class NewDailerActivity extends BaseActivity {
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
                 //txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
-                txtBalance.setText(String.format("%s %s", currencySymbolDollar, mBalanceHelper.getCurrentBalance()));
+                //txtBalance.setText(String.format("%s %s", currencySymbolDollar, mBalanceHelper.getCurrentBalance()));
+                txtBalance.setText(String.format("%s", mBalanceHelper.getCurrentBalance()));
             } else {
                 txtBalance.setVisibility(View.GONE);
             }
@@ -315,7 +317,12 @@ public class NewDailerActivity extends BaseActivity {
                 String displayNumber = number;
                 SipHelper.init(displayNumber);
                 number = number.replace(" ", "").replace("+", "");
-                number = Long.valueOf(number).toString();
+                try {
+                    number = Long.valueOf(number).toString();
+                } catch (NumberFormatException e) {
+                    mToastFactory.showToast("Please enter valid number.");
+                    return;
+                }
                 if (cPrefix != null) {
                     cPrefix = cPrefix.replace("+", "");
                 }
@@ -326,12 +333,21 @@ public class NewDailerActivity extends BaseActivity {
                     mToastFactory.showToast(getString(R.string.connectivity_network_settings));
                 } else if (number.length() == 0) {
                     mToastFactory.showToast("Please enter number.");
-                } else if(!voxUserName.contains(number)) {
-
-                    SipHelper.makeCall(NewDailerActivity.this, number);
+                } else if (!voxUserName.contains(number)) {
+                    SipHelper.makeCall(NewDailerActivity.this, number, true);
                     finish();
                 } else {
-                    alertMessage(R.string.self_number);
+                    String stringExtra = voxUserName;
+                    String onlyNumber = "";
+                    try {
+                        stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
+                        onlyNumber = stringExtra;
+                    } catch (StringIndexOutOfBoundsException e) {
+                        mLog.e(TAG, "" + e);
+                    }
+                    if (onlyNumber.equals(number)) {
+                        alertMessage(R.string.self_number);
+                    }
                 }
             }
         };
@@ -441,8 +457,8 @@ public class NewDailerActivity extends BaseActivity {
             if (cName != null) {
                 countryName.setText(cName);
             }
-            preferenceEndPoint.saveStringPreference(Constants.CALL_RATE, "$" + cRate + "/" + pulse);
-            txtCallRate.setText("$" + cRate + "/" + pulse);
+            preferenceEndPoint.saveStringPreference(Constants.CALL_RATE, cRate + "/" + pulse);
+            txtCallRate.setText(cRate + "/" + pulse);
             if (TextUtils.isEmpty(dialPadView.getDigits().getText().toString())) {
                 //TODO: Need to improve the logic
                 String str = dialPadView.getDigits().getText().toString();
@@ -487,14 +503,14 @@ public class NewDailerActivity extends BaseActivity {
     }
 
     public void onEventMainThread(String action) {
-        if(Constants.CALL_RATE_DETAILS_ACTION.equals(action)) {
+        if (Constants.CALL_RATE_DETAILS_ACTION.equals(action)) {
             String json = preferenceEndPoint.getStringPreference
                     (Constants.COUNTRY_LIST);
             callRateDetailList = new Gson().fromJson(json, new
                     TypeToken<List<CallRateDetail>>() {
                     }.getType());
             setCallRateText();
-        } else if(Constants.BALANCE_UPDATED_ACTION.equals(action)) {
+        } else if (Constants.BALANCE_UPDATED_ACTION.equals(action)) {
             loadCurrentBalance();
         }
     }
@@ -505,7 +521,8 @@ public class NewDailerActivity extends BaseActivity {
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        finish();
+                        dialog.dismiss();
+                        // finish();
                     }
                 });
         AlertDialog alert = builder.create();

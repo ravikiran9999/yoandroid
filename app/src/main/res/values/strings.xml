@@ -4,8 +4,6 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="chat_fragment">Hello chat fragment</string>
     <string name="chats">Chats</string>
 
     <string name="contacts_fragment">Hello contacts fragment</string>
@@ -37,6 +35,10 @@
     <string name="copy_messages">Messages Copied</string>
     <string name="add_contact">Add Contact</string>
     <string name="new_group">New Group</string>
+    <string name="format_message">Message %1$s</string>
+    <string name="format_call">Call %1$s</string>
+    <string name="format_add">Add to contacts</string>
+
     <plurals name="copy_message">
         <item quantity="one">Message Copied</item>
         <item quantity="other">%1$s Messages Copied</item>
@@ -128,7 +130,7 @@
     <string name="title_activity_load_magazine">LoadMagazineActivity</string>
     <string name="zero">0</string>
     <string name="group_creation_error">Group not created. Please try again</string>
-    <string name="enter_group_name">Please enter group name</string>
+    <string name="enter_group_name">Provide a group subject</string>
     <string name="create_group">Create group</string>
     <string name="clear_chat_history">Clear chat history</string>
     <string name="delete">Delete</string>
@@ -311,7 +313,7 @@
     <string name="morenotifications">Notifications</string>
     <string name="invitefriends">Invite Friends</string>
     <string name="accountdetails">Account Details</string>
-    <string name="yocredit">Yo Credit (%1$s %2$s)</string>
+    <string name="yocredit">Yo Credit (%1$s)</string>
     <string name="low_balance">Low balance, please add balance.</string>
     <string name="logged_in_another_device">User accessed from another device</string>
     <string name="activity_title_yourcountry">Select Country</string>
@@ -328,4 +330,19 @@
     <string name="connected_status">Connected</string>
     <string name="reconnecting_status">Reconnecting..</string>
     <string name="call_on_hold_status">Call is on hold</string>
+
+    <string-array name="yo_people_tabs_titles">
+        <item>Find People</item>
+        <item>Followings</item>
+        <item>Followers</item>
+    </string-array>
+    <string name="internal_build_cant_add_balance">You can\'t add more balance as its test build.</string>
+    <string name="not_valid_pstn_number">Not a valid phone number.</string>
+    <string name="not_supported_country">This country is not supported by your app</string>
+    <string name="enter_vocher_number">Please enter a Voucher Number</string>
+    <string name="not_online_unavailable">Recipient not online or unavailable.</string>
+    <string name="recharge">Recharge</string>
+    <string name="no_sufficient_bal_recharge">You don\'t have sufficient balance to call. Please recharge.</string>
+    <string name="not_in_coverage_area">Recipient not in coverage area.</string>
+    <string name="cannot_transfer_full_balance">You cannot transfer your whole balance. Please maintain atleast US $ 0.001</string>
 </resources>

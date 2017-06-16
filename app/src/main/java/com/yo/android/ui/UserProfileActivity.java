@@ -1,15 +1,22 @@
 package com.yo.android.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +54,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserProfileActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, ValueEventListener {
+public class UserProfileActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, ValueEventListener, AdapterView.OnItemClickListener {
 
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     @Bind(R.id.profile_image)
@@ -136,8 +143,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
         membersList = (NonScrollListView) findViewById(R.id.members);
-        profileMembersAdapter = new ProfileMembersAdapter(getApplicationContext());
+        profileMembersAdapter = new ProfileMembersAdapter(this);
         membersList.setAdapter(profileMembersAdapter);
+        membersList.setOnItemClickListener(this);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -174,10 +182,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (intent.hasExtra(Constants.CHAT_ROOM_ID)) {
                     String firebaseRoomId = intent.getStringExtra(Constants.CHAT_ROOM_ID);
                     if (firebaseRoomId != null) {
-                        Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
                         if (roomName != null) {
+                            Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
                             roomInfo.addListenerForSingleValueEvent(this);
                             roomInfo.keepSynced(true);
+                            //new GroupMembersTask().execute(roomName, firebaseRoomId);
                             profileCall.setVisibility(View.GONE);
                         }
                     }
@@ -231,7 +240,10 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (mContact != null) {
                 String numberTrim = numberFromNexgeFormat(mContact.getNexgieUserName(), mContact.getPhoneNo());
                 String mName = mContact.getName().replaceAll("\\s+", "");
-                if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !isSame(mName, numberTrim)) {
+                if(name.equalsIgnoreCase(getString(R.string.group_name))) {
+                    profileNameTitle.setText(name);
+                    profileName.setText(contact.getName());
+                } else if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(checkPlusSign(mContact.getName()));
@@ -250,9 +262,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             } else if (contact != null) {
                 String numberTrim = numberFromNexgeFormat(contact.getNexgieUserName(), contact.getPhoneNo());
                 String mName = contact.getName().replaceAll("\\s+", "");
-                if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !isSame(mName, numberTrim)) {
+                if (name.equalsIgnoreCase(getString(R.string.group_name))) {
+                    profileNameTitle.setText(name);
+                    profileName.setText(contact.getName());
+                } else if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
-
                     profileNameTitle.setText(name);
                     profileName.setText(checkPlusSign(contact.getName()));
                 } else {
@@ -320,7 +334,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     public void callUser() {
         //do nothing...
         if (contact != null && contact.getNexgieUserName() != null) {
-            SipHelper.makeCall(this, contact.getNexgieUserName());
+            SipHelper.makeCall(this, contact.getNexgieUserName(), false);
         }
     }
 
@@ -369,7 +383,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
-                                String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber());
+                                 String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber());
                                 if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber()) && userProfile.getPhoneNumber().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                                     userProfile.setFullName(getString(R.string.you));
                                 } else if (userProfile != null && !TextUtils.isEmpty(userProfile.getPhoneNumber())) {
@@ -418,10 +432,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     return lhs.getUserProfile().getFullName().toLowerCase().compareTo(rhs.getUserProfile().getFullName().toLowerCase());
                 }
             });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
             for (GroupMembers groupMembers : list) {
                 if (groupMembers.getUserProfile().getFullName().equalsIgnoreCase(getString(R.string.you))) {
                     list.add(list.size(), groupMembers);
@@ -444,7 +454,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     }
 
     private boolean isSame(String name, String phoneNumber) {
-        if (TextUtils.isDigitsOnly(phoneNumber) && !phoneNumber.startsWith("+")) {
+        if (TextUtils.isDigitsOnly(name) && TextUtils.isDigitsOnly(phoneNumber)) {
+            return name.equalsIgnoreCase(phoneNumber);
+        } else if (TextUtils.isDigitsOnly(phoneNumber) && !phoneNumber.startsWith("+")) {
             return name.equalsIgnoreCase(String.format(getResources().getString(R.string.plus_number), phoneNumber));
         } else if (TextUtils.isDigitsOnly(name) && !name.startsWith("+")) {
             return String.format(getResources().getString(R.string.plus_number), name).equalsIgnoreCase(phoneNumber);
@@ -456,5 +468,34 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private String numberFromNexgeFormat(String nexgeFormat, String phoneNumber) {
         String number = nexgeFormat != null ? nexgeFormat : phoneNumber;
         return Util.numberFromNexgeFormat(number);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String name = ((TextView) view.findViewById(R.id.tv_name)).getText().toString();
+        ArrayAdapter<String> userAdapter = createAdapter(name);
+        userActionFromGroup(userAdapter);
+    }
+
+    public void userActionFromGroup(final ArrayAdapter<String> displayUserAdapter) {
+        // Creating and Building the Dialog
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(this);
+        builderSingle.setAdapter(displayUserAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String strName = displayUserAdapter.getItem(which);
+            }
+        });
+        builderSingle.show();
+    }
+
+    private ArrayAdapter<String> createAdapter(String selectedUser) {
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item);
+        arrayAdapter.add(String.format(getString(R.string.format_message), selectedUser));
+        arrayAdapter.add(String.format(getString(R.string.format_call), selectedUser));
+        if (TextUtils.isDigitsOnly(selectedUser)) {
+            arrayAdapter.add(getString(R.string.format_add));
+        }
+        return arrayAdapter;
     }
 }

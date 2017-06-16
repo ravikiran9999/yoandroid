@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,20 +51,19 @@ public class GroupContactsActivity extends BaseActivity {
     ListView layout;
     @Bind(R.id.no_contacts)
     TextView textView;
-    private String groupName;
-    private Menu mMenu;
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchResult;
+
     @Inject
     YoApi.YoService yoService;
     @Inject
     ContactsSyncManager mContactsSyncManager;
-
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
 
-    @Bind(R.id.no_search_results)
-    protected TextView noSearchResult;
-
+    private String groupName;
+    private Menu mMenu;
     List<Contact> contactsList = null;
     List<Contact> selectedContactsList = null;
 
@@ -112,7 +112,7 @@ public class GroupContactsActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Util.prepareContactsSearch(this, mMenu, groupContactsListAdapter, Constants.CONT_FRAG, noSearchResult);
+        Util.prepareContactsSearch(this, mMenu, groupContactsListAdapter, Constants.CONT_FRAG, noSearchResult, textView);
 
         if (item.getItemId() == R.id.done) {
             done();
@@ -126,7 +126,18 @@ public class GroupContactsActivity extends BaseActivity {
     }
 
     private void getYoAppUsers() {
-        showProgressDialog();
+        /*List<Contact> contactList = new ArrayList<>();
+        List<Contact> mContactsList = mContactsSyncManager.getContacts();
+        if (!mContactsList.isEmpty()) {
+            for(Contact contact : mContactsList)
+                contactList.add(contact);
+            loadInAlphabeticalOrder(contactList);
+        }
+
+        if (mContactsList.isEmpty()) {
+            showProgressDialog();
+        }*/
+
         mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
@@ -155,10 +166,12 @@ public class GroupContactsActivity extends BaseActivity {
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
-                textView.setText(getString(R.string.no_contacts_found));
-                textView.setVisibility(View.VISIBLE);
-                listView.setVisibility(View.GONE);
-                mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
+                if(contactsList.isEmpty()) {
+                    textView.setText(getString(R.string.no_contacts_found));
+                    textView.setVisibility(View.VISIBLE);
+                    listView.setVisibility(View.GONE);
+                }
+
             }
         });
     }
