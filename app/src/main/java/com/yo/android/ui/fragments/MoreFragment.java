@@ -368,8 +368,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                     if (getActivity() != null) {
                                         getActivity().stopService(serviceIntent);
                                     }
-                                    alarmManager.cancel(BottomTabsActivity.pintent);
-
+                                    try {
+                                        alarmManager.cancel(BottomTabsActivity.pintent);
+                                    }catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                     //stop firebase service
                                     //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
 

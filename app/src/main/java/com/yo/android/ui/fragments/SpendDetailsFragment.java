@@ -267,6 +267,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             holder.getTxtReason().setText(item.getCalltype());
 
             //Todo remove this block
+            //=======================================================================
             /*try {
                 DecimalFormat df = new DecimalFormat("0.000");
                 String format = df.format(Double.valueOf(item.getCallcost()));
@@ -274,6 +275,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             } catch (Exception e) {
                 e.printStackTrace();
             }*/
+           //==========================================================================
 
             /*holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override
