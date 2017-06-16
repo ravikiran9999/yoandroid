@@ -520,6 +520,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnectedListner.callDisconnected();
         }
         mLog.e(TAG, "disconnected call >>>>>");
+
+        try {
+            String dumpString = currentCall.dump(true, "");
+            mLog.d(TAG, "The call disconnected dump string is " + dumpString);
+            Util.appendLog(dumpString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         stopRepeatingTask();
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);

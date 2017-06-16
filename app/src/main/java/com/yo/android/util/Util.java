@@ -63,9 +63,12 @@ import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.vox.BalanceHelper;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1151,6 +1154,34 @@ public class Util {
             return String.format("%02d mins %02d secs", minutes, seconds);
         }  else {
             return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
+        }
+    }
+
+    public static void appendLog(String text)
+    {
+        File logFile = new File("sdcard/calldump.file");
+        if (!logFile.exists())
+        {
+            try
+            {
+                logFile.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            //BufferedWriter for performance, true to set append to file flag
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(text);
+            buf.newLine();
+            buf.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 }
