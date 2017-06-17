@@ -151,7 +151,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         super.onActivityCreated(savedInstanceState);
         balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
-        NumberFormat formatter = new DecimalFormat("#0.00");
+        //NumberFormat formatter = new DecimalFormat("#0.00");
     }
 
     /**
@@ -190,9 +190,10 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     dismissProgressDialog();
                     try {
-                        DecimalFormat df = new DecimalFormat("0.000");
+                        /*DecimalFormat df = new DecimalFormat("0.000");
                         String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
-                        preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
+                        preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);*/
+                        preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
                     } catch (IllegalArgumentException e) {
                         mLog.w(TAG, "getCurrentBalance", e);
                     }
@@ -206,9 +207,11 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             });
         } else if (mBalanceHelper != null && resultCode == Activity.RESULT_OK) {
             try {
-                DecimalFormat df = new DecimalFormat("0.000");
+                /*DecimalFormat df = new DecimalFormat("0.000");
                 String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
-                preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
+                preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);*/
+                preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
+
             } catch (IllegalArgumentException e) {
                 mLog.w(TAG, "getCurrentBalance", e);
             }

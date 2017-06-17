@@ -165,7 +165,8 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
             if(mContext.getResources().getString(R.string.voucher_failed).equals(item.getAddedCredit())) {
                 holder.getTxtPrice().setText(item.getMessage());
             } else {
-                holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
+                //holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
+                holder.getTxtPrice().setText(String.format("%s", item.getConvertedAddedCredit()));
             }
             holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override

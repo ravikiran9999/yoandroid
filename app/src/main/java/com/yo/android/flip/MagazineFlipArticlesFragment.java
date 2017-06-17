@@ -1324,6 +1324,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (allArticles != null) {
             List<String> allArticlesIds = new ArrayList<>();
             for (Articles articles : allArticles) {
+                if(articles != null)
                 allArticlesIds.add(articles.getId());
             }
             List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
