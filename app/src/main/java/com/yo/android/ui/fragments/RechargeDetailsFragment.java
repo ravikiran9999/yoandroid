@@ -166,7 +166,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
                 holder.getTxtPrice().setText(item.getMessage());
             } else {
                 //holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
-                holder.getTxtPrice().setText(String.format("%s", item.getConvertedAddedCredit()));
+                holder.getTxtPrice().setText(String.format("%s %s%s", item.getCurrencyCode(), item.getCurrencySymbol(), item.getConvertedAddedCredit()));
             }
             holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override

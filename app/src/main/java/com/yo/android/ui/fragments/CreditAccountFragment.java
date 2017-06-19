@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.MoreListAdapter;
+import com.yo.android.adapters.WalletAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.NonScrollListView;
@@ -34,6 +36,7 @@ import com.yo.android.helpers.MenuViewHolder;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
 import com.yo.android.model.FindPeople;
 import com.yo.android.model.MoreData;
+import com.yo.android.model.Wallet;
 import com.yo.android.model.denominations.Denominations;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
@@ -68,20 +71,23 @@ import retrofit2.Response;
 public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, AdapterView.OnItemClickListener {
 
     private static final String TAG = CreditAccountFragment.class.getSimpleName();
-    @Bind(R.id.txt_balance)
-    TextView txt_balance;
 
-    private MoreListAdapter menuAdapter;
+    /*@Bind(R.id.txt_balance)
+    TextView txt_balance;*/
+    @Bind(R.id.lv_settings)
+    protected ListView menuListView;
+    @Bind(R.id.txtEmpty)
+    protected TextView txtEmpty;
+    @Bind(R.id.credit_account_view)
+    ListView walletListView;
+
     @Inject
     YoApi.YoService yoService;
 
     private String balance;
-
-    @Bind(R.id.lv_settings)
-    protected ListView menuListView;
-
-    @Bind(R.id.txtEmpty)
-    protected TextView txtEmpty;
+    private String mSBalance;
+    private String mWBalance;
+    private MoreListAdapter menuAdapter;
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
     private EditText voucherNumberEdit;
 
@@ -102,7 +108,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                         preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
                          //Todo remove this line
                         //txt_balance.setText(String.format("%s %s", MoreFragment.currencySymbolDollar, balance));
-                        txt_balance.setText(String.format("%s", balance));
+                        //txt_balance.setText(String.format("%s", balance));
                     } else {
                         txtEmpty.setVisibility(View.VISIBLE);
                         FragmentActivity activity = getActivity();
@@ -150,8 +156,20 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         balance = mBalanceHelper.getCurrentBalance();
-        String currencySymbol = mBalanceHelper.getCurrencySymbol();
+        mSBalance = mBalanceHelper.getSwitchBalance();
+        mWBalance = mBalanceHelper.getWalletBalance();
+
+        //String currencySymbol = mBalanceHelper.getCurrencySymbol();
         //NumberFormat formatter = new DecimalFormat("#0.00");
+
+        ArrayList<Wallet> wallets = new ArrayList<>();
+        wallets.add(new Wallet(mSBalance, getString(R.string.your_switch_balance)));
+        wallets.add(new Wallet(mWBalance, getString(R.string.your_wallet_balance)));
+        wallets.add(new Wallet(balance, getString(R.string.your_total_balance)));
+
+        WalletAdapter walletAdapter = new WalletAdapter(getActivity());
+        walletListView.setAdapter(walletAdapter);
+        walletAdapter.addItems(wallets);
     }
 
     /**
@@ -226,9 +244,12 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
             balance = mBalanceHelper.getCurrentBalance();
+            balance = mBalanceHelper.getCurrentBalance();
+            balance = mBalanceHelper.getCurrentBalance();
             String currencySymbol = mBalanceHelper.getCurrencySymbol();
             //txt_balance.setText(String.format("%s%s", MoreFragment.currencySymbolDollar, balance));
-            txt_balance.setText(String.format("%s", balance));
+
+            //txt_balance.setText(String.format("%s", balance));
         }
     }
 

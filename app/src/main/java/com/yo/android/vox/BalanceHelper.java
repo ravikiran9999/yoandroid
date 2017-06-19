@@ -8,6 +8,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.PaymentHistoryItem;
+import com.yo.android.model.Wallet;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -72,10 +73,14 @@ public class BalanceHelper {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
                         String balance = jsonObject.getString(Constants.BALANCE);
+                        String switchBalance = jsonObject.getString(Constants.S_BALANCE);
+                        String walletBalance = jsonObject.getString(Constants.W_BALANCE);
                         try {
                             /*DecimalFormat df = new DecimalFormat("0.000");
                             String format = df.format(Double.valueOf(balance));*/
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                            prefs.saveStringPreference(Constants.SWITCH_BALANCE, switchBalance);
+                            prefs.saveStringPreference(Constants.WALLET_BALANCE, walletBalance);
                             EventBus.getDefault().post(Constants.BALANCE_UPDATED_ACTION);
                             double val = Double.parseDouble(balance.trim());
                             if(val <=2) {
@@ -135,15 +140,20 @@ public class BalanceHelper {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     try {
+
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
                         String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.BALANCE);
+                        String mSwitchBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.S_BALANCE);
+                        String mWalletBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.W_BALANCE);
 
                         try {
                             // Todo remove these two lines as rounding to 3 decimals is done in server
                             /*DecimalFormat df = new DecimalFormat("0.000");
                             String format = df.format(Double.valueOf(balance));*/
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                            prefs.saveStringPreference(Constants.SWITCH_BALANCE, mSwitchBalance);
+                            prefs.saveStringPreference(Constants.WALLET_BALANCE, mWalletBalance);
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
@@ -461,6 +471,15 @@ public class BalanceHelper {
 
         return balance;
     }
+
+    public String getSwitchBalance() {
+        return prefs.getStringPreference(Constants.SWITCH_BALANCE, "0");
+    }
+
+    public String getWalletBalance() {
+        return prefs.getStringPreference(Constants.WALLET_BALANCE, "0");
+    }
+
 
     public String getCurrencySymbol() {
         return prefs.getStringPreference(Constants.CURRENCY_SYMBOL, "Rs");

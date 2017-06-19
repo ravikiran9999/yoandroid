@@ -6,7 +6,7 @@
     android:background="@color/light_gray"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
+    <!--<android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="70dp"
         app:cardCornerRadius="1dp">
@@ -30,8 +30,14 @@
                 android:layout_alignParentRight="true"
                 android:textColor="@color/colorPrimary" />
         </RelativeLayout>
-    </android.support.v7.widget.CardView>
+    </android.support.v7.widget.CardView>-->
 
+    <ListView
+        android:id="@+id/credit_account_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:divider="@android:color/transparent" />
 
     <include
         layout="@layout/activity_settings"

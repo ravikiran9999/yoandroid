@@ -66,12 +66,11 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                            ContactsSyncManager mContactsSyncManager) {
         super(context);
         inflater = LayoutInflater.from(context);
-        this.context = context.getBaseContext();
         this.userId = userId;
         this.mSelectedItemsIds = new SparseBooleanArray();
         this.roomType = type;
         this.mContactsSyncManager = mContactsSyncManager;
-        this.inflater = LayoutInflater.from(this.context);
+
     }
 
 
