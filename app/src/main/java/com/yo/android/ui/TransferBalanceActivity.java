@@ -147,7 +147,7 @@ public class TransferBalanceActivity extends BaseActivity {
                     if (val != 0) {
                         if (Double.parseDouble(Util.numberFromNexgeFormat(mBalanceHelper.getCurrentBalance())) > Double.parseDouble(Util.numberFromNexgeFormat(amount))) {
 
-                            showMessageDialog(amount, phoneNo);
+                            showMessageDialog(amount, mBalanceHelper.getCurrentBalance(), phoneNo);
 
                         } else if(Double.parseDouble(mBalanceHelper.getCurrentBalance()) == Double.parseDouble(amount)) {
                             showBalanceDialog();
@@ -215,9 +215,9 @@ public class TransferBalanceActivity extends BaseActivity {
 
                                     tvTitle.setText("Balance has been transferred successfully to " + "\"" + name + "\".");
                                     if(response.body().getBalance() != null) {
-                                        DecimalFormat df = new DecimalFormat("0.000");
-                                        String format = df.format(Double.valueOf(response.body().getBalance()));
-                                        String remainingBalance = "\"Your Remaining Balance is  US $" + format + "\"";
+                                        /*DecimalFormat df = new DecimalFormat("0.000");
+                                        String format = df.format(Double.valueOf(response.body().getBalance()));*/
+                                        String remainingBalance = "\"Your Remaining Balance is " + response.body().getBalance() + "\"";
                                         final SpannableString text = new SpannableString(remainingBalance);
                                         text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                         tvDesc.setText(text);
@@ -289,7 +289,7 @@ public class TransferBalanceActivity extends BaseActivity {
         });
     }
 
-    private void showMessageDialog(final String amount, final String phoneNumber) {
+    private void showMessageDialog(final String amount, final String amountWithDenomination, final String phoneNumber) {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -298,7 +298,8 @@ public class TransferBalanceActivity extends BaseActivity {
         builder.setView(view);
 
         TextView textView = (TextView) view.findViewById(R.id.dialog_content);
-        String confirmationText = "Are you sure you want to transfer US $" + amount + " balance to " + name + " with number " + phoneNumber + "?";
+        String mAmount = Util.addDenomination(amount, amountWithDenomination);
+        String confirmationText = "Are you sure you want to transfer " + mAmount + " balance to " + name + " with number " + phoneNumber + "?";
         textView.setText(confirmationText);
 
 

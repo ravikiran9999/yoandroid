@@ -420,7 +420,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (allArticles != null) {
                         List<String> allArticlesIds = new ArrayList<>();
                         for (Articles articles : allArticles) {
-                            if(articles != null) {
+                            if (articles != null) {
                                 allArticlesIds.add(articles.getId());
                             }
                         }
@@ -453,7 +453,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (allArticles != null) {
                         List<String> allArticlesIds = new ArrayList<>();
                         for (Articles articles : allArticles) {
-                            if(articles != null) {
+                            if (articles != null) {
                                 allArticlesIds.add(articles.getId());
                             }
                         }
@@ -467,7 +467,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (allArticles != null) {
                         List<String> allArticlesIds = new ArrayList<>();
                         for (Articles articles : allArticles) {
-                            if(articles != null) {
+                            if (articles != null) {
                                 allArticlesIds.add(articles.getId());
                             }
                         }
@@ -582,7 +582,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             try {
                                 Random r = new Random();
                                 suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -773,7 +773,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (myBaseAdapter != null) {
                 Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
                 for (int i = 0; i <= currentFlippedPosition; i++) {
-                    if(myBaseAdapter.getItem(i) != null) {
+                    if (myBaseAdapter.getItem(i) != null) {
                         String articleId = myBaseAdapter.getItem(i).getId();
                         Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(i).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
@@ -785,7 +785,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
             List<String> allArticlesIds = new ArrayList<>();
             for (Articles articles : articlesList) {
-                if(articles != null) {
+                if (articles != null) {
                     allArticlesIds.add(articles.getId());
                 }
             }
@@ -793,7 +793,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             unreadArticleIds.removeAll(readIdsList);
 
             for (Articles unreadArt : articlesList) {
-                if(unreadArt != null) {
+                if (unreadArt != null) {
                     for (String unreadId : unreadArticleIds) {
                         if (unreadArt.getId().equals(unreadId)) {
                             unreadArticles.add(unreadArt);
@@ -845,7 +845,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             followedArticlesList = notEmptyUpdatedArticles;
 
             for (Articles a : followedArticlesList) {
-                if(a != null) {
+                if (a != null) {
                     Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
                 }
             }
@@ -919,7 +919,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         if (myBaseAdapter != null) {
             for (int i = 0; i <= currentFlippedPosition; i++) {
-                if(myBaseAdapter.getItem(i) != null) {
+                if (myBaseAdapter.getItem(i) != null) {
                     String articleId = myBaseAdapter.getItem(i).getId();
                     //Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
@@ -932,7 +932,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         List<String> allArticlesIds = new ArrayList<>();
         List<Articles> articlesList = myBaseAdapter.getAllItems();
         for (Articles articles : articlesList) {
-            if(articles != null) {
+            if (articles != null) {
                 allArticlesIds.add(articles.getId());
             }
         }
@@ -941,7 +941,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         List<String> followedIds = new ArrayList<>();
         for (Articles followedArticle : followedArticlesList) {
-            if(followedArticle != null) {
+            if (followedArticle != null) {
                 followedIds.add(followedArticle.getId());
             }
         }
@@ -950,7 +950,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         List<Articles> unreadArticles = new ArrayList<>();
         for (Articles unreadArt : articlesList) {
-            if(unreadArt != null) {
+            if (unreadArt != null) {
                 for (String unreadId : unreadArticleIds) {
                     if (unreadArt.getId().equals(unreadId)) {
                         unreadArticles.add(unreadArt);
@@ -1014,7 +1014,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (myBaseAdapter != null) {
                 Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
                 for (int i = 0; i <= currentFlippedPosition; i++) {
-                    if(myBaseAdapter.getItem(i) != null) {
+                    if (myBaseAdapter.getItem(i) != null) {
                         String articleId = myBaseAdapter.getItem(i).getId();
                         Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
@@ -1026,7 +1026,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             readIdsList = new ArrayList<String>(new LinkedHashSet<String>(readIds));
             List<String> allArticlesIds = new ArrayList<>();
             for (Articles articles : articlesList) {
-                if(articles != null) {
+                if (articles != null) {
                     allArticlesIds.add(articles.getId());
                 }
             }
@@ -1034,7 +1034,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             unreadArticleIds.removeAll(readIdsList);
 
             for (Articles unreadArt : articlesList) {
-                if(unreadArt != null) {
+                if (unreadArt != null) {
                     for (String unreadId : unreadArticleIds) {
                         if (unreadArt.getId().equals(unreadId)) {
                             unreadArticles.add(unreadArt);
@@ -1114,7 +1114,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         List<String> allArticlesIds = new ArrayList<>();
         List<Articles> articlesList = myBaseAdapter.getAllItems();
         for (Articles articles : articlesList) {
-            if(articles != null) {
+            if (articles != null) {
                 allArticlesIds.add(articles.getId());
             }
         }
@@ -1123,7 +1123,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         List<Articles> unreadArticles = new ArrayList<>();
         for (Articles unreadArt : articlesList) {
-            if(unreadArt != null) {
+            if (unreadArt != null) {
                 for (String unreadId : unreadArticleIds) {
                     if (unreadArt.getId().equals(unreadId)) {
                         unreadArticles.add(unreadArt);
@@ -1324,6 +1324,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (allArticles != null) {
             List<String> allArticlesIds = new ArrayList<>();
             for (Articles articles : allArticles) {
+                if(articles != null)
                 allArticlesIds.add(articles.getId());
             }
             List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);

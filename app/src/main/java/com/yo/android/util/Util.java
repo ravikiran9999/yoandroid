@@ -953,4 +953,18 @@ public class Util {
             return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
         }
     }
+
+    public static String addDenomination(String amount, String amountWithDenomination) {
+        try {
+
+            if(amountWithDenomination != null) {
+                String denomination = amountWithDenomination.replaceAll("[0-9]", "");
+                return String.format("%s %s", denomination, amount);
+            } else {
+                return  String.format("%s %s", "IN Rs", amount);
+            }
+        } catch (Exception e) {
+            return String.format("%s %s", "IN Rs", amount);
+        }
+    }
 }

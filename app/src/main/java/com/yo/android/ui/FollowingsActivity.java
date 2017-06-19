@@ -43,8 +43,8 @@ public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayo
     protected ImageView imvEmptyFollowings;
     @Bind(R.id.network_failure)
     protected TextView networkFailureText;
-    @Bind(R.id.swipeContainer)
-    protected SwipeRefreshLayout swipeRefreshContainer;
+    /*@Bind(R.id.swipeContainer)
+    protected SwipeRefreshLayout swipeRefreshContainer;*/
 
     public boolean isEmptyDataSet;
     public boolean isNetworkFailure;
@@ -68,7 +68,7 @@ public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayo
         lvFindPeople.setAdapter(findPeopleAdapter);
 
         getFollowings(null);
-        swipeRefreshContainer.setOnRefreshListener(this);
+        //swipeRefreshContainer.setOnRefreshListener(this);
         lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -209,6 +209,6 @@ public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayo
 
     @Override
     public void onRefresh() {
-        getFollowings(swipeRefreshContainer);
+        //getFollowings(swipeRefreshContainer);
     }
 }
