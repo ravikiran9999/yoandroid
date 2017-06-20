@@ -253,6 +253,11 @@
     <string name="more_notification">more notification</string>
     <string name="more_notifications">more notifications</string>
     <string name="your_credit_balance">Your credit balance :</string>
+
+    <string name="your_total_balance">Your credit balance</string>
+    <string name="your_wallet_balance">Your wallet balance</string>
+    <string name="your_switch_balance">Your switch balance</string>
+
     <string name="invalid_request">Invalid Request.</string>
     <string name="insufficient_amount">Insufficient amount.</string>
     <string name="unsuccessful_amount_transfer">Unsuccessful amount transfer</string>

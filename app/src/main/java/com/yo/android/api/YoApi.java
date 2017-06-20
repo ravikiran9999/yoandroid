@@ -18,6 +18,7 @@ import com.yo.android.model.Subscriber;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.model.Wallet;
 import com.yo.android.model.denominations.Denominations;
 
 import org.json.JSONObject;
