@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -202,7 +203,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         roomType = getArguments().getString(Constants.TYPE);
         listView.setDivider(null);
         listView.setDividerHeight(0);
-        listView.setOnItemClickListener(this);
+        //listView.setOnItemClickListener(this);
         chatMessageHashMap = new HashMap<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
@@ -305,9 +306,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+
                 ChatMessage chatMessage = (ChatMessage) listView.getItemAtPosition(position);
                 final int checkedCount = listView.getCheckedItemCount();
                 mode.setTitle(Integer.toString(checkedCount));
+
                 userChatAdapter.toggleSelection(position);
                 boolean imageSelected = false;
                 SparseBooleanArray selected = userChatAdapter.getSelectedIds();

@@ -22,6 +22,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -176,6 +177,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+        mLog.d(TAG, "In the onStartCommand() of YoSipService");
         mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(YoSipService.this, RingtoneManager.TYPE_RINGTONE);
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -412,6 +414,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private void handleErrorCodes(final SipCallState sipCallstate, String message, pjsip_status_code code) {
         if (!mySelfEndCall) {
             pjsip_status_code lastStatusCode = code;
+            mLog.d(TAG, "The lastStatusCode code is " + lastStatusCode + " and statusCode is " + statusCode);
             if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
                 //mToastFactory.showToast(R.string.call_ended);
             } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE) {
@@ -520,6 +523,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnectedListner.callDisconnected();
         }
         mLog.e(TAG, "disconnected call >>>>>");
+
+        try {
+            String dumpString = currentCall.dump(true, "");
+            mLog.d(TAG, "The call disconnected dump string is " + dumpString);
+            Util.appendLog(dumpString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         stopRepeatingTask();
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
@@ -1031,6 +1043,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
         android.util.Log.d("debug", "Service Killed");
+        Toast.makeText(this, "OnReceive from killed service - YouWillNeverKillMe", Toast.LENGTH_SHORT).show();
+
+        sendBroadcast(new Intent("YouWillNeverKillMe"));
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
