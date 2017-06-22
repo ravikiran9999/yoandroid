@@ -341,6 +341,13 @@
         <item>Followings</item>
         <item>Followers</item>
     </string-array>
+
+    <string-array name="balance_details_tabs_titles">
+        <item>Credit Account</item>
+        <item>Recharge Details</item>
+        <item>Spend Details</item>
+    </string-array>
+
     <string name="internal_build_cant_add_balance">You can\'t add more balance as its test build.</string>
     <string name="not_valid_pstn_number">Not a valid phone number.</string>
     <string name="not_supported_country">This country is not supported by your app</string>

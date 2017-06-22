@@ -43,6 +43,17 @@
                 android:src="@drawable/ic_right_arrow"
                 android:visibility="gone" />
 
+            <TextView
+                android:id="@+id/text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="Large Text"
+                android:textSize="17sp"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
+
             <com.yo.android.ui.fragments.NonScrollableGridView
                 android:id="@+id/add_google_play_items"
                 android:layout_width="match_parent"

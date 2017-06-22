@@ -21,6 +21,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
@@ -41,6 +42,17 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
                 android:src="@drawable/ic_right_arrow"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:text="Large Text"
+                android:textSize="17sp"
                 android:visibility="gone" />
 
             <com.yo.android.ui.fragments.NonScrollableGridView

@@ -139,7 +139,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
             adapter.addFragment(new RechargeDetailsFragment(), "Recharge Details");
             adapter.addFragment(new SpendDetailsFragment(), "Spend Details");
         }
-
+        viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(adapter);
     }
 

@@ -16,6 +16,8 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +35,7 @@ import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.adapters.BalanceAdapter;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.calllogs.CallLog;
@@ -86,7 +89,7 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
+public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, BalanceAdapter.MoreItemListener {
 
     private MoreListAdapter menuAdapter;
 
@@ -120,7 +123,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private TextView profileStatus;
     private boolean isSharedPreferenceShown;
-
+    private ArrayList<Object> data = new ArrayList<>();
     public static final String currencySymbolDollar = " US $";
     private static final String currencySymbolDollarNoSpace = "US $";
 
@@ -253,7 +256,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     /**
      * Prepares the Settings list
      */
-    public void prepareSettingsList() {
+    /*public void prepareSettingsList() {
         menuAdapter = new MoreListAdapter(getActivity()) {
             @Override
             public int getLayoutId() {
@@ -267,6 +270,22 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         menuListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         menuListView.setSelection(0);
         menuListView.setOnItemClickListener(this);
+    }*/
+
+    public void prepareSettingsList() {
+        /*menuAdapter = new MoreListAdapter(getActivity()) {
+            @Override
+            public int getLayoutId() {
+                return R.layout.item_with_options;
+            }
+        };*/
+        data.addAll(getMenuList());
+        BalanceAdapter balanceAdapter = new BalanceAdapter(getActivity(), data, null, MoreFragment.this);
+        balanceAdapter.setMoreItemListener(this);
+        RecyclerView menuListView = (RecyclerView) getView().findViewById(R.id.lv_settings);
+        menuListView.setAdapter(balanceAdapter);
+        menuListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
     }
 
     /**
@@ -283,12 +302,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         //menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbolDollarNoSpace, balance), true));
-        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), balance), true));
-        menuDataList.add(new MoreData(getString(R.string.accountdetails), true));
-        menuDataList.add(new MoreData(getString(R.string.invitefriends), true));
-        menuDataList.add(new MoreData(getString(R.string.morenotifications), true));
-        menuDataList.add(new MoreData(getString(R.string.settings), true));
-        menuDataList.add(new MoreData(getString(R.string.signout), false));
+        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), balance), true, null));
+        menuDataList.add(new MoreData(getString(R.string.accountdetails), true, null));
+        menuDataList.add(new MoreData(getString(R.string.invitefriends), true, null));
+        menuDataList.add(new MoreData(getString(R.string.morenotifications), true, null));
+        menuDataList.add(new MoreData(getString(R.string.settings), true, null));
+        menuDataList.add(new MoreData(getString(R.string.signout), false, null));
         return menuDataList;
     }
 
@@ -630,4 +649,16 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NO_TEMP, phoneNo);
     }
 
+    @Override
+    public void onRowSelected(int keyIndex) {
+        switch (keyIndex) {
+            case 0:
+                startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
+                break;
+            case 1:
+                startActivity(new Intent(getActivity(), AccountDetailsActivity.class));
+                break;
+
+        }
+    }
 }

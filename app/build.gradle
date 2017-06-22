@@ -83,8 +83,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
-             productFlavors.dev.signingConfig signingConfigs.devconfig
-             productFlavors.stage.signingConfig signingConfigs.stageconfig
+            productFlavors.dev.signingConfig signingConfigs.devconfig
+            productFlavors.stage.signingConfig signingConfigs.stageconfig
         }
 
     }
@@ -125,8 +125,6 @@ dependencies {
     compile project(':emojilib')
     //Butter knife - view injector
     compile "com.android.support:support-v4:${supportAppcompatVersion}"
-    testCompile 'junit:junit:4.12'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile "com.android.support:palette-v7:${supportAppcompatVersion}"
     compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '7.0.3'
     compile "com.github.hotchemi:permissionsdispatcher:${permissionsDispatcherVersion}"
@@ -159,6 +157,9 @@ dependencies {
     compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.isseiaoki:simplecropview:1.1.4'
     compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
 }
 apply plugin: 'com.google.gms.google-services'
 

@@ -460,7 +460,7 @@ public class BalanceHelper {
     }
 
     public String getCurrentBalance() {
-        String balance = prefs.getStringPreference(Constants.CURRENT_BALANCE, "0");
+        return prefs.getStringPreference(Constants.CURRENT_BALANCE, "0");
         /*try {
             DecimalFormat df = new DecimalFormat("0.000");
             String format = df.format(Double.valueOf(balance));
@@ -469,7 +469,6 @@ public class BalanceHelper {
             mLog.w(TAG, "getCurrentBalance", e);
         }*/
 
-        return balance;
     }
 
     public String getSwitchBalance() {

@@ -80,6 +80,10 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             Uri.parse("content://" + AUTHORITY + "/callLogs");
 
 
+    public static SpendDetailsFragment newInstance() {
+        return new SpendDetailsFragment();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
