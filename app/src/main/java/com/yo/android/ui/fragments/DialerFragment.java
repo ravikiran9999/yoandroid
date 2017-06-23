@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
 import com.yo.android.api.YoApi;
@@ -38,6 +39,7 @@ import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NewDailerActivity;
@@ -391,21 +393,29 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     /**
      * @param action
      */
-    public void onEventMainThread(String action) {
+    public void onEventMainThread(Object action) {
         Log.w(TAG, "LOADING CALL LOGS AFTER ACTION " + action);
-        if (action.equals(REFRESH_CALL_LOGS)) {
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadCallLogs();
-                        refreshCallLogsIfNotUpdated();
-                        mBalanceHelper.checkBalance(null);
-                    }
-                });
+        if(action instanceof String) {
+            if (action.equals(REFRESH_CALL_LOGS)) {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadCallLogs();
+                            refreshCallLogsIfNotUpdated();
+                            mBalanceHelper.checkBalance(null);
+                        }
+                    });
+                }
+            } else if (action.equals(Constants.BALANCE_RECHARGE_ACTION)) {
+                showRechargeDialog();
             }
-        } else if(action.equals(Constants.BALANCE_RECHARGE_ACTION)) {
-            showRechargeDialog();
+        } else if(action instanceof OpponentDetails) {
+            if (((OpponentDetails)action) != null && ((OpponentDetails)action).getVoxUserName() != null && ((OpponentDetails)action).getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
+                if(((OpponentDetails)action).getStatusCode() == 503 || ((OpponentDetails)action).getStatusCode() == 404) {
+                    YODialogs.redirectToPSTN(bus, getActivity(), ((OpponentDetails) action), preferenceEndPoint, mBalanceHelper, mToastFactory);
+                }
+            }
         }
     }
 
