@@ -462,6 +462,6 @@ public class BalanceHelper {
     }
 
     public String getCurrencySymbol() {
-        return prefs.getStringPreference(Constants.CURRENCY_SYMBOL, "Rs");
+        return prefs.getStringPreference(Constants.CURRENCY_SYMBOL, "US $");
     }
 }

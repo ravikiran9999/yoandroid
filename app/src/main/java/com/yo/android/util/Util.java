@@ -1048,11 +1048,11 @@ public class Util {
                             if (!mHelper.isConnected()) {
                                 mToastFactory.showToast(R.string.calls_no_network);
                                 ((Activity) context).finish();
-                            } else {
+                            } /*else {
                                 if (details != null && details.getVoxUserName() != null && details.getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
                                     YODialogs.redirectToPSTN(bus, (Activity) context, details, mPreferenceEndPoint, mBalanceHelper, mToastFactory);
                                 }
-                            }
+                            }*/
                             break;
                         case 487:
                             //Missed call

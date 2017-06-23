@@ -13,12 +13,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.model.Popup;
+import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.TabsHeaderActivity;
@@ -28,6 +31,7 @@ import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.vox.BalanceHelper;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -190,9 +194,33 @@ public class YODialogs {
             Button noBtn = (Button) view.findViewById(R.id.no_btn);
             TextView txtCallRate = (TextView) view.findViewById(R.id.txt_call_rate);
             TextView txtBalance = (TextView) view.findViewById(R.id.txt_balance);
-            String callRate = preferenceEndPoint.getStringPreference(Constants.CALL_RATE, null);
+            //String callRate = preferenceEndPoint.getStringPreference(Constants.CALL_RATE, null);
 
-            txtCallRate.setText(callRate);
+            String countryCode = details.getContact().getCountryCode();
+            String json = preferenceEndPoint.getStringPreference(Constants.COUNTRY_LIST);
+            List<CallRateDetail> callRateDetailList = new Gson().fromJson(json, new TypeToken<List<CallRateDetail>>() {
+            }.getType());
+            if (callRateDetailList != null) {
+                for (CallRateDetail callRateDetail : callRateDetailList) {
+                    String prefix = callRateDetail.getPrefix();
+                    if(countryCode.equals(prefix)) {
+                        String cRate = callRateDetail.getRate();
+                        String cPulse = callRateDetail.getPulse();
+                        String pulse;
+                        if (cPulse.equals("60")) {
+                            pulse = "min";
+                        } else {
+                            pulse = "sec";
+                        }
+
+                        String callRate = " $" + cRate + "/" + pulse;
+                        txtCallRate.setText(callRate);
+                        break;
+                    }
+                }
+            }
+
+            //txtCallRate.setText(callRate);
             loadCurrentBalance(preferenceEndPoint, mBalanceHelper, activity, txtBalance);
             Button addBalance = (Button) view.findViewById(R.id.add_balance);
             addBalance.setOnClickListener(new View.OnClickListener() {
@@ -225,7 +253,7 @@ public class YODialogs {
                         } catch (StringIndexOutOfBoundsException e) {
                         }
                     }
-                    activity.finish();
+                    //activity.finish();
                 }
             });
 
@@ -234,7 +262,7 @@ public class YODialogs {
                 public void onClick(View v) {
                     alertDialog.dismiss();
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                    activity.finish();
+                    //activity.finish();
                 }
             });
         }
@@ -249,7 +277,7 @@ public class YODialogs {
         }
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
-                txtBalance.setText(String.format("%s%s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
+                txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
             } else {
                 txtBalance.setVisibility(View.GONE);
             }

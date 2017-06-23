@@ -375,7 +375,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                         }
                     });
                 }
-            } else if (hold == DISCONNECTED) {
+            } else  {
                 if (bus != null) {
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
                 }
