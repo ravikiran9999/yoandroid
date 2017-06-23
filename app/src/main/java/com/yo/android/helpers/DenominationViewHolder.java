@@ -41,6 +41,7 @@ public class DenominationViewHolder extends RecyclerView.ViewHolder implements D
         DenominationAdapter denominationAdapter = new DenominationAdapter(mContext, denominationsList);
         denominationAdapter.setDenominationItemListener(this);
         recyclerView.setAdapter(denominationAdapter);
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
 
     }

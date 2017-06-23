@@ -7,10 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +16,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -26,15 +23,12 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.BalanceAdapter;
-import com.yo.android.adapters.DenominationAdapter;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.adapters.WalletAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
-import com.yo.android.helpers.MenuViewHolder;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
 import com.yo.android.model.MoreData;
-import com.yo.android.model.Wallet;
 import com.yo.android.model.denominations.Denominations;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
@@ -54,74 +48,30 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by Ramesh on 24/7/16.
- */
-public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, AdapterView.OnItemClickListener, BalanceAdapter.MoreItemListener {
+public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, BalanceAdapter.MoreItemListener {
 
     private static final String TAG = CreditAccountFragment.class.getSimpleName();
+    private static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
-    /*@Bind(R.id.txt_balance)
-    TextView txt_balance;*/
     @Bind(R.id.lv_settings)
     protected RecyclerView menuRecyclerView;
     @Bind(R.id.txtEmpty)
     protected TextView txtEmpty;
-    @Bind(R.id.credit_account_view)
-    ListView walletListView;
 
     @Inject
     YoApi.YoService yoService;
 
-    private MoreListAdapter menuAdapter;
-    BalanceAdapter balanceAdapter;
-    private static final int OPEN_ADD_BALANCE_RESULT = 1000;
+
     private EditText voucherNumberEdit;
-    private WalletAdapter walletAdapter;
-    ArrayList<Object> data = new ArrayList<>();
+    private BalanceAdapter balanceAdapter;
+    private ArrayList<Object> denominationData = new ArrayList<>();
+    private ArrayList<Object> data = new ArrayList<>();
 
     @Override
     public void onResume() {
         super.onResume();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        Call<List<Denominations>> call = yoService.getDenominations(accessToken);
-        call.enqueue(new Callback<List<Denominations>>() {
-            @Override
-            public void onResponse(Call<List<Denominations>> call, Response<List<Denominations>> response) {
-                if (response.body() != null && response.body().size() > 0) {
-                    txtEmpty.setVisibility(View.GONE);
-                    List<Denominations> demonimations = response.body();
-                    prepareCreditAccountList(demonimations);
-                    if (demonimations != null && demonimations.size() > 0) {
-                        preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
-                        //txt_balance.setText(String.format("%s", balance));
-
-                        updateAmount();
-                    } else {
-                        txtEmpty.setVisibility(View.VISIBLE);
-                        FragmentActivity activity = getActivity();
-                        if (activity != null) {
-                            txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
-                        }
-                    }
-                } else {
-                    txtEmpty.setVisibility(View.VISIBLE);
-                    FragmentActivity activity = getActivity();
-                    if (activity != null) {
-                        txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Denominations>> call, Throwable t) {
-                Log.w(TAG, "Data Failed to load currenncy");
-                txtEmpty.setVisibility(View.VISIBLE);
-
-
-            }
-        });
+        prepareMenuList(denominationData);
     }
 
     @Override
@@ -139,18 +89,17 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        balanceAdapter = new BalanceAdapter(getActivity(), data, denominationData, CreditAccountFragment.this);
+        balanceAdapter.setMoreItemListener(this);
+        menuRecyclerView.setAdapter(balanceAdapter);
+        menuRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        //String currencySymbol = mBalanceHelper.getCurrencySymbol();
-        //NumberFormat formatter = new DecimalFormat("#0.00");
-
-        /*walletAdapter = new WalletAdapter(getActivity());
-        walletListView.setAdapter(walletAdapter);*/
-        updateAmount();
+        retrieveDenominations();
 
     }
 
@@ -190,9 +139,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     dismissProgressDialog();
                     try {
-                        /*DecimalFormat df = new DecimalFormat("0.000");
-                        String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
-                        preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);*/
                         preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
                     } catch (IllegalArgumentException e) {
                         mLog.w(TAG, "getCurrentBalance", e);
@@ -207,9 +153,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             });
         } else if (mBalanceHelper != null && resultCode == Activity.RESULT_OK) {
             try {
-                /*DecimalFormat df = new DecimalFormat("0.000");
-                String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
-                preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);*/
                 preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
 
             } catch (IllegalArgumentException e) {
@@ -225,67 +168,22 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
-            updateAmount();
+            prepareMenuList(denominationData);
         }
     }
 
     /**
      * Prepares the Credit Account list
      *
-     * @param demonimations
+     * @param denominations
      */
-    public void prepareCreditAccountList(final List<Denominations> demonimations) {
-        /*final CurrencyListAdapter adapter = prepareCurrencyAdapter();
-        menuAdapter = new MoreListAdapter(getActivity()) {
-            @Override
-            public int getLayoutId() {
-                return R.layout.item_with_options;
-            }
-
-            @Override
-            public void bindView(int position, MenuViewHolder holder, MoreData item) {
-                NonScrollableGridView viewById = (NonScrollableGridView) holder.getRootView().findViewById(R.id.add_google_play_items);
-                viewById.setAdapter(adapter);
-                adapter.addItems(demonimations);
-                if (position == 3) {
-                    viewById.setVisibility(View.VISIBLE);
-                } else {
-                    viewById.setVisibility(View.GONE);
-                }
-                super.bindView(position, holder, item);
-            }
-        };
-        menuAdapter.addItems(getMenuList());
-        menuListView.setAdapter(menuAdapter);*/
-
-
-        //menuListView.setNestedScrollingEnabled(true);
-        //menuListView.setOnItemClickListener(this);
-        /*data = new ArrayList<>();
-        data.addAll(demonimations);
-        DenominationAdapter denominationAdapter = new DenominationAdapter(getActivity(), data);
-        denominationView.setAdapter(denominationAdapter);
-        denominationView.setLayoutManager(new GridLayoutManager(getActivity(), 3));*/
-        ArrayList<Object> denominationData = new ArrayList<>();
-        denominationData.add(demonimations);
+    public void prepareCreditAccountList(final List<Denominations> denominations) {
+        denominationData.add(denominations);
         prepareMenuList(denominationData);
-        balanceAdapter = new BalanceAdapter(getActivity(), data, denominationData, CreditAccountFragment.this);
+        /*balanceAdapter = new BalanceAdapter(getActivity(), data, denominationData, CreditAccountFragment.this);
         balanceAdapter.setMoreItemListener(this);
         menuRecyclerView.setAdapter(balanceAdapter);
-        menuRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-    }
-
-    private CurrencyListAdapter prepareCurrencyAdapter() {
-        return new CurrencyListAdapter(getActivity()) {
-            @Override
-            public void bindView(int position, CurrencyViewHolder holder, Denominations item) {
-                Button viewById = holder.getButtonView();
-                viewById.setText(item.getCurrencySymbol() + " " + item.getDenomination());
-                viewById.setTag(R.id.btn1, item);
-                viewById.setOnClickListener(payBtnListener);
-            }
-        };
-
+        menuRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));*/
     }
 
     /**
@@ -297,11 +195,10 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         String balance = mBalanceHelper.getCurrentBalance();
         String mSBalance = mBalanceHelper.getSwitchBalance();
         String mWBalance = mBalanceHelper.getWalletBalance();
-        //List<MoreData> menuDataList = new ArrayList<>();
         data = new ArrayList<>();
         FragmentActivity activity = getActivity();
 
-        if (activity != null) {
+        if (activity != null && denominationsList != null) {
             data.add(new MoreData(activity.getString(R.string.your_total_balance), false, balance));
             data.add(new MoreData(activity.getString(R.string.your_wallet_balance), false, mWBalance));
             data.add(new MoreData(activity.getString(R.string.your_switch_balance), false, mSBalance));
@@ -312,35 +209,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 data.add(new MoreData(activity.getString(R.string.transfer_balance), true, null));
             }
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            if (name.equalsIgnoreCase(activity.getString(R.string.add_balance_from_voucher))) {
-                Bundle arguments = getArguments();
-                if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
-                    showVoucherDialog();
-                } else {
-                    showInternalBuildMessage();
-                }
-            } else if (name.equalsIgnoreCase(activity.getString(R.string.transfer_balance))) {
-                //TODO: Need to implement allow balance transfer even in out going call.
-                if (YoSipService.currentCall != null && YoSipService.outgoingCallUri != null) {
-                    mToastFactory.showToast(getActivity().getResources().getString(R.string.balance_transfer_not_allowed));
-                } else {
-                    String balance = mBalanceHelper.getCurrentBalance();
-                    String currencySymbol = mBalanceHelper.getCurrencySymbol();
-                    Intent intent = new Intent(activity, TransferBalanceSelectContactActivity.class);
-                    intent.putExtra("balance", balance);
-                    intent.putExtra("currencySymbol", currencySymbol);
-                    startActivityForResult(intent, 11);
-                }
-
-            }
-        }
+        balanceAdapter.notifyDataSetChanged();
     }
 
     private void showInternalBuildMessage() {
@@ -497,19 +366,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         closeActivityAddBalance(Activity.RESULT_CANCELED, null);
     }
 
-    private void updateAmount() {
-        String balance = mBalanceHelper.getCurrentBalance();
-        String mSBalance = mBalanceHelper.getSwitchBalance();
-        String mWBalance = mBalanceHelper.getWalletBalance();
-
-        ArrayList<Wallet> wallets = new ArrayList<>();
-        //wallets.add(new Wallet(mSBalance, getString(R.string.your_switch_balance)));
-        //wallets.add(new Wallet(mWBalance, getString(R.string.your_wallet_balance)));
-        wallets.add(new Wallet(balance, getString(R.string.your_total_balance)));
-        //walletAdapter.getAllItems().clear();
-        //walletAdapter.addItems(wallets);
-    }
-
     @Override
     public void onRowSelected(int position) {
         String name = ((MoreData) data.get(position)).getName();
@@ -539,4 +395,42 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         }
     }
 
+    private void retrieveDenominations() {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        Call<List<Denominations>> call = yoService.getDenominations(accessToken);
+        call.enqueue(new Callback<List<Denominations>>() {
+            @Override
+            public void onResponse(Call<List<Denominations>> call, Response<List<Denominations>> response) {
+                if (response.body() != null && response.body().size() > 0) {
+                    txtEmpty.setVisibility(View.GONE);
+                    List<Denominations> demonimations = response.body();
+                    prepareCreditAccountList(demonimations);
+                    if (demonimations != null && demonimations.size() > 0) {
+                        preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
+
+                    } else {
+                        txtEmpty.setVisibility(View.VISIBLE);
+                        FragmentActivity activity = getActivity();
+                        if (activity != null) {
+                            txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
+                        }
+                    }
+                } else {
+                    txtEmpty.setVisibility(View.VISIBLE);
+                    FragmentActivity activity = getActivity();
+                    if (activity != null) {
+                        txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Denominations>> call, Throwable t) {
+                Log.w(TAG, "Data Failed to load currenncy");
+                txtEmpty.setVisibility(View.VISIBLE);
+
+
+            }
+        });
+    }
 }

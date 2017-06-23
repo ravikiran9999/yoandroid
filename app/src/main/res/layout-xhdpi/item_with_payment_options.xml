@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_centerVertical="true"
     android:layout_marginRight="25dp"
-    android:text="$5"
     android:background="@drawable/button_buy"
     android:gravity="center_horizontal|center_vertical"
+    android:layout_marginTop="10dp"
+    android:text="$5"
     android:textSize="22sp" />
