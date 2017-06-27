@@ -27,7 +27,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 5
-        versionName "1.2Beta"
+        versionName "1.0Enhancement"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -65,7 +65,7 @@ android {
 
         enhancement {
             applicationIdSuffix ".enhancement"
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""

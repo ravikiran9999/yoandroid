@@ -18,7 +18,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:background="@color/white"
-            android:scaleType="fitXY"></ImageView>
+            android:scaleType="fitXY"/>
 
         <ImageView
             android:layout_width="match_parent"
@@ -153,7 +153,7 @@
                 android:background="@color/white"
                 android:scaleType="fitXY"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"></ImageView>
+                android:layout_marginRight="5dp"/>
 
             <Button
                 android:id="@+id/imv_magazine_follow_left"

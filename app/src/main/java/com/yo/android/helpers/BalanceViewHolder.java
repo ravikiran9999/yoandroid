@@ -36,10 +36,14 @@ public class BalanceViewHolder extends RecyclerView.ViewHolder {
         textView.setText(item.getName());
         if (item.isHasOptions()) {
             arrowView.setVisibility(View.VISIBLE);
+        } else {
+            arrowView.setVisibility(View.GONE);
         }
         if (item.getBalance() != null) {
             balanceView.setText(item.getBalance());
             balanceView.setVisibility(View.VISIBLE);
+        } else {
+            balanceView.setVisibility(View.GONE);
         }
     }
 }

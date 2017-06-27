@@ -18,13 +18,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.BalanceAdapter;
-import com.yo.android.adapters.MoreListAdapter;
-import com.yo.android.adapters.WalletAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
@@ -89,6 +86,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
         balanceAdapter = new BalanceAdapter(getActivity(), data, denominationData, CreditAccountFragment.this);
         balanceAdapter.setMoreItemListener(this);
         menuRecyclerView.setAdapter(balanceAdapter);
@@ -180,10 +178,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     public void prepareCreditAccountList(final List<Denominations> denominations) {
         denominationData.add(denominations);
         prepareMenuList(denominationData);
-        /*balanceAdapter = new BalanceAdapter(getActivity(), data, denominationData, CreditAccountFragment.this);
-        balanceAdapter.setMoreItemListener(this);
-        menuRecyclerView.setAdapter(balanceAdapter);
-        menuRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));*/
     }
 
     /**
@@ -209,7 +203,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 data.add(new MoreData(activity.getString(R.string.transfer_balance), true, null));
             }
         }
-        balanceAdapter.notifyDataSetChanged();
+        balanceAdapter.addItems(data);
     }
 
     private void showInternalBuildMessage() {

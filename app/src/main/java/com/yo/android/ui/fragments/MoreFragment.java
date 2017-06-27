@@ -658,6 +658,19 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             case 1:
                 startActivity(new Intent(getActivity(), AccountDetailsActivity.class));
                 break;
+            case 2:
+                startActivity(new Intent(getActivity(), InviteActivity.class));
+                break;
+            case 3:
+                startActivity(new Intent(getActivity(), NotificationsActivity.class));
+                break;
+            case 4:
+                Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
+                startActivityForResult(intent, Constants.GO_TO_SETTINGS);
+                break;
+            case 5:
+                showLogoutDialog();
+                break;
 
         }
     }

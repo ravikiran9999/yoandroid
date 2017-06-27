@@ -32,7 +32,6 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private Context mContext;
     private ArrayList<Object> mData;
-    private ArrayList<Object> mDenominationData;
     private Fragment mFragment;
     private LayoutInflater mInflater;
     private MoreItemListener mMoreItemListener;
@@ -44,10 +43,10 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public BalanceAdapter(Context context, ArrayList<Object> data, ArrayList<Object> denominationData, Fragment fragment) {
         mData = data;
         mFragment = fragment;
-        mDenominationData = new ArrayList<>();
-        if (denominationData != null) {
+        //mDenominationData = new ArrayList<>();
+        /*if (denominationData != null) {
             mDenominationData.addAll(denominationData);
-        }
+        }*/
         mContext = context;
         mInflater = LayoutInflater.from(context);
     }
@@ -85,7 +84,8 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 });
                 break;
             case VIEW_TYPE_DENOMINATION_ITEMS:
-                if (mDenominationData != null) {
+                if (mData.get(position) != null && mData.get(position) instanceof ArrayList) {
+                    ArrayList<Object> mDenominationData = (ArrayList<Object>) mData.get(position);
                     final DenominationViewHolder denominationViewHolder = (DenominationViewHolder) holder;
                     denominationViewHolder.bind(mDenominationData);
                     denominationViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +123,16 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setMoreItemListener(MoreItemListener listener) {
         mMoreItemListener = listener;
+    }
+
+    public void addItems(ArrayList<Object> data) {
+        if (mData.size() > 0) {
+            mData.clear();
+            mData = data;
+        } else {
+            mData = data;
+        }
+        notifyDataSetChanged();
     }
 
 }

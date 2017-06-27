@@ -36,8 +36,7 @@ public class DenominationViewHolder extends RecyclerView.ViewHolder implements D
     }
 
     public void bind(ArrayList<Object> data) {
-        ArrayList objects = (ArrayList) data;
-        ArrayList<Object> denominationsList = (ArrayList<Object>) objects.get(0);
+        ArrayList denominationsList = (ArrayList) data;
         DenominationAdapter denominationAdapter = new DenominationAdapter(mContext, denominationsList);
         denominationAdapter.setDenominationItemListener(this);
         recyclerView.setAdapter(denominationAdapter);

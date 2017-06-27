@@ -41,8 +41,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 
-//import com.squareup.picasso.Picasso;
-
 public class WishListActivity extends BaseActivity {
 
     private List<Articles> articlesList = new ArrayList<Articles>();
