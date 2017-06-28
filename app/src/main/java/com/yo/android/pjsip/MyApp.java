@@ -82,11 +82,11 @@ class MyApp {
             epConfig.getUaConfig().setUserAgent(AGENT_NAME);
             epConfig.getMedConfig().setHasIoqueue(true);
             epConfig.getMedConfig().setClockRate(16000);
-            epConfig.getMedConfig().setQuality(10);
+            // epConfig.getMedConfig().setQuality(0);
             epConfig.getMedConfig().setEcOptions(1);
-            epConfig.getMedConfig().setEcTailLen(200);
-            epConfig.getMedConfig().setThreadCnt(2);
-            mEndpoint.libInit(epConfig);
+            epConfig.getMedConfig().setEcTailLen(0);
+            //epConfig.getMedConfig().setThreadCnt(2);
+             mEndpoint.libInit(epConfig);
 
             TransportConfig udpTransport = new TransportConfig();
             udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
@@ -95,6 +95,8 @@ class MyApp {
 
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
+
+
             mEndpoint.libStart();
             mEndpoint.codecSetPriority("*", (short) 0);
             mEndpoint.codecSetPriority("PCMA/8000", (short) 1);
@@ -104,6 +106,14 @@ class MyApp {
             mEndpoint.audDevManager().setOutputVolume(60);
             //Disabling VAD to get around NAT
             mEndpoint.audDevManager().setVad(false);
+
+            /*//Disable Vad for one side communication issue.
+            mEndpoint.codecSetVad("PCMA/8000",0);
+            mEndpoint.codecSetVad("PCMU/8000",0);
+            mEndpoint.codecSetVad("G711/8000",0);
+            mEndpoint.codecSetVad("G722/8000",0);*/
+
+
             Log.e(TAG, "SIP STATCK STARTED");
 
         } catch (Exception e) {
@@ -138,7 +148,7 @@ class MyApp {
         UaConfig ua_cfg = epConfig.getUaConfig();
         ua_cfg.setUserAgent("Pjsua2 Android " + mEndpoint.libVersion().getFull());
         StringVector stun_servers = new StringVector();
-        stun_servers.add("stun.pjsip.org");
+        stun_servers.add("34.230.108.83:3478");
         ua_cfg.setStunServer(stun_servers);
         if (own_worker_thread) {
             ua_cfg.setThreadCnt(0);
@@ -147,7 +157,7 @@ class MyApp {
 
 		/* Init endpoint */
         try {
-            mEndpoint.libInit(epConfig);
+          //  mEndpoint.libInit(epConfig);
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -171,13 +181,15 @@ class MyApp {
 		/* Create accounts. */
         for (int i = 0; i < accCfgs.size(); i++) {
             MyAccountConfig my_cfg = accCfgs.get(i);
+            /* Customize account config */
+            my_cfg.accCfg.getNatConfig().setIceEnabled(true);
+             /* Enable ICE/TURN */
+            my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
+            my_cfg.accCfg.getNatConfig().setTurnServer("turn.pjsip.org:33478");
+            my_cfg.accCfg.getNatConfig().setTurnUserName("abzlute01");
+            my_cfg.accCfg.getNatConfig().setTurnPasswordType(0);
+            my_cfg.accCfg.getNatConfig().setTurnPassword("abzlute01");
 
-			/* Customize account config */
-            my_cfg.accCfg.getNatConfig().setIceEnabled(false);
-            my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
-            my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
-            my_cfg.accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
-            my_cfg.accCfg.getVideoConfig().setAutoShowIncoming(true);
 
             MyAccount acc = addAcc(my_cfg.accCfg);
 
@@ -193,7 +205,7 @@ class MyApp {
 
 		/* Start. */
         try {
-            mEndpoint.libStart();
+           // mEndpoint.libStart();
         } catch (Exception e) {
             return;
         }

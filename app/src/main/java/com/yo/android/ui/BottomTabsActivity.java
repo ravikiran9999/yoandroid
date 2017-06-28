@@ -165,8 +165,28 @@ public class BottomTabsActivity extends BaseActivity {
         mContext = getApplicationContext();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO_RECORD);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.GET_ACCOUNTS,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.READ_CONTACTS,
+                    Manifest.permission.USE_SIP,
+                    Manifest.permission.WAKE_LOCK,
+                    Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECEIVE_SMS,
+                    Manifest.permission.VIBRATE,
+                    Manifest.permission.GET_TASKS,
+                    Manifest.permission.WRITE_SYNC_SETTINGS,
+                    Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.CHANGE_NETWORK_STATE,
+                    Manifest.permission.ACCESS_WIFI_STATE,
+                    Manifest.permission.CHANGE_WIFI_STATE,
+
+
+            }, REQUEST_AUDIO_RECORD);
         }
+
 
         preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
 

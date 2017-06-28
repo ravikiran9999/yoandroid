@@ -77,6 +77,10 @@ public class Endpoint {
     pjsua2JNI.Endpoint_libCreate(swigCPtr, this);
   }
 
+  public void codecSetVad(String codec_id, long vad) throws java.lang.Exception {
+    pjsua2JNI.Endpoint_codecSetVad(swigCPtr, this, codec_id, vad);
+  }
+
   public pjsua_state libGetState() {
     return pjsua_state.swigToEnum(pjsua2JNI.Endpoint_libGetState(swigCPtr, this));
   }
@@ -187,6 +191,7 @@ public class Endpoint {
   }
 
   public void transportSetEnable(int id, boolean enabled) throws java.lang.Exception {
+    pjsua2JNI.Endpoint_transportSetEnable(swigCPtr, this, id, enabled);
   }
 
   public void transportClose(int id) throws java.lang.Exception {

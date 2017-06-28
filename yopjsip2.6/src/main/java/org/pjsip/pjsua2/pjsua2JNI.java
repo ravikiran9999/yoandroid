@@ -2300,6 +2300,7 @@ public class pjsua2JNI {
   public final static native void delete_Endpoint(long jarg1);
   public final static native long Endpoint_libVersion(long jarg1, Endpoint jarg1_);
   public final static native void Endpoint_libCreate(long jarg1, Endpoint jarg1_) throws java.lang.Exception;
+  public final static native void Endpoint_codecSetVad(long jarg1, Endpoint jarg1_, String jarg2, long jarg3) throws java.lang.Exception;
   public final static native int Endpoint_libGetState(long jarg1, Endpoint jarg1_);
   public final static native void Endpoint_libInit(long jarg1, Endpoint jarg1_, long jarg2, EpConfig jarg2_) throws java.lang.Exception;
   public final static native void Endpoint_libStart(long jarg1, Endpoint jarg1_) throws java.lang.Exception;
