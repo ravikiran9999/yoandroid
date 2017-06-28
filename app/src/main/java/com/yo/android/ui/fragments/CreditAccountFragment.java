@@ -150,6 +150,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         NumberFormat formatter = new DecimalFormat("#0.00");
+        //Util.checkPlayServices(getActivity());
     }
 
     /**
