@@ -113,6 +113,7 @@ class MyApp {
         ua_cfg.setUserAgent("Pjsua2 Android " + mEndpoint.libVersion().getFull());
         StringVector stun_servers = new StringVector();
         stun_servers.add("34.230.108.83:3478");
+        //stun_servers.add("stun.pjsip.org");
         ua_cfg.setStunServer(stun_servers);
         if (own_worker_thread) {
             ua_cfg.setThreadCnt(0);
@@ -124,7 +125,7 @@ class MyApp {
         epConfig.getMedConfig().setClockRate(16000);
         // epConfig.getMedConfig().setQuality(0);
         epConfig.getMedConfig().setEcOptions(1);
-        epConfig.getMedConfig().setEcTailLen(0);
+        epConfig.getMedConfig().setEcTailLen(200);
         //epConfig.getMedConfig().setThreadCnt(2);
 
 		/* Init endpoint */
