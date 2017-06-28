@@ -79,42 +79,6 @@ class MyApp {
 
 
             epConfig = new EpConfig();
-            epConfig.getUaConfig().setUserAgent(AGENT_NAME);
-            epConfig.getMedConfig().setHasIoqueue(true);
-            epConfig.getMedConfig().setClockRate(16000);
-            // epConfig.getMedConfig().setQuality(0);
-            epConfig.getMedConfig().setEcOptions(1);
-            epConfig.getMedConfig().setEcTailLen(0);
-            //epConfig.getMedConfig().setThreadCnt(2);
-             mEndpoint.libInit(epConfig);
-
-            TransportConfig udpTransport = new TransportConfig();
-            udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-            TransportConfig tcpTransport = new TransportConfig();
-            tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
-
-
-            mEndpoint.libStart();
-            mEndpoint.codecSetPriority("*", (short) 0);
-            mEndpoint.codecSetPriority("PCMA/8000", (short) 1);
-            mEndpoint.codecSetPriority("PCMU/8000", (short) 1);
-            mEndpoint.codecSetPriority("G722/8000", (short) 1);
-            mEndpoint.codecSetPriority("G711/8000", (short) 1);
-            mEndpoint.audDevManager().setOutputVolume(60);
-            //Disabling VAD to get around NAT
-            mEndpoint.audDevManager().setVad(false);
-
-            /*//Disable Vad for one side communication issue.
-            mEndpoint.codecSetVad("PCMA/8000",0);
-            mEndpoint.codecSetVad("PCMU/8000",0);
-            mEndpoint.codecSetVad("G711/8000",0);
-            mEndpoint.codecSetVad("G722/8000",0);*/
-
-
-            Log.e(TAG, "SIP STATCK STARTED");
 
         } catch (Exception e) {
             //e.printStackTrace();
@@ -155,12 +119,32 @@ class MyApp {
             ua_cfg.setMainThreadOnly(true);
         }
 
+        epConfig.getUaConfig().setUserAgent(AGENT_NAME);
+        epConfig.getMedConfig().setHasIoqueue(true);
+        epConfig.getMedConfig().setClockRate(16000);
+        // epConfig.getMedConfig().setQuality(0);
+        epConfig.getMedConfig().setEcOptions(1);
+        epConfig.getMedConfig().setEcTailLen(0);
+        //epConfig.getMedConfig().setThreadCnt(2);
+
 		/* Init endpoint */
         try {
-          //  mEndpoint.libInit(epConfig);
+            mEndpoint.libInit(epConfig);
         } catch (Exception e) {
             e.printStackTrace();
             return;
+        }
+
+        TransportConfig udpTransport = new TransportConfig();
+        udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+        TransportConfig tcpTransport = new TransportConfig();
+        tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+
+        try {
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
+        } catch(Exception e) {
+
         }
 
 		/* Create transports. */
@@ -205,7 +189,16 @@ class MyApp {
 
 		/* Start. */
         try {
-           // mEndpoint.libStart();
+            mEndpoint.libStart();
+            mEndpoint.codecSetPriority("*", (short) 0);
+            mEndpoint.codecSetPriority("PCMA/8000", (short) 1);
+            mEndpoint.codecSetPriority("PCMU/8000", (short) 1);
+            mEndpoint.codecSetPriority("G722/8000", (short) 1);
+            mEndpoint.codecSetPriority("G711/8000", (short) 1);
+            mEndpoint.audDevManager().setOutputVolume(60);
+            //Disabling VAD to get around NAT
+            mEndpoint.audDevManager().setVad(false);
+            Log.e(TAG, "SIP STATCK STARTED");
         } catch (Exception e) {
             return;
         }
