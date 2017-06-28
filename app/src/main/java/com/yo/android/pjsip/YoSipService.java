@@ -426,6 +426,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 showFailedToast(getString(R.string.busy));
             } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_NOT_FOUND) {
                 showFailedToast(getString(R.string.not_online_unavailable));
+                if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
+                    Contact contact = mContactsSyncManager.getContactByVoxUserName(sipCallstate.getMobileNumber());
+                    OpponentDetails details = new OpponentDetails(sipCallstate.getMobileNumber(), contact, statusCode);
+                    EventBus.getDefault().post(details);
+                }
             } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TIMEOUT || lastStatusCode == pjsip_status_code.PJSIP_SC_TEMPORARILY_UNAVAILABLE) {
                 showFailedToast(getString(R.string.not_in_coverage_area));
             } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_FORBIDDEN) {
@@ -444,10 +449,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         } else if (statusCode == 503) {
             mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
             callDisconnected();
-            if (!sipCallstate.getMobileNumber().contains(BuildConfig.RELEASE_USER_TYPE)) {
+            if (sipCallstate != null && !sipCallstate.getMobileNumber().contains(BuildConfig.RELEASE_USER_TYPE)) {
                 showFailedToast(getString(R.string.not_supported_country));
             } else {
                 showFailedToast(getString(R.string.not_online));
+                if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
+                    Contact contact = mContactsSyncManager.getContactByVoxUserName(sipCallstate.getMobileNumber());
+                    OpponentDetails details = new OpponentDetails(sipCallstate.getMobileNumber(), contact, statusCode);
+                    EventBus.getDefault().post(details);
+                }
             }
         } else if (statusCode == 603) {
             callDisconnected();
