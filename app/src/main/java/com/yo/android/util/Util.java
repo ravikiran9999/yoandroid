@@ -40,6 +40,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
@@ -102,6 +104,7 @@ public class Util {
     private static final int SIX = 6;
     public static final String ServerTimeStamp = "serverTimeStamp";
     public static final String ServerTimeStampReceived = "serverTimeStampReceived";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         return createNotification(context, title, body, clzz, intent, true);
@@ -574,7 +577,7 @@ public class Util {
                         noSearchResult.setVisibility(View.GONE);
                         isFromClose = true;
                     } else {
-                        if(noContactsFound != null) {
+                        if (noContactsFound != null) {
                             noContactsFound.setVisibility(View.GONE);
                         }
                         noSearchResult.setVisibility(View.VISIBLE);
@@ -1111,7 +1114,7 @@ public class Util {
         try {
             if (string.contains(Constants.YO_USER)) {
                 return String.format(context.getResources().getString(R.string.plus_number), string.replaceAll("[^0-9]", ""));
-            } else if(TextUtils.isDigitsOnly(string)){
+            } else if (TextUtils.isDigitsOnly(string)) {
                 return String.format(context.getResources().getString(R.string.plus_number), string);
             } else {
                 return string;
@@ -1123,7 +1126,7 @@ public class Util {
 
     public static String numberFromNexgeFormat(String string) {
         try {
-            if(string != null) {
+            if (string != null) {
                 return string.replaceAll("[^0-9]", "");
             } else {
                 return "1234567890";
@@ -1146,42 +1149,49 @@ public class Util {
         }
         return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);*/
 
-        if(hours == 0 && minutes == 0) {
+        if (hours == 0 && minutes == 0) {
             return String.format("%02d secs", seconds);
         } else if (hours == 0 && seconds == 0) {
             return String.format("%02d mins", minutes, seconds);
         } else if (hours == 0) {
             return String.format("%02d mins %02d secs", minutes, seconds);
-        }  else {
+        } else {
             return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
         }
     }
 
-    public static void appendLog(String text)
-    {
+    public static void appendLog(String text) {
         File logFile = new File("sdcard/calldump.file");
-        if (!logFile.exists())
-        {
-            try
-            {
+        if (!logFile.exists()) {
+            try {
                 logFile.createNewFile();
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        try
-        {
+        try {
             //BufferedWriter for performance, true to set append to file flag
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
             buf.append(text);
             buf.newLine();
             buf.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean checkPlayServices(Context context) {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(context);
+        if (result != ConnectionResult.SUCCESS) {
+            if (googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog((Activity) context, result,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }
