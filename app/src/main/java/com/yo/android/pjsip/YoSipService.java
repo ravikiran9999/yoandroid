@@ -187,7 +187,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             startSipService();
             // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
         }
-        addAccount();
+        String number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
+
+        addAccount(intent.hasExtra(VoipConstants.PSTN),number);
         NetworkStateListener.registerNetworkState(listener);
         performAction(intent);
         return START_STICKY;
@@ -382,12 +384,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mLog.e(TAG, "notifyCallState =  " + ci.getState());
         if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
             pausePlayingAudio();
-        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_INCOMING) {
-            startRingtone();
-        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
             if (mIntent != null && !mIntent.hasExtra(VoipConstants.PSTN)) {
                 startDefaultRingtone(1);
             }
+        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_INCOMING) {
+            startRingtone();
         } else if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
 
@@ -396,6 +397,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             try {
                 //TODO:Handle more error codes to display proper messages to the user
                 statusCode = call.getInfo().getLastStatusCode().swigValue();
+                mLog.e(TAG, "notifyCallState = Status code  " + statusCode);
+
                 handleErrorCodes(sipCallState, call.getInfo().getLastReason(), call.getInfo().getLastStatusCode());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -405,9 +408,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
             stopRingtone();
             callAccepted(call);
-        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
+        }/* else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
             stopRingtone();
-        }
+        }*/
     }
 
 
@@ -616,59 +619,60 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         return myApp.addAcc(accCfg);
     }
 
-    private void addAccount() {
+    private void addAccount(boolean isPSTN,String number) {
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
-
-
                 .withUserName(username == null ? "" : username)
-                //.withUserName(username == null ? "" : "64728474")
-                //.withUserName(username == null ? "" : "7032427")
-                //.withUserName(username == null ? "" : "64724865")
-                //.withUserName(username == null ? "" : "603703")
                 .withPassword(password)
-                //.withPassword("534653")
-                //.withPassword("@pa1ra2di3gm")
-                //.withPassword("823859")
-                //.withPassword("@pa1ra2di3gm")
-                //.withServer("209.239.120.239")
                 .withServer("173.82.147.172")
                 .build();
-        addAccount(sipProfile);
+        addAccount(sipProfile, isPSTN,number);
 
     }
 
 
-    public void addAccount(SipProfile sipProfile) {
+    public void addAccount(SipProfile sipProfile, boolean isPSTN,String number) {
         try {
             //startStack();
             myAccount = buildAccount();
-
-            String usernameDisplayName= sipProfile.getUsername();
-            String displayname = usernameDisplayName.substring(usernameDisplayName.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, usernameDisplayName.length() - 1);
-
-            String id = String.format("\"%s\"<sip:%s@%s>", displayname,usernameDisplayName, sipProfile.getDomain());
-            String registrar = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
-            String proxy = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
-            String username = usernameDisplayName;
-            String password = sipProfile.getPassword();
-            if (myAccount != null) {
-                mLog.w(TAG, "Display Name " + id);
-                configAccount(myAccount.cfg, id, registrar, proxy, username, password);
-                try {
-                    myAccount.cfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
-                    myAccount.modify(myAccount.cfg);
-                } catch (Exception e) {
-                    mLog.w(TAG, e);
-                }
+            String usernameDisplayName = sipProfile.getUsername();
+            String displayname;
+            // this is for sip to sip should send sip  number as displayname otherwise phone number need to parse from sip number
+            if (isPSTN) {
+                displayname = usernameDisplayName.substring(usernameDisplayName.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, usernameDisplayName.length() - 1);
+                // if local number dont add country code
+                String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
+                displayname = countryCode + displayname;
             } else {
-                mLog.w(TAG, "Created account object is null");
+                displayname = usernameDisplayName;
             }
+            updateUserDetails(sipProfile, usernameDisplayName, displayname);
         } catch (Exception | UnsatisfiedLinkError e) {
             mLog.w(TAG, e);
         }
 
+    }
+
+    private void updateUserDetails(SipProfile sipProfile, String usernameDisplayName, String displayname) {
+        String id = String.format("\"%s\"<sip:%s@%s>", displayname, usernameDisplayName, sipProfile.getDomain());
+        String registrar = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
+        String proxy = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
+        String username = usernameDisplayName;
+        String password = sipProfile.getPassword();
+        if (myAccount != null) {
+            mLog.w(TAG, "Display Name " + id);
+
+            configAccount(myAccount.cfg, id, registrar, proxy, username, password);
+            try {
+                myAccount.cfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
+                myAccount.modify(myAccount.cfg);
+            } catch (Exception e) {
+                mLog.w(TAG, e);
+            }
+        } else {
+            mLog.w(TAG, "Created account object is null");
+        }
     }
 
     @Override
@@ -780,7 +784,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             public void run() {
                 try {
                     if (!localHold) {
-                        if (currentCall!=null && !isCallDeleted) {
+                        if (currentCall != null && !isCallDeleted) {
                             final StreamStat stats = currentCall.getStreamStat(0);
                             if (currentBytes != stats.getRtcp().getRxStat().getBytes()) {
                                 count = 0;
@@ -802,6 +806,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                             }
                             if (count > 600) {
                                 if (currentCall != null) {
+                                    mLog.e(TAG, "Disconnecting call from UPDATE STATUS  ");
                                     hangupCall(callType);
                                 }
                                 callDisconnected();

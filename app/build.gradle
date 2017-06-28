@@ -23,11 +23,11 @@ android {
     }
     // Enabling multidex support.
     defaultConfig {
-        applicationId "com.yo.android"
+        applicationId "com.yowatsup.android"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 5
-        versionName "1.2Beta"
+        versionCode 1
+        versionName "1"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -41,8 +41,8 @@ android {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
-            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "true"
-            buildConfigField "boolean", "DISABLE_ADD_BALANCE", "true"
+            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
+            buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
             buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
             buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
             buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
@@ -53,20 +53,29 @@ android {
 
         stage {
             applicationIdSuffix ".stage"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
-            buildConfigField "String", "RELEASE_USER_TYPE", "\"yobeta\""
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
-            buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
+            buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
+            /*buildConfigField "String", "BASE_URL", "\"http://yoapp-stg.herokuapp.com/\""
             buildConfigField "String", "CLIENT_ID", "\"900a3311d6908db57bbfb37a5b0b97756bafe11d628cef69800ce15ceec5db6c\""
             buildConfigField "String", "CLIENT_SECRET", "\"ccd639dfd3f9e63a2de7cfe13c2e7f4b876b13d69121c7f0da8c8039e90715e6\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-staging.appspot.com/\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-staging.firebaseio.com\""
+        */
+            //Same as Dev
+            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
+            buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
+            buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yoandroid-a0b48.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yoandroid-a0b48.firebaseio.com\""
+
         }
     }
     buildTypes {
         release {
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
