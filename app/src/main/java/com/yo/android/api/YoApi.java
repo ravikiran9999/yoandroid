@@ -318,7 +318,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/articles/dashboard.json")
-        Call<LandingArticles> getDashboardArticlesAPI(@Field("access_token") String access_token, @Field("read_article_ids[]") List<String> read_article_ids, @Field("unread_article_ids[]") List<String> unread_article_ids);
+        Call<LandingArticles> getDashboardArticlesAPI(@Field("access_token") String access_token, @Field("read_article_ids[]") List<String> read_article_ids, @Field("unread_article_ids[]") List<String> unread_article_ids, @Query("autorenewal_subscription") boolean autorenewal_subscription, @Query("autorenewal") boolean autorenewal);
 
         @GET("api/categories.json")
         Call<List<Categories>> categoriesAPI(@Query("access_token") String access_token);

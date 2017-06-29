@@ -121,7 +121,7 @@ public class Constants {
     public static final int ADD_IMAGE_CAPTURE = 1;
     public static final int ADD_SELECT_PICTURE = 2;
 
-
+    public static final String AUTO_RENEWAL_SUBSCRIPTION = "autorenewal_subscription";
     public static String DELETE_MAGAZINE_ACTION = "com.edit.magazine.DELETE";
     public static String EDIT_MAGAZINE_ACTION = "com.edit.magazine.EDIT";
     public static String SESSION_EXPIRE = "SESSION_EXPIRE";

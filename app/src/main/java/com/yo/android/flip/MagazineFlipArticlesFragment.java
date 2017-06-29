@@ -206,7 +206,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         });*/
     }
 
-    public void loadArticles(List<String> tagIds) {
+    public void loadArticles(List<String> tagIds, boolean renewal) {
 
         if (!mHelper.isConnected()) {
 
@@ -266,7 +266,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             List<String> readArticlesList = new ArrayList<>();
             List<String> unreadArticlesList = new ArrayList<>();
-            magazineDashboardHelper.getDashboardArticles(this, yoService, preferenceEndPoint, readArticlesList, unreadArticlesList);
+            magazineDashboardHelper.getDashboardArticles(this, yoService, preferenceEndPoint, readArticlesList, unreadArticlesList, renewal);
 
         }
     }
@@ -371,7 +371,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         }
                         updateArticlesAfterFollowTopic(followedTopicId);
                     } else {
-                        loadArticles(null);
+                        loadArticles(null, false);
                     }
                 }
             } else {
@@ -594,7 +594,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
                 return;
             } else {
-                loadArticles(null);
+                loadArticles(null, false);
             }
         }
     }

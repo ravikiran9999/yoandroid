@@ -495,7 +495,7 @@ public class Util {
                         noSearchResult.setVisibility(View.GONE);
                         isFromClose = true;
                     } else {
-                        if(noContactsFound != null) {
+                        if (noContactsFound != null) {
                             noContactsFound.setVisibility(View.GONE);
                         }
                         noSearchResult.setVisibility(View.VISIBLE);
@@ -636,7 +636,7 @@ public class Util {
                     target.setPackage(candidate.activityInfo.packageName);
                     targets.add(target);
 
-                } else if(packageName.equals("com.yo.android")){
+                } else if (packageName.equals("com.yo.android")) {
                     // Hiding Yo app to show in share view
                 } else {
                     Intent target = new Intent(android.content.Intent.ACTION_SEND);
@@ -908,7 +908,7 @@ public class Util {
         try {
             if (string.contains(Constants.YO_USER)) {
                 return String.format(context.getResources().getString(R.string.plus_number), string.replaceAll("[^0-9]", ""));
-            } else if(TextUtils.isDigitsOnly(string)){
+            } else if (TextUtils.isDigitsOnly(string)) {
                 return String.format(context.getResources().getString(R.string.plus_number), string);
             } else {
                 return string;
@@ -920,7 +920,7 @@ public class Util {
 
     public static String numberFromNexgeFormat(String string) {
         try {
-            if(string != null) {
+            if (string != null) {
                 return string.replaceAll("[^0-9]", "");
             } else {
                 return "1234567890";
@@ -943,13 +943,13 @@ public class Util {
         }
         return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);*/
 
-        if(hours == 0 && minutes == 0) {
+        if (hours == 0 && minutes == 0) {
             return String.format("%02d secs", seconds);
         } else if (hours == 0 && seconds == 0) {
             return String.format("%02d mins", minutes, seconds);
         } else if (hours == 0) {
             return String.format("%02d mins %02d secs", minutes, seconds);
-        }  else {
+        } else {
             return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
         }
     }
@@ -957,11 +957,11 @@ public class Util {
     public static String addDenomination(String amount, String amountWithDenomination) {
         try {
 
-            if(amountWithDenomination != null) {
+            if (amountWithDenomination != null) {
                 String denomination = amountWithDenomination.replaceAll("[0-9]", "");
                 return String.format("%s %s", denomination, amount);
             } else {
-                return  String.format("%s %s", "IN Rs", amount);
+                return String.format("%s %s", "IN Rs", amount);
             }
         } catch (Exception e) {
             return String.format("%s %s", "IN Rs", amount);

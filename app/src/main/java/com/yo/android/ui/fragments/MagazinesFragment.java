@@ -332,7 +332,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     tagIds.add(topicId);
                     if (mMagazineFlipArticlesFragment != null) {
                         MagazineFlipArticlesFragment.lastReadArticle = 0;
-                        mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                        mMagazineFlipArticlesFragment.loadArticles(tagIds, false);
                     }
 
                     return;
@@ -378,7 +378,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         tagIds.add(topicId);
                         if (mMagazineFlipArticlesFragment != null) {
                             MagazineFlipArticlesFragment.lastReadArticle = 0;
-                            mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                            mMagazineFlipArticlesFragment.loadArticles(tagIds, false);
                         }
                     }
                     return true;

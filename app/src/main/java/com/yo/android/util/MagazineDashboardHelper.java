@@ -36,11 +36,12 @@ public class MagazineDashboardHelper {
     public static int currentReadArticles;
     public static int request;
 
-    public void getDashboardArticles(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds) {
+    public void getDashboardArticles(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, boolean renewal) {
 
         if (magazineFlipArticlesFragment != null) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
+            boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);
+            yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, renewal).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
 
@@ -128,7 +129,8 @@ public class MagazineDashboardHelper {
     public void getMoreDashboardArticles(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final SwipeRefreshLayout swipeRefreshContainer) {
         if (magazineFlipArticlesFragment != null) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
+            boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);
+            yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
                     if(swipeRefreshContainer != null) {
@@ -203,7 +205,8 @@ public class MagazineDashboardHelper {
     public void getMoreDashboardArticlesAfterFollow(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final List<Articles> unreadOtherFollowedArticles, final List<Articles> followedArticlesList) {
         if (magazineFlipArticlesFragment != null) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
+            boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);
+            yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
 
@@ -263,7 +266,8 @@ public class MagazineDashboardHelper {
     public void getDashboardArticlesForDailyService(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final List<Articles> unreadOtherFollowedArticles) {
         if (magazineFlipArticlesFragment != null) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
+            boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);
+            yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
 

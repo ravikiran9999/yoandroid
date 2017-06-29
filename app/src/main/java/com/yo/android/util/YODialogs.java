@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ import java.util.Date;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -222,7 +224,7 @@ public class YODialogs {
                     if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
                         try {
                             stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
-                            SipHelper.makeCall(activity, stringExtra,true);
+                            SipHelper.makeCall(activity, stringExtra, true);
                         } catch (StringIndexOutOfBoundsException e) {
                         }
                     }
@@ -261,4 +263,33 @@ public class YODialogs {
         }
     }
 
+    public static void renewMagazine(Activity activity, String description, final PreferenceEndPoint preferenceEndPoint) {
+        LayoutInflater layoutInflater = LayoutInflater.from(activity);
+        final View view = layoutInflater.inflate(R.layout.dialog_with_check_box, null);
+        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.auto_renew_checkbox);
+        TextView descriptionTextView = (TextView) view.findViewById(R.id.description);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setView(view);
+        builder.setMessage(description);
+        builder.setPositiveButton(activity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                boolean checkBoxResult = false;
+                if (checkBox.isChecked()) {
+                    checkBoxResult = true;
+                    preferenceEndPoint.saveBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, checkBoxResult);
+                }
+
+
+            }
+        });
+        builder.setNegativeButton(activity.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
 }
