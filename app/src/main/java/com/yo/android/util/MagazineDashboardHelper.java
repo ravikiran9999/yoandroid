@@ -1,5 +1,6 @@
 package com.yo.android.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -42,6 +43,7 @@ public class MagazineDashboardHelper {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, renewal).enqueue(new Callback<LandingArticles>() {
+                //yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
 
@@ -66,18 +68,30 @@ public class MagazineDashboardHelper {
                         LandingArticles articlesList = tempList;
                         List<Articles> followedTopicArticles = new ArrayList<Articles>();
                         List<Articles> randomTopicArticles = new ArrayList<Articles>();
-                        followedTopicArticles = articlesList.getFollowed_topic_articles();
-                        randomTopicArticles = articlesList.getRandom_articles();
-                        List<Articles> totalArticles = new ArrayList<Articles>();
-                        totalArticles = followedTopicArticles;
-                        totalArticles.addAll(randomTopicArticles);
+                        if (articlesList.getCode() == 200) {
+                            followedTopicArticles = articlesList.getFollowed_topic_articles();
+                            randomTopicArticles = articlesList.getRandom_articles();
+                            List<Articles> totalArticles = new ArrayList<Articles>();
+                            totalArticles = followedTopicArticles;
+                            totalArticles.addAll(randomTopicArticles);
 
-                        if (magazineFlipArticlesFragment.getActivity() != null) {
-                            removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
+                            if (magazineFlipArticlesFragment.getActivity() != null) {
+                                removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
+                            }
+
+                            magazineFlipArticlesFragment.myBaseAdapter.addItems(totalArticles);
+                            magazineFlipArticlesFragment.handleDashboardResponse(totalArticles);
+                        } else if (articlesList.getCode() == 401 || articlesList.getCode() == 403) {
+                            Activity activity = magazineFlipArticlesFragment.getActivity();
+                            YODialogs.renewMagazine(magazineFlipArticlesFragment, activity.getString(R.string.renewal_message), preferenceEndPoint);
+
+                            if (magazineFlipArticlesFragment.mProgress != null) {
+                                magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
+                            }
+                            magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
+                            magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
+                            magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
                         }
-
-                        magazineFlipArticlesFragment.myBaseAdapter.addItems(totalArticles);
-                        magazineFlipArticlesFragment.handleDashboardResponse(totalArticles);
 
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
@@ -131,9 +145,10 @@ public class MagazineDashboardHelper {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
+                //yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
-                    if(swipeRefreshContainer != null) {
+                    if (swipeRefreshContainer != null) {
                         swipeRefreshContainer.setRefreshing(false);
                     }
                     if (magazineFlipArticlesFragment.mProgress != null) {
@@ -207,6 +222,7 @@ public class MagazineDashboardHelper {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
+                //yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
 
@@ -255,7 +271,7 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.getLandingCachedArticles();
-                    if(magazineFlipArticlesFragment.getActivity() != null) {
+                    if (magazineFlipArticlesFragment.getActivity() != null) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
                     }
                 }
@@ -268,6 +284,7 @@ public class MagazineDashboardHelper {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
+                //yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
 

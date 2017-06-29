@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
+import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipHelper;
@@ -263,11 +265,11 @@ public class YODialogs {
         }
     }
 
-    public static void renewMagazine(Activity activity, String description, final PreferenceEndPoint preferenceEndPoint) {
+    public static void renewMagazine(final Fragment fragment, String description, final PreferenceEndPoint preferenceEndPoint) {
+        Activity activity = fragment.getActivity();
         LayoutInflater layoutInflater = LayoutInflater.from(activity);
         final View view = layoutInflater.inflate(R.layout.dialog_with_check_box, null);
         final CheckBox checkBox = (CheckBox) view.findViewById(R.id.auto_renew_checkbox);
-        TextView descriptionTextView = (TextView) view.findViewById(R.id.description);
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setView(view);
         builder.setMessage(description);
@@ -279,7 +281,9 @@ public class YODialogs {
                     checkBoxResult = true;
                     preferenceEndPoint.saveBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, checkBoxResult);
                 }
-
+                if (fragment instanceof MagazineFlipArticlesFragment) {
+                    ((MagazineFlipArticlesFragment) fragment).loadArticles(null, true);
+                }
 
             }
         });

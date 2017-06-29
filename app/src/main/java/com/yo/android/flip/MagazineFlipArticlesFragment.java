@@ -547,6 +547,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         isSearch = false;
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         if (getActivity() != null) {
+
+            //Todo check autorenewal before showing cache data
+            loadArticles(null, false);
+
             String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
             String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
 
