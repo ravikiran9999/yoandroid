@@ -135,7 +135,7 @@
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
-                <TextView
+                <me.grantland.widget.AutofitTextView
                     android:id="@+id/txt_balance"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
@@ -146,6 +146,8 @@
                     android:paddingLeft="5dp"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
+                    android:text="INR Rs10000.723"
+                    android:maxLines="1"
                    />
 
                 <TextView

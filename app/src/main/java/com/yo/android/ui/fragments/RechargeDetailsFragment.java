@@ -56,6 +56,10 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
     BalanceHelper mBalanceHelper;
     private RechargeDetailsAdapter adapter;
 
+    public static RechargeDetailsFragment newInstance() {
+        return new RechargeDetailsFragment();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

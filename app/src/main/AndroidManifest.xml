@@ -53,7 +53,9 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<activity
+
+        <!--
+        <activity
             android:name="org.pjsip.pjsua2.app.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -62,7 +64,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
         <activity
             android:name=".ui.SplashScreenActivity"
             android:screenOrientation="portrait"
@@ -169,18 +172,18 @@
             android:name=".chat.ui.fragments.AppContactsActivity"
             android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
             android:label="@string/select_contact"
-            android:screenOrientation="portrait"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/*" />
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
-
-            />
+        />
         <activity
             android:name=".ui.FollowMoreTopicsActivity"
             android:screenOrientation="portrait"
@@ -357,7 +360,7 @@
             android:name=".util.FetchNewArticlesService"
             android:enabled="true"
             android:exported="true" />
-        <service android:name="com.yo.android.util.ReCreateService" />
+        <service android:name=".util.ReCreateService" />
         <service
             android:name=".chat.firebase.ListenerJobService"
             android:exported="false">
@@ -366,15 +369,16 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="com.yo.android.app.RestartServiceReceiver">
+        <receiver android:name=".app.RestartServiceReceiver">
             <intent-filter>
-                <action android:name="YouWillNeverKillMe"></action>
+                <action android:name="YouWillNeverKillMe" />
             </intent-filter>
         </receiver>
 
         <activity
             android:name=".chat.ui.CountryCodeActivity"
-            android:theme="@style/AppTheme.Switch"></activity>
+            android:theme="@style/AppTheme.Switch" />
+        <activity android:name=".ui.YoBalanceDetailActivity"></activity>
     </application>
 
 </manifest>
