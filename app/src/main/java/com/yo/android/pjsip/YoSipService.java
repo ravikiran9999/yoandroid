@@ -610,7 +610,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         AccountConfig accCfg = new AccountConfig();
         accCfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
         accCfg.setIdUri("sip:localhost");
-        accCfg.getNatConfig().setIceEnabled(false);
+        accCfg.getNatConfig().setIceEnabled(true);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
         accCfg.getVideoConfig().setAutoShowIncoming(true);
         if (myApp == null) {
@@ -642,8 +642,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             if (isPSTN) {
                 displayname = usernameDisplayName.substring(usernameDisplayName.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, usernameDisplayName.length() - 1);
                 // if local number dont add country code
-                String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
-                displayname = countryCode + displayname;
+                //String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
+                //displayname = countryCode + displayname;
             } else {
                 displayname = usernameDisplayName;
             }
@@ -697,7 +697,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
 
 		/* Enable ICE */
-        accCfg.getNatConfig().setIceEnabled(false);
+        accCfg.getNatConfig().setIceEnabled(true);
     }
 
     public void makeCall(String destination, Bundle options, Intent intent) {
