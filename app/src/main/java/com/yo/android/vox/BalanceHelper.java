@@ -148,9 +148,6 @@ public class BalanceHelper {
                         String mWalletBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.W_BALANCE);
 
                         try {
-                            // Todo remove these two lines as rounding to 3 decimals is done in server
-                            /*DecimalFormat df = new DecimalFormat("0.000");
-                            String format = df.format(Double.valueOf(balance));*/
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
                             prefs.saveStringPreference(Constants.SWITCH_BALANCE, mSwitchBalance);
                             prefs.saveStringPreference(Constants.WALLET_BALANCE, mWalletBalance);
@@ -461,14 +458,6 @@ public class BalanceHelper {
 
     public String getCurrentBalance() {
         return prefs.getStringPreference(Constants.CURRENT_BALANCE, "0");
-        /*try {
-            DecimalFormat df = new DecimalFormat("0.000");
-            String format = df.format(Double.valueOf(balance));
-            return format;
-        } catch (IllegalArgumentException e) {
-            mLog.w(TAG, "getCurrentBalance", e);
-        }*/
-
     }
 
     public String getSwitchBalance() {

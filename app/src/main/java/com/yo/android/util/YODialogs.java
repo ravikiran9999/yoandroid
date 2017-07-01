@@ -25,6 +25,7 @@ import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
@@ -265,8 +266,7 @@ public class YODialogs {
         }
     }
 
-    public static void renewMagazine(final Fragment fragment, String description, final PreferenceEndPoint preferenceEndPoint) {
-        Activity activity = fragment.getActivity();
+    public static void renewMagazine(final Activity activity, final Fragment fragment, String description, final PreferenceEndPoint preferenceEndPoint) {
         LayoutInflater layoutInflater = LayoutInflater.from(activity);
         final View view = layoutInflater.inflate(R.layout.dialog_with_check_box, null);
         final CheckBox checkBox = (CheckBox) view.findViewById(R.id.auto_renew_checkbox);
@@ -281,13 +281,40 @@ public class YODialogs {
                     checkBoxResult = true;
                     preferenceEndPoint.saveBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, checkBoxResult);
                 }
-                if (fragment instanceof MagazineFlipArticlesFragment) {
+                dialog.dismiss();
+                if (fragment != null && fragment instanceof MagazineFlipArticlesFragment) {
                     ((MagazineFlipArticlesFragment) fragment).loadArticles(null, true);
+                } else if(activity instanceof MyCollections) {
+                    ((MyCollections)activity).myCollections(null);
                 }
 
             }
         });
         builder.setNegativeButton(activity.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+
+    public static void addBalance(final Context context, String description) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(description);
+        builder.setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Intent intent = new Intent(context, TabsHeaderActivity.class);
+                intent.putExtra(Constants.RENEWAL, true);
+                ((Activity) context).startActivityForResult(intent, 1001);
+
+            }
+        });
+        builder.setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

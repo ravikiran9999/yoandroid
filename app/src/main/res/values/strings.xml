@@ -359,4 +359,5 @@
     <string name="cannot_transfer_full_balance">You cannot transfer your whole balance. Please maintain atleast US $ 0.001</string>
     <string name="auto_renewal">Enable auto-renewal</string>
     <string name="renewal_message">Please renew to see magazines </string>
+    <string name="no_sufficient_bal_wallet">You don\'t have sufficient balance in wallet. Please add balance.</string>
 </resources>

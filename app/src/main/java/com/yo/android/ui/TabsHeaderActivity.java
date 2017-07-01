@@ -39,6 +39,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     private boolean isAlreadyShown;
     //private boolean isRemoved;
     private boolean isSharedPreferenceShown;
+    private boolean isRenewal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         } else {
             getSupportActionBar().setTitle(R.string.yo_credit);
         }
+        isRenewal = getIntent().getBooleanExtra(Constants.RENEWAL, false);
         enableBack();
         final ViewPager viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
         setupViewPager(viewPager);
@@ -132,6 +134,11 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.OPEN_ADD_BALANCE, true);
+            fragment.setArguments(bundle);
+        }
+        if(getIntent().hasExtra(Constants.RENEWAL)) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constants.RENEWAL, isRenewal);
             fragment.setArguments(bundle);
         }
         adapter.addFragment(fragment, "Credit Account");

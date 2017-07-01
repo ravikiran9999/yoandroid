@@ -183,7 +183,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mLog.d("onActivityCreated", "In onActivityCreated");
-
+        loadArticles(null, false);
         followMoreTopics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -476,6 +476,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     }
                 }
             }
+        } else if (Constants.RENEWAL.equalsIgnoreCase(action)) {
+            loadArticles(null, true);
         }
     }
 
@@ -546,15 +548,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void getLandingCachedArticles() {
         isSearch = false;
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        if (getActivity() != null) {
 
-            //Todo check autorenewal before showing cache data
-            loadArticles(null, false);
+        if (getActivity() != null) {
 
             String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
             String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
 
-            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) && !sharedFollowedCachedMagazines.equalsIgnoreCase("[]") || !TextUtils.isEmpty(sharedRandomCachedMagazines) && !sharedRandomCachedMagazines.equalsIgnoreCase("[]")) {
                 if (mProgress != null) {
                     mProgress.setVisibility(View.GONE);
                 }
@@ -597,9 +597,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
                 }
                 return;
-            } else {
+            } /*else {
                 loadArticles(null, false);
-            }
+            }*/
         }
     }
 
@@ -1328,8 +1328,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (allArticles != null) {
             List<String> allArticlesIds = new ArrayList<>();
             for (Articles articles : allArticles) {
-                if(articles != null)
-                allArticlesIds.add(articles.getId());
+                if (articles != null)
+                    allArticlesIds.add(articles.getId());
             }
             List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
             List<String> mCachedReadList = cachedReadList != null ? cachedReadList : new ArrayList<String>();
