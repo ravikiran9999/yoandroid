@@ -107,6 +107,8 @@ class MyApp {
         log_cfg.setDecor(log_cfg.getDecor()
                 & ~(pj_log_decoration.PJ_LOG_HAS_CR.swigValue() | pj_log_decoration.PJ_LOG_HAS_NEWLINE
                 .swigValue()));
+        String log_path = android.os.Environment.getExternalStorageDirectory().toString();
+        log_cfg.setFilename(log_path + "/pjsip.log");
 
 		/* Set ua config. */
         UaConfig ua_cfg = epConfig.getUaConfig();
@@ -174,7 +176,7 @@ class MyApp {
             my_cfg.accCfg.getNatConfig().setTurnUserName("abzlute01");
             my_cfg.accCfg.getNatConfig().setTurnPasswordType(0);
             my_cfg.accCfg.getNatConfig().setTurnPassword("abzlute01");
-
+            Log.d(TAG, "Setting TURN server");
 
             MyAccount acc = addAcc(my_cfg.accCfg);
 
