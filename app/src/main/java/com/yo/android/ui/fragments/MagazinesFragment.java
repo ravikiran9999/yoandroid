@@ -172,7 +172,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     public void update() {
         if (mMagazineFlipArticlesFragment != null) {
-            Log.d("MagazinesFragment", "In update() MagazinesFragment");
             mMagazineFlipArticlesFragment.update();
         }
     }

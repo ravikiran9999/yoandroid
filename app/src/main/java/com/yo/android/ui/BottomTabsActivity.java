@@ -256,7 +256,7 @@ public class BottomTabsActivity extends BaseActivity {
 
                     MagazineDashboardHelper.request = 1;
                     ((MagazinesFragment) getFragment()).removeReadArticles();
-                    ((MagazinesFragment) getFragment()).update();
+                    //((MagazinesFragment) getFragment()).update();
                     MagazineFlipArticlesFragment.currentFlippedPosition = 0;
                 }
 

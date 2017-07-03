@@ -3,6 +3,7 @@ package com.yo.android.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -69,13 +70,15 @@ public class MagazineDashboardHelper {
                         List<Articles> randomTopicArticles = new ArrayList<Articles>();
                         followedTopicArticles = articlesList.getFollowed_topic_articles();
                         randomTopicArticles = articlesList.getRandom_articles();
-                        if (articlesList.getCode() == 200 ) {
-                            if(followedTopicArticles.size() != 0 || randomTopicArticles.size() != 0) {
-                                preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, true);
-                                List<Articles> totalArticles = new ArrayList<Articles>();
-                                totalArticles = followedTopicArticles;
-                                totalArticles.addAll(randomTopicArticles);
+                        List<Articles> totalArticles = new ArrayList<Articles>();
+                        totalArticles = followedTopicArticles;
+                        totalArticles.addAll(randomTopicArticles);
 
+                        showDialog(articlesList.getCode(), preferenceEndPoint, magazineFlipArticlesFragment, totalArticles);
+
+                        /*if (articlesList.getCode() == 200) {
+                            if (followedTopicArticles.size() != 0 || randomTopicArticles.size() != 0) {
+                                preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, true);
                                 if (magazineFlipArticlesFragment.getActivity() != null) {
                                     removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
                                 }
@@ -88,30 +91,30 @@ public class MagazineDashboardHelper {
                                 magazineFlipArticlesFragment.getLandingCachedArticles();
                             }
                         } else if (articlesList.getCode() == 401 || articlesList.getCode() == 403) {
-                            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                             preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
                             Activity activity = magazineFlipArticlesFragment.getActivity();
                             YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, activity.getString(R.string.renewal_message), preferenceEndPoint);
-                            removeArticlesFromCache(activity,preferenceEndPoint ,"followed_cached_magazines");
-                            removeArticlesFromCache(activity,preferenceEndPoint ,"random_cached_magazines");
+                            removeArticlesFromCache(activity, preferenceEndPoint, "followed_cached_magazines");
+                            removeArticlesFromCache(activity, preferenceEndPoint, "random_cached_magazines");
                             if (magazineFlipArticlesFragment.mProgress != null) {
                                 magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                             }
                             magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                             magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
+                            magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
 
-                        } else if(articlesList.getCode() == 405) {
+                        } else if (articlesList.getCode() == 405) {
                             preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
                             Activity activity = magazineFlipArticlesFragment.getActivity();
                             YODialogs.addBalance(activity, activity.getString(R.string.no_sufficient_bal_wallet));
-                        }else {
+                        } else {
                             if (magazineFlipArticlesFragment.mProgress != null) {
                                 magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                             }
                             magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                             magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                            magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
-                        }
+                            magazineFlipArticlesFragment.getLandingCachedArticles();
+                        }*/
 
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
@@ -129,7 +132,6 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
-
                 }
             });
         }
@@ -189,6 +191,9 @@ public class MagazineDashboardHelper {
                         List<Articles> randomTopicArticles = new ArrayList<Articles>();
                         followedTopicArticles = articlesList.getFollowed_topic_articles();
                         randomTopicArticles = articlesList.getRandom_articles();
+                        if(articlesList.getCode() == 200) {
+
+                        }
                         List<Articles> totalArticles = new ArrayList<Articles>();
                         totalArticles = followedTopicArticles;
                         totalArticles.addAll(randomTopicArticles);
@@ -199,7 +204,6 @@ public class MagazineDashboardHelper {
 
                         magazineFlipArticlesFragment.myBaseAdapter.addItemsAll(totalArticles);
                         magazineFlipArticlesFragment.handleMoreDashboardResponse(totalArticles, false);
-
 
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
@@ -271,7 +275,6 @@ public class MagazineDashboardHelper {
                         magazineFlipArticlesFragment.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList);
                         magazineFlipArticlesFragment.handleMoreDashboardResponse(totalArticles, true);
 
-
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
@@ -333,7 +336,6 @@ public class MagazineDashboardHelper {
                         }
 
                         magazineFlipArticlesFragment.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles);
-
                         magazineFlipArticlesFragment.handleMoreDashboardResponse(totalArticles, false);
 
 
@@ -368,6 +370,46 @@ public class MagazineDashboardHelper {
             editor.commit();
             String cachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString(key, "");
             Log.d("MagazineDashboardHelper", "After removing " + key + " key " + cachedMagazines);
+        }
+    }
+
+    private void showDialog(int errorCode, PreferenceEndPoint preferenceEndPoint, MagazineFlipArticlesFragment magazineFlipArticlesFragment, List<Articles> totalArticles) {
+        Activity activity = magazineFlipArticlesFragment.getActivity();
+        switch (errorCode) {
+            case 200:
+                preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, true);
+                if (magazineFlipArticlesFragment.getActivity() != null) {
+                    removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
+                }
+
+                magazineFlipArticlesFragment.myBaseAdapter.addItems(totalArticles);
+                magazineFlipArticlesFragment.handleDashboardResponse(totalArticles);
+                break;
+            case 401:
+            case 403:
+                preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
+                YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, activity.getString(R.string.renewal_message), preferenceEndPoint);
+                removeArticlesFromCache(activity, preferenceEndPoint, "followed_cached_magazines");
+                removeArticlesFromCache(activity, preferenceEndPoint, "random_cached_magazines");
+                if (magazineFlipArticlesFragment.mProgress != null) {
+                    magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
+                }
+                magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
+                magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
+                magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                break;
+            case 405:
+                preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
+                YODialogs.addBalance(activity, activity.getString(R.string.no_sufficient_bal_wallet));
+                break;
+            default:
+                if (magazineFlipArticlesFragment.mProgress != null) {
+                    magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
+                }
+                magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
+                magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
+                magazineFlipArticlesFragment.getLandingCachedArticles();
+                break;
         }
     }
 }

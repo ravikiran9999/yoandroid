@@ -93,6 +93,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             showProgressDialog();
         }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        //Todo pass renewal status
         yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {

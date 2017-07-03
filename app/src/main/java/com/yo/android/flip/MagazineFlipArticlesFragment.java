@@ -183,7 +183,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mLog.d("onActivityCreated", "In onActivityCreated");
-        loadArticles(null, false);
+        //loadArticles(null, false);
         followMoreTopics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -597,9 +597,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
                 }
                 return;
-            } /*else {
+            } else {
+                //flipContainer.setVisibility(View.GONE);
+                //llNoArticles.setVisibility(View.VISIBLE);
                 loadArticles(null, false);
-            }*/
+            }
         }
     }
 
