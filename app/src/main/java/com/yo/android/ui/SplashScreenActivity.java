@@ -34,7 +34,7 @@ public class SplashScreenActivity extends BaseActivity {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageResource(R.drawable.ic_splash);
         mHandler.postDelayed(runnable, DURATION);
-        startService(new Intent(this, YoSipService.class));
+        //startService(new Intent(this, YoSipService.class));
     }
 
 

@@ -148,7 +148,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private boolean isOnGoingCall = false;
     private boolean mySelfEndCall = false;
     private boolean isCallDeleted;
-
+    private boolean isPSTN;
+    private String number;
 
     @Override
     public void onCreate() {
@@ -187,9 +188,12 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             startSipService();
             // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
         }
-        String number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
+        number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
 
-        addAccount(intent.hasExtra(VoipConstants.PSTN),number);
+        isPSTN = intent.hasExtra(VoipConstants.PSTN);
+        if (myAccount == null) {
+            addAccount(isPSTN, number);
+        }
         NetworkStateListener.registerNetworkState(listener);
         performAction(intent);
         return START_STICKY;
@@ -603,23 +607,32 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     }
 
-    private MyAccount buildAccount() throws UnsatisfiedLinkError {
+    private MyAccount buildAccount(String id, String msg) throws UnsatisfiedLinkError {
         if (myAccount != null) {
             return myAccount;
         }
         AccountConfig accCfg = new AccountConfig();
+        accCfg.setIdUri(id);
         accCfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
-        accCfg.setIdUri("sip:localhost");
         accCfg.getNatConfig().setIceEnabled(true);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
         accCfg.getVideoConfig().setAutoShowIncoming(true);
         if (myApp == null) {
             startSipService();
         }
+
+        accCfg.getNatConfig().setIceEnabled(true);
+             /* Enable ICE/TURN */
+        accCfg.getNatConfig().setTurnEnabled(true);
+        accCfg.getNatConfig().setTurnServer("turn.pjsip.org:33478");
+        accCfg.getNatConfig().setTurnUserName("abzlute01");
+        accCfg.getNatConfig().setTurnPasswordType(0);
+        accCfg.getNatConfig().setTurnPassword("abzlute01");
+        android.util.Log.d(TAG, msg + " Setting TURN server");
         return myApp.addAcc(accCfg);
     }
 
-    private void addAccount(boolean isPSTN,String number) {
+    private String addAccount(boolean isPSTN, String number) {
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         SipProfile sipProfile = new SipProfile.Builder()
@@ -627,18 +640,17 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 .withPassword(password)
                 .withServer("173.82.147.172")
                 .build();
-        addAccount(sipProfile, isPSTN,number);
+        return addAccount(sipProfile, isPSTN, number);
 
     }
 
 
-    public void addAccount(SipProfile sipProfile, boolean isPSTN,String number) {
+    public String addAccount(SipProfile sipProfile, boolean isPSTN, String number) {
+        String id = null;
         try {
-            //startStack();
-            myAccount = buildAccount();
-            String usernameDisplayName = sipProfile.getUsername();
             String displayname;
-            // this is for sip to sip should send sip  number as displayname otherwise phone number need to parse from sip number
+            //startStack();
+            String usernameDisplayName = sipProfile.getUsername();
             if (isPSTN) {
                 displayname = usernameDisplayName.substring(usernameDisplayName.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, usernameDisplayName.length() - 1);
                 // if local number dont add country code
@@ -647,10 +659,16 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             } else {
                 displayname = usernameDisplayName;
             }
+            id = String.format("\"%s\"<sip:%s@%s>", displayname, usernameDisplayName, sipProfile.getDomain());
+
+            myAccount = buildAccount(id, "Start");
+            // this is for sip to sip should send sip  number as displayname otherwise phone number need to parse from sip number
+
             updateUserDetails(sipProfile, usernameDisplayName, displayname);
         } catch (Exception | UnsatisfiedLinkError e) {
             mLog.w(TAG, e);
         }
+        return id;
 
     }
 
@@ -714,8 +732,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             return;
         }
 
+
         if (myAccount == null) {
-            myAccount = buildAccount();
+            myAccount = buildAccount(addAccount(isPSTN, number), "Make Call");
         }
 
 

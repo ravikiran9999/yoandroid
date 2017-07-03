@@ -150,45 +150,6 @@ class MyApp {
 
         }
 
-		/* Create transports. */
-       /* try {
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP,
-                    sipTpConfig);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        try {
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP,
-                    sipTpConfig);
-        } catch (Exception e) {
-            System.out.println(e);
-        }*/
-
-		/* Create accounts. */
-        for (int i = 0; i < accCfgs.size(); i++) {
-            MyAccountConfig my_cfg = accCfgs.get(i);
-            /* Customize account config */
-            my_cfg.accCfg.getNatConfig().setIceEnabled(true);
-             /* Enable ICE/TURN */
-            my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
-            my_cfg.accCfg.getNatConfig().setTurnServer("turn.pjsip.org:33478");
-            my_cfg.accCfg.getNatConfig().setTurnUserName("abzlute01");
-            my_cfg.accCfg.getNatConfig().setTurnPasswordType(0);
-            my_cfg.accCfg.getNatConfig().setTurnPassword("abzlute01");
-            Log.d(TAG, "Setting TURN server");
-
-            MyAccount acc = addAcc(my_cfg.accCfg);
-
-            if (acc == null)
-                continue;
-
-			/* Add Buddies */
-            for (int j = 0; j < my_cfg.buddyCfgs.size(); j++) {
-                BuddyConfig bud_cfg = my_cfg.buddyCfgs.get(j);
-                acc.addBuddy(bud_cfg);
-            }
-        }
 
 		/* Start. */
         try {
@@ -196,11 +157,11 @@ class MyApp {
             mEndpoint.codecSetPriority("*", (short) 0);
             mEndpoint.codecSetPriority("PCMA/8000", (short) 1);
             mEndpoint.codecSetPriority("PCMU/8000", (short) 1);
-            mEndpoint.codecSetPriority("G722/8000", (short) 1);
-            mEndpoint.codecSetPriority("G711/8000", (short) 1);
+           // mEndpoint.codecSetPriority("G722/8000", (short) 1);
+          //  mEndpoint.codecSetPriority("G711/8000", (short) 1);
             mEndpoint.audDevManager().setOutputVolume(60);
             //Disabling VAD to get around NAT
-            mEndpoint.audDevManager().setVad(false);
+          //  mEndpoint.audDevManager().setVad(false);
             Log.e(TAG, "SIP STATCK STARTED");
         } catch (Exception e) {
             return;

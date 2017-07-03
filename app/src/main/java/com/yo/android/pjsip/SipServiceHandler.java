@@ -9,7 +9,7 @@ import org.pjsip.pjsua2.CallInfo;
  * Created by Ramesh on 13/8/16.
  */
 public interface SipServiceHandler {
-    void addAccount(SipProfile sipProfile,boolean isPSTN,String number);
+    String addAccount(SipProfile sipProfile,boolean isPSTN,String number);
     void createSipService(SipProfile sipProfile);
 
     MediaManager getMediaManager();
