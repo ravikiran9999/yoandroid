@@ -232,7 +232,7 @@ public class NewDailerActivity extends BaseActivity {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
                 //txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
                 //txtBalance.setText(String.format("%s %s", currencySymbolDollar, mBalanceHelper.getCurrentBalance()));
-                //txtBalance.setText(String.format("%s", mBalanceHelper.getCurrentBalance()));
+                txtBalance.setText(String.format("%s", mBalanceHelper.getSwitchBalance()));
             } else {
                 txtBalance.setVisibility(View.GONE);
             }
