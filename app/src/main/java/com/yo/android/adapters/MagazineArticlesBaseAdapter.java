@@ -869,7 +869,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
     private void populateTopArticle(View layout, ViewHolder holder, final Articles data, final int position) {
-        Log.d("ArticlesBaseAdapter", "In populateTopArticle");
+       // Log.d("ArticlesBaseAdapter", "In populateTopArticle");
         if (holder.magazineLikeTop != null) {
             holder.magazineLikeTop.setTag(position);
         }
@@ -1134,10 +1134,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             }
         }
 
-    }
+    }B
 
     private void populateLeftArticle(ViewHolder holder, final Articles data, final int position) {
-        Log.d("ArticlesBaseAdapter", "In populateLeftArticle");
+        //Log.d("ArticlesBaseAdapter", "In populateLeftArticle");
         if (holder.magazineLikeLeft != null) {
             holder.magazineLikeLeft.setVisibility(View.VISIBLE);
             holder.magazineLikeLeft.setTag(position);
@@ -1434,7 +1434,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
     private void populateRightArticle(ViewHolder holder, final Articles data, final int position) {
-        Log.d("ArticlesBaseAdapter", "In populateRightArticle");
+      //  Log.d("ArticlesBaseAdapter", "In populateRightArticle");
         if (holder.magazineLikeRight != null) {
             holder.magazineLikeRight.setVisibility(View.VISIBLE);
             holder.magazineLikeRight.setTag(position);
