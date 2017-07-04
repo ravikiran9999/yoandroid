@@ -1134,7 +1134,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             }
         }
 
-    }B
+    }
 
     private void populateLeftArticle(ViewHolder holder, final Articles data, final int position) {
         //Log.d("ArticlesBaseAdapter", "In populateLeftArticle");
