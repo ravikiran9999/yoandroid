@@ -294,6 +294,7 @@ class MyApp {
 		 * thread (by GC?).
 		 */
         mEndpoint.delete();
+
         mEndpoint = null;
     }
 
