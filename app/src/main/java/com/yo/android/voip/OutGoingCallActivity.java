@@ -38,6 +38,7 @@ import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.ErrorCode;
+import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import org.pjsip.pjsua2.CallInfo;
@@ -86,7 +87,6 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
     private SeekBar seekBar;
     private SipBinder sipBinder;
-    private AudioManager audioManager;
 
 
     @Inject
@@ -149,8 +149,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         initViews();
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        initBar(seekBar, AudioManager.STREAM_VOICE_CALL);
+
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        Util.initBar(seekBar, audioManager, AudioManager.STREAM_VOICE_CALL);
 
 
         callModel = new SipCallModel();
@@ -428,34 +429,17 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-
-    private void initBar(SeekBar bar, final int stream) {
-        bar.setMax(audioManager.getStreamMaxVolume(stream));
-        bar.setProgress(audioManager.getStreamVolume(stream));
-        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
-                audioManager.setStreamVolume(stream, progress, AudioManager.FLAG_PLAY_SOUND);
-                //int seekBarProgress = progress;
-            }
-
-            public void onStartTrackingTouch(SeekBar bar) {
-            }
-
-            public void onStopTrackingTouch(SeekBar bar) {
-                //textView.setText("Progress: " + seekBarProgress + " / " + seekBar.getMax());
-            }
-        });
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
-            //seekBar.setOnSeekBarChangeListener(this);
+            int index = seekBar.getProgress();
+            seekBar.setProgress(index - 1);
             return true;
         } else if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
-            //seekBar.setOnSeekBarChangeListener(this);
+            int index = seekBar.getProgress();
+            seekBar.setProgress(index + 1);
             return true;
-        } else
-            return super.onKeyDown(keyCode, event);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

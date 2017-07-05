@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcelable;
@@ -38,6 +39,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -966,5 +968,21 @@ public class Util {
         } catch (Exception e) {
             return String.format("%s %s", "IN Rs", amount);
         }
+    }
+
+    public static void initBar(SeekBar bar, final AudioManager audioManager, final int stream) {
+        bar.setMax(audioManager.getStreamMaxVolume(stream));
+        bar.setProgress(audioManager.getStreamVolume(stream));
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
+                audioManager.setStreamVolume(stream, progress, AudioManager.FLAG_PLAY_SOUND);
+            }
+
+            public void onStartTrackingTouch(SeekBar bar) {
+            }
+
+            public void onStopTrackingTouch(SeekBar bar) {
+            }
+        });
     }
 }
