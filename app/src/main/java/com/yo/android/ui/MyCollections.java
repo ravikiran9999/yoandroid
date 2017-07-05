@@ -73,12 +73,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
         myCollectionsAdapter = new MyCollectionsAdapter(MyCollections.this);
 
-        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
-        if (renewalStatus) {
-            myCollections(null);
-        } else {
-            YODialogs.renewMagazine(this, null, getString(R.string.renewal_message), preferenceEndPoint);
-        }
+        myCollections(null);
 
 
         swipeRefreshContainer.setOnRefreshListener(this);

@@ -281,11 +281,12 @@ public class YODialogs {
                     checkBoxResult = true;
                     preferenceEndPoint.saveBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, checkBoxResult);
                 }
+
                 dialog.dismiss();
                 if (fragment != null && fragment instanceof MagazineFlipArticlesFragment) {
+                    ((MagazineFlipArticlesFragment) fragment).llNoArticles.setVisibility(View.GONE);
                     ((MagazineFlipArticlesFragment) fragment).loadArticles(null, true);
-                } else if(activity instanceof MyCollections) {
-                    ((MyCollections)activity).myCollections(null);
+
                 }
 
             }

@@ -3,7 +3,6 @@ package com.yo.android.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,6 +36,11 @@ public class MagazineDashboardHelper {
 
     public static int currentReadArticles;
     public static int request;
+    private static final int DASHBOARD_ARTICLES = 1;
+    private static final int MORE_DASHBOARD_ARTICLES = 2;
+    private static final int DASHBOARD_ARTICLES_AFTER_FOLLOW = 3;
+    private static final int DASHBOARD_ARTICLES_DAILY_SERVICE = 4;
+
 
     public void getDashboardArticles(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, boolean renewal) {
 
@@ -57,64 +61,9 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     currentReadArticles = 0;
                     request = 1;
-                    LinkedHashSet<LandingArticles> articlesHashSet = new LinkedHashSet<>();
                     if (response.body() != null) {
-                        articlesHashSet.add(response.body());
-                        Iterator<LandingArticles> itr = articlesHashSet.iterator();
-                        LandingArticles tempList = new LandingArticles();
-                        while (itr.hasNext()) {
-                            tempList = itr.next();
-                        }
-                        LandingArticles articlesList = tempList;
-                        List<Articles> followedTopicArticles = new ArrayList<Articles>();
-                        List<Articles> randomTopicArticles = new ArrayList<Articles>();
-                        followedTopicArticles = articlesList.getFollowed_topic_articles();
-                        randomTopicArticles = articlesList.getRandom_articles();
-                        List<Articles> totalArticles = new ArrayList<Articles>();
-                        totalArticles = followedTopicArticles;
-                        totalArticles.addAll(randomTopicArticles);
-
-                        showDialog(articlesList.getCode(), preferenceEndPoint, magazineFlipArticlesFragment, totalArticles);
-
-                        /*if (articlesList.getCode() == 200) {
-                            if (followedTopicArticles.size() != 0 || randomTopicArticles.size() != 0) {
-                                preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, true);
-                                if (magazineFlipArticlesFragment.getActivity() != null) {
-                                    removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
-                                }
-
-                                magazineFlipArticlesFragment.myBaseAdapter.addItems(totalArticles);
-                                magazineFlipArticlesFragment.handleDashboardResponse(totalArticles);
-                            } else {
-                                magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
-                                magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                                magazineFlipArticlesFragment.getLandingCachedArticles();
-                            }
-                        } else if (articlesList.getCode() == 401 || articlesList.getCode() == 403) {
-                            preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
-                            Activity activity = magazineFlipArticlesFragment.getActivity();
-                            YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, activity.getString(R.string.renewal_message), preferenceEndPoint);
-                            removeArticlesFromCache(activity, preferenceEndPoint, "followed_cached_magazines");
-                            removeArticlesFromCache(activity, preferenceEndPoint, "random_cached_magazines");
-                            if (magazineFlipArticlesFragment.mProgress != null) {
-                                magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
-                            }
-                            magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
-                            magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                            magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
-
-                        } else if (articlesList.getCode() == 405) {
-                            preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
-                            Activity activity = magazineFlipArticlesFragment.getActivity();
-                            YODialogs.addBalance(activity, activity.getString(R.string.no_sufficient_bal_wallet));
-                        } else {
-                            if (magazineFlipArticlesFragment.mProgress != null) {
-                                magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
-                            }
-                            magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
-                            magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                            magazineFlipArticlesFragment.getLandingCachedArticles();
-                        }*/
+                        List<Articles> totalArticles = getTotalArticles(response.body());
+                        showDialog(response.body().getCode(), DASHBOARD_ARTICLES, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, null, null);
 
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
@@ -178,33 +127,9 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     request++;
 
-                    LinkedHashSet<LandingArticles> articlesHashSet = new LinkedHashSet<>();
                     if (response.body() != null) {
-                        articlesHashSet.add(response.body());
-                        Iterator<LandingArticles> itr = articlesHashSet.iterator();
-                        LandingArticles tempList = new LandingArticles();
-                        while (itr.hasNext()) {
-                            tempList = itr.next();
-                        }
-                        LandingArticles articlesList = tempList;
-                        List<Articles> followedTopicArticles = new ArrayList<Articles>();
-                        List<Articles> randomTopicArticles = new ArrayList<Articles>();
-                        followedTopicArticles = articlesList.getFollowed_topic_articles();
-                        randomTopicArticles = articlesList.getRandom_articles();
-                        if(articlesList.getCode() == 200) {
-
-                        }
-                        List<Articles> totalArticles = new ArrayList<Articles>();
-                        totalArticles = followedTopicArticles;
-                        totalArticles.addAll(randomTopicArticles);
-
-                        if (magazineFlipArticlesFragment.getActivity() != null) {
-                            removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
-                        }
-
-                        magazineFlipArticlesFragment.myBaseAdapter.addItemsAll(totalArticles);
-                        magazineFlipArticlesFragment.handleMoreDashboardResponse(totalArticles, false);
-
+                        List<Articles> totalArticles = getTotalArticles(response.body());
+                        showDialog(response.body().getCode(), MORE_DASHBOARD_ARTICLES, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, null, null);
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
@@ -247,40 +172,17 @@ public class MagazineDashboardHelper {
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
-
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     request++;
 
-                    LinkedHashSet<LandingArticles> articlesHashSet = new LinkedHashSet<>();
                     if (response.body() != null) {
-                        articlesHashSet.add(response.body());
-                        Iterator<LandingArticles> itr = articlesHashSet.iterator();
-                        LandingArticles tempList = new LandingArticles();
-                        while (itr.hasNext()) {
-                            tempList = itr.next();
-                        }
-                        LandingArticles articlesList = tempList;
-                        List<Articles> followedTopicArticles = new ArrayList<Articles>();
-                        List<Articles> randomTopicArticles = new ArrayList<Articles>();
-                        followedTopicArticles = articlesList.getFollowed_topic_articles();
-                        randomTopicArticles = articlesList.getRandom_articles();
-                        List<Articles> totalArticles = new ArrayList<Articles>();
-                        totalArticles = followedTopicArticles;
-                        totalArticles.addAll(randomTopicArticles);
-
-                        if (magazineFlipArticlesFragment.getActivity() != null) {
-                            removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
-                        }
-
-                        magazineFlipArticlesFragment.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList);
-                        magazineFlipArticlesFragment.handleMoreDashboardResponse(totalArticles, true);
-
+                        List<Articles> totalArticles = getTotalArticles(response.body());
+                        showDialog(response.body().getCode(), DASHBOARD_ARTICLES_AFTER_FOLLOW, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, null, null);
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
                         magazineFlipArticlesFragment.getLandingCachedArticles();
                     }
-
                 }
 
                 @Override
@@ -307,38 +209,15 @@ public class MagazineDashboardHelper {
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
-
                     if (magazineFlipArticlesFragment.mProgress != null) {
                         magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     request++;
 
-                    LinkedHashSet<LandingArticles> articlesHashSet = new LinkedHashSet<>();
                     if (response.body() != null) {
-                        articlesHashSet.add(response.body());
-                        Iterator<LandingArticles> itr = articlesHashSet.iterator();
-                        LandingArticles tempList = new LandingArticles();
-                        while (itr.hasNext()) {
-                            tempList = itr.next();
-                        }
-                        LandingArticles articlesList = tempList;
-                        List<Articles> followedTopicArticles = new ArrayList<Articles>();
-                        List<Articles> randomTopicArticles = new ArrayList<Articles>();
-                        followedTopicArticles = articlesList.getFollowed_topic_articles();
-                        randomTopicArticles = articlesList.getRandom_articles();
-                        List<Articles> totalArticles = new ArrayList<Articles>();
-                        totalArticles = followedTopicArticles;
-                        totalArticles.addAll(randomTopicArticles);
-
-                        if (magazineFlipArticlesFragment.getActivity() != null) {
-                            removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
-                        }
-
-                        magazineFlipArticlesFragment.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles);
-                        magazineFlipArticlesFragment.handleMoreDashboardResponse(totalArticles, false);
-
-
+                        List<Articles> totalArticles = getTotalArticles(response.body());
+                        showDialog(response.body().getCode(), DASHBOARD_ARTICLES_DAILY_SERVICE, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, null, null);
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
@@ -373,43 +252,108 @@ public class MagazineDashboardHelper {
         }
     }
 
-    private void showDialog(int errorCode, PreferenceEndPoint preferenceEndPoint, MagazineFlipArticlesFragment magazineFlipArticlesFragment, List<Articles> totalArticles) {
-        Activity activity = magazineFlipArticlesFragment.getActivity();
-        switch (errorCode) {
-            case 200:
-                preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, true);
-                if (magazineFlipArticlesFragment.getActivity() != null) {
-                    removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
-                }
+    private List<Articles> getTotalArticles(LandingArticles landingArticles) {
+        LinkedHashSet<LandingArticles> articlesHashSet = new LinkedHashSet<>();
+        List<Articles> followedTopicArticles;
+        List<Articles> randomTopicArticles;
+        List<Articles> totalArticles;
 
-                magazineFlipArticlesFragment.myBaseAdapter.addItems(totalArticles);
-                magazineFlipArticlesFragment.handleDashboardResponse(totalArticles);
+        articlesHashSet.add(landingArticles);
+        Iterator<LandingArticles> itr = articlesHashSet.iterator();
+        LandingArticles tempList = new LandingArticles();
+        while (itr.hasNext()) {
+            tempList = itr.next();
+        }
+        LandingArticles articlesList = tempList;
+        followedTopicArticles = articlesList.getFollowed_topic_articles();
+        randomTopicArticles = articlesList.getRandom_articles();
+        totalArticles = followedTopicArticles;
+        totalArticles.addAll(randomTopicArticles);
+        return totalArticles;
+    }
+
+    private void showDialog(int errorCode, int id, PreferenceEndPoint preferenceEndPoint, MagazineFlipArticlesFragment magazineFlipArticlesFragment, List<Articles> totalArticles, final List<Articles> unreadOtherFollowedArticles, List<Articles> followedArticlesList) {
+        Activity activity = magazineFlipArticlesFragment.getActivity();
+        if (totalArticles != null) {
+            switch (errorCode) {
+                case 200:
+                    preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, true);
+                    if (magazineFlipArticlesFragment.getActivity() != null) {
+                        removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
+                    }
+                    addArticles(id, magazineFlipArticlesFragment, totalArticles, unreadOtherFollowedArticles, followedArticlesList);
+                    break;
+                case 401:
+                case 403:
+                    preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
+                    if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {
+                        YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, activity.getString(R.string.renewal_message), preferenceEndPoint);
+                    }
+                    removeArticlesFromCache(activity, preferenceEndPoint, "followed_cached_magazines");
+                    removeArticlesFromCache(activity, preferenceEndPoint, "random_cached_magazines");
+                    if (magazineFlipArticlesFragment.mProgress != null) {
+                        magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
+                    }
+                    magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
+                    magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
+                    magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                    break;
+                case 405:
+                    preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
+                    if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {
+                        YODialogs.addBalance(activity, activity.getString(R.string.no_sufficient_bal_wallet));
+                    }
+                    break;
+                default:
+                    if (magazineFlipArticlesFragment.mProgress != null) {
+                        magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
+                    }
+                    magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
+                    magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
+                    magazineFlipArticlesFragment.getLandingCachedArticles();
+                    break;
+            }
+        } else {
+            magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
+            magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
+            magazineFlipArticlesFragment.getLandingCachedArticles();
+        }
+    }
+
+    private void addArticles(int id, MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, final List<Articles> followedArticlesList) {
+        switch (id) {
+            case DASHBOARD_ARTICLES:
+                addDashboardArticlesList(articlesFragment, totalArticles);
                 break;
-            case 401:
-            case 403:
-                preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
-                YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, activity.getString(R.string.renewal_message), preferenceEndPoint);
-                removeArticlesFromCache(activity, preferenceEndPoint, "followed_cached_magazines");
-                removeArticlesFromCache(activity, preferenceEndPoint, "random_cached_magazines");
-                if (magazineFlipArticlesFragment.mProgress != null) {
-                    magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
-                }
-                magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
-                magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+            case MORE_DASHBOARD_ARTICLES:
+                addMoreDashboardArticlesList(articlesFragment, totalArticles);
                 break;
-            case 405:
-                preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
-                YODialogs.addBalance(activity, activity.getString(R.string.no_sufficient_bal_wallet));
+            case DASHBOARD_ARTICLES_AFTER_FOLLOW:
+                addMoreDashboardArticlesAfterFollow(articlesFragment, totalArticles, unreadOtherFollowedArticles, followedArticlesList);
                 break;
-            default:
-                if (magazineFlipArticlesFragment.mProgress != null) {
-                    magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
-                }
-                magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
-                magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
-                magazineFlipArticlesFragment.getLandingCachedArticles();
+            case DASHBOARD_ARTICLES_DAILY_SERVICE:
+                addDashboardArticlesForDailyService(articlesFragment, totalArticles, unreadOtherFollowedArticles);
                 break;
         }
+    }
+
+    private void addDashboardArticlesList(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles) {
+        articlesFragment.myBaseAdapter.addItems(totalArticles);
+        articlesFragment.handleDashboardResponse(totalArticles);
+    }
+
+    private void addMoreDashboardArticlesList(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles) {
+        articlesFragment.myBaseAdapter.addItemsAll(totalArticles);
+        articlesFragment.handleMoreDashboardResponse(totalArticles, false);
+    }
+
+    private void addMoreDashboardArticlesAfterFollow(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, final List<Articles> followedArticlesList) {
+        articlesFragment.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList);
+        articlesFragment.handleMoreDashboardResponse(totalArticles, true);
+    }
+
+    private void addDashboardArticlesForDailyService(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles) {
+        articlesFragment.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles);
+        articlesFragment.handleMoreDashboardResponse(totalArticles, false);
     }
 }
