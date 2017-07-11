@@ -33,6 +33,7 @@ import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineDashboardHelper;
+import com.yo.android.util.YODialogs;
 
 import java.lang.reflect.Type;
 import java.net.UnknownHostException;
@@ -129,8 +130,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         readArticleIds = new ArrayList<>();
         magazineDashboardHelper = new MagazineDashboardHelper();
         swipeRefreshContainer.setOnRefreshListener(this);
-
-        update();
+        boolean value = preferenceEndPoint.getBooleanPreference(Constants.LAUNCH_APP, false);
+        if(value) {
+            update();
+            preferenceEndPoint.saveBooleanPreference(Constants.LAUNCH_APP,false);
+        }
         return view;
     }
 
@@ -355,7 +359,18 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void update() {
         Log.d("FlipArticlesFragment", "In update() FlipArticlesFragment");
-        getLandingCachedArticles();
+        boolean magazineRenewal = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
+        if (!magazineRenewal) {
+            getLandingCachedArticles();
+        } else {
+            YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet));
+            tvProgressText.setVisibility(View.GONE);
+            if (mProgress != null) {
+                mProgress.setVisibility(View.GONE);
+            }
+            llNoArticles.setVisibility(View.VISIBLE);
+        }
+        //getLandingCachedArticles();
     }
 
 
@@ -392,7 +407,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void refresh() {
         lastReadArticle = 0;
-        getLandingCachedArticles();
+        boolean magazineRenewal = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
+        if (!magazineRenewal) {
+            getLandingCachedArticles();
+        } else {
+            YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet));
+        }
     }
 
 
@@ -603,6 +623,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             } else {
                 //flipContainer.setVisibility(View.GONE);
                 //llNoArticles.setVisibility(View.VISIBLE);
+
                 loadArticles(null, false);
             }
         }

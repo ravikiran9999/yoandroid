@@ -304,8 +304,9 @@ public class YODialogs {
 
     public static void addBalance(final Context context, String description) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
         builder.setMessage(description);
-        builder.setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getResources().getString(R.string.add), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -322,6 +323,9 @@ public class YODialogs {
             }
         });
         builder.setCancelable(false);
-        builder.show();
+        AlertDialog alertDialog = builder.create();
+        if (!alertDialog.isShowing()) {
+            alertDialog.show();
+        }
     }
 }

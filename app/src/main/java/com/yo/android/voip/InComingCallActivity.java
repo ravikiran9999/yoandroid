@@ -26,6 +26,7 @@ import com.google.common.eventbus.Subscribe;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.WebserviceUsecase;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
@@ -88,21 +89,22 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
     @Inject
     protected BalanceHelper mBalanceHelper;
-
     @Inject
     ConnectivityHelper mHelper;
-
-    private static final int KEEP_ON_HOLD = 100;
-    private static final int KEEP_ON_HOLD_RESUME = 101;
-
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
-
-    private boolean selfReject;
-
     @Inject
     ContactsSyncManager mContactsSyncManager;
+    @Inject
+    WebserviceUsecase webserviceUsecase;
+
+
+    private static final int KEEP_ON_HOLD = 100;
+    private static final int KEEP_ON_HOLD_RESUME = 101;
+    private boolean selfReject;
+
+
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {

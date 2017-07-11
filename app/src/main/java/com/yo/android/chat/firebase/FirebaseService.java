@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.ImageLoader;
 import com.yo.android.chat.notification.localnotificationsbuilder.GeneratePictureStyleNotification;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
@@ -39,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -47,6 +49,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FirebaseService extends InjectedService {
 
@@ -70,14 +75,15 @@ public class FirebaseService extends InjectedService {
     ContactsSyncManager mContactsSyncManager;
     @Inject
     FireBaseHelper fireBaseHelper;
+    @Inject
+    YoApi.YoService yoService;
+    @Inject
+    @Named("login")
+    PreferenceEndPoint loginPrefs;
 
     private boolean isRunning = false;
     private int initRoomCount;
     private int count;
-
-    @Inject
-    @Named("login")
-    PreferenceEndPoint loginPrefs;
 
 
     @Override
@@ -262,7 +268,7 @@ public class FirebaseService extends InjectedService {
                 } else if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
                     data.setDescription(Constants.PHOTO);
                 }
-                if(chatMessage.getRoomName() != null) {
+                if (chatMessage.getRoomName() != null) {
                     data.setSenderName(chatMessage.getRoomName());
                 } else {
                     String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(chatMessage.getSenderID());

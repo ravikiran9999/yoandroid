@@ -94,6 +94,19 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     @Bind(R.id.no_search_results)
     protected TextView noSearchResult;
 
+    @Inject
+    ConnectivityHelper mConnectivityHelper;
+    @Inject
+    BalanceHelper mBalanceHelper;
+    @Inject
+    @Named("voip_support")
+    boolean isVoipSupported;
+    @Inject
+    protected YoApi.YoService yoService;
+
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
+
     private MenuItem searchMenuItem;
     private SearchView searchView;
     private static final String TAG = "DialerFragment";
@@ -103,24 +116,13 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     //private ImageView btnDialer;
 
     private View bottom_layout;
-
     private boolean show;
-    @Inject
-    ConnectivityHelper mConnectivityHelper;
-    @Inject
-    BalanceHelper mBalanceHelper;
-    @Inject
-    @Named("voip_support")
-    boolean isVoipSupported;
+
     private Menu menu;
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> appCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> paidCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> results = new ArrayList<>();
-    @Inject
-    protected YoApi.YoService yoService;
 
-    @Inject
-    ContactsSyncManager mContactsSyncManager;
 
     public boolean isFromDailer = false;
     private boolean isAlreadyShown;
@@ -272,12 +274,17 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     @Override
     public void onResume() {
         super.onResume();
+        boolean dialerLock = preferenceEndPoint.getBooleanPreference(Constants.DIALER_LOCK, false);
         //getActivity().invalidateOptionsMenu();
-        if(searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
+        if (searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
             searchView.setQuery(searchView.getQuery(), false);
         } else {
-            loadCallLogs();
-            refreshCallLogsIfNotUpdated();
+            if (!dialerLock) {
+                loadCallLogs();
+                refreshCallLogsIfNotUpdated();
+            } else {
+                showEmptyText();
+            }
         }
     }
 
@@ -299,7 +306,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         appCalls.clear();
         paidCalls.clear();
         FragmentActivity activity = getActivity();
-        if(activity !=null) {
+        if (activity != null) {
             appCalls = CallLog.Calls.getAppToAppCallLog(activity);
             paidCalls = CallLog.Calls.getPSTNCallLog(activity);
             showEmptyText();
@@ -404,8 +411,9 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     }
                 });
             }
-        } else if(action.equals(Constants.BALANCE_RECHARGE_ACTION)) {
+        } else if (action.equals(Constants.BALANCE_RECHARGE_ACTION)) {
             showRechargeDialog();
+
         }
     }
 
@@ -537,4 +545,16 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
             });
         }
     }
+
+    public void loadData() {
+        boolean dialerLock = preferenceEndPoint.getBooleanPreference(Constants.DIALER_LOCK, false);
+        if (!dialerLock) {
+            loadCallLogs();
+            refreshCallLogsIfNotUpdated();
+        } else {
+            showRechargeDialog();
+            listView.setVisibility(View.GONE);
+        }
+    }
+
 }

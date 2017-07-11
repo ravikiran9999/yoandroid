@@ -26,6 +26,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.WebserviceUsecase;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.Helper;
@@ -98,6 +99,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
     @Inject
     ConnectivityHelper mHelper;
+
+    @Inject
+    WebserviceUsecase webserviceUsecase;
 
     public static final int OPEN_ADD_BALANCE_RESULT = 1000;
 

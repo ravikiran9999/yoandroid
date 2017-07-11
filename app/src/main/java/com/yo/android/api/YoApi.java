@@ -7,6 +7,7 @@ import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
 import com.yo.android.model.LandingArticles;
+import com.yo.android.model.Lock;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.Notification;
 import com.yo.android.model.OTPResponse;
@@ -322,6 +323,11 @@ public class YoApi {
 
         @GET("api/categories.json")
         Call<List<Categories>> categoriesAPI(@Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/user/user_magzines_info.json")
+        Call<Lock> lockAPI(@Field("access_token") String access_token);
+
     }
 
     public interface YoRefreshTokenService {

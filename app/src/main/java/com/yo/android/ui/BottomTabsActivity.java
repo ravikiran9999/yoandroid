@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.yo.android.R;
+import com.yo.android.WebserviceUsecase;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -98,14 +99,17 @@ public class BottomTabsActivity extends BaseActivity {
     private List<TabsData> dataList;
     @Inject
     BalanceHelper balanceHelper;
-    TabsPagerAdapter mAdapter;
-    public CustomViewPager viewPager;
     @Inject
     ContactsSyncManager contactsSyncManager;
     @Inject
     MyServiceConnection myServiceConnection;
     @Inject
     ContactSyncHelper mContactSyncHelper;
+    @Inject
+    WebserviceUsecase webserviceUsecase;
+
+    TabsPagerAdapter mAdapter;
+    public CustomViewPager viewPager;
     private Button notificationCount;
     private ImageView notificationEnable;
     private ViewGroup customActionBar;
@@ -188,6 +192,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
 
         preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, true);
+        preferenceEndPoint.saveBooleanPreference(Constants.LAUNCH_APP, true);
 
         viewPager = (CustomViewPager) findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
@@ -251,13 +256,19 @@ public class BottomTabsActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
 
-                if (position == 0 && getFragment() instanceof MagazinesFragment) {
-                    Log.d(TAG, "onPageSelected In update() BottomTabsActivity");
-
-                    MagazineDashboardHelper.request = 1;
-                    ((MagazinesFragment) getFragment()).removeReadArticles();
-                    //((MagazinesFragment) getFragment()).update();
-                    MagazineFlipArticlesFragment.currentFlippedPosition = 0;
+                switch (position) {
+                    case 0:
+                        if(getFragment() instanceof MagazinesFragment) {
+                            MagazineDashboardHelper.request = 1;
+                            ((MagazinesFragment) getFragment()).removeReadArticles();
+                            ((MagazinesFragment) getFragment()).update();
+                            MagazineFlipArticlesFragment.currentFlippedPosition = 0;
+                        }
+                        break;
+                    case 2:
+                        if(getFragment() instanceof DialerFragment) {
+                            ((DialerFragment) getFragment()).loadData();
+                        }
                 }
 
             }
@@ -712,6 +723,8 @@ public class BottomTabsActivity extends BaseActivity {
 
         Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
         startService(intent);
+
+        webserviceUsecase.appStatus();
 
         if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) == 0) {
             notificationCount.setVisibility(View.GONE);

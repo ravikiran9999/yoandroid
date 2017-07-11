@@ -150,6 +150,7 @@ public class Constants {
 
     public static final String NOTIFICATION_COUNT = "notification_count";
     public static final String IS_IN_APP = "isInApp";
+    public static final String LAUNCH_APP = "launchApp";
     public static final String POPUP_NOTIFICATION = "popupNotification";
 
     public static final String ID = "id";
@@ -179,4 +180,8 @@ public class Constants {
     public static final String W_BALANCE = "WalletBalance";
     public static final String LOW_BALANCE_NOTIFICATION_TIME = "low_bal_time";
     public static final long LOW_BALANCE_NOTIFICATION_FREQUENCY = 24 * 60 * 60 * 1000;
+
+    public static final String MAGAZINE_LOCK = "magazine_lock";
+    public static final String DIALER_LOCK = "dialer_lock";
+    public static final String APP_LOCK = "app_lock";
 }

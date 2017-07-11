@@ -32,6 +32,7 @@ import com.yo.android.adapters.MagazinesTabHeaderAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.FindPeople;
 import com.yo.android.util.Constants;
+import com.yo.android.util.YODialogs;
 import com.yo.android.widgets.ScrollTabHolder;
 import com.yo.android.util.Util;
 
@@ -46,7 +47,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FindPeopleActivity extends BaseActivity {
+public class FindPeopleActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
 
     /*@Bind(R.id.toolbar)
@@ -92,7 +93,7 @@ public class FindPeopleActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         initToolbar();
-         // Todo uncomment while implementing tabs
+        // Todo uncomment while implementing tabs
         /*setupTabPager();
         TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -107,26 +108,7 @@ public class FindPeopleActivity extends BaseActivity {
         imvEmptyFindPeople.setImageResource(R.drawable.ic_empty_find_people);
         originalList = new ArrayList<>();
         //swipeRefreshContainer.setOnRefreshListener(this);
-        lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                pos = position;
-                if(findPeopleAdapter.getCount() > position) {
-                    FindPeople item = findPeopleAdapter.getItem(position);
-                    if(item != null) {
-                        Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
-                        otherProfileIntent.putExtra(Constants.USER_ID, item.getId());
-                        otherProfileIntent.putExtra("PersonName", item.getFirst_name() + " " + item.getLast_name());
-                        otherProfileIntent.putExtra("PersonPic", item.getAvatar());
-                        otherProfileIntent.putExtra("PersonIsFollowing", item.getIsFollowing());
-                        otherProfileIntent.putExtra("MagazinesCount", item.getMagzinesCount());
-                        otherProfileIntent.putExtra("FollowersCount", item.getFollowersCount());
-                        otherProfileIntent.putExtra("LikedArticlesCount", item.getLikedArticlesCount());
-                        startActivityForResult(otherProfileIntent, 8);
-                    }
-                }
-            }
-        });
+        lvFindPeople.setOnItemClickListener(this);
     }
 
     private void initToolbar() {
@@ -150,7 +132,7 @@ public class FindPeopleActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(searchView != null) {
+        if (searchView != null) {
             if (searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                 pageCount = 1;
                 callFindPeopleService(null);
@@ -232,7 +214,7 @@ public class FindPeopleActivity extends BaseActivity {
                 int threshold = 1;
                 int count = lvFindPeople.getCount();
                 if (scrollState == SCROLL_STATE_IDLE) {
-                    if (isMoreLoading==false && lvFindPeople.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
+                    if (isMoreLoading == false && lvFindPeople.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                         doPagination();
                     }
                 }
@@ -406,7 +388,7 @@ public class FindPeopleActivity extends BaseActivity {
         findPeopleAdapter.clearAll();
         findPeopleAdapter.addItemsAll(originalList);
         lvFindPeople.setVisibility(View.VISIBLE);
-        if(originalList.size()> 0) {
+        if (originalList.size() > 0) {
             noData.setVisibility(View.GONE);
             llNoPeople.setVisibility(View.GONE);
             networkFailureText.setVisibility(View.GONE);
@@ -416,5 +398,29 @@ public class FindPeopleActivity extends BaseActivity {
     //@Override
     public void onRefresh() {
         //callFindPeopleService(swipeRefreshContainer);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
+        if (renewalStatus) {
+            pos = position;
+            if (findPeopleAdapter.getCount() > position) {
+                FindPeople item = findPeopleAdapter.getItem(position);
+                if (item != null) {
+                    Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
+                    otherProfileIntent.putExtra(Constants.USER_ID, item.getId());
+                    otherProfileIntent.putExtra("PersonName", item.getFirst_name() + " " + item.getLast_name());
+                    otherProfileIntent.putExtra("PersonPic", item.getAvatar());
+                    otherProfileIntent.putExtra("PersonIsFollowing", item.getIsFollowing());
+                    otherProfileIntent.putExtra("MagazinesCount", item.getMagzinesCount());
+                    otherProfileIntent.putExtra("FollowersCount", item.getFollowersCount());
+                    otherProfileIntent.putExtra("LikedArticlesCount", item.getLikedArticlesCount());
+                    startActivityForResult(otherProfileIntent, 8);
+                }
+            }
+        } else {
+            YODialogs.renewMagazine(this, null, getString(R.string.renewal_message), preferenceEndPoint);
+        }
     }
 }

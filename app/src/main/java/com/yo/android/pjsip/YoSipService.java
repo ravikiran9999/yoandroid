@@ -33,6 +33,7 @@ import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.WebserviceUsecase;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.calllogs.CallerInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -97,6 +98,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     Log mLog;
     @Inject
     ToastFactory mToastFactory;
+    @Inject
+    WebserviceUsecase webserviceUsecase;
     public static MyCall currentCall = null;
     public static String outgoingCallUri;
     private SipCallState sipCallState;
@@ -1184,7 +1187,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public void hangUp() {
         CallOpParam param = new CallOpParam();
         param.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
-
+        webserviceUsecase.appStatus();
         try {
             if (currentCall != null) {
                 currentCall.hangup(param);

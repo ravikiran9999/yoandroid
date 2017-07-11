@@ -34,6 +34,7 @@ import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.util.YODialogs;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.vox.BalanceHelper;
 
@@ -296,58 +297,64 @@ public class NewDailerActivity extends BaseActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Need to improve logic for PSTN calls
-                //Begin Normalizing PSTN number
-                String temp = dialPadView.getDigits().getText().toString().trim();
 
-                String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
-                boolean prefixrequired;
-                String number;
-                if (temp.startsWith("+")) {
-                    prefixrequired = false;
-                    number = temp;
-                } else if (temp.startsWith("00")) {
-                    prefixrequired = false;
-                    number = temp;
-                } else if (!TextUtils.isEmpty(cPrefix)) {
-                    number = cPrefix + temp;
-                } else {
-                    number = temp;
-                }
-                String displayNumber = number;
-                SipHelper.init(displayNumber);
-                number = number.replace(" ", "").replace("+", "");
-                try {
-                    number = Long.valueOf(number).toString();
-                } catch (NumberFormatException e) {
-                    mToastFactory.showToast("Please enter valid number.");
-                    return;
-                }
-                if (cPrefix != null) {
-                    cPrefix = cPrefix.replace("+", "");
-                }
-                String voxUserName = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME);
-                mLog.i(TAG, "Dialing number after normalized: " + number);
-                //End Normalizing PSTN number
-                if (!mConnectivityHelper.isConnected()) {
-                    mToastFactory.showToast(getString(R.string.connectivity_network_settings));
-                } else if (number.length() == 0) {
-                    mToastFactory.showToast("Please enter number.");
-                } else if (!voxUserName.contains(number)) {
-                    SipHelper.makeCall(NewDailerActivity.this, number, true);
-                    finish();
-                } else {
-                    String stringExtra = voxUserName;
-                    String onlyNumber = "";
+                boolean dialerLock = preferenceEndPoint.getBooleanPreference(Constants.DIALER_LOCK, false);
+                if (!dialerLock) {
+                    //TODO: Need to improve logic for PSTN calls
+                    //Begin Normalizing PSTN number
+                    String temp = dialPadView.getDigits().getText().toString().trim();
+
+                    String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
+                    boolean prefixrequired;
+                    String number;
+                    if (temp.startsWith("+")) {
+                        prefixrequired = false;
+                        number = temp;
+                    } else if (temp.startsWith("00")) {
+                        prefixrequired = false;
+                        number = temp;
+                    } else if (!TextUtils.isEmpty(cPrefix)) {
+                        number = cPrefix + temp;
+                    } else {
+                        number = temp;
+                    }
+                    String displayNumber = number;
+                    SipHelper.init(displayNumber);
+                    number = number.replace(" ", "").replace("+", "");
                     try {
-                        stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
-                        onlyNumber = stringExtra;
-                    } catch (StringIndexOutOfBoundsException e) {
-                        mLog.e(TAG, "" + e);
+                        number = Long.valueOf(number).toString();
+                    } catch (NumberFormatException e) {
+                        mToastFactory.showToast("Please enter valid number.");
+                        return;
                     }
-                    if (onlyNumber.equals(number)) {
-                        alertMessage(R.string.self_number);
+                    if (cPrefix != null) {
+                        cPrefix = cPrefix.replace("+", "");
                     }
+                    String voxUserName = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME);
+                    mLog.i(TAG, "Dialing number after normalized: " + number);
+                    //End Normalizing PSTN number
+                    if (!mConnectivityHelper.isConnected()) {
+                        mToastFactory.showToast(getString(R.string.connectivity_network_settings));
+                    } else if (number.length() == 0) {
+                        mToastFactory.showToast("Please enter number.");
+                    } else if (!voxUserName.contains(number)) {
+                        SipHelper.makeCall(NewDailerActivity.this, number, true);
+                        finish();
+                    } else {
+                        String stringExtra = voxUserName;
+                        String onlyNumber = "";
+                        try {
+                            stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
+                            onlyNumber = stringExtra;
+                        } catch (StringIndexOutOfBoundsException e) {
+                            mLog.e(TAG, "" + e);
+                        }
+                        if (onlyNumber.equals(number)) {
+                            alertMessage(R.string.self_number);
+                        }
+                    }
+                } else {
+                    YODialogs.addBalance(NewDailerActivity.this, getString(R.string.no_sufficient_bal_wallet));
                 }
             }
         };

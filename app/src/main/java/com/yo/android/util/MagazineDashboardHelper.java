@@ -29,9 +29,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by creatives on 12/8/2016.
- */
 public class MagazineDashboardHelper {
 
     public static int currentReadArticles;
@@ -87,7 +84,7 @@ public class MagazineDashboardHelper {
 
     }
 
-    public List<Articles> removeReadIds(List<Articles> totalArticles, Context context, final PreferenceEndPoint preferenceEndPoint) {
+    private List<Articles> removeReadIds(List<Articles> totalArticles, Context context, final PreferenceEndPoint preferenceEndPoint) {
         List<Articles> tempArticlesList = new ArrayList<>(totalArticles);
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         if (context != null) {
@@ -303,6 +300,7 @@ public class MagazineDashboardHelper {
                     if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {
                         YODialogs.addBalance(activity, activity.getString(R.string.no_sufficient_bal_wallet));
                     }
+                    magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
                     break;
                 default:
                     if (magazineFlipArticlesFragment.mProgress != null) {
