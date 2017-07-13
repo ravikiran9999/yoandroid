@@ -99,7 +99,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     @Inject
     ToastFactory mToastFactory;
     @Inject
-    WebserviceUsecase webserviceUsecase;
+    public WebserviceUsecase webserviceUsecase;
     public static MyCall currentCall = null;
     public static String outgoingCallUri;
     private SipCallState sipCallState;
@@ -1187,7 +1187,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     public void hangUp() {
         CallOpParam param = new CallOpParam();
         param.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
-        webserviceUsecase.appStatus();
+        webserviceUsecase.appStatus(null);
         try {
             if (currentCall != null) {
                 currentCall.hangup(param);

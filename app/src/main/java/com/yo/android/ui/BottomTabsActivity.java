@@ -38,6 +38,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.yo.android.R;
 import com.yo.android.WebserviceUsecase;
 import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.firebase.FirebaseService;
@@ -52,6 +53,7 @@ import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.Articles;
 import com.yo.android.model.FindPeople;
+import com.yo.android.model.Lock;
 import com.yo.android.model.NotificationCount;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.SipBinder;
@@ -168,8 +170,9 @@ public class BottomTabsActivity extends BaseActivity {
         activity = this;
         mContext = getApplicationContext();
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO,
+
+        if (ContextCompat.checkSelfPermission(BottomTabsActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(BottomTabsActivity.this, new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.GET_ACCOUNTS,
                     Manifest.permission.READ_PHONE_STATE,
@@ -258,7 +261,7 @@ public class BottomTabsActivity extends BaseActivity {
 
                 switch (position) {
                     case 0:
-                        if(getFragment() instanceof MagazinesFragment) {
+                        if (getFragment() instanceof MagazinesFragment) {
                             MagazineDashboardHelper.request = 1;
                             ((MagazinesFragment) getFragment()).removeReadArticles();
                             ((MagazinesFragment) getFragment()).update();
@@ -266,7 +269,7 @@ public class BottomTabsActivity extends BaseActivity {
                         }
                         break;
                     case 2:
-                        if(getFragment() instanceof DialerFragment) {
+                        if (getFragment() instanceof DialerFragment) {
                             ((DialerFragment) getFragment()).loadData();
                         }
                 }
@@ -300,11 +303,11 @@ public class BottomTabsActivity extends BaseActivity {
         loadUserProfileInfo();
         updateDeviceToken();
         //contactsSyncManager.syncContacts();
-        SyncUtils.createSyncAccount(this, preferenceEndPoint);
+        SyncUtils.createSyncAccount(BottomTabsActivity.this, preferenceEndPoint);
         mContactSyncHelper.init();
         mContactSyncHelper.checkContacts();
 
-        bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
+        bindService(new Intent(BottomTabsActivity.this, YoSipService.class), connection, BIND_AUTO_CREATE);
         EventBus.getDefault().register(this);
         List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
 
@@ -347,7 +350,7 @@ public class BottomTabsActivity extends BaseActivity {
                     });
 
                 } else if ("Topic".equals(tag)) {
-                    Intent intent = new Intent(this, MyCollectionDetails.class);
+                    Intent intent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Tag");
@@ -377,21 +380,21 @@ public class BottomTabsActivity extends BaseActivity {
                     });
 
                 } else if ("Magzine".equals(tag)) {
-                    Intent intent = new Intent(this, MyCollectionDetails.class);
+                    Intent intent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Magzine");
                     startActivity(intent);
                     finish();
                 } else if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
-                    startActivity(new Intent(this, TabsHeaderActivity.class));
+                    startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
                     finish();
                 } else if ("Broadcast".equals(tag) || "Tip".equals(tag) || "PriceUpdate".equals(tag)) {
                     if (redirectId.equals("AddFriends")) {
-                        startActivity(new Intent(this, InviteActivity.class));
+                        startActivity(new Intent(BottomTabsActivity.this, InviteActivity.class));
                         finish();
                     } else if (redirectId.equals("AddBalance")) {
-                        startActivity(new Intent(this, TabsHeaderActivity.class));
+                        startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
                         finish();
                     }
 
@@ -403,7 +406,7 @@ public class BottomTabsActivity extends BaseActivity {
         } else {
             if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
 
-                startActivity(new Intent(this, TabsHeaderActivity.class));
+                startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
                 finish();
             }
         }
@@ -414,6 +417,7 @@ public class BottomTabsActivity extends BaseActivity {
                 viewPager.setCurrentItem(2);
             }
         }
+
     }
 
     private void clearNotifications() {
@@ -444,14 +448,6 @@ public class BottomTabsActivity extends BaseActivity {
                 }
             }
         }
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(connection);
-        EventBus.getDefault().unregister(this);
     }
 
 
@@ -623,6 +619,7 @@ public class BottomTabsActivity extends BaseActivity {
         public Drawable getDrawable() {
             return drawable;
         }
+
     }
 
     private void loadUserProfileInfo() {
@@ -724,8 +721,6 @@ public class BottomTabsActivity extends BaseActivity {
         Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
         startService(intent);
 
-        webserviceUsecase.appStatus();
-
         if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) == 0) {
             notificationCount.setVisibility(View.GONE);
         } else if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) > 0) {
@@ -751,4 +746,12 @@ public class BottomTabsActivity extends BaseActivity {
     public static Context getAppContext() {
         return BottomTabsActivity.mContext;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(connection);
+        EventBus.getDefault().unregister(this);
+    }
+
 }

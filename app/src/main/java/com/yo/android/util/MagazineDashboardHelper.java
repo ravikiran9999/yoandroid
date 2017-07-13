@@ -199,7 +199,7 @@ public class MagazineDashboardHelper {
         }
     }
 
-    public void getDashboardArticlesForDailyService(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final List<Articles> unreadOtherFollowedArticles) {
+    public void getDashboardArticlesForDailyService(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds) {
         if (magazineFlipArticlesFragment != null) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);

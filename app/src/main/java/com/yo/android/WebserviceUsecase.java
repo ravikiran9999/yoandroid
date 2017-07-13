@@ -3,6 +3,7 @@ package com.yo.android;
 import android.util.Log;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Lock;
 import com.yo.android.util.Constants;
@@ -26,10 +27,9 @@ public class WebserviceUsecase {
     @Named("login")
     PreferenceEndPoint loginPrefs;
 
-    public void appStatus() {
+    public void appStatus(final ApiCallback<Lock> lockApiCallback) {
         String accessToken = loginPrefs.getStringPreference("access_token");
         Call<Lock> call = yoService.lockAPI(accessToken);
-        Log.d("WebserviceUsecase", "call");
         call.enqueue(new Callback<Lock>() {
             @Override
             public void onResponse(Call<Lock> call, Response<Lock> response) {
@@ -37,6 +37,10 @@ public class WebserviceUsecase {
                     loginPrefs.saveBooleanPreference(Constants.MAGAZINE_LOCK, response.body().getData().isIsMagzineLocked());
                     loginPrefs.saveBooleanPreference(Constants.DIALER_LOCK, response.body().getData().isIsDailerLocked());
                     loginPrefs.saveBooleanPreference(Constants.APP_LOCK, response.body().getData().isIsAppLocked());
+                    loginPrefs.saveBooleanPreference(Constants.RENEWAL, response.body().getData().isIsAutorenewalDone());
+                    if (lockApiCallback != null) {
+                        lockApiCallback.onResult(response.body());
+                    }
                 }
             }
 

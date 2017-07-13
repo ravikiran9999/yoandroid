@@ -638,9 +638,9 @@ public class Util {
                     target.setPackage(candidate.activityInfo.packageName);
                     targets.add(target);
 
-                } else if (packageName.equals("com.yo.android")) {
+                } /*else if (packageName.equals("com.yo.android")) {
                     // Hiding Yo app to show in share view
-                } else {
+                }*/ else {
                     Intent target = new Intent(android.content.Intent.ACTION_SEND);
                     target.setType("image/*");
                     target.putExtra(Intent.EXTRA_SUBJECT, title);

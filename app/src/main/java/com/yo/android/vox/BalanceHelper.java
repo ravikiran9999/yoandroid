@@ -152,7 +152,7 @@ public class BalanceHelper {
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
                             prefs.saveStringPreference(Constants.SWITCH_BALANCE, mSwitchBalance);
                             prefs.saveStringPreference(Constants.WALLET_BALANCE, mWalletBalance);
-                            webserviceUsecase.appStatus();
+                            webserviceUsecase.appStatus(null);
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
