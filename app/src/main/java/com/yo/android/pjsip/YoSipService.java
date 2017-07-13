@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.media.ToneGenerator;
+import android.net.Proxy;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -633,25 +634,31 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
         accCfg.getNatConfig().setIceEnabled(true);
              /* Enable ICE/TURN */
+
+
+       /* url: 'turn:ubuntu@34.230.108.83:3478',
+                credential: 'root'*/
+
+
         accCfg.getNatConfig().setTurnEnabled(true);
-        accCfg.getNatConfig().setTurnServer("turn.pjsip.org:33478");
-        accCfg.getNatConfig().setTurnUserName("abzlute01");
-        accCfg.getNatConfig().setTurnPasswordType(0);
-        accCfg.getNatConfig().setTurnPassword("abzlute01");
+        //accCfg.getNatConfig().setTurnServer("turn.34.230.108.83:3478");
+        //accCfg.getNatConfig().setTurnUserName("ubuntu");
+        //accCfg.getNatConfig().setTurnPasswordType(0);
+        //accCfg.getNatConfig().setTurnPassword("root");
         android.util.Log.d(TAG, msg + " Setting TURN server");
         return myApp.addAcc(accCfg);
     }
 
     private String addAccount(boolean isPSTN, String number) {
-        String username = "867";//preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
-        String password = "pw867"; //preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
+        String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
+        String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
 
 
         SipProfile sipProfile = new SipProfile.Builder()
                 .withUserName(username == null ? "" : username)
                 .withPassword(password)
-                // .withServer("173.82.147.172")
-                .withServer("pjsip.org")
+                .withServer("173.82.147.172")
+                // .withServer("pjsip.org")
                 .build();
         return addAccount(sipProfile, isPSTN, number);
 
@@ -664,18 +671,17 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             String displayname;
             //startStack();
             String usernameDisplayName = sipProfile.getUsername();
-            displayname = usernameDisplayName;
 
-            /*if (isPSTN) {
+            if (isPSTN) {
                 displayname = usernameDisplayName.substring(usernameDisplayName.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, usernameDisplayName.length() - 1);
                 // if local number dont add country code
                 //String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
                 //displayname = countryCode + displayname;
             } else {
                 displayname = usernameDisplayName;
-            }*/
+            }
             id = String.format("\"%s\"<sip:%s@%s>", displayname, usernameDisplayName, sipProfile.getDomain());
-
+            mLog.w(TAG, "SIP ID "+id);
             myAccount = buildAccount(id, "Start");
             // this is for sip to sip should send sip  number as displayname otherwise phone number need to parse from sip number
 
@@ -689,11 +695,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void updateUserDetails(SipProfile sipProfile, String usernameDisplayName, String displayname) {
         String id = String.format("\"%s\"<sip:%s@%s>", displayname, usernameDisplayName, sipProfile.getDomain());
-        //  String registrar = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
-        String registrar = String.format("sip:%s:%s", "pjsip.org", 5060);
+        String registrar = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
+        //String registrar = String.format("sip:%s:%s", "pjsip.org", 5060);
 
-        // String proxy = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
-        String proxy = String.format("sip:%s:%s", "pjsip.org", 5060);
+        String proxy = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
+        //String proxy = String.format("sip:%s:%s", "pjsip.org", 5060);
         String username = usernameDisplayName;
         String password = sipProfile.getPassword();
         if (myAccount != null) {
@@ -720,15 +726,21 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                                String username, String password) {
 
         accCfg.setIdUri(acc_id);
+        mLog.w(TAG, "username and password "+username+"==="+password);
+
         accCfg.getRegConfig().setRegistrarUri(registrar);
         AuthCredInfoVector creds = accCfg.getSipConfig().getAuthCreds();
         creds.clear();
         if (username != null && !username.isEmpty() && username.length() != 0) {
+
             creds.add(new AuthCredInfo("Digest", "*", username, 0, password));
         }
-        //  StringVector proxies = accCfg.getSipConfig().getProxies();
-        StringVector proxies = new StringVector();
-        proxies.add("sip:sip.pjsip.org;transport=tcp");
+        StringVector proxies = accCfg.getSipConfig().getProxies();
+        // above code is giving proxies size is 0
+
+
+       /* StringVector proxies = new StringVector();
+        proxies.add("sip:173.82.147.172:5060;transport=tcp");*/
         accCfg.getSipConfig().setProxies(proxies);
         proxies.clear();
         if (proxy.length() != 0) {
@@ -745,8 +757,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (destination != null && !destination.startsWith("sip:")) {
             destination = "sip:" + destination;
         }
-        // String finalUri = String.format("%s@%s", destination, getDomain());
-        String finalUri = String.format("%s", "sip:866@pjsip.org");
+        String finalUri = String.format("%s@%s", destination, getDomain());
+        // String finalUri = String.format("%s", "sip:866@pjsip.org");
         mLog.e(TAG, "Final uri to make a call " + finalUri);
         outgoingCallUri = finalUri;
         /* Only one call at anytime */
@@ -771,6 +783,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 call.makeCall(finalUri, prm);
                 isOnGoingCall = true;
             } catch (Exception e) {
+                e.printStackTrace();
                 mLog.w(TAG, "Exception making call " + e.getMessage());
                 isCallDeleted = true;
                 call.delete();

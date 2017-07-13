@@ -63,7 +63,7 @@ public class NetWorkModule {
 
     private <T> T buildAdapter(String baseUrl, Class<T> clazz, OkHttpClient.Builder builder, ConnectivityHelper connectivityHelper) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         //
         OkHttpClient defaultHttpClient = builder

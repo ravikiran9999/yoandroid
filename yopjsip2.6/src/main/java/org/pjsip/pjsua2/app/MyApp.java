@@ -261,7 +261,7 @@ class MyAccountConfig {
 }
 
 
-class MyApp {
+public class MyApp {
     static {
         try {
             System.loadLibrary("openh264");

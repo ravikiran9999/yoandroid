@@ -1,0 +1,9 @@
+  // if local number dont add country code
+  //String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
+  //displayname = countryCode + displayname;
+
+
+
+  ========================
+
+

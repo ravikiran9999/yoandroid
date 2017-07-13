@@ -6,7 +6,7 @@ import org.pjsip.pjsua2.BuddyInfo;
 import org.pjsip.pjsua2.pjsip_evsub_state;
 import org.pjsip.pjsua2.pjsua_buddy_status;
 
-class MyBuddy extends Buddy {
+public class MyBuddy extends Buddy {
     public BuddyConfig cfg;
 
     MyBuddy(BuddyConfig config) {

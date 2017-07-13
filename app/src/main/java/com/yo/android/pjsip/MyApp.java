@@ -24,7 +24,7 @@ import org.pjsip.pjsua2.pjsip_transport_type_e;
 import java.io.File;
 import java.util.ArrayList;
 
-class MyApp {
+public class MyApp {
 
 
     private static final String TAG = MyApp.class.getSimpleName();
@@ -113,10 +113,10 @@ class MyApp {
 		/* Set ua config. */
         UaConfig ua_cfg = epConfig.getUaConfig();
         ua_cfg.setUserAgent("Pjsua2 Android " + mEndpoint.libVersion().getFull());
-        StringVector stun_servers = new StringVector();
-        stun_servers.add("34.230.108.83:3478");
+        // StringVector stun_servers = new StringVector();
+        // stun_servers.add("34.230.108.83:3478");
         //stun_servers.add("stun.pjsip.org");
-        ua_cfg.setStunServer(stun_servers);
+        // ua_cfg.setStunServer(stun_servers);
         if (own_worker_thread) {
             ua_cfg.setThreadCnt(0);
             ua_cfg.setMainThreadOnly(true);
@@ -146,7 +146,7 @@ class MyApp {
         try {
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
-        } catch(Exception e) {
+        } catch (Exception e) {
 
         }
 
@@ -157,11 +157,11 @@ class MyApp {
             mEndpoint.codecSetPriority("*", (short) 0);
             mEndpoint.codecSetPriority("PCMA/8000", (short) 1);
             mEndpoint.codecSetPriority("PCMU/8000", (short) 1);
-           // mEndpoint.codecSetPriority("G722/8000", (short) 1);
-          //  mEndpoint.codecSetPriority("G711/8000", (short) 1);
+            // mEndpoint.codecSetPriority("G722/8000", (short) 1);
+            //  mEndpoint.codecSetPriority("G711/8000", (short) 1);
             mEndpoint.audDevManager().setOutputVolume(60);
             //Disabling VAD to get around NAT
-          //  mEndpoint.audDevManager().setVad(false);
+            //  mEndpoint.audDevManager().setVad(false);
             Log.e(TAG, "SIP STATCK STARTED");
         } catch (Exception e) {
             return;

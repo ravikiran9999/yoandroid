@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.api.YoApi;
@@ -69,6 +70,8 @@ import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
+import com.yo.dialer.NewDialerFragment;
+import com.yo.services.BackgroundServices;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -194,7 +197,11 @@ public class BottomTabsActivity extends BaseActivity {
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);
         mAdapter.addFragment(new ChatFragment(), null);
-        mAdapter.addFragment(new DialerFragment(), null);
+        if (BuildConfig.NEW_DIALER) {
+            mAdapter.addFragment(new NewDialerFragment(), null);
+        } else {
+            mAdapter.addFragment(new DialerFragment(), null);
+        }
         mAdapter.addFragment(new ContactsFragment(), null);
         mAdapter.addFragment(new MoreFragment(), null);
         viewPager.setOffscreenPageLimit(3);

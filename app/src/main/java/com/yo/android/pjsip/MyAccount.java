@@ -9,7 +9,7 @@ import org.pjsip.pjsua2.OnRegStateParam;
 
 import java.util.ArrayList;
 
-class MyAccount extends Account {
+public  class MyAccount extends Account {
     public ArrayList<MyBuddy> buddyList = new ArrayList<MyBuddy>();
     public AccountConfig cfg;
 

@@ -33,6 +33,7 @@ android {
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
         buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
         buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
+        buildConfigField "boolean", "NEW_DIALER", "true"
         multiDexEnabled true
     }
     productFlavors {
