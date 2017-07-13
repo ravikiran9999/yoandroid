@@ -21,7 +21,9 @@ import com.yo.android.R;
 import com.yo.android.adapters.MyCollectionsAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Collections;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.util.YODialogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,6 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     private boolean contextualMenu;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,23 +74,26 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         myCollectionsAdapter = new MyCollectionsAdapter(MyCollections.this);
 
         myCollections(null);
+
+
         swipeRefreshContainer.setOnRefreshListener(this);
         gridView.setOnItemLongClickListener(this);
         gridView.setOnItemClickListener(this);
     }
 
-    private void myCollections(final SwipeRefreshLayout swipeRefreshContainer) {
-        if(swipeRefreshContainer != null) {
+    public void myCollections(final SwipeRefreshLayout swipeRefreshContainer) {
+        if (swipeRefreshContainer != null) {
             swipeRefreshContainer.setRefreshing(false);
         } else {
             showProgressDialog();
         }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        //Todo pass renewal status
         yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
             @Override
             public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
 
-                if(swipeRefreshContainer != null) {
+                if (swipeRefreshContainer != null) {
                     swipeRefreshContainer.setRefreshing(false);
                 } else {
                     dismissProgressDialog();
@@ -110,7 +114,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
             @Override
             public void onFailure(Call<List<Collections>> call, Throwable t) {
-                if(swipeRefreshContainer != null) {
+                if (swipeRefreshContainer != null) {
                     swipeRefreshContainer.setRefreshing(false);
                 } else {
                     dismissProgressDialog();

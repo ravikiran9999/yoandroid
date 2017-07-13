@@ -3,24 +3,30 @@ package com.yo.android.voip;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.format.DateUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.WebserviceUsecase;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.Helper;
@@ -33,6 +39,7 @@ import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.ErrorCode;
+import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import org.pjsip.pjsua2.CallInfo;
@@ -76,11 +83,12 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
     boolean running;
     private String mobile;
     private ImageView callerImageView;
-
-    private SipBinder sipBinder;
-
     private TextView callDurationTextView;
     private int networkCheck;
+
+    private SeekBar seekBar;
+    private SipBinder sipBinder;
+
 
     @Inject
     protected BalanceHelper mBalanceHelper;
@@ -91,6 +99,9 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
     @Inject
     ConnectivityHelper mHelper;
+
+    @Inject
+    WebserviceUsecase webserviceUsecase;
 
     public static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
@@ -142,6 +153,11 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         initViews();
+
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        Util.initBar(seekBar, audioManager, AudioManager.STREAM_VOICE_CALL);
+
+
         callModel = new SipCallModel();
         Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER_NO));
 
@@ -159,13 +175,13 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
                             null,
                             //CallLog.Calls.NUMBER +" = "+ getIntent().getStringExtra(DISPLAY_NUMBER),
-                            CallLog.Calls.NUMBER +" = "+ trimmedNumber,
+                            CallLog.Calls.NUMBER + " = " + trimmedNumber,
                             null,
                             DEFAULT_SORT_ORDER);
                     if (c == null || !c.moveToFirst()) {
 
                     } else {
-                     callerName.setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
+                        callerName.setText(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
 
                     }
                 } finally {
@@ -234,6 +250,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         diplayNumber = getIntent().getStringExtra(DISPLAY_NUMBER);
         bus.register(this);
         bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
+
     }
 
 
@@ -252,7 +269,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callerNumber = (TextView) findViewById(R.id.tv_caller_number);
         connectionStatusTextView = (TextView) findViewById(R.id.tv_dialing);
         callerImageView = (ImageView) findViewById(R.id.imv_caller_pic);
-
+        seekBar = (SeekBar) findViewById(R.id.seek_bar);
     }
 
     @Override
@@ -348,7 +365,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
             }
         } else if (object instanceof OpponentDetails) {
             ErrorCode.showErrorMessages(bus, (OpponentDetails) object, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
-        }else if (object instanceof Integer) {
+        } else if (object instanceof Integer) {
             // while outgoing call is going on if default incoming call comes should put on hold
             int hold = (int) object;
             if (hold == KEEP_ON_HOLD) {
@@ -414,5 +431,19 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == Activity.RESULT_OK) {
 
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            int index = seekBar.getProgress();
+            seekBar.setProgress(index - 1);
+            return true;
+        } else if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+            int index = seekBar.getProgress();
+            seekBar.setProgress(index + 1);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

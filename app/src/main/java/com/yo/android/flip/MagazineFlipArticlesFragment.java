@@ -33,6 +33,7 @@ import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineDashboardHelper;
+import com.yo.android.util.YODialogs;
 
 import java.lang.reflect.Type;
 import java.net.UnknownHostException;
@@ -129,8 +130,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         readArticleIds = new ArrayList<>();
         magazineDashboardHelper = new MagazineDashboardHelper();
         swipeRefreshContainer.setOnRefreshListener(this);
-
-        update();
+        boolean value = preferenceEndPoint.getBooleanPreference(Constants.LAUNCH_APP, false);
+        if(value) {
+            preferenceEndPoint.saveBooleanPreference(Constants.LAUNCH_APP,false);
+            update();
+        }
         return view;
     }
 
@@ -183,7 +187,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mLog.d("onActivityCreated", "In onActivityCreated");
-
+        //loadArticles(null, false);
         followMoreTopics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,7 +210,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         });*/
     }
 
-    public void loadArticles(List<String> tagIds) {
+    public void loadArticles(List<String> tagIds, boolean renewal) {
 
         if (!mHelper.isConnected()) {
 
@@ -266,7 +270,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             List<String> readArticlesList = new ArrayList<>();
             List<String> unreadArticlesList = new ArrayList<>();
-            magazineDashboardHelper.getDashboardArticles(this, yoService, preferenceEndPoint, readArticlesList, unreadArticlesList);
+            magazineDashboardHelper.getDashboardArticles(this, yoService, preferenceEndPoint, readArticlesList, unreadArticlesList, renewal);
 
         }
     }
@@ -354,13 +358,28 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
     public void update() {
+
         Log.d("FlipArticlesFragment", "In update() FlipArticlesFragment");
-        getLandingCachedArticles();
+        boolean magazineRenewal = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
+        if (!magazineRenewal) {
+            getLandingCachedArticles();
+        } else {
+
+            YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet));
+            tvProgressText.setVisibility(View.GONE);
+            if (mProgress != null) {
+                mProgress.setVisibility(View.GONE);
+            }
+            flipContainer.setVisibility(View.GONE);
+            llNoArticles.setVisibility(View.VISIBLE);
+        }
+        //getLandingCachedArticles();
     }
 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        boolean magazineRenewal = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
         if ("magazine_tags".equals(key)) {
             if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
                 String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
@@ -370,8 +389,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             mProgress.setVisibility(View.GONE);
                         }
                         updateArticlesAfterFollowTopic(followedTopicId);
-                    } else {
-                        loadArticles(null);
+                    } else if(!magazineRenewal){
+                        loadArticles(null, false);
                     }
                 }
             } else {
@@ -392,7 +411,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void refresh() {
         lastReadArticle = 0;
-        getLandingCachedArticles();
+        boolean magazineRenewal = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
+        if (!magazineRenewal) {
+            getLandingCachedArticles();
+        } else {
+            YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet));
+        }
     }
 
 
@@ -476,6 +500,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     }
                 }
             }
+        } else if (Constants.RENEWAL.equalsIgnoreCase(action)) {
+            loadArticles(null, true);
         }
     }
 
@@ -546,11 +572,16 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void getLandingCachedArticles() {
         isSearch = false;
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        if (getActivity() != null) {
-            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
-            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
 
-            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
+        if (getActivity() != null) {
+
+            //String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+            //String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+
+            String sharedFollowedCachedMagazines = "";
+            String sharedRandomCachedMagazines = "";
+
+            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) && !sharedFollowedCachedMagazines.equalsIgnoreCase("[]") || !TextUtils.isEmpty(sharedRandomCachedMagazines) && !sharedRandomCachedMagazines.equalsIgnoreCase("[]")) {
                 if (mProgress != null) {
                     mProgress.setVisibility(View.GONE);
                 }
@@ -594,7 +625,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
                 return;
             } else {
-                loadArticles(null);
+                //flipContainer.setVisibility(View.GONE);
+                //llNoArticles.setVisibility(View.VISIBLE);
+
+                loadArticles(null, false);
             }
         }
     }
@@ -1073,7 +1107,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         myBaseAdapter.removeItems(unreadOtherOrderedArticles);
         myBaseAdapter.addItemsAll(unreadOtherOrderedArticles);
 
-        magazineDashboardHelper.getDashboardArticlesForDailyService(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds, unreadOtherOrderedArticles);
+        magazineDashboardHelper.getDashboardArticlesForDailyService(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds);
 
     }
 
@@ -1324,8 +1358,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (allArticles != null) {
             List<String> allArticlesIds = new ArrayList<>();
             for (Articles articles : allArticles) {
-                if(articles != null)
-                allArticlesIds.add(articles.getId());
+                if (articles != null)
+                    allArticlesIds.add(articles.getId());
             }
             List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
             List<String> mCachedReadList = cachedReadList != null ? cachedReadList : new ArrayList<String>();

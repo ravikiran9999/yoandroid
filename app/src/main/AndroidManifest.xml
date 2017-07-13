@@ -378,7 +378,8 @@
         <activity
             android:name=".chat.ui.CountryCodeActivity"
             android:theme="@style/AppTheme.Switch" />
-        <activity android:name=".ui.YoBalanceDetailActivity"></activity>
+        <activity android:name=".ui.YoBalanceDetailActivity" />
+        <activity android:name=".video.InAppVideoActivity"></activity>
     </application>
 
 </manifest>

@@ -32,6 +32,7 @@ import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.BuildConfig;
+import com.yo.android.vox.BalanceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,8 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
     @Inject
     YoApi.YoService yoService;
+    @Inject
+    BalanceHelper balanceHelper;
 
 
     private EditText voucherNumberEdit;
@@ -69,6 +72,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         super.onResume();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         prepareMenuList(denominationData);
+        balanceHelper.checkBalance(null);
     }
 
     @Override
@@ -113,6 +117,11 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         if (getArguments() != null && getArguments().getBoolean(Constants.OPEN_ADD_BALANCE, false)) {
             getActivity().setResult(resultcode);
             getActivity().finish();
+        }
+        if (getArguments() != null && getArguments().getBoolean(Constants.RENEWAL, false)) {
+            getActivity().setResult(1001);
+            getActivity().finish();
+            de.greenrobot.event.EventBus.getDefault().post(Constants.RENEWAL);
         }
     }
 

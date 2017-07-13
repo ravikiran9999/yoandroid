@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcelable;
@@ -38,6 +39,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -495,7 +497,7 @@ public class Util {
                         noSearchResult.setVisibility(View.GONE);
                         isFromClose = true;
                     } else {
-                        if(noContactsFound != null) {
+                        if (noContactsFound != null) {
                             noContactsFound.setVisibility(View.GONE);
                         }
                         noSearchResult.setVisibility(View.VISIBLE);
@@ -636,9 +638,9 @@ public class Util {
                     target.setPackage(candidate.activityInfo.packageName);
                     targets.add(target);
 
-                } else if(packageName.equals("com.yo.android")){
+                } /*else if (packageName.equals("com.yo.android")) {
                     // Hiding Yo app to show in share view
-                } else {
+                }*/ else {
                     Intent target = new Intent(android.content.Intent.ACTION_SEND);
                     target.setType("image/*");
                     target.putExtra(Intent.EXTRA_SUBJECT, title);
@@ -908,7 +910,7 @@ public class Util {
         try {
             if (string.contains(Constants.YO_USER)) {
                 return String.format(context.getResources().getString(R.string.plus_number), string.replaceAll("[^0-9]", ""));
-            } else if(TextUtils.isDigitsOnly(string)){
+            } else if (TextUtils.isDigitsOnly(string)) {
                 return String.format(context.getResources().getString(R.string.plus_number), string);
             } else {
                 return string;
@@ -920,7 +922,7 @@ public class Util {
 
     public static String numberFromNexgeFormat(String string) {
         try {
-            if(string != null) {
+            if (string != null) {
                 return string.replaceAll("[^0-9]", "");
             } else {
                 return "1234567890";
@@ -943,13 +945,13 @@ public class Util {
         }
         return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);*/
 
-        if(hours == 0 && minutes == 0) {
+        if (hours == 0 && minutes == 0) {
             return String.format("%02d secs", seconds);
         } else if (hours == 0 && seconds == 0) {
             return String.format("%02d mins", minutes, seconds);
         } else if (hours == 0) {
             return String.format("%02d mins %02d secs", minutes, seconds);
-        }  else {
+        } else {
             return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
         }
     }
@@ -957,14 +959,30 @@ public class Util {
     public static String addDenomination(String amount, String amountWithDenomination) {
         try {
 
-            if(amountWithDenomination != null) {
+            if (amountWithDenomination != null) {
                 String denomination = amountWithDenomination.replaceAll("[0-9]", "");
                 return String.format("%s %s", denomination, amount);
             } else {
-                return  String.format("%s %s", "IN Rs", amount);
+                return String.format("%s %s", "IN Rs", amount);
             }
         } catch (Exception e) {
             return String.format("%s %s", "IN Rs", amount);
         }
+    }
+
+    public static void initBar(SeekBar bar, final AudioManager audioManager, final int stream) {
+        bar.setMax(audioManager.getStreamMaxVolume(stream));
+        bar.setProgress(audioManager.getStreamVolume(stream));
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
+                audioManager.setStreamVolume(stream, progress, AudioManager.FLAG_PLAY_SOUND);
+            }
+
+            public void onStartTrackingTouch(SeekBar bar) {
+            }
+
+            public void onStopTrackingTouch(SeekBar bar) {
+            }
+        });
     }
 }

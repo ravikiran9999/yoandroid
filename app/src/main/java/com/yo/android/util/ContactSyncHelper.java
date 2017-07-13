@@ -413,7 +413,8 @@ public class ContactSyncHelper {
 
     private boolean hasContactsPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
-            return context.checkSelfPermission(android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
+            boolean value = context.checkSelfPermission(android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
+            return value;
         }
         Cursor cursor = null;
         try {

@@ -280,11 +280,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         };*/
         data.addAll(getMenuList());
-        BalanceAdapter balanceAdapter = new BalanceAdapter(getActivity(), data, null, MoreFragment.this);
+        BalanceAdapter balanceAdapter = new BalanceAdapter(getActivity(),data, null, MoreFragment.this);
         balanceAdapter.setMoreItemListener(this);
         RecyclerView menuListView = (RecyclerView) getView().findViewById(R.id.lv_settings);
         menuListView.setAdapter(balanceAdapter);
         menuListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        balanceAdapter.notifyDataSetChanged();
 
     }
 

@@ -2,6 +2,7 @@ package com.yo.android.di;
 
 import android.content.Context;
 
+import com.yo.android.WebserviceUsecase;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.CountryCodeListAdapter;
 import com.yo.android.adapters.FindPeopleAdapter;
@@ -209,6 +210,9 @@ import dagger.Provides;
                 Util.class,
                 FetchNewArticlesService.class,
                 CountryCodeListAdapter.class,
+
+                //usecases
+                WebserviceUsecase.class,
         },
         includes = {
                 AppModule.class,

@@ -7,6 +7,7 @@
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
+    <include layout="@layout/custom_seekbar" />
 
     <TextView
         android:id="@+id/tv_dialing"

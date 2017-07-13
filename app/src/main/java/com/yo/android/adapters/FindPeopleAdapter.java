@@ -1,5 +1,6 @@
 package com.yo.android.adapters;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -31,6 +32,7 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.util.Constants;
+import com.yo.android.util.YODialogs;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,94 +133,101 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             isFollowingUser = false;
         }
+
+
         holder.getBtnFindPeopleFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!"true".equals(item.getIsFollowing())) {
-                    ((BaseActivity) context).showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            holder.getBtnFindPeopleFollow().setText("Following");
-                            holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                            item.setIsFollowing("true");
-                            item.setFollowersCount(item.getFollowersCount() + 1);
-                            isFollowingUser = true;
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            ((BaseActivity) context).dismissProgressDialog();
-                            holder.getBtnFindPeopleFollow().setText("Follow");
-                            holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                            item.setIsFollowing("false");
-                            isFollowingUser = false;
-                        }
-                    });
-                } else {
-                    if (context != null) {
-
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-                        LayoutInflater layoutInflater = LayoutInflater.from(context);
-                        final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
-                        builder.setView(view);
-
-                        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-                        Button noBtn = (Button) view.findViewById(R.id.no_btn);
-
-
-                        final AlertDialog alertDialog = builder.create();
-                        alertDialog.setCancelable(false);
-                        alertDialog.show();
-
-                        yesBtn.setOnClickListener(new View.OnClickListener() {
+                boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
+                if (renewalStatus) {
+                    if (!"true".equals(item.getIsFollowing())) {
+                        ((BaseActivity) context).showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
                             @Override
-                            public void onClick(View v) {
-                                alertDialog.dismiss();
-                                ((BaseActivity) context).showProgressDialog();
-                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                                yoService.unfollowUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        ((BaseActivity) context).dismissProgressDialog();
-                                        if (context instanceof FollowingsActivity) {
-                                            removeItem(item);
-                                            if (getOriginalListCount() == 0) {
-                                                ((FollowingsActivity) context).showEmptyDataScreen();
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                holder.getBtnFindPeopleFollow().setText("Following");
+                                holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                item.setIsFollowing("true");
+                                item.setFollowersCount(item.getFollowersCount() + 1);
+                                isFollowingUser = true;
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                holder.getBtnFindPeopleFollow().setText("Follow");
+                                holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                item.setIsFollowing("false");
+                                isFollowingUser = false;
+                            }
+                        });
+                    } else {
+                        if (context != null) {
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                            LayoutInflater layoutInflater = LayoutInflater.from(context);
+                            final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+                            builder.setView(view);
+
+                            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+                            Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+
+                            final AlertDialog alertDialog = builder.create();
+                            alertDialog.setCancelable(false);
+                            alertDialog.show();
+
+                            yesBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alertDialog.dismiss();
+                                    ((BaseActivity) context).showProgressDialog();
+                                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                                    yoService.unfollowUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
+                                        @Override
+                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                            ((BaseActivity) context).dismissProgressDialog();
+                                            if (context instanceof FollowingsActivity) {
+                                                removeItem(item);
+                                                if (getOriginalListCount() == 0) {
+                                                    ((FollowingsActivity) context).showEmptyDataScreen();
+                                                }
+                                            } else {
+                                                // do nothing
                                             }
-                                        } else {
-                                            // do nothing
+                                            holder.getBtnFindPeopleFollow().setText("Follow");
+                                            holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                            item.setIsFollowing("false");
+                                            item.setFollowersCount(item.getFollowersCount() - 1);
+                                            isFollowingUser = false;
                                         }
-                                        holder.getBtnFindPeopleFollow().setText("Follow");
-                                        holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                        item.setIsFollowing("false");
-                                        item.setFollowersCount(item.getFollowersCount() - 1);
-                                        isFollowingUser = false;
-                                    }
 
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        ((BaseActivity) context).dismissProgressDialog();
-                                        holder.getBtnFindPeopleFollow().setText("Following");
-                                        holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                        item.setIsFollowing("true");
-                                        isFollowingUser = true;
-                                    }
-                                });
-                            }
-                        });
+                                        @Override
+                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                            ((BaseActivity) context).dismissProgressDialog();
+                                            holder.getBtnFindPeopleFollow().setText("Following");
+                                            holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                            item.setIsFollowing("true");
+                                            isFollowingUser = true;
+                                        }
+                                    });
+                                }
+                            });
 
 
-                        noBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                alertDialog.dismiss();
-                            }
-                        });
+                            noBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                        }
                     }
+                } else {
+                    YODialogs.renewMagazine((Activity) context, null, context.getString(R.string.renewal_message), preferenceEndPoint);
                 }
             }
         });
@@ -228,7 +237,6 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         } else {
             holder.getBtnFindPeopleFollow().setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override
