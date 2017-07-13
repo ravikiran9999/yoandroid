@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -51,7 +52,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -321,23 +324,34 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (getActivity() instanceof BottomTabsActivity) {
-                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
-                if (activity.getFragment() instanceof ContactsFragment) {
-                    if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        if (popup != null) {
-                            Collections.reverse(popup);
-                            isAlreadyShown = false;
-                            for (Popup p : popup) {
-                                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
-                                    if (!isAlreadyShown) {
-                                        PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CONTACTS, p, getActivity(), preferenceEndPoint, this, this, popup);
-                                        isAlreadyShown = true;
-                                        isSharedPreferenceShown = false;
-                                        break;
+
+            if (preferenceEndPoint != null) {
+                // Capture user id
+                Map<String, String> magazinesParams = new HashMap<String, String>();
+                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                //param keys and values have to be of String type
+                magazinesParams.put("UserId", userId);
+
+                FlurryAgent.logEvent("Contacts", magazinesParams);
+
+                if (getActivity() instanceof BottomTabsActivity) {
+                    BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                    if (activity.getFragment() instanceof ContactsFragment) {
+                        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                            Type type = new TypeToken<List<Popup>>() {
+                            }.getType();
+                            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                            if (popup != null) {
+                                Collections.reverse(popup);
+                                isAlreadyShown = false;
+                                for (Popup p : popup) {
+                                    if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CONTACTS) {
+                                        if (!isAlreadyShown) {
+                                            PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CONTACTS, p, getActivity(), preferenceEndPoint, this, this, popup);
+                                            isAlreadyShown = true;
+                                            isSharedPreferenceShown = false;
+                                            break;
+                                        }
                                     }
                                 }
                             }

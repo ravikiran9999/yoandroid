@@ -34,6 +34,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
@@ -75,7 +76,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -404,6 +407,14 @@ public class BottomTabsActivity extends BaseActivity {
                 viewPager.setCurrentItem(2);
             }
         }
+
+        // Capture user id
+        Map<String, String> appUsageParams = new HashMap<String, String>();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //param keys and values have to be of String type
+        appUsageParams.put("UserId", userId);
+
+        FlurryAgent.logEvent("Opened Yo App", appUsageParams);
     }
 
     private void clearNotifications() {

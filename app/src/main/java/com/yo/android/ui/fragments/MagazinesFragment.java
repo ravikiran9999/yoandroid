@@ -21,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -47,7 +48,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -90,6 +93,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     private boolean isSharedPreferenceShown;
 
+    private boolean isEventLogged;
+
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
         return mMagazineFlipArticlesFragment;
@@ -111,6 +116,21 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         setHasOptionsMenu(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         EventBus.getDefault().register(this);
+
+        if(!isEventLogged) {
+            if (getActivity() instanceof BottomTabsActivity) {
+                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                if (activity.getFragment() instanceof MagazinesFragment) {
+                    // Capture user id
+                    Map<String, String> magazinesParams = new HashMap<String, String>();
+                    String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                    //param keys and values have to be of String type
+                    magazinesParams.put("UserId", userId);
+
+                    FlurryAgent.logEvent("Magazines", magazinesParams);
+                }
+            }
+        }
     }
 
     @Override
@@ -458,6 +478,17 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            if(preferenceEndPoint != null) {
+                // Capture user id
+                Map<String, String> magazinesParams = new HashMap<String, String>();
+                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                //param keys and values have to be of String type
+                magazinesParams.put("UserId", userId);
+
+                FlurryAgent.logEvent("Magazines", magazinesParams);
+                isEventLogged = true;
+            }
+
             if (getActivity() instanceof BottomTabsActivity) {
                 BottomTabsActivity activity = (BottomTabsActivity) getActivity();
                 if (activity.getFragment() instanceof MagazinesFragment) {

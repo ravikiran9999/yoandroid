@@ -30,6 +30,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -59,7 +60,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -671,6 +674,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            if (preferenceEndPoint != null) {
+                // Capture user id
+                Map<String, String> magazinesParams = new HashMap<String, String>();
+                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                //param keys and values have to be of String type
+                magazinesParams.put("UserId", userId);
+
+                FlurryAgent.logEvent("Chats", magazinesParams);
+
             if (activity instanceof BottomTabsActivity) {
                 BottomTabsActivity bottomTabsActivity = (BottomTabsActivity) activity;
                 if (bottomTabsActivity.getFragment() instanceof ChatFragment) {
@@ -695,6 +707,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             }
+        }
 
         } else {
         }

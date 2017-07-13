@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.model.Articles;
@@ -21,6 +22,9 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -183,6 +187,15 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                 });
             }
         }
+
+        // Capture user id and article title
+        Map<String, String> articleReadParams = new HashMap<String, String>();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //param keys and values have to be of String type
+        articleReadParams.put("UserId", userId);
+        articleReadParams.put("ArticleTitle", title);
+
+        FlurryAgent.logEvent("Reading article", articleReadParams);
     }
 
     @Override

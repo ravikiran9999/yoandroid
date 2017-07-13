@@ -27,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.flurry.android.FlurryAgent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -67,7 +68,9 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -125,6 +128,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     public static final String currencySymbolDollar = " US $";
     private static final String currencySymbolDollarNoSpace = "US $";
+    private boolean isEventLogged;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -135,6 +139,22 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+        if(!isEventLogged) {
+            if (getActivity() instanceof BottomTabsActivity) {
+                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                if (activity.getFragment() instanceof MoreFragment) {
+                    // Capture user id
+                    Map<String, String> magazinesParams = new HashMap<String, String>();
+                    String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                    //param keys and values have to be of String type
+                    magazinesParams.put("UserId", userId);
+
+                    FlurryAgent.logEvent("Profile", magazinesParams);
+                }
+
+            }
+        }
     }
 
     @Override
@@ -523,6 +543,18 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+
+            if(preferenceEndPoint != null) {
+                // Capture user id
+                Map<String, String> magazinesParams = new HashMap<String, String>();
+                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                //param keys and values have to be of String type
+                magazinesParams.put("UserId", userId);
+
+                FlurryAgent.logEvent("Profile", magazinesParams);
+                isEventLogged = true;
+            }
+
             if (getActivity() instanceof BottomTabsActivity) {
                 BottomTabsActivity activity = (BottomTabsActivity) getActivity();
                 if (activity.getFragment() instanceof MoreFragment) {
