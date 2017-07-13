@@ -586,7 +586,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     RoomInfo roomInfo = dataSnapshot.getValue(RoomInfo.class);
-                    if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_INACTIVE)) {
+                    if (roomInfo != null && roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_INACTIVE)) {
                         roomInfo.setStatus(Constants.ROOM_STATUS_ACTIVE);
                         Map<String, Object> updateRoomStatusMap = new ObjectMapper().convertValue(roomInfo, Map.class);
                         roomInfoReference.updateChildren(updateRoomStatusMap);
