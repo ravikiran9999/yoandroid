@@ -127,7 +127,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     //param keys and values have to be of String type
                     magazinesParams.put("UserId", userId);
 
-                    FlurryAgent.logEvent("Magazines", magazinesParams);
+                    FlurryAgent.logEvent("Magazines", magazinesParams, true);
                 }
             }
         }
@@ -485,7 +485,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 //param keys and values have to be of String type
                 magazinesParams.put("UserId", userId);
 
-                FlurryAgent.logEvent("Magazines", magazinesParams);
+                FlurryAgent.logEvent("Magazines", magazinesParams, true);
                 isEventLogged = true;
             }
 

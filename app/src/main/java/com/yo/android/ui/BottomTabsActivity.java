@@ -120,6 +120,7 @@ public class BottomTabsActivity extends BaseActivity {
     private TextView actionBarTitle;
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     private static final int REQUEST_AUDIO_RECORD = 200;
+    private int lastFragmentPosition = 0;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -254,6 +255,33 @@ public class BottomTabsActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
+
+                if(lastFragmentPosition == 0) {
+                    mLog.d(TAG, "Leaving Magazines tab");
+                    // End the timed event, when the user navigates away from Magazines tab
+                    FlurryAgent.endTimedEvent("Magazines");
+                    lastFragmentPosition = position;
+                } else if(lastFragmentPosition == 1) {
+                    mLog.d(TAG, "Leaving Chats tab");
+                    // End the timed event, when the user navigates away from Chats tab
+                    FlurryAgent.endTimedEvent("Chats");
+                    lastFragmentPosition = position;
+                } else if(lastFragmentPosition == 2) {
+                    mLog.d(TAG, "Leaving Dialer tab");
+                    // End the timed event, when the user navigates away from Dialer tab
+                    FlurryAgent.endTimedEvent("Dialer");
+                    lastFragmentPosition = position;
+                } else if(lastFragmentPosition == 3) {
+                    mLog.d(TAG, "Leaving Contacts tab");
+                    // End the timed event, when the user navigates away from Contacts tab
+                    FlurryAgent.endTimedEvent("Contacts");
+                    lastFragmentPosition = position;
+                } else if(lastFragmentPosition == 4) {
+                    mLog.d(TAG, "Leaving Profile tab");
+                    // End the timed event, when the user navigates away from Profile tab
+                    FlurryAgent.endTimedEvent("Profile");
+                    lastFragmentPosition = position;
+                }
 
                 if (position == 0 && getFragment() instanceof MagazinesFragment) {
                     Log.d(TAG, "onPageSelected In update() BottomTabsActivity");

@@ -426,12 +426,12 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         if (isVisibleToUser) {
             if (preferenceEndPoint != null) {
                 // Capture user id
-                Map<String, String> magazinesParams = new HashMap<String, String>();
+                Map<String, String> dialerParams = new HashMap<String, String>();
                 String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                 //param keys and values have to be of String type
-                magazinesParams.put("UserId", userId);
+                dialerParams.put("UserId", userId);
 
-                FlurryAgent.logEvent("Dialer", magazinesParams);
+                FlurryAgent.logEvent("Dialer", dialerParams, true);
 
             if (getActivity() instanceof BottomTabsActivity) {
                 BottomTabsActivity activity = (BottomTabsActivity) getActivity();

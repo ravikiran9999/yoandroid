@@ -676,12 +676,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         if (isVisibleToUser) {
             if (preferenceEndPoint != null) {
                 // Capture user id
-                Map<String, String> magazinesParams = new HashMap<String, String>();
+                Map<String, String> chatsParams = new HashMap<String, String>();
                 String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                 //param keys and values have to be of String type
-                magazinesParams.put("UserId", userId);
+                chatsParams.put("UserId", userId);
 
-                FlurryAgent.logEvent("Chats", magazinesParams);
+                FlurryAgent.logEvent("Chats", chatsParams, true);
 
             if (activity instanceof BottomTabsActivity) {
                 BottomTabsActivity bottomTabsActivity = (BottomTabsActivity) activity;
