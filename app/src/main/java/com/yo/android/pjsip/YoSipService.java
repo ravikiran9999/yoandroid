@@ -732,9 +732,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
         //  StringVector proxies = accCfg.getSipConfig().getProxies();
         StringVector proxies = new StringVector();
-        //proxies.add("sip:sip.pjsip.org;transport=tcp");
+        proxies.add("sip:sip.pjsip.org;transport=tcp");
         //proxies.add("sip:sip.pjsip.org;transport=tls");
-        proxies.add("sip:sip.pjsip.org:5080;transport=tcp");
+        //proxies.add("sip:sip.pjsip.org:5080;transport=tcp");
         accCfg.getSipConfig().setProxies(proxies);
         proxies.clear();
         if (proxy.length() != 0) {
