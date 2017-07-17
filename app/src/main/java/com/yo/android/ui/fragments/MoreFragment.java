@@ -92,6 +92,7 @@ import retrofit2.Response;
 public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, BalanceAdapter.MoreItemListener {
 
     private MoreListAdapter menuAdapter;
+    private BalanceAdapter balanceAdapter;
 
     @Inject
     @Named("login")
@@ -123,9 +124,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private TextView profileStatus;
     private boolean isSharedPreferenceShown;
-    private ArrayList<Object> data = new ArrayList<>();
-    public static final String currencySymbolDollar = " US $";
-    private static final String currencySymbolDollarNoSpace = "US $";
 
     public MoreFragment() {
         // Required empty public constructor
@@ -271,7 +269,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         menuListView.setSelection(0);
         menuListView.setOnItemClickListener(this);
     }*/
-
     public void prepareSettingsList() {
         /*menuAdapter = new MoreListAdapter(getActivity()) {
             @Override
@@ -279,8 +276,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 return R.layout.item_with_options;
             }
         };*/
+        ArrayList<Object> data = new ArrayList<>();
         data.addAll(getMenuList());
-        BalanceAdapter balanceAdapter = new BalanceAdapter(getActivity(),data, null, MoreFragment.this);
+        balanceAdapter = new BalanceAdapter(getActivity(), data, null, MoreFragment.this);
         balanceAdapter.setMoreItemListener(this);
         RecyclerView menuListView = (RecyclerView) getView().findViewById(R.id.lv_settings);
         menuListView.setAdapter(balanceAdapter);
@@ -390,7 +388,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                     }
                                     try {
                                         alarmManager.cancel(BottomTabsActivity.pintent);
-                                    }catch (Exception e) {
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                     //stop firebase service
@@ -507,11 +505,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         if (key.equals(Constants.CURRENT_BALANCE)) {
             String balance = mBalanceHelper.getCurrentBalance();
             //String currencySymbol = mBalanceHelper.getCurrencySymbol();
-            if (menuAdapter != null) {
+            if (balanceAdapter != null) {
                 //menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
                 //menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbolDollarNoSpace, balance));
-                menuAdapter.getItem(0).setName(String.format("Yo Credit (%s)", balance));
-                menuAdapter.notifyDataSetChanged();
+                balanceAdapter.getItem(0).setName(String.format("Yo Credit %s", balance));
+                balanceAdapter.notifyDataSetChanged();
             }
         } else if (key.equals(Constants.USER_NAME)) {
             String username = preferenceEndPoint.getStringPreference(Constants.USER_NAME);

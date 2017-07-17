@@ -318,7 +318,7 @@
     <string name="morenotifications">Notifications</string>
     <string name="invitefriends">Invite Friends</string>
     <string name="accountdetails">Account Details</string>
-    <string name="yocredit">Yo Credit (%1$s)</string>
+    <string name="yocredit">Yo Credit %1$s</string>
     <string name="low_balance">Low balance, please add balance.</string>
     <string name="logged_in_another_device">User accessed from another device</string>
     <string name="activity_title_yourcountry">Select Country</string>

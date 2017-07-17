@@ -133,6 +133,8 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
         startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+
+        //mBalanceHelper.addBalance("7", null);
     }
 
 

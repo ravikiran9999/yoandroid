@@ -69,7 +69,7 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch (viewType) {
             case VIEW_TYPE_MORE_ITEMS:
                 final BalanceViewHolder balanceViewHolder = (BalanceViewHolder) holder;
-                balanceViewHolder.bind((MoreData) mData.get(position));
+                balanceViewHolder.bind(mData.get(position));
                 balanceViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -135,4 +135,10 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
+    public MoreData getItem(int position) {
+        if (mData != null && mData.size() > 0) {
+            return (MoreData) mData.get(position);
+        }
+        return new MoreData();
+    }
 }

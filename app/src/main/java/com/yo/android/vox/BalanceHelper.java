@@ -84,11 +84,13 @@ public class BalanceHelper {
                             prefs.saveStringPreference(Constants.SWITCH_BALANCE, switchBalance);
                             prefs.saveStringPreference(Constants.WALLET_BALANCE, walletBalance);
                             EventBus.getDefault().post(Constants.BALANCE_UPDATED_ACTION);
-                            double val = Double.parseDouble(balance.trim());
+
+                            //Todo low balance notification will come from server
+                            /*double val = Double.parseDouble(balance.trim());
                             if(val <=2) {
                                 mLog.w(TAG, "Current balance is less than or equal to $2");
                                 Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
-                            }
+                            }*/
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
