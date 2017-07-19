@@ -57,14 +57,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private ContactsSyncManager mContactsSyncManager;
     private LayoutInflater inflater;
 
-    public UserChatAdapter(Activity context) {
+    /*public UserChatAdapter(Activity context) {
         super(context);
         this.context = context.getBaseContext();
-    }
+    }*/
 
     public UserChatAdapter(Activity context, String userId, String type,
                            ContactsSyncManager mContactsSyncManager) {
         super(context);
+        this.context = context;
         inflater = LayoutInflater.from(context);
         this.userId = userId;
         this.mSelectedItemsIds = new SparseBooleanArray();

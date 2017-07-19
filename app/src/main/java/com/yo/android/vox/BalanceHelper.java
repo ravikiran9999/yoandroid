@@ -5,26 +5,21 @@ import android.text.TextUtils;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.yo.android.R;
 import com.yo.android.WebserviceUsecase;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.PaymentHistoryItem;
-import com.yo.android.model.Wallet;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -43,11 +38,11 @@ import retrofit2.Response;
 public class BalanceHelper {
     private static final String TAG = "BalanceHelper";
     private Set<String> sCountryCodes;
-    VoxFactory voxFactory;
-    YoApi.YoService yoService;
-    PreferenceEndPoint prefs;
-    Log mLog;
-    Context context;
+    private VoxFactory voxFactory;
+    private YoApi.YoService yoService;
+    private PreferenceEndPoint prefs;
+    private Log mLog;
+    private Context context;
 
     @Inject
     WebserviceUsecase webserviceUsecase;

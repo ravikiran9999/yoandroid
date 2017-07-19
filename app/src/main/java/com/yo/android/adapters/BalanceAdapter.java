@@ -1,8 +1,6 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,13 +11,9 @@ import com.yo.android.R;
 import com.yo.android.helpers.BalanceViewHolder;
 import com.yo.android.helpers.DenominationViewHolder;
 import com.yo.android.helpers.EmptyViewHolder;
-import com.yo.android.helpers.MenuViewHolder;
-import com.yo.android.model.MenuData;
 import com.yo.android.model.MoreData;
-import com.yo.android.model.denominations.Denominations;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by rdoddapaneni on 6/20/2017.
@@ -43,10 +37,6 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public BalanceAdapter(Context context, ArrayList<Object> data, ArrayList<Object> denominationData, Fragment fragment) {
         mData = data;
         mFragment = fragment;
-        //mDenominationData = new ArrayList<>();
-        /*if (denominationData != null) {
-            mDenominationData.addAll(denominationData);
-        }*/
         mContext = context;
         mInflater = LayoutInflater.from(context);
     }
@@ -84,7 +74,7 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 });
                 break;
             case VIEW_TYPE_DENOMINATION_ITEMS:
-                if (mData.get(position) != null && mData.get(position) instanceof ArrayList) {
+                if (mData != null && mData.get(position) != null && mData.get(position) instanceof ArrayList) {
                     ArrayList<Object> mDenominationData = (ArrayList<Object>) mData.get(position);
                     final DenominationViewHolder denominationViewHolder = (DenominationViewHolder) holder;
                     denominationViewHolder.bind(mDenominationData);

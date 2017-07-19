@@ -221,35 +221,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         mToastFactory.showToast(R.string.internal_build_cant_add_balance);
     }
 
-    private OnClickListener payBtnListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            Bundle arguments = getArguments();
-            if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
-                Denominations item = (Denominations) v.getTag(R.id.btn1);
-                addGooglePlayBalance(item.getProductID(), item.getDenomination());
-            } else {
-                showInternalBuildMessage();
-            }
-
-            //Bundle arguments = getArguments();
-            //if (arguments != null) {
-            //if (Double.valueOf(balance) < 5.000 && arguments.getBoolean(Constants.OPEN_ADD_BALANCE)) {
-           /* if (Double.valueOf(balance) < 5.000) {
-
-            } else {
-                addGooglePlayBalance(item.getProductID(), item.getDenomination());
-            }*/
-                    /*} else {
-                        mToastFactory.showToast(R.string.disabled);
-                    }*/
-            /*} else {
-                mToastFactory.showToast(R.string.disabled);
-            }*/
-        }
-    };
-
     public void showVoucherDialog() {
 
         if (getActivity() != null) {
@@ -373,9 +344,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
     @Override
     public void onRowSelected(int position) {
-        String name = ((MoreData) data.get(position)).getName();
         FragmentActivity activity = getActivity();
-        if (activity != null) {
+        if (activity != null && data.get(position) instanceof MoreData) {
+            String name = ((MoreData) data.get(position)).getName();
             if (name.equalsIgnoreCase(activity.getString(R.string.add_balance_from_voucher))) {
                 Bundle arguments = getArguments();
                 if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
@@ -433,8 +404,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             public void onFailure(Call<List<Denominations>> call, Throwable t) {
                 Log.w(TAG, "Data Failed to load currenncy");
                 txtEmpty.setVisibility(View.VISIBLE);
-
-
             }
         });
     }

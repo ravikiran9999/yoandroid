@@ -29,7 +29,7 @@ android {
     }
     // Enabling multidex support.
     defaultConfig {
-        applicationId "com.yo.android"
+        applicationId "com.yowatsup.android"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 5
