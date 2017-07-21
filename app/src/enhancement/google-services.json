@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "654323930980",
-    "firebase_url": "https://yo-android-enhancements.firebaseio.com",
-    "project_id": "yo-android-enhancements",
-    "storage_bucket": "yo-android-enhancements.appspot.com"
+    "project_number": "666825786281",
+    "firebase_url": "https://enhancement-94ccd.firebaseio.com",
+    "project_id": "enhancement-94ccd",
+    "storage_bucket": "enhancement-94ccd.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:654323930980:android:895dc7f63d30311b",
+        "mobilesdk_app_id": "1:666825786281:android:8fc8840d3a4d2322",
         "android_client_info": {
           "package_name": "com.yowatsup.android.enhancement"
         }
       },
       "oauth_client": [
         {
-          "client_id": "654323930980-bk44f2nnp9bsc982cfs8vaido75e4f83.apps.googleusercontent.com",
+          "client_id": "666825786281-oju7ki0mf8cg4i1b21g8uc873aaqbbc4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCUIRf_y11fMMJBRHvlnetBa_F39jK5ToA"
+          "current_key": "AIzaSyDI5BH0D8t0Z41qTgB3ynvpA7iG_ZfIKFA"
         }
       ],
       "services": {

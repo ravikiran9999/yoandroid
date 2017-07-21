@@ -35,7 +35,7 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     private static String ITEM_SKU;
     private static float ITEM_PRICE;
     private static final int REQUEST_CODE = 585;
-    //Can be userid
+    //Todo remove emailAddress
     private String emailAddress = "rajesh.polamarasetti@mtuity.com";
     @Inject
     BalanceHelper mBalanceHelper;

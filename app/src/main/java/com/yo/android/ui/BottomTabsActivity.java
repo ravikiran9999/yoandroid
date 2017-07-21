@@ -246,6 +246,7 @@ public class BottomTabsActivity extends BaseActivity {
                     if (getFragment() instanceof MoreFragment) {
                         getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.profile_background));
                         getSupportActionBar().setElevation(0);
+                        balanceHelper.checkBalance(null);
                     } else {
                         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
                     }
@@ -679,9 +680,9 @@ public class BottomTabsActivity extends BaseActivity {
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         dismissProgressDialog();
                         try {
-                            DecimalFormat df = new DecimalFormat("0.000");
-                            String format = df.format(Double.valueOf(balanceHelper.getCurrentBalance()));
-                            preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
+                            /*DecimalFormat df = new DecimalFormat("0.000");
+                            String format = df.format(Double.valueOf(balanceHelper.getCurrentBalance()));*/
+                            preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, balanceHelper.getCurrentBalance());
                         } catch (IllegalArgumentException e) {
                         }
                     }

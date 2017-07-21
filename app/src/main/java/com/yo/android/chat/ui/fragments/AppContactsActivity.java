@@ -46,13 +46,13 @@ public class AppContactsActivity extends BaseActivity {
         args.putBoolean(Constants.IS_CHAT_FORWARD, getIntent().hasExtra(Constants.IS_CHAT_FORWARD));
         if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
             args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
-        } else if(receivedAction.equals(Intent.ACTION_SEND) && receivedType.startsWith("image")){
+        } else if(receivedAction != null && receivedType != null && receivedAction.equals(Intent.ACTION_SEND) && receivedType.startsWith("image")){
             Share share = new Share();
             Uri receivedUri = receivedIntent.getParcelableExtra(Intent.EXTRA_STREAM);
             share.setUri(receivedUri);
             share.setType(Constants.IMAGE);
             args.putParcelable(Constants.CHAT_SHARE, share);
-        } else if(receivedAction.equals(Intent.ACTION_SEND) && receivedType.startsWith("text")) {
+        } else if(receivedAction != null && receivedType != null && receivedAction.equals(Intent.ACTION_SEND) && receivedType.startsWith("text")) {
             Share share = new Share();
             String receivedText = receivedIntent.getStringExtra(Intent.EXTRA_TEXT);
             share.setText(receivedText);

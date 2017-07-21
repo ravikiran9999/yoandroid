@@ -310,6 +310,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         return menuDataList;
     }
 
+    //Todo remove this as we are not using
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
@@ -322,7 +323,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
         } else if (name.contains(getString(R.string.morenotifications))) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        } else if (getString(R.string.settings).equals(name)) {
+        } else if (name.equals(getString(R.string.settings))) {
             Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
             startActivityForResult(intent, Constants.GO_TO_SETTINGS);
         } else if (name.equalsIgnoreCase(getString(R.string.accountdetails))) {

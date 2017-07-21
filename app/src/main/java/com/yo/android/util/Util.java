@@ -923,9 +923,14 @@ public class Util {
     public static String numberFromNexgeFormat(String string) {
         try {
             if (string != null) {
-                return string.replaceAll("[^0-9]", "");
+                String number = string.replaceAll("[^0-9]", "");
+                if (!number.startsWith("+")) {
+                    return "+" + number;
+                } else {
+                    return number;
+                }
             } else {
-                return "1234567890";
+                return "+1234567890";
             }
         } catch (NumberFormatException e) {
             return string;
