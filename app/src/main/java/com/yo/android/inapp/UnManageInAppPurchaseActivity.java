@@ -44,9 +44,9 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Injector.obtain(getApplication()).inject(this);
-        //ITEM_SKU = getIntent().getStringExtra("sku");
+        ITEM_SKU = getIntent().getStringExtra("sku");
         ITEM_PRICE = getIntent().getFloatExtra("price", 0f);
-        ITEM_SKU = "android.test.purchased";
+        //ITEM_SKU = "android.test.purchased";
         //ITEM_SKU = ITEM_SKU.toLowerCase();
         //developer payload
         emailAddress = getIntent().getStringExtra(Constants.USER_ID);

@@ -14,12 +14,12 @@ android {
             storeFile file('config/yo-app-stage.jks')
             storePassword '123456'
         }
-        enhancementconfig {
+        /*enhancementconfig {
             keyAlias 'yoappenhancement'
             keyPassword '123456'
             storeFile file('config/yoapp-enhancement.jks')
             storePassword '123456'
-        }
+        }*/
     }
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
@@ -32,8 +32,8 @@ android {
         applicationId "com.yowatsup.android"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 5
-        versionName "1.0Enhancement"
+        versionCode 6
+        versionName "17.3.1.0E"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -70,7 +70,7 @@ android {
         }
 
         enhancement {
-            applicationIdSuffix ".enhancement"
+            //applicationIdSuffix ".enhancement"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"yowltuser\""
@@ -91,7 +91,7 @@ android {
             //signingConfig signingConfigs.config
             productFlavors.dev.signingConfig signingConfigs.devconfig
             productFlavors.stage.signingConfig signingConfigs.stageconfig
-            productFlavors.enhancement.signingConfig signingConfigs.enhancementconfig
+            productFlavors.enhancement.signingConfig signingConfigs.devconfig
         }
 
     }
