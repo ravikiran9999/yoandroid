@@ -52,11 +52,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
+import se.emilsjolander.flipview.OverFlipMode;
 
 /**
  * Created by creatives on 6/30/2016.
  */
-public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, FlipView.OnFlipListener, SwipeRefreshLayout.OnRefreshListener {
+public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, FlipView.OnFlipListener, FlipView.OnOverFlipListener {
 
     private MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
     public MagazineArticlesBaseAdapter myBaseAdapter;
@@ -127,9 +128,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory, this);
         flipView.setAdapter(myBaseAdapter);
         flipView.setOnFlipListener(this);
+        flipView.setOnOverFlipListener(this);
         readArticleIds = new ArrayList<>();
         magazineDashboardHelper = new MagazineDashboardHelper();
-        swipeRefreshContainer.setOnRefreshListener(this);
+        //swipeRefreshContainer.setOnRefreshListener(this);
         boolean value = preferenceEndPoint.getBooleanPreference(Constants.LAUNCH_APP, false);
         if (value) {
             preferenceEndPoint.saveBooleanPreference(Constants.LAUNCH_APP, false);
@@ -1345,10 +1347,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
     }
 
-    @Override
+    /*@Override
     public void onRefresh() {
         refreshedArticles();
-    }
+    }*/
 
     private void refreshedArticles() {
         List<String> cachedReadList = getReadArticleIds();
@@ -1364,5 +1366,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             magazineDashboardHelper.getMoreDashboardArticles(this, yoService, preferenceEndPoint, mCachedReadList, unreadArticleIds, swipeRefreshContainer);
         }
+    }
+
+    @Override
+    public void onOverFlip(FlipView v, OverFlipMode mode, boolean overFlippingPrevious, float overFlipDistance, float flipDistancePerPage) {
+        refreshedArticles();
     }
 }

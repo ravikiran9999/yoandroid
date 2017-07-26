@@ -14,12 +14,6 @@ android {
             storeFile file('config/yo-app-stage.jks')
             storePassword '123456'
         }
-        /*enhancementconfig {
-            keyAlias 'yoappenhancement'
-            keyPassword '123456'
-            storeFile file('config/yoapp-enhancement.jks')
-            storePassword '123456'
-        }*/
     }
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
@@ -33,7 +27,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 6
-        versionName "17.3.1.0E"
+        versionName "17.3.1.1E"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
