@@ -254,7 +254,9 @@
     <string name="more_notifications">more notifications</string>
     <string name="your_credit_balance">Your credit balance :</string>
 
-    <string name="your_total_balance">Your credit balance</string>
+    <string name="your_total_balance">Your yo balance</string>
+
+    <!--Todo remove these two lines-->
     <string name="your_wallet_balance">Your wallet balance</string>
     <string name="your_switch_balance">Your switch balance</string>
 
@@ -318,7 +320,7 @@
     <string name="morenotifications">Notifications</string>
     <string name="invitefriends">Invite Friends</string>
     <string name="accountdetails">Account Details</string>
-    <string name="yocredit">Yo Credit (%1$s)</string>
+    <string name="yocredit">Yo Credit %1$s</string>
     <string name="low_balance">Low balance, please add balance.</string>
     <string name="logged_in_another_device">User accessed from another device</string>
     <string name="activity_title_yourcountry">Select Country</string>

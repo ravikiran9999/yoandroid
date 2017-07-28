@@ -349,6 +349,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
                         @Override
                         public void run() {
                             connectionStatusTextView.setText(getResources().getString(R.string.connected_status));
+                            callDurationTextView.setVisibility(View.VISIBLE);
                         }
                     });
                     //connectionStatusTextView.setText(getResources().getString(R.string.connected_status));

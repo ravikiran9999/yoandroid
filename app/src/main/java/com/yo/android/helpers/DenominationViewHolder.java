@@ -42,7 +42,6 @@ public class DenominationViewHolder extends RecyclerView.ViewHolder implements D
         recyclerView.setAdapter(denominationAdapter);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
-
     }
 
     @Override
@@ -50,6 +49,5 @@ public class DenominationViewHolder extends RecyclerView.ViewHolder implements D
         if(mFragment instanceof CreditAccountFragment) {
             ((CreditAccountFragment)mFragment).addGooglePlayBalance(sku, price);
         }
-
     }
 }

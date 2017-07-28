@@ -9,4 +9,4 @@
     android:background="@drawable/button_buy"
     android:gravity="center_horizontal|center_vertical"
     android:text="$5"
-    android:textSize="22sp" />
+    android:textSize="15sp" />

@@ -115,6 +115,8 @@ public class MagazineDashboardHelper {
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
+                    MagazineFlipArticlesFragment.refreshing = false;
+
                     if (swipeRefreshContainer != null) {
                         swipeRefreshContainer.setRefreshing(false);
                     }
@@ -137,6 +139,11 @@ public class MagazineDashboardHelper {
 
                 @Override
                 public void onFailure(Call<LandingArticles> call, Throwable t) {
+                    MagazineFlipArticlesFragment.refreshing = false;
+                    if (swipeRefreshContainer != null) {
+                        swipeRefreshContainer.setRefreshing(false);
+                    }
+
                     if (magazineFlipArticlesFragment.mProgress != null) {
                         magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                     }

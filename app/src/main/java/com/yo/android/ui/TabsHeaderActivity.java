@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -21,7 +24,6 @@ import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.helpers.PopupHelper;
-import com.yo.android.model.Contacts;
 import com.yo.android.model.Popup;
 import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
@@ -34,12 +36,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TabsHeaderActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
+public class TabsHeaderActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, ViewPager.OnPageChangeListener {
 
     private boolean isAlreadyShown;
     //private boolean isRemoved;
     private boolean isSharedPreferenceShown;
     private boolean isRenewal;
+    private ViewPager viewPager;
+    private TabsPagerAdapter adapter;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +61,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         }
         isRenewal = getIntent().getBooleanExtra(Constants.RENEWAL, false);
         enableBack();
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
+        viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
         setupViewPager(viewPager);
 
 
@@ -102,7 +107,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
         NotificationCache.clearNotifications();
 
-        if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
             Type type = new TypeToken<List<Popup>>() {
             }.getType();
             List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -129,14 +134,14 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        TabsPagerAdapter adapter = new TabsPagerAdapter(getSupportFragmentManager());
+        adapter = new TabsPagerAdapter(getSupportFragmentManager());
         Fragment fragment = new CreditAccountFragment();
         if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.OPEN_ADD_BALANCE, true);
             fragment.setArguments(bundle);
         }
-        if(getIntent().hasExtra(Constants.RENEWAL)) {
+        if (getIntent().hasExtra(Constants.RENEWAL)) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.RENEWAL, isRenewal);
             fragment.setArguments(bundle);
@@ -148,27 +153,28 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         }
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(this);
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (popup != null) {
-                    for (Popup p : popup) {
-                        if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
-                                isAlreadyShown = true;
-                                isSharedPreferenceShown = true;
-                                break;
-                            }
+        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+            Type type = new TypeToken<List<Popup>>() {
+            }.getType();
+            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+            if (popup != null) {
+                for (Popup p : popup) {
+                    if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
+                        if (!isAlreadyShown) {
+                            PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
+                            isAlreadyShown = true;
+                            isSharedPreferenceShown = true;
+                            break;
                         }
                     }
                 }
             }
+        }
     }
 
     @Override
@@ -183,7 +189,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         if (popup != null) {
-            if(!isSharedPreferenceShown) {
+            if (!isSharedPreferenceShown) {
                 Collections.reverse(popup);
             }
             List<Popup> tempPopup = new ArrayList<>(popup);
@@ -196,5 +202,36 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
             popup = tempPopup;
         }
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //DatePickerActivity.startForResult(this, 1001, new DateCalendar("20/06/2017"), new DateCalendar("20/06/2017"), "departure", false, "oneway");
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        Fragment fragment = adapter.getItem(position);
+
+        if (fragment instanceof SpendDetailsFragment) {
+            getMenuInflater().inflate(R.menu.filter, menu);
+        } else {
+            menu.clear();
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
     }
 }

@@ -273,13 +273,12 @@ public class YODialogs {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setView(view);
         builder.setMessage(description);
+        checkBox.setChecked(true);
         builder.setPositiveButton(activity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                boolean checkBoxResult = false;
                 if (checkBox.isChecked()) {
-                    checkBoxResult = true;
-                    preferenceEndPoint.saveBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, checkBoxResult);
+                    preferenceEndPoint.saveBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, checkBox.isChecked());
                 }
 
                 dialog.dismiss();

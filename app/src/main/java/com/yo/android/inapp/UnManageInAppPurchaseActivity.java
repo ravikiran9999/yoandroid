@@ -30,12 +30,12 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     boolean mDebugLog = true;
     String mDebugTag = "YoApp";
 
-    public String BASE_64_KEY_FOR_IN_APP_PURCHASE = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvN0nwJTxnfciBYiwTrZ2pzevIKGAB09Kulx0akR8Lzrd8bju2kCpe/PGeLQQ9BQWpvz3p81vl3N9sT7k0pfcJp10MMrtzyfYAR1t9U5R7manRzzRM2j1BNHnPneOaJ9WrQDUWpXqvDaeDgiS0rrSfWCHtTqDaoQV8RCbMLtanTJlBQgvYmObvhzLwtSSsD558UPUb7bEZtoFKgzSCqIS4pGFhFqVESxdRt95LpKbagVZSGEo4Nd2UoqDJ6gkG5cRLwHcl3ob2Nr+GRK3ybvNotCuGz3/cdVnqZjoWH73PP2qkG4iOopxhLW7ifZVtYVAW0hJFlM1Mf1TwPZ1AfICxQIDAQAB";
+    public String BASE_64_KEY_FOR_IN_APP_PURCHASE = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnDW78g7q5sjBENMt+qS4ioPqwtu1rdMMWFAhrsdUHRVXyftD2IPg50EuN/phvsANdpWbSqJHLjaw/1mNPVNcaBQ5VeS4IxvmGsQbJdLcVcKMj2gJ2eAWB31HtVCaOvv4zYNAzR250AK6ZT+GGgPjXoQiaB68DbHNiHGqska8lwswC08NRSmR5voMCpfodpt9z4hK7dSjRjiDfxH8+McbiFjCliWE0ygg4Je63aZW7erjJyw3MWc1fIOGlNwxmwNkM6uJnZTMWSCs3aTXKvujEvReea2//gjwfZgKB5sZG+AN7NmHKvy2+Jo/tB+FoBkr+tiq/845Xi1SffjOm4Cp8wIDAQAB";
     private IabHelper mHelper;
     private static String ITEM_SKU;
     private static float ITEM_PRICE;
     private static final int REQUEST_CODE = 585;
-    //Can be userid
+    //Todo remove emailAddress
     private String emailAddress = "rajesh.polamarasetti@mtuity.com";
     @Inject
     BalanceHelper mBalanceHelper;
@@ -44,9 +44,9 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Injector.obtain(getApplication()).inject(this);
-        //ITEM_SKU = getIntent().getStringExtra("sku");
+        ITEM_SKU = getIntent().getStringExtra("sku");
         ITEM_PRICE = getIntent().getFloatExtra("price", 0f);
-        ITEM_SKU = "android.test.purchased";
+        //ITEM_SKU = "android.test.purchased";
         //ITEM_SKU = ITEM_SKU.toLowerCase();
         //developer payload
         emailAddress = getIntent().getStringExtra(Constants.USER_ID);
@@ -78,7 +78,8 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
             logError("mReceivedInventoryListener: onQueryInventoryFinished called; result- " + result.isFailure() + "; inventory - " + inventory);
             if (result.isFailure() || inventory == null || inventory.getPurchase(ITEM_SKU) == null) {
                 logError("mReceivedInventoryListener: launchPurchaseFlow called");
-                mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE, mPurchaseFinishedListener, emailAddress);
+                //mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE, mPurchaseFinishedListener, emailAddress);
+                mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE, mPurchaseFinishedListener);
             } else {
                 logError("mReceivedInventoryListener: Calling Consuming");
                 final Purchase purchase = inventory.getPurchase(ITEM_SKU);
@@ -103,8 +104,11 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
                     logError("mConsumeFinishedListener: onConsumeFinished called");
                     if (result.isSuccess()) {
                         logError("mConsumeFinishedListener: launchPurchaseFlow called");
+                        /*mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE,
+                                mPurchaseFinishedListener, emailAddress);*/
+
                         mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE,
-                                mPurchaseFinishedListener, emailAddress);
+                                mPurchaseFinishedListener);
                     } else {
                         logError("mConsumeFinishedListener: Failed to get consume your product");
                         Toast.makeText(UnManageInAppPurchaseActivity.this, "Failed to get consume your product! Please try again later", Toast.LENGTH_SHORT).show();
@@ -202,7 +206,8 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     }
 
     private boolean verifyPayLoad(Purchase purchase) {
-        return !TextUtils.isEmpty(purchase.getDeveloperPayload()) && purchase.getDeveloperPayload().equalsIgnoreCase(emailAddress);
+        //return !TextUtils.isEmpty(purchase.getDeveloperPayload()) && purchase.getDeveloperPayload().equalsIgnoreCase(emailAddress);
+        return !TextUtils.isEmpty(purchase.getDeveloperPayload());
     }
 
 }

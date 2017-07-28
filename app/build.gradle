@@ -23,11 +23,11 @@ android {
     }
     // Enabling multidex support.
     defaultConfig {
-        applicationId "com.yo.android"
+        applicationId "com.yowatsup.android"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 5
-        versionName "1.0Enhancement"
+        versionCode 6
+        versionName "17.3.1.1E"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -64,27 +64,28 @@ android {
         }
 
         enhancement {
-            applicationIdSuffix ".enhancement"
+            //applicationIdSuffix ".enhancement"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
-            buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"yowltuser\""
             buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""
             buildConfigField "String", "CLIENT_ID", "\"385e29bdabe89c20ec32cae501b556554a8ece1605142b58ab6966cfee0635be\""
             buildConfigField "String", "CLIENT_SECRET", "\"5262628e450e5e356561753f712196d678acc0a994058935bc2dcbc351aa2fee\""
-            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-android-enhancements.appspot.com\""
-            buildConfigField "String", "FIREBASE_URL", "\"https://yo-android-enhancements.firebaseio.com\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://enhancement-94ccd.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://enhancement-94ccd.firebaseio.com\""
             minSdkVersion 18
         }
 
     }
     buildTypes {
         release {
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
             productFlavors.dev.signingConfig signingConfigs.devconfig
             productFlavors.stage.signingConfig signingConfigs.stageconfig
+            productFlavors.enhancement.signingConfig signingConfigs.devconfig
         }
 
     }

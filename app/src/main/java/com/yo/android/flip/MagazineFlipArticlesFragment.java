@@ -52,15 +52,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
+import se.emilsjolander.flipview.OverFlipMode;
 
 /**
  * Created by creatives on 6/30/2016.
  */
-public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, FlipView.OnFlipListener, SwipeRefreshLayout.OnRefreshListener {
+public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, FlipView.OnFlipListener, FlipView.OnOverFlipListener {
+
+    public static boolean refreshing;
 
     private MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
     public MagazineArticlesBaseAdapter myBaseAdapter;
 
+    @Bind(R.id.refreshContainer)
+    SwipeRefreshLayout swipeRefreshContainer;
     @Bind(R.id.article_root_layout)
     public FrameLayout articlesRootLayout;
     @Bind(R.id.ll_no_articles)
@@ -77,8 +82,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public Button followMoreTopics;
     @Bind(R.id.tv_progress_text)
     public TextView tvProgressText;
-    @Bind(R.id.swipeContainer)
-    SwipeRefreshLayout swipeRefreshContainer;
+
 
     @Inject
     YoApi.YoService yoService;
@@ -127,12 +131,16 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory, this);
         flipView.setAdapter(myBaseAdapter);
         flipView.setOnFlipListener(this);
+        flipView.setOnOverFlipListener(this);
         readArticleIds = new ArrayList<>();
         magazineDashboardHelper = new MagazineDashboardHelper();
-        swipeRefreshContainer.setOnRefreshListener(this);
+        swipeRefreshContainer.setOnRefreshListener(swipeRefreshLayout);
+        swipeRefreshContainer.setEnabled( false );
+        swipeRefreshContainer.setRefreshing(false);
+
         boolean value = preferenceEndPoint.getBooleanPreference(Constants.LAUNCH_APP, false);
-        if(value) {
-            preferenceEndPoint.saveBooleanPreference(Constants.LAUNCH_APP,false);
+        if (value) {
+            preferenceEndPoint.saveBooleanPreference(Constants.LAUNCH_APP, false);
             update();
         }
         return view;
@@ -359,12 +367,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void update() {
 
-        Log.d("FlipArticlesFragment", "In update() FlipArticlesFragment");
         boolean magazineRenewal = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
         if (!magazineRenewal) {
             getLandingCachedArticles();
         } else {
-
             YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet));
             tvProgressText.setVisibility(View.GONE);
             if (mProgress != null) {
@@ -389,7 +395,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             mProgress.setVisibility(View.GONE);
                         }
                         updateArticlesAfterFollowTopic(followedTopicId);
-                    } else if(!magazineRenewal){
+                    } else if (!magazineRenewal) {
                         loadArticles(null, false);
                     }
                 }
@@ -427,6 +433,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         } else {
             lastReadArticle = 0;
         }
+
+        if(position != 0) {
+            swipeRefreshContainer.setEnabled(false);
+            swipeRefreshContainer.setRefreshing(false);
+        }
+
         currentFlippedPosition = position;
 
         if (MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition == MagazineDashboardHelper.request * 100) {
@@ -1347,10 +1359,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
     }
 
-    @Override
+    /*@Override
     public void onRefresh() {
         refreshedArticles();
-    }
+    }*/
 
     private void refreshedArticles() {
         List<String> cachedReadList = getReadArticleIds();
@@ -1367,4 +1379,22 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             magazineDashboardHelper.getMoreDashboardArticles(this, yoService, preferenceEndPoint, mCachedReadList, unreadArticleIds, swipeRefreshContainer);
         }
     }
+
+    @Override
+    public void onOverFlip(FlipView v, OverFlipMode mode, boolean overFlippingPrevious, float overFlipDistance, float flipDistancePerPage) {
+        if(!refreshing) {
+            refreshing = true;
+            swipeRefreshContainer.setEnabled(true);
+            swipeRefreshContainer.setRefreshing(true);
+            refreshedArticles();
+        }
+    }
+
+    SwipeRefreshLayout.OnRefreshListener swipeRefreshLayout = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            swipeRefreshContainer.setEnabled(false);
+            swipeRefreshContainer.setRefreshing(false);
+        }
+    };
 }
