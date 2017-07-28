@@ -1,16 +1,10 @@
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipeContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <FrameLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/light_gray"
-        android:orientation="vertical"
-        tools:context="com.yo.android.chat.ui.fragments.ContactsFragment">
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:orientation="vertical"
+    tools:context="com.yo.android.chat.ui.fragments.ContactsFragment">
 
     <TextView
         android:id="@+id/no_search_results"
@@ -30,12 +24,18 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <ListView
-        android:id="@+id/lv_chat_room"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:divider="@android:color/transparent" />
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/lv_chat_room"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:divider="@android:color/transparent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ImageView
         android:id="@+id/empty_chat"
@@ -50,5 +50,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>-->
 
-    </FrameLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+</FrameLayout>

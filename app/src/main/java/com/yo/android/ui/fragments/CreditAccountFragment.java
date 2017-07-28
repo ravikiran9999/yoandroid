@@ -133,8 +133,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         final String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         intent.putExtra(Constants.USER_ID, userId);
         startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
-
-        //mBalanceHelper.addBalance("7", null);
     }
 
 
@@ -198,15 +196,19 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
      */
     public void prepareMenuList(ArrayList<Object> denominationsList) {
         String balance = mBalanceHelper.getCurrentBalance();
+
+        //Todo remove these lines as we are not using
         String mSBalance = mBalanceHelper.getSwitchBalance();
         String mWBalance = mBalanceHelper.getWalletBalance();
+
         data = new ArrayList<>();
         FragmentActivity activity = getActivity();
 
         if (activity != null && denominationsList != null) {
             data.add(new MoreData(activity.getString(R.string.your_total_balance), false, balance));
-            data.add(new MoreData(activity.getString(R.string.your_wallet_balance), false, mWBalance));
-            data.add(new MoreData(activity.getString(R.string.your_switch_balance), false, mSBalance));
+            //Todo remove these lines as we are not using
+            //data.add(new MoreData(activity.getString(R.string.your_wallet_balance), false, mWBalance));
+            //data.add(new MoreData(activity.getString(R.string.your_switch_balance), false, mSBalance));
             data.add(new MoreData(activity.getString(R.string.add_balance_from_google_play), false, null));
             data.addAll(denominationsList);
             data.add(new MoreData(activity.getString(R.string.add_balance_from_voucher), true, null));

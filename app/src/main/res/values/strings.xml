@@ -254,7 +254,9 @@
     <string name="more_notifications">more notifications</string>
     <string name="your_credit_balance">Your credit balance :</string>
 
-    <string name="your_total_balance">Your credit balance</string>
+    <string name="your_total_balance">Your yo balance</string>
+
+    <!--Todo remove these two lines-->
     <string name="your_wallet_balance">Your wallet balance</string>
     <string name="your_switch_balance">Your switch balance</string>
 
