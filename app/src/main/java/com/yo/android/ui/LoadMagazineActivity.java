@@ -36,6 +36,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to load the new article url and create the new article
+ */
 public class LoadMagazineActivity extends BaseActivity implements View.OnClickListener {
 
     @Inject
@@ -223,6 +226,10 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Creates the story in the new magazine
+     * @param accessToken
+     */
     private void createMagazineWithStory(String accessToken) {
         if(!isPostClicked) {
             isPostClicked = true;
@@ -256,6 +263,10 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Adds a story to an existing magazine
+     * @param accessToken
+     */
     private void addStoryToExistingMagazine(String accessToken) {
         if(!isPostClicked) {
             isPostClicked = true;
@@ -281,6 +292,9 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Gets all the magazine topics
+     */
     private void getAllTopics() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
 

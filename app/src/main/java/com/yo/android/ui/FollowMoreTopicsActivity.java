@@ -58,6 +58,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to display the list of magazine topics
+ */
 public class FollowMoreTopicsActivity extends BaseActivity {
 
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
@@ -107,7 +110,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private List<Categories> serverTopics;
     private TagView tagViewAdapter;
     private LayoutInflater layoutInflater;
-    private ArrayList<Tag> worldpopulationlist = null;
+    private ArrayList<Tag> searchTagsArrayList = null;
     private ArrayList<Tag> arraylist = null;
     private boolean isSkipClicked;
 
@@ -172,7 +175,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                 new TagLoader(FollowMoreTopicsActivity.this, new TagsLoader() {
                     @Override
                     public void loaded() {
-                        worldpopulationlist = new ArrayList<Tag>(initialTags);
+                        searchTagsArrayList = new ArrayList<Tag>(initialTags);
                         arraylist = new ArrayList<Tag>(initialTags);
                     }
                 }, serverTopics, tagViewAdapter, initialTags, categorisedList).execute();
@@ -249,6 +252,10 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         return ret;
     }
 
+    /**
+     * Action done on clicking the Done button
+     * @param followedTopicsIdsList The topics list
+     */
     private void performDoneAction(final List<String> followedTopicsIdsList) {
 
         if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
@@ -345,6 +352,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Searches for the tag
+     * @param activity
+     * @param menu
+     */
     public void prepareTagSearch(Activity activity, Menu menu) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
@@ -395,6 +407,10 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private boolean isTestSearch = true;
     private static TagView totalTagsInView;
 
+    /**
+     * Filters the tags based on the text to be searched for
+     * @param searchText The search text
+     */
     private void filterTags(CharSequence searchText) {
         noSearchResults.setVisibility(View.GONE);
         tvHelloInterests.setVisibility(View.GONE);
@@ -411,7 +427,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
             new TagLoader(FollowMoreTopicsActivity.this, new TagsLoader() {
                 @Override
                 public void loaded() {
-                    worldpopulationlist = new ArrayList<Tag>(initialTags);
+                    searchTagsArrayList = new ArrayList<Tag>(initialTags);
                     arraylist = new ArrayList<Tag>(initialTags);
                 }
             }, serverTopics, tagViewAdapter, initialTags, categorisedList).execute();
@@ -432,14 +448,14 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
                 @Override
                 protected ArrayList<Tag> doInBackground(CharSequence... search) {
-                    worldpopulationlist.clear();
+                    searchTagsArrayList.clear();
                     for (Categories category : serverTopics) {
                         String categoryName = category.getName();
                         if (categoryName.toLowerCase(Locale.getDefault()).contains(searchTextTemp)) {
                             for (Topics topic : category.getTags()) {
                                 for (Tag tag : arraylist) {
                                     if (tag.getText().equals(topic.getName())) {
-                                        worldpopulationlist.add(tag);
+                                        searchTagsArrayList.add(tag);
                                     }
                                 }
                             }
@@ -449,21 +465,21 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
                     for (Tag wp : arraylist) {
                         if (wp.getText().toLowerCase(Locale.getDefault()).contains(search[0])) {
-                            worldpopulationlist.add(wp);
+                            searchTagsArrayList.add(wp);
                         }
                     }
                     LinkedHashSet<Tag> hashSet = new LinkedHashSet<>();
-                    hashSet.addAll(worldpopulationlist);
-                    worldpopulationlist = new ArrayList<Tag>(hashSet);
-                    return worldpopulationlist;
+                    hashSet.addAll(searchTagsArrayList);
+                    searchTagsArrayList = new ArrayList<Tag>(hashSet);
+                    return searchTagsArrayList;
                 }
 
                 @Override
                 protected void onPostExecute(ArrayList<Tag> aVoid) {
                     super.onPostExecute(aVoid);
                     tagsParentLayout.removeAllViews();
-                    tagsParentLayout.addView(createTags(worldpopulationlist));
-                    if (worldpopulationlist.size() == 0) {
+                    tagsParentLayout.addView(createTags(searchTagsArrayList));
+                    if (searchTagsArrayList.size() == 0) {
                         noSearchResults.setVisibility(View.VISIBLE);
                         tvHelloInterests.setVisibility(View.GONE);
                         bottomLayout.setVisibility(View.GONE);
@@ -482,7 +498,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         }
     }
 
-
+    /**
+     * Creates the tags
+     * @param tags The list of tags
+     * @return the TagView
+     */
     private TagView createTags(List<Tag> tags) {
         TagView view = (TagView) layoutInflater.inflate(R.layout.section_list_item, null);
         TagView tv = (TagView) view.findViewById(R.id.tag_group);
@@ -491,6 +511,10 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     }
     //Ended new search
 
+    /**
+     * Sets the searched tags
+     * @param cs The search text
+     */
     private void setTags(CharSequence cs) {
 
         if (isTestSearch) {
@@ -585,6 +609,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     };
 
+    /**
+     * Navigates to the landing screen
+     */
     private void navigation() {
         Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
         myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -594,6 +621,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         finish();
     }
 
+    /**
+     * Performs operations on clicking the tag
+     * @param mTag The Tag object
+     * @param position The position
+     */
     public void onClickingTag(Tag mTag, int position) {
         Log.d("FollowMoreTopics", "Tag " + mTag + " position " + position);
         try {
@@ -671,6 +703,9 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         }
     }
 
+    /**
+     * On clicking the searched tags
+     */
     private void onTagSearchClickEvent() {
         if (tagsParentLayout.getChildCount() > 0 && tagsParentLayout.getChildAt(0) instanceof TagView) {
             Log.d("FollowMoreTopics", "getChildCount() " + tagsParentLayout.getChildCount() + " getChildAt(0) " + tagsParentLayout.getChildAt(0));
@@ -754,6 +789,11 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Updates the clicked tag
+     * @param mTag The Tag object
+     * @param position The position
+     */
     private void onUpdatingClickedTag(Tag mTag, int position) {
         Log.d("FollowMoreTopics", "Tag " + mTag + " position " + position);
         try {

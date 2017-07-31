@@ -54,8 +54,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 
-//import com.squareup.picasso.Picasso;
-
+/**
+ * This activity is used to see the articles of other's magazine
+ */
 public class OthersMagazinesDetailActivity extends BaseActivity {
 
     @Inject
@@ -521,7 +522,10 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             return layout;
         }
 
-
+        /**
+         * Adds articles to the list
+         * @param articlesList The articles list
+         */
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
             if (!hasDestroyed()) {
@@ -560,6 +564,12 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             }
         }
 
+        /**
+         * Updates the topic following
+         * @param isFollowing isFollowing or not
+         * @param topic The articles object
+         * @param position The position
+         */
         public void updateTopic(boolean isFollowing, Articles topic, int position) {
             items.remove(position);
             items.add(position, topic);
@@ -578,6 +588,13 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             notifyDataSetChanged();
         }
 
+        /**
+         * Updates the articles
+         * @param isLiked isLiked or not
+         * @param articles The articles object
+         * @param position The position
+         * @param articlePlace The article placement
+         */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
             items.remove(position);
             items.add(position, articles);
@@ -586,6 +603,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         }
     }
 
+    /**
+     * The View Holder class
+     */
     private static class ViewHolder {
 
         private TextView articleTitle;

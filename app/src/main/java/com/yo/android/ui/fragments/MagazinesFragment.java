@@ -208,6 +208,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         }
     }
 
+    /**
+     * Getting all the articles topics
+     */
     private void callApiSearchTopics() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
 
@@ -297,6 +300,10 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         return true;
     }
 
+    /**
+     * Handling searching of topics
+     * @param menu
+     */
     private void prepareTopicsSearch(Menu menu) {
         SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         search.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
@@ -539,6 +546,10 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(popup));
     }
 
+    /**
+     * Adding the topics selected
+     * @param followedTopicsIdsList The followed topics list
+     */
     private void addTopics(final List<String> followedTopicsIdsList) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {

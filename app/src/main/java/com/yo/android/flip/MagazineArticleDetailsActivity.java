@@ -31,6 +31,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * The activity used to display the article content in a WebView
+ */
 public class MagazineArticleDetailsActivity extends BaseActivity {
     private ProgressBar progressBar;
     private Articles data;

@@ -639,7 +639,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         accCfg.getNatConfig().setTurnUserName("abzlute01");
         accCfg.getNatConfig().setTurnPasswordType(0);
         accCfg.getNatConfig().setTurnPassword("abzlute01");
-        accCfg.getNatConfig().setTurnConnType(pj_turn_tp_type.PJ_TURN_TP_TCP);
+/*        accCfg.getNatConfig().setTurnServer("34.230.108.83:3478");
+        accCfg.getNatConfig().setTurnUserName("tadmin");
+        accCfg.getNatConfig().setTurnPasswordType(0);
+        accCfg.getNatConfig().setTurnPassword("test123");*/
+        //accCfg.getNatConfig().setTurnConnType(pj_turn_tp_type.PJ_TURN_TP_TCP);
         android.util.Log.d(TAG, msg + " Setting TURN server");
         return myApp.addAcc(accCfg);
     }
@@ -732,7 +736,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
         //  StringVector proxies = accCfg.getSipConfig().getProxies();
         StringVector proxies = new StringVector();
-        proxies.add("sip:sip.pjsip.org;transport=tcp");
+        //proxies.add("sip:sip.pjsip.org;transport=tcp");
+        proxies.add("sip:173.82.147.172:6000;transport=tcp");
         //proxies.add("sip:sip.pjsip.org;transport=tls");
         //proxies.add("sip:sip.pjsip.org:5080;transport=tcp");
         accCfg.getSipConfig().setProxies(proxies);
