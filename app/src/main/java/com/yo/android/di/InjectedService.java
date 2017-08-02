@@ -26,4 +26,5 @@ public abstract class InjectedService extends Service {
         super.onCreate();
         Injector.obtain(getApplication()).inject(this);
     }
+
 }

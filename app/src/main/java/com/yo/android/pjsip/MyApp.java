@@ -4,17 +4,13 @@ import android.util.Log;
 
 import com.orion.android.common.logging.Logger;
 import com.yo.android.BuildConfig;
-import com.yo.android.vox.CodecPriority;
 
 import org.pjsip.pjsua2.AccountConfig;
-import org.pjsip.pjsua2.BuddyConfig;
-import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.ContainerNode;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.JsonDocument;
 import org.pjsip.pjsua2.LogConfig;
-import org.pjsip.pjsua2.StringVector;
 import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.UaConfig;
 import org.pjsip.pjsua2.pj_log_decoration;
@@ -29,7 +25,7 @@ public class MyApp {
 
     private static final String TAG = MyApp.class.getSimpleName();
 
-    static {
+   /* static {
         try {
             System.loadLibrary("openh264");
             // Ticket #1937: libyuv is now included as static lib
@@ -41,7 +37,7 @@ public class MyApp {
         }
         System.loadLibrary("pjsua2");
         System.out.println("Library loaded");
-    }
+    }*/
 
     public static Endpoint mEndpoint = new Endpoint();
     public static MyAppObserver observer;
@@ -157,9 +153,10 @@ public class MyApp {
             mEndpoint.codecSetPriority("*", (short) 0);
             mEndpoint.codecSetPriority("PCMA/8000", (short) 1);
             mEndpoint.codecSetPriority("PCMU/8000", (short) 1);
-            // mEndpoint.codecSetPriority("G722/8000", (short) 1);
-            //  mEndpoint.codecSetPriority("G711/8000", (short) 1);
+            mEndpoint.codecSetPriority("G722/8000", (short) 1);
+            mEndpoint.codecSetPriority("G711/8000", (short) 1);
             mEndpoint.audDevManager().setOutputVolume(60);
+
             //Disabling VAD to get around NAT
             //  mEndpoint.audDevManager().setVad(false);
             Log.e(TAG, "SIP STATCK STARTED");

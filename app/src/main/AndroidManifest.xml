@@ -139,6 +139,14 @@
             android:taskAffinity=".incoming"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name="com.yo.dialer.ui.IncomingCallActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/yo_app_call"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".voip.OutGoingCallActivity"
             android:excludeFromRecents="true"
             android:label="@string/yo_app_call"
@@ -372,6 +380,7 @@
             android:value="@integer/google_play_services_version" />
 
         <service android:name="com.yo.services.BackgroundServices" />
+        <service android:name="com.yo.dialer.YoSipService" />
 
     </application>
 

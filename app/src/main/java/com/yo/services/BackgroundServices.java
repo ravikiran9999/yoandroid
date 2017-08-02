@@ -46,10 +46,12 @@ public class BackgroundServices extends InjectedService {
 
 
     private void performAction(Intent intent) {
-        String action = intent.getAction();
-        if (action != null) {
-            if (action.equalsIgnoreCase(FETCH_CALL_RATES)) {
-                fetchCallRates();
+        if (intent != null) {
+            String action = intent.getAction();
+            if (action != null) {
+                if (action.equalsIgnoreCase(FETCH_CALL_RATES)) {
+                    fetchCallRates();
+                }
             }
         }
     }

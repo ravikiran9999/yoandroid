@@ -36,7 +36,8 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     private static float ITEM_PRICE;
     private static final int REQUEST_CODE = 585;
     //Can be userid
-    private String emailAddress = "rajesh.polamarasetti@mtuity.com";
+    private String emailAddress = "rajesh.polamarasetti@quantela" +
+            ".com";
     @Inject
     BalanceHelper mBalanceHelper;
 
@@ -46,8 +47,8 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
         Injector.obtain(getApplication()).inject(this);
         ITEM_SKU = getIntent().getStringExtra("sku");
         ITEM_PRICE = getIntent().getFloatExtra("price", 0f);
-        ITEM_SKU = "android.test.purchased";
-        //ITEM_SKU = ITEM_SKU.toLowerCase();
+       ITEM_SKU = "android.test.purchased";
+        ITEM_SKU = ITEM_SKU.toLowerCase();
         //developer payload
         emailAddress = getIntent().getStringExtra(Constants.USER_ID);
         mHelper = new IabHelper(this, BASE_64_KEY_FOR_IN_APP_PURCHASE);

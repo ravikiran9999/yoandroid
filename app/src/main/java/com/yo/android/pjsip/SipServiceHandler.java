@@ -11,8 +11,6 @@ import org.pjsip.pjsua2.CallInfo;
 public interface SipServiceHandler {
     String addAccount(SipProfile sipProfile,boolean isPSTN,String number);
 
-    void createSipService(SipProfile sipProfile);
-
     MediaManager getMediaManager();
 
     void makeCall(String destination, Bundle options, Intent intent);
@@ -31,7 +29,6 @@ public interface SipServiceHandler {
 
     String getRegistrationStatus();
 
-    boolean isOnGOingCall();
 
     void disconnectCallBack(CallDisconnectedListner listner);
 

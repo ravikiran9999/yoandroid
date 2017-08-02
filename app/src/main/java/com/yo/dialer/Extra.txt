@@ -4,6 +4,40 @@
 
 
 
-  ========================
+=============================================
+
+
+//Chat Activity
+ /*if (!sipBinder.getHandler().isOnGOingCall()) {
+                mNotificationManager.cancelAll();
+                NotificationCache.clearNotifications();
+            }*/
+
+//BOttom tabs activity
+/*if (!sipBinder.getHandler().isOnGOingCall()) {
+                clearNotifications();
+            }*/
+=========================================
+
+            //YOAPP.JAVA
+
+            /* Create transports. */
+                 /*   try {
+                        ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP,
+                                sipTpConfig);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }*/
+
+
+       /* try {
+            sipTpConfig.setPort(SIP_PORT + 1);
+            ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TLS,
+                    sipTpConfig);
+        } catch (Exception e) {
+            System.out.println(e);
+        }*/
+
+=======================================
 
 

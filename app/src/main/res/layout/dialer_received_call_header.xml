@@ -13,7 +13,7 @@
         android:layout_marginTop="40dp"
         android:orientation="vertical">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imv_caller_pic"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -49,63 +49,86 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/tv_caller_name"
             android:layout_marginRight="20dp"
-            android:text="05:45"
             android:gravity="right"
+            android:text="05:45"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
         <TextView
             android:id="@+id/connection_status"
-            android:gravity="right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/tv_call_duration"
             android:layout_marginRight="20dp"
+            android:gravity="right"
             android:text="@string/connecting_status"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
-
-
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="80dp"
-        android:gravity="center">
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:padding="20dp">
 
-        <ImageView
-            android:id="@+id/imv_speaker"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="60dp"
-            android:background="@drawable/ic_speaker_off" />
+            android:layout_weight="1">
 
-        <ImageView
-            android:id="@+id/imv_mic_off"
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/imv_speaker"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_speaker_off" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:background="@drawable/ic_mute_off" />
+            android:layout_weight="1">
 
-        <ImageView
-            android:id="@+id/btnDialer"
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/imv_mic_off"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerHorizontal="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_dialer_mic_off" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:background="@drawable/ic_dialer_on_call" />
+            android:layout_weight="1"
+            android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/btnHold"
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/btnDialer"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:src="@drawable/ic_dialer_on_call" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:alpha="0.3"
-            android:background="@drawable/ic_hold" />
+            android:layout_weight="1">
 
+            <ImageView
+                android:id="@+id/btnHold"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_hold" />
+        </RelativeLayout>
     </LinearLayout>
 
     <RelativeLayout

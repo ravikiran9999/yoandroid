@@ -8,7 +8,6 @@ import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.media.ToneGenerator;
-import android.net.Proxy;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -193,11 +192,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
 
             isPSTN = intent.hasExtra(VoipConstants.PSTN);
-            if (myAccount == null) {
+           /* if (myAccount == null) {
                 addAccount(isPSTN, number);
             }
             NetworkStateListener.registerNetworkState(listener);
-            performAction(intent);
+            performAction(intent);*/
         }
         return START_STICKY;
     }
@@ -260,7 +259,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void startSipService() {
         myApp = new MyApp();
-        myApp.init(this, getFilesDir().getAbsolutePath());
+       // myApp.register(this, getFilesDir().getAbsolutePath());
         created = true;
         // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
 
@@ -717,10 +716,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
     }
 
-    @Override
-    public void createSipService(SipProfile sipProfile) {
-
-    }
 
     private void configAccount(AccountConfig accCfg, String acc_id, String registrar, String proxy,
                                String username, String password) {
@@ -1143,10 +1138,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         return registrationStatus;
     }
 
-    @Override
-    public boolean isOnGOingCall() {
-        return isOnGoingCall;
-    }
 
     @Override
     public void disconnectCallBack(CallDisconnectedListner listner) {

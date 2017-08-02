@@ -7,6 +7,8 @@ import android.telephony.TelephonyManager;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.VoipConstants;
+import com.yo.dialer.CallExtras;
+import com.yo.dialer.DialerConfig;
 
 /**
  * Created by Ramesh on 14/8/16.
@@ -21,10 +23,17 @@ public class SipHelper {
 
     public static void makeCall(Context mContext, String number, boolean isPSTN) {
 
-        Intent intent = new Intent(VoipConstants.CALL_ACTION_OUT_GOING, null, mContext, YoSipService.class);
-        intent.putExtra(VoipConstants.PSTN, isPSTN);
+        Intent intent;
+        if (DialerConfig.IS_NEW_SIP) {
+            intent = new Intent(CallExtras.MAKE_CALL, null, mContext, com.yo.dialer.YoSipService.class);
+            intent.putExtra(CallExtras.CALLER_NO, number);
+            intent.putExtra(CallExtras.IS_PSTN, isPSTN);
+        } else {
+            intent = new Intent(VoipConstants.CALL_ACTION_OUT_GOING, null, mContext, YoSipService.class);
+            intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
+            intent.putExtra(VoipConstants.PSTN, isPSTN);
+        }
 
-        intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
         if (actualNumber == null) {
             actualNumber = number;
         }

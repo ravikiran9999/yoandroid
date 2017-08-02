@@ -14,6 +14,8 @@ import com.yo.android.pjsip.YoSipService;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.voip.VoipConstants;
+import com.yo.dialer.CallExtras;
+import com.yo.dialer.DialerConfig;
 
 import java.io.IOException;
 
@@ -79,8 +81,15 @@ public class TokenAuthenticator implements Authenticator {
                     preferenceEndPoint.clearAll();
                     Intent intent = new Intent(mContext, LoginActivity.class);
                     //To Stop calls when logout
-                    Intent intents = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, mContext, YoSipService.class);
-                    mContext.startService(intent);
+                    if (DialerConfig.IS_NEW_SIP) {
+                        Intent service = new Intent(mContext, com.yo.dialer.YoSipService.class);
+                        service.setAction(CallExtras.UN_REGISTER);
+                        mContext.startService(service);
+                    } else {
+                        Intent intents = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, mContext, YoSipService.class);
+                        mContext.startService(intents);
+                    }
+
                     if (mContext != null) {
                         Util.cancelAllNotification(mContext);
                     }
