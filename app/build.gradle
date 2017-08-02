@@ -64,7 +64,6 @@ android {
         }
 
         enhancement {
-            //applicationIdSuffix ".enhancement"
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"yowltuser\""
@@ -87,6 +86,8 @@ android {
             productFlavors.stage.signingConfig signingConfigs.stageconfig
             productFlavors.enhancement.signingConfig signingConfigs.devconfig
         }
+
+
 
     }
     lintOptions {

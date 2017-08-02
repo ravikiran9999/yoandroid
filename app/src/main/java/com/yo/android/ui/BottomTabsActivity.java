@@ -464,8 +464,12 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     public Fragment getFragment() {
-        int position = tabLayout.getSelectedTabPosition();
-        return mAdapter.getItem(position);
+        if(tabLayout != null) {
+            int position = tabLayout.getSelectedTabPosition();
+            return mAdapter.getItem(position);
+        } else {
+            return mAdapter.getItem(0);
+        }
     }
 
     /*public void setToolBarTitle(String title) {

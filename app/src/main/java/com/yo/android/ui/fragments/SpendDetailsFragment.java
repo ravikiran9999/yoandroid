@@ -51,6 +51,9 @@ import retrofit2.Response;
 public class SpendDetailsFragment extends BaseFragment implements Callback<ResponseBody> {
 
     private static final String PSTN = "PSTN";
+    public static final String BALANCE_TRANSFER = "BalanceTransfer";
+    public static final String MAGAZINES = "Magzines";
+
     @Bind(R.id.txtEmpty)
     TextView txtEmpty;
 
@@ -65,7 +68,6 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
     private SpentDetailsAdapter adapter;
 
-    public static final String BALANCE_TRANSFER = "BalanceTransfer";
 
     public static final String AUTHORITY = YoAppContactContract.CONTENT_AUTHORITY;
 
@@ -124,7 +126,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     if (detailResponseList != null && !detailResponseList.isEmpty()) {
                         List<SubscribersList> removedFreeSpents = new ArrayList<>();
                         for (SubscribersList item : detailResponseList) {
-                            if (item.getCalltype().equals(PSTN) || item.getCalltype().equals(BALANCE_TRANSFER)) {
+                            if (item.getCalltype().equals(PSTN) || item.getCalltype().equals(BALANCE_TRANSFER) || item.getCalltype().equals(MAGAZINES)) {
                                 /*if (Float.valueOf(item.getCallcost()) != 0f) {
                                     removedFreeSpents.add(item);
                                 }*/
@@ -193,13 +195,12 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         public void onBindViewHolder(SpendDetailsViewHolder holder, int position) {
             final SubscribersList item = mSubscribersList.get(position);
 
-            // Set item views based on your views and data model
-            //holder.getDate().setText(item.getTime());
             String modifiedTime = item.getTime().substring(0, item.getTime().lastIndexOf("."));
-            holder.getDate().setText(modifiedTime);
-            //                Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
+            //holder.getDate().setText(modifiedTime);
             Date date = DateUtil.convertUtcToGmt(modifiedTime);
             holder.getDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(date));
+
+
             if (item.getDuration() != null) {
                 if (item.getDuration().contains(":")) {
                     String[] tokens = item.getDuration().split(":");
@@ -227,13 +228,16 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     }
                     holder.getDuration().setText(duration);
                 } else {
-                    String duration = "";
-                    duration = Util.convertSecToHMmSs(Long.parseLong(item.getDuration()));
-                    holder.getDuration().setText(duration);
+                    if (!item.getCalltype().equals(MAGAZINES)) {
+                        String duration = "";
+                        duration = Util.convertSecToHMmSs(Long.parseLong(item.getDuration()));
+                        holder.getDuration().setText(duration);
+                    }
                 }
             } else {
                 holder.getDuration().setText(item.getDuration());
             }
+
             String phoneName = Helper.getContactName(mContext, item.getDestination());
             if (phoneName != null) {
                 holder.getTxtPhone().setText(phoneName);
@@ -279,7 +283,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             } catch (Exception e) {
                 e.printStackTrace();
             }*/
-           //==========================================================================
+            //==========================================================================
 
             /*holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override

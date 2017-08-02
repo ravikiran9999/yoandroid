@@ -665,7 +665,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
 
             if (myBaseAdapter != null) {
-                Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
                 for (int i = 0; i <= currentFlippedPosition; i++) {
                     if (myBaseAdapter.getItem(i) != null) {
                         String articleId = myBaseAdapter.getItem(i).getId();
@@ -1358,11 +1357,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
         }
     }
-
-    /*@Override
-    public void onRefresh() {
-        refreshedArticles();
-    }*/
 
     private void refreshedArticles() {
         List<String> cachedReadList = getReadArticleIds();
