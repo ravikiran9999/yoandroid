@@ -5,7 +5,7 @@ package com.yo.dialer;
  */
 
 public class DialerConfig {
-    public static final boolean ENABLE_LOGS = true;
+    public static final boolean ENABLE_LOGS = false;
     public static final boolean SHOW_POPUPS = true;
 
     public static final String NEXGE_SERVER_IP = "173.82.147.172";

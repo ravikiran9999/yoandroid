@@ -72,7 +72,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         connectionStatusTxtView = (TextView) mReceivedCallHeader.findViewById(R.id.connection_status);
         durationTxtview = (TextView) mReceivedCallHeader.findViewById(R.id.tv_call_duration);
 
-        fullImageLayout = (RelativeLayout) findViewById(R.id.full_image_layout);
+        //fullImageLayout = (RelativeLayout) findViewById(R.id.full_image_layout);
 
         callAcceptBtn = (ImageView) findViewById(R.id.btnAcceptCall);
         callRejectBtn = (ImageView) findViewById(R.id.btnRejectCall);
@@ -102,11 +102,11 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnAcceptCall:
-                acceptCall();
+               // acceptCall();
                 changeToAcceptedCallUI();
                 break;
             case R.id.btnRejectCall:
-                rejectCall();
+                //rejectCall();
                 break;
             case R.id.btnMessageIncoming:
                 //if call is not accepted it should display busy messages otherwise it should display yo chat.
@@ -116,10 +116,10 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
                 toggerSpeaker(v);
                 break;
             case R.id.imv_mic_off:
-                toggleMic(v);
+              //  toggleMic(v);
                 break;
             case R.id.btnHold:
-                toggleHold(v);
+              //  toggleHold(v);
                 break;
         }
     }

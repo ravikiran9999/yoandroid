@@ -85,7 +85,7 @@ class CallBaseActivity extends BaseActivity {
         calleName = getIntent().getStringExtra(CallExtras.NAME);
     }
 
-    protected void toggleHold(View v) {
+    /*protected void toggleHold(View v) {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             if (v.getTag() != null) {
                 Boolean flag = Boolean.valueOf(v.getTag().toString());
@@ -113,12 +113,12 @@ class CallBaseActivity extends BaseActivity {
         } else {
             DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
         }
-    }
+    }*/
 
     protected void toggerSpeaker(View v) {
         if (v.getTag() != null) {
             Boolean flag = Boolean.valueOf(v.getTag().toString());
-            changeSelection(v, flag);
+            //changeSelection(v, flag);
             am.setSpeakerphoneOn(flag);
             v.setTag(!flag);
         } else {
@@ -126,7 +126,7 @@ class CallBaseActivity extends BaseActivity {
         }
     }
 
-    private void changeSelection(View v, Boolean flag) {
+   /* private void changeSelection(View v, Boolean flag) {
         if (!flag) {
             v.setBackgroundResource(R.drawable.mute_selector);
         } else {
@@ -150,7 +150,7 @@ class CallBaseActivity extends BaseActivity {
         } else {
             DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
         }
-    }
+    }*/
 
     @Override
     protected void onPause() {

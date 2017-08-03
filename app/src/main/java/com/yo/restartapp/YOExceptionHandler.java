@@ -1,12 +1,8 @@
 package com.yo.restartapp;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 
-import com.yo.android.app.BaseApp;
 import com.yo.android.ui.BottomTabsActivity;
 
 /**
@@ -29,10 +25,10 @@ public class YOExceptionHandler implements Thread.UncaughtExceptionHandler {
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(BaseApp.get().getBaseContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(BaseApp.get().getBaseContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        AlarmManager mgr = (AlarmManager) BaseApp.get().getBaseContext().getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
+        //AlarmManager mgr = (AlarmManager) BaseApp.get().getBaseContext().getSystemService(Context.ALARM_SERVICE);
+       // mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
 
         activity.finish();
         System.exit(2);

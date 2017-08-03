@@ -23,7 +23,7 @@ class UIHelper {
             @Override
             public void run() {
 
-                DialerLogs.messageE(TAG, "YO====isCallStopped" + !activity.isCallStopped);
+             /*   DialerLogs.messageE(TAG, "YO====isCallStopped" + !activity.isCallStopped);
 
                 if (!activity.isCallStopped) {
                     activity.mHandler.postDelayed(this, 1000L);
@@ -55,7 +55,7 @@ class UIHelper {
                             activity.connectionStatusTxtView.setText(activity.getResources().getString(R.string.reconnecting_status));
                         }
                     }
-                }
+                }*/
             }
         };
     }

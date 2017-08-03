@@ -52,7 +52,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return new SipBinder(sipServiceHandler);
+        return new SipBinder(null);
     }
 
     public void register() {
@@ -187,7 +187,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         rejectCall();
         isReconnecting = false;
         yoCurrentCall = null;
-        setCallStatus(getResources().getString(R.string.disconnect_status));
+       // setCallStatus(getResources().getString(R.string.disconnect_status));
     }
 
     public int getCallDurationInSec() {
