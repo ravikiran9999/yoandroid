@@ -46,4 +46,7 @@
     <dimen name="text_size_s">16sp</dimen>
     <dimen name="button_height">48dp</dimen>
     <dimen name="image_popup_height">200dp</dimen>
+    <dimen name="pin_content_layout_padding">40dp</dimen>
+    <dimen name="pin_label_margin">10dp</dimen>
+    <dimen name="pin_min_width">32dp</dimen>
 </resources>

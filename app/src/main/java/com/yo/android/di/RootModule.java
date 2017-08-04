@@ -53,6 +53,7 @@ import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.NewMagazineActivity;
+import com.yo.android.ui.NewOTPActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.OtherProfilesFollowers;
 import com.yo.android.ui.OtherProfilesLikedArticles;
@@ -80,6 +81,7 @@ import com.yo.android.ui.fragments.InviteActivity;
 import com.yo.android.ui.fragments.InviteFriendsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.ui.fragments.NewOTPFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.util.FetchNewArticlesService;
@@ -160,6 +162,7 @@ import dagger.Provides;
                 TopicsDetailActivity.class,
                 TransferBalanceSelectContactActivity.class,
                 TransferBalanceActivity.class,
+                NewOTPActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -180,6 +183,7 @@ import dagger.Provides;
                 CreditAccountFragment.class,
                 SpendDetailsFragment.class,
                 RechargeDetailsFragment.class,
+                NewOTPFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,
