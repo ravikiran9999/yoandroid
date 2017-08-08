@@ -136,6 +136,7 @@ public class Constants {
     public static String BALANCE_UPDATED_ACTION = "com.balance.BALANCEUPDATED";
     public static String CALL_RATE_DETAILS_ACTION = "com.callrates.CALLRATEDETAILS";
     public static String BALANCE_RECHARGE_ACTION = "com.balance.BALANCERECHARGE";
+    public static String FINISH_LOGIN_ACTIVITY_ACTION = "com.finish.LOGINACTIVITY";
 
     // Contacts
     public static final String NUMBER = "number";

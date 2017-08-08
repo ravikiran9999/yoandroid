@@ -376,6 +376,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             part2 = matcher.group(2);
             ip = matcher.group(3);
         }
+        mLog.d(TAG, "Remote uri " + remoteUriStr + " Part 2 " + part2);
         return part2;
     }
 
@@ -625,26 +626,26 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         AccountConfig accCfg = new AccountConfig();
         accCfg.setIdUri(id);
         accCfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
-        accCfg.getNatConfig().setIceEnabled(true);
+        accCfg.getNatConfig().setIceEnabled(false);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
         accCfg.getVideoConfig().setAutoShowIncoming(true);
         if (myApp == null) {
             startSipService();
         }
 
-        accCfg.getNatConfig().setIceEnabled(true);
+        accCfg.getNatConfig().setIceEnabled(false);
              /* Enable ICE/TURN */
-        accCfg.getNatConfig().setTurnEnabled(true);
+        /*accCfg.getNatConfig().setTurnEnabled(true);
         accCfg.getNatConfig().setTurnServer("turn.pjsip.org:33478");
         accCfg.getNatConfig().setTurnUserName("abzlute01");
         accCfg.getNatConfig().setTurnPasswordType(0);
-        accCfg.getNatConfig().setTurnPassword("abzlute01");
+        accCfg.getNatConfig().setTurnPassword("abzlute01");*/
 /*        accCfg.getNatConfig().setTurnServer("34.230.108.83:3478");
         accCfg.getNatConfig().setTurnUserName("tadmin");
         accCfg.getNatConfig().setTurnPasswordType(0);
         accCfg.getNatConfig().setTurnPassword("test123");*/
         //accCfg.getNatConfig().setTurnConnType(pj_turn_tp_type.PJ_TURN_TP_TCP);
-        android.util.Log.d(TAG, msg + " Setting TURN server");
+        //android.util.Log.d(TAG, msg + " Setting TURN server");
         return myApp.addAcc(accCfg);
     }
 
@@ -747,7 +748,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
 
 		/* Enable ICE */
-        accCfg.getNatConfig().setIceEnabled(true);
+        accCfg.getNatConfig().setIceEnabled(false);
     }
 
     public void makeCall(String destination, Bundle options, Intent intent) {

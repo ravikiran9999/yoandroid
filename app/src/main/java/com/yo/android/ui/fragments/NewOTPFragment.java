@@ -389,6 +389,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         getActivity().sendBroadcast(broadcastIntent);
 
         getActivity().finish();
+        EventBus.getDefault().post(Constants.FINISH_LOGIN_ACTIVITY_ACTION);
     }
 
     public void onEventMainThread(Bundle bundle) {

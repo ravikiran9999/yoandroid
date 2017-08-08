@@ -129,7 +129,9 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                         isInvalidUrl = false;
 
                         if (!url.contains("http://")) {
-                            url = "http://" + url;
+                            if(!url.contains("https://")) {
+                                url = "http://" + url;
+                            }
                             if (Patterns.WEB_URL.matcher(url).matches()) {
                                 webview.loadUrl(url);
                             } else {

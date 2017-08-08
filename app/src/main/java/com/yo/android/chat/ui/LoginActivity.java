@@ -46,6 +46,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -87,6 +88,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     private static final int SELECTED_OK = 101;
 
     private MenuItem searchMenuItem;
+    private EventBus bus = EventBus.getDefault();
 
 
     @Override
@@ -94,6 +96,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        bus.register(this);
         if (getIntent().getBooleanExtra(Constants.SESSION_EXPIRE, false)) {
             //Toast.makeText(this, "YoApp session expired.", Toast.LENGTH_LONG).show();
             Toast.makeText(this, getString(R.string.logged_in_another_device), Toast.LENGTH_LONG).show();
@@ -396,6 +399,18 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, countryCode);
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID, countryId);
             }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        bus.unregister(this);
+    }
+
+    public void onEventMainThread(Object action) {
+        if (action.equals(Constants.FINISH_LOGIN_ACTIVITY_ACTION)) {
+            finish();
         }
     }
 
