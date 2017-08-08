@@ -114,7 +114,8 @@ class MyApp {
         UaConfig ua_cfg = epConfig.getUaConfig();
         ua_cfg.setUserAgent("Pjsua2 Android " + mEndpoint.libVersion().getFull());
         StringVector stun_servers = new StringVector();
-        stun_servers.add("34.230.108.83:3478");
+        //stun_servers.add("34.230.108.83:3478");
+        stun_servers.add("54.90.250.89:3478");
         //stun_servers.add("stun.pjsip.org");
         ua_cfg.setStunServer(stun_servers);
         if (own_worker_thread) {

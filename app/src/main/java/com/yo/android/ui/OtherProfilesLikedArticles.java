@@ -56,8 +56,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 
-//import com.squareup.picasso.Picasso;
-
 /**
  * Created by root on 15/7/16.
  */
@@ -117,6 +115,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         loadLikedArticles(userID);
     }
 
+    /**
+     * Gets the other Yo app user's liked articles
+     * @param userID
+     */
     private void loadLikedArticles(String userID) {
         articlesList.clear();
         myBaseAdapter.addItems(articlesList);
@@ -576,7 +578,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             return layout;
         }
 
-
+        /**
+         * Adds the articles to the list
+         * @param articlesList The list of articles
+         */
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
             if (!((BaseActivity) context).hasDestroyed()) {
@@ -589,6 +594,11 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             autoReflectFollowOrLikes(data, type);
         }
 
+        /**
+         * Performs operations after following or liking an article
+         * @param data The articles list
+         * @param type The type of operation whether it is follow or like
+         */
         private void autoReflectFollowOrLikes(Articles data, String type) {
             if (data != null) {
 
@@ -632,6 +642,12 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             }
         }
 
+        /**
+         * Updates the topic following
+         * @param isFollowing isFollowing or not
+         * @param topic The articles object
+         * @param position The position
+         */
         public void updateTopic(boolean isFollowing, Articles topic, int position) {
             items.remove(position);
             items.add(position, topic);
@@ -650,6 +666,13 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             notifyDataSetChanged();
         }
 
+        /**
+         * Updates the articles
+         * @param isLiked isLiked or not
+         * @param articles The articles object
+         * @param position The position
+         * @param articlePlace The article placement
+         */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
             items.remove(position);
             items.add(position, articles);
@@ -658,6 +681,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         }
     }
 
+    /**
+     * The View Holder class
+     */
     private static class ViewHolder {
 
         private TextView articleTitle;
@@ -701,6 +727,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         }
     }
 
+    /**
+     * Gets the list of cached articles
+     * @return The list of cached articles
+     */
     private List<Articles> getCachedMagazinesList() {
         Type type1 = new TypeToken<List<Articles>>() {
         }.getType();
@@ -726,6 +756,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         return cachedMagazinesList;
     }
 
+    /**
+     * Saved the list of articles in the cache
+     * @param cachedMagazinesList The list of articles to be cached
+     */
     private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
         List<Articles> followedTopicArticles = new ArrayList<>();
         List<Articles> randomTopicArticles = new ArrayList<>();

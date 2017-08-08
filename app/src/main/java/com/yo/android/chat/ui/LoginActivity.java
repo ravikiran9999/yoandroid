@@ -1,14 +1,10 @@
 package com.yo.android.chat.ui;
 
 import android.app.AlertDialog;
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
-
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -28,8 +24,6 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import com.orion.android.common.logger.Log;
-import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -37,17 +31,15 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.model.CountryCode;
 import com.yo.android.model.Response;
+import com.yo.android.ui.NewOTPActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.CountryCodeHelper;
 import com.yo.android.util.Util;
 import com.yo.android.vox.UserDetails;
 import com.yo.android.vox.VoxFactory;
 
-import org.angmarch.views.NiceSpinner;
-
 import java.net.SocketTimeoutException;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -284,14 +276,22 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                         boolean balanceAdded = (boolean) ((LinkedTreeMap) response1.getData()).get("balanceAdded");
                         preferenceEndPoint.saveBooleanPreference("balanceAdded", balanceAdded);
                     }
-                    OTPFragment otpFragment = new OTPFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
-                    otpFragment.setArguments(bundle);
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
-                    transaction.disallowAddToBackStack();
-                    transaction.commit();
+                    if(!BuildConfig.NEW_OTP_SCREEN) {
+                        OTPFragment otpFragment = new OTPFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
+                        otpFragment.setArguments(bundle);
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
+                        transaction.disallowAddToBackStack();
+                        transaction.commit();
+                    } else {
+                        Intent intent = new Intent(LoginActivity.this, NewOTPActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
                 } else {
                     mToastFactory.showToast("Please enter valid phone number.");
                 }

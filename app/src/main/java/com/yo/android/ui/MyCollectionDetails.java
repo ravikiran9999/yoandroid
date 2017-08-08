@@ -58,8 +58,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 
-//import com.squareup.picasso.Picasso;
-
+/**
+ * This activity is used to display the articles of a followed topic
+ */
 public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlipListener {
 
     @Inject
@@ -592,6 +593,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             return layout;
         }
 
+        /**
+         * Shows the unfollow confirmation dialog
+         * @param data The articles object
+         * @param finalHolder The ViewHolder object
+         */
         private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
 
 
@@ -662,6 +668,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         }
 
 
+        /**
+         * Adds the articles to the list
+         * @param articlesList The articles list
+         */
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
             if (!((BaseActivity) context).hasDestroyed()) {
@@ -669,6 +679,13 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             }
         }
 
+        /**
+         * Updates the list of articles
+         * @param isLiked isLiked article or not
+         * @param articles The Articles object
+         * @param position The position
+         * @param articlePlace The article placement
+         */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
             items.remove(position);
             items.add(position, articles);
@@ -677,6 +694,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         }
     }
 
+    /**
+     * The View Holder class
+     */
     private static class ViewHolder {
 
         private TextView articleTitle;
@@ -835,6 +855,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         }
     }
 
+    /**
+     * Removes the read articles
+     */
     public void removeReadArticles() {
 
         Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
@@ -894,6 +917,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
     }
 
+    /**
+     * Checks the cached magazines list with the topicId of the selected topic
+     * @return
+     */
     private List<String> checkCachedMagazines() {
         List<String> existingArticleIds = new ArrayList<>();
 
@@ -910,6 +937,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         return existingArticleIds;
     }
 
+    /**
+     * Gets the remaining articles of the topic
+     * @param existingArticles The list of existing article ids
+     */
     private void getRemainingArticlesInTopics(List<String> existingArticles) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getRemainingArticlesInTopicAPI(accessToken, topicId, existingArticles).enqueue(new Callback<List<Articles>>() {
@@ -987,6 +1018,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         });
     }
 
+    /**
+     * Gets the remaining articles of the magazine
+     * @param existingArticles The list of existing article ids
+     */
     private void getRemainingArticlesInMagazine(List<String> existingArticles) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getRemainingArticlesInMagAPI(accessToken, topicId, existingArticles).enqueue(new Callback<MagazineArticles>() {
@@ -1062,6 +1097,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         });
     }
 
+    /**
+     * Gets the cached articles list
+     * @return The list of cached articles
+     */
     private List<Articles> getCachedMagazinesList() {
         Type type1 = new TypeToken<List<Articles>>() {
         }.getType();
@@ -1086,6 +1125,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         return cachedMagazinesList;
     }
 
+    /**
+     * Saves the list of cached articles
+     * @param cachedMagazinesList The articles to cache
+     */
     private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
         List<Articles> followedTopicArticles = new ArrayList<>();
         List<Articles> randomTopicArticles = new ArrayList<>();

@@ -5,6 +5,8 @@ import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.firebase.client.Firebase;
+import com.flurry.android.FlurryAgent;
+import com.flurry.android.FlurryAgentListener;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.di.Injector;
 import com.yo.android.di.RootModule;
@@ -25,6 +27,7 @@ public class BaseApp extends MultiDexApplication {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    private FlurryAgentListener flurryAgentListener;
 
     @Override
     public void onCreate() {
@@ -36,7 +39,13 @@ public class BaseApp extends MultiDexApplication {
         Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
         // ReCreateService.getInstance(this).start(this);
-
+        flurryAgentListener = new FlurryAgentListener() {
+            @Override
+            public void onSessionStarted() {
+                Log.d("BaseApp", "In onSessionStarted of Flurry");
+            }
+        };
+        initFlurry();
 
     }
 
@@ -58,5 +67,16 @@ public class BaseApp extends MultiDexApplication {
     public void onTerminate() {
         super.onTerminate();
         preferenceEndPoint.saveBooleanPreference(Constants.IS_IN_APP, false);
+    }
+
+    private void initFlurry() {
+        new FlurryAgent.Builder()
+                .withLogEnabled(true)
+                .withCaptureUncaughtExceptions(true)
+                //.withContinueSessionMillis(10)
+                //.withLogEnabled(true)
+                .withLogLevel(Log.VERBOSE)
+                .withListener(flurryAgentListener)
+                .build(this, Constants.FLURRY_API_KEY);
     }
 }

@@ -56,5 +56,10 @@
     <color name="transperantDarkGray">#a0494848</color>
 
     <color name="list_selected">#B6D8E0</color>
+    
+    <color name="dark_bluish_gray">#333447</color>
+    <color name="light_bluish_gray">#454a61</color>
+    <color name="underline_grey">#B6C6CE</color>
+    <color name="resend_white">#C82121</color>
 
 </resources>

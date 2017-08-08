@@ -29,6 +29,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to display the user's created magazines in a GridView
+ */
 public class CreateMagazineActivity extends BaseActivity {
 
     @Inject

@@ -35,6 +35,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to display all the Yo App users
+ */
 public class FindPeopleActivity extends BaseActivity {
 
     private ListView lvFindPeople;
@@ -112,6 +115,9 @@ public class FindPeopleActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Getting the Yo app users
+     */
     private void callFindPeopleService() {
         showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -178,6 +184,9 @@ public class FindPeopleActivity extends BaseActivity {
         };
     }
 
+    /**
+     * Used to implement pagination
+     */
     private void doPagination() {
         isMoreLoading=true;
         pageCount++;
@@ -223,6 +232,10 @@ public class FindPeopleActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Searches in the list of Yo app users
+     * @param menu
+     */
     private void searchPeople(Menu menu) {
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -266,6 +279,10 @@ public class FindPeopleActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Calls the service to get the list of Yo app users with the search text
+     * @param newText The search text
+     */
     private void callSearchingService(String newText) {
 
         String searchKey = newText.trim();
@@ -327,6 +344,9 @@ public class FindPeopleActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Refreshes the list of Yo app users
+     */
     public void refresh() {
         callFindPeopleService();
         pageCount = 1;

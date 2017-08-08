@@ -41,8 +41,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 
-//import com.squareup.picasso.Picasso;
-
+/**
+ * This activity is used to display the liked articles of the users
+ */
 public class WishListActivity extends BaseActivity {
 
     private List<Articles> articlesList = new ArrayList<Articles>();
@@ -530,7 +531,10 @@ public class WishListActivity extends BaseActivity {
             return layout;
         }
 
-
+        /**
+         * Adds items to the list
+         * @param articlesList The articles list
+         */
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
             if (!((BaseActivity) context).hasDestroyed()) {
@@ -538,6 +542,12 @@ public class WishListActivity extends BaseActivity {
             }
         }
 
+        /**
+         * Updates the topic with the topic following
+         * @param isFollowing isFollowing or not
+         * @param topic The articles object
+         * @param position The position
+         */
         public void updateTopic(boolean isFollowing, Articles topic, int position) {
             items.remove(position);
             items.add(position, topic);
@@ -556,6 +566,13 @@ public class WishListActivity extends BaseActivity {
             notifyDataSetChanged();
         }
 
+        /**
+         * Updates the articles
+         * @param isLiked isLiked or not
+         * @param articles The articles object
+         * @param position The position
+         * @param articlePlace The articles placement
+         */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
             items.remove(position);
             items.add(position, articles);
@@ -570,6 +587,9 @@ public class WishListActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Refreshes the liked articles list
+     */
     private void refreshWishList() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
@@ -612,6 +632,9 @@ public class WishListActivity extends BaseActivity {
         });
     }
 
+    /**
+     * The ViewHolder class
+     */
     private static class ViewHolder {
 
         private TextView articleTitle;
