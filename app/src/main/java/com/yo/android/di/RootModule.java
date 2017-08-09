@@ -96,6 +96,7 @@ import com.yo.android.voip.SipService;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.NewDialerFragment;
 import com.yo.dialer.ui.IncomingCallActivity;
+import com.yo.dialer.ui.OutgoingCallActivity;
 import com.yo.dialer.yopj.YoSipServiceHandler;
 import com.yo.services.BackgroundServices;
 
@@ -215,6 +216,7 @@ import dagger.Provides;
                 com.yo.dialer.YoSipService.class,
                 YoSipServiceHandler.class,
                 IncomingCallActivity.class,
+                OutgoingCallActivity.class,
                 DialerHelper.class
 
         },

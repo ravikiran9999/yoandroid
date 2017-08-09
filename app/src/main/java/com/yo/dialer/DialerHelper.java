@@ -44,8 +44,13 @@ public class DialerHelper {
     }
 
     public String parsePhoneNumber(String username) {
-        if (username != null) {
-            return username.substring(username.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, username.length() - 1);
+        try {
+            DialerLogs.messageE(TAG, "Username for parse Phone number" + username);
+            if (username != null) {
+                return username.substring(username.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, username.length() - 1);
+            }
+        } catch (StringIndexOutOfBoundsException ex) {
+            DialerLogs.messageE(TAG, "Parsing YO USER EXception " + ex.getMessage());
         }
         return username;
     }

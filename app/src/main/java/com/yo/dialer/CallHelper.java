@@ -44,7 +44,9 @@ public class CallHelper {
                     final YoCall call = new YoCall(yoAccount, -1);
                     CallOpParam prm = new CallOpParam(true);
                     try {
-                        String dst_uri = "sip:" + calleeNumber + "@" + DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP;
+                        // String dst_uri = "sip:" + calleeNumber + "@" + DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP;
+                        String dst_uri = String.format("\"%s\"<sip:%s@%s>", calleeNumber, calleeNumber, DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT);
+
                         DialerLogs.messageI(TAG, "YO=========Callee URI==========" + dst_uri);
                         call.makeCall(dst_uri, prm);
                         return call;
