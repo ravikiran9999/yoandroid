@@ -17,7 +17,7 @@ public class OutgoingCallActivity extends CallBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialer_outgoing_call);
-        DialerLogs.messageI(TAG, "YO========Incoming call screen=====");
+        DialerLogs.messageI(TAG, "YO========Outgongcall call screen=====");
         setContentView(R.layout.dialer_received_call);
         DialerLogs.messageI(TAG, "YO==== Callee Number====" + callePhoneNumber);
         initViews();

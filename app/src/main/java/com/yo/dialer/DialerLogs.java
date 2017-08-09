@@ -7,21 +7,23 @@ import android.util.Log;
  */
 
 public class DialerLogs {
+    private static final String COMMON_STRING = "YO======";
+
     public static void messageW(final String TAG, final String message) {
         if (DialerConfig.ENABLE_LOGS) {
-            Log.w(TAG, message);
+            Log.w(TAG, COMMON_STRING + message);
         }
     }
 
     public static void messageE(final String TAG, final String message) {
         if (DialerConfig.ENABLE_LOGS) {
-            Log.e(TAG, message);
+            Log.e(TAG, COMMON_STRING + message);
         }
     }
 
     public static void messageI(final String TAG, final String message) {
         if (DialerConfig.ENABLE_LOGS) {
-            Log.i(TAG, message);
+            Log.i(TAG, COMMON_STRING + message);
         }
     }
 

@@ -4,10 +4,12 @@ import android.content.Context;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.util.Constants;
+import com.yo.dialer.DialerConfig;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.YoSipService;
 import com.yo.dialer.model.SipProperties;
+import com.yo.dialer.ui.CallStatusListener;
 
 /**
  * Created by Rajesh Babu on 17/7/17.
@@ -31,6 +33,8 @@ public class YoSipServiceHandler implements SipServicesListener {
     private String displayname;
     private static YoCallObserver yoCallObserver;
     private static Context mContext;
+
+    public CallStatusListener callStatusListener;
 
     public static YoSipServiceHandler getInstance(Context context, PreferenceEndPoint preferenceEndPoints) {
         mContext = context;
@@ -97,7 +101,11 @@ public class YoSipServiceHandler implements SipServicesListener {
     public String getCallState() {
         if (mContext != null) {
             if (mContext instanceof YoSipService) {
-                return ((YoSipService) mContext).getCallStatus();
+                String callStatus = ((YoSipService) mContext).getCallStatus();
+                if (callStatusListener != null) {
+                    callStatusListener.callStatus(callStatus);
+                }
+                return callStatus;
             }
         }
         return null;
@@ -121,6 +129,13 @@ public class YoSipServiceHandler implements SipServicesListener {
         }
     }
 
+    @Override
+    public void callDisconnected() {
+        if (callStatusListener != null) {
+            callStatusListener.callDisconnected();
+        }
+    }
+
     public int getRegistersCount() {
         return yoApp.accList.size();
     }
@@ -135,16 +150,16 @@ public class YoSipServiceHandler implements SipServicesListener {
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         return new SipProperties.Builder().withICEEnable(false)
                 .withTurnEnable(false)
-                .withStunServer("54.90.250.89:3478")
-                .withTurnServer("turn.pjsip.org:33478")
-                .withTurnServerUsername("abzlute01")
-                .withTurnServerPassword("abzlute01")
-                .withSipServer("173.82.147.172:6000")
-                .withProxyServer("173.82.147.172:6000;transport=tcp;lr")
+                .withStunServer(DialerConfig.STUN_SERVER)
+                .withTurnServer(DialerConfig.TURN_SERVER)
+                .withTurnServerUsername(DialerConfig.USERNAME)
+                .withTurnServerPassword(DialerConfig.PASSWORD)
+                .withSipServer(DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT)
+                .withProxyServer(DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP)
                 .withVadEnable(false)
                 .withDisplayName("YO")
                 .showDisplayName(true)
-                .withRegister("173.82.147.172:6000")
+                .withRegister(DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT)
                 .withUserName(username)
                 .withPassword(password)
                 .build();
@@ -174,5 +189,9 @@ public class YoSipServiceHandler implements SipServicesListener {
         DialerLogs.messageI(TAG, "YO========UN-REGISTER ACCOUNT===========");
         yoApp.delAcc(account);
         yoApp.deinit();
+    }
+
+    public void registerCallStatusListener(CallStatusListener callStatusListener) {
+        this.callStatusListener = callStatusListener;
     }
 }

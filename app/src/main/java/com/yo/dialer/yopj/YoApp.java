@@ -88,6 +88,7 @@ public class YoApp {
 
         /* Media config */
         epConfig.getMedConfig().setQuality(4);
+        epConfig.getMedConfig().setNoVad(true);
 
 	/* Set ua config. */
         UaConfig ua_cfg = epConfig.getUaConfig();
@@ -131,7 +132,8 @@ public class YoApp {
             ep.libStart();
             ep.codecSetPriority("*", (short) 0);
             ep.codecSetPriority("opus", (short) 1);
-
+            ep.codecSetPriority("PCMA/8000", (short) 1);
+            ep.codecSetPriority("PCMU/8000", (short) 1);
             CodecInfoVector vector = ep.codecEnum();
             for (int i = 0; i < vector.size(); i++) {
                 CodecInfo codecInfo = vector.get(i);
@@ -146,6 +148,8 @@ public class YoApp {
 
             //ep.codecSetPriority("G711/8000", (short) 1);
             ep.audDevManager().setInputRoute(pjmedia_aud_dev_route.PJMEDIA_AUD_DEV_ROUTE_CUSTOM);
+            // ep.audDevManager().setVad(sipProperties.isVad());
+
         } catch (Exception e) {
             DialerLogs.messageE(TAG, "YO== Initialization of codecs Failed==" + e.getMessage());
             return;

@@ -26,6 +26,7 @@ import java.io.IOException;
  * Created by Rajesh Babu on 18/7/17.
  */
 
+
 public class CallHelper {
     private static final String TAG = CallHelper.class.getSimpleName();
 
@@ -35,6 +36,10 @@ public class CallHelper {
                 DialerLogs.messageI(TAG, "YO========Making makeCall===========");
                 try {
                     DialerLogs.messageI(TAG, "YO=========Caller Number==========" + yoAccount.getInfo().getUri());
+                } catch (Exception e) {
+                    DialerLogs.messageE(TAG, "YO=========Caller Number==========" + e.getMessage());
+                }
+                try {
                     String calleeNumber = prepareDestinationDetails(intent);
                     final YoCall call = new YoCall(yoAccount, -1);
                     CallOpParam prm = new CallOpParam(true);
@@ -52,6 +57,7 @@ public class CallHelper {
                     e.printStackTrace();
                 }
             } else {
+                DialerLogs.messageE(TAG, "YO=========Intent does not contain CALLER NO VALUE==========");
 
             }
         } else {

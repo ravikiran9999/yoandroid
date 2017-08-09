@@ -33,7 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by root on 31/7/17.
  */
 
-class CallBaseActivity extends BaseActivity {
+class CallBaseActivity extends BaseActivity implements CallStatusListener {
 
     private static final String TAG = CallBaseActivity.class.getSimpleName();
     //User details;
@@ -58,10 +58,13 @@ class CallBaseActivity extends BaseActivity {
     protected TextView calleNameTxt;
     protected TextView callePhoneNumberTxt;
 
+    private CallStatusListener callStatusListener;
+
     protected ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
+            sipBinder.getYOHandler().registerCallStatusListener(callStatusListener);
             DialerLogs.messageW(TAG, "YO====Service connected to incoming call activity====" + sipBinder);
         }
 
@@ -83,15 +86,18 @@ class CallBaseActivity extends BaseActivity {
         callePhoneNumber = getIntent().getStringExtra(CallExtras.CALLER_NO);
         calleImageUrl = getIntent().getStringExtra(CallExtras.IMAGE);
         calleName = getIntent().getStringExtra(CallExtras.NAME);
+        callStatusListener = this;
     }
 
-    /*protected void toggleHold(View v) {
+    protected void toggleHold(View v) {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             if (v.getTag() != null) {
                 Boolean flag = Boolean.valueOf(v.getTag().toString());
                 changeSelection(v, flag);
+                DialerLogs.messageE(TAG, "toggleHold == v.getTag = " + flag);
                 sipBinder.getYOHandler().setHold(flag);
                 v.setTag(!flag);
+                DialerLogs.messageE(TAG, "toggleHold Changing ==" + !flag);
             } else {
                 DialerLogs.messageE(TAG, "YO====toggleHold == v.getTag null");
             }
@@ -113,12 +119,12 @@ class CallBaseActivity extends BaseActivity {
         } else {
             DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
         }
-    }*/
+    }
 
     protected void toggerSpeaker(View v) {
         if (v.getTag() != null) {
             Boolean flag = Boolean.valueOf(v.getTag().toString());
-            //changeSelection(v, flag);
+            changeSelection(v, flag);
             am.setSpeakerphoneOn(flag);
             v.setTag(!flag);
         } else {
@@ -126,7 +132,7 @@ class CallBaseActivity extends BaseActivity {
         }
     }
 
-   /* private void changeSelection(View v, Boolean flag) {
+    private void changeSelection(View v, Boolean flag) {
         if (!flag) {
             v.setBackgroundResource(R.drawable.mute_selector);
         } else {
@@ -150,7 +156,7 @@ class CallBaseActivity extends BaseActivity {
         } else {
             DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
         }
-    }*/
+    }
 
     @Override
     protected void onPause() {
@@ -189,9 +195,33 @@ class CallBaseActivity extends BaseActivity {
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 Drawable drawable = new BitmapDrawable(resource);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    fullImageLayout.setBackground(drawable);
+                    if (fullImageLayout != null) {
+                        fullImageLayout.setBackground(drawable);
+                    } else {
+                        DialerLogs.messageE(TAG, "YO====fULL IMAGE LAYOUT NULL");
+                    }
                 }
             }
         });
     }
+
+    @Override
+    public void callDisconnected() {
+        finish();
+    }
+
+    @Override
+    public void callStatus(final String status) {
+        DialerLogs.messageI(TAG, "CALL STATUS " + status);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (connectionStatusTxtView != null) {
+                    connectionStatusTxtView.setText(status);
+                }
+            }
+        });
+    }
+
+
 }

@@ -18,7 +18,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:drawableLeft="@drawable/ic_yo_dialer"
             android:drawablePadding="5dp"
             android:text="VOICE CALL"
             android:textColor="@android:color/white"

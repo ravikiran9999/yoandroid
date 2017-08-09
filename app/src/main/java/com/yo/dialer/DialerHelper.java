@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
@@ -58,19 +59,38 @@ public class DialerHelper {
     }
 
 
-    public String getPhoneNumber(YoCall call) throws Exception {
-        String remoteUriStr = call.getInfo().getRemoteUri();
+    public String getPhoneNumber(YoCall call) {
+        String remoteUriStr = null;
+        try {
+            remoteUriStr = call.getInfo().getRemoteUri();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        DialerLogs.messageI(TAG, "YO=======getPhoneNumber Remote URI===" + remoteUriStr);
+        String title = null;
         String part2 = "";
+        String ip = null;
+        //EX:"8341569102" <sip:8341569102@209.239.120.239>
         String regex = "\"(.+?)\" \\<sip:(.+?)@(.+?)\\>";
         Pattern p = Pattern.compile(regex);
         Matcher matcher = p.matcher(remoteUriStr);
         if (matcher.matches()) {
+            title = matcher.group(1);
             part2 = matcher.group(2);
+            ip = matcher.group(3);
         }
+        DialerLogs.messageI(TAG, "YO=======getPhoneNumber TITLE===" + title + ",IP=" + ip + ",Part2=" + part2);
+
         return part2;
     }
 
     public Contact readCalleeDetailsFromDB(ContactsSyncManager mContactsSyncManager, String calleeNumber) {
+        DialerLogs.messageI(TAG, "YO=======readCalleeDetailsFromDB===" + calleeNumber);
+        if (TextUtils.isEmpty(calleeNumber)) {
+            calleeNumber = "9490570720";
+            DialerLogs.messageI(TAG, "YO=======aDDING TEMP,readCalleeDetailsFromDB===" + calleeNumber);
+
+        }
         Contact contact = mContactsSyncManager.getContactByVoxUserName(calleeNumber);
         if (contact != null) {
             DialerLogs.messageI(TAG, "YO=======Image===" + contact.getImage());

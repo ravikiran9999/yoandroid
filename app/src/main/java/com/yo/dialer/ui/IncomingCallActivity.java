@@ -20,7 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class IncomingCallActivity extends CallBaseActivity implements View.OnClickListener {
     private static final String TAG = InComingCallActivity.class.getSimpleName();
 
-   //After accepting call
+    //After accepting call
     private CircleImageView acceptedCalleImageView;
     private TextView acceptedcalleNameTxt;
     private TextView acceptedcallePhoneNumberTxt;
@@ -55,6 +55,10 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
 
     }
 
+    private void readIntentValues() {
+
+    }
+
     private void initViews() {
         mReceivedCallHeader = findViewById(R.id.received_call_header);
         mInComingHeader = findViewById(R.id.incoming_call_header);
@@ -63,6 +67,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         calleImageView = (CircleImageView) mInComingHeader.findViewById(R.id.imv_caller_pic);
         calleNameTxt = (TextView) mInComingHeader.findViewById(R.id.tv_caller_name);
         callePhoneNumberTxt = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
+        fullImageLayout = (RelativeLayout) findViewById(R.id.full_image_layout);
         mReceivedCallHeader.setVisibility(View.GONE);
 
         //Accepted call
@@ -79,11 +84,11 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         callMessageBtn = (ImageView) findViewById(R.id.btnMessageIncoming);
 
         callSpeakerView = (ImageView) findViewById(R.id.imv_speaker);
-        callSpeakerView.setTag(false);
-        callHoldView = (ImageView) findViewById(R.id.imv_mic_off);
-        callHoldView.setTag(false);
-        callMuteView = (ImageView) findViewById(R.id.btnHold);
-        callMuteView.setTag(false);
+        callSpeakerView.setTag(true);
+        callMuteView = (ImageView) findViewById(R.id.imv_mic_off);
+        callMuteView.setTag(true);
+        callHoldView = (ImageView) findViewById(R.id.btnHold);
+        callHoldView.setTag(true);
 
         registerListerners();
     }
@@ -102,11 +107,11 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnAcceptCall:
-               // acceptCall();
+                acceptCall();
                 changeToAcceptedCallUI();
                 break;
             case R.id.btnRejectCall:
-                //rejectCall();
+                rejectCall();
                 break;
             case R.id.btnMessageIncoming:
                 //if call is not accepted it should display busy messages otherwise it should display yo chat.
@@ -116,10 +121,10 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
                 toggerSpeaker(v);
                 break;
             case R.id.imv_mic_off:
-              //  toggleMic(v);
+                toggleMic(v);
                 break;
             case R.id.btnHold:
-              //  toggleHold(v);
+                toggleHold(v);
                 break;
         }
     }

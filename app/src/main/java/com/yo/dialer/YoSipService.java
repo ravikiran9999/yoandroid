@@ -13,6 +13,7 @@ import com.yo.android.model.Contact;
 import com.yo.android.pjsip.MediaManager;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.dialer.ui.IncomingCallActivity;
+import com.yo.dialer.ui.OutgoingCallActivity;
 import com.yo.dialer.yopj.YoAccount;
 import com.yo.dialer.yopj.YoCall;
 import com.yo.dialer.yopj.YoSipServiceHandler;
@@ -21,6 +22,7 @@ import org.pjsip.pjsua2.StreamStat;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 
 /**
  * Created by Rajesh Babu on 11/7/17.
@@ -34,6 +36,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private String registrationStatus;
     private long currentRTPPackets;
     private boolean isReconnecting = false;
+    private boolean isHold = false;
+    private Runnable checkNetworkLossRunnable;
 
     @Inject
     @Named("login")
@@ -52,7 +56,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return new SipBinder(null);
+        return new SipBinder(sipServiceHandler);
     }
 
     public void register() {
@@ -106,7 +110,17 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void makeCall(Intent intent) {
-        CallHelper.makeCall(yoAccount, intent);
+        if (yoCurrentCall == null) {
+            YoCall yoCall = CallHelper.makeCall(yoAccount, intent);
+            DialerLogs.messageE(TAG, "YO==makeCalling call...and YOCALL = " + yoCall);
+            showOutgointCallActivity(yoCall);
+        } else {
+            //TODO: ALREADY CALL IS GOING ON
+        }
+    }
+
+    private void showOutgointCallActivity(YoCall yoCall) {
+        showCallUI(yoCall, true);
     }
 
     @Override
@@ -122,20 +136,28 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void startInComingCallScreen(final YoCall yoCall) {
-        final Intent intent = new Intent(YoSipService.this, IncomingCallActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        try {
-            String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
-            Contact contact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, calleeNumber);
-            intent.putExtra(CallExtras.CALLER_NO, calleeNumber);
-            intent.putExtra(CallExtras.IMAGE, contact.getImage());
-            intent.putExtra(CallExtras.PHONE_NUMBER, contact.getPhoneNo());
-            intent.putExtra(CallExtras.NAME, contact.getName());
-            //Wait until user profile image is loaded , it should not show blank image
-            startActivity(intent);
-        } catch (Exception e) {
-            DialerLogs.messageE(TAG, "YO====startInComingCallScreen==" + e.getMessage());
+        showCallUI(yoCall, false);
+    }
+
+    private void showCallUI(YoCall yoCall, boolean isOutgongCall) {
+        Intent intent;
+        DialerLogs.messageE(TAG, "YO====showCallUI== isOutgoingcall" + isOutgongCall);
+
+        if (isOutgongCall) {
+            intent = new Intent(YoSipService.this, OutgoingCallActivity.class);
+        } else {
+            intent = new Intent(YoSipService.this, IncomingCallActivity.class);
         }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
+        Contact contact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, calleeNumber);
+        intent.putExtra(CallExtras.CALLER_NO, calleeNumber);
+        intent.putExtra(CallExtras.IMAGE, contact.getImage());
+        intent.putExtra(CallExtras.PHONE_NUMBER, contact.getPhoneNo());
+        intent.putExtra(CallExtras.NAME, contact.getName());
+        //Wait until user profile image is loaded , it should not show blank image
+        startActivity(intent);
+
     }
 
     public void setCurrentCallToNull() {
@@ -147,10 +169,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     //So after 10sec change to reconnecting and  30sec if there are no rtp packets need to disconnect the call.
     public void checkCalleeLossNetwork() {
         if (yoCurrentCall != null) {
-            mHandler.postDelayed(new Runnable() {
+            checkNetworkLossRunnable = new Runnable() {
                 @Override
                 public void run() {
                     final StreamStat stats;
+                    if (isHold) {
+                        return;
+                    }
                     try {
                         stats = yoCurrentCall.getStreamStat(0);
                         DialerLogs.messageE(TAG, currentRTPPackets + "YO===checkCalleeLossNetwork stats.getRtcp().getRxStat().getBytes()...." + stats.getRtcp().getRxStat().getBytes());
@@ -179,15 +204,16 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                         updateDisconnectStatus();
                     }
                 }
-            }, NO_RTP_DISCONNECT_DURATION);
+            };
+            mHandler.postDelayed(checkNetworkLossRunnable, NO_RTP_DISCONNECT_DURATION);
         }
     }
 
     private void updateDisconnectStatus() {
         rejectCall();
         isReconnecting = false;
-        yoCurrentCall = null;
-       // setCallStatus(getResources().getString(R.string.disconnect_status));
+        setCurrentCallToNull();
+        updateCallStatus();
     }
 
     public int getCallDurationInSec() {
@@ -206,35 +232,81 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void setCallStatus(String status) {
         registrationStatus = null;
         registrationStatus = status;
+        updateCallStatus();
     }
 
     public String getCallStatus() {
+        String callStatus = getResources().getString(R.string.unknown);
         if (yoCurrentCall != null) {
             try {
+
                 if (isReconnecting) {
-                    return registrationStatus;
+                    callStatus = registrationStatus;
                 } else {
                     String stateTxt = yoCurrentCall.getInfo().getStateText();
-                    return stateTxt;
+                    callStatus = stateTxt;
                 }
             } catch (Exception e) {
-                DialerLogs.messageE(TAG, "YO==getCallStatus===" + e.getMessage());
+                DialerLogs.messageE(TAG, "getCallStatus" + e.getMessage());
             }
         } else {
-            return registrationStatus;
+            callStatus = registrationStatus;
         }
-        return null;
+
+        return callStatus;
     }
 
     public void setHold(boolean flag) {
+        DialerLogs.messageE(TAG, "Call HOld" + isHold);
+        isHold = flag;
         if (flag) {
             CallHelper.holdCall(yoCurrentCall);
+            registrationStatus = getResources().getString(R.string.hold);
+            if (mHandler != null && checkNetworkLossRunnable != null) {
+                mHandler.removeCallbacks(checkNetworkLossRunnable);
+            }
         } else {
             CallHelper.unHoldCall(yoCurrentCall);
+            registrationStatus = getResources().getString(R.string.unhold);
+            if (mHandler != null && checkNetworkLossRunnable != null) {
+                mHandler.post(checkNetworkLossRunnable);
+            }
+        }
+        if (sipServiceHandler.callStatusListener != null) {
+            sipServiceHandler.callStatusListener.callStatus(registrationStatus);
         }
     }
 
     public void setMic(boolean flag) {
         CallHelper.setMute(YoSipServiceHandler.getYoApp(), yoCurrentCall, flag);
+    }
+
+    public void callDisconnected() {
+        setCurrentCallToNull();
+        DialerLogs.messageE(TAG, "callDisconnected");
+        if (sipServiceHandler != null) {
+            sipServiceHandler.callDisconnected();
+        } else {
+            DialerLogs.messageE(TAG, "SipServiceHandler is null");
+        }
+    }
+
+    public void updateCallStatus() {
+        DialerLogs.messageE(TAG, "updateCallStatus");
+        if (sipServiceHandler != null) {
+            sipServiceHandler.getCallState();
+        } else {
+            DialerLogs.messageE(TAG, "SipServiceHandler is null");
+        }
+    }
+
+    public void remoteHold(boolean isHold) {
+        if (sipServiceHandler.callStatusListener != null) {
+            if (isHold) {
+                sipServiceHandler.callStatusListener.callStatus(getResources().getString(R.string.call_on_hold_status));
+            } else {
+                updateCallStatus();
+            }
+        }
     }
 }

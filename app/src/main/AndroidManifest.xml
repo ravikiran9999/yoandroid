@@ -156,6 +156,15 @@
             android:taskAffinity=".outgoing"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name="com.yo.dialer.ui.OutgoingCallActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/yo_app_call"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:taskAffinity=".outgoing"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.UserProfileActivity"
             android:label="@string/user_profile"
             android:screenOrientation="portrait" />

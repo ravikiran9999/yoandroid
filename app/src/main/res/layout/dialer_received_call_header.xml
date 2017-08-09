@@ -81,8 +81,8 @@
 
             <ImageView
                 android:id="@+id/imv_speaker"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_centerHorizontal="true"
                 android:padding="10dp"
                 android:src="@drawable/ic_speaker_off" />
