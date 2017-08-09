@@ -354,7 +354,7 @@ public class NewDailerActivity extends BaseActivity {
                         }
                     }
                 } else {
-                    YODialogs.addBalance(NewDailerActivity.this, getString(R.string.no_sufficient_bal_wallet));
+                    YODialogs.addBalance(NewDailerActivity.this, getString(R.string.no_sufficient_bal_wallet), preferenceEndPoint);
                 }
             }
         };

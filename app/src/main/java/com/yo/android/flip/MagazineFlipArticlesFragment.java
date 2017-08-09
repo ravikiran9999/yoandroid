@@ -60,6 +60,7 @@ import se.emilsjolander.flipview.OverFlipMode;
 public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, FlipView.OnFlipListener, FlipView.OnOverFlipListener {
 
     public static boolean refreshing;
+    public static int updateCalled;
 
     private MagazineTopicsSelectionFragment magazineTopicsSelectionFragment;
     public MagazineArticlesBaseAdapter myBaseAdapter;
@@ -135,12 +136,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         readArticleIds = new ArrayList<>();
         magazineDashboardHelper = new MagazineDashboardHelper();
         swipeRefreshContainer.setOnRefreshListener(swipeRefreshLayout);
-        swipeRefreshContainer.setEnabled( false );
+        swipeRefreshContainer.setEnabled(false);
         swipeRefreshContainer.setRefreshing(false);
 
         boolean value = preferenceEndPoint.getBooleanPreference(Constants.LAUNCH_APP, false);
         if (value) {
             preferenceEndPoint.saveBooleanPreference(Constants.LAUNCH_APP, false);
+            updateCalled = 1;
             update();
         }
         return view;
@@ -175,8 +177,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     @Override
     public void onResume() {
-        super.onResume();
         Log.d("FlipArticlesFragment", "In onResume()");
+
+        if (showAddBalance()) {
+            YODialogs.addBalance(getActivity(), getString(R.string.no_sufficient_bal_wallet), preferenceEndPoint);
+        }
+
+        super.onResume();
     }
 
     @Override
@@ -371,7 +378,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (!magazineRenewal) {
             getLandingCachedArticles();
         } else {
-            YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet));
+            YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet), preferenceEndPoint);
             tvProgressText.setVisibility(View.GONE);
             if (mProgress != null) {
                 mProgress.setVisibility(View.GONE);
@@ -421,7 +428,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (!magazineRenewal) {
             getLandingCachedArticles();
         } else {
-            YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet));
+            YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet), preferenceEndPoint);
         }
     }
 
@@ -434,7 +441,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             lastReadArticle = 0;
         }
 
-        if(position != 0) {
+        if (position != 0) {
             swipeRefreshContainer.setEnabled(false);
             swipeRefreshContainer.setRefreshing(false);
         }
@@ -1376,7 +1383,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     @Override
     public void onOverFlip(FlipView v, OverFlipMode mode, boolean overFlippingPrevious, float overFlipDistance, float flipDistancePerPage) {
-        if(!refreshing) {
+        if (!refreshing) {
             refreshing = true;
             swipeRefreshContainer.setEnabled(true);
             swipeRefreshContainer.setRefreshing(true);
@@ -1391,4 +1398,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             swipeRefreshContainer.setRefreshing(false);
         }
     };
+
+    /**
+     * work around to show add balance
+     * @return
+     */
+    private boolean showAddBalance() {
+        boolean appLockStatus = preferenceEndPoint.getBooleanPreference(Constants.APP_LOCK, false);
+        return appLockStatus && updateCalled == 0;
+    }
 }
