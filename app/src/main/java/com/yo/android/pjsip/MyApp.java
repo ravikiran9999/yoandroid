@@ -4,17 +4,13 @@ import android.util.Log;
 
 import com.orion.android.common.logging.Logger;
 import com.yo.android.BuildConfig;
-import com.yo.android.vox.CodecPriority;
 
 import org.pjsip.pjsua2.AccountConfig;
-import org.pjsip.pjsua2.BuddyConfig;
-import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.ContainerNode;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.JsonDocument;
 import org.pjsip.pjsua2.LogConfig;
-import org.pjsip.pjsua2.StringVector;
 import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.UaConfig;
 import org.pjsip.pjsua2.pj_log_decoration;
@@ -24,12 +20,12 @@ import org.pjsip.pjsua2.pjsip_transport_type_e;
 import java.io.File;
 import java.util.ArrayList;
 
-class MyApp {
+public class MyApp {
 
 
     private static final String TAG = MyApp.class.getSimpleName();
 
-    static {
+   /* static {
         try {
             System.loadLibrary("openh264");
             // Ticket #1937: libyuv is now included as static lib
@@ -41,7 +37,7 @@ class MyApp {
         }
         System.loadLibrary("pjsua2");
         System.out.println("Library loaded");
-    }
+    }*/
 
     public static Endpoint mEndpoint = new Endpoint();
     public static MyAppObserver observer;
@@ -113,11 +109,12 @@ class MyApp {
 		/* Set ua config. */
         UaConfig ua_cfg = epConfig.getUaConfig();
         ua_cfg.setUserAgent("Pjsua2 Android " + mEndpoint.libVersion().getFull());
-        StringVector stun_servers = new StringVector();
+
+        /*StringVector stun_servers = new StringVector();
         //stun_servers.add("34.230.108.83:3478");
-        stun_servers.add("54.90.250.89:3478");
+        stun_servers.add("54.90.250.89:3478");*/
         //stun_servers.add("stun.pjsip.org");
-        ua_cfg.setStunServer(stun_servers);
+        // ua_cfg.setStunServer(stun_servers);
         if (own_worker_thread) {
             ua_cfg.setThreadCnt(0);
             ua_cfg.setMainThreadOnly(true);
@@ -147,7 +144,7 @@ class MyApp {
         try {
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
             mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
-        } catch(Exception e) {
+        } catch (Exception e) {
 
         }
 
@@ -158,11 +155,12 @@ class MyApp {
             mEndpoint.codecSetPriority("*", (short) 0);
             mEndpoint.codecSetPriority("PCMA/8000", (short) 1);
             mEndpoint.codecSetPriority("PCMU/8000", (short) 1);
-           // mEndpoint.codecSetPriority("G722/8000", (short) 1);
-          //  mEndpoint.codecSetPriority("G711/8000", (short) 1);
+            mEndpoint.codecSetPriority("G722/8000", (short) 1);
+            mEndpoint.codecSetPriority("G711/8000", (short) 1);
             mEndpoint.audDevManager().setOutputVolume(60);
+
             //Disabling VAD to get around NAT
-          //  mEndpoint.audDevManager().setVad(false);
+            //  mEndpoint.audDevManager().setVad(false);
             Log.e(TAG, "SIP STATCK STARTED");
         } catch (Exception e) {
             return;

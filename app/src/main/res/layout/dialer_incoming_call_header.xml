@@ -18,17 +18,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Incoming call"
+            android:drawablePadding="5dp"
+            android:text="VOICE CALL"
             android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imv_caller_pic"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_below="@+id/tv_incoming_call"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/dialer_default_avatar" />
 
         <TextView
@@ -38,7 +40,7 @@
             android:layout_below="@+id/imv_caller_pic"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="2dp"
             android:textColor="@android:color/white"
             android:textSize="26sp" />
 
@@ -51,6 +53,18 @@
             android:text=""
             android:textColor="@android:color/white"
             android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_incoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_caller_number"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:text="INCOMING"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
 
         <TextView
             android:id="@+id/connection_status"

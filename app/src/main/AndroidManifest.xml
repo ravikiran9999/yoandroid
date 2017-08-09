@@ -142,7 +142,24 @@
             android:taskAffinity=".incoming"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name="com.yo.dialer.ui.IncomingCallActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/yo_app_call"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".voip.OutGoingCallActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/yo_app_call"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:taskAffinity=".outgoing"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.yo.dialer.ui.OutgoingCallActivity"
             android:excludeFromRecents="true"
             android:label="@string/yo_app_call"
             android:launchMode="singleTask"
@@ -376,6 +393,10 @@
 
         <activity android:name=".ui.NewOTPActivity"
             android:screenOrientation="portrait"></activity>
+
+        <service android:name="com.yo.services.BackgroundServices" />
+        <service android:name="com.yo.dialer.YoSipService" />
+
     </application>
 
 </manifest>

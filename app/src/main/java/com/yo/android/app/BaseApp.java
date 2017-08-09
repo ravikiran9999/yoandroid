@@ -23,6 +23,7 @@ import dagger.ObjectGraph;
 public class BaseApp extends MultiDexApplication {
 
     private ObjectGraph objectGraph;
+    private static BaseApp baseAppInstance;
 
     @Inject
     @Named("login")
@@ -32,6 +33,7 @@ public class BaseApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        baseAppInstance = this;
         injectDependencies();
 
         /* Enable disk persistence  */
@@ -39,6 +41,7 @@ public class BaseApp extends MultiDexApplication {
         Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
         // ReCreateService.getInstance(this).start(this);
+
         flurryAgentListener = new FlurryAgentListener() {
             @Override
             public void onSessionStarted() {
@@ -46,9 +49,11 @@ public class BaseApp extends MultiDexApplication {
             }
         };
         initFlurry();
-
     }
 
+    public static BaseApp get() {
+        return baseAppInstance;
+    }
 
     private void injectDependencies() {
         objectGraph = ObjectGraph.create(new RootModule(this));

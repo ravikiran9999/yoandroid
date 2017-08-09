@@ -345,7 +345,7 @@ public class FirebaseService extends InjectedService {
         if (notificationList != null && count.getCount() == 0) {
             notificationList.clear();
             initRoomCount = 0;
-            //init();
+            //register();
         }
     }
 

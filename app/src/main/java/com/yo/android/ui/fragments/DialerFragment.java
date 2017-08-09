@@ -145,11 +145,6 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        try {
-            ListNets.main(null);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
         bus.register(this);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<ResponseBody>() {
@@ -258,9 +253,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         ButterKnife.bind(this, view);
-
     }
 
 
@@ -423,6 +416,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+
         if (isVisibleToUser) {
             if (preferenceEndPoint != null) {
                 // Capture user id
@@ -433,23 +427,24 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
 
                 FlurryAgent.logEvent("Dialer", dialerParams, true);
 
-            if (getActivity() instanceof BottomTabsActivity) {
-                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
-                if (activity.getFragment() instanceof DialerFragment) {
-                    if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        if (popup != null) {
-                            Collections.reverse(popup);
-                            isAlreadyShown = false;
-                            for (Popup p : popup) {
-                                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.DIALER) {
-                                    if (!isAlreadyShown) {
-                                        PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.DIALER, p, getActivity(), preferenceEndPoint, this, this, popup);
-                                        isAlreadyShown = true;
-                                        isSharedPreferenceShown = false;
-                                        break;
+                if (getActivity() instanceof BottomTabsActivity) {
+                    BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                    if (activity.getFragment() instanceof DialerFragment) {
+                        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                            Type type = new TypeToken<List<Popup>>() {
+                            }.getType();
+                            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                            if (popup != null) {
+                                Collections.reverse(popup);
+                                isAlreadyShown = false;
+                                for (Popup p : popup) {
+                                    if (p.getPopupsEnum() == PopupHelper.PopupsEnum.DIALER) {
+                                        if (!isAlreadyShown) {
+                                            PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.DIALER, p, getActivity(), preferenceEndPoint, this, this, popup);
+                                            isAlreadyShown = true;
+                                            isSharedPreferenceShown = false;
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -457,9 +452,9 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     }
                 }
             }
-        }
 
         } else {
+
         }
     }
 

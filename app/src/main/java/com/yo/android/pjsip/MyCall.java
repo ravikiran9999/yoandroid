@@ -18,7 +18,7 @@ import org.pjsip.pjsua2.pjsua_call_media_status;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
-class MyCall extends Call {
+public class MyCall extends Call {
     public VideoWindow vidWin;
     public VideoPreview vidPrev;
 

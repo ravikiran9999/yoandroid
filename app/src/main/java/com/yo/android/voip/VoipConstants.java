@@ -11,6 +11,9 @@ public interface VoipConstants {
     String NEW_ACCOUNT_REGISTRATION = "com.yo.NewAccountSipRegistration";
     String ACCOUNT_LOGOUT = "com.yo.android.ACCOUNT_LOGOUT";
 
+    String MAKE_CALL = "android.yo.MAKE_CALL";
+
+
     int BASE = 100;
     int CALL_DIRECTION_OUT = BASE + 1;
     int CALL_DIRECTION_IN = BASE + 2;

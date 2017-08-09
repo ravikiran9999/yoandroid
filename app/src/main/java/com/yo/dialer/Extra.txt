@@ -1,0 +1,43 @@
+  // if local number dont add country code
+  //String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
+  //displayname = countryCode + displayname;
+
+
+
+=============================================
+
+
+//Chat Activity
+ /*if (!sipBinder.getHandler().isOnGOingCall()) {
+                mNotificationManager.cancelAll();
+                NotificationCache.clearNotifications();
+            }*/
+
+//BOttom tabs activity
+/*if (!sipBinder.getHandler().isOnGOingCall()) {
+                clearNotifications();
+            }*/
+=========================================
+
+            //YOAPP.JAVA
+
+            /* Create transports. */
+                 /*   try {
+                        ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP,
+                                sipTpConfig);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }*/
+
+
+       /* try {
+            sipTpConfig.setPort(SIP_PORT + 1);
+            ep.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TLS,
+                    sipTpConfig);
+        } catch (Exception e) {
+            System.out.println(e);
+        }*/
+
+=======================================
+
+

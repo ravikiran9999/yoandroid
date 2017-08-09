@@ -61,6 +61,7 @@ import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 import com.yo.android.voip.VoipConstants;
+import com.yo.dialer.CallExtras;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -369,6 +370,13 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                             //  23	Data is missing in dialer screen once user logouts & login again  - Fixed
                             //  CallLog.Calls.clearCallHistory(getActivity());
                         }
+
+                        //Delete user from PJSIP
+                        Intent service = new Intent(getActivity(), com.yo.dialer.YoSipService.class);
+                        service.setAction(CallExtras.UN_REGISTER);
+                        getActivity().startService(service);
+
+
                         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
                         int deleteContacts = getActivity().getContentResolver().delete(uri, null, null);
                         mLog.i("MoreFragment", "Deleted contacts >>>>%d", deleteContacts);

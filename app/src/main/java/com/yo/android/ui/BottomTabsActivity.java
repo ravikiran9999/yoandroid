@@ -33,9 +33,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.api.YoApi;
@@ -55,8 +57,6 @@ import com.yo.android.model.FindPeople;
 import com.yo.android.model.NotificationCount;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.SipBinder;
-import com.yo.android.pjsip.SipProfile;
-import com.yo.android.pjsip.YoSipService;
 import com.yo.android.sync.SyncUtils;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
@@ -70,6 +70,10 @@ import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
+import com.yo.dialer.CallExtras;
+import com.yo.dialer.NewDialerFragment;
+import com.yo.dialer.Test;
+import com.yo.restartapp.YOExceptionHandler;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -126,9 +130,9 @@ public class BottomTabsActivity extends BaseActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
-            if (!sipBinder.getHandler().isOnGOingCall()) {
+            /*if (!sipBinder.getHandler().isOnGOingCall()) {
                 clearNotifications();
-            }
+            }*/
             //addAccount();
         }
 
@@ -168,6 +172,17 @@ public class BottomTabsActivity extends BaseActivity {
         activity = this;
         mContext = getApplicationContext();
 
+        // TODO: Test
+        Intent service = new Intent(this, com.yo.dialer.YoSipService.class);
+        service.setAction(CallExtras.REGISTER);
+        startService(service);
+
+        // Handle application crash
+       // Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
+       /* if (getIntent().getBooleanExtra("crash", false)) {
+            Toast.makeText(this, "App restarted after crash", Toast.LENGTH_SHORT).show();
+        }*/
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -187,7 +202,6 @@ public class BottomTabsActivity extends BaseActivity {
                     Manifest.permission.ACCESS_WIFI_STATE,
                     Manifest.permission.CHANGE_WIFI_STATE,
 
-
             }, REQUEST_AUDIO_RECORD);
         }
 
@@ -198,7 +212,11 @@ public class BottomTabsActivity extends BaseActivity {
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);
         mAdapter.addFragment(new ChatFragment(), null);
-        mAdapter.addFragment(new DialerFragment(), null);
+        if (BuildConfig.NEW_DIALER) {
+            mAdapter.addFragment(new NewDialerFragment(), null);
+        } else {
+            mAdapter.addFragment(new DialerFragment(), null);
+        }
         mAdapter.addFragment(new ContactsFragment(), null);
         mAdapter.addFragment(new MoreFragment(), null);
         viewPager.setOffscreenPageLimit(3);
@@ -325,7 +343,7 @@ public class BottomTabsActivity extends BaseActivity {
         mContactSyncHelper.init();
         mContactSyncHelper.checkContacts();
 
-        bindService(new Intent(this, YoSipService.class), connection, BIND_AUTO_CREATE);
+        bindService(new Intent(this, com.yo.dialer.YoSipService.class), connection, BIND_AUTO_CREATE);
         EventBus.getDefault().register(this);
         List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
 
@@ -443,6 +461,8 @@ public class BottomTabsActivity extends BaseActivity {
         appUsageParams.put("UserId", userId);
 
         FlurryAgent.logEvent("Opened Yo App", appUsageParams);
+
+       // Test.startInComingCallScreen(context);
     }
 
     private void clearNotifications() {
@@ -479,7 +499,9 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(connection);
+        if (sipBinder != null) {
+            unbindService(connection);
+        }
         EventBus.getDefault().unregister(this);
     }
 

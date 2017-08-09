@@ -93,6 +93,11 @@ import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.Receiver;
 import com.yo.android.voip.SipService;
+import com.yo.dialer.DialerHelper;
+import com.yo.dialer.NewDialerFragment;
+import com.yo.dialer.ui.IncomingCallActivity;
+import com.yo.dialer.yopj.YoSipServiceHandler;
+import com.yo.services.BackgroundServices;
 
 import javax.inject.Singleton;
 
@@ -147,8 +152,6 @@ import dagger.Provides;
                 MoreSettingsActivity.class,
                 UserProfileActivity.class,
                 CountryCodeActivity.class,
-
-
 
 
                 InviteActivity.class,
@@ -207,6 +210,13 @@ import dagger.Provides;
                 Util.class,
                 FetchNewArticlesService.class,
                 CountryCodeListAdapter.class,
+                BackgroundServices.class,
+                NewDialerFragment.class,
+                com.yo.dialer.YoSipService.class,
+                YoSipServiceHandler.class,
+                IncomingCallActivity.class,
+                DialerHelper.class
+
         },
         includes = {
                 AppModule.class,
