@@ -1,7 +1,6 @@
 package com.yo.android.ui;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -11,15 +10,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-//import com.squareup.picasso.Picasso;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.util.Constants;
@@ -215,6 +210,9 @@ public class OthersProfileActivity extends BaseActivity {
 
     }
 
+    /**
+     * Updates the titles of the tabs
+     */
     private void updateTitles() {
         int index = 0;
         for (ProfileTabsData data : dataList) {
@@ -228,6 +226,13 @@ public class OthersProfileActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Sets the tabs title and count
+     * @param title The title of the tab
+     * @param count The count
+     * @param isLast isLast tab or not
+     * @return
+     */
     public View setTabs(final String title, final int count, final boolean isLast) {
         final View view = LayoutInflater.from(this).inflate(R.layout.profile_tab_holder, null);
         // We need to manually set the LayoutParams here because we don't have a view root
@@ -241,6 +246,10 @@ public class OthersProfileActivity extends BaseActivity {
         return view;
     }
 
+    /**
+     * The tabs in the Other's Profile screen
+     * @return
+     */
     protected List<ProfileTabsData> createTabsList() {
         List<ProfileTabsData> list = new ArrayList<>();
         list.add(new ProfileTabsData("Magazines", magazinesCount));
@@ -250,7 +259,9 @@ public class OthersProfileActivity extends BaseActivity {
         return list;
     }
 
-
+    /**
+     * The ProfileTabsData class
+     */
     public class ProfileTabsData {
 
         private String title;
@@ -283,6 +294,9 @@ public class OthersProfileActivity extends BaseActivity {
         super.onBackPressed();
     }
 
+    /**
+     * Updates the magazines count
+     */
     public void updateMagazinesCount() {
         magazinesCount = magazinesCount - 1;
         dataList.get(0).setCount(magazinesCount);

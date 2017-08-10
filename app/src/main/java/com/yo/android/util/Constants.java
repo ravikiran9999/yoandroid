@@ -136,6 +136,7 @@ public class Constants {
     public static String BALANCE_UPDATED_ACTION = "com.balance.BALANCEUPDATED";
     public static String CALL_RATE_DETAILS_ACTION = "com.callrates.CALLRATEDETAILS";
     public static String BALANCE_RECHARGE_ACTION = "com.balance.BALANCERECHARGE";
+    public static String FINISH_LOGIN_ACTIVITY_ACTION = "com.finish.LOGINACTIVITY";
 
     // Contacts
     public static final String NUMBER = "number";
@@ -172,4 +173,5 @@ public class Constants {
     public static final String BALANCE = "Balance";
     public static final String LOW_BALANCE_NOTIFICATION_TIME = "low_bal_time";
     public static final long LOW_BALANCE_NOTIFICATION_FREQUENCY = 24 * 60 * 60 * 1000;
+    public static final String FLURRY_API_KEY = "VZPC24G2HP8Q7V74Z25Y";
 }

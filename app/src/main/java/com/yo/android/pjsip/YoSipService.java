@@ -61,6 +61,7 @@ import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.OnIncomingCallParam;
 import org.pjsip.pjsua2.StreamStat;
 import org.pjsip.pjsua2.StringVector;
+import org.pjsip.pjsua2.pj_turn_tp_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 
@@ -375,6 +376,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             part2 = matcher.group(2);
             ip = matcher.group(3);
         }
+        mLog.d(TAG, "Remote uri " + remoteUriStr + " Part 2 " + part2);
         return part2;
     }
 
@@ -624,39 +626,40 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         AccountConfig accCfg = new AccountConfig();
         accCfg.setIdUri(id);
         accCfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
-        accCfg.getNatConfig().setIceEnabled(true);
+        accCfg.getNatConfig().setIceEnabled(false);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
         accCfg.getVideoConfig().setAutoShowIncoming(true);
         if (myApp == null) {
             startSipService();
         }
 
-        accCfg.getNatConfig().setIceEnabled(true);
+        accCfg.getNatConfig().setIceEnabled(false);
              /* Enable ICE/TURN */
 
-
-       /* url: 'turn:ubuntu@34.230.108.83:3478',
-                credential: 'root'*/
-
-
         accCfg.getNatConfig().setTurnEnabled(true);
-        //accCfg.getNatConfig().setTurnServer("turn.34.230.108.83:3478");
-        //accCfg.getNatConfig().setTurnUserName("ubuntu");
-        //accCfg.getNatConfig().setTurnPasswordType(0);
-        //accCfg.getNatConfig().setTurnPassword("root");
+        /*accCfg.getNatConfig().setTurnServer("turn.pjsip.org:33478");
+        accCfg.getNatConfig().setTurnUserName("abzlute01");
+        accCfg.getNatConfig().setTurnPasswordType(0);
+        accCfg.getNatConfig().setTurnPassword("abzlute01");*/
+/*        accCfg.getNatConfig().setTurnServer("34.230.108.83:3478");
+        accCfg.getNatConfig().setTurnUserName("tadmin");
+        accCfg.getNatConfig().setTurnPasswordType(0);
+        accCfg.getNatConfig().setTurnPassword("test123");*/
+        //accCfg.getNatConfig().setTurnConnType(pj_turn_tp_type.PJ_TURN_TP_TCP);
         android.util.Log.d(TAG, msg + " Setting TURN server");
         return myApp.addAcc(accCfg);
     }
 
     private String addAccount(boolean isPSTN, String number) {
+
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
-
 
         SipProfile sipProfile = new SipProfile.Builder()
                 .withUserName(username == null ? "" : username)
                 .withPassword(password)
                 .withServer("173.82.147.172")
+
                 // .withServer("pjsip.org")
                 .build();
         return addAccount(sipProfile, isPSTN, number);
@@ -730,12 +733,21 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
             creds.add(new AuthCredInfo("Digest", "*", username, 0, password));
         }
+
+        /*//  StringVector proxies = accCfg.getSipConfig().getProxies();
+        StringVector proxies = new StringVector();
+        //proxies.add("sip:sip.pjsip.org;transport=tcp");
+        proxies.add("sip:173.82.147.172:6000;transport=tcp");
+        //proxies.add("sip:sip.pjsip.org;transport=tls");
+        //proxies.add("sip:sip.pjsip.org:5080;transport=tcp");*/
+
         StringVector proxies = accCfg.getSipConfig().getProxies();
         // above code is giving proxies size is 0
 
 
        /* StringVector proxies = new StringVector();
         proxies.add("sip:173.82.147.172:5060;transport=tcp");*/
+
         accCfg.getSipConfig().setProxies(proxies);
         proxies.clear();
         if (proxy.length() != 0) {
@@ -743,7 +755,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         }
 
 		/* Enable ICE */
-        accCfg.getNatConfig().setIceEnabled(true);
+        accCfg.getNatConfig().setIceEnabled(false);
     }
 
     public void makeCall(String destination, Bundle options, Intent intent) {
@@ -752,8 +764,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (destination != null && !destination.startsWith("sip:")) {
             destination = "sip:" + destination;
         }
+
         String finalUri = String.format("%s@%s", destination, getDomain());
         // String finalUri = String.format("%s", "sip:866@pjsip.org");
+
         mLog.e(TAG, "Final uri to make a call " + finalUri);
         outgoingCallUri = finalUri;
         /* Only one call at anytime */

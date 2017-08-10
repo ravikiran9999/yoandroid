@@ -25,6 +25,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to display the list of user's followings
+ */
 public class FollowingsActivity extends BaseActivity {
 
     @Inject
@@ -175,6 +178,9 @@ public class FollowingsActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Shows the Empty Data screen
+     */
     public void showEmptyDataScreen() {
         noData.setVisibility(View.GONE);
         llNoPeople.setVisibility(View.VISIBLE);

@@ -26,6 +26,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to enter a magazine title and description and select the privacy setting of it
+ */
 public class NewMagazineActivity extends BaseActivity implements View.OnClickListener {
 
     private String magazinePrivacy;

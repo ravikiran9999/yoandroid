@@ -13,8 +13,6 @@ import com.yo.android.R;
 import com.yo.android.helpers.OwnMagazineViewHolder;
 import com.yo.android.model.OwnMagazine;
 
-//import com.squareup.picasso.Picasso;
-
 /**
  * Created by creatives on 7/9/2016.
  */

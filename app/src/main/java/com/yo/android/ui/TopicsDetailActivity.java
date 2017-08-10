@@ -48,6 +48,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 
+/**
+ * This activity is used to display the articles of a topic
+ */
 public class TopicsDetailActivity extends BaseActivity {
 
     @Inject
@@ -459,6 +462,11 @@ public class TopicsDetailActivity extends BaseActivity {
             return layout;
         }
 
+        /**
+         * Shows the unfollow confirmation dialog
+         * @param data The Articles object
+         * @param finalHolder The View holder object
+         */
         private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
 
 
@@ -528,7 +536,10 @@ public class TopicsDetailActivity extends BaseActivity {
             }
         }
 
-
+        /**
+         * Adds articles to the list
+         * @param articlesList
+         */
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
             if (!((BaseActivity) context).hasDestroyed()) {
@@ -536,6 +547,13 @@ public class TopicsDetailActivity extends BaseActivity {
             }
         }
 
+        /**
+         * Updates the article
+         * @param isLiked isLiked or not
+         * @param articles The articles object
+         * @param position The position
+         * @param articlePlace The article's placement
+         */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
             items.remove(position);
             items.add(position, articles);
@@ -544,6 +562,9 @@ public class TopicsDetailActivity extends BaseActivity {
         }
     }
 
+    /**
+     * The ViewHolder class
+     */
     private static class ViewHolder {
 
         private TextView articleTitle;

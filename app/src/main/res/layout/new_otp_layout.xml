@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout android:id="@+id/ll_pin_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <include
+        layout="@layout/pin_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <com.yo.android.voip.DigitsEditText android:id="@+id/et_otp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:background="@drawable/button_border"
+        android:inputType="number"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:singleLine="true"
+        android:hint="@string/enter_otp"
+        android:ems="10"
+        android:maxLines="1"
+        android:visibility="gone"/>
+
+<!--    <LinearLayout
+        android:id="@+id/ll_otp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:gravity="center_horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="1"
+                android:textColor="@color/black"
+                android:textSize="26sp" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="0.5dp"
+                android:background="@color/gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="2"
+                android:textColor="@color/black"
+                android:textSize="26sp" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="0.5dp"
+                android:background="@color/gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="3"
+                android:textColor="@color/black"
+                android:textSize="26sp" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="0.5dp"
+                android:background="@color/gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="4"
+                android:textColor="@color/black"
+                android:textSize="26sp" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="0.5dp"
+                android:background="@color/gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="5"
+                android:textColor="@color/black"
+                android:textSize="26sp" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="0.5dp"
+                android:background="@color/gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="6"
+                android:textColor="@color/black"
+                android:textSize="26sp" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="0.5dp"
+                android:background="@color/gray" />
+        </LinearLayout>
+
+    </LinearLayout>-->
+
+    <TextView
+        android:id="@+id/tv_enter_otp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_pin_layout"
+        android:gravity="center_horizontal"
+        android:textColor="@color/light_bluish_gray"
+        android:textStyle="italic"
+        android:textSize="14sp"/>
+
+    <TextView android:id="@+id/tv_resend"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/tv_enter_otp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_textvew"
+        android:paddingBottom="10dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="10dp"
+        android:text="@string/resend_code"
+        android:textAllCaps="false"
+        android:textColor="@color/light_bluish_gray"
+        android:textSize="21sp"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:gravity="center_horizontal">
+
+            <include
+                layout="@layout/otp_keypad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <Button android:id="@+id/next_btn"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/next"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="25sp"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -11,6 +11,9 @@ import com.yo.android.di.Injector;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+/**
+ * This service is used to fetch the articles from the server once a day
+ */
 public class FetchNewArticlesService extends Service {
     @Inject
     @Named("login")

@@ -71,6 +71,10 @@ public class OtherProfilesFollowers extends BaseFragment {
         });
     }
 
+    /**
+     * Gets the list of other Yo app user's followers
+     * @param accessToken
+     */
     private void callService(String accessToken) {
         yoService.getOtherProfilesFollowersAPI(accessToken, userID).enqueue(new Callback<List<FindPeople>>() {
             @Override
@@ -92,6 +96,9 @@ public class OtherProfilesFollowers extends BaseFragment {
         });
     }
 
+    /**
+     * Used to call the service to get the list of other Yo app user's followers
+     */
     public void update(){
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         callService(accessToken);
