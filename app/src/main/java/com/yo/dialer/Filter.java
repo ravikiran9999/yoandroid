@@ -37,7 +37,7 @@ public class Filter {
         }
     }
 
-    public static void filteredData(final Activity activity, final PreferenceEndPoint preferenceEndPoint, final CallLogCompleteLister lister) {
+    public static void filteredData(final Activity activity, final PreferenceEndPoint preferenceEndPoint, final ArrayList<Map.Entry<String, List<CallLogsResult>>> appCalls, final ArrayList<Map.Entry<String, List<CallLogsResult>>> paidCalls, final CallLogCompleteLister lister) {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, ALL_CALLS);
         int filterType = getFilterType(filter);
         CallLogs.load(activity, new CallLogCompleteLister() {
@@ -45,7 +45,13 @@ public class Filter {
             public void callLogsCompleted(com.yo.dialer.model.CallLog callLog) {
                 ArrayList<Map.Entry<String, List<CallLogsResult>>> tempResults = new ArrayList<>();
                 ArrayList<Map.Entry<String, List<CallLogsResult>>> results = new ArrayList<>();
-                results = prepare(activity.getString(R.string.all_calls), results, CallLog.Calls.getCallLog(activity));
+                if(filter.equalsIgnoreCase(ALL_CALLS)) {
+                    results = prepare(activity.getString(R.string.all_calls), results, CallLog.Calls.getCallLog(activity));
+                } else if(filter.equalsIgnoreCase(APP_CALLS)) {
+                    results = prepare(activity.getString(R.string.free_calls), results, appCalls);
+                } else if(filter.equalsIgnoreCase(PAID_CALLS)) {
+                    results = prepare(activity.getString(R.string.paid_calls), results, paidCalls);
+                }
                 tempResults.addAll(results);
                 results.clear();
                 results.addAll(tempResults);
