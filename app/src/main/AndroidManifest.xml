@@ -54,7 +54,9 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<activity
+
+        <!--
+        <activity
             android:name="org.pjsip.pjsua2.app.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -63,7 +65,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
         <activity
             android:name=".ui.SplashScreenActivity"
             android:screenOrientation="portrait"
@@ -365,7 +368,7 @@
             android:name=".util.FetchNewArticlesService"
             android:enabled="true"
             android:exported="true" />
-        <service android:name="com.yo.android.util.ReCreateService" />
+        <service android:name=".util.ReCreateService" />
         <service
             android:name=".chat.firebase.ListenerJobService"
             android:exported="false">
@@ -374,19 +377,22 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="com.yo.android.app.RestartServiceReceiver">
+        <receiver android:name=".app.RestartServiceReceiver">
             <intent-filter>
-                <action android:name="YouWillNeverKillMe"></action>
+                <action android:name="YouWillNeverKillMe" />
             </intent-filter>
         </receiver>
 
         <activity
             android:name=".chat.ui.CountryCodeActivity"
-            android:theme="@style/AppTheme.Switch"></activity>
+            android:theme="@style/AppTheme.Switch" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity android:name=".ui.NewOTPActivity"
+            android:screenOrientation="portrait"></activity>
 
         <service android:name="com.yo.services.BackgroundServices" />
         <service android:name="com.yo.dialer.YoSipService" />

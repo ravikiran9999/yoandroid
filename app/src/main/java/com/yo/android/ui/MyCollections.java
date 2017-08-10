@@ -33,6 +33,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to display the followed topics
+ */
 public class MyCollections extends BaseActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
 
     @Inject
@@ -122,6 +125,10 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     }
 
+    /**
+     * Dismisses the contextual menu
+     * @return
+     */
     private boolean dismissContextualMenu() {
         if (contextualMenu) {
             contextualMenu = false;
@@ -202,6 +209,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         return true;
     }
 
+    /**
+     * Shows the confirmation dialog when unfollowing a topic
+     */
     private void showDeleteAlert() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -238,6 +248,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         });
     }
 
+    /**
+     * Unfollows the selected topic
+     */
     private void deleteTopic() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         List<Collections> collections = myCollectionsAdapter.getSelectedItems();

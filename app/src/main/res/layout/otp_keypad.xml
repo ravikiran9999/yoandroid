@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:id="@+id/gv_keypad"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentStart="true"
+    android:layout_gravity="center"
+    android:columnCount="3"
+    android:orientation="horizontal"
+    android:weightSum="3"
+    android:background="@android:color/white"
+    android:fadingEdgeLength="0px"
+    android:listSelector="@null">-->
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+    android:id="@+id/gv_keypad"
+    android:layout_gravity="center"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentStart="true"
+    android:columnCount="3"
+    android:weightSum="3"
+    android:stretchColumns="*"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp">
+
+    <TableRow>
+
+    <Button android:id="@+id/btn_one"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="1"
+        android:textColor="@color/black"
+        android:textSize="30sp"/>
+
+    <Button android:id="@+id/btn_two"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="2"
+        android:textColor="@color/black"
+        android:textSize="30sp"/>
+
+    <Button android:id="@+id/btn_three"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="3"
+        android:textColor="@color/black"
+        android:textSize="30sp"/>
+    </TableRow>
+    <TableRow>
+    <Button android:id="@+id/btn_four"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="4"
+        android:textColor="@color/black"
+        android:textSize="30sp"/>
+
+    <Button android:id="@+id/btn_five"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="5"
+        android:textColor="@color/black"
+        android:textSize="30sp"/>
+
+    <Button android:id="@+id/btn_six"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="6"
+        android:textColor="@color/black"
+        android:textSize="30sp"/>
+    </TableRow>
+
+    <TableRow>
+
+    <Button android:id="@+id/btn_seven"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="7"
+        android:textColor="@color/black"
+        android:textSize="30sp"/>
+
+    <Button android:id="@+id/btn_eight"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="8"
+        android:textColor="@color/black"
+        android:textSize="30sp" />
+
+    <Button android:id="@+id/btn_nine"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="9"
+        android:textColor="@color/black"
+        android:textSize="30sp"/>
+    </TableRow>
+    <TableRow>
+
+    <Button android:layout_column="0"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="30sp"/>
+
+    <Button android:id="@+id/btn_zero"
+        android:layout_column="1"
+        android:layout_columnWeight="1"
+        android:background="@null"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textSize="30sp" />
+
+<!--    <RelativeLayout
+        android:layout_column="2"
+        android:layout_columnWeight="1">-->
+
+<!--    <Button android:id="@+id/dummy"
+        android:background="@drawable/on_clear2"
+        android:text=""
+        android:textColor="@color/dark_bluish_gray"
+        android:textSize="24sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />-->
+
+    <ImageButton android:id="@+id/img_btn_clear"
+        android:src="@drawable/ic_otp_clear"
+        android:layout_column="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center"
+        android:background="@null"/>
+    <!--</RelativeLayout>-->
+    </TableRow>
+<!--
+</GridLayout>-->
+    </TableLayout>

@@ -41,6 +41,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to transfer the balance to another Yo app user
+ */
 public class TransferBalanceActivity extends BaseActivity {
 
     private TextDrawable.IBuilder mDrawableBuilder;
@@ -164,6 +167,10 @@ public class TransferBalanceActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Loads the user's avatar image
+     * @param imvProfilePic The CircleImageView
+     */
     private void loadAvatarImage(CircleImageView imvProfilePic) {
 
         Drawable tempImage = getResources().getDrawable(R.drawable.dynamic_profile);
@@ -187,6 +194,10 @@ public class TransferBalanceActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Transfers the balance to the other user
+     * @param amount The amount to be transferred
+     */
     private void transferBalance(String amount) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
@@ -288,6 +299,11 @@ public class TransferBalanceActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Shows the confirmation dialog to transfer the balance
+     * @param amount The amount to be transferred
+     * @param phoneNumber The phone number of the user to whom the balance needs to be transferred to
+     */
     private void showMessageDialog(final String amount, final String phoneNumber) {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -371,6 +387,9 @@ public class TransferBalanceActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Dialog which shows complete balance cannot be transferred
+     */
     private void showBalanceDialog() {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
         builder.setMessage(R.string.cannot_transfer_full_balance)

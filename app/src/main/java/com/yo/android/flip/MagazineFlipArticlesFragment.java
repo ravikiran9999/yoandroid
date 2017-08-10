@@ -75,12 +75,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private FlipView flipView;
 
     public boolean isSearch;
-    private int pageCount = 1;
     private String accessToken;
-    private boolean isArticlesEndReached;
     public TextView tvProgressText;
     private List<String> readArticleIds;
-    private LinkedHashSet<List<String>> articlesIdsHashSet = new LinkedHashSet<>();
     public static int currentFlippedPosition;
     private MagazineDashboardHelper magazineDashboardHelper;
     private String followedTopicId;
@@ -197,6 +194,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         });*/
     }
 
+    /**
+     * Loading articles
+     * @param tagIds The topic ids
+     */
     public void loadArticles(List<String> tagIds) {
 
         if (!mHelper.isConnected()) {
@@ -344,6 +345,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         EventBus.getDefault().unregister(this);
     }
 
+    /**
+     * Updating the articles in the landing screen
+     */
     public void update() {
         Log.d("FlipArticlesFragment", "In update() FlipArticlesFragment");
         getLandingCachedArticles();
@@ -381,6 +385,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
 
+    /**
+     * Refreshing the articles in the landing screen
+     */
     public void refresh() {
         lastReadArticle = 0;
         getLandingCachedArticles();
@@ -470,6 +477,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
     }
 
+    /**
+     * Removing the read articles
+     */
     public void removeReadArticles() {
 
         if (currentFlippedPosition > 0) {
@@ -534,6 +544,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     }
 
+    /**
+     * Getting the cached articles
+     */
     public void getLandingCachedArticles() {
         isSearch = false;
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
@@ -586,6 +599,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
     }
 
+    /**
+     * Getting the read article ids
+     */
     private void getReadArticleIds() {
         if (currentFlippedPosition > 0) {
             if (currentFlippedPosition == 1) {
@@ -629,6 +645,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     }
 
+    /**
+     * Handling the dashboard response
+     * @param totalArticles The total articles
+     */
     public void handleDashboardResponse(List<Articles> totalArticles) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
         if (myBaseAdapter.getCount() > lastReadArticle) {
@@ -666,6 +686,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
     }
 
+    /**
+     * Handling the dashboard response after getting more articles
+     * @param totalArticles The total articles
+     * @param isFromFollow Is from clicking Follow button
+     */
     public void handleMoreDashboardResponse(List<Articles> totalArticles, boolean isFromFollow) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
         if (myBaseAdapter.getCount() > lastReadArticle) {
@@ -740,6 +765,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
     }
 
+    /**
+     * Updating the articles after following a topic
+     * @param topicId The topic id
+     */
     public void updateArticlesAfterFollowTopic(String topicId) {
         List<Articles> articlesList = myBaseAdapter.getAllItems();
         List<Articles> unreadArticles = new ArrayList<>();
@@ -881,6 +910,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     }
 
+    /**
+     * Sorting after following a topic
+     * @param totalArticles The total articles
+     * @param unreadOtherFollowedArticles The unread other followed articles
+     * @param followedArticlesList The followed articles list
+     */
     public void performSortingAfterFollow(List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, List<Articles> followedArticlesList) {
         List<Articles> followedTopicArticles = new ArrayList<>();
         List<Articles> randomTopicArticles = new ArrayList<>();
@@ -981,6 +1016,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         myBaseAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Updating the articles after the daily service to fetch the new articles
+     */
     public void updateArticlesAfterDailyService() {
         List<Articles> articlesList = myBaseAdapter.getAllItems();
         List<Articles> unreadArticles = new ArrayList<>();
@@ -1063,6 +1101,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     }
 
+    /**
+     * Sorting the articles after the daily service to fetch the new articles
+     * @param totalArticles The total articles
+     * @param unreadOtherFollowedArticles The unread other followed articles
+     */
     public void performSortingAfterDailyService(List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles) {
         List<Articles> followedTopicArticles = new ArrayList<>();
         List<Articles> randomTopicArticles = new ArrayList<>();
@@ -1163,6 +1206,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         deleteExtraArticlesFromCache();
     }
 
+    /**
+     * Getting the list of cached articles
+     * @return cached articles list
+     */
     private List<Articles> getCachedMagazinesList() {
         Type type1 = new TypeToken<List<Articles>>() {
         }.getType();
@@ -1188,6 +1235,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         return cachedMagazinesList;
     }
 
+    /**
+     * Saving the list of cached articles
+     * @param cachedMagazinesList The cached articles list
+     */
     private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
         List<Articles> followedTopicArticles = new ArrayList<>();
         List<Articles> randomTopicArticles = new ArrayList<>();
@@ -1208,6 +1259,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
     }
 
+    /**
+     * Deleting extra articles from the cache if the cache exceeds the limit
+     */
     private void deleteExtraArticlesFromCache() {
 
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);

@@ -131,4 +131,16 @@
         <item name="android:gravity">center_vertical|center_horizontal</item>
     </style>
 
+    <style name="pin_edittext_style">
+        <item name="android:gravity">center</item>
+        <item name="android:cursorVisible">false</item>
+        <item name="android:maxLength">1</item>
+        <item name="android:minEms">2</item>
+        <item name="android:inputType">number</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:textSize">35sp</item>
+        <item name="android:textColor">@color/dark_bluish_gray</item>
+    </style>
+
 </resources>

@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -416,6 +417,45 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
+        if (isVisibleToUser) {
+            if (preferenceEndPoint != null) {
+                // Capture user id
+                Map<String, String> dialerParams = new HashMap<String, String>();
+                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                //param keys and values have to be of String type
+                dialerParams.put("UserId", userId);
+
+                FlurryAgent.logEvent("Dialer", dialerParams, true);
+
+                if (getActivity() instanceof BottomTabsActivity) {
+                    BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                    if (activity.getFragment() instanceof DialerFragment) {
+                        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                            Type type = new TypeToken<List<Popup>>() {
+                            }.getType();
+                            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                            if (popup != null) {
+                                Collections.reverse(popup);
+                                isAlreadyShown = false;
+                                for (Popup p : popup) {
+                                    if (p.getPopupsEnum() == PopupHelper.PopupsEnum.DIALER) {
+                                        if (!isAlreadyShown) {
+                                            PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.DIALER, p, getActivity(), preferenceEndPoint, this, this, popup);
+                                            isAlreadyShown = true;
+                                            isSharedPreferenceShown = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } else {
+
+        }
     }
 
     @Override

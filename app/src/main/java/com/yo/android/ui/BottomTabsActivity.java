@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -79,7 +80,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -121,6 +124,7 @@ public class BottomTabsActivity extends BaseActivity {
     private TextView actionBarTitle;
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     private static final int REQUEST_AUDIO_RECORD = 200;
+    private int lastFragmentPosition = 0;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -269,6 +273,33 @@ public class BottomTabsActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
+
+                if(lastFragmentPosition == 0) {
+                    mLog.d(TAG, "Leaving Magazines tab");
+                    // End the timed event, when the user navigates away from Magazines tab
+                    FlurryAgent.endTimedEvent("Magazines");
+                    lastFragmentPosition = position;
+                } else if(lastFragmentPosition == 1) {
+                    mLog.d(TAG, "Leaving Chats tab");
+                    // End the timed event, when the user navigates away from Chats tab
+                    FlurryAgent.endTimedEvent("Chats");
+                    lastFragmentPosition = position;
+                } else if(lastFragmentPosition == 2) {
+                    mLog.d(TAG, "Leaving Dialer tab");
+                    // End the timed event, when the user navigates away from Dialer tab
+                    FlurryAgent.endTimedEvent("Dialer");
+                    lastFragmentPosition = position;
+                } else if(lastFragmentPosition == 3) {
+                    mLog.d(TAG, "Leaving Contacts tab");
+                    // End the timed event, when the user navigates away from Contacts tab
+                    FlurryAgent.endTimedEvent("Contacts");
+                    lastFragmentPosition = position;
+                } else if(lastFragmentPosition == 4) {
+                    mLog.d(TAG, "Leaving Profile tab");
+                    // End the timed event, when the user navigates away from Profile tab
+                    FlurryAgent.endTimedEvent("Profile");
+                    lastFragmentPosition = position;
+                }
 
                 if (position == 0 && getFragment() instanceof MagazinesFragment) {
                     Log.d(TAG, "onPageSelected In update() BottomTabsActivity");
@@ -422,6 +453,15 @@ public class BottomTabsActivity extends BaseActivity {
                 viewPager.setCurrentItem(2);
             }
         }
+
+        // Capture user id
+        Map<String, String> appUsageParams = new HashMap<String, String>();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //param keys and values have to be of String type
+        appUsageParams.put("UserId", userId);
+
+        FlurryAgent.logEvent("Opened Yo App", appUsageParams);
+
        // Test.startInComingCallScreen(context);
     }
 
