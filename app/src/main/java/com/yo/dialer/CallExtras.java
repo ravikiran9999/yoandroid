@@ -26,4 +26,13 @@ public interface CallExtras {
     public static final String CONNECTION_TIMEOUT = "Connection timed out";
     public static final String NO_ROUTE_TO_HOST = "No route to host";//CODE PJSIP_SC_SERVICE_UNAVAILABLE
     public static final String DISPLAY_NUMBER = "display_number";
+
+    public interface StatusCode {
+        public static final int PJSUA_CALL_MEDIA_REMOTE_HOLD = 1;
+        public static final int PJSUA_CALL_MEDIA_ACTIVE = 2;
+        public static final int PJSIP_INV_STATE_CONFIRMED = 3;
+        public static final int PJSIP_INV_STATE_DISCONNECTED = 4;
+        public static final int PJSIP_INV_STATE_SC_RINGING = 5;
+
+    }
 }

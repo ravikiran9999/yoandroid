@@ -250,7 +250,7 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
         callDurationTextView = (TextView) findViewById(R.id.tv_call_duration);
         callerName = (TextView) findViewById(R.id.tv_caller_name);
         callerNumber = (TextView) findViewById(R.id.tv_caller_number);
-        connectionStatusTextView = (TextView) findViewById(R.id.tv_dialing);
+        connectionStatusTextView = (TextView) findViewById(R.id.connection_status);
         callerImageView = (ImageView) findViewById(R.id.imv_caller_pic);
 
     }

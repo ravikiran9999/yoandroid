@@ -37,6 +37,7 @@ public class SendTypingIndicationParam {
 
   public void setIsTyping(boolean value) {
     pjsua2JNI.SendTypingIndicationParam_isTyping_set(swigCPtr, this, value);
+    pjsua2JNI.SendInstantMessageParam_content_set(swigCPtr,null,"");
   }
 
   public boolean getIsTyping() {

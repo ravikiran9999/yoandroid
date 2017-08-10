@@ -13,6 +13,7 @@ import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.Media;
+import org.pjsip.pjsua2.SendTypingIndicationParam;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsua_call_media_status;
@@ -45,7 +46,7 @@ public class CallHelper {
                     CallOpParam prm = new CallOpParam(true);
                     try {
                         // String dst_uri = "sip:" + calleeNumber + "@" + DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP;
-                        String dst_uri = String.format("\"%s\"<sip:%s@%s>", calleeNumber, calleeNumber, DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT);
+                        String dst_uri = String.format("\"%s\" <sip:%s@%s>", calleeNumber, calleeNumber, DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT);
 
                         DialerLogs.messageI(TAG, "YO=========Callee URI==========" + dst_uri);
                         call.makeCall(dst_uri, prm);

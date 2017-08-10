@@ -6,6 +6,7 @@ package com.yo.dialer.ui;
 
 public interface CallStatusListener {
     void callDisconnected();
+    void callAccepted();
 
     void callStatus(String status);
 

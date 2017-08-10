@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.InjectedService;
@@ -113,14 +114,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         if (yoCurrentCall == null) {
             YoCall yoCall = CallHelper.makeCall(yoAccount, intent);
             DialerLogs.messageE(TAG, "YO==makeCalling call...and YOCALL = " + yoCall);
-            showOutgointCallActivity(yoCall);
+            showOutgointCallActivity(yoCall, intent);
         } else {
             //TODO: ALREADY CALL IS GOING ON
         }
     }
 
-    private void showOutgointCallActivity(YoCall yoCall) {
-        showCallUI(yoCall, true);
+    private void showOutgointCallActivity(YoCall yoCall, Intent intent) {
+        showCallUI(yoCall, true, intent.getBooleanExtra(CallExtras.IS_PSTN, false));
     }
 
     @Override
@@ -136,10 +137,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void startInComingCallScreen(final YoCall yoCall) {
-        showCallUI(yoCall, false);
+        showCallUI(yoCall, false, false);
     }
 
-    private void showCallUI(YoCall yoCall, boolean isOutgongCall) {
+    private void showCallUI(YoCall yoCall, boolean isOutgongCall, boolean isPSTNCall) {
         Intent intent;
         DialerLogs.messageE(TAG, "YO====showCallUI== isOutgoingcall" + isOutgongCall);
 
@@ -150,7 +151,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
-        Contact contact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, calleeNumber);
+        Contact contact;
+        if (isPSTNCall) {
+            //TODO: NEED TO THINK FOR BETTER LOGIC
+            contact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, BuildConfig.RELEASE_USER_TYPE + calleeNumber + "D");
+        } else {
+            contact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, calleeNumber);
+        }
         intent.putExtra(CallExtras.CALLER_NO, calleeNumber);
         intent.putExtra(CallExtras.IMAGE, contact.getImage());
         intent.putExtra(CallExtras.PHONE_NUMBER, contact.getPhoneNo());
@@ -197,6 +204,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                             }
                         } else {
                             currentRTPPackets = stats.getRtcp().getRxStat().getBytes();
+                            setCallStatus(getResources().getString(R.string.connected_status));
                             mHandler.postDelayed(this, NO_RTP_DISCONNECT_DURATION);
                         }
                     } catch (Exception e) {
@@ -303,10 +311,21 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void remoteHold(boolean isHold) {
         if (sipServiceHandler.callStatusListener != null) {
             if (isHold) {
+                //Removing checking networkLossRunnable
+                //TODO: EVEN in remote hold it may be connection loss;
+                if (mHandler != null && checkNetworkLossRunnable != null) {
+                    mHandler.removeCallbacks(checkNetworkLossRunnable);
+                }
                 sipServiceHandler.callStatusListener.callStatus(getResources().getString(R.string.call_on_hold_status));
             } else {
                 updateCallStatus();
             }
+        }
+    }
+
+    public void callAccepted() {
+        if (sipServiceHandler.callStatusListener != null) {
+            sipServiceHandler.callStatusListener.callAccepted();
         }
     }
 }

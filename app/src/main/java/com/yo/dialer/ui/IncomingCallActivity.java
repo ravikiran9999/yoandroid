@@ -20,24 +20,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class IncomingCallActivity extends CallBaseActivity implements View.OnClickListener {
     private static final String TAG = InComingCallActivity.class.getSimpleName();
 
-    //After accepting call
-    private CircleImageView acceptedCalleImageView;
-    private TextView acceptedcalleNameTxt;
-    private TextView acceptedcallePhoneNumberTxt;
-
-
     private View mInComingHeader;
-    private View mReceivedCallHeader;
 
 
-    //YO Call buttons;
-    private ImageView callAcceptBtn;
-    private ImageView callRejectBtn;
-    private ImageView callMessageBtn;
 
-    private ImageView callSpeakerView;
-    private ImageView callMuteView;
-    private ImageView callHoldView;
 
 
     @Override
@@ -47,9 +33,10 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         setContentView(R.layout.dialer_received_call);
         DialerLogs.messageI(TAG, "YO==== Callee Number====" + callePhoneNumber);
         initViews();
-        loadCalleImage(calleImageView, calleImageUrl);
-        loadCalleeName(calleNameTxt, calleName);
+        loadUserDetails();
         loadCallePhoneNumber(callePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
+        tvCallStatus.setText(getResources().getString(R.string.incoming_call));
+
         //to show callee yo chat
         callMessageBtn.setTag(callePhoneNumber);
 
@@ -60,7 +47,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
     }
 
     private void initViews() {
-        mReceivedCallHeader = findViewById(R.id.received_call_header);
+        mAcceptedCallHeader = findViewById(R.id.received_call_header);
         mInComingHeader = findViewById(R.id.incoming_call_header);
 
         //Incoming
@@ -68,20 +55,25 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         calleNameTxt = (TextView) mInComingHeader.findViewById(R.id.tv_caller_name);
         callePhoneNumberTxt = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
         fullImageLayout = (RelativeLayout) findViewById(R.id.full_image_layout);
-        mReceivedCallHeader.setVisibility(View.GONE);
+        tvCallStatus = (TextView) mInComingHeader.findViewById(R.id.tv_incoming);
+        mAcceptedCallHeader.setVisibility(View.GONE);
 
         //Accepted call
-        acceptedCalleImageView = (CircleImageView) mReceivedCallHeader.findViewById(R.id.imv_caller_pic);
-        acceptedcalleNameTxt = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_name);
-        acceptedcallePhoneNumberTxt = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_number);
-        connectionStatusTxtView = (TextView) mReceivedCallHeader.findViewById(R.id.connection_status);
-        durationTxtview = (TextView) mReceivedCallHeader.findViewById(R.id.tv_call_duration);
-
-        //fullImageLayout = (RelativeLayout) findViewById(R.id.full_image_layout);
+        acceptedCalleImageView = (CircleImageView) mAcceptedCallHeader.findViewById(R.id.imv_caller_pic);
+        acceptedcalleNameTxt = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_caller_name);
+        acceptedcallePhoneNumberTxt = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_caller_number);
+        connectionStatusTxtView = (TextView) mAcceptedCallHeader.findViewById(R.id.connection_status);
+        durationTxtview = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_call_duration);
 
         callAcceptBtn = (ImageView) findViewById(R.id.btnAcceptCall);
         callRejectBtn = (ImageView) findViewById(R.id.btnRejectCall);
         callMessageBtn = (ImageView) findViewById(R.id.btnMessageIncoming);
+        callSpeakerBtn = (ImageView) findViewById(R.id.btnSpeaker);
+        callMicBtn = (ImageView) findViewById(R.id.btnMICOff);
+        callEndBtn = (ImageView) findViewById(R.id.btnEndCall);
+
+        hideMicAndSpeaker();
+
 
         callSpeakerView = (ImageView) findViewById(R.id.imv_speaker);
         callSpeakerView.setTag(true);
@@ -93,6 +85,11 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         registerListerners();
     }
 
+    private void hideMicAndSpeaker() {
+        callMicBtn.setVisibility(View.GONE);
+        callSpeakerBtn.setVisibility(View.GONE);
+    }
+
     private void registerListerners() {
         callAcceptBtn.setOnClickListener(this);
         callRejectBtn.setOnClickListener(this);
@@ -100,6 +97,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         callHoldView.setOnClickListener(this);
         callMuteView.setOnClickListener(this);
         callSpeakerView.setOnClickListener(this);
+        callEndBtn.setOnClickListener(this);
     }
 
 
@@ -108,9 +106,10 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         switch (v.getId()) {
             case R.id.btnAcceptCall:
                 acceptCall();
-                changeToAcceptedCallUI();
+                changeToAcceptCallUI();
                 break;
             case R.id.btnRejectCall:
+            case R.id.btnEndCall:
                 rejectCall();
                 break;
             case R.id.btnMessageIncoming:
@@ -129,14 +128,17 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         }
     }
 
-    private void changeToAcceptedCallUI() {
-        mReceivedCallHeader.setVisibility(View.VISIBLE);
+    private void changeToAcceptCallUI() {
         mInComingHeader.setVisibility(View.GONE);
-        loadCalleeName(acceptedcalleNameTxt, calleName);
-        loadCalleImage(acceptedCalleImageView, calleImageUrl);
-        loadCallePhoneNumber(acceptedcallePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
-        isCallStopped = false;
-        mHandler.post(UIHelper.getTimer(IncomingCallActivity.this));
+        changeToAcceptedCallUI();
+    }
+
+    protected void acceptCall() {
+        if (sipBinder != null && sipBinder.getYOHandler() != null) {
+            sipBinder.getYOHandler().acceptCall();
+        } else {
+            DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
+        }
     }
 
     private void showYoChat(String calleeYOUsername) {

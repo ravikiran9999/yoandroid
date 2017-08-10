@@ -8,8 +8,12 @@ import com.yo.dialer.YoSipService;
 
 import org.pjsip.pjsua2.Call;
 import org.pjsip.pjsua2.CallInfo;
+import org.pjsip.pjsua2.CallMediaInfo;
+import org.pjsip.pjsua2.CallMediaInfoVector;
+import org.pjsip.pjsua2.CodecInfo;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
+import org.pjsip.pjsua2.pjsua_call_media_status;
 
 /**
  * Created by Rajesh Babu on 12/7/17.
@@ -78,6 +82,10 @@ public class YoCallObserver implements YoAppObserver {
                     ((YoSipService) mContext).callDisconnected();
                     isHold = false;
                 }
+            } else if (call.getInfo().getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+                if (mContext instanceof YoSipService) {
+                    ((YoSipService) mContext).callAccepted();
+                }
             } else {
                 if (mContext instanceof YoSipService) {
                     ((YoSipService) mContext).updateCallStatus();
@@ -93,15 +101,20 @@ public class YoCallObserver implements YoAppObserver {
         try {
             CallInfo info = call.getInfo();
             if (info != null && info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
-                //TODO: MORE TESTING IS REQUIRED
-                isHold = !isHold;
-                if (mContext instanceof YoSipService) {
-                    ((YoSipService) mContext).remoteHold(isHold);
+                DialerLogs.messageI(TAG, "YO========notifyCallMediaState===========State =" + info.getState() + "," + "," + info.getStateText());
+                CallMediaInfoVector media = info.getMedia();
+                for (int i = 0; i < media.size(); i++) {
+                    CallMediaInfo mediaInfo = media.get(i);
+                    if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_REMOTE_HOLD) {
+                        if (mContext instanceof YoSipService) {
+                            ((YoSipService) mContext).remoteHold(true);
+                        }
+                    }
+                    DialerLogs.messageI(TAG, "YO=====Medis Status =" + mediaInfo.getStatus());
                 }
             }
-            DialerLogs.messageI(TAG, "YO========notifyCallMediaState===========State =" + info.getState() + "," + info.toString() + "," + info.getStateText());
         } catch (Exception e) {
-            DialerLogs.messageI(TAG, "YO========notifyCallMediaState===========" + e.getMessage());
+            DialerLogs.messageE(TAG, "YO========notifyCallMediaState===========" + e.getMessage());
         }
     }
 

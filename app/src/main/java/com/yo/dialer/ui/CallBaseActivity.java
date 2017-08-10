@@ -25,6 +25,7 @@ import com.yo.android.R;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.ui.BaseActivity;
 import com.yo.dialer.CallExtras;
+import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -40,6 +41,8 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     protected String calleName;
     protected String callePhoneNumber;
     protected String calleImageUrl;
+    protected TextView tvCallStatus;
+
 
     //Handler for call duration
     protected Handler mHandler = new Handler();
@@ -58,6 +61,25 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     protected TextView calleNameTxt;
     protected TextView callePhoneNumberTxt;
 
+    //YO Call buttons;
+    protected ImageView callAcceptBtn;
+    protected ImageView callRejectBtn;
+    protected ImageView callMessageBtn;
+    protected ImageView callSpeakerBtn;
+    protected ImageView callMicBtn;
+
+    protected ImageView callSpeakerView;
+    protected ImageView callMuteView;
+    protected ImageView callHoldView;
+
+    //After accepting call
+    protected View mAcceptedCallHeader;
+    protected CircleImageView acceptedCalleImageView;
+    protected TextView acceptedcalleNameTxt;
+    protected TextView acceptedcallePhoneNumberTxt;
+    protected ImageView callEndBtn;
+
+
     private CallStatusListener callStatusListener;
 
     protected ServiceConnection connection = new ServiceConnection() {
@@ -65,12 +87,12 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
             sipBinder.getYOHandler().registerCallStatusListener(callStatusListener);
-            DialerLogs.messageW(TAG, "YO====Service connected to incoming call activity====" + sipBinder);
+            DialerLogs.messageW(TAG, "YO====Service connected to CallBaseActivity activity====" + sipBinder);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            DialerLogs.messageW(TAG, "YO====Service disconnected to incoming call activity====");
+            DialerLogs.messageW(TAG, "YO====Service disconnected to CallBaseActivity activity====");
             sipBinder = null;
         }
     };
@@ -133,7 +155,7 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     }
 
     private void changeSelection(View v, Boolean flag) {
-        if (!flag) {
+        if (flag) {
             v.setBackgroundResource(R.drawable.mute_selector);
         } else {
             v.setBackgroundResource(0);
@@ -145,14 +167,6 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
             isCallStopped = true;
             sipBinder.getYOHandler().rejectCall();
             finish();
-        } else {
-            DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
-        }
-    }
-
-    protected void acceptCall() {
-        if (sipBinder != null && sipBinder.getYOHandler() != null) {
-            sipBinder.getYOHandler().acceptCall();
         } else {
             DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
         }
@@ -205,14 +219,37 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         });
     }
 
+    protected void loadUserDetails() {
+        loadCalleImage(calleImageView, calleImageUrl);
+        loadCalleeName(calleNameTxt, calleName);
+    }
+
     @Override
     public void callDisconnected() {
-        finish();
+        mHandler.removeCallbacks(UIHelper.getTimer(CallBaseActivity.this));
+        mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
+       finish();
+    }
+
+    @Override
+    public void callAccepted() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                changeToAcceptedCallUI();
+            }
+        });
     }
 
     @Override
     public void callStatus(final String status) {
         DialerLogs.messageI(TAG, "CALL STATUS " + status);
+        //If call status hold no need to check timer and connecting status until its unhold and changed status to something else
+        Runnable timer = UIHelper.getTimer(CallBaseActivity.this);
+        if (getResources().getString(R.string.call_on_hold_status).equalsIgnoreCase(status)) {
+            mHandler.removeCallbacks(timer);
+        }
+        //show the status on the UI
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -223,5 +260,23 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         });
     }
 
+    protected void changeToAcceptedCallUI() {
+        mAcceptedCallHeader.setVisibility(View.VISIBLE);
+        loadCalleeName(acceptedcalleNameTxt, calleName);
+        loadCalleImage(acceptedCalleImageView, calleImageUrl);
+        loadCallePhoneNumber(acceptedcallePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
+        isCallStopped = false;
+        mHandler.post(UIHelper.getTimer(CallBaseActivity.this));
+        mHandler.post(UIHelper.getDurationRunnable(CallBaseActivity.this));
+        showEndAndMessage();
+    }
 
+    private void showEndAndMessage() {
+        callAcceptBtn.setVisibility(View.GONE);
+        callSpeakerBtn.setVisibility(View.GONE);
+        callMicBtn.setVisibility(View.GONE);
+        callRejectBtn.setVisibility(View.GONE);
+        callEndBtn.setVisibility(View.VISIBLE);
+        callMessageBtn.setVisibility(View.VISIBLE);
+    }
 }

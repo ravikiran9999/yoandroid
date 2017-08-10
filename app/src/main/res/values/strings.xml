@@ -199,6 +199,7 @@
     <string name="call_info">Call Info</string>
     <string name="outgoing_call">Outgoing call</string>
     <string name="incoming_call">Incoming call</string>
+    <string name="incoming">Incoming</string>
     <string name="missed_call">Missed call</string>
     <string name="empty_chat">No chat history found.</string>
     <string name="clear_history_dec">This will delete all calls from your history</string>
@@ -272,7 +273,7 @@
     <string name="select_country_name">Select Country Name</string>
     <string name="recent_county_code">Recent Countries/regions</string>
     <string name="all_county_code">All Countries/regions</string>
-    <string name="calling">Dialing</string>
+    <string name="calling">Calling</string>
     <string name="paid_call">Paid Call?</string>
     <string name="calle_not_online">The YO! user you are trying is offline, do you want to make paid call?</string>
     <string name="disabled">This functionality is currently disabled.</string>

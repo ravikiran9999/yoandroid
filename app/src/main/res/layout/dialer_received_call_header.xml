@@ -10,7 +10,7 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="50dp"
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -102,20 +102,6 @@
                 android:src="@drawable/ic_dialer_mic_off" />
         </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/btnDialer"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:src="@drawable/ic_dialer_on_call" />
-        </LinearLayout>
-
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -131,21 +117,4 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/hidden_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.yo.android.voip.DialPadView
-            android:id="@+id/dialPadView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <include layout="@layout/dialpad" />
-        </com.yo.android.voip.DialPadView>
-    </RelativeLayout>
 </LinearLayout>
