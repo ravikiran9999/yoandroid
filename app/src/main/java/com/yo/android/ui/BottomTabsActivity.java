@@ -33,7 +33,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -72,8 +71,6 @@ import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.NewDialerFragment;
-import com.yo.dialer.Test;
-import com.yo.restartapp.YOExceptionHandler;
 
 import java.io.File;
 import java.text.DecimalFormat;

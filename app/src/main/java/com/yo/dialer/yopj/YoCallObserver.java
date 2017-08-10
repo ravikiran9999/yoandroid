@@ -6,11 +6,10 @@ import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.YoSipService;
 
-import org.pjsip.pjsua2.Call;
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallMediaInfoVector;
-import org.pjsip.pjsua2.CodecInfo;
+import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsua_call_media_status;
@@ -51,10 +50,8 @@ public class YoCallObserver implements YoAppObserver {
         }
         if (reason != null && reason.equalsIgnoreCase(CallExtras.NETWORK_NOT_REACHABLE)) {
             if (mContext instanceof YoSipService) {
-                ((YoSipService) mContext).setCallStatus(CallExtras.NETWORK_NOT_REACHABLE);
+                ((YoSipService) mContext).setCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
             }
-        } else {
-            ((YoSipService) mContext).setCallStatus(registrationStatus);
         }
         DialerLogs.messageI(TAG, "YO========notifyRegState>>>> " + registrationStatus);
     }
@@ -62,7 +59,7 @@ public class YoCallObserver implements YoAppObserver {
     @Override
     public void notifyIncomingCall(YoCall call) {
         try {
-            DialerLogs.messageI(TAG, "YO========notifyIncomingCall===========");
+            DialerLogs.messageI(TAG, "YO========notifyIncomingCall===========" + call.getInfo().getState());
             if (mContext != null) {
                 if (mContext instanceof YoSipService) {
                     ((YoSipService) mContext).OnIncomingCall(call);
@@ -71,25 +68,44 @@ public class YoCallObserver implements YoAppObserver {
         } catch (Exception e) {
             DialerLogs.messageI(TAG, "YO========notifyIncomingCall===========" + e.getMessage());
         }
+
+        //TODO: Know Caller that its ringing. // we may need to call this when playing ring sound
+        CallOpParam call_param = new CallOpParam();
+        call_param.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);
+        try {
+            call.answer(call_param);
+        } catch (Exception e) {
+            System.out.println(e);
+            return;
+        }
+
+
     }
 
     @Override
     public void notifyCallState(YoCall call) {
         try {
-            DialerLogs.messageI(TAG, "YO========notifyCallState===========State =" + call.getInfo().getState() + ",Reason" + call.getInfo().getLastReason());
-            if (call.getInfo().getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
-                if (mContext instanceof YoSipService) {
-                    ((YoSipService) mContext).callDisconnected();
+            CallInfo info = call.getInfo();
+            DialerLogs.messageI(TAG, "YO========notifyCallState===========State =" + info.getState() + ",Reason" + info.getLastReason());
+            YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
+            if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+                if (YoCallObserver.mContext instanceof YoSipService) {
+                    yoSipService.callDisconnected();
+                    yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
                     isHold = false;
                 }
-            } else if (call.getInfo().getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
-                if (mContext instanceof YoSipService) {
-                    ((YoSipService) mContext).callAccepted();
+            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+                yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CONNECTED);
+                if (YoCallObserver.mContext instanceof YoSipService) {
+                    yoSipService.callAccepted();
                 }
+            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY && info.getLastReason().equalsIgnoreCase("Ringing")) {
+                yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RINGING);
+            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
+                yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CALLING);
             } else {
-                if (mContext instanceof YoSipService) {
-                    ((YoSipService) mContext).updateCallStatus();
-                }
+                DialerLogs.messageE(TAG, "YO========notifyCallState Other case===========" + info.getState());
+                yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_UNKNOWN);
             }
         } catch (Exception e) {
             DialerLogs.messageE(TAG, "YO========notifyCallState===========" + e.getMessage());
@@ -99,6 +115,7 @@ public class YoCallObserver implements YoAppObserver {
     @Override
     public void notifyCallMediaState(YoCall call) {
         try {
+            YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
             CallInfo info = call.getInfo();
             if (info != null && info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
                 DialerLogs.messageI(TAG, "YO========notifyCallMediaState===========State =" + info.getState() + "," + "," + info.getStateText());
@@ -107,8 +124,14 @@ public class YoCallObserver implements YoAppObserver {
                     CallMediaInfo mediaInfo = media.get(i);
                     if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_REMOTE_HOLD) {
                         if (mContext instanceof YoSipService) {
-                            ((YoSipService) mContext).remoteHold(true);
+                            yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_CALL_MEDIA_REMOTE_HOLD);
                         }
+                    } else if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE) {
+                        if (mContext instanceof YoSipService) {
+                            yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CONNECTED);
+                        }
+                    } else if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_LOCAL_HOLD) {
+                        yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_CALL_MEDIA_LOCAL_HOLD);
                     }
                     DialerLogs.messageI(TAG, "YO=====Medis Status =" + mediaInfo.getStatus());
                 }

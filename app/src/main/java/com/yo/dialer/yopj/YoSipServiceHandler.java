@@ -97,19 +97,6 @@ public class YoSipServiceHandler implements SipServicesListener {
         return 0;
     }
 
-    @Override
-    public String getCallState() {
-        if (mContext != null) {
-            if (mContext instanceof YoSipService) {
-                String callStatus = ((YoSipService) mContext).getCallStatus();
-                if (callStatusListener != null) {
-                    callStatusListener.callStatus(callStatus);
-                }
-                return callStatus;
-            }
-        }
-        return null;
-    }
 
     @Override
     public void setMic(boolean flag) {
@@ -133,6 +120,13 @@ public class YoSipServiceHandler implements SipServicesListener {
     public void callDisconnected() {
         if (callStatusListener != null) {
             callStatusListener.callDisconnected();
+        }
+    }
+
+    @Override
+    public void updateWithCallStatus(int callState) {
+        if (callStatusListener != null) {
+            callStatusListener.updateWithCallStatus(callState);
         }
     }
 

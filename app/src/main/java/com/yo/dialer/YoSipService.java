@@ -11,6 +11,8 @@ import com.yo.android.R;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.Contact;
+import com.yo.android.networkmanager.NetworkStateChangeListener;
+import com.yo.android.networkmanager.NetworkStateListener;
 import com.yo.android.pjsip.MediaManager;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.dialer.ui.IncomingCallActivity;
@@ -32,12 +34,12 @@ import javax.inject.Named;
 public class YoSipService extends InjectedService implements IncomingCallListener {
     private static final String TAG = YoSipService.class.getSimpleName();
     private static final int NO_RTP_DISCONNECT_DURATION = 15000;
+    private static final int INITIAL_CONNECTION_DURATION = 30000;
+
     private YoSipServiceHandler sipServiceHandler;
     private YoAccount yoAccount;
-    private String registrationStatus;
     private long currentRTPPackets;
     private boolean isReconnecting = false;
-    private boolean isHold = false;
     private Runnable checkNetworkLossRunnable;
 
     @Inject
@@ -53,6 +55,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private static YoCall yoCurrentCall;
     private Handler mHandler = new Handler();
 
+    public YoSipServiceHandler getSipServiceHandler() {
+        return sipServiceHandler;
+    }
+
 
     @Nullable
     @Override
@@ -62,12 +68,17 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     public void register() {
         mediaManager = new MediaManager(this);
-        sipServiceHandler = YoSipServiceHandler.getInstance(this, preferenceEndPoint);
-        yoAccount = sipServiceHandler.addAccount(this);
+        if (yoAccount == null) {
+            sipServiceHandler = YoSipServiceHandler.getInstance(this, preferenceEndPoint);
+            yoAccount = sipServiceHandler.addAccount(this);
+        } else {
+            DialerLogs.messageI(TAG, "Acccount is already registered===========");
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        NetworkStateListener.registerNetworkState(listener);
         parseIntentInfo(intent);
         return START_STICKY;
     }
@@ -104,6 +115,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             StreamStat stats = yoCurrentCall.getStreamStat(0);
             currentRTPPackets = stats.getRtcp().getRxStat().getBytes();
             DialerLogs.messageE(TAG, "YO===Accepting call == currentRTP" + currentRTPPackets);
+
             checkCalleeLossNetwork();
         } catch (Exception e) {
             DialerLogs.messageE(TAG, "YO===Accepting call ==" + e.getMessage());
@@ -112,9 +124,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     private void makeCall(Intent intent) {
         if (yoCurrentCall == null) {
-            YoCall yoCall = CallHelper.makeCall(yoAccount, intent);
-            DialerLogs.messageE(TAG, "YO==makeCalling call...and YOCALL = " + yoCall);
-            showOutgointCallActivity(yoCall, intent);
+            yoCurrentCall = CallHelper.makeCall(yoAccount, intent);
+            DialerLogs.messageE(TAG, "YO==makeCalling call...and YOCALL = " + yoCurrentCall);
+            showOutgointCallActivity(yoCurrentCall, intent);
         } else {
             //TODO: ALREADY CALL IS GOING ON
         }
@@ -165,6 +177,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         //Wait until user profile image is loaded , it should not show blank image
         startActivity(intent);
 
+        //Check if no response from the calle side need to disconnect the call.
+        // checkCalleeLossNetwork();
+
+
     }
 
     public void setCurrentCallToNull() {
@@ -175,45 +191,34 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     //When callee loss his network there wont be any callback to caller
     //So after 10sec change to reconnecting and  30sec if there are no rtp packets need to disconnect the call.
     public void checkCalleeLossNetwork() {
-        if (yoCurrentCall != null) {
-            checkNetworkLossRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    final StreamStat stats;
-                    if (isHold) {
-                        return;
-                    }
-                    try {
-                        stats = yoCurrentCall.getStreamStat(0);
-                        DialerLogs.messageE(TAG, currentRTPPackets + "YO===checkCalleeLossNetwork stats.getRtcp().getRxStat().getBytes()...." + stats.getRtcp().getRxStat().getBytes());
+        if (checkNetworkLossRunnable == null) {
+            networkPacketsCheck();
+        }
+        mHandler.postDelayed(checkNetworkLossRunnable, INITIAL_CONNECTION_DURATION);
 
-                        if (currentRTPPackets == stats.getRtcp().getRxStat().getBytes()) {
-                            //Change to reconnecting .
-                            DialerLogs.messageE(TAG, "YO===checkCalleeLossNetwork....isreconnecting." + isReconnecting + "," + currentRTPPackets);
+    }
 
-                            if (!isReconnecting) {
-                                isReconnecting = true;
-                                currentRTPPackets = stats.getRtcp().getRxStat().getBytes();
-                                setCallStatus(getResources().getString(R.string.reconnecting_status));
-                                DialerLogs.messageE(TAG, "YO===checkCalleeLossNetwork....Checking for next 15sec." + isReconnecting + "," + currentRTPPackets);
-                                mHandler.postDelayed(this, NO_RTP_DISCONNECT_DURATION);
-                            } else {
-                                //Hangup call
-                                DialerLogs.messageE(TAG, "YO===checkCalleeLossNetwork....end the call " + isReconnecting + "," + currentRTPPackets);
-                                updateDisconnectStatus();
-                            }
-                        } else {
-                            currentRTPPackets = stats.getRtcp().getRxStat().getBytes();
-                            setCallStatus(getResources().getString(R.string.connected_status));
-                            mHandler.postDelayed(this, NO_RTP_DISCONNECT_DURATION);
-                        }
-                    } catch (Exception e) {
-                        DialerLogs.messageE(TAG, "YO===While reading RTP packets got an exception" + e.getMessage());
-                        updateDisconnectStatus();
-                    }
+    private void networkPacketsCheck() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (yoCurrentCall != null) {
+                    DialerLogs.messageE(TAG, currentRTPPackets + "YO===Re-Inviting from Thread...");
+                    reInviteToCheckCalleStatus();
                 }
-            };
-            mHandler.postDelayed(checkNetworkLossRunnable, NO_RTP_DISCONNECT_DURATION);
+                mHandler.postDelayed(checkNetworkLossRunnable, NO_RTP_DISCONNECT_DURATION);
+            }
+        };
+        checkNetworkLossRunnable = runnable;
+    }
+
+    private void reInviteToCheckCalleStatus() {
+        DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state" + yoCurrentCall);
+        try {
+            CallHelper.unHoldCall(yoCurrentCall);
+        } catch (Exception e) {
+            getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
+            DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
         }
     }
 
@@ -221,7 +226,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         rejectCall();
         isReconnecting = false;
         setCurrentCallToNull();
-        updateCallStatus();
+        mHandler.removeCallbacks(checkNetworkLossRunnable);
     }
 
     public int getCallDurationInSec() {
@@ -237,51 +242,23 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     // this is for registration fail case, there we cant get call state from yocall object
-    public void setCallStatus(String status) {
-        registrationStatus = null;
-        registrationStatus = status;
-        updateCallStatus();
+    public void setCallStatus(int status) {
+        getSipServiceHandler().updateWithCallStatus(status);
     }
 
-    public String getCallStatus() {
-        String callStatus = getResources().getString(R.string.unknown);
-        if (yoCurrentCall != null) {
-            try {
 
-                if (isReconnecting) {
-                    callStatus = registrationStatus;
-                } else {
-                    String stateTxt = yoCurrentCall.getInfo().getStateText();
-                    callStatus = stateTxt;
-                }
-            } catch (Exception e) {
-                DialerLogs.messageE(TAG, "getCallStatus" + e.getMessage());
-            }
-        } else {
-            callStatus = registrationStatus;
-        }
-
-        return callStatus;
-    }
-
-    public void setHold(boolean flag) {
+    public void setHold(boolean isHold) {
         DialerLogs.messageE(TAG, "Call HOld" + isHold);
-        isHold = flag;
-        if (flag) {
+        if (isHold) {
             CallHelper.holdCall(yoCurrentCall);
-            registrationStatus = getResources().getString(R.string.hold);
-            if (mHandler != null && checkNetworkLossRunnable != null) {
-                mHandler.removeCallbacks(checkNetworkLossRunnable);
-            }
         } else {
-            CallHelper.unHoldCall(yoCurrentCall);
-            registrationStatus = getResources().getString(R.string.unhold);
-            if (mHandler != null && checkNetworkLossRunnable != null) {
-                mHandler.post(checkNetworkLossRunnable);
+            try {
+                CallHelper.unHoldCall(yoCurrentCall);
+            } catch (Exception e) {
+                DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
+                //Disconnect the call;
+                updateDisconnectStatus();
             }
-        }
-        if (sipServiceHandler.callStatusListener != null) {
-            sipServiceHandler.callStatusListener.callStatus(registrationStatus);
         }
     }
 
@@ -299,33 +276,20 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
-    public void updateCallStatus() {
-        DialerLogs.messageE(TAG, "updateCallStatus");
-        if (sipServiceHandler != null) {
-            sipServiceHandler.getCallState();
-        } else {
-            DialerLogs.messageE(TAG, "SipServiceHandler is null");
-        }
-    }
-
-    public void remoteHold(boolean isHold) {
-        if (sipServiceHandler.callStatusListener != null) {
-            if (isHold) {
-                //Removing checking networkLossRunnable
-                //TODO: EVEN in remote hold it may be connection loss;
-                if (mHandler != null && checkNetworkLossRunnable != null) {
-                    mHandler.removeCallbacks(checkNetworkLossRunnable);
-                }
-                sipServiceHandler.callStatusListener.callStatus(getResources().getString(R.string.call_on_hold_status));
-            } else {
-                updateCallStatus();
-            }
-        }
-    }
-
     public void callAccepted() {
         if (sipServiceHandler.callStatusListener != null) {
             sipServiceHandler.callStatusListener.callAccepted();
         }
     }
+
+    NetworkStateChangeListener listener = new NetworkStateChangeListener() {
+        public void onNetworkStateChanged(final int networkstate) {
+            DialerLogs.messageI(TAG, "Network change listener and state is " + networkstate);
+            if (networkstate == NetworkStateListener.NETWORK_CONNECTED) {
+                // Network is connected.
+                DialerLogs.messageI(TAG, "YO========Register Account===========");
+                register();
+            }
+        }
+    };
 }

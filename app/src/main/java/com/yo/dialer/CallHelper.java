@@ -194,15 +194,11 @@ public class CallHelper {
         }
     }
 
-    public static void unHoldCall(YoCall currentCall) {
+    public static void unHoldCall(YoCall currentCall) throws Exception {
         CallOpParam prm = new CallOpParam(true);
         prm.getOpt().setFlag(1);
         if (currentCall != null) {
-            try {
-                currentCall.reinvite(prm);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            currentCall.reinvite(prm);
         } else {
             DialerLogs.messageE(TAG, "Current call is null so call not unhold");
         }

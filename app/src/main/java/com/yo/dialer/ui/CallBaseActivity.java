@@ -226,9 +226,8 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
 
     @Override
     public void callDisconnected() {
-        mHandler.removeCallbacks(UIHelper.getTimer(CallBaseActivity.this));
         mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
-       finish();
+        finish();
     }
 
     @Override
@@ -242,22 +241,17 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     }
 
     @Override
-    public void callStatus(final String status) {
-        DialerLogs.messageI(TAG, "CALL STATUS " + status);
-        //If call status hold no need to check timer and connecting status until its unhold and changed status to something else
-        Runnable timer = UIHelper.getTimer(CallBaseActivity.this);
-        if (getResources().getString(R.string.call_on_hold_status).equalsIgnoreCase(status)) {
-            mHandler.removeCallbacks(timer);
-        }
-        //show the status on the UI
+    public void updateWithCallStatus(final int callStatus) {
+        //User- > CallExtras.StatusCode.PJSIP_INV_STATE_CONFIRMED
+        DialerLogs.messageI(TAG, "CallExtras.StatusCode -> updateWithCallStatus " + callStatus);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (connectionStatusTxtView != null) {
-                    connectionStatusTxtView.setText(status);
-                }
+                UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, tvCallStatus);
+                UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, connectionStatusTxtView);
             }
         });
+
     }
 
     protected void changeToAcceptedCallUI() {
@@ -266,7 +260,7 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         loadCalleImage(acceptedCalleImageView, calleImageUrl);
         loadCallePhoneNumber(acceptedcallePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
         isCallStopped = false;
-        mHandler.post(UIHelper.getTimer(CallBaseActivity.this));
+        //  mHandler.post(UIHelper.getTimer(CallBaseActivity.this));
         mHandler.post(UIHelper.getDurationRunnable(CallBaseActivity.this));
         showEndAndMessage();
     }

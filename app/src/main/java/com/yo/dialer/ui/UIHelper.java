@@ -2,6 +2,7 @@ package com.yo.dialer.ui;
 
 import android.content.Context;
 import android.text.format.DateUtils;
+import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.dialer.CallExtras;
@@ -22,9 +23,6 @@ class UIHelper {
         return durationRunnable;
     }
 
-    public static void setDurationRunnable(Runnable durationRunnable) {
-        UIHelper.durationRunnable = durationRunnable;
-    }
 
     private static Runnable durationRunnable = new Runnable() {
         @Override
@@ -40,47 +38,25 @@ class UIHelper {
             }
         }
     };
-    private static Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
 
-            DialerLogs.messageE(TAG, "YO====isCallStopped" + !activity.isCallStopped);
 
-            if (!activity.isCallStopped) {
-                activity.mHandler.postDelayed(this, 1000L);
-            }
-            if (activity.sipBinder != null) {
-
-                String callState = activity.sipBinder.getYOHandler().getCallState();
-                if (callState == null) {
-                    //seems call got disconnected.
-                    DialerLogs.messageE(TAG, "YO====Seems call got disconnected");
-                    activity.connectionStatusTxtView.setText(activity.getResources().getString(R.string.disconnect_status));
-                    activity.finish();
-                } else {
-                    DialerLogs.messageE(TAG, "YO====Call State " + callState);
-
-                    if (callState.equalsIgnoreCase(CallExtras.CONFIRMED)) {
-                        activity.connectionStatusTxtView.setText(activity.getResources().getString(R.string.connected_status));
-                    } else if (callState.equalsIgnoreCase(CallExtras.CONNECTING)) {
-                        activity.connectionStatusTxtView.setText(activity.getResources().getString(R.string.connecting_status));
-                    } else if (callState.equalsIgnoreCase(CallExtras.DISCONNECTED)) {
-                        activity.isCallStopped = true;
-                        DialerLogs.messageE(TAG, "YO====Seems call got disconnected");
-                        activity.connectionStatusTxtView.setText(activity.getResources().getString(R.string.disconnect_status));
-                        activity.finish();
-                    } else if (!callState.equalsIgnoreCase(CallExtras.REGISTRATION_SUCCESS)) {
-                        activity.connectionStatusTxtView.setText(activity.getResources().getString(R.string.reconnecting_status));
-                    }
-                }
-            }
+    public static void handleCallStatus(Context context, final int callStatus, final TextView connectionStatusTxtView) {
+        if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_CALLING) {
+            connectionStatusTxtView.setText(context.getResources().getString(R.string.calling));
+        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_RINGING) {
+            connectionStatusTxtView.setText(context.getResources().getString(R.string.ringing));
+        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_CONNECTED) {
+            connectionStatusTxtView.setText(context.getResources().getString(R.string.connected_status));
+        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_RE_CONNECTING) {
+            connectionStatusTxtView.setText(context.getResources().getString(R.string.reconnecting_status));
+        } else if (callStatus == CallExtras.StatusCode.YO_CALL_MEDIA_REMOTE_HOLD) {
+            connectionStatusTxtView.setText(context.getResources().getString(R.string.call_on_hold_status));
+        } else if (callStatus == CallExtras.StatusCode.YO_CALL_MEDIA_LOCAL_HOLD) {
+            connectionStatusTxtView.setText(context.getResources().getString(R.string.call_on_hold_status));
+        } else if (callStatus == CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE) {
+            connectionStatusTxtView.setText(context.getResources().getString(R.string.reconnecting_status));
+        }else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING) {
+            connectionStatusTxtView.setText(context.getResources().getString(R.string.connecting_status));
         }
-    };
-
-    public static Runnable getTimer(Context context) {
-        if (context instanceof CallBaseActivity) {
-            activity = (CallBaseActivity) context;
-        }
-        return runnable;
     }
 }
