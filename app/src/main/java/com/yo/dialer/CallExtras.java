@@ -29,7 +29,6 @@ public interface CallExtras {
 
     public interface StatusCode {
         public static final int YO_INV_STATE_SC_UNKNOWN = 108;
-
         public static final int YO_CALL_MEDIA_REMOTE_HOLD = 1;
         public static final int YO_CALL_MEDIA_ACTIVE = 2; //Media active mean its unhold or connected.
         public static final int YO_INV_STATE_CONNECTED = 3;
@@ -41,6 +40,12 @@ public interface CallExtras {
         public static final int YO_CALL_NETWORK_NOT_REACHABLE = 9;
         public static final int YO_INV_STATE_SC_CONNECTING = 10;
         public static final int YO_INV_STATE_SC_NO_ANSWER = 11;
+        public static final int YO_INV_STATE_CALLEE_NOT_ONLINE = 12;
+    }
+    public interface StatusReason{
+        public static final String YO_SERVICE_UNAVAILABLE = "Service unavailable";
+        public static final String YO_NOT_FOUND = "Not found";
+        public static final String YO_RINGING = "Ringing";
 
     }
 }

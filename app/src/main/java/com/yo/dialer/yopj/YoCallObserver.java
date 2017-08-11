@@ -93,6 +93,9 @@ public class YoCallObserver implements YoAppObserver {
                     if (info.getLastReason().equalsIgnoreCase("Not Acceptable Here")) {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER);
                         yoSipService.callDisconnected();
+                    }else if(info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_FOUND) || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SERVICE_UNAVAILABLE)){
+                        yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE);
+                        yoSipService.callDisconnected();
                     } else {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
                         yoSipService.callDisconnected();
@@ -104,7 +107,7 @@ public class YoCallObserver implements YoAppObserver {
                 if (YoCallObserver.mContext instanceof YoSipService) {
                     yoSipService.callAccepted();
                 }
-            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY && info.getLastReason().equalsIgnoreCase("Ringing")) {
+            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY && info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_RINGING)) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RINGING);
             } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CALLING);

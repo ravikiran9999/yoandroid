@@ -23,12 +23,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.yo.android.R;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.YODialogs;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 
+import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -260,6 +263,8 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
             public void run() {
                 if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER) {
                     showCallAgain();
+                }else if(callStatus == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE){
+                    //YODialogs.redirectToPSTN(new EventBus(), this, ((OpponentDetails) action), preferenceEndPoint, mBalanceHelper, mToastFactory);
                 } else {
                     UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, tvCallStatus);
                     UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, connectionStatusTxtView);

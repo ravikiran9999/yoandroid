@@ -140,7 +140,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
 
     private void readCallLogs() {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, Filter.ALL_CALLS);
-        int filterType = Filter.getFilterType(filter);
+        FilterData filterData = Filter.getFilterType(filter, getActivity());
         CallLogs.load(activity, new CallLogCompleteLister() {
             @Override
             public void callLogsCompleted(CallLog callLog) {
@@ -154,7 +154,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
                     });
                 }
             }
-        }, filterType);
+        }, filterData.getFilterType());
     }
 
     @Override
