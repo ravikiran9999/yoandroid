@@ -1,12 +1,22 @@
 package com.yo.dialer;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
+import com.orion.android.common.logging.Logger;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
+import com.yo.android.R;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.Contact;
@@ -14,6 +24,7 @@ import com.yo.android.networkmanager.NetworkStateChangeListener;
 import com.yo.android.networkmanager.NetworkStateListener;
 import com.yo.android.pjsip.MediaManager;
 import com.yo.android.pjsip.SipBinder;
+import com.yo.android.pjsip.SipCallState;
 import com.yo.dialer.ui.IncomingCallActivity;
 import com.yo.dialer.ui.OutgoingCallActivity;
 import com.yo.dialer.yopj.YoAccount;
@@ -45,6 +56,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private boolean isRemoteHold = false;
     private boolean isCallAccepted;
 
+    //To play Ringtone
+    private MediaPlayer mRingTone;
+    private AudioManager mAudioManager;
+    private Vibrator mVibrator;
+    private Uri mRingtoneUri;
+    private static final long[] VIBRATOR_PATTERN = {0, 1000, 1000};
+
     public boolean isCallAccepted() {
         return isCallAccepted;
     }
@@ -61,7 +79,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void setRemoteHold(boolean remoteHold) {
         isRemoteHold = remoteHold;
     }
-
 
     @Inject
     @Named("login")
@@ -101,7 +118,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public int onStartCommand(Intent intent, int flags, int startId) {
         NetworkStateListener.registerNetworkState(listener);
         parseIntentInfo(intent);
+        initializeMediaPalyer();
         return START_STICKY;
+    }
+
+    private void initializeMediaPalyer() {
+        mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(YoSipService.this, RingtoneManager.TYPE_RINGTONE);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     private void parseIntentInfo(Intent intent) {
@@ -118,6 +142,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 }
             } else if (CallExtras.MAKE_CALL.equals(intent.getAction())) {
                 makeCall(intent);
+                //PSTN Call it will play ringtone from IVR
+                if (!intent.getBooleanExtra(CallExtras.IS_PSTN, false)) {
+                    startDefaultRingtone(1);
+                }
             } else if (CallExtras.ACCEPT_CALL.equals(intent.getAction())) {
                 acceptCall();
             } else if (CallExtras.REJECT_CALL.equals(intent.getAction())) {
@@ -127,14 +155,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     public void rejectCall() {
+        stopDefaultRingtone();
         CallHelper.rejectCall(yoCurrentCall);
     }
 
     public void acceptCall() {
+        stopDefaultRingtone();
         try {
             CallHelper.accetpCall(yoCurrentCall);
-            StreamStat stats = yoCurrentCall.getStreamStat(0);
-            DialerLogs.messageE(TAG, "YO===Accepting call == currentRTP");
             checkCalleeLossNetwork();
         } catch (Exception e) {
             DialerLogs.messageE(TAG, "YO===Accepting call ==" + e.getMessage());
@@ -158,12 +186,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     @Override
     public void OnIncomingCall(YoCall yoCall) {
         yoCurrentCall = yoCall;
+        startRingtone(); // to play caller ringtone
         DialerLogs.messageE(TAG, "YO====On Incoming call current call call obj==" + yoCurrentCall);
-        try {
-            DialerLogs.messageE(TAG, "YO====OnIncomingCall==" + yoCall.getInfo().getCallIdString());
-        } catch (Exception e) {
-            DialerLogs.messageE(TAG, "YO====OnIncomingCall==" + e.getMessage());
-        }
         triggerNoAnswerIfNotRespond();
         startInComingCallScreen(yoCurrentCall);
     }
@@ -179,11 +203,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void sendNoAnswer() {
+        DialerLogs.messageE(TAG, "YO====sendNoAnswer==" + isCallAccepted());
+
         if (!isCallAccepted() && yoCurrentCall != null) {
             CallOpParam prm = new CallOpParam(true);
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_NOT_ACCEPTABLE_HERE);
             try {
                 yoCurrentCall.answer(prm);
+                callDisconnected();
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "sendNoAnswer== " + e.getMessage());
             }
@@ -197,7 +224,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private void showCallUI(YoCall yoCall, boolean isOutgongCall, boolean isPSTNCall) {
         Intent intent;
         DialerLogs.messageE(TAG, "YO====showCallUI== isOutgoingcall" + isOutgongCall);
-
         if (isOutgongCall) {
             intent = new Intent(YoSipService.this, OutgoingCallActivity.class);
         } else {
@@ -314,6 +340,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     public void callDisconnected() {
         setCurrentCallToNull();
+        //If the call is rejected should stop rigntone
+        stopDefaultRingtone();
         DialerLogs.messageE(TAG, "callDisconnected");
         if (sipServiceHandler != null) {
             sipServiceHandler.callDisconnected();
@@ -323,6 +351,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     public void callAccepted() {
+        //Callee accepted call so stop ringtone.
+        stopDefaultRingtone();
         if (sipServiceHandler.callStatusListener != null) {
             sipServiceHandler.callStatusListener.callAccepted();
         }
@@ -334,8 +364,93 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             if (networkstate == NetworkStateListener.NETWORK_CONNECTED) {
                 // Network is connected.
                 DialerLogs.messageI(TAG, "YO========Register Account===========");
-                register();
+                sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING);
+                if (yoCurrentCall != null) {
+                    DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
+                    if (!isRemoteHold() && isCallAccepted) {
+                        reInviteToCheckCalleStatus();
+                    }
+                }
+                //register();
+            } else {
+                DialerLogs.messageI(TAG, "Network change listener and state is Network not reachable " );
+                sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
             }
         }
     };
+
+    protected synchronized void startDefaultRingtone(int volume) {
+
+        try {
+            mAudioManager.setSpeakerphoneOn(false);
+            mRingTone = MediaPlayer.create(this, R.raw.calling);
+            mRingTone.setVolume(volume, volume);
+            mRingTone.setLooping(true);
+            mAudioManager.setMode(AudioManager.RINGER_MODE_SILENT);
+            try {
+                mRingTone.start();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception exc) {
+            Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
+        }
+    }
+
+    protected synchronized void startRingtone() {
+        mVibrator.vibrate(VIBRATOR_PATTERN, 0);
+        try {
+            mRingTone = MediaPlayer.create(this, mRingtoneUri);
+            mRingTone.setLooping(true);
+            int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+            mAudioManager.setSpeakerphoneOn(false);
+            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+            mRingTone.setVolume(volume, volume);
+            mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                }
+            });
+            mRingTone.start();
+        } catch (Exception exc) {
+            Logger.warn("Error while trying to play ringtone!");
+        }
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        DialerLogs.messageE(TAG, "KILLING YO APPLICATION.");
+        sendBroadcast(new Intent("YouWillNeverKillMe"));
+        if (yoCurrentCall != null) {
+            CallOpParam prm = new CallOpParam();
+            prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+            try {
+                yoCurrentCall.hangup(prm);
+                
+            } catch (Exception e) {
+                DialerLogs.messageE(TAG, "Call is terminated because app got killed.");
+            }
+        }
+    }
+
+    protected synchronized void stopDefaultRingtone() {
+        mVibrator.cancel();
+        if (mRingTone != null) {
+            try {
+                if (mRingTone.isPlaying()) {
+                    mRingTone.stop();
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                mRingTone.reset();
+                mRingTone.release();
+            } catch (Exception ignored) {
+            }
+        }
+
+    }
 }

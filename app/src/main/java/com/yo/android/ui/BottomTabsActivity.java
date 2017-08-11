@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -71,6 +72,7 @@ import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.NewDialerFragment;
+import com.yo.restartapp.YOExceptionHandler;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -175,10 +177,10 @@ public class BottomTabsActivity extends BaseActivity {
         startService(service);
 
         // Handle application crash
-       // Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
-       /* if (getIntent().getBooleanExtra("crash", false)) {
+        Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
+        if (getIntent().getBooleanExtra("crash", false)) {
             Toast.makeText(this, "App restarted after crash", Toast.LENGTH_SHORT).show();
-        }*/
+        }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO,

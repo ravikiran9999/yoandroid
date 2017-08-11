@@ -1159,7 +1159,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     protected synchronized void startDefaultRingtone(int volume) {
-
         try {
 
             mAudioManager.setSpeakerphoneOn(false);
@@ -1180,7 +1179,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         } catch (Exception exc) {
             Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
         }
-
     }
 
     protected synchronized void startRingtone() {

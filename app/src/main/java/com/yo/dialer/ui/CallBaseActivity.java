@@ -272,7 +272,7 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     //Need to show call again screen to caller not callee.
     private void showCallAgain() {
         if (!isIncoming()) {
-            Toast.makeText(this, "Need to show call again screen", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Call not answered - Need to show call again screen", Toast.LENGTH_LONG).show();
             finish();
         }
     }

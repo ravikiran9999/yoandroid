@@ -1,11 +1,13 @@
 package com.yo.dialer.ui;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
@@ -32,7 +34,12 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         loadUserDetails();
         tvCallStatus.setText(getResources().getString(R.string.calling));
 
+        //If outgoing call phone number contaitns yo username it should be parse and display only phone number.
+        if (!TextUtils.isEmpty(callePhoneNumber) && callePhoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
+            callePhoneNumber = DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber);
+        }
         //TODO: Need to check edge cases for Incoming and Outgoing calls
+        //
         loadCallePhoneNumber(callePhoneNumberTxt, callePhoneNumber);
         //to show callee yo chat
         //callMessageBtn.setTag(callePhoneNumber);

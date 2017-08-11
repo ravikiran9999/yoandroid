@@ -92,6 +92,7 @@ public class YoCallObserver implements YoAppObserver {
                 if (YoCallObserver.mContext instanceof YoSipService) {
                     if (info.getLastReason().equalsIgnoreCase("Not Acceptable Here")) {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER);
+                        yoSipService.callDisconnected();
                     } else {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
                         yoSipService.callDisconnected();

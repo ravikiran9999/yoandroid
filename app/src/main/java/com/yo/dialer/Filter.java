@@ -39,13 +39,13 @@ public class Filter {
 
     public static void filteredData(final Activity activity, final PreferenceEndPoint preferenceEndPoint, final CallLogCompleteLister lister) {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, ALL_CALLS);
-        int filterType = getFilterType(filter);
+        final FilterData filterData = getFilterType(filter,activity);
         CallLogs.load(activity, new CallLogCompleteLister() {
             @Override
             public void callLogsCompleted(com.yo.dialer.model.CallLog callLog) {
                 ArrayList<Map.Entry<String, List<CallLogsResult>>> tempResults = new ArrayList<>();
                 ArrayList<Map.Entry<String, List<CallLogsResult>>> results = new ArrayList<>();
-                results = prepare(activity.getString(R.string.all_calls), results, CallLog.Calls.getCallLog(activity));
+                results = prepare(filterData.getFilterTitle(), results, filterData.getFilterData());
                 tempResults.addAll(results);
                 results.clear();
                 results.addAll(tempResults);
@@ -54,19 +54,29 @@ public class Filter {
                 callLogs.setCallLogResults(results);
                 lister.callLogsCompleted(callLogs);
             }
-        }, filterType);
+        }, filterData.getFilterType());
     }
 
-    public static int getFilterType(String filter) {
+    public static FilterData getFilterType(String filter,Activity activity) {
         int filterType = -1;
+        FilterData filterData = new FilterData();
         if (filter.equalsIgnoreCase(ALL_CALLS)) {
             filterType = CallLogs.TOTAL_CALL_LOG;
+            filterData.setFilterType(filterType);
+            filterData.setFilterData(CallLog.Calls.getCallLog(activity));
+            filterData.setFilterTitle(activity.getString(R.string.all_calls));
         } else if (filter.equalsIgnoreCase(APP_CALLS)) {
             filterType = CallLogs.APP_TO_APP_CALL_LOG;
+            filterData.setFilterType(filterType);
+            filterData.setFilterData(CallLog.Calls.getAppToAppCallLog(activity));
+            filterData.setFilterTitle(activity.getString(R.string.free_calls));
         } else if (filter.equalsIgnoreCase(PAID_CALLS)) {
             filterType = CallLogs.APP_TO_PSTN_CALL_LOG;
+            filterData.setFilterType(filterType);
+            filterData.setFilterData(CallLog.Calls.getPSTNCallLog(activity));
+            filterData.setFilterTitle(activity.getString(R.string.paid_calls));
         }
-        return filterType;
+        return filterData;
     }
 
     private static ArrayList<Map.Entry<String, List<CallLogsResult>>> prepare(String type, ArrayList<Map.Entry<String, List<CallLogsResult>>> results, ArrayList<Map.Entry<String, List<CallLogsResult>>> checkList) {
