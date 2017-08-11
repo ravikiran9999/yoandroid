@@ -11,12 +11,18 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import com.orion.android.common.logging.Logger;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.calllogs.CallLog;
+import com.yo.android.calllogs.CallerInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.Contact;
@@ -25,6 +31,8 @@ import com.yo.android.networkmanager.NetworkStateListener;
 import com.yo.android.pjsip.MediaManager;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.SipCallState;
+import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.util.Util;
 import com.yo.dialer.ui.IncomingCallActivity;
 import com.yo.dialer.ui.OutgoingCallActivity;
 import com.yo.dialer.yopj.YoAccount;
@@ -34,6 +42,8 @@ import com.yo.dialer.yopj.YoSipServiceHandler;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.StreamStat;
 import org.pjsip.pjsua2.pjsip_status_code;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -92,6 +102,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     //Maintain current makeCall Object
     private static YoCall yoCurrentCall;
     private Handler mHandler = new Handler();
+    private long callStarted;
+    private int callType = -1;
+    private String phoneNumber;
 
     public YoSipServiceHandler getSipServiceHandler() {
         return sipServiceHandler;
@@ -185,11 +198,16 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     @Override
     public void OnIncomingCall(YoCall yoCall) {
-        yoCurrentCall = yoCall;
-        startRingtone(); // to play caller ringtone
-        DialerLogs.messageE(TAG, "YO====On Incoming call current call call obj==" + yoCurrentCall);
-        triggerNoAnswerIfNotRespond();
-        startInComingCallScreen(yoCurrentCall);
+        if(yoCurrentCall != null) {
+            //handleBusyCase(yoCall);
+        } else {
+            yoCurrentCall = yoCall;
+            startRingtone(); // to play caller ringtone
+            DialerLogs.messageE(TAG, "YO====On Incoming call current call call obj==" + yoCurrentCall);
+            triggerNoAnswerIfNotRespond();
+            startInComingCallScreen(yoCurrentCall);
+        }
+
     }
 
     private void triggerNoAnswerIfNotRespond() {
@@ -225,12 +243,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         Intent intent;
         DialerLogs.messageE(TAG, "YO====showCallUI== isOutgoingcall" + isOutgongCall);
         if (isOutgongCall) {
+            callType = CallLog.Calls.OUTGOING_TYPE;
             intent = new Intent(YoSipService.this, OutgoingCallActivity.class);
         } else {
+            callType = CallLog.Calls.INCOMING_TYPE;
             intent = new Intent(YoSipService.this, IncomingCallActivity.class);
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
+        phoneNumber = calleeNumber;
         Contact contact;
         if (isPSTNCall) {
             //TODO: NEED TO THINK FOR BETTER LOGIC
@@ -343,6 +364,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         //If the call is rejected should stop rigntone
         stopDefaultRingtone();
         DialerLogs.messageE(TAG, "callDisconnected");
+        storeCallLog(phoneNumber);
         if (sipServiceHandler != null) {
             sipServiceHandler.callDisconnected();
         } else {
@@ -354,6 +376,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         //Callee accepted call so stop ringtone.
         stopDefaultRingtone();
         if (sipServiceHandler.callStatusListener != null) {
+            callStarted = System.currentTimeMillis();
             sipServiceHandler.callStatusListener.callAccepted();
         }
     }
@@ -452,5 +475,86 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             }
         }
 
+    }
+
+    private void storeCallLog(String mobileNumber) {
+        long currentTime = System.currentTimeMillis();
+        long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
+        if (callStarted == 0 || callType == -1) {
+            callDuration = 0;
+        }
+        callStarted = 0;
+        int pstnorapp = 0;
+        Contact contact = mContactsSyncManager.getContactByVoxUserName(mobileNumber);
+        CallerInfo info = new CallerInfo();
+        if (contact != null && contact.getName() != null) {
+            info.name = contact.getName();
+            pstnorapp = CallLog.Calls.APP_TO_APP_CALL;
+        } else {
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+            try {
+                // phone must begin with '+'
+                Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + mobileNumber, "");
+                int countryCode = numberProto.getCountryCode();
+                String mobileTemp = mobileNumber;
+                String phoneNumber = mobileTemp.replace(countryCode + "", "");
+                contact = mContactsSyncManager.getContactPSTN(countryCode, phoneNumber);
+            } catch (NumberParseException e) {
+                DialerLogs.messageE(TAG, "NumberParseException was thrown: " + e.toString());
+            }
+            if (contact != null && contact.getName() != null) {
+                info.name = contact.getName();
+            }
+            pstnorapp = CallLog.Calls.APP_TO_PSTN_CALL;
+        }
+        CallLog.Calls.addCall(info, getBaseContext(), mobileNumber, callType, callStarted, callDuration, pstnorapp);
+    }
+
+    private void handleBusyCase(YoCall yoCall) {
+        if (yoCurrentCall != null) {
+            try {
+                String source = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
+                sendBusyHereToIncomingCall(yoCall);
+                //source = parseVoxUser(source);
+                Util.createNotification(this, source, getResources().getString(R.string.missed_call), BottomTabsActivity.class, new Intent(), false);
+                //Util.setBigStyleNotification(this, source, "Missed call", "Missed call", "", false, true, BottomTabsActivity.class, new Intent());
+                callType = CallLog.Calls.MISSED_TYPE;
+                storeCallLog(source);
+            } catch (Exception e) {
+                //DialerLogs.messageE(TAG, e);
+            }
+
+            // Dont remove below logic.
+            //isCallDeleted = true;
+            yoCall.delete();
+
+            return;
+        }
+    }
+
+    public void sendBusyHereToIncomingCall(YoCall yoCall) {
+        CallOpParam param = new CallOpParam();
+        param.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
+
+        try {
+            if (yoCall != null) {
+                yoCall.answer(param);
+            }
+        } catch (Exception exc) {
+            DialerLogs.messageE(TAG, "Failed to send busy here");
+        }
+    }
+
+    private String parseVoxUser(String destination) {
+        Contact contact = mContactsSyncManager.getContactByVoxUserName(destination);
+        CallerInfo info = new CallerInfo();
+        if (contact != null) {
+            if (!TextUtils.isEmpty(contact.getName())) {
+                destination = contact.getName();
+            } else if (contact.getPhoneNo() != null) {
+                destination = contact.getPhoneNo();
+            }
+        }
+        return destination;
     }
 }
