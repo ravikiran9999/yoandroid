@@ -25,6 +25,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.fragments.DialerFragment;
@@ -34,6 +35,10 @@ import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
 import com.yo.dialer.model.CallLog;
 import com.yo.services.BackgroundServices;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -87,6 +92,8 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
     //Used to read contact object based on nexge username.
     @Inject
     ContactsSyncManager mContactsSyncManager;
+    private ArrayList<Map.Entry<String, List<CallLogsResult>>> appCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
+    private ArrayList<Map.Entry<String, List<CallLogsResult>>> paidCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
 
 
     @Override
@@ -139,6 +146,8 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
     }
 
     private void readCallLogs() {
+        appCalls.clear();
+        paidCalls.clear();
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, Filter.ALL_CALLS);
         int filterType = Filter.getFilterType(filter);
         CallLogs.load(activity, new CallLogCompleteLister() {
@@ -148,6 +157,8 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            appCalls = com.yo.android.calllogs.CallLog.Calls.getAppToAppCallLog(activity);
+                            paidCalls = com.yo.android.calllogs.CallLog.Calls.getPSTNCallLog(activity);
                             showEmptyText();
                             showFilteredCallLogs();
                         }
@@ -213,7 +224,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
     }
 
     private void showFilteredCallLogs() {
-        Filter.filteredData(activity, preferenceEndPoint, new CallLogCompleteLister() {
+        Filter.filteredData(activity, preferenceEndPoint, appCalls, paidCalls, new CallLogCompleteLister() {
 
             @Override
             public void callLogsCompleted(final CallLog callLog) {
@@ -270,7 +281,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    CallLogs.load(activity, null, CallLogs.APP_TO_APP_CALL_LOG);
+                    CallLogs.load(activity, null, CallLogs.CLEAR_CALL_LOGS);
                     adapter.clearAll();
                     showEmptyText();
                 }
