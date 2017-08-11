@@ -31,12 +31,12 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         DialerLogs.messageI(TAG, "YO========Incoming call screen=====");
         setContentView(R.layout.dialer_received_call);
+        setIncoming(true);
         DialerLogs.messageI(TAG, "YO==== Callee Number====" + callePhoneNumber);
         initViews();
         loadUserDetails();
         loadCallePhoneNumber(callePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
         tvCallStatus.setText(getResources().getString(R.string.incoming_call));
-
         //to show callee yo chat
         callMessageBtn.setTag(callePhoneNumber);
 

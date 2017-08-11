@@ -22,7 +22,6 @@ public class YoCallObserver implements YoAppObserver {
     private static final String TAG = YoCallObserver.class.getSimpleName();
     private static YoCallObserver yoCallObserver;
     private static Context mContext;
-    private boolean isHold = false;
 
     public static YoCallObserver getInstance(Context context) {
         mContext = context;
@@ -89,13 +88,18 @@ public class YoCallObserver implements YoAppObserver {
             DialerLogs.messageI(TAG, "YO========notifyCallState===========State =" + info.getState() + ",Reason" + info.getLastReason());
             YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
             if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+                yoSipService.setCallAccepted(false);
                 if (YoCallObserver.mContext instanceof YoSipService) {
-                    yoSipService.callDisconnected();
-                    yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
-                    isHold = false;
+                    if (info.getLastReason().equalsIgnoreCase("Not Acceptable Here")) {
+                        yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER);
+                    } else {
+                        yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
+                        yoSipService.callDisconnected();
+                    }
                 }
             } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CONNECTED);
+                yoSipService.setCallAccepted(true);
                 if (YoCallObserver.mContext instanceof YoSipService) {
                     yoSipService.callAccepted();
                 }
@@ -123,15 +127,20 @@ public class YoCallObserver implements YoAppObserver {
                 for (int i = 0; i < media.size(); i++) {
                     CallMediaInfo mediaInfo = media.get(i);
                     if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_REMOTE_HOLD) {
+                        yoSipService.setRemoteHold(true);
                         if (mContext instanceof YoSipService) {
                             yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_CALL_MEDIA_REMOTE_HOLD);
                         }
                     } else if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE) {
+                        yoSipService.setRemoteHold(false);
                         if (mContext instanceof YoSipService) {
                             yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CONNECTED);
                         }
                     } else if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_LOCAL_HOLD) {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_CALL_MEDIA_LOCAL_HOLD);
+                        if (!yoSipService.isRemoteHold()) {
+                            yoSipService.setRemoteHold(false);
+                        }
                     }
                     DialerLogs.messageI(TAG, "YO=====Medis Status =" + mediaInfo.getStatus());
                 }

@@ -16,7 +16,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Rajesh Babu on 29/7/17.
  */
 
-public class OutgoingCallActivity extends CallBaseActivity implements View.OnClickListener{
+public class OutgoingCallActivity extends CallBaseActivity implements View.OnClickListener {
     private static final String TAG = OutgoingCallActivity.class.getSimpleName();
     private View mOutgoingCallHeader;
 
@@ -25,6 +25,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialer_received_call);
+        setIncoming(false);
         DialerLogs.messageI(TAG, "YO========Outgongcall call screen=====");
         DialerLogs.messageI(TAG, "YO==== Callee Number====" + callePhoneNumber);
         initViews();
@@ -77,6 +78,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         registerListerners();
 
     }
+
     private void registerListerners() {
         callAcceptBtn.setOnClickListener(this);
         callRejectBtn.setOnClickListener(this);
@@ -86,6 +88,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         callSpeakerView.setOnClickListener(this);
         callEndBtn.setOnClickListener(this);
     }
+
     private void hideAcceptAndMessage() {
         callAcceptBtn.setVisibility(View.GONE);
         callMessageBtn.setVisibility(View.GONE);

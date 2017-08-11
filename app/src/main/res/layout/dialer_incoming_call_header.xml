@@ -61,13 +61,14 @@
             android:layout_below="@+id/tv_caller_number"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="30dp"
-
+            android:textAllCaps="true"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 
 
         <TextView
             android:id="@+id/connection_status"
+            android:textAllCaps="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_caller_number"

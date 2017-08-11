@@ -33,13 +33,14 @@ public interface CallExtras {
         public static final int YO_CALL_MEDIA_REMOTE_HOLD = 1;
         public static final int YO_CALL_MEDIA_ACTIVE = 2; //Media active mean its unhold or connected.
         public static final int YO_INV_STATE_CONNECTED = 3;
-        public static final int YO_INV_STATE_DISCONNECTED = 4; //Reason  - Service unavailable,
+        public static final int YO_INV_STATE_DISCONNECTED = 4; //Reason  - Service unavailable,Not found,Not Acceptable Here
         public static final int YO_INV_STATE_SC_RINGING = 5;
         public static final int YO_INV_STATE_SC_CALLING = 6;
         public static final int YO_INV_STATE_SC_RE_CONNECTING = 7;
         public static final int YO_CALL_MEDIA_LOCAL_HOLD = 8;
         public static final int YO_CALL_NETWORK_NOT_REACHABLE = 9;
         public static final int YO_INV_STATE_SC_CONNECTING = 10;
+        public static final int YO_INV_STATE_SC_NO_ANSWER = 11;
 
     }
 }

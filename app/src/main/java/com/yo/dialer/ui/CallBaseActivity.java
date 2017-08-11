@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -79,8 +80,18 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     protected TextView acceptedcallePhoneNumberTxt;
     protected ImageView callEndBtn;
 
+    private boolean isIncoming;
 
     private CallStatusListener callStatusListener;
+
+    public boolean isIncoming() {
+        return isIncoming;
+    }
+
+    public void setIncoming(boolean incoming) {
+        isIncoming = incoming;
+    }
+
 
     protected ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -247,11 +258,23 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, tvCallStatus);
-                UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, connectionStatusTxtView);
+                if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER) {
+                    showCallAgain();
+                } else {
+                    UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, tvCallStatus);
+                    UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, connectionStatusTxtView);
+                }
             }
         });
+    }
 
+
+    //Need to show call again screen to caller not callee.
+    private void showCallAgain() {
+        if (!isIncoming()) {
+            Toast.makeText(this, "Need to show call again screen", Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
 
     protected void changeToAcceptedCallUI() {
@@ -260,7 +283,6 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         loadCalleImage(acceptedCalleImageView, calleImageUrl);
         loadCallePhoneNumber(acceptedcallePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
         isCallStopped = false;
-        //  mHandler.post(UIHelper.getTimer(CallBaseActivity.this));
         mHandler.post(UIHelper.getDurationRunnable(CallBaseActivity.this));
         showEndAndMessage();
     }
