@@ -37,9 +37,9 @@ public class Filter {
         }
     }
 
-    public static void filteredData(final Activity activity, final PreferenceEndPoint preferenceEndPoint, final CallLogCompleteLister lister) {
+    public static void filteredData(final Activity activity, final PreferenceEndPoint preferenceEndPoint, ArrayList<Map.Entry<String, List<CallLogsResult>>> appCalls, ArrayList<Map.Entry<String, List<CallLogsResult>>> paidCalls, final CallLogCompleteLister lister) {
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, ALL_CALLS);
-        final FilterData filterData = getFilterType(filter,activity);
+        final FilterData filterData = getFilterType(filter,activity, appCalls, paidCalls);
         CallLogs.load(activity, new CallLogCompleteLister() {
             @Override
             public void callLogsCompleted(com.yo.dialer.model.CallLog callLog) {
@@ -57,7 +57,7 @@ public class Filter {
         }, filterData.getFilterType());
     }
 
-    public static FilterData getFilterType(String filter,Activity activity) {
+    public static FilterData getFilterType(String filter,Activity activity, ArrayList<Map.Entry<String, List<CallLogsResult>>> appCalls, ArrayList<Map.Entry<String, List<CallLogsResult>>> paidCalls) {
         int filterType = -1;
         FilterData filterData = new FilterData();
         if (filter.equalsIgnoreCase(ALL_CALLS)) {
@@ -68,12 +68,12 @@ public class Filter {
         } else if (filter.equalsIgnoreCase(APP_CALLS)) {
             filterType = CallLogs.APP_TO_APP_CALL_LOG;
             filterData.setFilterType(filterType);
-            filterData.setFilterData(CallLog.Calls.getAppToAppCallLog(activity));
+            filterData.setFilterData(appCalls);
             filterData.setFilterTitle(activity.getString(R.string.free_calls));
         } else if (filter.equalsIgnoreCase(PAID_CALLS)) {
             filterType = CallLogs.APP_TO_PSTN_CALL_LOG;
             filterData.setFilterType(filterType);
-            filterData.setFilterData(CallLog.Calls.getPSTNCallLog(activity));
+            filterData.setFilterData(paidCalls);
             filterData.setFilterTitle(activity.getString(R.string.paid_calls));
         }
         return filterData;
