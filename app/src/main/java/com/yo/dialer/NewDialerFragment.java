@@ -282,6 +282,8 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
                 @Override
                 public void run() {
                     CallLogs.load(activity, null, CallLogs.CLEAR_CALL_LOGS);
+                    appCalls.clear();
+                    paidCalls.clear();
                     adapter.clearAll();
                     showEmptyText();
                 }

@@ -148,7 +148,8 @@
             android:launchMode="singleTask"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"/>
         <activity
             android:name=".voip.OutGoingCallActivity"
             android:excludeFromRecents="true"
@@ -166,7 +167,8 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:taskAffinity=".outgoing"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"/>
         <activity
             android:name=".ui.UserProfileActivity"
             android:label="@string/user_profile"

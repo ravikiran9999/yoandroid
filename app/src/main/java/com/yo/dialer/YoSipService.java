@@ -32,6 +32,7 @@ import com.yo.android.pjsip.MediaManager;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.SipCallState;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.dialer.ui.IncomingCallActivity;
 import com.yo.dialer.ui.OutgoingCallActivity;
@@ -105,6 +106,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private long callStarted;
     private int callType = -1;
     private String phoneNumber;
+    private int callNotificationId;
 
     public YoSipServiceHandler getSipServiceHandler() {
         return sipServiceHandler;
@@ -265,11 +267,28 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         intent.putExtra(CallExtras.NAME, contact.getName());
         //Wait until user profile image is loaded , it should not show blank image
         startActivity(intent);
-
+        sendNotification(intent, isOutgongCall);
         //Check if no response from the calle side need to disconnect the call.
         // checkCalleeLossNetwork();
 
 
+    }
+
+    private void sendNotification(Intent intent, boolean isOutgongCall) {
+       Class classs = null;
+       String title = null;
+
+        if(isOutgongCall) {
+            classs = OutgoingCallActivity.class;
+            title = "Outgoing call";
+        } else  {
+            classs = IncomingCallActivity.class;
+            title = "Incoming call";
+        }
+
+        if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
+            callNotificationId = Util.createNotification(this, phoneNumber, title, classs, intent);
+        }
     }
 
     public void setCurrentCallToNull() {
@@ -365,6 +384,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         stopDefaultRingtone();
         DialerLogs.messageE(TAG, "callDisconnected");
         storeCallLog(phoneNumber);
+        Util.cancelNotification(this, callNotificationId);
         if (sipServiceHandler != null) {
             sipServiceHandler.callDisconnected();
         } else {
@@ -445,6 +465,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
+        Util.cancelNotification(this, callNotificationId);
         DialerLogs.messageE(TAG, "KILLING YO APPLICATION.");
         sendBroadcast(new Intent("YouWillNeverKillMe"));
         if (yoCurrentCall != null) {
