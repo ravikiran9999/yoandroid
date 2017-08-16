@@ -177,7 +177,7 @@ public class BottomTabsActivity extends BaseActivity {
         startService(service);
 
         // Handle application crash
-        Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
+        //Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
         if (getIntent().getBooleanExtra("crash", false)) {
             Toast.makeText(this, "App restarted after crash", Toast.LENGTH_SHORT).show();
         }
@@ -273,27 +273,27 @@ public class BottomTabsActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
 
-                if(lastFragmentPosition == 0) {
+                if (lastFragmentPosition == 0) {
                     mLog.d(TAG, "Leaving Magazines tab");
                     // End the timed event, when the user navigates away from Magazines tab
                     FlurryAgent.endTimedEvent("Magazines");
                     lastFragmentPosition = position;
-                } else if(lastFragmentPosition == 1) {
+                } else if (lastFragmentPosition == 1) {
                     mLog.d(TAG, "Leaving Chats tab");
                     // End the timed event, when the user navigates away from Chats tab
                     FlurryAgent.endTimedEvent("Chats");
                     lastFragmentPosition = position;
-                } else if(lastFragmentPosition == 2) {
+                } else if (lastFragmentPosition == 2) {
                     mLog.d(TAG, "Leaving Dialer tab");
                     // End the timed event, when the user navigates away from Dialer tab
                     FlurryAgent.endTimedEvent("Dialer");
                     lastFragmentPosition = position;
-                } else if(lastFragmentPosition == 3) {
+                } else if (lastFragmentPosition == 3) {
                     mLog.d(TAG, "Leaving Contacts tab");
                     // End the timed event, when the user navigates away from Contacts tab
                     FlurryAgent.endTimedEvent("Contacts");
                     lastFragmentPosition = position;
-                } else if(lastFragmentPosition == 4) {
+                } else if (lastFragmentPosition == 4) {
                     mLog.d(TAG, "Leaving Profile tab");
                     // End the timed event, when the user navigates away from Profile tab
                     FlurryAgent.endTimedEvent("Profile");
@@ -461,7 +461,7 @@ public class BottomTabsActivity extends BaseActivity {
 
         FlurryAgent.logEvent("Opened Yo App", appUsageParams);
 
-       // Test.startInComingCallScreen(context);
+        // Test.startInComingCallScreen(context);
     }
 
     private void clearNotifications() {
@@ -517,8 +517,12 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     public Fragment getFragment() {
-        int position = tabLayout.getSelectedTabPosition();
-        return mAdapter.getItem(position);
+        int position = 0;
+        if (tabLayout != null) {
+            position = tabLayout.getSelectedTabPosition();
+            return mAdapter.getItem(position);
+        }
+        return null;
     }
 
     /*public void setToolBarTitle(String title) {
