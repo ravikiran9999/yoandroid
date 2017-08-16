@@ -9,7 +9,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,7 +69,6 @@ import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.model.Share;
@@ -92,6 +90,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
@@ -203,7 +202,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
         ButterKnife.bind(this, view);
-
         roomType = getArguments().getString(Constants.TYPE);
         listView.setDivider(null);
         listView.setDividerHeight(0);
@@ -211,7 +209,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessageHashMap = new HashMap<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
-        listView.smoothScrollToPosition(userChatAdapter.getCount());
+        //listView.smoothScrollToPosition(userChatAdapter.getCount());
+        setSmoothScrollPosition(userChatAdapter, listView);
         listView.setVerticalScrollBarEnabled(true);
         listView.setClipToPadding(false);
         listView.setPadding(0, Helper.dp(getActivity(), 4), 0, Helper.dp(getActivity(), 3));
@@ -219,6 +218,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setStackFromBottom(true);
 
         chatText.addTextChangedListener(this);
+        chatText.setOnClickListener(this);
         listView.setOnItemClickListener(this);
         popup = new EmojiconsPopup(rootView, getActivity());
         send.setOnClickListener(this);
@@ -285,7 +285,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         try {
-            listView.setStackFromBottom(false);
+            listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+            listView.setStackFromBottom(true);
             listView.setOnScrollListener(new AbsListView.OnScrollListener() {
                                              @Override
                                              public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -510,6 +511,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         } else if (v.getId() == R.id.cameraView) {
             takePicture();
+        } else if(v.getId() == R.id.chat_text) {
+            setSmoothScrollPosition(userChatAdapter, listView);
         }
     }
 
@@ -586,7 +589,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
                     chatMessageArray.add(chatMessage);
                     userChatAdapter.addItems(chatMessageArray);
-                    listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                    //listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                    setSmoothScrollPosition(userChatAdapter, listView);
                     chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
                 }
             }
@@ -919,7 +923,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
-                listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                //listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                setSmoothScrollPosition(userChatAdapter, listView);
+
 
                 if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0) && getActivity() instanceof ChatActivity) {
                     long timestamp = System.currentTimeMillis();
@@ -945,7 +951,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     }
                 }
                 userChatAdapter.addItems(chatMessageArray);
-                listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                setSmoothScrollPosition(userChatAdapter, listView);
+                //listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1129,8 +1136,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Intent alarmIntent = new Intent(getActivity().getApplicationContext(), FirebaseService.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        int interval = 2 * 60 * 1000; // 10 minutes interval
+        int interval = 2 * 60 * 1000; // 2 minutes interval
 
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+    }
+
+    private void setSmoothScrollPosition(UserChatAdapter chatAdapter, StickyListHeadersListView listView) {
+        listView.setVerticalScrollBarEnabled(false);
+        int count = chatAdapter.getCount() - 1;
+        Log.i(TAG, String.valueOf(count));
+        listView.setSelection(count);
     }
 }

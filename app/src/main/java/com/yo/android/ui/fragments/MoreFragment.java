@@ -364,6 +364,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
                         if (getActivity() != null) {
                             Util.cancelAllNotification(getActivity());
+                            preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
                             //  23	Data is missing in dialer screen once user logouts & login again  - Fixed
                             //  CallLog.Calls.clearCallHistory(getActivity());
                         }
@@ -507,8 +508,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             String balance = mBalanceHelper.getCurrentBalance();
             //String currencySymbol = mBalanceHelper.getCurrencySymbol();
             if (balanceAdapter != null) {
-                //menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
-                //menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbolDollarNoSpace, balance));
                 balanceAdapter.getItem(0).setName(String.format("Yo Credit %s", balance));
                 balanceAdapter.notifyDataSetChanged();
             }

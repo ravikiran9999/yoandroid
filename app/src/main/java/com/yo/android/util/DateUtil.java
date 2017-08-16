@@ -145,7 +145,7 @@ public class DateUtil {
         return new SimpleDateFormat("hh:mm a").format(new Date(time));
     }
 
-    public static String getTimeFormatForChat(@NonNull final Context context, long time) {
+    public static String getTimeFormatForChat(long time) {
         SimpleDateFormat sFormat;
         String currentTime;
         try {
