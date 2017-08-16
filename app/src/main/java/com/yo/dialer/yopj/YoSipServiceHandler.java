@@ -143,7 +143,7 @@ public class YoSipServiceHandler implements SipServicesListener {
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
         return new SipProperties.Builder().withICEEnable(false)
-                .withTurnEnable(false)
+                .withTurnEnable(true)
                 .withStunServer(DialerConfig.STUN_SERVER)
                 .withTurnServer(DialerConfig.TURN_SERVER)
                 .withTurnServerUsername(DialerConfig.USERNAME)
