@@ -17,6 +17,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.orion.android.common.logging.Logger;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
@@ -87,9 +88,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         isRemoteHold = remoteHold;
     }
 
+    public PreferenceEndPoint getPreferenceEndPoint() {
+        return preferenceEndPoint;
+    }
+
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    @Inject
+    ToastFactory mToastFactory;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -153,10 +160,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 }
             } else if (CallExtras.MAKE_CALL.equals(intent.getAction())) {
                 makeCall(intent);
-                //PSTN Call it will play ringtone from IVR
-                if (!intent.getBooleanExtra(CallExtras.IS_PSTN, false)) {
-                    startDefaultRingtone(1);
-                }
+
             } else if (CallExtras.ACCEPT_CALL.equals(intent.getAction())) {
                 acceptCall();
             } else if (CallExtras.REJECT_CALL.equals(intent.getAction())) {
@@ -242,14 +246,27 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         DialerLogs.messageE(TAG, "YO====showCallUI== isOutgoingcall" + isOutgongCall);
         if (isOutgongCall) {
             callType = CallLog.Calls.OUTGOING_TYPE;
-            intent = new Intent(YoSipService.this, OutgoingCallActivity.class);
+            int regStatus = preferenceEndPoint.getIntPreference(CallExtras.REGISTRATION_STATUS);
+            if (regStatus == CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE) {
+                showToast(getResources().getString(R.string.calls_no_network));
+                return;
+            } else if (regStatus == CallExtras.StatusCode.YO_REQUEST_TIME_OUT) {
+                showToast(getResources().getString(R.string.request_timeout));
+                return;
+            } else {
+                intent = new Intent(YoSipService.this, OutgoingCallActivity.class);
+                //PSTN Call it will play ringtone from IVR
+                if (!isPSTNCall) {
+                    startDefaultRingtone(1);
+                }
+            }
         } else {
             callType = CallLog.Calls.INCOMING_TYPE;
             intent = new Intent(YoSipService.this, IncomingCallActivity.class);
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
-        if(calleeNumber ==null){
+        if (calleeNumber == null) {
             callDisconnected();
             sipServiceHandler.callDisconnected();
         }
@@ -272,6 +289,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         // checkCalleeLossNetwork();
 
 
+    }
+
+    private void showToast(final String string) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mToastFactory.showToast(string);
+            }
+        });
     }
 
     private void sendNotification(Intent intent, boolean isOutgongCall) {
@@ -305,7 +331,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             networkPacketsCheck();
         }
         mHandler.postDelayed(checkNetworkLossRunnable, INITIAL_CONNECTION_DURATION);
-
     }
 
     private void networkPacketsCheck() {

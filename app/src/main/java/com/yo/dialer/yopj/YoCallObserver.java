@@ -2,6 +2,7 @@ package com.yo.dialer.yopj;
 
 import android.content.Context;
 
+import com.yo.android.calllogs.CallLog;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.YoSipService;
@@ -13,6 +14,8 @@ import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsua_call_media_status;
+
+import static org.pjsip.pjsua2.pjsip_status_code.PJSIP_SC_REQUEST_TIMEOUT;
 
 /**
  * Created by Rajesh Babu on 12/7/17.
@@ -47,10 +50,16 @@ public class YoCallObserver implements YoAppObserver {
         } else {
             registrationStatus += " failed: " + reason;
         }
+        YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
         if (reason != null && reason.equalsIgnoreCase(CallExtras.NETWORK_NOT_REACHABLE)) {
-            if (mContext instanceof YoSipService) {
-                ((YoSipService) mContext).setCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
+            if (yoSipService instanceof YoSipService) {
+                yoSipService.setCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
+                yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
             }
+        } else if (code == PJSIP_SC_REQUEST_TIMEOUT) {
+            yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, CallExtras.StatusCode.YO_REQUEST_TIME_OUT);
+        } else {
+            yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, 0);
         }
         DialerLogs.messageI(TAG, "YO========notifyRegState>>>> " + registrationStatus);
     }
@@ -93,7 +102,7 @@ public class YoCallObserver implements YoAppObserver {
                     if (info.getLastReason().equalsIgnoreCase("Not Acceptable Here")) {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER);
                         yoSipService.callDisconnected();
-                    }else if(info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_FOUND) || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SERVICE_UNAVAILABLE)){
+                    } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_FOUND) || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SERVICE_UNAVAILABLE)) {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE);
                         yoSipService.callDisconnected();
                     } else {

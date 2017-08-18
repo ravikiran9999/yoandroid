@@ -124,6 +124,7 @@ public class YoSipServiceHandler implements SipServicesListener {
 
     @Override
     public void updateWithCallStatus(int callState) {
+
         if (callStatusListener != null) {
             callStatusListener.updateWithCallStatus(callState);
         }

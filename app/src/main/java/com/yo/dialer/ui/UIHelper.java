@@ -40,23 +40,34 @@ class UIHelper {
     };
 
 
-    public static void handleCallStatus(Context context, final int callStatus, final TextView connectionStatusTxtView) {
+    public static void handleCallStatus(Context context, final int callStatus, TextView tvCallStatus, final TextView connectionStatusTxtView) {
         if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_CALLING) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.calling));
+            tvCallStatus.setText(context.getResources().getString(R.string.calling));
+            DialerLogs.messageI(TAG, "YO====handleCallStatus====CALLING....");
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_RINGING) {
+            DialerLogs.messageI(TAG, "YO====handleCallStatus====RINGING....");
             connectionStatusTxtView.setText(context.getResources().getString(R.string.ringing));
+            tvCallStatus.setText(context.getResources().getString(R.string.ringing));
+
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_CONNECTED) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.connected_status));
+            tvCallStatus.setText(context.getResources().getString(R.string.connected_status));
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_RE_CONNECTING) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.reconnecting_status));
+            tvCallStatus.setText(context.getResources().getString(R.string.reconnecting_status));
         } else if (callStatus == CallExtras.StatusCode.YO_CALL_MEDIA_REMOTE_HOLD) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.call_on_hold_status));
+            tvCallStatus.setText(context.getResources().getString(R.string.call_on_hold_status));
         } else if (callStatus == CallExtras.StatusCode.YO_CALL_MEDIA_LOCAL_HOLD) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.call_on_hold_status));
+            tvCallStatus.setText(context.getResources().getString(R.string.call_on_hold_status));
         } else if (callStatus == CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.reconnecting_status));
-        }else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING) {
+            tvCallStatus.setText(context.getResources().getString(R.string.reconnecting_status));
+        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.connecting_status));
+            tvCallStatus.setText(context.getResources().getString(R.string.connecting_status));
         }
     }
 }

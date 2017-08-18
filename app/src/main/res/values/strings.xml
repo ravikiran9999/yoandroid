@@ -344,4 +344,7 @@
     <string name="verify_phone_number">Verify phone number</string>
     <string name="pin_content_desc">PIN input field</string>
     <string name="pin_label_text">PIN</string>
+
+    <string name="request_timeout">Getting request timeout, may be issue with SIP Server, contact sipserver.</string>
+
 </resources>

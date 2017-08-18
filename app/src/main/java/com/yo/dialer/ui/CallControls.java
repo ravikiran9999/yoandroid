@@ -33,10 +33,9 @@ class CallControls {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             if (v.getTag() != null) {
                 Boolean flag = Boolean.valueOf(v.getTag().toString());
-                callControlsModel.setHoldOn(flag);
-                changeSelection(v, flag);
                 DialerLogs.messageE(TAG, "toggleHold == v.getTag = " + flag);
-                sipBinder.getYOHandler().setHold(flag);
+                sipBinder.getYOHandler().setHold(!flag);
+                changeSelection(v, !flag);
                 v.setTag(!flag);
                 DialerLogs.messageE(TAG, "toggleHold Changing ==" + !flag);
             } else {
@@ -50,7 +49,9 @@ class CallControls {
     private static void changeSelection(View v, Boolean flag) {
         if (flag) {
             v.setBackgroundResource(R.drawable.mute_selector);
+            callControlsModel.setHoldOn(true);
         } else {
+            callControlsModel.setHoldOn(false);
             v.setBackgroundResource(0);
         }
     }

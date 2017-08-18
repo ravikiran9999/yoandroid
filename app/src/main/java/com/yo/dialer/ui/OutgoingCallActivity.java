@@ -140,7 +140,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
                 toggleHold(v);
                 break;
             case R.id.btnSpeaker:
-                toggerSpeaker(v);
+                toggleSpeaker(v);
                 break;
             case R.id.btnMICOff:
                 toggleMic(v);
