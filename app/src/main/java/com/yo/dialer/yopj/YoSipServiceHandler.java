@@ -188,4 +188,11 @@ public class YoSipServiceHandler implements SipServicesListener {
     public void registerCallStatusListener(CallStatusListener callStatusListener) {
         this.callStatusListener = callStatusListener;
     }
+
+    public void cancelCallNotification() {
+        if (mContext != null) {
+            ((YoSipService) mContext).cancelCallNotification();
+        }
+
+    }
 }
