@@ -11,6 +11,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import com.yo.android.BuildConfig;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -109,7 +112,24 @@ public class DialerHelper {
             String calleePhoneNumber = parsePhoneNumber(calleeNumber);
             //Callee Phone Number with country code.
             DialerLogs.messageI(TAG, "YO=======CallePhoneNumber===" + calleePhoneNumber);
-            return new Contact();
+
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+            try {
+                // phone must begin with '+'
+                Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + calleePhoneNumber, "");
+                int countryCode = numberProto.getCountryCode();
+                String mobileTemp = calleePhoneNumber;
+                String phoneNumber = mobileTemp.replace(countryCode + "", "");
+                contact = mContactsSyncManager.getContactPSTN(countryCode, phoneNumber);
+            } catch (NumberParseException e) {
+                DialerLogs.messageE(TAG, "NumberParseException was thrown: " + e.toString());
+            }
+
+           if(contact != null) {
+               return contact;
+           } else {
+               return new Contact();
+           }
         }
 
     }

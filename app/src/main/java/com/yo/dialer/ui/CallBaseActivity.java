@@ -273,6 +273,11 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     private void showCallAgain() {
         if (!isIncoming()) {
             Toast.makeText(this, "Call not answered - Need to show call again screen", Toast.LENGTH_LONG).show();
+            if(sipBinder != null) {
+                if(sipBinder.getYOHandler() != null) {
+                    sipBinder.getYOHandler().cancelCallNotification();
+                }
+            }
             finish();
         }
     }
