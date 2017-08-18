@@ -509,7 +509,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
 
     private void showRechargeDialog() {
         if (this != null) {
-
+            boolean appLockStatus = preferenceEndPoint.getBooleanPreference(Constants.APP_LOCK, false);
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());

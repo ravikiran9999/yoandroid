@@ -1,6 +1,7 @@
 package com.yo.android.app;
 
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -44,6 +45,11 @@ public class BaseApp extends MultiDexApplication {
         Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
         // ReCreateService.getInstance(this).start(this);
+
+        // Fix for camera in nougat
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        builder.detectFileUriExposure();
     }
 
 

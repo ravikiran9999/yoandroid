@@ -77,19 +77,18 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
                         .into(holder.getChatRoomPic());
-            } else {
-                if (item.getFullName() != null && item.getFullName().length() >= 1 && !TextUtils.isDigitsOnly(item.getFullName())) {
-                    if (Settings.isTitlePicEnabled) {
-                        if (item.getFullName() != null && item.getFullName().length() >= 1) {
-                            Drawable drawable = Util.showFirstLetter(mContext, item.getFullName());
-                            holder.getChatRoomPic().setImageDrawable(drawable);
-                        }
-                    } else {
-                        holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
+            } else if (item.getFullName() != null && item.getFullName().length() >= 1 && !TextUtils.isDigitsOnly(item.getFullName())) {
+                if (Settings.isTitlePicEnabled) {
+                    if (item.getFullName() != null && item.getFullName().length() >= 1) {
+                        Drawable drawable = Util.showFirstLetter(mContext, item.getFullName());
+                        holder.getChatRoomPic().setImageDrawable(drawable);
                     }
                 } else {
                     holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
                 }
+            } else {
+                holder.getChatRoomPic().setImageDrawable(mContext.getResources().getDrawable(R.drawable.dynamic_profile));
+
             }
         } else if (item.getGroupName() != null) {
             holder.getOpponentName().setText(item.getGroupName());
@@ -114,7 +113,9 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
+        } else
+
+        {
             holder.getOpponentName().setText("");
             Glide.with(context).load(loadAvatarImage(item, holder, false))
                     .dontAnimate()
@@ -124,18 +125,26 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                     .into(holder.getChatRoomPic());
         }
 
-        if (item.isImages()) {
+        if (item.isImages())
+
+        {
             holder.getChat().setText(mContext.getResources().getString(R.string.photo));
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_icon_tint));
-        } else if (!TextUtils.isEmpty(item.getLastChat())) {
+        } else if (!TextUtils.isEmpty(item.getLastChat()))
+
+        {
             holder.getChat().setText(item.getLastChat());
             holder.getChat().setVisibility(View.VISIBLE);
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
-        } else {
+        } else
+
+        {
             holder.getChat().setVisibility(View.GONE);
             holder.getChat().setTextColor(mContext.getResources().getColor(R.color.dialpad_digits_text_color));
         }
-        holder.getTimeStamp().setText(item.getTimeStamp());
+        holder.getTimeStamp().
+
+                setText(item.getTimeStamp());
     }
 
     private Drawable loadAvatarImage(Room item, ChatRoomViewHolder holder, boolean isgroup) {

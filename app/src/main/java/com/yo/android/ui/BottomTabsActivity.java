@@ -252,7 +252,7 @@ public class BottomTabsActivity extends BaseActivity {
                     }
                 } catch (NullPointerException e) {
                     if (mLog != null) {
-                        mLog.w("onPageSelected", e);
+                        mLog.w("onPageScrolled", e);
                     }
                 }
             }
@@ -464,8 +464,12 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     public Fragment getFragment() {
-        int position = tabLayout.getSelectedTabPosition();
-        return mAdapter.getItem(position);
+        if(tabLayout != null && mAdapter != null) {
+            int position = tabLayout.getSelectedTabPosition();
+            return mAdapter.getItem(position);
+        } else {
+            return mAdapter.getItem(0);
+        }
     }
 
     /*public void setToolBarTitle(String title) {

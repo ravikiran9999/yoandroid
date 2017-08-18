@@ -157,7 +157,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
             holder.getTxtPhone().setText(modifiedTime);
             //                Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
             Date date = DateUtil.convertUtcToGmt(modifiedTime);
-            holder.getTxtPhone().setText(new SimpleDateFormat("dd/MM/yyyy hh:mm a").format(date));
+            holder.getTxtPhone().setText(new SimpleDateFormat(DateUtil.DATE_FORMAT2).format(date));
 
             holder.getTxtPulse().setText(item.getStatus());
 

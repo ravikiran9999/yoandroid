@@ -305,7 +305,7 @@ public class MagazineDashboardHelper {
                 case 405:
                     preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
                     if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {
-                        YODialogs.addBalance(activity, activity.getString(R.string.no_sufficient_bal_wallet));
+                        YODialogs.addBalance(activity, activity.getString(R.string.no_sufficient_bal_wallet), preferenceEndPoint);
                     }
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
                     break;
