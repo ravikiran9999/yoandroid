@@ -71,12 +71,16 @@ public class DialerHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         DialerLogs.messageI(TAG, "YO=======getPhoneNumber Remote URI===" + remoteUriStr);
         String title = null;
         String part2 = "";
         String ip = null;
         //EX:"8341569102" <sip:8341569102@209.239.120.239>
         String regex = "\"(.+?)\" \\<sip:(.+?)@(.+?)\\>";
+        if (regex == null) {
+            return null;
+        }
         Pattern p = Pattern.compile(regex);
         Matcher matcher = p.matcher(remoteUriStr);
         if (matcher.matches()) {
@@ -92,9 +96,7 @@ public class DialerHelper {
     public Contact readCalleeDetailsFromDB(ContactsSyncManager mContactsSyncManager, String calleeNumber) {
         DialerLogs.messageI(TAG, "YO=======readCalleeDetailsFromDB===" + calleeNumber);
         if (TextUtils.isEmpty(calleeNumber)) {
-            calleeNumber = "9490570720";
             DialerLogs.messageI(TAG, "YO=======aDDING TEMP,readCalleeDetailsFromDB===" + calleeNumber);
-
         }
         Contact contact = mContactsSyncManager.getContactByVoxUserName(calleeNumber);
         if (contact != null) {

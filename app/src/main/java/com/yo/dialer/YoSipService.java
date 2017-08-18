@@ -249,6 +249,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
+        if(calleeNumber ==null){
+            callDisconnected();
+            sipServiceHandler.callDisconnected();
+        }
         phoneNumber = calleeNumber;
         Contact contact;
         if (isPSTNCall) {
@@ -271,13 +275,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void sendNotification(Intent intent, boolean isOutgongCall) {
-       Class classs = null;
-       String title = null;
+        Class classs = null;
+        String title = null;
 
-        if(isOutgongCall) {
+        if (isOutgongCall) {
             classs = OutgoingCallActivity.class;
             title = "Outgoing call";
-        } else  {
+        } else {
             classs = IncomingCallActivity.class;
             title = "Incoming call";
         }

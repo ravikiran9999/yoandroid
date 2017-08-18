@@ -8,12 +8,20 @@ import android.content.Context;
 
 public interface SipServicesListener {
     YoAccount addAccount(Context context);
+
     void acceptCall();
+
     void rejectCall();
+
     int getCallDurationInSec();
+
     void setMic(boolean flag);
+
     void setHold(boolean flag);
+
     void callDisconnected();
+
     void updateWithCallStatus(int callState);
+
 
 }

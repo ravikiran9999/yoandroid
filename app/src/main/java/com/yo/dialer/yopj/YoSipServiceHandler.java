@@ -33,7 +33,6 @@ public class YoSipServiceHandler implements SipServicesListener {
     private String displayname;
     private static YoCallObserver yoCallObserver;
     private static Context mContext;
-
     public CallStatusListener callStatusListener;
 
     public static YoSipServiceHandler getInstance(Context context, PreferenceEndPoint preferenceEndPoints) {
@@ -180,7 +179,7 @@ public class YoSipServiceHandler implements SipServicesListener {
     }
 
     public void deleteAccount(YoAccount account) {
-        DialerLogs.messageI(TAG, "YO========UN-REGISTER ACCOUNT===========");
+        DialerLogs.messageI(TAG, "UN-REGISTER ACCOUNT===========");
         yoApp.delAcc(account);
         yoApp.deinit();
     }
@@ -188,4 +187,5 @@ public class YoSipServiceHandler implements SipServicesListener {
     public void registerCallStatusListener(CallStatusListener callStatusListener) {
         this.callStatusListener = callStatusListener;
     }
+
 }

@@ -4,11 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -20,18 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.yo.android.R;
-import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.ui.BaseActivity;
-import com.yo.android.util.YODialogs;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 
-import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -85,6 +76,7 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
 
     private boolean isIncoming;
 
+
     private CallStatusListener callStatusListener;
 
     public boolean isIncoming() {
@@ -123,57 +115,19 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         calleImageUrl = getIntent().getStringExtra(CallExtras.IMAGE);
         calleName = getIntent().getStringExtra(CallExtras.NAME);
         callStatusListener = this;
+
     }
 
     protected void toggleHold(View v) {
-        if (sipBinder != null && sipBinder.getYOHandler() != null) {
-            if (v.getTag() != null) {
-                Boolean flag = Boolean.valueOf(v.getTag().toString());
-                changeSelection(v, flag);
-                DialerLogs.messageE(TAG, "toggleHold == v.getTag = " + flag);
-                sipBinder.getYOHandler().setHold(flag);
-                v.setTag(!flag);
-                DialerLogs.messageE(TAG, "toggleHold Changing ==" + !flag);
-            } else {
-                DialerLogs.messageE(TAG, "YO====toggleHold == v.getTag null");
-            }
-        } else {
-            DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
-        }
+        CallControls.toggleHold(sipBinder, v);
     }
 
     protected void toggleMic(View v) {
-        if (sipBinder != null && sipBinder.getYOHandler() != null) {
-            if (v.getTag() != null) {
-                Boolean flag = Boolean.valueOf(v.getTag().toString());
-                changeSelection(v, flag);
-                sipBinder.getYOHandler().setMic(flag);
-                v.setTag(!flag);
-            } else {
-                DialerLogs.messageE(TAG, "YO====toggleMic == v.getTag null");
-            }
-        } else {
-            DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
-        }
+        CallControls.toggleMic(sipBinder, v);
     }
 
-    protected void toggerSpeaker(View v) {
-        if (v.getTag() != null) {
-            Boolean flag = Boolean.valueOf(v.getTag().toString());
-            changeSelection(v, flag);
-            am.setSpeakerphoneOn(flag);
-            v.setTag(!flag);
-        } else {
-            DialerLogs.messageE(TAG, "YO====toggerSpeaker == null && sipBinder.getYOHandler() ==NULL");
-        }
-    }
-
-    private void changeSelection(View v, Boolean flag) {
-        if (flag) {
-            v.setBackgroundResource(R.drawable.mute_selector);
-        } else {
-            v.setBackgroundResource(0);
-        }
+    protected void toggleSpeaker(View v) {
+        CallControls.toggleSpeaker(am, v);
     }
 
     protected void rejectCall() {
@@ -190,7 +144,11 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     protected void onPause() {
         super.onPause();
         if (sipBinder != null) {
-            unbindService(connection);
+            try {
+                unbindService(connection);
+            } catch (IllegalArgumentException e) {
+                DialerLogs.messageI(TAG, "YO====onPause====UNBIND SERVICE NOT BINDED");
+            }
         }
     }
 
@@ -216,21 +174,7 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     }
 
     protected void loadFullImage(String imagePath) {
-        int myWidth = 512;
-        int myHeight = 384;
-        Glide.with(this).load(imagePath).asBitmap().into(new SimpleTarget<Bitmap>(myWidth, myHeight) {
-            @Override
-            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                Drawable drawable = new BitmapDrawable(resource);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    if (fullImageLayout != null) {
-                        fullImageLayout.setBackground(drawable);
-                    } else {
-                        DialerLogs.messageE(TAG, "YO====fULL IMAGE LAYOUT NULL");
-                    }
-                }
-            }
-        });
+        CallControls.loadFullImage(this, imagePath, fullImageLayout);
     }
 
     protected void loadUserDetails() {
@@ -241,6 +185,7 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     @Override
     public void callDisconnected() {
         mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
+        CallControls.getCallControlsModel().setCallAccepted(false);
         finish();
     }
 
@@ -263,7 +208,7 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
             public void run() {
                 if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER) {
                     showCallAgain();
-                }else if(callStatus == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE){
+                } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
                     //YODialogs.redirectToPSTN(new EventBus(), this, ((OpponentDetails) action), preferenceEndPoint, mBalanceHelper, mToastFactory);
                 } else {
                     UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, tvCallStatus);
@@ -283,13 +228,22 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     }
 
     protected void changeToAcceptedCallUI() {
-        mAcceptedCallHeader.setVisibility(View.VISIBLE);
-        loadCalleeName(acceptedcalleNameTxt, calleName);
-        loadCalleImage(acceptedCalleImageView, calleImageUrl);
-        loadCallePhoneNumber(acceptedcallePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
-        isCallStopped = false;
-        mHandler.post(UIHelper.getDurationRunnable(CallBaseActivity.this));
-        showEndAndMessage();
+        try {
+            CallControls.getCallControlsModel().setCallAccepted(true);
+            mAcceptedCallHeader.setVisibility(View.VISIBLE);
+            loadCalleeName(acceptedcalleNameTxt, calleName);
+            loadCalleImage(acceptedCalleImageView, calleImageUrl);
+            if (isIncoming) {
+                loadCallePhoneNumber(acceptedcallePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
+            } else {
+                loadCallePhoneNumber(acceptedcallePhoneNumberTxt, callePhoneNumber);
+            }
+            isCallStopped = false;
+            mHandler.post(UIHelper.getDurationRunnable(CallBaseActivity.this));
+            showEndAndMessage();
+        } catch (IllegalArgumentException exe) {
+            DialerLogs.messageI(TAG, "YO====changeToAcceptedCallUI====" + exe.getMessage());
+        }
     }
 
     private void showEndAndMessage() {
@@ -299,5 +253,25 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         callRejectBtn.setVisibility(View.GONE);
         callEndBtn.setVisibility(View.VISIBLE);
         callMessageBtn.setVisibility(View.VISIBLE);
+    }
+
+    protected void loadPreviousSettings() {
+        CallControlsModel callControlsModel = CallControls.getCallControlsModel();
+        if (callControlsModel != null) {
+            if (callControlsModel.isMicOn()) {
+                toggleMic(callMuteView);
+            }
+            if (callControlsModel.isSpeakerOn()) {
+                toggleSpeaker(callSpeakerView);
+            }
+            DialerLogs.messageI(TAG, "YO====changeToAcceptedCallUI====" + callControlsModel.isHoldOn());
+
+            if (callControlsModel.isHoldOn()) {
+                toggleHold(callHoldView);
+            }
+            if (callControlsModel.isChatOpened()) {
+                //TODO: NEED TO OPEN CHAT
+            }
+        }
     }
 }

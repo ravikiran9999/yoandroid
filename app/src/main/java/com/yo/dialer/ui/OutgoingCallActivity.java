@@ -43,6 +43,12 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         loadCallePhoneNumber(callePhoneNumberTxt, callePhoneNumber);
         //to show callee yo chat
         //callMessageBtn.setTag(callePhoneNumber);
+        // if user opens outgoing call screen from notification, if the call is already is in progress just change UI to accepted call UI.
+        CallControlsModel callControlsModel = CallControls.getCallControlsModel();
+        if (callControlsModel != null && callControlsModel.isCallAccepted()) {
+            changeToAcceptedCallUI();
+            loadPreviousSettings();
+        }
     }
 
 
@@ -76,12 +82,13 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         hideAcceptAndMessage();
 
         callSpeakerView = (ImageView) findViewById(R.id.imv_speaker);
-        callSpeakerView.setTag(true);
-        callMuteView = (ImageView) findViewById(R.id.imv_mic_off);
-        callMuteView.setTag(true);
-        callHoldView = (ImageView) findViewById(R.id.btnHold);
-        callHoldView.setTag(true);
 
+        CallControlsModel callControlsModel = CallControls.getCallControlsModel();
+        callSpeakerView.setTag(callControlsModel != null ? callControlsModel.isSpeakerOn() : false);
+        callMuteView = (ImageView) findViewById(R.id.imv_mic_off);
+        callMuteView.setTag(callControlsModel != null ? callControlsModel.isMicOn() : false);
+        callHoldView = (ImageView) findViewById(R.id.btnHold);
+        callHoldView.setTag(callControlsModel != null ? callControlsModel.isHoldOn() : false);
         registerListerners();
 
     }
@@ -117,7 +124,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
                 //showYoChat((String) v.getTag());
                 break;
             case R.id.imv_speaker:
-                toggerSpeaker(v);
+                toggleSpeaker(v);
                 break;
             case R.id.imv_mic_off:
                 toggleMic(v);
