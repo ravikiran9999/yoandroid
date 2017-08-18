@@ -594,11 +594,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         if (getActivity() != null) {
 
-            //String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
-            //String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
+            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
+            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
 
-            String sharedFollowedCachedMagazines = "";
-            String sharedRandomCachedMagazines = "";
+            /*String sharedFollowedCachedMagazines = "";
+            String sharedRandomCachedMagazines = "";*/
 
             if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) && !sharedFollowedCachedMagazines.equalsIgnoreCase("[]") || !TextUtils.isEmpty(sharedRandomCachedMagazines) && !sharedRandomCachedMagazines.equalsIgnoreCase("[]")) {
                 if (mProgress != null) {

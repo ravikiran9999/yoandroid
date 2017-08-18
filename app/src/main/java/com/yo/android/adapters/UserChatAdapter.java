@@ -120,6 +120,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         try {
             if (userId.equals(item.getSenderID())) {
                 holder.getLinearLayout().setGravity(Gravity.END);
+                holder.getLinearLayout().setPadding(0,0,10,0);
                 if (item.getType().equals(Constants.TEXT)) {
                     newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
@@ -127,6 +128,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 }
             } else {
                 holder.getLinearLayout().setGravity(Gravity.START);
+                holder.getLinearLayout().setPadding(10,0,0,0);
                 if (item.getType().equals(Constants.TEXT)) {
                     newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
