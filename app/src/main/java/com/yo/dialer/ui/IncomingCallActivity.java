@@ -1,5 +1,6 @@
 package com.yo.dialer.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -7,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yo.android.R;
+import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
@@ -118,7 +120,8 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
                 break;
             case R.id.btnMessageIncoming:
                 //if call is not accepted it should display busy messages otherwise it should display yo chat.
-                showYoChat((String) v.getTag());
+                //showYoChat((String) v.getTag());
+                startActivity(new Intent(this, AppContactsActivity.class));
                 break;
             case R.id.imv_speaker:
                 toggleSpeaker(v);

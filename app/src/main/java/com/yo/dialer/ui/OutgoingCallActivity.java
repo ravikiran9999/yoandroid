@@ -1,5 +1,6 @@
 package com.yo.dialer.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 
@@ -75,7 +77,9 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         callRejectBtn = (ImageView) findViewById(R.id.btnRejectCall);
         callMessageBtn = (ImageView) findViewById(R.id.btnMessageIncoming);
         callSpeakerBtn = (ImageView) findViewById(R.id.btnSpeaker);
+        callSpeakerBtn.setTag(true);
         callMicBtn = (ImageView) findViewById(R.id.btnMICOff);
+        callMicBtn.setTag(true);
         callEndBtn = (ImageView) findViewById(R.id.btnEndCall);
 
 
@@ -101,13 +105,15 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         callMuteView.setOnClickListener(this);
         callSpeakerView.setOnClickListener(this);
         callEndBtn.setOnClickListener(this);
+        callSpeakerBtn.setOnClickListener(this);
+        callMicBtn.setOnClickListener(this);
     }
 
     private void hideAcceptAndMessage() {
         callAcceptBtn.setVisibility(View.GONE);
         callMessageBtn.setVisibility(View.GONE);
         callSpeakerBtn.setVisibility(View.VISIBLE);
-        callMicBtn.setVisibility(View.VISIBLE);
+        callMicBtn.setVisibility(View.GONE);
         callEndBtn.setVisibility(View.VISIBLE);
         callRejectBtn.setVisibility(View.GONE);
     }
@@ -122,6 +128,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
             case R.id.btnMessageIncoming:
                 //if call is not accepted it should display busy messages otherwise it should display yo chat.
                 //showYoChat((String) v.getTag());
+                startActivity(new Intent(this, AppContactsActivity.class));
                 break;
             case R.id.imv_speaker:
                 toggleSpeaker(v);
@@ -131,6 +138,12 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
                 break;
             case R.id.btnHold:
                 toggleHold(v);
+                break;
+            case R.id.btnSpeaker:
+                toggerSpeaker(v);
+                break;
+            case R.id.btnMICOff:
+                toggleMic(v);
                 break;
         }
 
