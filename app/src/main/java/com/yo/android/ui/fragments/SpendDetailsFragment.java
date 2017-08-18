@@ -198,7 +198,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             String modifiedTime = item.getTime().substring(0, item.getTime().lastIndexOf("."));
             //holder.getDate().setText(modifiedTime);
             Date date = DateUtil.convertUtcToGmt(modifiedTime);
-            holder.getDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(date));
+            holder.getDate().setText(new SimpleDateFormat(DateUtil.DATE_FORMAT8).format(date));
 
 
             if (item.getDuration() != null) {

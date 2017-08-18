@@ -58,7 +58,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     private static int updateViewPosition = -1;
     Context mContext;
 
-    protected DateFormat dateFormat1 = new SimpleDateFormat("MM/dd");
+    protected DateFormat dateFormat1 = new SimpleDateFormat(DateUtil.DATE_FORMAT8);
     protected DateFormat dateFormat2 = new SimpleDateFormat("EEE");
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -228,7 +228,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             @Override
             public void onClick(View v) {
                 Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
-                boolean isPSTN = item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_PSTN_CALL ? true : false;
+                boolean isPSTN = item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_PSTN_CALL;
                 SipHelper.makeCall(mContext, item.getValue().get(0).getDialnumber(), isPSTN);
             }
         });

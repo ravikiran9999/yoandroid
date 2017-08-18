@@ -286,7 +286,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         super.onViewCreated(view, savedInstanceState);
         try {
             listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-            listView.setStackFromBottom(true);
+            listView.setStackFromBottom(false);
             listView.setOnScrollListener(new AbsListView.OnScrollListener() {
                                              @Override
                                              public void onScrollStateChanged(AbsListView view, int scrollState) {
