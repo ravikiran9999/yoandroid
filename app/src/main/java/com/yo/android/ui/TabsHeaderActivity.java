@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.yo.android.flip.MagazineFlipArticlesFragment.updateCalled;
+
 public class TabsHeaderActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, ViewPager.OnPageChangeListener {
 
     private boolean isAlreadyShown;
@@ -51,7 +53,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.actvity_yo_credit);
-
+        updateCalled = 0;
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
         setSupportActionBar(toolbar);
         if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {

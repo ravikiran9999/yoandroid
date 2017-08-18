@@ -48,7 +48,6 @@ public class YODialogs {
 
     public static void clearHistory(final Activity activity, final DialerFragment.CallLogClearListener callLogClearListener) {
 
-
         if (activity != null) {
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -301,7 +300,9 @@ public class YODialogs {
     }
 
 
-    public static void addBalance(final Context context, String description) {
+    public static void addBalance(final Context context, String description, final PreferenceEndPoint preferenceEndPoint) {
+        boolean appLockStatus = preferenceEndPoint.getBooleanPreference(Constants.APP_LOCK, false);
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         builder.setMessage(description);
@@ -315,16 +316,21 @@ public class YODialogs {
 
             }
         });
-        builder.setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        if (!appLockStatus) {
+            builder.setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
         builder.setCancelable(false);
         AlertDialog alertDialog = builder.create();
         if (!alertDialog.isShowing()) {
             alertDialog.show();
+        } else {
+            alertDialog.dismiss();
         }
+
     }
 }

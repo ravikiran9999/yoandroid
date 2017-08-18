@@ -283,7 +283,7 @@ public class CallLog {
 
             ContentValues values = new ContentValues(5);
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat(DateUtil.DATE_FORMAT1);
             Date currentDate = new Date(TimeZoneUtils.getTime(dateFormat));
             values.put(NUMBER, number);
 

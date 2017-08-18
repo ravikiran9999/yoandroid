@@ -7,10 +7,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.yo.android.di.Injector;
-import com.yo.android.inapp.inapputil.IabHelper;
-import com.yo.android.inapp.inapputil.IabResult;
-import com.yo.android.inapp.inapputil.Inventory;
-import com.yo.android.inapp.inapputil.Purchase;
+import com.yo.android.inapp.util.IabHelper;
+import com.yo.android.inapp.util.IabResult;
+import com.yo.android.inapp.util.Inventory;
+import com.yo.android.inapp.util.Purchase;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.vox.BalanceHelper;
@@ -26,6 +26,8 @@ import retrofit2.Response;
  * Created by Ramesh on 23/7/16.
  */
 public class UnManageInAppPurchaseActivity extends BaseActivity {
+
+    public static final String TAG = "UnManageInAppPurchase";
     // Is debug logging enabled?
     boolean mDebugLog = true;
     String mDebugTag = "YoApp";
@@ -51,6 +53,9 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
         //developer payload
         emailAddress = getIntent().getStringExtra(Constants.USER_ID);
         mHelper = new IabHelper(this, BASE_64_KEY_FOR_IN_APP_PURCHASE);
+        // enable debug logging (for a production application, you should set this to false).
+        mHelper.enableDebugLogging(true);
+
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
                 if (mHelper == null) {
@@ -58,9 +63,16 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
                 }
                 if (!result.isSuccess()) {
                     logError("onStart:In App Purchase Setup Failed: " + result.getMessage());
+                    return;
                 } else {
-                    logError("onStart: queryInventoryAsync called");
-                    mHelper.queryInventoryAsync(mReceivedInventoryListener);
+                    // IAB is fully set up. Now, let's get an inventory of stuff we own.
+                    Log.d(TAG, "Setup successful. Querying inventory.");
+
+                    try {
+                        mHelper.queryInventoryAsync(mReceivedInventoryListener);
+                    } catch (IabHelper.IabAsyncInProgressException e) {
+                        Log.d(TAG, "Error querying inventory. Another async operation in progress.");
+                    }
                 }
             }
         });
@@ -79,16 +91,30 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
             if (result.isFailure() || inventory == null || inventory.getPurchase(ITEM_SKU) == null) {
                 logError("mReceivedInventoryListener: launchPurchaseFlow called");
                 //mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE, mPurchaseFinishedListener, emailAddress);
-                mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE, mPurchaseFinishedListener);
+                try {
+                    mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE, mPurchaseFinishedListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    e.printStackTrace();
+                }
             } else {
                 logError("mReceivedInventoryListener: Calling Consuming");
                 final Purchase purchase = inventory.getPurchase(ITEM_SKU);
-                if (verifyPayLoad(purchase) && false) {
+                /*if (verifyPayLoad(purchase) && false) {
                     logError("mReceivedInventoryListener: verifyPayLoad true");
                 } else {
                     logDebug("Calling Consuming..");
                     //Calling the consume function will "free" your item and make it "available" again. (Your user will be able to purchase it as many time as he wants)
                     mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+                }*/
+
+                if (purchase != null && verifyPayLoad(purchase)) {
+                    Log.d(TAG, "We have denomination. Consuming it.");
+                    try {
+                        mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+                    } catch (IabHelper.IabAsyncInProgressException e) {
+                        Toast.makeText(UnManageInAppPurchaseActivity.this, "Error consuming denomination. Another async operation in progress.", Toast.LENGTH_SHORT).show();
+                    }
+                    return;
                 }
             }
         }
@@ -107,8 +133,12 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
                         /*mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE,
                                 mPurchaseFinishedListener, emailAddress);*/
 
-                        mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE,
-                                mPurchaseFinishedListener);
+                        try {
+                            mHelper.launchPurchaseFlow(UnManageInAppPurchaseActivity.this, ITEM_SKU, REQUEST_CODE,
+                                    mPurchaseFinishedListener);
+                        } catch (IabHelper.IabAsyncInProgressException e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         logError("mConsumeFinishedListener: Failed to get consume your product");
                         Toast.makeText(UnManageInAppPurchaseActivity.this, "Failed to get consume your product! Please try again later", Toast.LENGTH_SHORT).show();
@@ -140,38 +170,42 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
 
     private void consumePurchase(final Purchase info) {
         showProgressDialog();
-        mHelper.consumeAsync(info, new IabHelper.OnConsumeFinishedListener() {
-            @Override
-            public void onConsumeFinished(Purchase purchase, IabResult result) {
-                mBalanceHelper.addBalance(String.valueOf(ITEM_PRICE), new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        dismissProgressDialog();
-                        Intent data = new Intent();
-                        data.putExtra("sku", ITEM_SKU);
-                        data.putExtra("details", info.toString());
-                        if (response.isSuccessful()) {
-                            setResult(RESULT_OK, data);
-                            //for multiple purchase.
-                            //mHelper.consumeAsync(info, mConsumeFinishedListener);
-                        } else {
-                            setResult(RESULT_CANCELED, data);
+        try {
+            mHelper.consumeAsync(info, new IabHelper.OnConsumeFinishedListener() {
+                @Override
+                public void onConsumeFinished(Purchase purchase, IabResult result) {
+                    mBalanceHelper.addBalance(String.valueOf(ITEM_PRICE), new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            dismissProgressDialog();
+                            Intent data = new Intent();
+                            data.putExtra("sku", ITEM_SKU);
+                            data.putExtra("details", info.toString());
+                            if (response.isSuccessful()) {
+                                setResult(RESULT_OK, data);
+                                //for multiple purchase.
+                                //mHelper.consumeAsync(info, mConsumeFinishedListener);
+                            } else {
+                                setResult(RESULT_CANCELED, data);
+                            }
+                            finish();
                         }
-                        finish();
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        dismissProgressDialog();
-                        Intent data = new Intent();
-                        data.putExtra("sku", ITEM_SKU);
-                        data.putExtra("details", info.toString());
-                        setResult(RESULT_CANCELED, data);
-                        finish();
-                    }
-                });
-            }
-        });
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            dismissProgressDialog();
+                            Intent data = new Intent();
+                            data.putExtra("sku", ITEM_SKU);
+                            data.putExtra("details", info.toString());
+                            setResult(RESULT_CANCELED, data);
+                            finish();
+                        }
+                    });
+                }
+            });
+        } catch (IabHelper.IabAsyncInProgressException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -187,7 +221,11 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         if (mHelper != null) {
-            mHelper.dispose();
+            try {
+                mHelper.dispose();
+            } catch (IabHelper.IabAsyncInProgressException e) {
+                e.printStackTrace();
+            }
             mHelper = null;
         }
     }

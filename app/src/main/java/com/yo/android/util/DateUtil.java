@@ -20,9 +20,17 @@ import java.util.TimeZone;
 
 public class DateUtil {
 
+    public final static String DATE_FORMAT_FULL = "yyyy-MM-dd'T'HH:mm:ss";
+    public final static String DATE_FORMAT2 = "MMM dd, yyyy hh:mm a";
+    public final static String DATE_FORMAT1 = "yyyy-MM-dd HH:mm:ss";
+    public final static String DATE_FORMAT8 = "MMM dd, yyyy";
+
+
+
+
     public static Date convertUtcToGmt(String time) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_FULL);
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date gmtTime = sdf.parse(time);
             return gmtTime;
@@ -34,7 +42,7 @@ public class DateUtil {
 
     public static String parseConvertUtcToGmt(String time) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT1);
             sdf.setTimeZone(TimeZone.getDefault());
             Date gmtTime = sdf.parse(time);
             String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
@@ -70,7 +78,7 @@ public class DateUtil {
             } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
                 return "Yesterday";
             } else {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT8);
                 simpleDateFormat.setTimeZone(TimeZone.getDefault());
                 String date = simpleDateFormat.format(new Date(time));
                 if (!date.equalsIgnoreCase("Jan 01, 1970")) {
@@ -85,7 +93,7 @@ public class DateUtil {
 
     public static String parseDate(String s) {
         try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
+            Date date = new SimpleDateFormat(DATE_FORMAT1).parse(s);
             String timeStamp = DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
             return timeStamp;
         } catch (ParseException e) {
@@ -96,7 +104,7 @@ public class DateUtil {
 
     public static long getTime(String str) {
         try {
-            SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sourceFormat = new SimpleDateFormat(DATE_FORMAT1);
             sourceFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date date = sourceFormat.parse(str);
             return date.getTime();
@@ -126,7 +134,7 @@ public class DateUtil {
         }
     }
 
-    public static String getTimeFormat(@NonNull final Context context, long time) {
+    private static String getTimeFormat(@NonNull final Context context, long time) {
         SimpleDateFormat sFormat;
         String currentTime;
         try {
@@ -145,7 +153,7 @@ public class DateUtil {
         return new SimpleDateFormat("hh:mm a").format(new Date(time));
     }
 
-    public static String getTimeFormatForChat(@NonNull final Context context, long time) {
+    public static String getTimeFormatForChat(long time) {
         SimpleDateFormat sFormat;
         String currentTime;
         try {

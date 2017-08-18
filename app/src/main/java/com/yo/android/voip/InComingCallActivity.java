@@ -208,9 +208,11 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         mReceivedCallHeader.setVisibility(View.GONE);
         //
         callerName = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_name);
+        callerNumber = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_number);
+
         callerName2 = (TextView) mInComingHeader.findViewById(R.id.tv_caller_name);
-        callerNumber = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
-        callerNumber2 = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_number);
+        callerNumber2 = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
+
         callDuration = (TextView) mReceivedCallHeader.findViewById(R.id.tv_call_duration);
         callerImageView = (ImageView) mReceivedCallHeader.findViewById(R.id.imv_caller_pic);
         mReceivedConnectionStatus = (TextView) mReceivedCallHeader.findViewById(R.id.connection_status);
