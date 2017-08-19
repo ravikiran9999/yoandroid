@@ -107,6 +107,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private static YoCall yoCurrentCall;
     private Handler mHandler = new Handler();
     private long callStarted;
+
+    public int getCallType() {
+        return callType;
+    }
+
+    public void setCallType(int callType) {
+        this.callType = callType;
+    }
+
     private int callType = -1;
     private String phoneNumber;
     private int callNotificationId;
@@ -230,7 +239,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_NOT_ACCEPTABLE_HERE);
             try {
                 yoCurrentCall.answer(prm);
-                callDisconnected();
+                //callDisconnected();
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "sendNoAnswer== " + e.getMessage());
             }
@@ -282,6 +291,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         intent.putExtra(CallExtras.IMAGE, contact.getImage());
         intent.putExtra(CallExtras.PHONE_NUMBER, contact.getPhoneNo());
         intent.putExtra(CallExtras.NAME, contact.getName());
+        intent.putExtra(CallExtras.IS_PSTN, isPSTNCall);
         //Wait until user profile image is loaded , it should not show blank image
         startActivity(intent);
         sendNotification(intent, isOutgongCall);
@@ -420,10 +430,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void callAccepted() {
         //Callee accepted call so stop ringtone.
         stopDefaultRingtone();
-        if (sipServiceHandler.callStatusListener != null) {
-            callStarted = System.currentTimeMillis();
-            sipServiceHandler.callStatusListener.callAccepted();
-        }
+        callStarted = System.currentTimeMillis();
+        sipServiceHandler.sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_ACCEPTED));
     }
 
     NetworkStateChangeListener listener = new NetworkStateChangeListener() {
@@ -596,5 +604,16 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             }
         }
         return destination;
+    }
+
+    public void sendMissedCallNotification() {
+        Util.createNotification(this,
+                parseVoxUser(phoneNumber),
+                "Missed call ", BottomTabsActivity.class, new Intent(), false);
+        callType = CallLog.Calls.MISSED_TYPE;
+    }
+
+    public void cancelCallNotification() {
+        Util.cancelNotification(this, callNotificationId);
     }
 }

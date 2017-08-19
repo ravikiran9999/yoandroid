@@ -1,7 +1,12 @@
 package com.yo.dialer.ui;
 
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,6 +19,8 @@ import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -22,8 +29,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class OutgoingCallActivity extends CallBaseActivity implements View.OnClickListener {
     private static final String TAG = OutgoingCallActivity.class.getSimpleName();
-    private View mOutgoingCallHeader;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +56,13 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
             changeToAcceptedCallUI();
             loadPreviousSettings();
         }
+        updateCallType();
+
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
     }
 
 
@@ -64,6 +76,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         callePhoneNumberTxt = (TextView) mOutgoingCallHeader.findViewById(R.id.tv_caller_number);
         fullImageLayout = (RelativeLayout) findViewById(R.id.full_image_layout);
         tvCallStatus = (TextView) mOutgoingCallHeader.findViewById(R.id.tv_incoming);
+        tvCallType = (TextView) mOutgoingCallHeader.findViewById(R.id.tv_incoming_call);
 
 
         //Accepted call
@@ -72,6 +85,8 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         acceptedcallePhoneNumberTxt = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_caller_number);
         connectionStatusTxtView = (TextView) mAcceptedCallHeader.findViewById(R.id.connection_status);
         durationTxtview = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_call_duration);
+        tvAccepetedCallType = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_call_type);
+
 
         callAcceptBtn = (ImageView) findViewById(R.id.btnAcceptCall);
         callRejectBtn = (ImageView) findViewById(R.id.btnRejectCall);

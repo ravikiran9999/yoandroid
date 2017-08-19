@@ -27,6 +27,7 @@ public interface CallExtras {
     public static final String NO_ROUTE_TO_HOST = "No route to host";//CODE PJSIP_SC_SERVICE_UNAVAILABLE
     public static final String DISPLAY_NUMBER = "display_number";
     public static final String REGISTRATION_STATUS = "registration_status";
+    public static final String CALL_STATE = "call_state";
 
 
     public interface StatusCode {
@@ -52,5 +53,11 @@ public interface CallExtras {
         public static final String YO_NOT_FOUND = "Not found";
         public static final String YO_RINGING = "Ringing";
 
+    }
+
+    public interface Actions {
+        public static final String COM_YO_ACTION_CLOSE = "com.yo.action.close";
+        public static final String COM_YO_ACTION_CALL_ACCEPTED = "com.yo.action.CALL_ACCEPTED";
+        public static final String COM_YO_ACTION_CALL_UPDATE_STATUS = "com.yo.action.CALL_UPDATE_STATUS";
     }
 }

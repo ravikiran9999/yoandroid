@@ -25,6 +25,7 @@ public class YoCallObserver implements YoAppObserver {
     private static final String TAG = YoCallObserver.class.getSimpleName();
     private static YoCallObserver yoCallObserver;
     private static Context mContext;
+    private boolean isRinging;
 
     public static YoCallObserver getInstance(Context context) {
         mContext = context;
@@ -100,11 +101,10 @@ public class YoCallObserver implements YoAppObserver {
                 yoSipService.setCallAccepted(false);
                 if (YoCallObserver.mContext instanceof YoSipService) {
                     if (info.getLastReason().equalsIgnoreCase("Not Acceptable Here")) {
+                        checkMissedCall();
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER);
                         yoSipService.callDisconnected();
-                    } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_FOUND) || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SERVICE_UNAVAILABLE)) {
-                        yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE);
-                        yoSipService.callDisconnected();
+                        isRinging = false;
                     } else {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
                         yoSipService.callDisconnected();
@@ -118,6 +118,7 @@ public class YoCallObserver implements YoAppObserver {
                 }
             } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY && info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_RINGING)) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RINGING);
+                isRinging = true;
             } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CALLING);
             } else {
@@ -126,6 +127,16 @@ public class YoCallObserver implements YoAppObserver {
             }
         } catch (Exception e) {
             DialerLogs.messageE(TAG, "YO========notifyCallState===========" + e.getMessage());
+        }
+    }
+
+    private void checkMissedCall() {
+        YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
+
+        if(isRinging && yoSipService.getCallType() == CallLog.Calls.INCOMING_TYPE ) {
+            isRinging = false;
+            yoSipService.sendMissedCallNotification();
+
         }
     }
 

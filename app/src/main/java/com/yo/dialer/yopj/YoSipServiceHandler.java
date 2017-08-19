@@ -1,15 +1,17 @@
 package com.yo.dialer.yopj;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.util.Constants;
+import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerConfig;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.YoSipService;
 import com.yo.dialer.model.SipProperties;
-import com.yo.dialer.ui.CallStatusListener;
 
 /**
  * Created by Rajesh Babu on 17/7/17.
@@ -33,7 +35,6 @@ public class YoSipServiceHandler implements SipServicesListener {
     private String displayname;
     private static YoCallObserver yoCallObserver;
     private static Context mContext;
-    public CallStatusListener callStatusListener;
 
     public static YoSipServiceHandler getInstance(Context context, PreferenceEndPoint preferenceEndPoints) {
         mContext = context;
@@ -117,17 +118,20 @@ public class YoSipServiceHandler implements SipServicesListener {
 
     @Override
     public void callDisconnected() {
-        if (callStatusListener != null) {
-            callStatusListener.callDisconnected();
-        }
+        sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CLOSE));
+    }
+
+    public void sendAction(Intent action) {
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
+                .getInstance(mContext);
+        localBroadcastManager.sendBroadcast(action);
     }
 
     @Override
     public void updateWithCallStatus(int callState) {
-
-        if (callStatusListener != null) {
-            callStatusListener.updateWithCallStatus(callState);
-        }
+        Intent intent = new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_UPDATE_STATUS);
+        intent.putExtra(CallExtras.CALL_STATE, callState);
+        sendAction(intent);
     }
 
     public int getRegistersCount() {
@@ -185,8 +189,11 @@ public class YoSipServiceHandler implements SipServicesListener {
         yoApp.deinit();
     }
 
-    public void registerCallStatusListener(CallStatusListener callStatusListener) {
-        this.callStatusListener = callStatusListener;
-    }
 
+    public void cancelCallNotification() {
+        if (mContext != null) {
+            ((YoSipService) mContext).cancelCallNotification();
+        }
+
+    }
 }

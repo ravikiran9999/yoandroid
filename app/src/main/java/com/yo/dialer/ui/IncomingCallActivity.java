@@ -22,7 +22,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class IncomingCallActivity extends CallBaseActivity implements View.OnClickListener {
     private static final String TAG = InComingCallActivity.class.getSimpleName();
 
-    private View mInComingHeader;
 
 
     @Override
@@ -44,6 +43,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
             changeToAcceptedCallUI();
             loadPreviousSettings();
         }
+        updateCallType();
     }
 
 
@@ -61,6 +61,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         callePhoneNumberTxt = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
         fullImageLayout = (RelativeLayout) findViewById(R.id.full_image_layout);
         tvCallStatus = (TextView) mInComingHeader.findViewById(R.id.tv_incoming);
+        tvCallType = (TextView)mInComingHeader.findViewById(R.id.tv_incoming_call);
         mAcceptedCallHeader.setVisibility(View.GONE);
 
         //Accepted call
@@ -69,6 +70,8 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         acceptedcallePhoneNumberTxt = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_caller_number);
         connectionStatusTxtView = (TextView) mAcceptedCallHeader.findViewById(R.id.connection_status);
         durationTxtview = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_call_duration);
+        tvAccepetedCallType = (TextView)mAcceptedCallHeader.findViewById(R.id.tv_call_type);
+
 
         callAcceptBtn = (ImageView) findViewById(R.id.btnAcceptCall);
         callRejectBtn = (ImageView) findViewById(R.id.btnRejectCall);

@@ -1,13 +1,16 @@
 package com.yo.dialer.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -29,7 +32,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by root on 31/7/17.
  */
 
-class CallBaseActivity extends BaseActivity implements CallStatusListener {
+class CallBaseActivity extends BaseActivity {
 
     private static final String TAG = CallBaseActivity.class.getSimpleName();
     //User details;
@@ -37,6 +40,10 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     protected String callePhoneNumber;
     protected String calleImageUrl;
     protected TextView tvCallStatus;
+    protected TextView tvCallType;
+    protected TextView tvAccepetedCallType;
+
+    protected boolean isPstn;
 
 
     //Handler for call duration
@@ -75,9 +82,9 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     protected ImageView callEndBtn;
 
     private boolean isIncoming;
+    protected View mInComingHeader;
+    protected View mOutgoingCallHeader;
 
-
-    private CallStatusListener callStatusListener;
 
     public boolean isIncoming() {
         return isIncoming;
@@ -87,12 +94,25 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         isIncoming = incoming;
     }
 
+    LocalBroadcastManager mLocalBroadcastManager;
+    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CLOSE)) {
+                callDisconnected();
+            } else if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_UPDATE_STATUS)) {
+                updateWithCallStatus(intent.getIntExtra(CallExtras.CALL_STATE, 0));
+            } else if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_ACCEPTED)) {
+                callAccepted();
+            }
+        }
+    };
 
     protected ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
-            sipBinder.getYOHandler().registerCallStatusListener(callStatusListener);
             DialerLogs.messageW(TAG, "YO====Service connected to CallBaseActivity activity====" + sipBinder);
         }
 
@@ -109,6 +129,7 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         if (sipBinder == null) {
             bindService(new Intent(this, com.yo.dialer.YoSipService.class), connection, BIND_AUTO_CREATE);
         }
+        registerForcallActions();
         am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
@@ -116,8 +137,16 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         callePhoneNumber = getIntent().getStringExtra(CallExtras.CALLER_NO);
         calleImageUrl = getIntent().getStringExtra(CallExtras.IMAGE);
         calleName = getIntent().getStringExtra(CallExtras.NAME);
-        callStatusListener = this;
+        isPstn = getIntent().getBooleanExtra(CallExtras.IS_PSTN, false);
+    }
 
+    private void registerForcallActions() {
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CLOSE);
+        mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CALL_ACCEPTED);
+        mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CALL_UPDATE_STATUS);
+        mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, mIntentFilter);
     }
 
     protected void toggleHold(View v) {
@@ -166,7 +195,7 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
 
     protected void loadCalleImage(ImageView imageView, String imagePath) {
         try {
-            Glide.with(this).load(imagePath)
+            Glide.with(CallBaseActivity.this).load(imagePath)
                     .placeholder(R.drawable.ic_contacts)
                     .dontAnimate()
                     .error(R.drawable.ic_contacts).
@@ -187,48 +216,33 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         loadCalleeName(calleNameTxt, calleName);
     }
 
-    @Override
     public void callDisconnected() {
-        CallBaseActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
-                CallControls.getCallControlsModel().setCallAccepted(false);
-                finish();
-            }
-        });
-
+        mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
+        CallControls.getCallControlsModel().setCallAccepted(false);
+        DialerLogs.messageI(TAG, "callDisconnected Before finishing..");
+        finish();
     }
 
-    @Override
     public void callAccepted() {
-        CallBaseActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                changeToAcceptedCallUI();
-            }
-        });
+        DialerLogs.messageI(TAG, "Call Accepted");
+        changeToAcceptedCallUI();
     }
 
-    @Override
     public void updateWithCallStatus(final int callStatus) {
         //User- > CallExtras.StatusCode.PJSIP_INV_STATE_CONFIRMED
         DialerLogs.messageI(TAG, "CallExtras.StatusCode -> updateWithCallStatus " + callStatus);
-        Runnable action = new Runnable() {
-            @Override
-            public void run() {
-                if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER) {
-                    showCallAgain();
-                } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
-                    //YODialogs.redirectToPSTN(new EventBus(), this, ((OpponentDetails) action), preferenceEndPoint, mBalanceHelper, mToastFactory);
-                } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED) {
-                    callDisconnected();
-                } else {
-                    UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, tvCallStatus, connectionStatusTxtView);
-                }
-            }
-        };
-        CallBaseActivity.this.runOnUiThread(action);
+
+        if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER) {
+            showCallAgain();
+        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
+            //YODialogs.redirectToPSTN(new EventBus(), this, ((OpponentDetails) action), preferenceEndPoint, mBalanceHelper, mToastFactory);
+        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED) {
+            //callDisconnected();
+        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_CONNECTED) {
+            changeToAcceptedCallUI();
+        } else {
+            UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, tvCallStatus, connectionStatusTxtView);
+        }
     }
 
 
@@ -236,14 +250,29 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
     private void showCallAgain() {
         if (!isIncoming()) {
             Toast.makeText(this, "Call not answered - Need to show call again screen", Toast.LENGTH_LONG).show();
+            if (sipBinder != null) {
+                if (sipBinder.getYOHandler() != null) {
+                    sipBinder.getYOHandler().cancelCallNotification();
+                }
+            }
         }
         finish();
     }
 
     protected void changeToAcceptedCallUI() {
+        DialerLogs.messageI(TAG, "YO====changeToAcceptedCallUI====");
         //try {
-        CallControls.getCallControlsModel().setCallAccepted(true);
+        if (isIncoming) {
+            if (mInComingHeader != null) {
+                mInComingHeader.setVisibility(View.GONE);
+            }
+        } else {
+            if (mOutgoingCallHeader != null) {
+                mOutgoingCallHeader.setVisibility(View.GONE);
+            }
+        }
         mAcceptedCallHeader.setVisibility(View.VISIBLE);
+
         loadCalleeName(acceptedcalleNameTxt, calleName);
         loadCalleImage(acceptedCalleImageView, calleImageUrl);
         if (isIncoming) {
@@ -254,6 +283,8 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
         isCallStopped = false;
         mHandler.post(UIHelper.getDurationRunnable(CallBaseActivity.this));
         showEndAndMessage();
+        CallControls.getCallControlsModel().setCallAccepted(true);
+
         // } catch (IllegalArgumentException exe) {
         // DialerLogs.messageI(TAG, "YO====changeToAcceptedCallUI====" + exe.getMessage());
         //}
@@ -288,6 +319,16 @@ class CallBaseActivity extends BaseActivity implements CallStatusListener {
             if (callControlsModel.isChatOpened()) {
                 //TODO: NEED TO OPEN CHAT
             }
+        }
+    }
+
+    protected void updateCallType() {
+        if (isPstn) {
+            tvCallType.setText(getResources().getString(R.string.pstn_call));
+            tvAccepetedCallType.setText(getResources().getString(R.string.pstn_call));
+        } else {
+            tvCallType.setText(getResources().getString(R.string.app_call));
+            tvAccepetedCallType.setText(getResources().getString(R.string.app_call));
         }
     }
 }

@@ -346,5 +346,7 @@
     <string name="pin_label_text">PIN</string>
 
     <string name="request_timeout">Getting request timeout, may be issue with SIP Server, contact sipserver.</string>
+    <string name="pstn_call">PSTN CALL</string>
+    <string name="app_call">APP CALL</string>
 
 </resources>
