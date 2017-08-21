@@ -570,9 +570,11 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 // phone must begin with '+'
                 Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + mobileNumber, "");
                 int countryCode = numberProto.getCountryCode();
+                String countryCodeString = countryCode + "";
                 String mobileTemp = mobileNumber;
-                String phoneNumber = mobileTemp.replace(countryCode + "", "");
+                String phoneNumber = mobileTemp.substring(countryCodeString.length(), mobileTemp.length());
                 contact = mContactsSyncManager.getContactPSTN(countryCode, phoneNumber);
+
             } catch (NumberParseException e) {
                 DialerLogs.messageE(TAG, mobileNumber + " NumberParseException was thrown: " + e.toString());
             }
