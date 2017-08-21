@@ -461,8 +461,10 @@ public class Helper {
                    PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
                    Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + phoneNumber, "");
                    int countryCode = numberProto.getCountryCode();
+                   String countryCodeString = countryCode + "";
                    String mobileTemp = phoneNumber;
-                   phoneNumber = mobileTemp.replace(countryCode + "", "");
+                   phoneNumber = mobileTemp.substring(countryCodeString.length(), mobileTemp.length());
+
                    Contact contact =getContactPSTN(context,countryCode, phoneNumber);
                    if (contact != null && contact.getName() != null) {
                        contactName = contact.getName();

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -200,8 +201,17 @@ class CallBaseActivity extends BaseActivity {
     }
 
     protected void loadCalleeName(TextView textView, String name) {
-        textView.setText(name);
-        DialerLogs.messageI(TAG, "YO====loadCalleeName====" + name);
+
+        if(!TextUtils.isEmpty(name)) {
+            textView.setText(name);
+            DialerLogs.messageI(TAG, "YO====loadCalleeName====" + name);
+        } else {
+            if (isIncoming) {
+                textView.setText(DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
+            } else {
+                textView.setText(callePhoneNumber);
+            }
+        }
     }
 
     protected void loadCalleImage(ImageView imageView, String imagePath) {

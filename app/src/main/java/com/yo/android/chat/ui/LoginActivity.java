@@ -2,6 +2,7 @@ package com.yo.android.chat.ui;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -180,7 +181,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     }
 
     private void checkForPermissions() {
-        ActivityCompat.requestPermissions(LoginActivity.this, new String[]{"android.permission.READ_SMS"}, READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS);
+        ActivityCompat.requestPermissions(LoginActivity.this, new String[]{"android.permission.RECEIVE_SMS"}, READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS);
     }
 
 
@@ -425,6 +426,30 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS) {
 
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //start audio recording or whatever you planned to do
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this, Manifest.permission.RECEIVE_SMS)) {
+                    //Show an explanation to the user *asynchronously*
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+                    builder.setMessage("This permission is important to read sms.")
+                            .setTitle("Important permission required");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.RECEIVE_SMS}, READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS);
+                        }
+                    });
+                    ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.RECEIVE_SMS}, READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS);
+                } else {
+                    //Never ask again and handle your app without permission.
+                }
+            }
+
+        }
+    }
 }
 
