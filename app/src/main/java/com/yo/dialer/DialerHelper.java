@@ -74,6 +74,9 @@ public class DialerHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (remoteUriStr == null) {
+            return null;
+        }
 
         DialerLogs.messageI(TAG, "YO=======getPhoneNumber Remote URI===" + remoteUriStr);
         String title = null;

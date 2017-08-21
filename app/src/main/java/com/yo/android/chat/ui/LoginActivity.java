@@ -1,10 +1,14 @@
 package com.yo.android.chat.ui;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -58,7 +62,7 @@ import retrofit2.Callback;
 public class LoginActivity extends ParentActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "LoginActivity";
-    private static final int REQUEST_READ_CONTACTS = 0;
+    private static final int READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS = 123;
     private static final String FRAGMENT_TAG = "OTPFragment";
 
 
@@ -102,6 +106,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             //Toast.makeText(this, "YoApp session expired.", Toast.LENGTH_LONG).show();
             Toast.makeText(this, getString(R.string.logged_in_another_device), Toast.LENGTH_LONG).show();
         }
+        checkForPermissions();
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -144,17 +149,17 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         mCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Util.hideKeyboard(LoginActivity.this,view);
+                Util.hideKeyboard(LoginActivity.this, view);
                 Intent intent = new Intent(LoginActivity.this, CountryCodeActivity.class);
                 startActivityForResult(intent, SELECTED_OK);
 
             }
         });
 
-        mCountryCode.setOnTouchListener(new View.OnTouchListener(){
+        mCountryCode.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Util.hideKeyboard(LoginActivity.this,v);
+                Util.hideKeyboard(LoginActivity.this, v);
                 return false;
             }
         });
@@ -174,6 +179,9 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         });
     }
 
+    private void checkForPermissions() {
+        ActivityCompat.requestPermissions(LoginActivity.this, new String[]{"android.permission.READ_SMS"}, READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS);
+    }
 
 
     /**
@@ -271,37 +279,37 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
                 try {
-                dismissProgressDialog();
-                if (response.isSuccessful()) {
-                    Response response1 = response.body();
-                    if (response1 != null) {
-                        boolean isNewUser = (boolean) ((LinkedTreeMap) response1.getData()).get("isNewUser");
-                        String userId = (String) ((LinkedTreeMap) response1.getData()).get("id");
-                        preferenceEndPoint.saveStringPreference(Constants.USER_ID, userId);
-                        preferenceEndPoint.saveBooleanPreference("isNewUser", isNewUser);
-                        boolean balanceAdded = (boolean) ((LinkedTreeMap) response1.getData()).get("balanceAdded");
-                        preferenceEndPoint.saveBooleanPreference("balanceAdded", balanceAdded);
-                    }
-                    if(!BuildConfig.NEW_OTP_SCREEN) {
-                        OTPFragment otpFragment = new OTPFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
-                        otpFragment.setArguments(bundle);
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
-                        transaction.disallowAddToBackStack();
-                        transaction.commit();
+                    dismissProgressDialog();
+                    if (response.isSuccessful()) {
+                        Response response1 = response.body();
+                        if (response1 != null) {
+                            boolean isNewUser = (boolean) ((LinkedTreeMap) response1.getData()).get("isNewUser");
+                            String userId = (String) ((LinkedTreeMap) response1.getData()).get("id");
+                            preferenceEndPoint.saveStringPreference(Constants.USER_ID, userId);
+                            preferenceEndPoint.saveBooleanPreference("isNewUser", isNewUser);
+                            boolean balanceAdded = (boolean) ((LinkedTreeMap) response1.getData()).get("balanceAdded");
+                            preferenceEndPoint.saveBooleanPreference("balanceAdded", balanceAdded);
+                        }
+                        if (!BuildConfig.NEW_OTP_SCREEN) {
+                            OTPFragment otpFragment = new OTPFragment();
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
+                            otpFragment.setArguments(bundle);
+                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                            transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
+                            transaction.disallowAddToBackStack();
+                            transaction.commit();
+                        } else {
+                            Intent intent = new Intent(LoginActivity.this, NewOTPActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                        }
                     } else {
-                        Intent intent = new Intent(LoginActivity.this, NewOTPActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
+                        mToastFactory.showToast("Please enter valid phone number.");
                     }
-                } else {
-                    mToastFactory.showToast("Please enter valid phone number.");
-                }
-            } catch (Exception e) {
+                } catch (Exception e) {
 
                 }
 

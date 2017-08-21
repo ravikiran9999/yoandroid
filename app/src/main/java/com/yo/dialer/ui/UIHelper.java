@@ -40,16 +40,20 @@ class UIHelper {
     };
 
 
-    public static void handleCallStatus(Context context, final int callStatus, TextView tvCallStatus, final TextView connectionStatusTxtView) {
+    public static void handleCallStatus(Context context, boolean isIncoming, final int callStatus, TextView tvCallStatus, final TextView connectionStatusTxtView) {
         if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_CALLING) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.calling));
             tvCallStatus.setText(context.getResources().getString(R.string.calling));
             DialerLogs.messageI(TAG, "YO====handleCallStatus====CALLING....");
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_RINGING) {
             DialerLogs.messageI(TAG, "YO====handleCallStatus====RINGING....");
-            connectionStatusTxtView.setText(context.getResources().getString(R.string.ringing));
-            tvCallStatus.setText(context.getResources().getString(R.string.ringing));
-
+            if (isIncoming) {
+                connectionStatusTxtView.setText(context.getResources().getString(R.string.incoming));
+                tvCallStatus.setText(context.getResources().getString(R.string.incoming));
+            } else {
+                connectionStatusTxtView.setText(context.getResources().getString(R.string.ringing));
+                tvCallStatus.setText(context.getResources().getString(R.string.ringing));
+            }
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_CONNECTED) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.connected_status));
             tvCallStatus.setText(context.getResources().getString(R.string.connected_status));

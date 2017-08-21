@@ -129,10 +129,9 @@ public class BottomTabsActivity extends BaseActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
-            /*if (!sipBinder.getHandler().isOnGOingCall()) {
+            /*if (!sipBinder.getYOHandler().isOnGOingCall()) {
                 clearNotifications();
             }*/
-            //addAccount();
         }
 
         @Override
@@ -141,27 +140,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
     };
 
-   /* private void addAccount() {
-        String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
-        String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
-        SipProfile sipProfile = new SipProfile.Builder()
 
-                .withUserName(username == null ? "" : username)
-                //.withUserName(username == null ? "" : "64728474")
-                //.withUserName(username == null ? "" : "7032427")
-                //.withUserName(username == null ? "" : "64724865")
-                //.withUserName(username == null ? "" : "603703")
-                .withPassword(password)
-                //.withPassword("534653")
-                //.withPassword("@pa1ra2di3gm")
-                //.withPassword("823859")
-                //.withPassword("@pa1ra2di3gm")
-                //.withServer("209.239.120.239")
-                .withServer("173.82.147.172")
-                .build();
-        sipBinder.getHandler().addAccount(sipProfile);
-
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,10 +156,10 @@ public class BottomTabsActivity extends BaseActivity {
         startService(service);
 
         // Handle application crash
-        //Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
-        if (getIntent().getBooleanExtra("crash", false)) {
+        Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
+        /*if (getIntent().getBooleanExtra("crash", false)) {
             Toast.makeText(this, "App restarted after crash", Toast.LENGTH_SHORT).show();
-        }
+        }*/
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO,

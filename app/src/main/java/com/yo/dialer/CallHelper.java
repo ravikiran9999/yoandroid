@@ -31,24 +31,28 @@ import java.io.IOException;
 public class CallHelper {
     private static final String TAG = CallHelper.class.getSimpleName();
 
-    public static YoCall makeCall(YoAccount yoAccount, Intent intent) {
+    public static YoCall makeCall(YoSipService sipService, YoAccount yoAccount, Intent intent) {
         if (intent != null) {
             if (intent.hasExtra(CallExtras.CALLER_NO)) {
-                DialerLogs.messageI(TAG, "YO========Making makeCall===========");
+                DialerLogs.messageI(TAG, "Making makeCall===========" + intent.getStringExtra(CallExtras.CALLER_NO));
                 try {
-                    DialerLogs.messageI(TAG, "YO=========Caller Number==========" + yoAccount.getInfo().getUri());
+                    DialerLogs.messageI(TAG, yoAccount + "Caller Number==========" + yoAccount.getInfo().getUri());
                 } catch (Exception e) {
-                    DialerLogs.messageE(TAG, "YO=========Caller Number==========" + e.getMessage());
+                    DialerLogs.messageE(TAG, "Caller Number==========" + e.getMessage());
+                    //TODO: NEED TO TEST THIS CASE, IF ACCOUNT IS NULL TRYING TO REGISTER AGAIN.
+                    DialerLogs.messageE(TAG, "Registering user again from makeCall method");
+                    sipService.register();
                 }
                 try {
                     String calleeNumber = prepareDestinationDetails(intent);
+                    DialerLogs.messageI(TAG, " makeCall Callee Number==========" + calleeNumber);
                     final YoCall call = new YoCall(yoAccount, -1);
                     CallOpParam prm = new CallOpParam(true);
                     try {
                         // String dst_uri = "sip:" + calleeNumber + "@" + DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP;
                         String dst_uri = String.format("\"%s\" <sip:%s@%s>", calleeNumber, calleeNumber, DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT);
 
-                        DialerLogs.messageI(TAG, "YO=========Callee URI==========" + dst_uri);
+                        DialerLogs.messageI(TAG, "Callee URI==========" + dst_uri);
                         call.makeCall(dst_uri, prm);
                         return call;
                     } catch (Exception e) {
@@ -102,6 +106,7 @@ public class CallHelper {
             if (yoCurrentCall != null) {
                 storeDump(yoCurrentCall);
                 yoCurrentCall.hangup(param);
+
             } else {
                 DialerLogs.messageI(TAG, "YO====Current Call Object is null====");
             }

@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -62,6 +63,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private boolean isReconnecting = false;
     private Runnable checkNetworkLossRunnable;
     private boolean isRemoteHold = false;
+    private boolean isLocalHold = false;
+
     private boolean isCallAccepted;
 
     //To play Ringtone
@@ -70,6 +73,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private Vibrator mVibrator;
     private Uri mRingtoneUri;
     private static final long[] VIBRATOR_PATTERN = {0, 1000, 1000};
+
+
+    public boolean isLocalHold() {
+        return isLocalHold;
+    }
+
+    public void setLocalHold(boolean localHold) {
+        isLocalHold = localHold;
+    }
 
     public boolean isCallAccepted() {
         return isCallAccepted;
@@ -169,7 +181,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 }
             } else if (CallExtras.MAKE_CALL.equals(intent.getAction())) {
                 makeCall(intent);
-
             } else if (CallExtras.ACCEPT_CALL.equals(intent.getAction())) {
                 acceptCall();
             } else if (CallExtras.REJECT_CALL.equals(intent.getAction())) {
@@ -181,6 +192,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void rejectCall() {
         stopDefaultRingtone();
         CallHelper.rejectCall(yoCurrentCall);
+        callDisconnected();
     }
 
     public void acceptCall() {
@@ -195,11 +207,12 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     private void makeCall(Intent intent) {
         if (yoCurrentCall == null) {
-            yoCurrentCall = CallHelper.makeCall(yoAccount, intent);
+            yoCurrentCall = CallHelper.makeCall(this,yoAccount, intent);
             DialerLogs.messageE(TAG, "YO==makeCalling call...and YOCALL = " + yoCurrentCall);
             showOutgointCallActivity(yoCurrentCall, intent);
         } else {
-            //TODO: ALREADY CALL IS GOING ON
+            DialerLogs.messageE(TAG, "Previous call is not properly ended" + yoCurrentCall);
+            callDisconnected();            //TODO: ALREADY CALL IS GOING ON
         }
     }
 
@@ -278,6 +291,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         if (calleeNumber == null) {
             callDisconnected();
             sipServiceHandler.callDisconnected();
+            sipServiceHandler.sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_NO_NETWORK));
+            return;
         }
         phoneNumber = calleeNumber;
         Contact contact;
@@ -349,7 +364,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             public void run() {
                 if (yoCurrentCall != null) {
                     DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
-                    if (!isRemoteHold() && isCallAccepted) {
+                    if (!isRemoteHold() && !isLocalHold() && isCallAccepted) {
                         reInviteToCheckCalleStatus();
                     }
                 }
@@ -440,17 +455,22 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             if (networkstate == NetworkStateListener.NETWORK_CONNECTED) {
                 // Network is connected.
                 DialerLogs.messageI(TAG, "YO========Register Account===========");
-                sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING);
-                if (yoCurrentCall != null) {
-                    DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
-                    if (!isRemoteHold() && isCallAccepted) {
-                        reInviteToCheckCalleStatus();
+                if (sipServiceHandler != null) {
+                    sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING);
+                    if (yoCurrentCall != null) {
+                        DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
+                        if (!isRemoteHold() && isCallAccepted) {
+                            reInviteToCheckCalleStatus();
+                        }
                     }
                 }
+                // its alredy registered so no need to register again when network connects
                 //register();
             } else {
                 DialerLogs.messageI(TAG, "Network change listener and state is Network not reachable ");
-                sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
+                if (sipServiceHandler != null) {
+                    sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
+                }
             }
         }
     };
@@ -554,7 +574,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 String phoneNumber = mobileTemp.replace(countryCode + "", "");
                 contact = mContactsSyncManager.getContactPSTN(countryCode, phoneNumber);
             } catch (NumberParseException e) {
-                DialerLogs.messageE(TAG, "NumberParseException was thrown: " + e.toString());
+                DialerLogs.messageE(TAG, mobileNumber + " NumberParseException was thrown: " + e.toString());
             }
             if (contact != null && contact.getName() != null) {
                 info.name = contact.getName();
@@ -615,5 +635,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     public void cancelCallNotification() {
         Util.cancelNotification(this, callNotificationId);
+    }
+
+    public void sendNoNetwork() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(YoSipService.this, getResources().getString(R.string.calls_no_network), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

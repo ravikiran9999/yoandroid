@@ -20,12 +20,16 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.yo.android.R;
+import com.yo.android.model.Contact;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.YODialogs;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 
+import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -105,9 +109,15 @@ class CallBaseActivity extends BaseActivity {
                 updateWithCallStatus(intent.getIntExtra(CallExtras.CALL_STATE, 0));
             } else if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_ACCEPTED)) {
                 callAccepted();
+            } else if (intent.getAction().equalsIgnoreCase(CallExtras.Actions.COM_YO_ACTION_CALL_NO_NETWORK)) {
+                showToast(context, context.getResources().getString(R.string.calls_no_network));
             }
         }
     };
+
+    private void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    }
 
     protected ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -146,6 +156,7 @@ class CallBaseActivity extends BaseActivity {
         mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CLOSE);
         mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CALL_ACCEPTED);
         mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CALL_UPDATE_STATUS);
+        mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CALL_NO_NETWORK);
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, mIntentFilter);
     }
 
@@ -235,13 +246,9 @@ class CallBaseActivity extends BaseActivity {
         if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER) {
             showCallAgain();
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
-            //YODialogs.redirectToPSTN(new EventBus(), this, ((OpponentDetails) action), preferenceEndPoint, mBalanceHelper, mToastFactory);
-        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED) {
-            //callDisconnected();
-        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_CONNECTED) {
-            changeToAcceptedCallUI();
+            finish();
         } else {
-            UIHelper.handleCallStatus(CallBaseActivity.this, callStatus, tvCallStatus, connectionStatusTxtView);
+            UIHelper.handleCallStatus(CallBaseActivity.this, isIncoming, callStatus, tvCallStatus, connectionStatusTxtView);
         }
     }
 

@@ -20,6 +20,8 @@ public class Test {
 
     public static void main(String[] args) {
         getPhoneNumber();
+
+
     }
 
     public static void startInComingCallScreen(Context context) {
@@ -40,7 +42,7 @@ public class Test {
     }
 
     public static void getPhoneNumber() {
-       // String mobileNumber = "919490570791";
+        // String mobileNumber = "919490570791";
         String mobileNumber = "97477498669";
 
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
@@ -49,7 +51,7 @@ public class Test {
             // phone must begin with '+'
             Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + mobileNumber, "");
             int countryCode = numberProto.getCountryCode();
-            String country = countryCode+"";
+            String country = countryCode + "";
             System.out.println(country.length() + " Country code " + countryCode);
             String mobileTemp = mobileNumber;
             String phoneNumber = mobileTemp.substring(country.length(), mobileTemp.length());

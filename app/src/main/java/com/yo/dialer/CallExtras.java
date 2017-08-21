@@ -52,6 +52,7 @@ public interface CallExtras {
         public static final String YO_SERVICE_UNAVAILABLE = "Service unavailable";
         public static final String YO_NOT_FOUND = "Not found";
         public static final String YO_RINGING = "Ringing";
+        public static final String YO_REQUEST_TIMEOUT = "Request Timeout";
 
     }
 
@@ -59,5 +60,6 @@ public interface CallExtras {
         public static final String COM_YO_ACTION_CLOSE = "com.yo.action.close";
         public static final String COM_YO_ACTION_CALL_ACCEPTED = "com.yo.action.CALL_ACCEPTED";
         public static final String COM_YO_ACTION_CALL_UPDATE_STATUS = "com.yo.action.CALL_UPDATE_STATUS";
+        public static final String COM_YO_ACTION_CALL_NO_NETWORK = "com.yo.action.CALL_NO_NETWORK";
     }
 }

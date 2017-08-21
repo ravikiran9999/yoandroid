@@ -362,6 +362,9 @@ public class CallLog {
                     do {
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        if (voxuser == null) {
+                            continue;
+                        }
                         String phoneName = Helper.getContactName(context, voxuser);
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
@@ -419,6 +422,9 @@ public class CallLog {
                     do {
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        if (voxuser == null) {
+                            continue;
+                        }
                         String phoneName = Helper.getContactName(context, voxuser);
 
                         info.setDialnumber(voxuser);
@@ -476,6 +482,9 @@ public class CallLog {
 
                         CallLogsResult info = new CallLogsResult();
                         String voxuser = c.getString(c.getColumnIndex(Calls.NUMBER));
+                        if (voxuser == null) {
+                            continue;
+                        }
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         String date = c.getString(c.getColumnIndex(Calls.DATE));

@@ -27,7 +27,7 @@ public class YoAccount extends Account {
     @Override
     public void onRegState(OnRegStateParam prm) {
         super.onRegState(prm);
-        DialerLogs.messageI(TAG, "YO========onRegState " + prm.getReason());
+        DialerLogs.messageI(TAG, "onRegState " + prm.getReason());
         YoApp.observer.notifyRegState(prm.getCode(), prm.getReason(),
                 prm.getExpiration());
     }
@@ -35,14 +35,14 @@ public class YoAccount extends Account {
     @Override
     public void onRegStarted(OnRegStartedParam prm) {
         super.onRegStarted(prm);
-        DialerLogs.messageI(TAG, "YO========onRegStarted " + prm.getRenew());
+        DialerLogs.messageI(TAG, "onRegStarted " + prm.getRenew());
 
     }
 
     @Override
     public void onIncomingCall(OnIncomingCallParam prm) {
         super.onIncomingCall(prm);
-        DialerLogs.messageI(TAG, "YO========onIncomingCall " + prm.getCallId());
+        DialerLogs.messageI(TAG, "onIncomingCall " + prm.getCallId());
         YoCall call = new YoCall(this, prm.getCallId());
         YoApp.observer.notifyIncomingCall(call);
 
