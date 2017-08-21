@@ -171,7 +171,7 @@ public class BottomTabsActivity extends BaseActivity {
                     Manifest.permission.WAKE_LOCK,
                     Manifest.permission.MODIFY_AUDIO_SETTINGS,
                     Manifest.permission.CAMERA,
-                    Manifest.permission.RECEIVE_SMS,
+                    //Manifest.permission.RECEIVE_SMS,
                     Manifest.permission.VIBRATE,
                     Manifest.permission.GET_TASKS,
                     Manifest.permission.WRITE_SYNC_SETTINGS,
