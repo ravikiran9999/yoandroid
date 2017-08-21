@@ -227,6 +227,7 @@
     <string name="dialer">Dialer</string>
     <string name="magazines">Magazines</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="tc"><u>Terms and Conditions</u></string>
     <string name="add_balance_from_google_play">Add balance from Google Play</string>
     <string name="add_balance_from_voucher">Add balance from Voucher</string>
     <string name="transfer_balance">Transfer Balance</string>
@@ -255,10 +256,6 @@
     <string name="your_credit_balance">Your credit balance :</string>
 
     <string name="your_total_balance">Your yo balance</string>
-
-    <!--Todo remove these two lines-->
-    <string name="your_wallet_balance">Your wallet balance</string>
-    <string name="your_switch_balance">Your switch balance</string>
 
     <string name="invalid_request">Invalid Request.</string>
     <string name="insufficient_amount">Insufficient amount.</string>

@@ -184,4 +184,5 @@ public class Constants {
     public static final String MAGAZINE_LOCK = "magazine_lock";
     public static final String DIALER_LOCK = "dialer_lock";
     public static final String APP_LOCK = "app_lock";
+    public static final String TERMS_CONDITIONS = "terms_conditions";
 }

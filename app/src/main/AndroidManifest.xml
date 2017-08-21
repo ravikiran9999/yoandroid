@@ -378,8 +378,15 @@
         <activity
             android:name=".chat.ui.CountryCodeActivity"
             android:theme="@style/AppTheme.Switch" />
-        <activity android:name=".ui.YoBalanceDetailActivity" />
-        <activity android:name=".video.InAppVideoActivity"></activity>
+        <activity android:name=".ui.YoBalanceDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".video.InAppVideoActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.PlainActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

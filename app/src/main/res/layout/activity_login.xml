@@ -70,6 +70,15 @@
         android:textColor="@android:color/white"
         android:textSize="16sp" />
 
-
+    <TextView
+        android:id="@+id/tc_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textSize="@dimen/xxsmall_textsize"
+        android:layout_marginTop="@dimen/small_padding"
+        android:text="@string/tc"
+        android:textColor="@color/white" />
 
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.ui.fragments.GeneralWebViewFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -20,9 +21,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * Created by kalyani on 25/7/16.
- */
+import static com.yo.android.chat.ui.LoginActivity.URL;
+
 public class MoreSettingsActivity extends BaseActivity {
 
     @Bind(R.id.share_lint_btn)
@@ -86,4 +86,12 @@ public class MoreSettingsActivity extends BaseActivity {
         Util.shareIntent(shareLinkBtn, url, "Sharing Link");
     }
 
+    @OnClick(R.id.tc_link)
+    public void termAndConditions() {
+
+        Bundle args = new Bundle();
+        args.putString(GeneralWebViewFragment.KEY_URL, URL);
+        PlainActivity.start(this, Constants.TERMS_CONDITIONS, args);
+
+    }
 }

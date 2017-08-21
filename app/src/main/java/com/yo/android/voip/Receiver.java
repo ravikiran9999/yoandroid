@@ -161,6 +161,8 @@ public class Receiver extends InjectedBroadcastReceiver {
 
     }
 
+    //Todo check online status from util
+
     @SuppressWarnings("deprecation")
     public boolean isOnline(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context

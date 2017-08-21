@@ -37,6 +37,8 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.model.CountryCode;
 import com.yo.android.model.Response;
+import com.yo.android.ui.PlainActivity;
+import com.yo.android.ui.fragments.GeneralWebViewFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.CountryCodeHelper;
 import com.yo.android.util.Util;
@@ -66,10 +68,12 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_READ_CONTACTS = 0;
     private static final String FRAGMENT_TAG = "OTPFragment";
+    public static final String URL = BuildConfig.BASE_URL + "T&C/YO_PRIVACY_POLICY.html";
 
 
     @Bind(R.id.et_enter_phone)
     protected EditText mPhoneNumberView;
+
 
 //    @Bind(R.id.spCountrySpinner)
 //    protected NiceSpinner spCountrySpinner;
@@ -231,6 +235,15 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             showMessageDialog(phoneNumber);
 
         }
+    }
+
+    @OnClick(R.id.tc_link)
+    public void termAndConditions() {
+
+        Bundle args = new Bundle();
+        args.putString(GeneralWebViewFragment.KEY_URL, URL);
+        PlainActivity.start(this, Constants.TERMS_CONDITIONS, args);
+
     }
 
     private void performLogin(String phoneNumber) {
@@ -395,7 +408,5 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             }
         }
     }
-
-
 }
 

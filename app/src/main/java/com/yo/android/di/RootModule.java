@@ -62,6 +62,7 @@ import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
 import com.yo.android.ui.PhoneBookActivity;
 import com.yo.android.ui.PhoneChatActivity;
+import com.yo.android.ui.PlainActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.SplashScreenActivity;
@@ -77,12 +78,14 @@ import com.yo.android.ui.fragments.AccountDetailsEditFragment;
 import com.yo.android.ui.fragments.AccountDetailsFragment;
 import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.DialerFragment;
+import com.yo.android.ui.fragments.GeneralWebViewFragment;
 import com.yo.android.ui.fragments.InviteActivity;
 import com.yo.android.ui.fragments.InviteFriendsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
+import com.yo.android.ui.fragments.WebViewFragment;
 import com.yo.android.ui.fragments.findpeople.FindPeopleFragment;
 import com.yo.android.ui.fragments.findpeople.FollowersFragment;
 import com.yo.android.ui.fragments.findpeople.FollowingsFragment;
@@ -150,9 +153,6 @@ import dagger.Provides;
                 UserProfileActivity.class,
                 CountryCodeActivity.class,
 
-
-
-
                 InviteActivity.class,
                 AccountDetailsActivity.class,
                 OthersProfileMagazines.class,
@@ -164,6 +164,7 @@ import dagger.Provides;
                 TopicsDetailActivity.class,
                 TransferBalanceSelectContactActivity.class,
                 TransferBalanceActivity.class,
+                PlainActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -187,6 +188,8 @@ import dagger.Provides;
                 FindPeopleFragment.class,
                 FollowersFragment.class,
                 FollowingsFragment.class,
+                GeneralWebViewFragment.class,
+                WebViewFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,
