@@ -323,6 +323,14 @@ class CallBaseActivity extends BaseActivity {
                 tvCallStatus.setText(getResources().getString(R.string.call_on_hold_status));
                 connectionStatusTxtView.setText(getResources().getString(R.string.call_on_hold_status));
             }
+            if (callControlsModel.isMicOn()) {
+                callMuteView.setTag(false);
+                toggleHold(callMuteView);
+            }
+            if (callControlsModel.isSpeakerOn()) {
+                callSpeakerView.setTag(false);
+                toggleHold(callSpeakerView);
+            }
             if (callControlsModel.isChatOpened()) {
                 //TODO: NEED TO OPEN CHAT
             }

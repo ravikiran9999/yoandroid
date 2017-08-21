@@ -134,7 +134,7 @@ public class YoCallObserver implements YoAppObserver {
                 if (YoCallObserver.mContext instanceof YoSipService) {
                     yoSipService.callAccepted();
                 }
-            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY && info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_RINGING)) {
+            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY && (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_RINGING) || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SESSION_IN_PROGRESS))) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RINGING);
                 isRinging = true;
             } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {

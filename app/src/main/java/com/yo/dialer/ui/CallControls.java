@@ -36,6 +36,11 @@ class CallControls {
                 DialerLogs.messageE(TAG, "toggleHold == v.getTag = " + flag);
                 sipBinder.getYOHandler().setHold(!flag);
                 changeSelection(v, !flag);
+                if (!flag) {
+                    callControlsModel.setHoldOn(true);
+                } else {
+                    callControlsModel.setHoldOn(false);
+                }
                 v.setTag(!flag);
                 DialerLogs.messageE(TAG, "toggleHold Changing ==" + !flag);
             } else {
@@ -46,21 +51,18 @@ class CallControls {
         }
     }
 
-    private static void changeSelection(View v, Boolean flag) {
-        if (flag) {
-            v.setBackgroundResource(R.drawable.mute_selector);
-            callControlsModel.setHoldOn(true);
-        } else {
-            callControlsModel.setHoldOn(false);
-            v.setBackgroundResource(0);
-        }
-    }
 
     public static boolean toggleSpeaker(AudioManager am, View v) {
         if (v.getTag() != null) {
             Boolean flag = Boolean.valueOf(v.getTag().toString());
-            changeSelection(v, flag);
-            am.setSpeakerphoneOn(flag);
+            DialerLogs.messageE(TAG, "toggleSpeaker == v.getTag = " + flag);
+            changeSelection(v, !flag);
+            if (!flag) {
+                callControlsModel.setSpeakerOn(true);
+            } else {
+                callControlsModel.setSpeakerOn(false);
+            }
+            am.setSpeakerphoneOn(!flag);
             v.setTag(!flag);
             return flag;
         } else {
@@ -73,8 +75,13 @@ class CallControls {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             if (v.getTag() != null) {
                 Boolean flag = Boolean.valueOf(v.getTag().toString());
-                changeSelection(v, flag);
-                sipBinder.getYOHandler().setMic(flag);
+                changeSelection(v, !flag);
+                if (!flag) {
+                    callControlsModel.setMicOn(true);
+                } else {
+                    callControlsModel.setMicOn(false);
+                }
+                sipBinder.getYOHandler().setMic(!flag);
                 v.setTag(!flag);
                 return flag;
             } else {
@@ -86,6 +93,13 @@ class CallControls {
         return false;
     }
 
+    private static void changeSelection(View v, Boolean flag) {
+        if (flag) {
+            v.setBackgroundResource(R.drawable.mute_selector);
+        } else {
+            v.setBackgroundResource(0);
+        }
+    }
     public static void loadFullImage(Context context, String imagePath, final RelativeLayout fullImageLayout) {
         int myWidth = 512;
         int myHeight = 384;
