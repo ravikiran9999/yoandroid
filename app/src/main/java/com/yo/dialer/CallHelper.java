@@ -36,14 +36,6 @@ public class CallHelper {
             if (intent.hasExtra(CallExtras.CALLER_NO)) {
                 DialerLogs.messageI(TAG, "Making makeCall===========" + intent.getStringExtra(CallExtras.CALLER_NO));
                 try {
-                    DialerLogs.messageI(TAG, yoAccount + "Caller Number==========" + yoAccount.getInfo().getUri());
-                } catch (Exception e) {
-                    DialerLogs.messageE(TAG, "Caller Number==========" + e.getMessage());
-                    //TODO: NEED TO TEST THIS CASE, IF ACCOUNT IS NULL TRYING TO REGISTER AGAIN.
-                    DialerLogs.messageE(TAG, "Registering user again from makeCall method");
-                    sipService.register();
-                }
-                try {
                     String calleeNumber = prepareDestinationDetails(intent);
                     DialerLogs.messageI(TAG, " makeCall Callee Number==========" + calleeNumber);
                     final YoCall call = new YoCall(yoAccount, -1);
@@ -51,13 +43,16 @@ public class CallHelper {
                     try {
                         // String dst_uri = "sip:" + calleeNumber + "@" + DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP;
                         String dst_uri = String.format("\"%s\" <sip:%s@%s>", calleeNumber, calleeNumber, DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT);
-
                         DialerLogs.messageI(TAG, "Callee URI==========" + dst_uri);
                         call.makeCall(dst_uri, prm);
                         return call;
                     } catch (Exception e) {
                         e.printStackTrace();
                         call.delete();
+                        DialerLogs.messageE(TAG, "makeCall==========" + e.getMessage());
+                        sipService.setCurrentCallToNull();
+                        sipService.callDisconnected();
+                        sipService.register();
                         return null;
                     }
                 } catch (Exception e) {
@@ -83,14 +78,14 @@ public class CallHelper {
             CallOpParam call_param = new CallOpParam();
             call_param.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
             try {
-                DialerLogs.messageI(TAG, "YO=======Accepting call============" + yoCurrentCall.getInfo().getCallIdString());
+                DialerLogs.messageI(TAG, "Accepting call============" + yoCurrentCall.getInfo().getCallIdString());
                 yoCurrentCall.answer(call_param);
             } catch (Exception e) {
-                DialerLogs.messageI(TAG, "YO====While accepting call====" + e.getMessage());
+                DialerLogs.messageI(TAG, "While accepting call====" + e.getMessage());
                 return;
             }
         } else {
-            DialerLogs.messageI(TAG, "YO====Current Call Object is null====");
+            DialerLogs.messageI(TAG, "Current Call Object is null====");
 
         }
     }
@@ -108,20 +103,20 @@ public class CallHelper {
                 yoCurrentCall.hangup(param);
 
             } else {
-                DialerLogs.messageI(TAG, "YO====Current Call Object is null====");
+                DialerLogs.messageI(TAG, "Current Call Object is null====");
             }
         } catch (Exception exc) {
-            DialerLogs.messageE(TAG, "YO====While End call====" + exc.getMessage());
+            DialerLogs.messageE(TAG, "While End call====" + exc.getMessage());
         }
     }
 
     public static void storeDump(YoCall yoCurrentCall) {
         try {
             String dumpString = yoCurrentCall.dump(true, "");
-            DialerLogs.messageI(TAG, "YO====The call disconnected dump string is====" + dumpString);
+            DialerLogs.messageI(TAG, "The call disconnected dump string is====" + dumpString);
             appendLog(dumpString);
         } catch (Exception e) {
-            DialerLogs.messageE(TAG, "YO====While Store DUMP call====" + e.getMessage());
+            DialerLogs.messageE(TAG, "While Store DUMP call====" + e.getMessage());
         }
     }
 
@@ -131,7 +126,7 @@ public class CallHelper {
             try {
                 logFile.createNewFile();
             } catch (IOException e) {
-                DialerLogs.messageE(TAG, "YO====While Store DUMP appendLog====" + e.getMessage());
+                DialerLogs.messageE(TAG, "While Store DUMP appendLog====" + e.getMessage());
             }
         }
         try {
@@ -141,7 +136,7 @@ public class CallHelper {
             buf.newLine();
             buf.close();
         } catch (IOException e) {
-            DialerLogs.messageE(TAG, "YO====While Store DUMP appendLog====" + e.getMessage());
+            DialerLogs.messageE(TAG, "While Store DUMP appendLog====" + e.getMessage());
         }
     }
 

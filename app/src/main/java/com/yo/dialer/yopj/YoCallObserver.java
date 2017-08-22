@@ -118,10 +118,10 @@ public class YoCallObserver implements YoAppObserver {
                     } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SERVICE_UNAVAILABLE)
                             || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_FOUND)
                             || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_REQUEST_TIMEOUT)) {
-                        Contact contact = new Contact();
-                        contact.setCountryCode("91");
-                        DialerLogs.messageI(TAG, info.getRemoteUri() + "Service not available or user not found so PSTN dialog");
-                        OpponentDetails details = new OpponentDetails(info.getRemoteUri(), contact, CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE);
+                        Contact contact = yoSipService.getCalleeContact();
+                        yoSipService.callDisconnected();
+                        DialerLogs.messageI(TAG, yoSipService.phoneNumber + "Service not available or user not found so PSTN dialog");
+                        OpponentDetails details = new OpponentDetails(contact.getPhoneNo(), contact, CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE);
                         EventBus.getDefault().post(details);
                     } else {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);

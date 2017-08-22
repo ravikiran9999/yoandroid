@@ -203,7 +203,7 @@ public class YODialogs {
             if (callRateDetailList != null) {
                 for (CallRateDetail callRateDetail : callRateDetailList) {
                     String prefix = callRateDetail.getPrefix();
-                    if(countryCode.equals(prefix)) {
+                    if (countryCode.equals(prefix)) {
                         String cRate = callRateDetail.getRate();
                         String cPulse = callRateDetail.getPulse();
                         String pulse;
@@ -249,8 +249,9 @@ public class YODialogs {
                     if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
                         try {
                             stringExtra = stringExtra.substring(stringExtra.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, stringExtra.length() - 1);
-                            SipHelper.makeCall(activity, stringExtra,true);
+                            SipHelper.makeCall(activity, stringExtra, true);
                         } catch (StringIndexOutOfBoundsException e) {
+                            e.printStackTrace();
                         }
                     }
                     //activity.finish();

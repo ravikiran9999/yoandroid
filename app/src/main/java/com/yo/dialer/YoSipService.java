@@ -129,8 +129,18 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private int callType = -1;
-    private String phoneNumber;
+    public String phoneNumber;
     private int callNotificationId;
+
+    public Contact getCalleeContact() {
+        return calleeContact;
+    }
+
+    public void setCalleeContact(Contact calleeContact) {
+        this.calleeContact = calleeContact;
+    }
+
+    private Contact calleeContact;
 
     public YoSipServiceHandler getSipServiceHandler() {
         return sipServiceHandler;
@@ -169,12 +179,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     private void parseIntentInfo(Intent intent) {
         if (intent != null) {
-            DialerLogs.messageI(TAG, "YO========Intent Action===========" + intent.getAction());
+            DialerLogs.messageI(TAG, "Intent Action===========" + intent.getAction());
             if (CallExtras.REGISTER.equals(intent.getAction())) {
-                if (sipServiceHandler == null || (sipServiceHandler != null && sipServiceHandler.getRegistersCount() == 0)) {
-                    DialerLogs.messageI(TAG, "YO========Register Account===========");
-                    register();
-                }
+                DialerLogs.messageI(TAG, "sipServiceHandler===========");
+
+                //   if (sipServiceHandler == null || (sipServiceHandler != null && sipServiceHandler.getRegistersCount() == 0)) {
+                DialerLogs.messageI(TAG, "Registering Account===========");
+                register();
+                //   }
             } else if (CallExtras.UN_REGISTER.equals(intent.getAction())) {
                 if (sipServiceHandler != null && sipServiceHandler.getRegistersCount() > 0) {
                     sipServiceHandler.deleteAccount(yoAccount);
@@ -191,8 +203,11 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     public void rejectCall() {
         stopDefaultRingtone();
-        CallHelper.rejectCall(yoCurrentCall);
-        callDisconnected();
+        DialerLogs.messageE(TAG, "rejectCall==" + yoCurrentCall);
+        if (yoCurrentCall != null) {
+            CallHelper.rejectCall(yoCurrentCall);
+            callDisconnected();
+        }
     }
 
     public void acceptCall() {
@@ -207,7 +222,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     private void makeCall(Intent intent) {
         if (yoCurrentCall == null) {
-            yoCurrentCall = CallHelper.makeCall(this,yoAccount, intent);
+            yoCurrentCall = CallHelper.makeCall(this, yoAccount, intent);
             DialerLogs.messageE(TAG, "YO==makeCalling call...and YOCALL = " + yoCurrentCall);
             showOutgointCallActivity(yoCurrentCall, intent);
         } else {
@@ -295,17 +310,16 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             return;
         }
         phoneNumber = calleeNumber;
-        Contact contact;
         if (isPSTNCall) {
             //TODO: NEED TO THINK FOR BETTER LOGIC
-            contact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, BuildConfig.RELEASE_USER_TYPE + calleeNumber + "D");
+            calleeContact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, BuildConfig.RELEASE_USER_TYPE + calleeNumber + "D");
         } else {
-            contact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, calleeNumber);
+            calleeContact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, calleeNumber);
         }
         intent.putExtra(CallExtras.CALLER_NO, calleeNumber);
-        intent.putExtra(CallExtras.IMAGE, contact.getImage());
-        intent.putExtra(CallExtras.PHONE_NUMBER, contact.getPhoneNo());
-        intent.putExtra(CallExtras.NAME, contact.getName());
+        intent.putExtra(CallExtras.IMAGE, calleeContact.getImage());
+        intent.putExtra(CallExtras.PHONE_NUMBER, calleeContact.getPhoneNo());
+        intent.putExtra(CallExtras.NAME, calleeContact.getName());
         intent.putExtra(CallExtras.IS_PSTN, isPSTNCall);
         //Wait until user profile image is loaded , it should not show blank image
         startActivity(intent);

@@ -9,6 +9,7 @@ import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.VoipConstants;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerConfig;
+import com.yo.dialer.DialerLogs;
 
 /**
  * Created by Ramesh on 14/8/16.
@@ -16,6 +17,7 @@ import com.yo.dialer.DialerConfig;
 public class SipHelper {
     //For pstn calls if user enter + or 0091 the dailer should show the same number, but call will use the number after removing + and 00
     private static String actualNumber;
+    private static final String TAG = SipHelper.class.getSimpleName();
 
     public static void init(String number) {
         actualNumber = number;
@@ -24,6 +26,8 @@ public class SipHelper {
     public static void makeCall(Context mContext, String number, boolean isPSTN) {
 
         Intent intent;
+        DialerLogs.messageI(TAG, "Phone Number while making call " + number);
+
         if (DialerConfig.IS_NEW_SIP) {
             intent = new Intent(CallExtras.MAKE_CALL, null, mContext, com.yo.dialer.YoSipService.class);
             intent.putExtra(CallExtras.CALLER_NO, number);

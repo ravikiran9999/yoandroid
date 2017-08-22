@@ -157,9 +157,9 @@ public class BottomTabsActivity extends BaseActivity {
 
         // Handle application crash
         Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
-        /*if (getIntent().getBooleanExtra("crash", false)) {
-            Toast.makeText(this, "App restarted after crash", Toast.LENGTH_SHORT).show();
-        }*/
+        if (getIntent().getBooleanExtra("crash", false)) {
+            clearNotifications();
+        }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO,
