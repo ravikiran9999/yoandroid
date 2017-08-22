@@ -145,7 +145,7 @@
 
         <RadioGroup
             android:id="@+id/toggle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
@@ -161,7 +161,6 @@
                 android:layout_marginTop="1dp"
                 android:layout_weight="1"
                 android:button="@drawable/toggle_red_background"
-                android:gravity="center"
                 android:paddingLeft="12dp"
                 android:paddingRight="20dp"
                 android:text="@string/male"
@@ -176,7 +175,6 @@
                 android:layout_marginTop="1dp"
                 android:layout_weight="1"
                 android:button="@drawable/toggle_red_background"
-                android:gravity="center"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:text="@string/female"

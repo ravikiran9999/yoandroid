@@ -404,9 +404,12 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         otpReceived = true;
         stopTimer();
         String otp = IncomingSmsReceiver.extractOTP(bundle);
-        this.mPinHiddenEditText.setText(otp);
         if (otp != null) {
-            mPinHiddenEditText.setText(otp);
+
+            for(int i=0; i<otp.length(); i++) {
+                enterText(otp.charAt(i)+"");
+            }
+
             nextBtn.performClick();
         }
     }
