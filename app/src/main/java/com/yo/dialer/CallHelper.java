@@ -50,8 +50,8 @@ public class CallHelper {
                         e.printStackTrace();
                         call.delete();
                         DialerLogs.messageE(TAG, "makeCall==========" + e.getMessage());
-                        sipService.setCurrentCallToNull();
                         sipService.callDisconnected();
+                        sipService.setYoAccount(null);
                         sipService.register();
                         return null;
                     }

@@ -106,13 +106,13 @@ public class YoCallObserver implements YoAppObserver {
             YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
 
             if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+                isRinging = false;
                 yoSipService.setCallAccepted(false);
                 if (YoCallObserver.mContext instanceof YoSipService) {
                     if (info.getLastReason().equalsIgnoreCase("Not Acceptable Here")) {
                         checkMissedCall();
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER);
                         yoSipService.callDisconnected();
-                        isRinging = false;
                     } else if (info.getLastReason().equalsIgnoreCase("Network is unreachable")) {
                         yoSipService.sendNoNetwork();
                     } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SERVICE_UNAVAILABLE)
@@ -123,21 +123,26 @@ public class YoCallObserver implements YoAppObserver {
                         DialerLogs.messageI(TAG, yoSipService.phoneNumber + "Service not available or user not found so PSTN dialog");
                         OpponentDetails details = new OpponentDetails(contact.getPhoneNo(), contact, CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE);
                         EventBus.getDefault().post(details);
+                    } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NEXGE_SERVER_DOWN)) {
+                        yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
+                        yoSipService.callDisconnected();
                     } else {
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
                         yoSipService.callDisconnected();
                     }
                 }
             } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
+                isRinging = false;
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CONNECTED);
                 yoSipService.setCallAccepted(true);
                 if (YoCallObserver.mContext instanceof YoSipService) {
                     yoSipService.callAccepted();
                 }
-            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY && (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_RINGING) || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SESSION_IN_PROGRESS))) {
+            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY && (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_RINGING))) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RINGING);
                 isRinging = true;
             } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
+                isRinging = false;
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CALLING);
             } else {
                 DialerLogs.messageE(TAG, "notifyCallState Other case===========" + info.getState());

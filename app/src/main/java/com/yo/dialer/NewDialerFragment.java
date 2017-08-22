@@ -333,7 +333,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
             }
         } else if (action instanceof OpponentDetails) {
             DialerLogs.messageI(TAG, "Service not available or user not found so PSTN dialog");
-            if (((OpponentDetails) action) != null && ((OpponentDetails) action).getVoxUserName() != null && ((OpponentDetails) action).getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
+            if (((OpponentDetails) action) != null && ((OpponentDetails) action).getContact().getNexgieUserName() != null && ((OpponentDetails) action).getContact().getNexgieUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
                 if (((OpponentDetails) action).getStatusCode() == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
                     YODialogs.redirectToPSTN(bus, getActivity(), ((OpponentDetails) action), preferenceEndPoint, mBalanceHelper, mToastFactory);
                 }

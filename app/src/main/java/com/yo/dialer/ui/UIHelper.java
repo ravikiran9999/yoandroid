@@ -2,6 +2,7 @@ package com.yo.dialer.ui;
 
 import android.content.Context;
 import android.text.format.DateUtils;
+import android.view.View;
 import android.widget.TextView;
 
 import com.yo.android.R;
@@ -41,6 +42,8 @@ class UIHelper {
 
 
     public static void handleCallStatus(Context context, boolean isIncoming, final int callStatus, TextView tvCallStatus, final TextView connectionStatusTxtView) {
+        connectionStatusTxtView.setVisibility(View.VISIBLE);
+        tvCallStatus.setVisibility(View.VISIBLE);
         if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_CALLING) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.calling));
             tvCallStatus.setText(context.getResources().getString(R.string.calling));
@@ -72,6 +75,14 @@ class UIHelper {
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.connecting_status));
             tvCallStatus.setText(context.getResources().getString(R.string.connecting_status));
+        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_UNKNOWN) {
+            if (isIncoming) {
+                connectionStatusTxtView.setText(context.getResources().getString(R.string.incoming));
+                tvCallStatus.setText(context.getResources().getString(R.string.incoming));
+            } else {
+                connectionStatusTxtView.setText(context.getResources().getString(R.string.calling));
+                tvCallStatus.setText(context.getResources().getString(R.string.calling));
+            }
         }
     }
 }

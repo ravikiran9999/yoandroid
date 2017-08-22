@@ -53,7 +53,8 @@ public interface CallExtras {
         public static final String YO_NOT_FOUND = "Not found";
         public static final String YO_RINGING = "Ringing";
         public static final String YO_REQUEST_TIMEOUT = "Request Timeout";
-        public static final String YO_SESSION_IN_PROGRESS = "Session Progress";
+        public static final String YO_NEXGE_SERVER_DOWN = "Connection refused";
+
 
     }
 

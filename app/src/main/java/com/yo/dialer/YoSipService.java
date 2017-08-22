@@ -153,6 +153,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         return new SipBinder(sipServiceHandler);
     }
 
+    public YoAccount getYoAccount() {
+        return yoAccount;
+    }
+
+    public void setYoAccount(YoAccount yoAccount) {
+        this.yoAccount = yoAccount;
+    }
+
     public void register() {
         mediaManager = new MediaManager(this);
         if (yoAccount == null) {
@@ -401,7 +409,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private void updateDisconnectStatus() {
         rejectCall();
         isReconnecting = false;
-        setCurrentCallToNull();
+        callDisconnected();
         mHandler.removeCallbacks(checkNetworkLossRunnable);
     }
 
@@ -540,7 +548,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
             try {
                 yoCurrentCall.hangup(prm);
-
+                 callDisconnected();
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "Call is terminated because app got killed.");
             }

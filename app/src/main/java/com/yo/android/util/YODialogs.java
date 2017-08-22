@@ -29,6 +29,7 @@ import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.vox.BalanceHelper;
+import com.yo.dialer.DialerLogs;
 
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,7 @@ import de.greenrobot.event.EventBus;
  * Created by rajesh on 8/9/16.
  */
 public class YODialogs {
+    public static final String TAG = YODialogs.class.getSimpleName();
 
 
     public static void clearHistory(final Activity activity, final DialerFragment.CallLogClearListener callLogClearListener) {
@@ -180,7 +182,7 @@ public class YODialogs {
     }
 
     public static void redirectToPSTN(final EventBus bus, final Activity activity, final OpponentDetails details, PreferenceEndPoint preferenceEndPoint, BalanceHelper mBalanceHelper, final ToastFactory mToastFactory) {
-
+        DialerLogs.messageI(TAG, "redirectToPSTN Dailog");
 
         if (activity != null) {
 
@@ -243,8 +245,7 @@ public class YODialogs {
             yesBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    alertDialog.dismiss();
-                    String stringExtra = details.getVoxUserName();
+                    String stringExtra = details.getContact().getNexgieUserName();
 
                     if (stringExtra != null && stringExtra.contains(BuildConfig.RELEASE_USER_TYPE)) {
                         try {
@@ -254,6 +255,7 @@ public class YODialogs {
                             e.printStackTrace();
                         }
                     }
+                    alertDialog.dismiss();
                     //activity.finish();
                 }
             });
