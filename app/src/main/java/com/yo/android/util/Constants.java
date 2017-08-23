@@ -44,21 +44,26 @@ public class Constants {
     public static final String YESTERDAY = "Yesterday";
 
     //Preference
+
+    //UserProfile
     public static final String USER_ID = "user_id";
-    public static final String FIREBASE_USER_ID = "firebase_user_id";
     public static final String USER_AVATAR = "user_avatar";
+    public static final String USER_STATUS = "user_status";
+    public static final String FIREBASE_USER_ID = "firebase_user_id";
     public static final String USER_NAME = "first_name";
+    public static final String USER_TYPE = "user_type";
+
+
     public static final String VOX_USER_NAME = "vox_user_name";
     public static final String PASSWORD = "password";
     public static final String CALLINGCARDNUMBER = "calling_card_number";
     public static final String LAST_CONTACTS_SYNC_TIME = "last_contacts_sync_time";
 
 
-    public static final String USER_STATUS = "user_status";
     public static final String PHONE_NUMBER = "phone";
     public static final String CURRENT_BALANCE = "current_balance";
-    public static final String SWITCH_BALANCE = "switch_balance";
     public static final String WALLET_BALANCE = "wallet_balance";
+    public static final String SWITCH_BALANCE = "switch_balance";
     public static final String CURRENCY_SYMBOL = "currency_symbol";
     public static final String SUBSCRIBER_ID = "subscriber_id";
     public static final String DIALER_FILTER = "dialer_filter";

@@ -1,7 +1,9 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -23,7 +26,6 @@ import com.yo.android.R;
 import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
-import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
@@ -34,6 +36,9 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.ResponseBody;
@@ -45,22 +50,73 @@ public class TransferBalanceActivity extends BaseActivity {
 
     private TextDrawable.IBuilder mDrawableBuilder;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
-    private EditText etAmount;
     private String name;
+    private String phoneNo;
+    String profilePic;
     private String id;
+
+    @Bind(R.id.enter_contact_view)
+    RelativeLayout enterNumberView;
+    @Bind(R.id.et_amount)
+    EditText etAmount;
+    @Bind(R.id.et_enter_phone)
+    EditText enteredPhoneNumber;
+    @Bind(R.id.txt_balance)
+    TextView tvBalance;
+    @Bind(R.id.contact_view)
+    RelativeLayout contactNumberView;
+
+    @Bind(R.id.tv_phone_number)
+    TextView tvPhoneNumber;
+    @Bind(R.id.tv_contact_email)
+    TextView tvContactMail;
+    @Bind(R.id.imv_contact_pic)
+    CircleImageView imvProfilePic;
 
 
     @Inject
     protected BalanceHelper mBalanceHelper;
 
-    private TextView tvBalance;
+    //private TextView tvBalance;
     private String currencySymbol;
+
+    public static void start(Activity activity, String currencySymbol, String availableBalance, String fullName, String phoneNo, String userAvatar, String userId, boolean userType) {
+        Intent intent = createIntent(activity, currencySymbol, availableBalance, fullName, phoneNo, userAvatar, userId,  userType);
+        activity.startActivityForResult(intent, 22);
+    }
+
+    public static void start(Activity activity, String currencySymbol, String availableBalance, boolean userType) {
+        Intent intent = createIntent(activity, currencySymbol, availableBalance, userType);
+        activity.startActivityForResult(intent, 22);
+    }
+
+    private static Intent createIntent(Activity activity, String currencySymbol, String availableBalance, String fullName, String phoneNo, String userAvatar, String userId, boolean userType) {
+
+        Intent intent = new Intent(activity, TransferBalanceActivity.class);
+        intent.putExtra(Constants.CURRENT_BALANCE, availableBalance);
+        intent.putExtra(Constants.USER_TYPE, userType);
+        intent.putExtra("currencySymbol", currencySymbol);
+        intent.putExtra(Constants.USER_NAME, fullName);
+        intent.putExtra(Constants.PHONE_NUMBER, phoneNo);
+        intent.putExtra("profilePic", userAvatar);
+        intent.putExtra("id", userId);
+        return intent;
+    }
+
+    private static Intent createIntent(Activity activity, String currencySymbol, String availableBalance, boolean userType) {
+
+        Intent intent = new Intent(activity, TransferBalanceActivity.class);
+        intent.putExtra(Constants.CURRENT_BALANCE, availableBalance);
+        intent.putExtra(Constants.USER_TYPE, userType);
+        intent.putExtra("currencySymbol", currencySymbol);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer_balance);
-
+        ButterKnife.bind(this);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -68,28 +124,33 @@ public class TransferBalanceActivity extends BaseActivity {
 
         getSupportActionBar().setTitle(title);
 
-        String balance = getIntent().getStringExtra("balance");
+        String balance = getIntent().getStringExtra(Constants.CURRENT_BALANCE);
         currencySymbol = getIntent().getStringExtra("currencySymbol");
-        name = getIntent().getStringExtra("name");
-        final String phoneNo = getIntent().getStringExtra("phoneNo");
-        String profilePic = getIntent().getStringExtra("profilePic");
-        id = getIntent().getStringExtra("id");
+        boolean userType = getIntent().getBooleanExtra(Constants.USER_TYPE, false);
 
-        tvBalance = (TextView) findViewById(R.id.txt_balance);
+        if(userType) {
+            enterNumberView.setVisibility(View.VISIBLE);
+            contactNumberView.setVisibility(View.GONE);
+        } else {
+            enterNumberView.setVisibility(View.GONE);
+            contactNumberView.setVisibility(View.VISIBLE);
+            userSelectedFromContacts();
+        }
+
         //tvBalance.setText(String.format("%s%s", MoreFragment.currencySymbolDollar, balance));
         tvBalance.setText(String.format("%s", balance));
 
-        TextView tvPhoneNumber = (TextView) findViewById(R.id.tv_phone_number);
-
-        TextView tvContactMail = (TextView) findViewById(R.id.tv_contact_email);
-
-        CircleImageView imvProfilePic = (CircleImageView) findViewById(R.id.imv_contact_pic);
-
-        Button btnTransfer = (Button) findViewById(R.id.btn_transfer);
-
-        etAmount = (EditText) findViewById(R.id.et_amount);
-
         EventBus.getDefault().register(this);
+
+
+    }
+
+    private void userSelectedFromContacts() {
+
+        name = getIntent().getStringExtra(Constants.USER_NAME);
+        phoneNo = getIntent().getStringExtra(Constants.PHONE_NUMBER);
+        profilePic = getIntent().getStringExtra("profilePic");
+        id = getIntent().getStringExtra("id");
 
         if (!TextUtils.isEmpty(name)) {
             tvPhoneNumber.setText(name);
@@ -106,8 +167,8 @@ public class TransferBalanceActivity extends BaseActivity {
         } else {
             tvContactMail.setVisibility(View.GONE);
         }
-        mDrawableBuilder = TextDrawable.builder()
-                .round();
+        mDrawableBuilder = TextDrawable.builder().round();
+
         if (!TextUtils.isEmpty(profilePic)) {
 
             Glide.with(this)
@@ -134,35 +195,32 @@ public class TransferBalanceActivity extends BaseActivity {
         } else {
             loadAvatarImage(imvProfilePic);
         }
+    }
 
-        btnTransfer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @OnClick(R.id.btn_transfer)
+    public void balanceTransfer() {
+        //Check current balance and call is going on cases before transfer.
+        String amount = etAmount.getText().toString();
+        String phoneNumber = enteredPhoneNumber.getText().toString();
+        String mPhoneNumber = phoneNo != null ? phoneNo : phoneNumber;
+        if (!TextUtils.isEmpty(amount.trim())) {
+            double val = Double.parseDouble(amount.trim());
+            if (val != 0) {
+                if (Double.parseDouble(Util.numberFromNexgeFormat(mBalanceHelper.getCurrentBalance())) > Double.parseDouble(Util.numberFromNexgeFormat(amount))) {
 
-                //Check current balance and call is going on cases before transfer.
-                String amount = etAmount.getText().toString();
+                    showMessageDialog(amount, mBalanceHelper.getCurrentBalance(), mPhoneNumber);
 
-                if (!TextUtils.isEmpty(amount.trim())) {
-                    double val = Double.parseDouble(amount.trim());
-                    if (val != 0) {
-                        if (Double.parseDouble(Util.numberFromNexgeFormat(mBalanceHelper.getCurrentBalance())) > Double.parseDouble(Util.numberFromNexgeFormat(amount))) {
-
-                            showMessageDialog(amount, mBalanceHelper.getCurrentBalance(), phoneNo);
-
-                        } else if(Double.parseDouble(mBalanceHelper.getCurrentBalance()) == Double.parseDouble(amount)) {
-                            showBalanceDialog();
-                        } else {
-                            mToastFactory.showToast(R.string.insufficient_amount);
-                        }
-                    } else {
-                        mToastFactory.showToast(getResources().getString(R.string.enter_valid_amount));
-                    }
+                } else if(Double.parseDouble(mBalanceHelper.getCurrentBalance()) == Double.parseDouble(amount)) {
+                    showBalanceDialog();
                 } else {
-                    mToastFactory.showToast(getResources().getString(R.string.enter_amount_to_transfer));
+                    mToastFactory.showToast(R.string.insufficient_amount);
                 }
-
+            } else {
+                mToastFactory.showToast(getResources().getString(R.string.enter_valid_amount));
             }
-        });
+        } else {
+            mToastFactory.showToast(getResources().getString(R.string.enter_amount_to_transfer));
+        }
     }
 
     private void loadAvatarImage(CircleImageView imvProfilePic) {
@@ -188,10 +246,10 @@ public class TransferBalanceActivity extends BaseActivity {
         }
     }
 
-    private void transferBalance(String amount) {
+    private void transferBalance(String amount, String phoneNo) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
-        yoService.balanceTransferAPI(accessToken, id, amount).enqueue(new Callback<com.yo.android.model.Response>() {
+        yoService.balanceTransferAPI(accessToken, phoneNo, amount).enqueue(new Callback<com.yo.android.model.Response>() {
             @Override
             public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
                 dismissProgressDialog();
@@ -215,8 +273,6 @@ public class TransferBalanceActivity extends BaseActivity {
 
                                     tvTitle.setText("Balance has been transferred successfully to " + "\"" + name + "\".");
                                     if(response.body().getBalance() != null) {
-                                        /*DecimalFormat df = new DecimalFormat("0.000");
-                                        String format = df.format(Double.valueOf(response.body().getBalance()));*/
                                         String remainingBalance = "\"Your Remaining Balance is " + response.body().getBalance() + "\"";
                                         final SpannableString text = new SpannableString(remainingBalance);
                                         text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -264,6 +320,9 @@ public class TransferBalanceActivity extends BaseActivity {
                                 case 614:
                                     mToastFactory.showToast(response.body().getData().toString());
                                     break;
+                                case 616:
+                                    mToastFactory.showToast(response.body().getData().toString());
+                                    break;
                                 default:
                                     mToastFactory.showToast(R.string.transfer_balance_failed);
                                     break;
@@ -299,7 +358,14 @@ public class TransferBalanceActivity extends BaseActivity {
 
         TextView textView = (TextView) view.findViewById(R.id.dialog_content);
         String mAmount = Util.addDenomination(amount, amountWithDenomination);
-        String confirmationText = "Are you sure you want to transfer " + mAmount + " balance to " + name + " with number " + phoneNumber + "?";
+        String confirmationText;
+
+        if(name != null) {
+            confirmationText = getString(R.string.transfer_balance_alert, mAmount, name, phoneNumber);
+        } else{
+            confirmationText = getString(R.string.transfer_balance_alert_number, mAmount, phoneNumber);
+        }
+
         textView.setText(confirmationText);
 
 
@@ -318,7 +384,7 @@ public class TransferBalanceActivity extends BaseActivity {
             public void onClick(View v) {
 
                 alertDialog.dismiss();
-                transferBalance(amount);
+                transferBalance(amount, phoneNumber);
             }
 
         });

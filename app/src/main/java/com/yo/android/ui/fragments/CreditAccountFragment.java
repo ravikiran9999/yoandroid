@@ -28,6 +28,7 @@ import com.yo.android.inapp.UnManageInAppPurchaseActivity;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.denominations.Denominations;
 import com.yo.android.pjsip.YoSipService;
+import com.yo.android.ui.TransferBalanceActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -139,7 +140,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (mBalanceHelper != null && requestCode == 11 && resultCode == Activity.RESULT_OK) {
+        if (mBalanceHelper != null && (requestCode == 11 || requestCode == 22) && resultCode == Activity.RESULT_OK) {
             showProgressDialog();
             mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
                 @Override
@@ -206,9 +207,6 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
         if (activity != null && denominationsList != null) {
             data.add(new MoreData(activity.getString(R.string.your_total_balance), false, balance));
-            //Todo remove these lines as we are not using
-            //data.add(new MoreData(activity.getString(R.string.your_wallet_balance), false, mWBalance));
-            //data.add(new MoreData(activity.getString(R.string.your_switch_balance), false, mSBalance));
             data.add(new MoreData(activity.getString(R.string.add_balance_from_google_play), false, null));
             data.addAll(denominationsList);
             data.add(new MoreData(activity.getString(R.string.add_balance_from_voucher), true, null));
@@ -363,10 +361,12 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 } else {
                     String balance = mBalanceHelper.getCurrentBalance();
                     String currencySymbol = mBalanceHelper.getCurrencySymbol();
-                    Intent intent = new Intent(activity, TransferBalanceSelectContactActivity.class);
-                    intent.putExtra("balance", balance);
-                    intent.putExtra("currencySymbol", currencySymbol);
-                    startActivityForResult(intent, 11);
+                    boolean userType = preferenceEndPoint.getBooleanPreference(Constants.USER_TYPE, false);
+                    if(userType) {
+                        TransferBalanceActivity.start(activity, currencySymbol, balance, true);
+                    } else {
+                        TransferBalanceSelectContactActivity.start(activity, balance, false);
+                    }
                 }
 
             }

@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -54,6 +55,18 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     private TextView noData;
     private LinearLayout llNoPeople;
 
+    public static void start(Activity activity, String availableBalance, boolean userType) {
+        Intent intent = createIntent(activity, availableBalance, userType);
+        activity.startActivityForResult(intent, 11);
+    }
+
+    private static Intent createIntent(Activity activity, String availableBalance, boolean userType) {
+        Intent intent = new Intent(activity, TransferBalanceSelectContactActivity.class);
+        intent.putExtra(Constants.CURRENT_BALANCE, availableBalance);
+        intent.putExtra(Constants.USER_TYPE, userType);
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,8 +93,8 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         listView.setOnItemClickListener(this);
 
         originalList = new ArrayList<>();
-
-        loadUserProfileInfo();
+        handleRepresentative(isRepresentative);
+        //loadUserProfileInfo();
     }
 
     private void loadUserProfileInfo() {
@@ -121,11 +134,12 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     }
 
     private void handleRepresentative(boolean isRepresentative) {
-        if (isRepresentative) {
-            callFindPeopleService();
+        callAppUsersService();
+        /*if (isRepresentative) {
+            //callFindPeopleService();
         } else {
             callAppUsersService();
-        }
+        }*/
     }
 
     private void callFindPeopleService() {
@@ -276,14 +290,13 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         FindPeople contact = (FindPeople) listView.getItemAtPosition(position);
-        Intent intent = new Intent(this, TransferBalanceActivity.class);
-        intent.putExtra("balance", balance);
-        intent.putExtra("currencySymbol", currencySymbol);
-        intent.putExtra("name", contact.getFirst_name() + " " + contact.getLast_name());
-        intent.putExtra("phoneNo", contact.getPhone_no());
-        intent.putExtra("profilePic", contact.getAvatar());
-        intent.putExtra("id", contact.getId());
-        startActivityForResult(intent, 22);
+        String fullName =  contact.getFirst_name() + " " + contact.getLast_name();
+        String phoneNumber = contact.getPhone_no();
+        String userAvatar = contact.getAvatar();
+        String userId = contact.getId();
+        boolean userType = preferenceEndPoint.getBooleanPreference(Constants.USER_TYPE, false);
+
+        TransferBalanceActivity.start(this, currencySymbol, balance, fullName, phoneNumber, userAvatar, userId, userType);
     }
 
     @Override

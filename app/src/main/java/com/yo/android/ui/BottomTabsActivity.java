@@ -642,6 +642,8 @@ public class BottomTabsActivity extends BaseActivity {
                     if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.USER_NAME))) {
                         preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     }
+                    preferenceEndPoint.saveBooleanPreference(Constants.USER_TYPE, response.body().isRepresentative());
+
                 }
             }
 
