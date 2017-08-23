@@ -58,6 +58,18 @@ public class DialerHelper {
         return username;
     }
 
+    public String parsePhoneNumberWithoutCountryCode(String username) {
+        try {
+            DialerLogs.messageE(TAG, "Username for parse Phone number" + username);
+            if (username != null) {
+                return username.substring(username.indexOf(BuildConfig.RELEASE_USER_TYPE) + 8, username.length() - 1);
+            }
+        } catch (StringIndexOutOfBoundsException ex) {
+            DialerLogs.messageE(TAG, "Parsing YO USER EXception " + ex.getMessage());
+        }
+        return username;
+    }
+
     public String getURI(String displayname, String username, String domain) {
         return String.format("\"%s\"<sip:%s@%s>", displayname, username, domain);
     }
@@ -68,6 +80,10 @@ public class DialerHelper {
 
 
     public String getPhoneNumber(YoCall call) {
+        if (call == null) {
+            DialerLogs.messageI(TAG, "YO=======getPhoneNumber Call object is null===");
+            return "";
+        }
         String remoteUriStr = null;
         try {
             remoteUriStr = call.getInfo().getRemoteUri();

@@ -214,7 +214,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         DialerLogs.messageE(TAG, "rejectCall==" + yoCurrentCall);
         if (yoCurrentCall != null) {
             CallHelper.rejectCall(yoCurrentCall);
-            callDisconnected();
         }
     }
 

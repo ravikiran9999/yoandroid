@@ -17,7 +17,7 @@ public class SipProperties {
     private boolean isStunEnable = true;
     private boolean isVad = false;
     private boolean isICE = true;
-    private String displayName = "YO!";
+    private String displayName = null;
     private String stunServer = "stun.pjsip.org";//"34.230.108.83:3479";//
     private boolean isDisplayName = false;
     private String proxyServer = DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP;
