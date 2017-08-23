@@ -444,6 +444,7 @@ public class Helper {
 
     public static String getContactName(Context context, String phoneNumber) {
         String contactName = null;
+        String phNumber = phoneNumber;
         Cursor cursor = null;
         try {
             ContentResolver cr = context.getContentResolver();
@@ -481,7 +482,8 @@ public class Helper {
             }
         }
 
-        return contactName != null? contactName:phoneNumber;
+        //return contactName != null? contactName:phoneNumber;
+        return contactName != null? contactName:"+" + phNumber;
     }
     public static Contact getContactPSTN(Context context,int countrycode, String pstnnumber) {
         if (pstnnumber != null) {
