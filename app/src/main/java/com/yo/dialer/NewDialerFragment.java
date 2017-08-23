@@ -333,9 +333,18 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
             }
         } else if (action instanceof OpponentDetails) {
             DialerLogs.messageI(TAG, "Service not available or user not found so PSTN dialog");
-            if (((OpponentDetails) action) != null && ((OpponentDetails) action).getContact().getNexgieUserName() != null && ((OpponentDetails) action).getContact().getNexgieUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
-                if (((OpponentDetails) action).getStatusCode() == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
-                    YODialogs.redirectToPSTN(bus, getActivity(), ((OpponentDetails) action), preferenceEndPoint, mBalanceHelper, mToastFactory);
+            OpponentDetails opponentDetails = (OpponentDetails) action;
+            if (opponentDetails != null && opponentDetails.getContact().getNexgieUserName() != null && opponentDetails.getContact().getNexgieUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
+                if (opponentDetails.getStatusCode() == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
+                    YODialogs.redirectToPSTN(bus, getActivity(), opponentDetails, preferenceEndPoint, mBalanceHelper, mToastFactory);
+                }
+            } else if (opponentDetails != null && opponentDetails.getVoxUserName() != null) {
+                //This case is phone number is not save in his device bu the callee is voxuser
+                opponentDetails.getContact().setNexgieUserName(opponentDetails.getVoxUserName());
+
+
+                if (opponentDetails.getStatusCode() == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
+                    YODialogs.redirectToPSTN(bus, getActivity(), opponentDetails, preferenceEndPoint, mBalanceHelper, mToastFactory);
                 }
             }
         }

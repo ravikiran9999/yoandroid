@@ -34,6 +34,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-feature
         android:name="android.hardware.sip.voip"
@@ -382,6 +383,15 @@
         <receiver android:name=".app.RestartServiceReceiver">
             <intent-filter>
                 <action android:name="YouWillNeverKillMe" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".networkmanager.StartServiceAtBootReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="StartServiceAtBootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action._BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 

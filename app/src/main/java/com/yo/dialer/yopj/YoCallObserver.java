@@ -6,6 +6,7 @@ import com.yo.android.calllogs.CallLog;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.dialer.CallExtras;
+import com.yo.dialer.CallStateHandler;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.YoSipService;
 
@@ -31,7 +32,6 @@ public class YoCallObserver implements YoAppObserver {
     private static final String TAG = YoCallObserver.class.getSimpleName();
     private static YoCallObserver yoCallObserver;
     private static Context mContext;
-    private boolean isRinging;
 
     public static YoCallObserver getInstance(Context context) {
         mContext = context;
@@ -104,64 +104,12 @@ public class YoCallObserver implements YoAppObserver {
             CallInfo info = call.getInfo();
             DialerLogs.messageI(TAG, "notifyCallState===========State =" + info.getState() + ",Reason" + info.getLastReason());
             YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
-
-            if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
-                isRinging = false;
-                yoSipService.setCallAccepted(false);
-                if (YoCallObserver.mContext instanceof YoSipService) {
-                    if (info.getLastReason().equalsIgnoreCase("Not Acceptable Here")) {
-                        checkMissedCall();
-                        yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER);
-                        yoSipService.callDisconnected();
-                    } else if (info.getLastReason().equalsIgnoreCase("Network is unreachable")) {
-                        yoSipService.sendNoNetwork();
-                    } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SERVICE_UNAVAILABLE)
-                            || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_FOUND)
-                            || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_REQUEST_TIMEOUT)) {
-                        Contact contact = yoSipService.getCalleeContact();
-                        yoSipService.callDisconnected();
-                        DialerLogs.messageI(TAG, yoSipService.phoneNumber + "Service not available or user not found so PSTN dialog");
-                        OpponentDetails details = new OpponentDetails(contact.getPhoneNo(), contact, CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE);
-                        EventBus.getDefault().post(details);
-                    } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NEXGE_SERVER_DOWN)) {
-                        yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
-                        yoSipService.callDisconnected();
-                    } else {
-                        yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
-                        yoSipService.callDisconnected();
-                    }
-                }
-            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
-                isRinging = false;
-                yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CONNECTED);
-                yoSipService.setCallAccepted(true);
-                if (YoCallObserver.mContext instanceof YoSipService) {
-                    yoSipService.callAccepted();
-                }
-            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY && (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_RINGING))) {
-                yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RINGING);
-                isRinging = true;
-            } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
-                isRinging = false;
-                yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CALLING);
-            } else {
-                DialerLogs.messageE(TAG, "notifyCallState Other case===========" + info.getState());
-                yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_UNKNOWN);
-            }
+            CallStateHandler.verify(yoSipService, info);
         } catch (Exception e) {
             DialerLogs.messageE(TAG, "notifyCallState===========" + e.getMessage());
         }
     }
 
-    private void checkMissedCall() {
-        YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
-
-        if (isRinging && yoSipService.getCallType() == CallLog.Calls.INCOMING_TYPE) {
-            isRinging = false;
-            yoSipService.sendMissedCallNotification();
-
-        }
-    }
 
     @Override
     public void notifyCallMediaState(YoCall call) {

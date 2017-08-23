@@ -54,6 +54,8 @@ public interface CallExtras {
         public static final String YO_RINGING = "Ringing";
         public static final String YO_REQUEST_TIMEOUT = "Request Timeout";
         public static final String YO_NEXGE_SERVER_DOWN = "Connection refused";
+        public static final String YO_NOT_ACCEPTABLE_HERE = "Not Acceptable Here";
+        public static final String YO_NETWORK_IS_UNREACHABLE = "Network is unreachable";
 
 
     }

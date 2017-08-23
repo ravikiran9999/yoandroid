@@ -58,17 +58,6 @@ public class DialerHelper {
         return username;
     }
 
-    public String parsePhoneNumberWithoutCountryCode(String username) {
-        try {
-            DialerLogs.messageE(TAG, "Username for parse Phone number" + username);
-            if (username != null) {
-                return username.substring(username.indexOf(BuildConfig.RELEASE_USER_TYPE) + 8, username.length() - 1);
-            }
-        } catch (StringIndexOutOfBoundsException ex) {
-            DialerLogs.messageE(TAG, "Parsing YO USER EXception " + ex.getMessage());
-        }
-        return username;
-    }
 
     public String getURI(String displayname, String username, String domain) {
         return String.format("\"%s\"<sip:%s@%s>", displayname, username, domain);
@@ -161,5 +150,20 @@ public class DialerHelper {
                 .load(imagePath)
                 .downloadOnly(500, 500);
         imageLoadedCallback.onImageLoadComplete(future.get());
+    }
+
+    public static String getCountryCodeFromNexgeUsername(final String calleePhoneNumber) {
+
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        try {
+            // phone must begin with '+'
+            Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + calleePhoneNumber, "");
+            int countryCode = numberProto.getCountryCode();
+            String countryCodeString = countryCode + "";
+            return countryCodeString;
+        } catch (NumberParseException e) {
+            DialerLogs.messageE(TAG, "NumberParseException was thrown: " + e.toString());
+        }
+        return null;
     }
 }

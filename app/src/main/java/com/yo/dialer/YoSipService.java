@@ -475,11 +475,12 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             DialerLogs.messageI(TAG, "Network change listener and state is " + networkstate);
             if (networkstate == NetworkStateListener.NETWORK_CONNECTED) {
                 // Network is connected.
-                DialerLogs.messageI(TAG, "YO========Register Account===========");
+                DialerLogs.messageI(TAG, "YO========Register sipServiceHandler==========="+sipServiceHandler);
                 if (sipServiceHandler != null) {
                     sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING);
+                    DialerLogs.messageI(TAG, "YO========Register yoCurrentCall==========="+yoCurrentCall);
                     if (yoCurrentCall != null) {
-                        DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
+                        DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold()+" and isCallAccepted "+isCallAccepted);
                         if (!isRemoteHold() && isCallAccepted) {
                             reInviteToCheckCalleStatus();
                         }
