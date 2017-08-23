@@ -155,7 +155,7 @@ public class YoSipServiceHandler implements SipServicesListener {
                 .withSipServer(DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT)
                 .withProxyServer(DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP)
                 .withVadEnable(false)
-                .withDisplayName("YO")
+                .withDisplayName(DialerHelper.getInstance(mContext).parsePhoneNumber(username))
                 .showDisplayName(true)
                 .withRegister(DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT)
                 .withUserName(username)
