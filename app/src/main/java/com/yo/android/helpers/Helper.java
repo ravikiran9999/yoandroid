@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AlphabetAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -444,6 +445,7 @@ public class Helper {
 
     public static String getContactName(Context context, String phoneNumber) {
         String contactName = null;
+        String phNumber = phoneNumber;
         Cursor cursor = null;
         try {
             ContentResolver cr = context.getContentResolver();
@@ -481,7 +483,12 @@ public class Helper {
             }
         }
 
-        return contactName != null? contactName:phoneNumber;
+        //return contactName != null? contactName:phoneNumber;
+        if (phoneNumber != null && phoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
+            return contactName != null? contactName:phoneNumber;
+        } else {
+            return contactName != null ? contactName : "+" + phNumber;
+        }
     }
     public static Contact getContactPSTN(Context context,int countrycode, String pstnnumber) {
         if (pstnnumber != null) {

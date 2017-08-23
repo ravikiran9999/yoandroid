@@ -27,7 +27,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "1"
+        versionName "17.3.1.0"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -41,8 +41,8 @@ android {
     productFlavors {
 
         dev {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
             buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
