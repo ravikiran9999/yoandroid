@@ -313,8 +313,8 @@ public class ContactsSyncManager {
         //
         Contact contact = new Contact();
         contact.setId(entryId);
-        //contact.setName(name);
-        contact.setName(getName(name, phone));
+        contact.setName(name);
+        //contact.setName(getName(name, phone));
         contact.setPhoneNo(phone);
         contact.setImage(image);
         contact.setFirebaseRoomId(roomId);

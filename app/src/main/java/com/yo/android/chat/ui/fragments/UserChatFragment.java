@@ -69,7 +69,6 @@ import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.model.Share;
 import com.yo.android.pjsip.SipHelper;
@@ -90,14 +89,9 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import de.greenrobot.event.EventBus;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 import static com.yo.android.util.Util.copyFile;
@@ -923,7 +917,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
-                //listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
                 setSmoothScrollPosition(userChatAdapter, listView);
 
 
@@ -1013,53 +1006,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         }
         forwardInt = 0;
-    }
-
-    // Todo remove this method as we are not creating
-    private void createRoom(final String message, final ChatMessage chatMessage) {
-        String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-        List<String> selectedUsers = new ArrayList<>();
-        selectedUsers.add(opponentId);
-        showProgressDialog();
-        yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
-            @Override
-            public void onResponse(Call<Room> call, Response<Room> response) {
-                dismissProgressDialog();
-                if (response.isSuccessful()) {
-                    Room room = response.body();
-                    if (room.getFirebaseRoomId() != null) {
-                        roomExist = 1;
-                        roomCreationProgress = 0;
-                        roomReference = authReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
-                        registerChildEventListener(roomReference);
-                        childRoomId = room.getFirebaseRoomId();
-                        if (chatForwards != null) {
-                            receiveForward(chatForwards);
-                        } else if (chatMessage != null && childRoomId != null && !TextUtils.isEmpty(childRoomId)) {
-                            chatMessage.setRoomId(childRoomId);
-                            sendChatMessage(chatMessage);
-                        } else {
-                            mToastFactory.showToast(getString(R.string.room_id_not_created));
-                        }
-                        update(opponentNumber, room.getFirebaseRoomId());
-                        EventBus.getDefault().post(Constants.CHAT_ROOM_REFRESH);
-                    }
-                } else {
-                    if (chatText != null) {
-                        //Restore the message if room fails
-                        chatText.setText(message);
-                        roomCreationProgress = 0;
-                        roomExist = 0;
-                        mToastFactory.showToast("Chat initiation failed! Please try again.");
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Room> call, Throwable t) {
-                dismissProgressDialog();
-            }
-        });
     }
 
     public void update(String voxUsername, String roomId) {

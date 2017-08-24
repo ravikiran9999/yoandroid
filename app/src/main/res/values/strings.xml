@@ -226,8 +226,8 @@
     <string name="contacts">Contacts</string>
     <string name="dialer">Dialer</string>
     <string name="magazines">Magazines</string>
-    <string name="terms_and_conditions">Terms and Conditions</string>
-    <string name="tc"><u>Terms and Conditions</u></string>
+    <string name="terms_and_conditions">Privacy policy</string>
+    <string name="tc"><u>Privacy policy</u></string>
     <string name="add_balance_from_google_play">Add balance from Google Play</string>
     <string name="add_balance_from_voucher">Add balance from Voucher</string>
     <string name="transfer_balance">Transfer Balance</string>
@@ -363,6 +363,7 @@
 
     <string name="transfer_balance_alert">Are you sure you want to transfer %1$s balance to %2$s with number %3$s ?</string>
     <string name="transfer_balance_alert_number">Are you sure you want to transfer %1$s balance to %2$s ?</string>
+    <string name="successful_transfer">"Balance has been transferred successfully to %1$s.</string>
 
 
     <!--video-->

@@ -48,12 +48,10 @@ import retrofit2.Response;
 
 public class TransferBalanceActivity extends BaseActivity {
 
-    private TextDrawable.IBuilder mDrawableBuilder;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private String name;
     private String phoneNo;
     String profilePic;
-    private String id;
 
     @Bind(R.id.enter_contact_view)
     RelativeLayout enterNumberView;
@@ -65,7 +63,6 @@ public class TransferBalanceActivity extends BaseActivity {
     TextView tvBalance;
     @Bind(R.id.contact_view)
     RelativeLayout contactNumberView;
-
     @Bind(R.id.tv_phone_number)
     TextView tvPhoneNumber;
     @Bind(R.id.tv_contact_email)
@@ -77,7 +74,6 @@ public class TransferBalanceActivity extends BaseActivity {
     @Inject
     protected BalanceHelper mBalanceHelper;
 
-    //private TextView tvBalance;
     private String currencySymbol;
 
     public static void start(Activity activity, String currencySymbol, String availableBalance, String fullName, String phoneNo, String userAvatar, String userId, boolean userType) {
@@ -137,7 +133,6 @@ public class TransferBalanceActivity extends BaseActivity {
             userSelectedFromContacts();
         }
 
-        //tvBalance.setText(String.format("%s%s", MoreFragment.currencySymbolDollar, balance));
         tvBalance.setText(String.format("%s", balance));
 
         EventBus.getDefault().register(this);
@@ -150,7 +145,7 @@ public class TransferBalanceActivity extends BaseActivity {
         name = getIntent().getStringExtra(Constants.USER_NAME);
         phoneNo = getIntent().getStringExtra(Constants.PHONE_NUMBER);
         profilePic = getIntent().getStringExtra("profilePic");
-        id = getIntent().getStringExtra("id");
+        String id = getIntent().getStringExtra("id");
 
         if (!TextUtils.isEmpty(name)) {
             tvPhoneNumber.setText(name);
@@ -167,7 +162,7 @@ public class TransferBalanceActivity extends BaseActivity {
         } else {
             tvContactMail.setVisibility(View.GONE);
         }
-        mDrawableBuilder = TextDrawable.builder().round();
+        TextDrawable.IBuilder mDrawableBuilder = TextDrawable.builder().round();
 
         if (!TextUtils.isEmpty(profilePic)) {
 
@@ -246,7 +241,7 @@ public class TransferBalanceActivity extends BaseActivity {
         }
     }
 
-    private void transferBalance(String amount, String phoneNo) {
+    private void transferBalance(String amount, final String phoneNo) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         showProgressDialog();
         yoService.balanceTransferAPI(accessToken, phoneNo, amount).enqueue(new Callback<com.yo.android.model.Response>() {
@@ -261,37 +256,8 @@ public class TransferBalanceActivity extends BaseActivity {
                             int statusCode = Integer.parseInt(response.body().getCode());
                             switch (statusCode) {
                                 case 200:
-                                    final AlertDialog.Builder builder = new AlertDialog.Builder(TransferBalanceActivity.this);
-
-                                    LayoutInflater layoutInflater = LayoutInflater.from(TransferBalanceActivity.this);
-                                    final View view = layoutInflater.inflate(R.layout.transfer_balance_dialog, null);
-                                    builder.setView(view);
-
-                                    Button okBtn = (Button) view.findViewById(R.id.yes_btn);
-                                    TextView tvTitle = (TextView) view.findViewById(R.id.dialog_title);
-                                    TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
-
-                                    tvTitle.setText("Balance has been transferred successfully to " + "\"" + name + "\".");
-                                    if(response.body().getBalance() != null) {
-                                        String remainingBalance = "\"Your Remaining Balance is " + response.body().getBalance() + "\"";
-                                        final SpannableString text = new SpannableString(remainingBalance);
-                                        text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                        tvDesc.setText(text);
-                                    }
-
-                                    final AlertDialog alertDialog = builder.create();
-                                    alertDialog.setCancelable(false);
-                                    alertDialog.show();
-
-                                    okBtn.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            alertDialog.dismiss();
-                                            setResult(RESULT_OK);
-                                            finish();
-                                        }
-                                    });
-
+                                    String mName = name != null ? name : phoneNo;
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.successful_transfer, mName));
                                     break;
                                 case 606:
                                     mToastFactory.showToast(response.body().getData().toString());
@@ -440,7 +406,7 @@ public class TransferBalanceActivity extends BaseActivity {
     }
 
     private void showBalanceDialog() {
-        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.cannot_transfer_full_balance)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -448,7 +414,40 @@ public class TransferBalanceActivity extends BaseActivity {
                         dialog.dismiss();
                     }
                 });
-        android.support.v7.app.AlertDialog alert = builder.create();
+        AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void showAlertDialog(String value, String titleMsg) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(TransferBalanceActivity.this);
+
+        LayoutInflater layoutInflater = LayoutInflater.from(TransferBalanceActivity.this);
+        final View view = layoutInflater.inflate(R.layout.transfer_balance_dialog, null);
+        builder.setView(view);
+
+        Button okBtn = (Button) view.findViewById(R.id.yes_btn);
+        TextView tvTitle = (TextView) view.findViewById(R.id.dialog_title);
+        TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
+
+        tvTitle.setText(titleMsg);
+        if(value != null) {
+            String remainingBalance = "\"Your Remaining Balance is " + value + "\"";
+            final SpannableString text = new SpannableString(remainingBalance);
+            text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvDesc.setText(text);
+        }
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
     }
 }
