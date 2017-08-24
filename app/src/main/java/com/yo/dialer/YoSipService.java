@@ -133,6 +133,17 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public String phoneNumber;
     private int callNotificationId;
 
+    public boolean isReInvitePending() {
+        return isReInvitePending;
+    }
+
+    public void setReInvitePending(boolean reInvitePending) {
+        DialerLogs.messageE(TAG, "Making reinvite status to " + reInvitePending);
+        isReInvitePending = reInvitePending;
+    }
+
+    private boolean isReInvitePending = false;
+
     public Contact getCalleeContact() {
         return calleeContact;
     }
@@ -169,6 +180,11 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             yoAccount = sipServiceHandler.addAccount(this);
         } else {
             DialerLogs.messageI(TAG, "Acccount is already registered===========");
+            try {
+                yoAccount.setRegistration(true);
+            } catch (Exception e) {
+                DialerLogs.messageI(TAG, "Acccount registration renewal Failed===========" + e.getMessage());
+            }
         }
     }
 
@@ -275,9 +291,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         if (yoCurrentCall != null) {
             handleBusy(yoCall);
         } else {
+            checkCalleeLossNetwork();
             yoCurrentCall = yoCall;
             startRingtone(); // to play caller ringtone
-            DialerLogs.messageE(TAG, "YO====On Incoming call current call call obj==" + yoCurrentCall);
+            DialerLogs.messageE(TAG, "On Incoming call current call call obj==" + yoCurrentCall);
             triggerNoAnswerIfNotRespond();
             startInComingCallScreen(yoCurrentCall);
         }
@@ -399,7 +416,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     //When callee loss his network there wont be any callback to caller
     //So after 10sec change to reconnecting and  30sec if there are no rtp packets need to disconnect the call.
     public void checkCalleeLossNetwork() {
-        DialerLogs.messageE(TAG, "YO====checkCalleeLossNetwork== calleed");
+        DialerLogs.messageE(TAG, "YO====Starting Checking Network FAILURE== calleed");
 
         if (checkNetworkLossRunnable == null) {
             networkPacketsCheck();
@@ -413,7 +430,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             public void run() {
                 if (yoCurrentCall != null) {
                     DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
-                    if (!isRemoteHold() && !isLocalHold() && isCallAccepted) {
+                    if (!isRemoteHold() && !isLocalHold() && !isReInvitePending()) {
                         reInviteToCheckCalleStatus();
                     }
                 }
@@ -424,12 +441,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void reInviteToCheckCalleStatus() {
-        DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state" + yoCurrentCall);
+        DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state " + yoCurrentCall);
         try {
+            setReInvitePending(true);
             CallHelper.unHoldCall(yoCurrentCall);
         } catch (Exception e) {
             getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RE_CONNECTING);
             DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
+            setReInvitePending(false);
         }
     }
 
