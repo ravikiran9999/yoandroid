@@ -133,16 +133,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public String phoneNumber;
     private int callNotificationId;
 
-    public boolean isReInvitePending() {
-        return isReInvitePending;
-    }
-
-    public void setReInvitePending(boolean reInvitePending) {
-        DialerLogs.messageE(TAG, "Making reinvite status to " + reInvitePending);
-        isReInvitePending = reInvitePending;
-    }
-
-    private boolean isReInvitePending = false;
 
     public Contact getCalleeContact() {
         return calleeContact;
@@ -291,7 +281,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         if (yoCurrentCall != null) {
             handleBusy(yoCall);
         } else {
-            checkCalleeLossNetwork();
             yoCurrentCall = yoCall;
             startRingtone(); // to play caller ringtone
             DialerLogs.messageE(TAG, "On Incoming call current call call obj==" + yoCurrentCall);
@@ -430,7 +419,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             public void run() {
                 if (yoCurrentCall != null) {
                     DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
-                    if (!isRemoteHold() && !isLocalHold() && !isReInvitePending()) {
+                    if (!isRemoteHold() && !isLocalHold() && isCallAccepted()) {
                         reInviteToCheckCalleStatus();
                     }
                 }
@@ -443,12 +432,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private void reInviteToCheckCalleStatus() {
         DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state " + yoCurrentCall);
         try {
-            setReInvitePending(true);
             CallHelper.unHoldCall(yoCurrentCall);
         } catch (Exception e) {
             getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RE_CONNECTING);
             DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
-            setReInvitePending(false);
         }
     }
 
