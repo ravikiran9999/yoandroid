@@ -28,6 +28,7 @@ public interface CallExtras {
     public static final String DISPLAY_NUMBER = "display_number";
     public static final String REGISTRATION_STATUS = "registration_status";
     public static final String CALL_STATE = "call_state";
+    public static final String RE_REGISTERING = "re-registering";
 
 
     public interface StatusCode {
