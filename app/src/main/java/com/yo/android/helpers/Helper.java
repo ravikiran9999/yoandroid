@@ -15,6 +15,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -233,7 +235,7 @@ public class Helper {
 
         Bitmap rotatedBitmap = null;
 
-        switch(orientation) {
+        switch (orientation) {
 
             case ExifInterface.ORIENTATION_ROTATE_90:
                 rotatedBitmap = rotateImage(bitmap, 90);
@@ -257,14 +259,13 @@ public class Helper {
         }
 
 
-
-        if(activity != null) {
+        if (activity != null) {
             Intent intent = new Intent(activity, MainImageCropActivity.class);
-            if(!isFromCameraBitmap) {
+            if (!isFromCameraBitmap) {
                 intent.putExtra(GALLERY_IMAGE_ITEM, path);
                 finalRotatedBitmap = null;
             }
-            if(rotatedBitmap != null) {
+            if (rotatedBitmap != null) {
                 finalRotatedBitmap = rotatedBitmap;
             }
             if (isFromCam) {
@@ -277,7 +278,7 @@ public class Helper {
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
-        if(source != null) {
+        if (source != null) {
             Matrix matrix = new Matrix();
             matrix.postRotate(angle);
             return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
@@ -435,9 +436,22 @@ public class Helper {
         }
     }
 
-    public static String getContactName(Context context, String phoneNumber) {
+    public static String getContactName(Context context, @NonNull String phoneNumber) {
         String contactName = null;
         Cursor cursor = null;
+        String mPhoneNumber;
+
+
+        if (TextUtils.isEmpty(phoneNumber)) {
+            return phoneNumber;
+        }
+
+        if (phoneNumber != null && !phoneNumber.startsWith(context.getString(R.string.plus))) {
+            mPhoneNumber = context.getString(R.string.plus_number, phoneNumber);
+        } else {
+            mPhoneNumber = phoneNumber;
+        }
+
         try {
             ContentResolver cr = context.getContentResolver();
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
@@ -457,7 +471,7 @@ public class Helper {
                 cursor.close();
             }
         }
-        return contactName != null? contactName:phoneNumber;
+        return contactName != null ? contactName : mPhoneNumber;
     }
 
     private static void scaleAndSaveImageInternal(Bitmap bitmap, int w, int h, float photoW, float photoH, float scaleFactor, int quality, boolean cache, boolean scaleAnyway) throws Exception {

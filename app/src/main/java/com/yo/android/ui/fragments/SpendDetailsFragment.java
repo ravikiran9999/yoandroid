@@ -1,6 +1,5 @@
 package com.yo.android.ui.fragments;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
-import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.SpendDetailsViewHolder;
@@ -30,7 +28,6 @@ import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import java.io.InputStreamReader;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -183,10 +180,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             Context context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
 
-            // Inflate the custom layout
             View contactView = inflater.inflate(R.layout.frag_spent_list_row_item, parent, false);
-
-            // Return a new holder instance
             SpendDetailsViewHolder viewHolder = new SpendDetailsViewHolder(contactView);
             return viewHolder;
         }
@@ -208,14 +202,6 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     int minutes = Integer.parseInt(tokens[1]);
                     int seconds = Integer.parseInt(tokens[2]);
                     String duration = "";
-                    /*if (seconds > 30) {
-                        minutes++;
-                    }
-                    if (hours == 0) {
-                        duration = String.format("%02d mins", minutes);
-                    } else {
-                        duration = String.format("%02d hrs %02d mins", hours, minutes);
-                    }*/
 
                     if (hours == 0 && minutes == 0) {
                         duration = String.format("%02d secs", seconds);
@@ -227,12 +213,13 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                         duration = String.format("%02d hrs %02d mins %02d secs", hours, minutes, seconds);
                     }
                     holder.getDuration().setText(duration);
+                } else if (!item.getCalltype().equals(MAGAZINES)) {
+                    String duration = "";
+                    duration = Util.convertSecToHMmSs(Long.parseLong(item.getDuration()));
+                    holder.getDuration().setText(duration);
+
                 } else {
-                    if (!item.getCalltype().equals(MAGAZINES)) {
-                        String duration = "";
-                        duration = Util.convertSecToHMmSs(Long.parseLong(item.getDuration()));
-                        holder.getDuration().setText(duration);
-                    }
+                    holder.getDuration().setText("");
                 }
             } else {
                 holder.getDuration().setText(item.getDuration());
@@ -242,7 +229,8 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             if (phoneName != null) {
                 holder.getTxtPhone().setText(phoneName);
             } else {
-                final ContentResolver resolver = mContext.getContentResolver();
+                // Todo remove this code as we are not using
+                /*final ContentResolver resolver = mContext.getContentResolver();
                 Cursor c = null;
                 try {
                     c = resolver.query(
@@ -268,37 +256,11 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     }
                 } finally {
                     if (c != null) c.close();
-                }
+                }*/
             }
             //holder.getTxtPrice().setText("US $ " + item.getCallcost());
             holder.getTxtPrice().setText(item.getCallcost());
             holder.getTxtReason().setText(item.getCalltype());
-
-            //Todo remove this block
-            //=======================================================================
-            /*try {
-                DecimalFormat df = new DecimalFormat("0.000");
-                String format = df.format(Double.valueOf(item.getCallcost()));
-                holder.getTxtPrice().setText("US $ " + format);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-            //==========================================================================
-
-            /*holder.getArrow().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    item.setArrowDown(!item.isArrowDown());
-                    notifyDataSetChanged();
-                }
-            });
-            if (item.isArrowDown()) {
-                holder.getArrow().setImageResource(R.drawable.ic_downarrow);
-                holder.getDurationContainer().setVisibility(View.VISIBLE);
-            } else {
-                holder.getArrow().setImageResource(R.drawable.ic_uparrow);
-                holder.getDurationContainer().setVisibility(View.GONE);
-            }*/
         }
 
         @Override
@@ -343,7 +305,5 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
             return contactName;
         }
-
     }
-
 }
