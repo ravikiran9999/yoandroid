@@ -28,8 +28,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
+/**
+ * This activity is used to display the list of user's followings
+ */
+public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
     @Inject
     YoApi.YoService yoService;
 
@@ -150,7 +153,7 @@ public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayo
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed  here it is 2
         if (requestCode == 10 && resultCode == RESULT_OK) {
-            if (data != null) {
+            if(data!= null) {
                 showProgressDialog();
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 yoService.getFollowingsAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
@@ -198,6 +201,9 @@ public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayo
         }
     }
 
+    /**
+     * Shows the Empty Data screen
+     */
     public void showEmptyDataScreen() {
         noData.setVisibility(View.GONE);
         llNoPeople.setVisibility(View.VISIBLE);

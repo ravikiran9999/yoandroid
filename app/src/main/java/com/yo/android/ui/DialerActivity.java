@@ -64,7 +64,7 @@ public class DialerActivity extends BaseActivity {
         txtBalance = (TextView) findViewById(R.id.txt_balance);
         txtCallRate = (TextView) findViewById(R.id.txt_call_rate);
         btnCallGreen = (ImageView) findViewById(R.id.btnCall);
-        btnDialer = (ImageView) findViewById(R.id.btnDialer);
+       // btnDialer = (ImageView) findViewById(R.id.btnDialer);
         findViewById(R.id.btnMessage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

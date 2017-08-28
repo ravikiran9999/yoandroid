@@ -319,10 +319,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private void clearNotifications() {
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         if (sipBinder != null) {
-            if (!sipBinder.getHandler().isOnGOingCall()) {
+            /*if (!sipBinder.getHandler().isOnGOingCall()) {
                 mNotificationManager.cancelAll();
                 NotificationCache.clearNotifications();
-            }
+            }*/
         }
     }
 

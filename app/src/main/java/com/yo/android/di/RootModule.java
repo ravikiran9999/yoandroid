@@ -54,6 +54,7 @@ import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.NewMagazineActivity;
+import com.yo.android.ui.NewOTPActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.OtherProfilesFollowers;
 import com.yo.android.ui.OtherProfilesLikedArticles;
@@ -83,6 +84,7 @@ import com.yo.android.ui.fragments.InviteActivity;
 import com.yo.android.ui.fragments.InviteFriendsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.ui.fragments.NewOTPFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.ui.fragments.WebViewFragment;
@@ -98,6 +100,12 @@ import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
 import com.yo.android.voip.Receiver;
 import com.yo.android.voip.SipService;
+import com.yo.dialer.DialerHelper;
+import com.yo.dialer.NewDialerFragment;
+import com.yo.dialer.ui.IncomingCallActivity;
+import com.yo.dialer.ui.OutgoingCallActivity;
+import com.yo.dialer.yopj.YoSipServiceHandler;
+import com.yo.services.BackgroundServices;
 
 import javax.inject.Singleton;
 
@@ -153,6 +161,7 @@ import dagger.Provides;
                 UserProfileActivity.class,
                 CountryCodeActivity.class,
 
+
                 InviteActivity.class,
                 AccountDetailsActivity.class,
                 OthersProfileMagazines.class,
@@ -165,6 +174,9 @@ import dagger.Provides;
                 TransferBalanceSelectContactActivity.class,
                 TransferBalanceActivity.class,
                 PlainActivity.class,
+                NewOTPActivity.class,
+                IncomingCallActivity.class,
+                OutgoingCallActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -190,6 +202,8 @@ import dagger.Provides;
                 FollowingsFragment.class,
                 GeneralWebViewFragment.class,
                 WebViewFragment.class,
+                NewOTPFragment.class,
+                NewDialerFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,
@@ -213,6 +227,11 @@ import dagger.Provides;
                 Util.class,
                 FetchNewArticlesService.class,
                 CountryCodeListAdapter.class,
+                BackgroundServices.class,
+
+                com.yo.dialer.YoSipService.class,
+                YoSipServiceHandler.class,
+                DialerHelper.class
 
                 //usecases
                 WebserviceUsecase.class,

@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.flurry.android.FlurryAgent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -63,6 +64,7 @@ import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 import com.yo.android.voip.VoipConstants;
+import com.yo.dialer.CallExtras;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -70,7 +72,9 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -125,6 +129,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     private TextView profileStatus;
     private boolean isSharedPreferenceShown;
 
+    public static final String currencySymbolDollar = " US $";
+    private static final String currencySymbolDollarNoSpace = "US $";
+    private boolean isEventLogged;
+
     public MoreFragment() {
         // Required empty public constructor
     }
@@ -134,6 +142,22 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+        if(!isEventLogged) {
+            if (getActivity() instanceof BottomTabsActivity) {
+                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                if (activity.getFragment() instanceof MoreFragment) {
+                    // Capture user id
+                    Map<String, String> profileParams = new HashMap<String, String>();
+                    String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                    //param keys and values have to be of String type
+                    profileParams.put("UserId", userId);
+
+                    FlurryAgent.logEvent("Profile", profileParams, true);
+                }
+
+            }
+        }
     }
 
     @Override
@@ -368,6 +392,13 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                             //  23	Data is missing in dialer screen once user logouts & login again  - Fixed
                             //  CallLog.Calls.clearCallHistory(getActivity());
                         }
+
+                        //Delete user from PJSIP
+                        Intent service = new Intent(getActivity(), com.yo.dialer.YoSipService.class);
+                        service.setAction(CallExtras.UN_REGISTER);
+                        getActivity().startService(service);
+
+
                         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
                         int deleteContacts = getActivity().getContentResolver().delete(uri, null, null);
                         mLog.i("MoreFragment", "Deleted contacts >>>>%d", deleteContacts);
@@ -544,6 +575,18 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+
+            if(preferenceEndPoint != null) {
+                // Capture user id
+                Map<String, String> profileParams = new HashMap<String, String>();
+                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                //param keys and values have to be of String type
+                profileParams.put("UserId", userId);
+
+                FlurryAgent.logEvent("Profile", profileParams, true);
+                isEventLogged = true;
+            }
+
             if (getActivity() instanceof BottomTabsActivity) {
                 BottomTabsActivity activity = (BottomTabsActivity) getActivity();
                 if (activity.getFragment() instanceof MoreFragment) {

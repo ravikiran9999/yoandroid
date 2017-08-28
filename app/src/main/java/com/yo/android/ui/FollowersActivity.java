@@ -28,6 +28,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to display the list of the user's followers
+ */
 public class FollowersActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     @Bind(R.id.lv_find_people)
@@ -154,7 +157,7 @@ public class FollowersActivity extends BaseActivity implements SwipeRefreshLayou
                 yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
                     @Override
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                        if (response != null && response.body() != null && response.body().size() > 0) {
+                        if (response!=null && response.body()!=null && response.body().size() > 0) {
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.GONE);
                             lvFindPeople.setVisibility(View.VISIBLE);

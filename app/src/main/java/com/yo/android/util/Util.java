@@ -44,6 +44,8 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
@@ -67,9 +69,12 @@ import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.vox.BalanceHelper;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -103,6 +108,7 @@ public class Util {
     private static final int SIX = 6;
     public static final String ServerTimeStamp = "serverTimeStamp";
     public static final String ServerTimeStampReceived = "serverTimeStampReceived";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     public static <T> int createNotification(Context context, String title, String body, Class<T> clzz, Intent intent) {
         return createNotification(context, title, body, clzz, intent, true);
@@ -640,9 +646,7 @@ public class Util {
                     target.setPackage(candidate.activityInfo.packageName);
                     targets.add(target);
 
-                } /*else if (packageName.equals("com.yo.android")) {
-                    // Hiding Yo app to show in share view
-                }*/ else {
+                } else {
                     Intent target = new Intent(android.content.Intent.ACTION_SEND);
                     target.setType("image/*");
                     target.putExtra(Intent.EXTRA_SUBJECT, title);
@@ -976,6 +980,42 @@ public class Util {
             return String.format("%s %s", "IN Rs", amount);
         }
     }
+
+    public static void appendLog(String text) {
+        File logFile = new File("sdcard/calldump.file");
+        if (!logFile.exists()) {
+            try {
+                logFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            //BufferedWriter for performance, true to set append to file flag
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(text);
+            buf.newLine();
+            buf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean checkPlayServices(Context context) {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(context);
+        if (result != ConnectionResult.SUCCESS) {
+            if (googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog((Activity) context, result,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+}
 
     public static void initBar(SeekBar bar, final AudioManager audioManager, final int stream) {
         bar.setMax(audioManager.getStreamMaxVolume(stream));

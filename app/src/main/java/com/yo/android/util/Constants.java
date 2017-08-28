@@ -62,8 +62,6 @@ public class Constants {
 
     public static final String PHONE_NUMBER = "phone";
     public static final String CURRENT_BALANCE = "current_balance";
-    public static final String WALLET_BALANCE = "wallet_balance";
-    public static final String SWITCH_BALANCE = "switch_balance";
     public static final String CURRENCY_SYMBOL = "currency_symbol";
     public static final String SUBSCRIBER_ID = "subscriber_id";
     public static final String DIALER_FILTER = "dialer_filter";
@@ -146,6 +144,7 @@ public class Constants {
     public static String BALANCE_UPDATED_ACTION = "com.balance.BALANCEUPDATED";
     public static String CALL_RATE_DETAILS_ACTION = "com.callrates.CALLRATEDETAILS";
     public static String BALANCE_RECHARGE_ACTION = "com.balance.BALANCERECHARGE";
+    public static String FINISH_LOGIN_ACTIVITY_ACTION = "com.finish.LOGINACTIVITY";
 
     // Contacts
     public static final String NUMBER = "number";
@@ -181,10 +180,9 @@ public class Constants {
 
     public static final String FAILED = "FAILED";
     public static final String BALANCE = "Balance";
-    public static final String S_BALANCE = "SwitchBalance";
-    public static final String W_BALANCE = "WalletBalance";
     public static final String LOW_BALANCE_NOTIFICATION_TIME = "low_bal_time";
     public static final long LOW_BALANCE_NOTIFICATION_FREQUENCY = 24 * 60 * 60 * 1000;
+    public static final String FLURRY_API_KEY = "VZPC24G2HP8Q7V74Z25Y";
 
     public static final String MAGAZINE_LOCK = "magazine_lock";
     public static final String DIALER_LOCK = "dialer_lock";

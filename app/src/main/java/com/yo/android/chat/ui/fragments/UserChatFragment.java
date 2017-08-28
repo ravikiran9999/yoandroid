@@ -49,6 +49,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
+import com.flurry.android.FlurryAgent;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -470,6 +471,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.send) {
+
+            // Capture user id
+            Map<String, String> chattingParams = new HashMap<String, String>();
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            //param keys and values have to be of String type
+            chattingParams.put("UserId", userId);
+
+            FlurryAgent.logEvent("Chatting", chattingParams);
+
             String message = chatText.getText().toString().trim();
             sendChatMessage(message, Constants.TEXT);
             if (chatText.getText() != null) {
@@ -594,7 +604,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     RoomInfo roomInfo = dataSnapshot.getValue(RoomInfo.class);
-                    if (roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_INACTIVE)) {
+                    if (roomInfo != null && roomInfo.getStatus().equalsIgnoreCase(Constants.ROOM_STATUS_INACTIVE)) {
                         roomInfo.setStatus(Constants.ROOM_STATUS_ACTIVE);
                         Map<String, Object> updateRoomStatusMap = new ObjectMapper().convertValue(roomInfo, Map.class);
                         roomInfoReference.updateChildren(updateRoomStatusMap);

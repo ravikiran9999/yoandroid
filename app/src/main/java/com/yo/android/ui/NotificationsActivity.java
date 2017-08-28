@@ -34,6 +34,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to display the list of Notifications
+ */
 public class NotificationsActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener{
 
     @Bind(R.id.lv_notifications)

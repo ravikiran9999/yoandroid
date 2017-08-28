@@ -27,35 +27,32 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
- * Created by rajesh on 27/8/16.
+ * Created by Rajesh Babu on 27/8/16.
  */
 public class ReCreateService extends Service {
     protected static PreferenceEndPoint preferenceEndPoint;
     private static ReCreateService reCreateServiceIns;
-    private Context context;
-    String username;
-    String password;
 
     public static ReCreateService getInstance(Context context) {
         if (reCreateServiceIns == null) {
             reCreateServiceIns = new ReCreateService();
             preferenceEndPoint = new PreferenceEndPointImpl(context, "login");
-            reCreateServiceIns.context = context;
         }
         return reCreateServiceIns;
     }
 
 
     private static SipBinder sipBinder;
-    private Handler mHandler = new Handler();
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            sipBinder = (SipBinder) service;
+            if (service instanceof SipBinder) {
+                sipBinder = (SipBinder) service;
+                sipBinder.getYOHandler().addAccount(ReCreateService.this);
+            }
             Log.w("ReCreateService", "Created account addAccount onServiceConnected...." + sipBinder);
 
-            addAccount();
         }
 
         @Override
@@ -66,39 +63,12 @@ public class ReCreateService extends Service {
         }
     };
 
-    public void start(Context context) {
-    }
-
-    private void addAccount() {
-        Log.e("YOService-Recreate", preferenceEndPoint + "");
-
-        SipProfile sipProfile = new SipProfile.Builder()
-                .withUserName(username)
-                //.withUserName("64728474")
-                //.withUserName("7032427")
-                //.withUserName("64724865")
-                //.withUserName("603703")
-                .withPassword(password)
-                //     .withPassword("534653")
-                //.withPassword("@pa1ra2di3gm")
-                //.withPassword("823859")
-                //.withPassword("@pa1ra2di3gm")
-                //       .withServer("209.239.120.239")
-                .withServer("173.82.147.172")
-                .build();
-        sipBinder.getHandler().createSipService(sipProfile);
-
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            username = intent.getStringExtra(Constants.VOX_USER_NAME);
-            password = intent.getStringExtra(Constants.PASSWORD);
-            bindService(new Intent(this, YoSipService.class), connection, Context.BIND_AUTO_CREATE);
+            bindService(new Intent(this, com.yo.dialer.YoSipService.class), connection, Context.BIND_AUTO_CREATE);
         }
-        Log.w("ReCreateService", "Created account  onStartCommand " + username + "......" + password);
-
+        Log.w("ReCreateService", "Created account  onStartCommand ");
         return START_STICKY;
     }
 
@@ -107,6 +77,4 @@ public class ReCreateService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-
-
 }

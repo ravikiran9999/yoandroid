@@ -1,0 +1,719 @@
+package com.yo.dialer;
+
+import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Vibrator;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.widget.Toast;
+
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import com.orion.android.common.logging.Logger;
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ToastFactory;
+import com.yo.android.BuildConfig;
+import com.yo.android.R;
+import com.yo.android.calllogs.CallLog;
+import com.yo.android.calllogs.CallerInfo;
+import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.di.InjectedService;
+import com.yo.android.model.Contact;
+import com.yo.android.networkmanager.NetworkStateChangeListener;
+import com.yo.android.networkmanager.NetworkStateListener;
+import com.yo.android.pjsip.MediaManager;
+import com.yo.android.pjsip.SipBinder;
+import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
+import com.yo.dialer.ui.IncomingCallActivity;
+import com.yo.dialer.ui.OutgoingCallActivity;
+import com.yo.dialer.yopj.YoAccount;
+import com.yo.dialer.yopj.YoCall;
+import com.yo.dialer.yopj.YoSipServiceHandler;
+import com.yo.feedback.AppFailureReport;
+
+import org.pjsip.pjsua2.CallOpParam;
+import org.pjsip.pjsua2.pjsip_status_code;
+
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+
+/**
+ * Created by Rajesh Babu on 11/7/17.
+ */
+
+public class YoSipService extends InjectedService implements IncomingCallListener {
+    private static final String TAG = YoSipService.class.getSimpleName();
+    private static final int NO_RTP_DISCONNECT_DURATION = 15000;
+    private static final int INITIAL_CONNECTION_DURATION = 30000;
+    private static final long NO_ANSWER_TRIGGER_DURATION = 45000;
+
+    private YoSipServiceHandler sipServiceHandler;
+    private YoAccount yoAccount;
+    private boolean isReconnecting = false;
+    private Runnable checkNetworkLossRunnable;
+    private boolean isRemoteHold = false;
+    private boolean isLocalHold = false;
+
+    private boolean isCallAccepted;
+
+    //To play Ringtone
+    private MediaPlayer mRingTone;
+    private AudioManager mAudioManager;
+    private Vibrator mVibrator;
+    private Uri mRingtoneUri;
+    private static final long[] VIBRATOR_PATTERN = {0, 1000, 1000};
+
+
+    public boolean isLocalHold() {
+        return isLocalHold;
+    }
+
+    public void setLocalHold(boolean localHold) {
+        isLocalHold = localHold;
+    }
+
+    public boolean isCallAccepted() {
+        return isCallAccepted;
+    }
+
+    public void setCallAccepted(boolean callAccepted) {
+        isCallAccepted = callAccepted;
+    }
+
+
+    public boolean isRemoteHold() {
+        return isRemoteHold;
+    }
+
+    public void setRemoteHold(boolean remoteHold) {
+        isRemoteHold = remoteHold;
+    }
+
+    public PreferenceEndPoint getPreferenceEndPoint() {
+        return preferenceEndPoint;
+    }
+
+    @Inject
+    @Named("login")
+    protected PreferenceEndPoint preferenceEndPoint;
+    @Inject
+    ToastFactory mToastFactory;
+
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
+    //Media Manager to handle audio related events.
+    private MediaManager mediaManager;
+
+    //Maintain current makeCall Object
+    private static YoCall yoCurrentCall;
+    private Handler mHandler = new Handler();
+    private long callStarted;
+
+    public int getCallType() {
+        return callType;
+    }
+
+    public void setCallType(int callType) {
+        this.callType = callType;
+    }
+
+    private int callType = -1;
+    public String phoneNumber;
+    private int callNotificationId;
+
+
+    public Contact getCalleeContact() {
+        return calleeContact;
+    }
+
+    public void setCalleeContact(Contact calleeContact) {
+        this.calleeContact = calleeContact;
+    }
+
+    private Contact calleeContact;
+
+    public YoSipServiceHandler getSipServiceHandler() {
+        return sipServiceHandler;
+    }
+
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new SipBinder(sipServiceHandler);
+    }
+
+    public YoAccount getYoAccount() {
+        return yoAccount;
+    }
+
+    public void setYoAccount(YoAccount yoAccount) {
+        this.yoAccount = yoAccount;
+    }
+
+    public void register() {
+        mediaManager = new MediaManager(this);
+        if (yoAccount == null) {
+            sipServiceHandler = YoSipServiceHandler.getInstance(this, preferenceEndPoint);
+            yoAccount = sipServiceHandler.addAccount(this);
+        } else {
+            DialerLogs.messageI(TAG, "Acccount is already registered===========");
+            try {
+                yoAccount.setRegistration(true);
+            } catch (Exception e) {
+                DialerLogs.messageI(TAG, "Acccount registration renewal Failed===========" + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        NetworkStateListener.registerNetworkState(listener);
+        parseIntentInfo(intent);
+        initializeMediaPalyer();
+        return START_STICKY;
+    }
+
+    private void initializeMediaPalyer() {
+        mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(YoSipService.this, RingtoneManager.TYPE_RINGTONE);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    }
+
+    private void parseIntentInfo(Intent intent) {
+        if (intent != null) {
+            DialerLogs.messageI(TAG, "Intent Action===========" + intent.getAction());
+            if (CallExtras.REGISTER.equals(intent.getAction())) {
+                DialerLogs.messageI(TAG, "sipServiceHandler===========");
+
+                //   if (sipServiceHandler == null || (sipServiceHandler != null && sipServiceHandler.getRegistersCount() == 0)) {
+                DialerLogs.messageI(TAG, "Registering Account===========");
+                register();
+                //   }
+            } else if (CallExtras.UN_REGISTER.equals(intent.getAction())) {
+                if (sipServiceHandler != null && sipServiceHandler.getRegistersCount() > 0) {
+                    sipServiceHandler.deleteAccount(yoAccount);
+                }
+            } else if (CallExtras.MAKE_CALL.equals(intent.getAction())) {
+                makeCall(intent);
+            } else if (CallExtras.ACCEPT_CALL.equals(intent.getAction())) {
+                acceptCall();
+            } else if (CallExtras.REJECT_CALL.equals(intent.getAction())) {
+                rejectCall();
+            }
+        }
+    }
+
+    public void rejectCall() {
+        stopDefaultRingtone();
+        DialerLogs.messageE(TAG, "rejectCall==" + yoCurrentCall);
+        if (yoCurrentCall != null) {
+            CallHelper.rejectCall(yoCurrentCall);
+        }
+    }
+
+    public void acceptCall() {
+        stopDefaultRingtone();
+        try {
+            CallHelper.accetpCall(yoCurrentCall);
+            checkCalleeLossNetwork();
+        } catch (Exception e) {
+            DialerLogs.messageE(TAG, "YO===Accepting call ==" + e.getMessage());
+        }
+    }
+
+    private void makeCall(Intent intent) {
+        String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
+
+        if (yoCurrentCall == null) {
+            yoCurrentCall = CallHelper.makeCall(this, yoAccount, intent);
+            DialerLogs.messageE(TAG, "YO==makeCalling call...and YOCALL = " + yoCurrentCall);
+            if (yoCurrentCall != null) {
+                showOutgointCallActivity(yoCurrentCall, intent);
+                AppFailureReport.sendSuccessDetails("Showing outgoing call screen:" + username);
+            } else {
+                if (intent != null && intent.hasExtra(CallExtras.RE_REGISTERING)) {
+                    //Re-tried but agian problem.
+                    AppFailureReport.sendDetails("Making call failed, try to delete account but still issue, restart app required. :" + username);
+                    return;
+                } else {
+                    AppFailureReport.sendDetails("Problem with Current call object, so deleting account and re-register and calling agian.:" + username);
+                    if (yoAccount != null) {
+                        yoAccount.delete();
+                        yoAccount = null;
+                        register();
+                        if (intent != null) {
+                            intent.putExtra(CallExtras.RE_REGISTERING, true);
+                        }
+                        makeCall(intent);
+                    } else {
+                        AppFailureReport.sendDetails("While Making call failed to create Account object and Call Object :" + username);
+                    }
+                }
+            }
+        } else {
+            AppFailureReport.sendDetails("Previous call is not properly ended:" + username);
+            DialerLogs.messageE(TAG, "Previous call is not properly ended" + yoCurrentCall);
+            yoCurrentCall.delete();
+            setCurrentCallToNull();
+            makeCall(intent);
+        }
+    }
+
+    private void showOutgointCallActivity(YoCall yoCall, Intent intent) {
+        showCallUI(yoCall, true, intent.getBooleanExtra(CallExtras.IS_PSTN, false));
+    }
+
+    @Override
+    public void OnIncomingCall(YoCall yoCall) {
+        if (yoCurrentCall != null) {
+            handleBusy(yoCall);
+        } else {
+            yoCurrentCall = yoCall;
+            startRingtone(); // to play caller ringtone
+            DialerLogs.messageE(TAG, "On Incoming call current call call obj==" + yoCurrentCall);
+            triggerNoAnswerIfNotRespond();
+            startInComingCallScreen(yoCurrentCall);
+        }
+
+    }
+
+    private void triggerNoAnswerIfNotRespond() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                sendNoAnswer();
+            }
+        };
+        mHandler.postDelayed(runnable, NO_ANSWER_TRIGGER_DURATION);
+    }
+
+    private void sendNoAnswer() {
+        DialerLogs.messageE(TAG, "YO====sendNoAnswer==" + isCallAccepted());
+
+        if (!isCallAccepted() && yoCurrentCall != null) {
+            CallOpParam prm = new CallOpParam(true);
+            prm.setStatusCode(pjsip_status_code.PJSIP_SC_NOT_ACCEPTABLE_HERE);
+            try {
+                yoCurrentCall.answer(prm);
+                //callDisconnected();
+            } catch (Exception e) {
+                DialerLogs.messageE(TAG, "sendNoAnswer== " + e.getMessage());
+            }
+        }
+    }
+
+    private void startInComingCallScreen(final YoCall yoCall) {
+        showCallUI(yoCall, false, false);
+    }
+
+    private void showCallUI(YoCall yoCall, boolean isOutgongCall, boolean isPSTNCall) {
+        Intent intent;
+        DialerLogs.messageE(TAG, "YO====showCallUI== isOutgoingcall" + isOutgongCall);
+        if (isOutgongCall) {
+            callType = CallLog.Calls.OUTGOING_TYPE;
+            int regStatus = preferenceEndPoint.getIntPreference(CallExtras.REGISTRATION_STATUS);
+            if (regStatus == CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE) {
+                showToast(getResources().getString(R.string.calls_no_network));
+                return;
+            } else if (regStatus == CallExtras.StatusCode.YO_REQUEST_TIME_OUT) {
+                showToast(getResources().getString(R.string.request_timeout));
+                return;
+            } else {
+                intent = new Intent(YoSipService.this, OutgoingCallActivity.class);
+                //PSTN Call it will play ringtone from IVR
+                if (!isPSTNCall) {
+                    startDefaultRingtone(1);
+                }
+            }
+        } else {
+            callType = CallLog.Calls.INCOMING_TYPE;
+            intent = new Intent(YoSipService.this, IncomingCallActivity.class);
+        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
+        if (calleeNumber == null) {
+            callDisconnected();
+            sipServiceHandler.callDisconnected();
+            sipServiceHandler.sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_NO_NETWORK));
+            return;
+        }
+        phoneNumber = calleeNumber;
+        if (isPSTNCall) {
+            //TODO: NEED TO THINK FOR BETTER LOGIC
+            calleeContact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, BuildConfig.RELEASE_USER_TYPE + calleeNumber + "D");
+        } else {
+            calleeContact = DialerHelper.getInstance(YoSipService.this).readCalleeDetailsFromDB(mContactsSyncManager, calleeNumber);
+        }
+        intent.putExtra(CallExtras.CALLER_NO, calleeNumber);
+        intent.putExtra(CallExtras.IMAGE, calleeContact.getImage());
+        intent.putExtra(CallExtras.PHONE_NUMBER, calleeContact.getPhoneNo());
+        intent.putExtra(CallExtras.NAME, calleeContact.getName());
+        intent.putExtra(CallExtras.IS_PSTN, isPSTNCall);
+        //Wait until user profile image is loaded , it should not show blank image
+        startActivity(intent);
+        sendNotification(intent, isOutgongCall);
+        //Check if no response from the calle side need to disconnect the call.
+        // checkCalleeLossNetwork();
+
+
+    }
+
+    private void showToast(final String string) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mToastFactory.showToast(string);
+            }
+        });
+    }
+
+    private void sendNotification(Intent intent, boolean isOutgongCall) {
+        Class classs = null;
+        String title = null;
+
+        if (isOutgongCall) {
+            classs = OutgoingCallActivity.class;
+            title = "Outgoing call";
+        } else {
+            classs = IncomingCallActivity.class;
+            title = "Incoming call";
+        }
+
+        if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
+            callNotificationId = Util.createNotification(this, phoneNumber, title, classs, intent);
+        }
+    }
+
+    public void setCurrentCallToNull() {
+        yoCurrentCall = null;
+    }
+
+
+    //When callee loss his network there wont be any callback to caller
+    //So after 10sec change to reconnecting and  30sec if there are no rtp packets need to disconnect the call.
+    public void checkCalleeLossNetwork() {
+        DialerLogs.messageE(TAG, "YO====Starting Checking Network FAILURE== calleed");
+
+        if (checkNetworkLossRunnable == null) {
+            networkPacketsCheck();
+        }
+        mHandler.postDelayed(checkNetworkLossRunnable, INITIAL_CONNECTION_DURATION);
+    }
+
+    private void networkPacketsCheck() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (yoCurrentCall != null) {
+                    DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
+                    if (!isRemoteHold() && !isLocalHold() && isCallAccepted()) {
+                        reInviteToCheckCalleStatus();
+                    }
+                }
+                mHandler.postDelayed(checkNetworkLossRunnable, NO_RTP_DISCONNECT_DURATION);
+            }
+        };
+        checkNetworkLossRunnable = runnable;
+    }
+
+    private void reInviteToCheckCalleStatus() {
+        DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state " + yoCurrentCall);
+        try {
+            CallHelper.unHoldCall(yoCurrentCall);
+        } catch (Exception e) {
+            getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RE_CONNECTING);
+            DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
+        }
+    }
+
+    private void updateDisconnectStatus() {
+        rejectCall();
+        isReconnecting = false;
+        callDisconnected();
+        mHandler.removeCallbacks(checkNetworkLossRunnable);
+    }
+
+    public int getCallDurationInSec() {
+        if (yoCurrentCall != null) {
+            try {
+                int mSec = yoCurrentCall.getInfo().getConnectDuration().getSec();
+                return mSec;
+            } catch (Exception e) {
+                DialerLogs.messageE(TAG, "YO==getCallDurationInSec===" + e.getMessage());
+            }
+        }
+        return 0;
+    }
+
+    // this is for registration fail case, there we cant get call state from yocall object
+    public void setCallStatus(int status) {
+        getSipServiceHandler().updateWithCallStatus(status);
+    }
+
+
+    public void setHold(boolean isHold) {
+        DialerLogs.messageE(TAG, "Call HOld" + isHold);
+        if (isHold) {
+            CallHelper.holdCall(yoCurrentCall);
+        } else {
+            try {
+                CallHelper.unHoldCall(yoCurrentCall);
+            } catch (Exception e) {
+                DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
+                //Disconnect the call;
+                updateDisconnectStatus();
+            }
+        }
+    }
+
+    public void setMic(boolean flag) {
+        CallHelper.setMute(YoSipServiceHandler.getYoApp(), yoCurrentCall, flag);
+    }
+
+    public void callDisconnected() {
+        setCurrentCallToNull();
+        //If the call is rejected should stop rigntone
+        stopDefaultRingtone();
+        DialerLogs.messageE(TAG, "callDisconnected");
+        storeCallLog(phoneNumber);
+        Util.cancelNotification(this, callNotificationId);
+        if (sipServiceHandler != null) {
+            sipServiceHandler.callDisconnected();
+        } else {
+            DialerLogs.messageE(TAG, "SipServiceHandler is null");
+        }
+    }
+
+    public void callAccepted() {
+        //Callee accepted call so stop ringtone.
+        stopDefaultRingtone();
+        callStarted = System.currentTimeMillis();
+        sipServiceHandler.sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_ACCEPTED));
+    }
+
+    NetworkStateChangeListener listener = new NetworkStateChangeListener() {
+        public void onNetworkStateChanged(final int networkstate) {
+            DialerLogs.messageI(TAG, "Network change listener and state is " + networkstate);
+            if (networkstate == NetworkStateListener.NETWORK_CONNECTED) {
+                // Network is connected.
+                DialerLogs.messageI(TAG, "YO========Register sipServiceHandler===========" + sipServiceHandler);
+                if (sipServiceHandler != null) {
+                    sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING);
+                    DialerLogs.messageI(TAG, "YO========Register yoCurrentCall===========" + yoCurrentCall);
+                    //To check registration
+                    if (yoAccount != null) {
+                        try {
+                            DialerLogs.messageI(TAG, "YO========Renew registration===========");
+                            yoAccount.setRegistration(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        register();
+                    }
+
+                    //To check ongoing call.
+                    if (yoCurrentCall != null) {
+                        DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold() + " and isCallAccepted " + isCallAccepted);
+                        if (!isRemoteHold() && isCallAccepted) {
+                            reInviteToCheckCalleStatus();
+                        }
+                    }
+                }
+                // its alredy registered so no need to register again when network connects
+                //register();
+            } else {
+                DialerLogs.messageI(TAG, "Network change listener and state is Network not reachable ");
+                if (sipServiceHandler != null) {
+                    sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
+                }
+            }
+        }
+    };
+
+    protected synchronized void startDefaultRingtone(int volume) {
+
+        try {
+            mAudioManager.setSpeakerphoneOn(false);
+            mRingTone = MediaPlayer.create(this, R.raw.calling);
+            mRingTone.setVolume(volume, volume);
+            mRingTone.setLooping(true);
+            mAudioManager.setMode(AudioManager.RINGER_MODE_SILENT);
+            try {
+                mRingTone.start();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception exc) {
+            Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
+        }
+    }
+
+    protected synchronized void startRingtone() {
+        mVibrator.vibrate(VIBRATOR_PATTERN, 0);
+        try {
+            mRingTone = MediaPlayer.create(this, mRingtoneUri);
+            mRingTone.setLooping(true);
+            int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_RING);
+            mAudioManager.setSpeakerphoneOn(false);
+            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+            mRingTone.setVolume(volume, volume);
+            mRingTone.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                }
+            });
+            mRingTone.start();
+        } catch (Exception exc) {
+            Logger.warn("Error while trying to play ringtone!");
+        }
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        Util.cancelNotification(this, callNotificationId);
+        DialerLogs.messageE(TAG, "KILLING YO APPLICATION.");
+        sendBroadcast(new Intent("YouWillNeverKillMe"));
+        if (yoCurrentCall != null) {
+            CallOpParam prm = new CallOpParam();
+            prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+            try {
+                yoCurrentCall.hangup(prm);
+                callDisconnected();
+            } catch (Exception e) {
+                DialerLogs.messageE(TAG, "Call is terminated because app got killed.");
+            }
+        }
+    }
+
+    protected synchronized void stopDefaultRingtone() {
+        mVibrator.cancel();
+        if (mRingTone != null) {
+            try {
+                if (mRingTone.isPlaying()) {
+                    mRingTone.stop();
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                mRingTone.reset();
+                mRingTone.release();
+            } catch (Exception ignored) {
+            }
+        }
+
+    }
+
+    private void storeCallLog(String mobileNumber) {
+        long currentTime = System.currentTimeMillis();
+        long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
+        if (callStarted == 0 || callType == -1) {
+            callDuration = 0;
+        }
+        callStarted = 0;
+        int pstnorapp = 0;
+        Contact contact = mContactsSyncManager.getContactByVoxUserName(mobileNumber);
+        CallerInfo info = new CallerInfo();
+        if (contact != null && contact.getName() != null) {
+            info.name = contact.getName();
+            pstnorapp = CallLog.Calls.APP_TO_APP_CALL;
+        } else {
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+            try {
+                // phone must begin with '+'
+                Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + mobileNumber, "");
+                int countryCode = numberProto.getCountryCode();
+                String countryCodeString = countryCode + "";
+                String mobileTemp = mobileNumber;
+                String phoneNumber = mobileTemp.substring(countryCodeString.length(), mobileTemp.length());
+                contact = mContactsSyncManager.getContactPSTN(countryCode, phoneNumber);
+
+            } catch (NumberParseException e) {
+                DialerLogs.messageE(TAG, mobileNumber + " NumberParseException was thrown: " + e.toString());
+            }
+            if (contact != null && contact.getName() != null) {
+                info.name = contact.getName();
+            }
+            pstnorapp = CallLog.Calls.APP_TO_PSTN_CALL;
+        }
+        CallLog.Calls.addCall(info, getBaseContext(), mobileNumber, callType, callStarted, callDuration, pstnorapp);
+    }
+
+    private void handleBusy(YoCall yoCall) {
+        if (yoCurrentCall != null) {
+            try {
+                String source = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
+                sendBusyHereToIncomingCall(yoCall);
+                Util.createNotification(this, source, getResources().getString(R.string.missed_call), BottomTabsActivity.class, new Intent(), false);
+                callType = CallLog.Calls.MISSED_TYPE;
+                storeCallLog(source);
+            } catch (Exception e) {
+                DialerLogs.messageE(TAG, e.getMessage());
+            }
+            // Dont remove below logic.
+            yoCall.delete();
+            return;
+        }
+    }
+
+    public void sendBusyHereToIncomingCall(YoCall yoCall) {
+        CallOpParam param = new CallOpParam(true);
+        param.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
+        try {
+            if (yoCall != null) {
+                yoCall.hangup(param);
+            }
+        } catch (Exception exc) {
+            DialerLogs.messageE(TAG, "Failed to send busy here");
+        }
+    }
+
+    private String parseVoxUser(String destination) {
+        Contact contact = mContactsSyncManager.getContactByVoxUserName(destination);
+        CallerInfo info = new CallerInfo();
+        if (contact != null) {
+            if (!TextUtils.isEmpty(contact.getName())) {
+                destination = contact.getName();
+            } else if (contact.getPhoneNo() != null) {
+                destination = contact.getPhoneNo();
+            }
+        }
+        return destination;
+    }
+
+    public void sendMissedCallNotification() {
+        Util.createNotification(this,
+                parseVoxUser(phoneNumber),
+                "Missed call ", BottomTabsActivity.class, new Intent(), false);
+        callType = CallLog.Calls.MISSED_TYPE;
+    }
+
+    public void cancelCallNotification() {
+        Util.cancelNotification(this, callNotificationId);
+    }
+
+    public void sendNoNetwork() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(YoSipService.this, getResources().getString(R.string.calls_no_network), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+}

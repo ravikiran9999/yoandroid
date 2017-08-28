@@ -36,12 +36,8 @@ public class SplashScreenActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*setContentView(R.layout.activity_splash);
-        ImageView imageView = (ImageView) findViewById(R.id.imageView);
-        imageView.setImageResource(R.drawable.ic_splash);*/
-        //mHandler.postDelayed(runnable, DURATION);
         new SplashScreen().execute();
-        startService(new Intent(this, YoSipService.class));
+        //startService(new Intent(this, YoSipService.class));
 
     }
 

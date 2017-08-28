@@ -39,6 +39,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to display the users to which the logged in user can transfer his balance to
+ */
 public class TransferBalanceSelectContactActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     private TransferBalanceContactAdapter contactsListAdapter;
@@ -97,6 +100,9 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         //loadUserProfileInfo();
     }
 
+    /**
+     * Loads the user profile info
+     */
     private void loadUserProfileInfo() {
         String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getUserInfo(access).enqueue(new Callback<UserProfileInfo>() {
@@ -133,6 +139,10 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         });
     }
 
+    /**
+     * Calls the respective service based on whether the user is a representative or not
+     * @param isRepresentative isRepresentative or not
+     */
     private void handleRepresentative(boolean isRepresentative) {
         callAppUsersService();
         /*if (isRepresentative) {
@@ -142,6 +152,9 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         }*/
     }
 
+    /**
+     * Calls the service to get the users who are representatives
+     */
     private void callFindPeopleService() {
         showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -175,6 +188,9 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         });
     }
 
+    /**
+     * Calls the service to get the app users
+     */
     private void callAppUsersService() {
         if (!isFinishing()) {
             showProgressDialog();
@@ -224,6 +240,10 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Loads the contacts in alphabetical order
+     * @param list The list of users
+     */
     private void loadAlphabetOrder(List<FindPeople> list) {
 
         Collections.sort(list, new Comparator<FindPeople>() {
@@ -264,6 +284,9 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         };
     }
 
+    /**
+     * Gets the next page of representatives using pagination
+     */
     private void doPagination() {
         isMoreLoading = true;
         pageCount++;
@@ -309,6 +332,10 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         }
     }
 
+    /**
+     * Searches for the user in the list of users based on the search text
+     * @param menu
+     */
     private void searchPeople(Menu menu) {
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -352,6 +379,10 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         });
     }
 
+    /**
+     * Calls the service to search for a user based on the search text
+     * @param newText
+     */
     private void callSearchingService(String newText) {
 
         String searchKey = newText.trim();
@@ -408,6 +439,9 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Refreshes the list of users
+     */
     public void refresh() {
         contactsListAdapter.clearAll();
         contactsListAdapter.addItemsAll(originalList);

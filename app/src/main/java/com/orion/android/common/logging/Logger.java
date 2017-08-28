@@ -45,7 +45,7 @@ public class Logger {
      *                <li>Create the log directory if it does not exists</li>
      *                <li>Write Device Info into the logs</li>
      *                </ul>
-     * @return <code>true</code> if init is successful else <code>false</code>
+     * @return <code>true</code> if register is successful else <code>false</code>
      */
     public static boolean init(Context context) {
         boolean initialized = true;

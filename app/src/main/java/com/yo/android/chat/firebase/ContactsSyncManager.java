@@ -53,7 +53,7 @@ public class ContactsSyncManager {
     private Object lock = new Object();
     private PreferenceEndPoint loginPrefs;
     final boolean IS_CONTACT_SYNC_ON = false;
-    private static final String[] PROJECTION = new String[]{
+    public static final String[] PROJECTION = new String[]{
             YoAppContactContract.YoAppContactsEntry._ID,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_USER_ID,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME,

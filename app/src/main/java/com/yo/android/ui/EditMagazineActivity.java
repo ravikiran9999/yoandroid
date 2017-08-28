@@ -29,6 +29,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to edit the title and description and delete the magazine
+ */
 public class EditMagazineActivity extends BaseActivity {
 
     @Inject
@@ -82,6 +85,10 @@ public class EditMagazineActivity extends BaseActivity {
 
     }
 
+    /**
+     * Deletes the magazine
+     * @param magazineTitle The magazine title
+     */
     private void deleteMagazine(final String magazineTitle) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.deleteMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
@@ -99,6 +106,10 @@ public class EditMagazineActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Confirmation dialog of deletion
+     * @param title The title of the dialog
+     */
     private void showDeleteAlert(final String title) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 

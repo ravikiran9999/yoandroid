@@ -28,12 +28,17 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AlphabetAdapter;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.crop.Bitmaps;
 import com.yo.android.crop.MainImageCropActivity;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
+import com.yo.android.provider.YoAppContactContract;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,6 +55,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.inject.Inject;
 
 /**
  * Created by rajesh on 20/9/16.
@@ -70,6 +77,7 @@ public class Helper {
     private static HashMap<Integer, File> mediaDirs = null;
     public static Bitmap finalRotatedBitmap;
     public static boolean IS_FROM_CAMERA_BITMAP;
+
 
     public static void createNewContactWithPhoneNumber(Activity activity, String phoneNumber) {
         Intent i = new Intent(Intent.ACTION_INSERT);
@@ -259,13 +267,14 @@ public class Helper {
         }
 
 
-        if (activity != null) {
+
+        if(activity != null) {
             Intent intent = new Intent(activity, MainImageCropActivity.class);
-            if (!isFromCameraBitmap) {
+            if(!isFromCameraBitmap) {
                 intent.putExtra(GALLERY_IMAGE_ITEM, path);
                 finalRotatedBitmap = null;
             }
-            if (rotatedBitmap != null) {
+            if(rotatedBitmap != null) {
                 finalRotatedBitmap = rotatedBitmap;
             }
             if (isFromCam) {
@@ -278,7 +287,7 @@ public class Helper {
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
-        if (source != null) {
+        if(source != null) {
             Matrix matrix = new Matrix();
             matrix.postRotate(angle);
             return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
@@ -438,6 +447,7 @@ public class Helper {
 
     public static String getContactName(Context context, @NonNull String phoneNumber) {
         String contactName = null;
+        //String phNumber = phoneNumber;
         Cursor cursor = null;
         String mPhoneNumber;
 
@@ -463,16 +473,54 @@ public class Helper {
                 contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
             }
 
+           //Todo changes from server
+           /*if(contactName ==null){
+               try {
+                   PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+                   Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + phoneNumber, "");
+                   int countryCode = numberProto.getCountryCode();
+                   String countryCodeString = countryCode + "";
+                   String mobileTemp = phoneNumber;
+                   phoneNumber = mobileTemp.substring(countryCodeString.length(), mobileTemp.length());
 
+                   Contact contact =getContactPSTN(context,countryCode, phoneNumber);
+                   if (contact != null && contact.getName() != null) {
+                       contactName = contact.getName();
+                   }
+               }catch (Exception e){
+
+               }
+           }*/
         } catch (RuntimeException e) {
-
+            e.printStackTrace();
         } finally {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
         }
         return contactName != null ? contactName : mPhoneNumber;
+
+        //return contactName != null? contactName:phoneNumber;
+
+        //Todo changes from server
+        /*if (phoneNumber != null && phoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
+            return contactName != null? contactName:phoneNumber;
+        } else {
+            return contactName != null ? contactName : "+" + phNumber;
+        }*/
     }
+    /*public static Contact getContactPSTN(Context context,int countrycode, String pstnnumber) {
+        if (pstnnumber != null) {
+            Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
+            Cursor c = context.getContentResolver().query(uri, ContactsSyncManager.PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE + "= '" + countrycode + "' and " + YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + " = '" + pstnnumber + "'", null, null);
+            if (c != null && c.moveToFirst()) {
+                Contact contact = ContactsSyncManager.prepareContact(c);
+                return contact;
+
+            }
+        }
+        return null;
+    }*/
 
     private static void scaleAndSaveImageInternal(Bitmap bitmap, int w, int h, float photoW, float photoH, float scaleFactor, int quality, boolean cache, boolean scaleAnyway) throws Exception {
         Bitmap scaledBitmap;

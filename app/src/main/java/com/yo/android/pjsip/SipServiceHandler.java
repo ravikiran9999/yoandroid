@@ -9,8 +9,7 @@ import org.pjsip.pjsua2.CallInfo;
  * Created by Ramesh on 13/8/16.
  */
 public interface SipServiceHandler {
-    void addAccount(SipProfile sipProfile);
-    void createSipService(SipProfile sipProfile);
+    String addAccount(SipProfile sipProfile,boolean isPSTN,String number);
 
     MediaManager getMediaManager();
 
@@ -30,7 +29,7 @@ public interface SipServiceHandler {
 
     String getRegistrationStatus();
 
-    boolean isOnGOingCall();
+
     void disconnectCallBack(CallDisconnectedListner listner);
 
 }

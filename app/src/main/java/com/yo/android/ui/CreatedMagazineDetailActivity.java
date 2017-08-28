@@ -49,8 +49,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 
-//import com.squareup.picasso.Picasso;
-
+/**
+ * The activity which displays on creating a new article in our magazine
+ */
 public class CreatedMagazineDetailActivity extends BaseActivity {
 
     @Inject
@@ -98,6 +99,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
     }
 
+    /**
+     * Gets the articles of a magazine
+     */
     private void loadArticles() {
         articlesList.clear();
         showProgressDialog();
@@ -167,16 +171,12 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
         private LayoutInflater inflater;
 
-        private Bitmap placeholderBitmap;
         private List<Articles> items;
 
         private MyBaseAdapter(Context context) {
             inflater = LayoutInflater.from(context);
             this.context = context;
 
-            //Use a system resource as the placeholder
-            placeholderBitmap =
-                    BitmapFactory.decodeResource(context.getResources(), android.R.drawable.dark_header);
             items = new ArrayList<>();
         }
 
@@ -419,6 +419,10 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         }
 
 
+        /**
+         * Adds the articles to the list
+         * @param articlesList The articles list to be added
+         */
         public void addItems(List<Articles> articlesList) {
             items = new ArrayList<>(articlesList);
             if (!((BaseActivity)context).hasDestroyed()) {
@@ -426,6 +430,12 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
             }
         }
 
+        /**
+         * Updates the topic following to true or false
+         * @param isFollowing isFollowing or not
+         * @param topic The articles object
+         * @param position The position
+         */
         public void updateTopic(boolean isFollowing, Articles topic, int position) {
             items.remove(position);
             items.add(position, topic);
@@ -444,6 +454,13 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
             notifyDataSetChanged();
         }
 
+        /**
+         * Updates the article
+         * @param isLiked isLiked true or false
+         * @param articles The articles object
+         * @param position The position
+         * @param articlePlace The articles placement
+         */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
                 items.remove(position);
                 items.add(position, articles);
@@ -452,6 +469,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         }
     }
 
+    /**
+     * The view holder class
+     */
     private static class ViewHolder {
 
         private TextView articleTitle;

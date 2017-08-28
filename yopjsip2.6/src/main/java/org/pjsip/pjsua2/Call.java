@@ -127,7 +127,6 @@ public class Call {
     pjsua2JNI.Call_update(swigCPtr, this, CallOpParam.getCPtr(prm), prm);
   }
 
-
   public void xfer(String dest, CallOpParam prm) throws java.lang.Exception {
     pjsua2JNI.Call_xfer(swigCPtr, this, dest, CallOpParam.getCPtr(prm), prm);
   }

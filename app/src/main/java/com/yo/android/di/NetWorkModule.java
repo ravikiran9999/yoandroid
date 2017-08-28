@@ -64,12 +64,14 @@ public class NetWorkModule {
     private <T> T buildAdapter(String baseUrl, Class<T> clazz, OkHttpClient.Builder builder, ConnectivityHelper connectivityHelper) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
         //
         OkHttpClient defaultHttpClient = builder
                 .addInterceptor(interceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
+
                 //Commented below code as Getting OOM : Created an issue in
                 // https://github.com/square/okhttp/issues/2781
 //                .addInterceptor(new OfflineResponseInterceptor(connectivityHelper))
@@ -140,6 +142,7 @@ public class NetWorkModule {
                     cacheControl.contains("must-revalidate") || cacheControl.contains("max-age=0")) {
                 return originalResponse.newBuilder()
                         .header("Cache-Control", "public, max-age=" + 10)
+
                         .build();
             } else {
                 return originalResponse;

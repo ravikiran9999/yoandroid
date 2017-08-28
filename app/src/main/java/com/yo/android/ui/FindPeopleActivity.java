@@ -47,6 +47,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity is used to display all the Yo App users
+ */
 public class FindPeopleActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
 
@@ -132,7 +135,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
     @Override
     protected void onResume() {
         super.onResume();
-        if (searchView != null) {
+        if(searchView != null) {
             if (searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                 pageCount = 1;
                 callFindPeopleService(null);
@@ -144,6 +147,9 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         }
     }
 
+    /**
+     * Getting the Yo app users
+     */
     private void callFindPeopleService(final SwipeRefreshLayout swipeRefreshContainer) {
         if (swipeRefreshContainer != null) {
             swipeRefreshContainer.setRefreshing(false);
@@ -228,8 +234,11 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         };
     }
 
+    /**
+     * Used to implement pagination
+     */
     private void doPagination() {
-        isMoreLoading = true;
+        isMoreLoading=true;
         pageCount++;
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getFindPeopleAPI(accessToken, pageCount, 30).enqueue(new Callback<List<FindPeople>>() {
@@ -256,8 +265,8 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 8 && resultCode == RESULT_OK) {
-            if (data != null) {
-                if ("Following".equals(data.getStringExtra("FollowState"))) {
+            if(data!= null) {
+                if("Following".equals(data.getStringExtra("FollowState"))) {
                     findPeopleAdapter.getItem(pos).setIsFollowing("true");
                     if (!hasDestroyed()) {
                         findPeopleAdapter.notifyDataSetChanged();
@@ -273,6 +282,10 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         }
     }
 
+    /**
+     * Searches in the list of Yo app users
+     * @param menu
+     */
     private void searchPeople(Menu menu) {
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -317,6 +330,10 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         });
     }
 
+    /**
+     * Calls the service to get the list of Yo app users with the search text
+     * @param newText The search text
+     */
     private void callSearchingService(String newText) {
 
         String searchKey = newText.trim();
@@ -331,7 +348,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
             showProgressDialog();
             mProgressDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            if (call != null) {
+            if(call != null) {
                 call.cancel();
             }
             call = yoService.searchInFindPeople(accessToken, searchKey, 1, 100);
@@ -382,13 +399,16 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Refreshes the list of Yo app users
+     */
     public void refresh() {
         callFindPeopleService(null);
         pageCount = 1;
         findPeopleAdapter.clearAll();
         findPeopleAdapter.addItemsAll(originalList);
         lvFindPeople.setVisibility(View.VISIBLE);
-        if (originalList.size() > 0) {
+        if(originalList.size()> 0) {
             noData.setVisibility(View.GONE);
             llNoPeople.setVisibility(View.GONE);
             networkFailureText.setVisibility(View.GONE);

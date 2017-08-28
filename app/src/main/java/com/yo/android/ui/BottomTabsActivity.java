@@ -33,8 +33,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.WebserviceUsecase;
 import com.yo.android.adapters.TabsPagerAdapter;
@@ -57,8 +60,6 @@ import com.yo.android.model.Lock;
 import com.yo.android.model.NotificationCount;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.SipBinder;
-import com.yo.android.pjsip.SipProfile;
-import com.yo.android.pjsip.YoSipService;
 import com.yo.android.sync.SyncUtils;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
@@ -72,13 +73,18 @@ import com.yo.android.util.Util;
 import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
+import com.yo.dialer.CallExtras;
+import com.yo.dialer.NewDialerFragment;
+import com.yo.restartapp.YOExceptionHandler;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -123,15 +129,15 @@ public class BottomTabsActivity extends BaseActivity {
     private TextView actionBarTitle;
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     private static final int REQUEST_AUDIO_RECORD = 200;
+    private int lastFragmentPosition = 0;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             sipBinder = (SipBinder) service;
-            if (!sipBinder.getHandler().isOnGOingCall()) {
+            /*if (!sipBinder.getYOHandler().isOnGOingCall()) {
                 clearNotifications();
-            }
-            //addAccount();
+            }*/
         }
 
         @Override
@@ -140,27 +146,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
     };
 
-   /* private void addAccount() {
-        String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
-        String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
-        SipProfile sipProfile = new SipProfile.Builder()
 
-                .withUserName(username == null ? "" : username)
-                //.withUserName(username == null ? "" : "64728474")
-                //.withUserName(username == null ? "" : "7032427")
-                //.withUserName(username == null ? "" : "64724865")
-                //.withUserName(username == null ? "" : "603703")
-                .withPassword(password)
-                //.withPassword("534653")
-                //.withPassword("@pa1ra2di3gm")
-                //.withPassword("823859")
-                //.withPassword("@pa1ra2di3gm")
-                //.withServer("209.239.120.239")
-                .withServer("173.82.147.172")
-                .build();
-        sipBinder.getHandler().addAccount(sipProfile);
-
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,9 +156,19 @@ public class BottomTabsActivity extends BaseActivity {
         activity = this;
         mContext = getApplicationContext();
 
+        // TODO: Test
+        Intent service = new Intent(this, com.yo.dialer.YoSipService.class);
+        service.setAction(CallExtras.REGISTER);
+        startService(service);
 
-        if (ContextCompat.checkSelfPermission(BottomTabsActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(BottomTabsActivity.this, new String[]{Manifest.permission.RECORD_AUDIO,
+        // Handle application crash
+        Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
+        if (getIntent().getBooleanExtra("crash", false)) {
+            clearNotifications();
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.GET_ACCOUNTS,
                     Manifest.permission.READ_PHONE_STATE,
@@ -181,7 +177,7 @@ public class BottomTabsActivity extends BaseActivity {
                     Manifest.permission.WAKE_LOCK,
                     Manifest.permission.MODIFY_AUDIO_SETTINGS,
                     Manifest.permission.CAMERA,
-                    Manifest.permission.RECEIVE_SMS,
+                    //Manifest.permission.RECEIVE_SMS,
                     Manifest.permission.VIBRATE,
                     Manifest.permission.GET_TASKS,
                     Manifest.permission.WRITE_SYNC_SETTINGS,
@@ -189,7 +185,6 @@ public class BottomTabsActivity extends BaseActivity {
                     Manifest.permission.CHANGE_NETWORK_STATE,
                     Manifest.permission.ACCESS_WIFI_STATE,
                     Manifest.permission.CHANGE_WIFI_STATE,
-
 
             }, REQUEST_AUDIO_RECORD);
         }
@@ -201,7 +196,11 @@ public class BottomTabsActivity extends BaseActivity {
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new MagazinesFragment(), null);
         mAdapter.addFragment(new ChatFragment(), null);
-        mAdapter.addFragment(new DialerFragment(), null);
+        if (BuildConfig.NEW_DIALER) {
+            mAdapter.addFragment(new NewDialerFragment(), null);
+        } else {
+            mAdapter.addFragment(new DialerFragment(), null);
+        }
         mAdapter.addFragment(new ContactsFragment(), null);
         mAdapter.addFragment(new MoreFragment(), null);
         viewPager.setOffscreenPageLimit(3);
@@ -260,7 +259,43 @@ public class BottomTabsActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
 
-                switch (position) {
+                if (lastFragmentPosition == 0) {
+                    mLog.d(TAG, "Leaving Magazines tab");
+                    // End the timed event, when the user navigates away from Magazines tab
+                    FlurryAgent.endTimedEvent("Magazines");
+                    lastFragmentPosition = position;
+                } else if (lastFragmentPosition == 1) {
+                    mLog.d(TAG, "Leaving Chats tab");
+                    // End the timed event, when the user navigates away from Chats tab
+                    FlurryAgent.endTimedEvent("Chats");
+                    lastFragmentPosition = position;
+                } else if (lastFragmentPosition == 2) {
+                    mLog.d(TAG, "Leaving Dialer tab");
+                    // End the timed event, when the user navigates away from Dialer tab
+                    FlurryAgent.endTimedEvent("Dialer");
+                    lastFragmentPosition = position;
+                } else if (lastFragmentPosition == 3) {
+                    mLog.d(TAG, "Leaving Contacts tab");
+                    // End the timed event, when the user navigates away from Contacts tab
+                    FlurryAgent.endTimedEvent("Contacts");
+                    lastFragmentPosition = position;
+                } else if (lastFragmentPosition == 4) {
+                    mLog.d(TAG, "Leaving Profile tab");
+                    // End the timed event, when the user navigates away from Profile tab
+                    FlurryAgent.endTimedEvent("Profile");
+                    lastFragmentPosition = position;
+                }
+
+                if (position == 0 && getFragment() instanceof MagazinesFragment) {
+                    Log.d(TAG, "onPageSelected In update() BottomTabsActivity");
+
+                    MagazineDashboardHelper.request = 1;
+                    ((MagazinesFragment) getFragment()).removeReadArticles();
+                    ((MagazinesFragment) getFragment()).update();
+                    MagazineFlipArticlesFragment.currentFlippedPosition = 0;
+
+
+                /*switch (position) {
                     case 0:
                         if (getFragment() instanceof MagazinesFragment) {
                             MagazineDashboardHelper.request = 1;
@@ -273,7 +308,7 @@ public class BottomTabsActivity extends BaseActivity {
                         if (getFragment() instanceof DialerFragment) {
                             ((DialerFragment) getFragment()).loadData();
                         }
-                }
+                }*/
 
             }
 
@@ -419,6 +454,15 @@ public class BottomTabsActivity extends BaseActivity {
             }
         }
 
+        // Capture user id
+        Map<String, String> appUsageParams = new HashMap<String, String>();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //param keys and values have to be of String type
+        appUsageParams.put("UserId", userId);
+
+        FlurryAgent.logEvent("Opened Yo App", appUsageParams);
+
+        // Test.startInComingCallScreen(context);
     }
 
     private void clearNotifications() {
@@ -453,6 +497,16 @@ public class BottomTabsActivity extends BaseActivity {
 
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (sipBinder != null) {
+            unbindService(connection);
+        }
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    @Override
     public void onBackPressed() {
         Fragment fragment = getFragment();
         boolean handle = fragment instanceof BaseFragment && ((BaseFragment) fragment).onBackPressHandle();
@@ -464,12 +518,20 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     public Fragment getFragment() {
-        if(tabLayout != null && mAdapter != null) {
+        int position = 0;
+        if (tabLayout != null) {
+            position = tabLayout.getSelectedTabPosition();
+            return mAdapter.getItem(position);
+        }
+        return null;
+
+        // Todo changes from enhancement branch
+        /*if(tabLayout != null && mAdapter != null) {
             int position = tabLayout.getSelectedTabPosition();
             return mAdapter.getItem(position);
         } else {
             return mAdapter.getItem(0);
-        }
+        }*/
     }
 
     /*public void setToolBarTitle(String title) {

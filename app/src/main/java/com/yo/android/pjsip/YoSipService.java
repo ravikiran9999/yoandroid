@@ -22,6 +22,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -61,6 +62,7 @@ import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.OnIncomingCallParam;
 import org.pjsip.pjsua2.StreamStat;
 import org.pjsip.pjsua2.StringVector;
+import org.pjsip.pjsua2.pj_turn_tp_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 
@@ -150,7 +152,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     private boolean isOnGoingCall = false;
     private boolean mySelfEndCall = false;
     private boolean isCallDeleted;
-
+    private boolean isPSTN;
+    private String number;
 
     @Override
     public void onCreate() {
@@ -179,18 +182,26 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(YoSipService.this, RingtoneManager.TYPE_RINGTONE);
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        //created = preferenceEndPoint.getBooleanPreference(Constants.CREATED);
-        mLog.e(TAG, created + ".....");
-        if (!created) {
-            startSipService();
-            // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
+        if (intent != null && intent.hasExtra(OutGoingCallActivity.CALLER_NO)) {
+            mLog.d(TAG, "In the onStartCommand() of YoSipService");
+            mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(YoSipService.this, RingtoneManager.TYPE_RINGTONE);
+            mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            //created = preferenceEndPoint.getBooleanPreference(Constants.CREATED);
+            mLog.e(TAG, created + ".....");
+            if (!created) {
+                startSipService();
+                // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
+            }
+            number = intent.getStringExtra(OutGoingCallActivity.CALLER_NO);
+
+            isPSTN = intent.hasExtra(VoipConstants.PSTN);
+           /* if (myAccount == null) {
+                addAccount(isPSTN, number);
+            }
+            NetworkStateListener.registerNetworkState(listener);
+            performAction(intent);*/
         }
-        addAccount();
-        NetworkStateListener.registerNetworkState(listener);
-        performAction(intent);
         return START_STICKY;
     }
 
@@ -252,7 +263,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     private void startSipService() {
         myApp = new MyApp();
-        myApp.init(this, getFilesDir().getAbsolutePath());
+       // myApp.register(this, getFilesDir().getAbsolutePath());
         created = true;
         // preferenceEndPoint.saveBooleanPreference(Constants.CREATED, created);
 
@@ -368,6 +379,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             part2 = matcher.group(2);
             ip = matcher.group(3);
         }
+        mLog.d(TAG, "Remote uri " + remoteUriStr + " Part 2 " + part2);
         return part2;
     }
 
@@ -383,12 +395,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         mLog.e(TAG, "notifyCallState =  " + ci.getState());
         if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CALLING) {
             pausePlayingAudio();
-        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_INCOMING) {
-            startRingtone();
-        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
             if (mIntent != null && !mIntent.hasExtra(VoipConstants.PSTN)) {
                 startDefaultRingtone(1);
             }
+        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_INCOMING) {
+            startRingtone();
         } else if (ci != null
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
 
@@ -397,6 +408,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             try {
                 //TODO:Handle more error codes to display proper messages to the user
                 statusCode = call.getInfo().getLastStatusCode().swigValue();
+                mLog.e(TAG, "notifyCallState = Status code  " + statusCode);
+
                 handleErrorCodes(sipCallState, call.getInfo().getLastReason(), call.getInfo().getLastStatusCode());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -406,15 +419,16 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
             stopRingtone();
             callAccepted(call);
-        } else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
+        }/* else if (ci != null && ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_EARLY) {
             stopRingtone();
-        }
+        }*/
     }
 
 
     private void handleErrorCodes(final SipCallState sipCallstate, String message, pjsip_status_code code) {
         if (!mySelfEndCall) {
             pjsip_status_code lastStatusCode = code;
+            mLog.d(TAG, "The lastStatusCode code is " + lastStatusCode + " and statusCode is " + statusCode);
             if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TERMINATED || lastStatusCode == pjsip_status_code.PJSIP_SC_OK) {
                 //mToastFactory.showToast(R.string.call_ended);
             } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_DECLINE) {
@@ -423,6 +437,11 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 showFailedToast(getString(R.string.busy));
             } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_NOT_FOUND) {
                 showFailedToast(getString(R.string.not_online_unavailable));
+                if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
+                    Contact contact = mContactsSyncManager.getContactByVoxUserName(sipCallstate.getMobileNumber());
+                    OpponentDetails details = new OpponentDetails(sipCallstate.getMobileNumber(), contact, statusCode);
+                    EventBus.getDefault().post(details);
+                }
             } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_REQUEST_TIMEOUT || lastStatusCode == pjsip_status_code.PJSIP_SC_TEMPORARILY_UNAVAILABLE) {
                 showFailedToast(getString(R.string.not_in_coverage_area));
             } else if (lastStatusCode == pjsip_status_code.PJSIP_SC_FORBIDDEN) {
@@ -441,10 +460,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         } else if (statusCode == 503) {
             mLog.e(TAG, "503 >>> Buddy is not online at this moment. calltype =  " + callType);
             callDisconnected();
-            if (!sipCallstate.getMobileNumber().contains(BuildConfig.RELEASE_USER_TYPE)) {
+            if (sipCallstate != null && !sipCallstate.getMobileNumber().contains(BuildConfig.RELEASE_USER_TYPE)) {
                 showFailedToast(getString(R.string.not_supported_country));
             } else {
                 showFailedToast(getString(R.string.not_online));
+                if (sipCallstate != null && sipCallstate.getMobileNumber() != null) {
+                    Contact contact = mContactsSyncManager.getContactByVoxUserName(sipCallstate.getMobileNumber());
+                    OpponentDetails details = new OpponentDetails(sipCallstate.getMobileNumber(), contact, statusCode);
+                    EventBus.getDefault().post(details);
+                }
             }
         } else if (statusCode == 603) {
             callDisconnected();
@@ -523,6 +547,15 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             callDisconnectedListner.callDisconnected();
         }
         mLog.e(TAG, "disconnected call >>>>>");
+
+        try {
+            String dumpString = currentCall.dump(true, "");
+            mLog.d(TAG, "The call disconnected dump string is " + dumpString);
+            Util.appendLog(dumpString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         stopRepeatingTask();
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
@@ -549,6 +582,14 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.sendBroadcast(new Intent(UserAgent.ACTION_CALL_END));
         EventBus.getDefault().post(OutGoingCallActivity.DISCONNECTED);
+        if (mEndpoint != null) {
+            try {
+                mEndpoint.libDestroy();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        //
     }
 
     private void playPausedAudio() {
@@ -581,93 +622,136 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
 
     }
 
-    private MyAccount buildAccount() throws UnsatisfiedLinkError {
+    private MyAccount buildAccount(String id, String msg) throws UnsatisfiedLinkError {
         if (myAccount != null) {
             return myAccount;
         }
         AccountConfig accCfg = new AccountConfig();
+        accCfg.setIdUri(id);
         accCfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
-        accCfg.setIdUri("sip:localhost");
         accCfg.getNatConfig().setIceEnabled(false);
         accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
         accCfg.getVideoConfig().setAutoShowIncoming(true);
         if (myApp == null) {
             startSipService();
         }
+
+        accCfg.getNatConfig().setIceEnabled(false);
+             /* Enable ICE/TURN */
+
+        accCfg.getNatConfig().setTurnEnabled(true);
+        /*accCfg.getNatConfig().setTurnServer("turn.pjsip.org:33478");
+        accCfg.getNatConfig().setTurnUserName("abzlute01");
+        accCfg.getNatConfig().setTurnPasswordType(0);
+        accCfg.getNatConfig().setTurnPassword("abzlute01");*/
+/*        accCfg.getNatConfig().setTurnServer("34.230.108.83:3478");
+        accCfg.getNatConfig().setTurnUserName("tadmin");
+        accCfg.getNatConfig().setTurnPasswordType(0);
+        accCfg.getNatConfig().setTurnPassword("test123");*/
+        //accCfg.getNatConfig().setTurnConnType(pj_turn_tp_type.PJ_TURN_TP_TCP);
+        android.util.Log.d(TAG, msg + " Setting TURN server");
         return myApp.addAcc(accCfg);
     }
 
-    private void addAccount() {
+    private String addAccount(boolean isPSTN, String number) {
+
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
+
         SipProfile sipProfile = new SipProfile.Builder()
-
-
                 .withUserName(username == null ? "" : username)
-                //.withUserName(username == null ? "" : "64728474")
-                //.withUserName(username == null ? "" : "7032427")
-                //.withUserName(username == null ? "" : "64724865")
-                //.withUserName(username == null ? "" : "603703")
                 .withPassword(password)
-                //.withPassword("534653")
-                //.withPassword("@pa1ra2di3gm")
-                //.withPassword("823859")
-                //.withPassword("@pa1ra2di3gm")
-                //.withServer("209.239.120.239")
                 .withServer("173.82.147.172")
+
+                // .withServer("pjsip.org")
                 .build();
-        addAccount(sipProfile);
+        return addAccount(sipProfile, isPSTN, number);
 
     }
 
 
-    public void addAccount(SipProfile sipProfile) {
+    public String addAccount(SipProfile sipProfile, boolean isPSTN, String number) {
+        String id = null;
         try {
+            String displayname;
             //startStack();
-            myAccount = buildAccount();
+            String usernameDisplayName = sipProfile.getUsername();
 
-            String usernameDisplayName= sipProfile.getUsername();
-            String displayname = usernameDisplayName.substring(usernameDisplayName.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, usernameDisplayName.length() - 1);
-
-            String id = String.format("\"%s\"<sip:%s@%s>", displayname,usernameDisplayName, sipProfile.getDomain());
-            String registrar = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
-            String proxy = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
-            String username = usernameDisplayName;
-            String password = sipProfile.getPassword();
-            if (myAccount != null) {
-                mLog.w(TAG, "Display Name " + id);
-                configAccount(myAccount.cfg, id, registrar, proxy, username, password);
-                try {
-                    myAccount.cfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
-                    myAccount.modify(myAccount.cfg);
-                } catch (Exception e) {
-                    mLog.w(TAG, e);
-                }
+            if (isPSTN) {
+                displayname = usernameDisplayName.substring(usernameDisplayName.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, usernameDisplayName.length() - 1);
+                // if local number dont add country code
+                //String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM, null);
+                //displayname = countryCode + displayname;
             } else {
-                mLog.w(TAG, "Created account object is null");
+                displayname = usernameDisplayName;
             }
+            id = String.format("\"%s\"<sip:%s@%s>", displayname, usernameDisplayName, sipProfile.getDomain());
+            mLog.w(TAG, "SIP ID "+id);
+            myAccount = buildAccount(id, "Start");
+            // this is for sip to sip should send sip  number as displayname otherwise phone number need to parse from sip number
+
+            updateUserDetails(sipProfile, usernameDisplayName, displayname);
         } catch (Exception | UnsatisfiedLinkError e) {
             mLog.w(TAG, e);
         }
+        return id;
 
     }
 
-    @Override
-    public void createSipService(SipProfile sipProfile) {
+    private void updateUserDetails(SipProfile sipProfile, String usernameDisplayName, String displayname) {
+        String id = String.format("\"%s\"<sip:%s@%s>", displayname, usernameDisplayName, sipProfile.getDomain());
+        String registrar = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
+        //String registrar = String.format("sip:%s:%s", "pjsip.org", 5060);
 
+        String proxy = String.format("sip:%s:%s", sipProfile.getDomain(), 5060);
+        //String proxy = String.format("sip:%s:%s", "pjsip.org", 5060);
+        String username = usernameDisplayName;
+        String password = sipProfile.getPassword();
+        if (myAccount != null) {
+            mLog.w(TAG, "Display Name " + id);
+
+            configAccount(myAccount.cfg, id, registrar, proxy, username, password);
+            try {
+                myAccount.cfg.getRegConfig().setTimeoutSec(YoSipService.EXPIRE);
+                myAccount.modify(myAccount.cfg);
+            } catch (Exception e) {
+                mLog.w(TAG, e);
+            }
+        } else {
+            mLog.w(TAG, "Created account object is null");
+        }
     }
+
 
     private void configAccount(AccountConfig accCfg, String acc_id, String registrar, String proxy,
                                String username, String password) {
 
         accCfg.setIdUri(acc_id);
+        mLog.w(TAG, "username and password "+username+"==="+password);
+
         accCfg.getRegConfig().setRegistrarUri(registrar);
         AuthCredInfoVector creds = accCfg.getSipConfig().getAuthCreds();
         creds.clear();
         if (username != null && !username.isEmpty() && username.length() != 0) {
+
             creds.add(new AuthCredInfo("Digest", "*", username, 0, password));
         }
+
+        /*//  StringVector proxies = accCfg.getSipConfig().getProxies();
+        StringVector proxies = new StringVector();
+        //proxies.add("sip:sip.pjsip.org;transport=tcp");
+        proxies.add("sip:173.82.147.172:6000;transport=tcp");
+        //proxies.add("sip:sip.pjsip.org;transport=tls");
+        //proxies.add("sip:sip.pjsip.org:5080;transport=tcp");*/
+
         StringVector proxies = accCfg.getSipConfig().getProxies();
+        // above code is giving proxies size is 0
+
+
+       /* StringVector proxies = new StringVector();
+        proxies.add("sip:173.82.147.172:5060;transport=tcp");*/
+
+        accCfg.getSipConfig().setProxies(proxies);
         proxies.clear();
         if (proxy.length() != 0) {
             proxies.add(proxy);
@@ -683,7 +767,10 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         if (destination != null && !destination.startsWith("sip:")) {
             destination = "sip:" + destination;
         }
+
         String finalUri = String.format("%s@%s", destination, getDomain());
+        // String finalUri = String.format("%s", "sip:866@pjsip.org");
+
         mLog.e(TAG, "Final uri to make a call " + finalUri);
         outgoingCallUri = finalUri;
         /* Only one call at anytime */
@@ -691,8 +778,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             return;
         }
 
+
         if (myAccount == null) {
-            myAccount = buildAccount();
+            myAccount = buildAccount(addAccount(isPSTN, number), "Make Call");
         }
 
 
@@ -707,6 +795,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                 call.makeCall(finalUri, prm);
                 isOnGoingCall = true;
             } catch (Exception e) {
+                e.printStackTrace();
                 mLog.w(TAG, "Exception making call " + e.getMessage());
                 isCallDeleted = true;
                 call.delete();
@@ -761,7 +850,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             public void run() {
                 try {
                     if (!localHold) {
-                        if (currentCall!=null && !isCallDeleted) {
+                        if (currentCall != null && !isCallDeleted) {
                             final StreamStat stats = currentCall.getStreamStat(0);
                             if (currentBytes != stats.getRtcp().getRxStat().getBytes()) {
                                 count = 0;
@@ -783,6 +872,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
                             }
                             if (count > 600) {
                                 if (currentCall != null) {
+                                    mLog.e(TAG, "Disconnecting call from UPDATE STATUS  ");
                                     hangupCall(callType);
                                 }
                                 callDisconnected();
@@ -1034,6 +1124,9 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         Util.cancelNotification(this, inComingCallNotificationId);
         Util.cancelNotification(this, outGoingCallNotificationId);
         android.util.Log.d("debug", "Service Killed");
+        Toast.makeText(this, "OnReceive from killed service - YouWillNeverKillMe", Toast.LENGTH_SHORT).show();
+
+        sendBroadcast(new Intent("YouWillNeverKillMe"));
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
@@ -1062,10 +1155,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         return registrationStatus;
     }
 
-    @Override
-    public boolean isOnGOingCall() {
-        return isOnGoingCall;
-    }
 
     @Override
     public void disconnectCallBack(CallDisconnectedListner listner) {
@@ -1073,7 +1162,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
     }
 
     protected synchronized void startDefaultRingtone(int volume) {
-
         try {
 
             mAudioManager.setSpeakerphoneOn(false);
@@ -1094,7 +1182,6 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         } catch (Exception exc) {
             Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
         }
-
     }
 
     protected synchronized void startRingtone() {

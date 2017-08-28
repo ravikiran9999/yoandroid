@@ -4,17 +4,13 @@ import android.util.Log;
 
 import com.orion.android.common.logging.Logger;
 import com.yo.android.BuildConfig;
-import com.yo.android.vox.CodecPriority;
 
 import org.pjsip.pjsua2.AccountConfig;
-import org.pjsip.pjsua2.BuddyConfig;
-import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.ContainerNode;
 import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.JsonDocument;
 import org.pjsip.pjsua2.LogConfig;
-import org.pjsip.pjsua2.StringVector;
 import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.UaConfig;
 import org.pjsip.pjsua2.pj_log_decoration;
@@ -24,12 +20,12 @@ import org.pjsip.pjsua2.pjsip_transport_type_e;
 import java.io.File;
 import java.util.ArrayList;
 
-class MyApp {
+public class MyApp {
 
 
     private static final String TAG = MyApp.class.getSimpleName();
 
-    static {
+   /* static {
         try {
             System.loadLibrary("openh264");
             // Ticket #1937: libyuv is now included as static lib
@@ -41,7 +37,7 @@ class MyApp {
         }
         System.loadLibrary("pjsua2");
         System.out.println("Library loaded");
-    }
+    }*/
 
     public static Endpoint mEndpoint = new Endpoint();
     public static MyAppObserver observer;
@@ -79,32 +75,6 @@ class MyApp {
 
 
             epConfig = new EpConfig();
-            epConfig.getUaConfig().setUserAgent(AGENT_NAME);
-            epConfig.getMedConfig().setHasIoqueue(true);
-            epConfig.getMedConfig().setClockRate(16000);
-            epConfig.getMedConfig().setQuality(10);
-            epConfig.getMedConfig().setEcOptions(1);
-            epConfig.getMedConfig().setEcTailLen(200);
-            epConfig.getMedConfig().setThreadCnt(2);
-            mEndpoint.libInit(epConfig);
-
-            TransportConfig udpTransport = new TransportConfig();
-            udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-            TransportConfig tcpTransport = new TransportConfig();
-            tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
-
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
-            mEndpoint.libStart();
-            mEndpoint.codecSetPriority("*", (short) 0);
-            mEndpoint.codecSetPriority("PCMA/8000", (short) 1);
-            mEndpoint.codecSetPriority("PCMU/8000", (short) 1);
-            mEndpoint.codecSetPriority("G722/8000", (short) 1);
-            mEndpoint.codecSetPriority("G711/8000", (short) 1);
-            mEndpoint.audDevManager().setOutputVolume(60);
-            //Disabling VAD to get around NAT
-            mEndpoint.audDevManager().setVad(false);
-            Log.e(TAG, "SIP STATCK STARTED");
 
         } catch (Exception e) {
             //e.printStackTrace();
@@ -133,17 +103,30 @@ class MyApp {
         log_cfg.setDecor(log_cfg.getDecor()
                 & ~(pj_log_decoration.PJ_LOG_HAS_CR.swigValue() | pj_log_decoration.PJ_LOG_HAS_NEWLINE
                 .swigValue()));
+        String log_path = android.os.Environment.getExternalStorageDirectory().toString();
+        log_cfg.setFilename(log_path + "/pjsip.log");
 
 		/* Set ua config. */
         UaConfig ua_cfg = epConfig.getUaConfig();
         ua_cfg.setUserAgent("Pjsua2 Android " + mEndpoint.libVersion().getFull());
-        StringVector stun_servers = new StringVector();
-        stun_servers.add("stun.pjsip.org");
-        ua_cfg.setStunServer(stun_servers);
+
+        /*StringVector stun_servers = new StringVector();
+        //stun_servers.add("34.230.108.83:3478");
+        stun_servers.add("54.90.250.89:3478");*/
+        //stun_servers.add("stun.pjsip.org");
+        // ua_cfg.setStunServer(stun_servers);
         if (own_worker_thread) {
             ua_cfg.setThreadCnt(0);
             ua_cfg.setMainThreadOnly(true);
         }
+
+        epConfig.getUaConfig().setUserAgent(AGENT_NAME);
+        epConfig.getMedConfig().setHasIoqueue(true);
+        epConfig.getMedConfig().setClockRate(16000);
+        // epConfig.getMedConfig().setQuality(0);
+        epConfig.getMedConfig().setEcOptions(1);
+        epConfig.getMedConfig().setEcTailLen(200);
+        //epConfig.getMedConfig().setThreadCnt(2);
 
 		/* Init endpoint */
         try {
@@ -153,47 +136,32 @@ class MyApp {
             return;
         }
 
-		/* Create transports. */
-       /* try {
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP,
-                    sipTpConfig);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        TransportConfig udpTransport = new TransportConfig();
+        udpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
+        TransportConfig tcpTransport = new TransportConfig();
+        tcpTransport.setQosType(pj_qos_type.PJ_QOS_TYPE_VOICE);
 
         try {
-            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP,
-                    sipTpConfig);
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_UDP, udpTransport);
+            mEndpoint.transportCreate(pjsip_transport_type_e.PJSIP_TRANSPORT_TCP, tcpTransport);
         } catch (Exception e) {
-            System.out.println(e);
-        }*/
 
-		/* Create accounts. */
-        for (int i = 0; i < accCfgs.size(); i++) {
-            MyAccountConfig my_cfg = accCfgs.get(i);
-
-			/* Customize account config */
-            my_cfg.accCfg.getNatConfig().setIceEnabled(false);
-            my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
-            my_cfg.accCfg.getNatConfig().setTurnEnabled(true);
-            my_cfg.accCfg.getVideoConfig().setAutoTransmitOutgoing(true);
-            my_cfg.accCfg.getVideoConfig().setAutoShowIncoming(true);
-
-            MyAccount acc = addAcc(my_cfg.accCfg);
-
-            if (acc == null)
-                continue;
-
-			/* Add Buddies */
-            for (int j = 0; j < my_cfg.buddyCfgs.size(); j++) {
-                BuddyConfig bud_cfg = my_cfg.buddyCfgs.get(j);
-                acc.addBuddy(bud_cfg);
-            }
         }
+
 
 		/* Start. */
         try {
             mEndpoint.libStart();
+            mEndpoint.codecSetPriority("*", (short) 0);
+            mEndpoint.codecSetPriority("PCMA/8000", (short) 1);
+            mEndpoint.codecSetPriority("PCMU/8000", (short) 1);
+            mEndpoint.codecSetPriority("G722/8000", (short) 1);
+            mEndpoint.codecSetPriority("G711/8000", (short) 1);
+            mEndpoint.audDevManager().setOutputVolume(60);
+
+            //Disabling VAD to get around NAT
+            //  mEndpoint.audDevManager().setVad(false);
+            Log.e(TAG, "SIP STATCK STARTED");
         } catch (Exception e) {
             return;
         }
@@ -325,6 +293,7 @@ class MyApp {
 		 * thread (by GC?).
 		 */
         mEndpoint.delete();
+
         mEndpoint = null;
     }
 

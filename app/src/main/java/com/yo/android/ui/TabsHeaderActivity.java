@@ -16,8 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
@@ -30,6 +28,7 @@ import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
+import com.yo.android.util.Util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -109,7 +108,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
         NotificationCache.clearNotifications();
 
-        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+        if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
             Type type = new TypeToken<List<Popup>>() {
             }.getType();
             List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -160,23 +159,23 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-            Type type = new TypeToken<List<Popup>>() {
-            }.getType();
-            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-            if (popup != null) {
-                for (Popup p : popup) {
-                    if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
-                        if (!isAlreadyShown) {
-                            PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
-                            isAlreadyShown = true;
-                            isSharedPreferenceShown = true;
-                            break;
+            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                Type type = new TypeToken<List<Popup>>() {
+                }.getType();
+                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                if (popup != null) {
+                    for (Popup p : popup) {
+                        if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
+                            if (!isAlreadyShown) {
+                                PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
+                                isAlreadyShown = true;
+                                isSharedPreferenceShown = true;
+                                break;
+                            }
                         }
                     }
                 }
             }
-        }
     }
 
     @Override
@@ -191,7 +190,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         if (popup != null) {
-            if (!isSharedPreferenceShown) {
+            if(!isSharedPreferenceShown) {
                 Collections.reverse(popup);
             }
             List<Popup> tempPopup = new ArrayList<>(popup);

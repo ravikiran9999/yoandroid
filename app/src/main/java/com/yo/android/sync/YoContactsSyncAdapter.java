@@ -131,7 +131,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
-        Log.i(TAG, "Beginning network synchronization");
+     //   Log.i(TAG, "Beginning network synchronization");
         List<Contact> contacts = null;
         try {
             String access = loginPrefs == null ? "" : loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
@@ -156,7 +156,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             syncResult.databaseError = true;
             return;
         }
-        Log.i(TAG, "Network synchronization complete");
+      //  Log.i(TAG, "Network synchronization complete");
     }
 
     /**
@@ -181,9 +181,9 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     public static synchronized void updateLocalFeedData(Context context, List<Contact> contacts, final SyncResult syncResult) throws RemoteException, OperationApplicationException {
         final ContentResolver contentResolver = context.getContentResolver();
         ContentResolver mContentResolver = context.getContentResolver();
-        Log.i(TAG, "Parsing stream as Atom feed");
+       // Log.i(TAG, "Parsing stream as Atom feed");
         final List<Entry> entries = prepareEntries(contacts);
-        Log.i(TAG, "Parsing complete. Found " + entries.size() + " entries");
+        //Log.i(TAG, "Parsing complete. Found " + entries.size() + " entries");
 
 
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
@@ -195,11 +195,11 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         // Get list of all items
-        Log.i(TAG, "Fetching local entries for merge");
+      //  Log.i(TAG, "Fetching local entries for merge");
         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
         Cursor c = contentResolver.query(uri, PROJECTION, null, null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
         assert c != null;
-        Log.i(TAG, "Found " + c.getCount() + " local entries. Computing merge solution...");
+       // Log.i(TAG, "Found " + c.getCount() + " local entries. Computing merge solution...");
 
         // Find stale data
         int id;
@@ -240,7 +240,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                         (match.countryCode != null && !match.countryCode.equals(countryCode))
                         ) {
                     // Update existing record
-                    Log.i(TAG, "Scheduling update: " + existingUri);
+                //    Log.i(TAG, "Scheduling update: " + existingUri);
                     batch.add(ContentProviderOperation.newUpdate(existingUri)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME, match.name)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE, match.image)
@@ -255,7 +255,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                 // Entry doesn't exist. Remove it from the database.
                 Uri deleteUri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI.buildUpon()
                         .appendPath(Integer.toString(id)).build();
-                Log.i(TAG, "Scheduling delete: " + deleteUri);
+               // Log.i(TAG, "Scheduling delete: " + deleteUri);
                 batch.add(ContentProviderOperation.newDelete(deleteUri).build());
                 syncResult.stats.numDeletes++;
             }

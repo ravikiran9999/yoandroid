@@ -24,9 +24,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
 import com.yo.android.api.YoApi;
@@ -38,6 +40,7 @@ import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.model.dialer.CallRateDetail;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NewDailerActivity;
@@ -144,11 +147,6 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        try {
-            ListNets.main(null);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
         bus.register(this);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<ResponseBody>() {
@@ -257,9 +255,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         ButterKnife.bind(this, view);
-
     }
 
 
@@ -306,7 +302,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         appCalls.clear();
         paidCalls.clear();
         FragmentActivity activity = getActivity();
-        if (activity != null) {
+        if(activity !=null) {
             appCalls = CallLog.Calls.getAppToAppCallLog(activity);
             paidCalls = CallLog.Calls.getPSTNCallLog(activity);
             showEmptyText();
@@ -398,46 +394,64 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     /**
      * @param action
      */
-    public void onEventMainThread(String action) {
+    public void onEventMainThread(Object action) {
         Log.w(TAG, "LOADING CALL LOGS AFTER ACTION " + action);
-        if (action.equals(REFRESH_CALL_LOGS)) {
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadCallLogs();
-                        refreshCallLogsIfNotUpdated();
-                        mBalanceHelper.checkBalance(null);
-                    }
-                });
+        if(action instanceof String) {
+            if (action.equals(REFRESH_CALL_LOGS)) {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadCallLogs();
+                            refreshCallLogsIfNotUpdated();
+                            mBalanceHelper.checkBalance(null);
+                        }
+                    });
+                }
+            } else if (action.equals(Constants.BALANCE_RECHARGE_ACTION)) {
+                showRechargeDialog();
             }
-        } else if (action.equals(Constants.BALANCE_RECHARGE_ACTION)) {
-            showRechargeDialog();
-
+        } else if(action instanceof OpponentDetails) {
+            if (((OpponentDetails)action) != null && ((OpponentDetails)action).getVoxUserName() != null && ((OpponentDetails)action).getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
+                if(((OpponentDetails)action).getStatusCode() == 503 || ((OpponentDetails)action).getStatusCode() == 404) {
+                    YODialogs.redirectToPSTN(bus, getActivity(), ((OpponentDetails) action), preferenceEndPoint, mBalanceHelper, mToastFactory);
+                }
+            }
         }
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+
         if (isVisibleToUser) {
-            if (getActivity() instanceof BottomTabsActivity) {
-                BottomTabsActivity activity = (BottomTabsActivity) getActivity();
-                if (activity.getFragment() instanceof DialerFragment) {
-                    if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        if (popup != null) {
-                            Collections.reverse(popup);
-                            isAlreadyShown = false;
-                            for (Popup p : popup) {
-                                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.DIALER) {
-                                    if (!isAlreadyShown) {
-                                        PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.DIALER, p, getActivity(), preferenceEndPoint, this, this, popup);
-                                        isAlreadyShown = true;
-                                        isSharedPreferenceShown = false;
-                                        break;
+            if (preferenceEndPoint != null) {
+                // Capture user id
+                Map<String, String> dialerParams = new HashMap<String, String>();
+                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                //param keys and values have to be of String type
+                dialerParams.put("UserId", userId);
+
+                FlurryAgent.logEvent("Dialer", dialerParams, true);
+
+                if (getActivity() instanceof BottomTabsActivity) {
+                    BottomTabsActivity activity = (BottomTabsActivity) getActivity();
+                    if (activity.getFragment() instanceof DialerFragment) {
+                        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                            Type type = new TypeToken<List<Popup>>() {
+                            }.getType();
+                            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                            if (popup != null) {
+                                Collections.reverse(popup);
+                                isAlreadyShown = false;
+                                for (Popup p : popup) {
+                                    if (p.getPopupsEnum() == PopupHelper.PopupsEnum.DIALER) {
+                                        if (!isAlreadyShown) {
+                                            PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.DIALER, p, getActivity(), preferenceEndPoint, this, this, popup);
+                                            isAlreadyShown = true;
+                                            isSharedPreferenceShown = false;
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -447,6 +461,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
             }
 
         } else {
+
         }
     }
 

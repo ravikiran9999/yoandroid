@@ -60,6 +60,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * The adapter for the Magazine landing screen articles
+ */
 public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener, MagazineOtherPeopleReflectListener, AutoReflectTopicsFollowActionsListener {
 
     private Context context;
@@ -271,8 +274,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -299,8 +300,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -334,8 +333,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }
 
                                 mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -362,8 +359,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -603,6 +598,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         return layout;
     }
 
+    /**
+     * Used to follow an article
+     * @param data The Articles object
+     * @param finalHolder The view holder object
+     * @param follow The follow button
+     */
     private void followArticle(final Articles data, final ViewHolder finalHolder, final Button follow) {
         if (!"true".equals(data.getIsFollowing())) {
             ((BaseActivity) context).showProgressDialog();
@@ -665,6 +666,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
     }
 
+    /**
+     * Shows unfollow confirmation dialog
+     * @param data The articles object
+     * @param finalHolder The view holder object
+     * @param follow The follow button
+     */
     private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder, final Button follow) {
 
 
@@ -758,6 +765,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
 
+    /**
+     * Adds the items to the list
+     * @param articlesList The list of articles
+     */
     public void addItems(List<Articles> articlesList) {
         allArticles = new ArrayList<>(articlesList);
         totalItems = new ArrayList<>(articlesList);
@@ -781,6 +792,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
     }
 
+    /**
+     * Adds all the items to the list
+     * @param list The articles list
+     */
     public void addItemsAll(List<Articles> list) {
         items.addAll(list);
         if (!((BaseActivity) context).hasDestroyed()) {
@@ -788,6 +803,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
     }
 
+    /**
+     * Clears the articles list
+     */
     public void clear() {
         items.clear();
         if (!((BaseActivity) context).hasDestroyed()) {
@@ -800,6 +818,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         autoReflectStatus(data, type);
     }
 
+    /**
+     * Updates the Follow and Like status of the articles
+     * @param data The articles object
+     * @param type Whether it is Follow or Like
+     */
     private void autoReflectStatus(Articles data, String type) {
         if (data != null) {
 
@@ -868,8 +891,15 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
     }
 
+    /**
+     * Populates the top article
+     * @param layout The view object
+     * @param holder The view holder object
+     * @param data The articles object
+     * @param position The position
+     */
     private void populateTopArticle(View layout, ViewHolder holder, final Articles data, final int position) {
-        Log.d("ArticlesBaseAdapter", "In populateTopArticle");
+       // Log.d("ArticlesBaseAdapter", "In populateTopArticle");
         if (holder.magazineLikeTop != null) {
             holder.magazineLikeTop.setTag(position);
         }
@@ -911,8 +941,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -939,8 +967,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -974,8 +1000,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }
 
                                 mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1002,8 +1026,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1136,8 +1158,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     }
 
+    /**
+     * Populates the left article
+     * @param holder The view holder object
+     * @param data The articles object
+     * @param position The position
+     */
     private void populateLeftArticle(ViewHolder holder, final Articles data, final int position) {
-        Log.d("ArticlesBaseAdapter", "In populateLeftArticle");
+        //Log.d("ArticlesBaseAdapter", "In populateLeftArticle");
         if (holder.magazineLikeLeft != null) {
             holder.magazineLikeLeft.setVisibility(View.VISIBLE);
             holder.magazineLikeLeft.setTag(position);
@@ -1192,8 +1220,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1220,8 +1246,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1255,8 +1279,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }
 
                                 mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1283,8 +1305,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1433,8 +1453,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     }
 
+    /**
+     * Populates the right article
+     * @param holder The view holder object
+     * @param data The articles object
+     * @param position The position
+     */
     private void populateRightArticle(ViewHolder holder, final Articles data, final int position) {
-        Log.d("ArticlesBaseAdapter", "In populateRightArticle");
+      //  Log.d("ArticlesBaseAdapter", "In populateRightArticle");
         if (holder.magazineLikeRight != null) {
             holder.magazineLikeRight.setVisibility(View.VISIBLE);
             holder.magazineLikeRight.setTag(position);
@@ -1489,8 +1515,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
                                 }
                                 mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1517,8 +1541,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1552,8 +1574,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }
 
                                 mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1580,8 +1600,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 if (!((BaseActivity) context).hasDestroyed()) {
                                     notifyDataSetChanged();
                                 }
-                                Type type = new TypeToken<List<Articles>>() {
-                                }.getType();
 
                                 List<Articles> cachedMagazinesList = getCachedMagazinesList();
                                 if (cachedMagazinesList != null) {
@@ -1729,6 +1747,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     }
 
+    /**
+     * Populates the empty left article
+     * @param holder The view holder object
+     */
     private void populateEmptyLeftArticle(ViewHolder holder) {
         if (holder.magazineLikeLeft != null) {
             holder.magazineLikeLeft.setVisibility(View.GONE);
@@ -1763,6 +1785,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     }
 
+    /**
+     * Populates the empty right article
+     * @param holder The view holder object
+     */
     private void populateEmptyRightArticle(ViewHolder holder) {
         if (holder.magazineLikeRight != null) {
             holder.magazineLikeRight.setVisibility(View.GONE);
@@ -1797,6 +1823,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     }
 
+    /**
+     * Updates the topic follow status
+     * @param data The articles object
+     * @param follow The follow string
+     */
     @Override
     public void updateFollowTopicStatus(Articles data, String follow) {
         if (data != null) {
@@ -1828,6 +1859,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     }
 
+    /**
+     * The View Holder class
+     */
     private static class ViewHolder {
 
         private TextView articleTitle;
@@ -1897,6 +1931,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private TextView articleSummaryRight;
     }
 
+    /**
+     * Updates the topic follow
+     * @param isFollowing isFollowing or not
+     * @param topic The articles object
+     * @param position The position
+     * @param articlePlace The article's placement
+     */
     public void updateTopic(boolean isFollowing, Articles topic, int position, String articlePlace) {
 
         if (TextUtils.isEmpty(articlePlace)) {
@@ -1922,6 +1963,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         notifyDataSetChanged();
     }
 
+    /**
+     * Updates the articles
+     * @param isLiked isLiked article or not
+     * @param articles The Articles object
+     * @param position The position
+     * @param articlePlace The article placement
+     */
     public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
         Log.d("ArticlesBaseAdapter", "The position in updateArticle " + position);
         if (TextUtils.isEmpty(articlePlace)) {
@@ -1938,6 +1986,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         notifyDataSetChanged();
     }
 
+    /**
+     * Gets all the articles
+     * @return The articles list
+     */
     public List<Articles> getAllItems() {
         getAllArticles = new ArrayList<>(items);
         /*if (getAllArticles.size() >= 2) {
@@ -1951,11 +2003,19 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         return getAllArticles;
     }
 
+    /**
+     * Removes the articles from the list
+     * @param articlesList The articles list which needs to be removed
+     */
     public void removeItems(List<Articles> articlesList) {
         items.removeAll(articlesList);
         notifyDataSetChanged();
     }
 
+    /**
+     * Gets the cached magazines list
+     * @return The list of articles
+     */
     private List<Articles> getCachedMagazinesList() {
         Type type1 = new TypeToken<List<Articles>>() {
         }.getType();
@@ -1980,6 +2040,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         return cachedMagazinesList;
     }
 
+    /**
+     * Saves the cached magazines list
+     * @param cachedMagazinesList The list of articles to be cached
+     */
     private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
         List<Articles> followedTopicArticles = new ArrayList<>();
         List<Articles> randomTopicArticles = new ArrayList<>();

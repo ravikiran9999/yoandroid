@@ -7,6 +7,28 @@ public class SipProfile {
     private String username;
     private String password;
     private String domain;
+    private boolean displayName;
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public boolean isDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(boolean displayName) {
+        this.displayName = displayName;
+    }
+
 
     private SipProfile(String username,
                        String password,
