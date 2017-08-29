@@ -120,7 +120,7 @@ public class CallHelper {
         }
     }
 
-    private static void appendLog(String text) {
+    public static void appendLog(String text) {
         File logFile = new File("sdcard/calldump.file");
         if (!logFile.exists()) {
             try {

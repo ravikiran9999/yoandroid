@@ -28,6 +28,7 @@ public interface CallExtras {
     public static final String DISPLAY_NUMBER = "display_number";
     public static final String REGISTRATION_STATUS = "registration_status";
     public static final String CALL_STATE = "call_state";
+    public static final String RE_REGISTERING = "re-registering";
 
 
     public interface StatusCode {
@@ -54,6 +55,8 @@ public interface CallExtras {
         public static final String YO_RINGING = "Ringing";
         public static final String YO_REQUEST_TIMEOUT = "Request Timeout";
         public static final String YO_NEXGE_SERVER_DOWN = "Connection refused";
+        public static final String YO_NOT_ACCEPTABLE_HERE = "Not Acceptable Here";
+        public static final String YO_NETWORK_IS_UNREACHABLE = "Network is unreachable";
 
 
     }

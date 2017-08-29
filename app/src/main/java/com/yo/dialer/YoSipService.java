@@ -38,6 +38,7 @@ import com.yo.dialer.ui.OutgoingCallActivity;
 import com.yo.dialer.yopj.YoAccount;
 import com.yo.dialer.yopj.YoCall;
 import com.yo.dialer.yopj.YoSipServiceHandler;
+import com.yo.feedback.AppFailureReport;
 
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.pjsip_status_code;
@@ -132,6 +133,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public String phoneNumber;
     private int callNotificationId;
 
+
     public Contact getCalleeContact() {
         return calleeContact;
     }
@@ -168,6 +170,11 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             yoAccount = sipServiceHandler.addAccount(this);
         } else {
             DialerLogs.messageI(TAG, "Acccount is already registered===========");
+            try {
+                yoAccount.setRegistration(true);
+            } catch (Exception e) {
+                DialerLogs.messageI(TAG, "Acccount registration renewal Failed===========" + e.getMessage());
+            }
         }
     }
 
@@ -228,13 +235,40 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void makeCall(Intent intent) {
+        String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
+
         if (yoCurrentCall == null) {
             yoCurrentCall = CallHelper.makeCall(this, yoAccount, intent);
             DialerLogs.messageE(TAG, "YO==makeCalling call...and YOCALL = " + yoCurrentCall);
-            showOutgointCallActivity(yoCurrentCall, intent);
+            if (yoCurrentCall != null) {
+                showOutgointCallActivity(yoCurrentCall, intent);
+                AppFailureReport.sendSuccessDetails("Showing outgoing call screen:" + username);
+            } else {
+                if (intent != null && intent.hasExtra(CallExtras.RE_REGISTERING)) {
+                    //Re-tried but agian problem.
+                    AppFailureReport.sendDetails("Making call failed, try to delete account but still issue, restart app required. :" + username);
+                    return;
+                } else {
+                    AppFailureReport.sendDetails("Problem with Current call object, so deleting account and re-register and calling agian.:" + username);
+                    if (yoAccount != null) {
+                        yoAccount.delete();
+                        yoAccount = null;
+                        register();
+                        if (intent != null) {
+                            intent.putExtra(CallExtras.RE_REGISTERING, true);
+                        }
+                        makeCall(intent);
+                    } else {
+                        AppFailureReport.sendDetails("While Making call failed to create Account object and Call Object :" + username);
+                    }
+                }
+            }
         } else {
+            AppFailureReport.sendDetails("Previous call is not properly ended:" + username);
             DialerLogs.messageE(TAG, "Previous call is not properly ended" + yoCurrentCall);
-            callDisconnected();            //TODO: ALREADY CALL IS GOING ON
+            yoCurrentCall.delete();
+            setCurrentCallToNull();
+            makeCall(intent);
         }
     }
 
@@ -249,7 +283,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         } else {
             yoCurrentCall = yoCall;
             startRingtone(); // to play caller ringtone
-            DialerLogs.messageE(TAG, "YO====On Incoming call current call call obj==" + yoCurrentCall);
+            DialerLogs.messageE(TAG, "On Incoming call current call call obj==" + yoCurrentCall);
             triggerNoAnswerIfNotRespond();
             startInComingCallScreen(yoCurrentCall);
         }
@@ -371,7 +405,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     //When callee loss his network there wont be any callback to caller
     //So after 10sec change to reconnecting and  30sec if there are no rtp packets need to disconnect the call.
     public void checkCalleeLossNetwork() {
-        DialerLogs.messageE(TAG, "YO====checkCalleeLossNetwork== calleed");
+        DialerLogs.messageE(TAG, "YO====Starting Checking Network FAILURE== calleed");
 
         if (checkNetworkLossRunnable == null) {
             networkPacketsCheck();
@@ -385,7 +419,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             public void run() {
                 if (yoCurrentCall != null) {
                     DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
-                    if (!isRemoteHold() && !isLocalHold() && isCallAccepted) {
+                    if (!isRemoteHold() && !isLocalHold() && isCallAccepted()) {
                         reInviteToCheckCalleStatus();
                     }
                 }
@@ -396,7 +430,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void reInviteToCheckCalleStatus() {
-        DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state" + yoCurrentCall);
+        DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state " + yoCurrentCall);
         try {
             CallHelper.unHoldCall(yoCurrentCall);
         } catch (Exception e) {
@@ -475,11 +509,25 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             DialerLogs.messageI(TAG, "Network change listener and state is " + networkstate);
             if (networkstate == NetworkStateListener.NETWORK_CONNECTED) {
                 // Network is connected.
-                DialerLogs.messageI(TAG, "YO========Register Account===========");
+                DialerLogs.messageI(TAG, "YO========Register sipServiceHandler===========" + sipServiceHandler);
                 if (sipServiceHandler != null) {
                     sipServiceHandler.updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING);
+                    DialerLogs.messageI(TAG, "YO========Register yoCurrentCall===========" + yoCurrentCall);
+                    //To check registration
+                    if (yoAccount != null) {
+                        try {
+                            DialerLogs.messageI(TAG, "YO========Renew registration===========");
+                            yoAccount.setRegistration(true);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        register();
+                    }
+
+                    //To check ongoing call.
                     if (yoCurrentCall != null) {
-                        DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
+                        DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold() + " and isCallAccepted " + isCallAccepted);
                         if (!isRemoteHold() && isCallAccepted) {
                             reInviteToCheckCalleStatus();
                         }
@@ -547,7 +595,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
             try {
                 yoCurrentCall.hangup(prm);
-                 callDisconnected();
+                callDisconnected();
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "Call is terminated because app got killed.");
             }

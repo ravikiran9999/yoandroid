@@ -205,7 +205,7 @@ public class YODialogs {
             if (callRateDetailList != null) {
                 for (CallRateDetail callRateDetail : callRateDetailList) {
                     String prefix = callRateDetail.getPrefix();
-                    if (countryCode.equals(prefix)) {
+                    if (countryCode != null && countryCode.equals(prefix)) {
                         String cRate = callRateDetail.getRate();
                         String cPulse = callRateDetail.getPulse();
                         String pulse;

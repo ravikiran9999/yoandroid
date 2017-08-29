@@ -38,13 +38,15 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         DialerLogs.messageI(TAG, "YO========Outgongcall call screen=====");
         DialerLogs.messageI(TAG, "YO==== Callee Number====" + callePhoneNumber);
         initViews();
+
+        if (!TextUtils.isEmpty(callePhoneNumber) && callePhoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
+            callePhoneNumber = DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber);
+        }
         loadUserDetails();
         tvCallStatus.setText(getResources().getString(R.string.calling));
 
         //If outgoing call phone number contaitns yo username it should be parse and display only phone number.
-        if (!TextUtils.isEmpty(callePhoneNumber) && callePhoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
-            callePhoneNumber = DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber);
-        }
+
         //TODO: Need to check edge cases for Incoming and Outgoing calls
         //
         loadCallePhoneNumber(callePhoneNumberTxt, callePhoneNumber);
