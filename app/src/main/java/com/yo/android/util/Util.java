@@ -1015,7 +1015,6 @@ public class Util {
 
         return true;
     }
-}
 
     public static void initBar(SeekBar bar, final AudioManager audioManager, final int stream) {
         bar.setMax(audioManager.getStreamMaxVolume(stream));

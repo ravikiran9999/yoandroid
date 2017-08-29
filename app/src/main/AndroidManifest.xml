@@ -142,12 +142,12 @@
         <activity
             android:name="com.yo.dialer.ui.IncomingCallActivity"
             android:excludeFromRecents="true"
+            android:exported="true"
             android:label="@string/yo_app_call"
             android:launchMode="singleTask"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:exported="true"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".voip.OutGoingCallActivity"
             android:excludeFromRecents="true"
@@ -160,13 +160,13 @@
         <activity
             android:name="com.yo.dialer.ui.OutgoingCallActivity"
             android:excludeFromRecents="true"
+            android:exported="true"
             android:label="@string/yo_app_call"
             android:launchMode="singleTask"
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:taskAffinity=".outgoing"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:exported="true"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.UserProfileActivity"
             android:label="@string/user_profile"
@@ -193,15 +193,14 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait" />
 
-            <intent-filter android:label="@string/app_name">
-                <action android:name="android.intent.action.SEND" />
+        <intent-filter android:label="@string/app_name">
+            <action android:name="android.intent.action.SEND" />
 
-                <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="text/*" />
-                <data android:mimeType="image/*" />
-            </intent-filter>
-        </activity>
+            <data android:mimeType="text/*" />
+            <data android:mimeType="image/*" />
+        </intent-filter>
         />
         <activity
             android:name=".ui.FollowMoreTopicsActivity"
@@ -380,13 +379,13 @@
             android:enabled="true"
             android:exported="true" />
         <service android:name=".util.ReCreateService" />
-        <service
+        <!--<service
             android:name=".chat.firebase.ListenerJobService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
-        </service>
+        </service>-->
 
         <receiver android:name=".app.RestartServiceReceiver">
             <intent-filter>
@@ -397,7 +396,7 @@
             android:name=".networkmanager.StartServiceAtBootReceiver"
             android:enabled="true"
             android:exported="false"
-            android:label="StartServiceAtBootReceiver" >
+            android:label="StartServiceAtBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -406,25 +405,27 @@
         <activity
             android:name=".chat.ui.CountryCodeActivity"
             android:theme="@style/AppTheme.Switch" />
-        <activity android:name=".ui.YoBalanceDetailActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".video.InAppVideoActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.YoBalanceDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".video.InAppVideoActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.PlainActivity"
             android:label=""
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
-    <meta-data
-        android:name="com.google.android.gms.version"
-        android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
-    <activity android:name=".ui.NewOTPActivity"
-        android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.NewOTPActivity"
+            android:screenOrientation="portrait"/>
 
-    <service android:name="com.yo.services.BackgroundServices" />
-    <service android:name="com.yo.dialer.YoSipService" />
+        <service android:name="com.yo.services.BackgroundServices" />
+        <service android:name="com.yo.dialer.YoSipService" />
     </application>
-
 </manifest>

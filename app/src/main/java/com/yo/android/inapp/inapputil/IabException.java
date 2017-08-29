@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.yo.android.inapp.util;
+package com.yo.android.inapp.inapputil;
 
 /**
  * Exception thrown when something went wrong with in-app billing.

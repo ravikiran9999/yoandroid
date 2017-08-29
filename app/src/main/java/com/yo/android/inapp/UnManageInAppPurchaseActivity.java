@@ -50,7 +50,7 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
         Injector.obtain(getApplication()).inject(this);
         ITEM_SKU = getIntent().getStringExtra("sku");
         ITEM_PRICE = getIntent().getFloatExtra("price", 0f);
-       ITEM_SKU = "android.test.purchased";
+        ITEM_SKU = "android.test.purchased";
         ITEM_SKU = ITEM_SKU.toLowerCase();
         //developer payload
         emailAddress = getIntent().getStringExtra(Constants.USER_ID);
@@ -190,11 +190,7 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         if (mHelper != null) {
-            try {
-                mHelper.dispose();
-            } catch (IabHelper.IabAsyncInProgressException e) {
-                e.printStackTrace();
-            }
+            mHelper.dispose();
             mHelper = null;
         }
     }

@@ -335,8 +335,6 @@
     <string name="connected_status">Connected</string>
     <string name="reconnecting_status">Reconnecting</string>
     <string name="disconnect_status">Disconnected</string>
-    <string name="call_on_hold_status">Call On hold</string>
-    <string name="reconnecting_status">Reconnecting..</string>
     <string name="call_on_hold_status">Call is on hold</string>
 
     <string-array name="yo_people_tabs_titles">

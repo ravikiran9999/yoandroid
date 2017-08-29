@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.yo.android.inapp.util;
+package com.yo.android.inapp.inapputil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,15 +22,13 @@ import org.json.JSONObject;
  * Represents an in-app product's listing details.
  */
 public class SkuDetails {
-    private final String mItemType;
-    private final String mSku;
-    private final String mType;
-    private final String mPrice;
-    private final long mPriceAmountMicros;
-    private final String mPriceCurrencyCode;
-    private final String mTitle;
-    private final String mDescription;
-    private final String mJson;
+    String mItemType;
+    String mSku;
+    String mType;
+    String mPrice;
+    String mTitle;
+    String mDescription;
+    String mJson;
 
     public SkuDetails(String jsonSkuDetails) throws JSONException {
         this(IabHelper.ITEM_TYPE_INAPP, jsonSkuDetails);
@@ -43,19 +41,29 @@ public class SkuDetails {
         mSku = o.optString("productId");
         mType = o.optString("type");
         mPrice = o.optString("price");
-        mPriceAmountMicros = o.optLong("price_amount_micros");
-        mPriceCurrencyCode = o.optString("price_currency_code");
         mTitle = o.optString("title");
         mDescription = o.optString("description");
     }
 
-    public String getSku() { return mSku; }
-    public String getType() { return mType; }
-    public String getPrice() { return mPrice; }
-    public long getPriceAmountMicros() { return mPriceAmountMicros; }
-    public String getPriceCurrencyCode() { return mPriceCurrencyCode; }
-    public String getTitle() { return mTitle; }
-    public String getDescription() { return mDescription; }
+    public String getSku() {
+        return mSku;
+    }
+
+    public String getType() {
+        return mType;
+    }
+
+    public String getPrice() {
+        return mPrice;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
 
     @Override
     public String toString() {

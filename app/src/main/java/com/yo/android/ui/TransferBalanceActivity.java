@@ -86,7 +86,7 @@ public class TransferBalanceActivity extends BaseActivity {
 
     public static void start(Activity activity, String currencySymbol, String availableBalance, boolean userType) {
         Intent intent = createIntent(activity, currencySymbol, availableBalance, userType);
-        activity.startActivityForResult(intent, 22);
+        activity.startActivityForResult(intent, 11);
     }
 
     private static Intent createIntent(Activity activity, String currencySymbol, String availableBalance, String fullName, String phoneNo, String userAvatar, String userId, boolean userType) {

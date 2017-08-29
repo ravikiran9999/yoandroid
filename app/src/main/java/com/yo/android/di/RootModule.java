@@ -231,10 +231,10 @@ import dagger.Provides;
 
                 com.yo.dialer.YoSipService.class,
                 YoSipServiceHandler.class,
-                DialerHelper.class
+                DialerHelper.class,
 
                 //usecases
-                WebserviceUsecase.class,
+                WebserviceUsecase.class
         },
         includes = {
                 AppModule.class,

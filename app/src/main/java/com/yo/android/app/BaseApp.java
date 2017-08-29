@@ -8,13 +8,6 @@ import android.util.Log;
 import com.firebase.client.Firebase;
 import com.flurry.android.FlurryAgent;
 import com.flurry.android.FlurryAgentListener;
-import com.google.android.exoplayer2.BuildConfig;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.util.Util;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.di.Injector;
 import com.yo.android.di.RootModule;
@@ -44,7 +37,6 @@ public class BaseApp extends MultiDexApplication {
         super.onCreate();
         baseAppInstance = this;
         injectDependencies();
-        userAgent = Util.getUserAgent(this, "ExoPlayerDemo");
         /* Enable disk persistence  */
         // FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Firebase.getDefaultConfig().setPersistenceEnabled(true);
@@ -99,7 +91,7 @@ public class BaseApp extends MultiDexApplication {
                 .build(this, Constants.FLURRY_API_KEY);
     }
 
-    public DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
+    /*public DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
         return new DefaultDataSourceFactory(this, bandwidthMeter,
                 buildHttpDataSourceFactory(bandwidthMeter));
     }
@@ -110,6 +102,6 @@ public class BaseApp extends MultiDexApplication {
 
     public boolean useExtensionRenderers() {
         return BuildConfig.FLAVOR.equals("withExtensions");
-    }
+    }*/
 
 }

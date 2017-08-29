@@ -82,7 +82,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
         getSupportActionBar().setTitle(title);
 
-        balance = getIntent().getStringExtra("balance");
+        balance = getIntent().getStringExtra(Constants.CURRENT_BALANCE);
         currencySymbol = getIntent().getStringExtra("currencySymbol");
 
         listView = (ListView) findViewById(R.id.lv_contacts);
@@ -141,6 +141,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
     /**
      * Calls the respective service based on whether the user is a representative or not
+     *
      * @param isRepresentative isRepresentative or not
      */
     private void handleRepresentative(boolean isRepresentative) {
@@ -242,6 +243,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
     /**
      * Loads the contacts in alphabetical order
+     *
      * @param list The list of users
      */
     private void loadAlphabetOrder(List<FindPeople> list) {
@@ -313,7 +315,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         FindPeople contact = (FindPeople) listView.getItemAtPosition(position);
-        String fullName =  contact.getFirst_name() + " " + contact.getLast_name();
+        String fullName = contact.getFirst_name() + " " + contact.getLast_name();
         String phoneNumber = contact.getPhone_no();
         String userAvatar = contact.getAvatar();
         String userId = contact.getId();
@@ -334,6 +336,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
     /**
      * Searches for the user in the list of users based on the search text
+     *
      * @param menu
      */
     private void searchPeople(Menu menu) {
@@ -381,6 +384,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
 
     /**
      * Calls the service to search for a user based on the search text
+     *
      * @param newText
      */
     private void callSearchingService(String newText) {
