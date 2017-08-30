@@ -21,7 +21,6 @@ public class CallStateHandler {
 
     public static void verify(YoSipService yoSipService, CallInfo info) {
         if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
-            isRinging = false;
             yoSipService.setCallAccepted(false);
             if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_ACCEPTABLE_HERE)) {
                 checkMissedCall(yoSipService);
@@ -51,7 +50,7 @@ public class CallStateHandler {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
                 yoSipService.callDisconnected();
             }
-
+            isRinging = false;
         } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
             isRinging = false;
             yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CONNECTED);
