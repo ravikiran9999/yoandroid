@@ -2,7 +2,6 @@ package com.yo.android.ui;
 
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;

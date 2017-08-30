@@ -192,4 +192,6 @@ public class Constants {
     public static final String DIALER_LOCK = "dialer_lock";
     public static final String APP_LOCK = "app_lock";
     public static final String TERMS_CONDITIONS = "terms_conditions";
+
+    public static final String VIDEO_URL = "video_url";
 }

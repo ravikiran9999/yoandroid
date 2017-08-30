@@ -1,6 +1,5 @@
 package com.yo.android.app;
 
-import android.content.Intent;
 import android.os.StrictMode;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
@@ -90,18 +89,4 @@ public class BaseApp extends MultiDexApplication {
                 .withListener(flurryAgentListener)
                 .build(this, Constants.FLURRY_API_KEY);
     }
-
-    /*public DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
-        return new DefaultDataSourceFactory(this, bandwidthMeter,
-                buildHttpDataSourceFactory(bandwidthMeter));
-    }
-
-    public HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
-        return new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter);
-    }
-
-    public boolean useExtensionRenderers() {
-        return BuildConfig.FLAVOR.equals("withExtensions");
-    }*/
-
 }
