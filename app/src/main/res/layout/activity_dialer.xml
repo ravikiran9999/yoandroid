@@ -133,7 +133,7 @@
                     android:paddingLeft="5dp"
                     android:text="@string/your_credit_balance"
                     android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/balance_txt_size" />
 
                 <TextView
                     android:id="@+id/txt_balance"
@@ -145,8 +145,9 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="5dp"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
-                   />
+                    android:textSize="@dimen/balance_txt_size"
+                    android:singleLine="true"
+                    android:ellipsize="end"/>
 
                 <TextView
                     android:id="@+id/add_balance"
@@ -160,7 +161,7 @@
                     android:paddingRight="5dp"
                     android:text="Add Balance"
                     android:textColor="@color/white"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/balance_txt_size" />
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>

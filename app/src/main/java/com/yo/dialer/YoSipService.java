@@ -626,7 +626,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         if (callStarted == 0 || callType == -1) {
             callDuration = 0;
         }
-        callStarted = 0;
+        //callStarted = 0;
         int pstnorapp = 0;
         Contact contact = mContactsSyncManager.getContactByVoxUserName(mobileNumber);
         CallerInfo info = new CallerInfo();
@@ -653,6 +653,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             pstnorapp = CallLog.Calls.APP_TO_PSTN_CALL;
         }
         CallLog.Calls.addCall(info, getBaseContext(), mobileNumber, callType, callStarted, callDuration, pstnorapp);
+        callStarted = 0;
     }
 
     private void handleBusy(YoCall yoCall) {
