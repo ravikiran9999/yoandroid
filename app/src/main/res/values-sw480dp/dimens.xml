@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="magazine_image_height">230dp</dimen>
-    <dimen name="image_popup_height">300dp</dimen>
     <dimen name="balance_txt_size">14sp</dimen>
 </resources>
