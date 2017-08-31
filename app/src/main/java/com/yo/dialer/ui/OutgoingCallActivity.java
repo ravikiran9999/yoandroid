@@ -58,6 +58,10 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
             changeToAcceptedCallUI();
             loadPreviousSettings();
         }
+
+        if (callControlsModel != null && callControlsModel.isSpeakerOn()) {
+            loadPreviousSettings();
+        }
         updateCallType();
 
     }
@@ -102,7 +106,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
 
         hideAcceptAndMessage();
 
-        callSpeakerView = (ImageView) findViewById(R.id.imv_speaker);
+        callSpeakerView = (ImageView) mAcceptedCallHeader.findViewById(R.id.imv_speaker);
 
         CallControlsModel callControlsModel = CallControls.getCallControlsModel();
         callSpeakerView.setTag(callControlsModel != null ? callControlsModel.isSpeakerOn() : false);

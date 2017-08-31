@@ -83,7 +83,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         hideMicAndSpeaker();
 
 
-        callSpeakerView = (ImageView) findViewById(R.id.imv_speaker);
+        callSpeakerView = (ImageView) mAcceptedCallHeader.findViewById(R.id.imv_speaker);
         CallControlsModel callControlsModel = CallControls.getCallControlsModel();
         callSpeakerView.setTag(callControlsModel != null ? callControlsModel.isSpeakerOn() : false);
         callMuteView = (ImageView) findViewById(R.id.imv_mic_off);
