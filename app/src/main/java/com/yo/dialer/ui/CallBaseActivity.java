@@ -173,6 +173,14 @@ class CallBaseActivity extends BaseActivity {
         CallControls.toggleSpeaker(am, v);
     }
 
+    protected void loadPrevMicSettings(View v) {
+        CallControls.loadPrevMicSettings(sipBinder, v);
+    }
+
+    protected void loadPrevSpeakerSettings(View v) {
+        CallControls.loadPrevSpeakerSettings(am, v);
+    }
+
     protected void rejectCall() {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             isCallStopped = true;
@@ -320,10 +328,10 @@ class CallBaseActivity extends BaseActivity {
         CallControlsModel callControlsModel = CallControls.getCallControlsModel();
         if (callControlsModel != null) {
             if (callControlsModel.isMicOn()) {
-                toggleMic(callMuteView);
+                loadPrevMicSettings(callMuteView);
             }
             if (callControlsModel.isSpeakerOn()) {
-                toggleSpeaker(callSpeakerView);
+                loadPrevSpeakerSettings(callSpeakerView);
             }
             DialerLogs.messageI(TAG, "YO====changeToAcceptedCallUI====" + callControlsModel.isHoldOn());
 
@@ -334,12 +342,12 @@ class CallBaseActivity extends BaseActivity {
                 connectionStatusTxtView.setText(getResources().getString(R.string.call_on_hold_status));
             }
             if (callControlsModel.isMicOn()) {
-                callMuteView.setTag(false);
-                toggleHold(callMuteView);
+                callMuteView.setTag(true);
+                //toggleHold(callMuteView);
             }
             if (callControlsModel.isSpeakerOn()) {
-                callSpeakerView.setTag(false);
-                toggleHold(callSpeakerView);
+                callSpeakerView.setTag(true);
+                //toggleHold(callSpeakerView);
             }
             if (callControlsModel.isChatOpened()) {
                 //TODO: NEED TO OPEN CHAT
