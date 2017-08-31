@@ -17,7 +17,7 @@ public class DialerLogs {
     }
 
     private static void write(String message) {
-        CallHelper.appendLog(message);
+        //CallHelper.appendLog(message);
     }
 
     public static void messageE(final String TAG, final String message) {

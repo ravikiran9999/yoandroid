@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
+import com.yo.dialer.CallExtras;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -21,7 +23,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         //Toast.makeText(context, state + incomingNumber, Toast.LENGTH_SHORT).show();
 
         if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
-            EventBus.getDefault().post(100);
+            EventBus.getDefault().post(CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL);
             isDefaultCall = true;
             // Getting call
             //Toast.makeText(context, "Ringing State Number is -" + incomingNumber, Toast.LENGTH_SHORT).show();
@@ -33,7 +35,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         }
         if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
             isDefaultCall = false;
-            EventBus.getDefault().post(101);
+            EventBus.getDefault().post(CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL_DISCONNECTED);
 
             // Toast.makeText(context, "Idle State", Toast.LENGTH_SHORT).show();
             //Call disconnected

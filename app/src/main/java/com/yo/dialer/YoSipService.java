@@ -18,6 +18,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.orion.android.common.logging.Logger;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -112,10 +113,12 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     ToastFactory mToastFactory;
 
     @Inject
+    ConnectivityHelper mHelper;
+
+    @Inject
     ContactsSyncManager mContactsSyncManager;
     //Media Manager to handle audio related events.
     private MediaManager mediaManager;
-
     //Maintain current makeCall Object
     private static YoCall yoCurrentCall;
     private Handler mHandler = new Handler();
@@ -148,6 +151,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         return sipServiceHandler;
     }
 
+    public static YoCall getYoCurrentCall() {
+        return yoCurrentCall;
+    }
+
+    public static void setYoCurrentCall(YoCall yoCurrentCall) {
+        YoSipService.yoCurrentCall = yoCurrentCall;
+    }
 
     @Nullable
     @Override
@@ -168,12 +178,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         if (yoAccount == null) {
             sipServiceHandler = YoSipServiceHandler.getInstance(this, preferenceEndPoint);
             yoAccount = sipServiceHandler.addAccount(this);
+            DialerLogs.messageI(TAG, "Adding account.");
         } else {
-            DialerLogs.messageI(TAG, "Acccount is already registered===========");
+            DialerLogs.messageI(TAG, "Acccount is already registered===========So doing renew");
             try {
                 yoAccount.setRegistration(true);
             } catch (Exception e) {
-                DialerLogs.messageI(TAG, "Acccount registration renewal Failed===========" + e.getMessage());
+                String failedMessage = "Acccount registration renewal Failed, No further logic to re-register." + e.getMessage();
+                DialerLogs.messageI(TAG, failedMessage);
+                AppFailureReport.sendDetails(failedMessage);
             }
         }
     }
@@ -183,6 +196,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         NetworkStateListener.registerNetworkState(listener);
         parseIntentInfo(intent);
         initializeMediaPalyer();
+        CheckStatus.registration(this);
         return START_STICKY;
     }
 
@@ -235,6 +249,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void makeCall(Intent intent) {
+        if (!mHelper.isConnected()) {
+            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+            return;
+        }
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
 
         if (yoCurrentCall == null) {
@@ -432,6 +450,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private void reInviteToCheckCalleStatus() {
         DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state " + yoCurrentCall);
         try {
+            if (yoCurrentCall != null) {
+                DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state " + yoCurrentCall.isActive());
+            }
             CallHelper.unHoldCall(yoCurrentCall);
         } catch (Exception e) {
             getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RE_CONNECTING);
@@ -500,6 +521,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void callAccepted() {
         //Callee accepted call so stop ringtone.
         stopDefaultRingtone();
+        CheckStatus.callStateBasedOnRTP(this);
         callStarted = System.currentTimeMillis();
         sipServiceHandler.sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_ACCEPTED));
     }

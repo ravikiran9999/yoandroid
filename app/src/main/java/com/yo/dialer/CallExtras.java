@@ -27,6 +27,8 @@ public interface CallExtras {
     public static final String NO_ROUTE_TO_HOST = "No route to host";//CODE PJSIP_SC_SERVICE_UNAVAILABLE
     public static final String DISPLAY_NUMBER = "display_number";
     public static final String REGISTRATION_STATUS = "registration_status";
+    public static final String REGISTRATION_STATUS_MESSAGE = "registration_status_message";
+
     public static final String CALL_STATE = "call_state";
     public static final String RE_REGISTERING = "re-registering";
 
@@ -46,6 +48,11 @@ public interface CallExtras {
         public static final int YO_INV_STATE_SC_NO_ANSWER = 11;
         public static final int YO_INV_STATE_CALLEE_NOT_ONLINE = 12;
         public static final int YO_REQUEST_TIME_OUT = 13;
+
+
+        public static final int YO_NORMAL_PHONE_INCOMING_CALL = 50;//put yo call on hold
+        public static final int YO_NORMAL_PHONE_INCOMING_CALL_DISCONNECTED = 51;//put yo call on hold
+
 
     }
 

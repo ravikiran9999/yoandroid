@@ -65,9 +65,11 @@ public class YoCallObserver implements YoAppObserver {
             }
         } else if (code == PJSIP_SC_REQUEST_TIMEOUT) {
             yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, CallExtras.StatusCode.YO_REQUEST_TIME_OUT);
+            yoSipService.callDisconnected();
         } else {
             yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, 0);
         }
+        yoSipService.getPreferenceEndPoint().saveStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE, reason);
         DialerLogs.messageI(TAG, "Registration Status " + registrationStatus);
         DialerLogs.messageI(TAG, "notifyRegState>>>> " + registrationStatus);
     }
