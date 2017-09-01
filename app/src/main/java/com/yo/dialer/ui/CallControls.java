@@ -158,4 +158,10 @@ class CallControls {
         }
         return false;
     }
+
+    public static void toggleRecSpeaker(AudioManager am, View v) {
+            changeSelection(v, true);
+            v.setTag(true);
+
+    }
 }
