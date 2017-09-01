@@ -10,19 +10,23 @@ import com.yo.dialer.CallStateHandler;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.YoSipService;
 
+import org.pjsip.pjsua2.BuddyInfo;
 import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallMediaInfoVector;
 import org.pjsip.pjsua2.CallOpParam;
+import org.pjsip.pjsua2.PresenceStatus;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
 import de.greenrobot.event.EventBus;
 
+import static org.pjsip.pjsua2.pjrpid_activity.PJRPID_ACTIVITY_BUSY;
 import static org.pjsip.pjsua2.pjsip_status_code.PJSIP_SC_NOT_FOUND;
 import static org.pjsip.pjsua2.pjsip_status_code.PJSIP_SC_REQUEST_TIMEOUT;
 import static org.pjsip.pjsua2.pjsip_status_code.PJSIP_SC_SERVICE_UNAVAILABLE;
+import static org.pjsip.pjsua2.pjsua_buddy_status.PJSUA_BUDDY_STATUS_ONLINE;
 
 /**
  * Created by Rajesh Babu on 12/7/17.
@@ -58,6 +62,7 @@ public class YoCallObserver implements YoAppObserver {
             registrationStatus += " failed: " + reason;
         }
         YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
+        yoSipService.getYoAccount().setRegistrationPending(false);
         if (reason != null && reason.equalsIgnoreCase(CallExtras.NETWORK_NOT_REACHABLE)) {
             if (yoSipService instanceof YoSipService) {
                 yoSipService.setCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
@@ -69,9 +74,10 @@ public class YoCallObserver implements YoAppObserver {
         } else {
             yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, 0);
         }
-        yoSipService.getPreferenceEndPoint().saveStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE, reason);
+        yoSipService.getPreferenceEndPoint().saveStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE, registrationStatus);
         DialerLogs.messageI(TAG, "Registration Status " + registrationStatus);
         DialerLogs.messageI(TAG, "notifyRegState>>>> " + registrationStatus);
+        updateBuddyState(yoSipService);
     }
 
     @Override
@@ -117,6 +123,10 @@ public class YoCallObserver implements YoAppObserver {
     public void notifyCallMediaState(YoCall call) {
         try {
             YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
+            YoCall yoCurrentCall = yoSipService.getYoCurrentCall();
+            if (yoCurrentCall != null) {
+                yoCurrentCall.setPendingReInvite(false);
+            }
             CallInfo info = call.getInfo();
             if (info != null && info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
                 DialerLogs.messageI(TAG, "notifyCallMediaState===========State =" + info.getState() + "," + "," + info.getStateText());
@@ -149,8 +159,35 @@ public class YoCallObserver implements YoAppObserver {
         }
     }
 
+    private void updateBuddyState(YoSipService yoSipService) {
+        try {
+            PresenceStatus ps = new PresenceStatus();
+            ps.setStatus(PJSUA_BUDDY_STATUS_ONLINE);
+            // Optional, set the activity and some note
+            ps.setActivity(PJRPID_ACTIVITY_BUSY);
+            ps.setNote("On the phone");
+            if (yoSipService != null) {
+                YoAccount yoAccount = yoSipService.getYoAccount();
+                if (yoAccount != null) {
+                    yoAccount.setOnlineStatus(ps);
+                }
+            }
+        } catch (Exception e) {
+            DialerLogs.messageE(TAG, "While setting update Buddy State got an exception " + e.getMessage());
+        }
+    }
+
     @Override
     public void notifyBuddyState(YoBuddy buddy) {
-        DialerLogs.messageI(TAG, "notifyBuddyState===========");
+        if (buddy != null) {
+            BuddyInfo info = null;
+            try {
+                info = buddy.getInfo();
+            } catch (Exception e) {
+
+
+            }
+            DialerLogs.messageI(TAG, "notifyBuddyState===========" + info.getUri() + ", State = " + info.getPresStatus().getStatusText());
+        }
     }
 }

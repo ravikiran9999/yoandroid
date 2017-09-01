@@ -26,6 +26,16 @@ public class YoCall extends Call {
     public VideoWindow vidWin;
     public VideoPreview vidPrev;
 
+    public boolean isPendingReInvite() {
+        return isPendingReInvite;
+    }
+
+    public void setPendingReInvite(boolean pendingReInvite) {
+        isPendingReInvite = pendingReInvite;
+    }
+
+    private boolean isPendingReInvite;
+
     public YoCall(YoAccount acc, int call_id) {
         super(acc, call_id);
         vidWin = null;

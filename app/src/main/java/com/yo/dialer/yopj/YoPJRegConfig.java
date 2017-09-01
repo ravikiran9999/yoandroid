@@ -40,6 +40,7 @@ public class YoPJRegConfig {
         if (yoApp == null) {
             startSipService(context, yoApp, properties);
         }
+
         return yoApp.addAcc(accCfg);
     }
 

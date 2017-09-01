@@ -13,7 +13,9 @@ import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.Media;
+import org.pjsip.pjsua2.SendInstantMessageParam;
 import org.pjsip.pjsua2.SendTypingIndicationParam;
+import org.pjsip.pjsua2.SipTxOption;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsua_call_media_status;
@@ -90,11 +92,13 @@ public class CallHelper {
         }
     }
 
+
     public static void rejectCall(YoCall yoCurrentCall) {
         endCall(yoCurrentCall);
     }
 
     public static void endCall(YoCall yoCurrentCall) {
+        DialerLogs.messageI(TAG, "Sending Hangup  Call...");
         CallOpParam param = new CallOpParam();
         param.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
         try {

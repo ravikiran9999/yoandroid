@@ -180,9 +180,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             yoAccount = sipServiceHandler.addAccount(this);
             DialerLogs.messageI(TAG, "Adding account.");
         } else {
-            DialerLogs.messageI(TAG, "Acccount is already registered===========So doing renew");
+            String stringPreference = preferenceEndPoint.getStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE);
+            DialerLogs.messageI(TAG, "Acccount is already registered====Previsous state is=======" + stringPreference);
             try {
-                yoAccount.setRegistration(true);
+                DialerLogs.messageI(TAG, "Acccount is already registered===========So doing renew");
+                if (!yoAccount.isRegistrationPending()) {
+                    yoAccount.setRegistration(true);
+                } else {
+                    DialerLogs.messageI(TAG, "YO========Previous registration request is in pending state==");
+                }
             } catch (Exception e) {
                 String failedMessage = "Acccount registration renewal Failed, No further logic to re-register." + e.getMessage();
                 DialerLogs.messageI(TAG, failedMessage);
@@ -448,12 +454,18 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     private void reInviteToCheckCalleStatus() {
+
         DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state " + yoCurrentCall);
         try {
             if (yoCurrentCall != null) {
                 DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state " + yoCurrentCall.isActive());
             }
-            CallHelper.unHoldCall(yoCurrentCall);
+            if (yoCurrentCall != null && !yoCurrentCall.isPendingReInvite()) {
+                CallHelper.unHoldCall(yoCurrentCall);
+                yoCurrentCall.setPendingReInvite(true);
+            } else {
+                DialerLogs.messageE(TAG, "YO===Pending Re-Inviting");
+            }
         } catch (Exception e) {
             getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RE_CONNECTING);
             DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
@@ -539,7 +551,11 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                     if (yoAccount != null) {
                         try {
                             DialerLogs.messageI(TAG, "YO========Renew registration===========");
-                            yoAccount.setRegistration(true);
+                            if (!yoAccount.isRegistrationPending()) {
+                                yoAccount.setRegistration(true);
+                            } else {
+                                DialerLogs.messageI(TAG, "YO========Previous registration request is in pending state==");
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
