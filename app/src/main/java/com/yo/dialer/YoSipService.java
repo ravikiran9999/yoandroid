@@ -714,6 +714,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void sendBusyHereToIncomingCall(YoCall yoCall) {
         CallOpParam param = new CallOpParam(true);
         param.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
+        param.setReason(CallExtras.StatusReason.YO_BUSY_HERE);
         try {
             if (yoCall != null) {
                 yoCall.hangup(param);

@@ -48,6 +48,8 @@ public interface CallExtras {
         public static final int YO_INV_STATE_SC_NO_ANSWER = 11;
         public static final int YO_INV_STATE_CALLEE_NOT_ONLINE = 12;
         public static final int YO_REQUEST_TIME_OUT = 13;
+        public static final int YO_BUSY_HERE = 14;
+
 
 
         public static final int YO_NORMAL_PHONE_INCOMING_CALL = 50;//put yo call on hold
@@ -64,6 +66,7 @@ public interface CallExtras {
         public static final String YO_NEXGE_SERVER_DOWN = "Connection refused";
         public static final String YO_NOT_ACCEPTABLE_HERE = "Not Acceptable Here";
         public static final String YO_NETWORK_IS_UNREACHABLE = "Network is unreachable";
+        public static final String YO_BUSY_HERE = "Busy Here";
 
 
     }

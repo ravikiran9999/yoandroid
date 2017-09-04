@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yo.android.R;
 import com.yo.dialer.CallExtras;
@@ -75,6 +76,9 @@ class UIHelper {
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_CONNECTING) {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.connecting_status));
             tvCallStatus.setText(context.getResources().getString(R.string.connecting_status));
+        } else if (callStatus == CallExtras.StatusCode.YO_BUSY_HERE) {
+
+            Toast.makeText(context, context.getResources().getString(R.string.busy), Toast.LENGTH_LONG).show();
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_UNKNOWN) {
             if (isIncoming) {
                 connectionStatusTxtView.setText(context.getResources().getString(R.string.incoming));

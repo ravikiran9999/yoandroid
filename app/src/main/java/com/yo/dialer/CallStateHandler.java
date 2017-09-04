@@ -46,6 +46,9 @@ public class CallStateHandler {
                     || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_REQUEST_TIMEOUT)) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
                 yoSipService.callDisconnected();
+            } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_BUSY_HERE)) {
+                yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_BUSY_HERE);
+                yoSipService.callDisconnected();
             } else {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
                 yoSipService.callDisconnected();
