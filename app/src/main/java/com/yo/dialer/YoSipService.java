@@ -694,7 +694,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         callStarted = 0;
     }
 
-    private void handleBusy(YoCall yoCall) {
+    public void handleBusy(YoCall yoCall) {
         if (yoCurrentCall != null) {
             try {
                 String source = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);

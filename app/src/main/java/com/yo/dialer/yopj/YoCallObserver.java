@@ -82,35 +82,44 @@ public class YoCallObserver implements YoAppObserver {
 
     @Override
     public void notifyIncomingCall(YoCall call) {
+        YoCall yoCall = YoSipService.getYoCurrentCall();
+        DialerLogs.messageI(TAG, "notifyIncomingCall===========Getting another call but current call object is" + yoCall);
+
+
         try {
             DialerLogs.messageI(TAG, "notifyIncomingCall===========" + call.getInfo().getState());
-            if (mContext != null) {
-                if (mContext instanceof YoSipService) {
-                    ((YoSipService) mContext).OnIncomingCall(call);
+
+            if (yoCall != null) {
+                DialerLogs.messageI(TAG, "notifyIncomingCall=========Make it missed call " + call.getInfo().getRemoteUri());
+                ((YoSipService) mContext).handleBusy(call);
+                return;
+            } else {
+                if (mContext != null) {
+                    if (mContext instanceof YoSipService) {
+                        ((YoSipService) mContext).OnIncomingCall(call);
+                    }
+                }
+
+                //TODO: Know Caller that its ringing. // we may need to call this when playing ring sound
+                CallOpParam call_param = new CallOpParam();
+                call_param.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);
+                try {
+                    call.answer(call_param);
+                } catch (Exception e) {
+                    System.out.println(e);
+                    return;
                 }
             }
         } catch (Exception e) {
             DialerLogs.messageI(TAG, "notifyIncomingCall===========" + e.getMessage());
         }
-
-        //TODO: Know Caller that its ringing. // we may need to call this when playing ring sound
-        CallOpParam call_param = new CallOpParam();
-        call_param.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);
-        try {
-            call.answer(call_param);
-        } catch (Exception e) {
-            System.out.println(e);
-            return;
-        }
-
-
     }
 
     @Override
     public void notifyCallState(YoCall call) {
         try {
             CallInfo info = call.getInfo();
-            DialerLogs.messageI(TAG, "notifyCallState===========State =" + info.getState() + ",Reason" + info.getLastReason());
+            DialerLogs.messageI(TAG, "notifyCallState===========State =" + info.getState() + ",Reason" + info.getLastReason()+info.getStateText());
             YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
             CallStateHandler.verify(yoSipService, info);
         } catch (Exception e) {
