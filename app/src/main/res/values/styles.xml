@@ -11,6 +11,17 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="YoutubeTheme">
+        <item name="android:windowActionBar">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionModeBackground">@color/colorPrimary</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/list_activated_background</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+    </style>
+
     <style name="activated">
         <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
     </style>
@@ -147,4 +158,8 @@
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:actionMenuTextColor">@color/white</item>
     </style>
+
+    <style name="BlackNoBarsTheme" parent="android:Theme.Black.NoTitleBar.Fullscreen"/>
+
+    <style name="BlackNoTitleBarTheme" parent="android:Theme.Black.NoTitleBar" />
 </resources>

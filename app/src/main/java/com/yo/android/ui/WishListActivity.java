@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.video.InAppVideoActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -345,12 +347,17 @@ public class WishListActivity extends BaseActivity {
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    startActivityForResult(intent, 500);
+                    String videoUrl = data.getVideo_url();
+                    if(videoUrl != null) {
+                        InAppVideoActivity.start((Activity) context, videoUrl, data.getTitle());
+                    } else {
+                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                        intent.putExtra("Title", data.getTitle());
+                        intent.putExtra("Image", data.getUrl());
+                        intent.putExtra("Article", data);
+                        intent.putExtra("Position", position);
+                        startActivityForResult(intent, 500);
+                    }
                 }
             });
 

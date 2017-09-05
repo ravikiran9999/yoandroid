@@ -194,4 +194,5 @@ public class Constants {
     public static final String TERMS_CONDITIONS = "terms_conditions";
 
     public static final String VIDEO_URL = "video_url";
+    public static final String TITLE = "title";
 }

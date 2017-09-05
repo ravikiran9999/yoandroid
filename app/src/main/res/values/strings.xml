@@ -383,4 +383,9 @@
     <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="selection_default">Default</string>
     <string name="selection_disabled">Disabled</string>
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+
+    <string name="minVersion">minVersion</string>
+    <string name="isLaunchableActivity">isLaunchableActivity</string>
+
 </resources>
