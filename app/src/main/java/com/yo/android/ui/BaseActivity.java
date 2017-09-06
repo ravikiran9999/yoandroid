@@ -148,7 +148,7 @@ public class BaseActivity extends ParentActivity {
         DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
         //Name	Caller	Callee	StatusCode	Reason	Duration	CallType	Comment
         List<List<Object>> values = Arrays.asList(
-                Arrays.asList((Object)model.getName(), model.getCaller(), model.getCallee(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getComments()
+                Arrays.asList((Object) model.getName(), model.getCaller(), model.getCallee(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDateTime(), model.getComments()
 
                 )
         );

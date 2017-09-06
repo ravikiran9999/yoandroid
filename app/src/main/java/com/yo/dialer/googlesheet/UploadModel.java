@@ -15,6 +15,16 @@ public class UploadModel implements Serializable {
     private String comments;
     private String duration;
     private String callType;
+    private String dateTime;
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
 
 
     public String getCallType() {

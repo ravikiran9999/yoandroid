@@ -47,6 +47,8 @@ import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.pjsip_status_code;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -539,7 +541,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     public void uploadGoogleSheet(String code, String reason, String comment, long callduration) {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
-
             try {
                 UploadModel model = new UploadModel();
                 PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
@@ -558,6 +559,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 model.setStatusCode(code);
                 model.setStatusReason(reason);
                 model.setComments(comment);
+                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+                model.setDateTime(currentDateTimeString);
                 UploadCallDetails.postDataFromApi(model);
             } catch (IOException e) {
                 e.printStackTrace();
