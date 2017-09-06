@@ -1,6 +1,7 @@
 package com.yo.android.ui;
 
 import android.Manifest;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -36,6 +38,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.util.ExponentialBackOff;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -71,13 +75,18 @@ import com.yo.android.voip.SipService;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.android.widgets.CustomViewPager;
 import com.yo.dialer.CallExtras;
+import com.yo.dialer.DialerLogs;
 import com.yo.dialer.NewDialerFragment;
+import com.yo.dialer.googlesheet.UploadCallDetails;
+import com.yo.dialer.googlesheet.UploadModel;
 import com.yo.restartapp.YOExceptionHandler;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -90,9 +99,12 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import pub.devrel.easypermissions.EasyPermissions;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.yo.dialer.googlesheet.UploadCallDetails.SCOPES;
 
 /**
  * Created by Ramesh on 3/7/16.
@@ -140,7 +152,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
     };
 
-
+    public static GoogleAccountCredential mCredential;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +166,7 @@ public class BottomTabsActivity extends BaseActivity {
         Intent service = new Intent(this, com.yo.dialer.YoSipService.class);
         service.setAction(CallExtras.REGISTER);
         startService(service);
+
 
         // Handle application crash
         Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
@@ -181,6 +194,13 @@ public class BottomTabsActivity extends BaseActivity {
                     Manifest.permission.CHANGE_WIFI_STATE,
 
             }, REQUEST_AUDIO_RECORD);
+        } else {
+            if (mCredential == null) {
+                mCredential = GoogleAccountCredential.usingOAuth2(
+                        getApplicationContext(), Arrays.asList(SCOPES))
+                        .setBackOff(new ExponentialBackOff());
+                UploadCallDetails.getInstance(this).getResultsFromApi(this, mCredential);
+            }
         }
 
 
@@ -451,8 +471,22 @@ public class BottomTabsActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        DialerLogs.messageI(TAG, requestCode + " Permissions while requesting " + grantResults[2]);
+       /* mCredential = GoogleAccountCredential.usingOAuth2(
+                getApplicationContext(), Arrays.asList(UploadCallDetails.SCOPES))
+                .setBackOff(new ExponentialBackOff());*/
+
+
+        mCredential = GoogleAccountCredential.usingOAuth2(
+                getApplicationContext(), Arrays.asList(SCOPES))
+                .setBackOff(new ExponentialBackOff());
+        UploadCallDetails.getInstance(this).getResultsFromApi(this, mCredential);
+
         if (requestCode == REQUEST_AUDIO_RECORD) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[2] == PackageManager.PERMISSION_GRANTED && permissions[2] == Manifest.permission.GET_ACCOUNTS) {
+                DialerLogs.messageI(TAG, permissions.length + " Permissions and initializing google drive ");
+
+
                 //start audio recording or whatever you planned to do
             } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(BottomTabsActivity.this, Manifest.permission.RECORD_AUDIO)) {
@@ -521,6 +555,55 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            // user has  returned back from the account picker,
+            // initiate the rest of the flow with the account he/she has chosen.
+            case UploadCallDetails.REQUEST_ACCOUNT_PICKER:
+                if (resultCode == RESULT_OK && data != null &&
+                        data.getExtras() != null) {
+                    String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    if (accountName != null) {
+                        if (accountName != null) {
+                            SharedPreferences settings =
+                                    getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putString(UploadCallDetails.PREF_ACCOUNT_NAME, accountName);
+                            editor.apply();
+                            mCredential.setSelectedAccountName(accountName);
+                        }
+                        new RetrieveExchangeCodeAsyncTask(this).execute();
+                        new RetrieveJwtAsyncTask(this).execute();
+                    }
+                }
+                break;
+            // user has returned back from the permissions screen,
+            // if he/she has given enough permissions, retry the the request.
+            case UploadCallDetails.REQUEST_AUTHORIZATION:
+                if (resultCode == Activity.RESULT_OK) {
+                    // replay the same operations
+                    new RetrieveExchangeCodeAsyncTask(this).execute();
+                    new RetrieveJwtAsyncTask(this).execute();
+                }
+                break;
+            case UploadCallDetails.COMPLETE_AUTHORIZATION_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    DialerLogs.messageI(TAG, "Google App is authorized, you can go back to sending the API request");
+                    try {
+                        UploadCallDetails.postDataFromApi((UploadModel) data.getSerializableExtra(CallExtras.GOOGLE_DATA));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    // App is authorized, you can go back to sending the API request
+                } else {
+                    DialerLogs.messageI(TAG, "Google User denied access, show him the account chooser again");
+
+                    // User denied access, show him the account chooser again
+                }
+                break;
+        }
+
+
         if (requestCode == Helper.CROP_ACTIVITY) {
             if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
                 Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));

@@ -11,6 +11,10 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 
 import de.greenrobot.event.EventBus;
 
+import static com.yo.dialer.CallExtras.StatusCode.BUSY;
+import static com.yo.dialer.CallExtras.StatusCode.OTHER;
+import static com.yo.dialer.CallExtras.StatusCode.YO_NEXGE_SERVER_DOWN;
+
 /**
  * Created by root on 23/8/17.
  */
@@ -25,14 +29,14 @@ public class CallStateHandler {
             if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_ACCEPTABLE_HERE)) {
                 checkMissedCall(yoSipService);
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_NO_ANSWER);
-                yoSipService.callDisconnected();
+                yoSipService.callDisconnected(CallExtras.StatusCode.NO_ANSWER_NOT_ACCEPTABLE, "Call Not acceptable", "While call state got notified, got a reason that call not acceptable, so sending no answer." + info.getCallIdString());
             } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NETWORK_IS_UNREACHABLE)) {
                 yoSipService.sendNoNetwork();
             } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_SERVICE_UNAVAILABLE)
                     || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_FOUND)
                     ) {
                 Contact contact = yoSipService.getCalleeContact();
-                yoSipService.callDisconnected();
+                yoSipService.callDisconnected(CallExtras.StatusCode.USER_NOT_FOUND_SERVICE_NOT_AVAILABLE, "Service not available/User not online", "Got service not available or user not found, if its PSTN call need to check with Gateway people for not supporting " + info.getCallIdString());
                 DialerLogs.messageI(TAG, yoSipService.phoneNumber + "Service not available or user not found so PSTN dialog");
                 //dont  show PSTN dialog if the call is PSTN
                 if (yoSipService.phoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
@@ -45,13 +49,13 @@ public class CallStateHandler {
             } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NEXGE_SERVER_DOWN)
                     || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_REQUEST_TIMEOUT)) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
-                yoSipService.callDisconnected();
+                yoSipService.callDisconnected(YO_NEXGE_SERVER_DOWN, "Connect refused/Request Timeout", "This may be Nexge server down." + info.getCallIdString());
             } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_BUSY_HERE)) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_BUSY_HERE);
-                yoSipService.callDisconnected();
+                yoSipService.callDisconnected(BUSY, "Busy", "Getting Busy here, " + info.getCallIdString());
             } else {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
-                yoSipService.callDisconnected();
+                yoSipService.callDisconnected(OTHER, "Call got disconnected", "Call got disconnected because of " + info.getLastReason());
             }
             isRinging = false;
         } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {

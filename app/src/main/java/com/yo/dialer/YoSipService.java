@@ -34,6 +34,8 @@ import com.yo.android.pjsip.SipBinder;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.dialer.googlesheet.UploadCallDetails;
+import com.yo.dialer.googlesheet.UploadModel;
 import com.yo.dialer.ui.IncomingCallActivity;
 import com.yo.dialer.ui.OutgoingCallActivity;
 import com.yo.dialer.yopj.YoAccount;
@@ -44,6 +46,7 @@ import com.yo.feedback.AppFailureReport;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.pjsip_status_code;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -369,7 +372,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
         if (calleeNumber == null) {
-            callDisconnected();
+            callDisconnected(CallExtras.StatusCode.OTHER, "Unfortunately callee number got null " + calleeNumber, "Sending that no network, this may be request registration request timeout.");
             sipServiceHandler.callDisconnected();
             sipServiceHandler.sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_NO_NETWORK));
             return;
@@ -475,7 +478,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private void updateDisconnectStatus() {
         rejectCall();
         isReconnecting = false;
-        callDisconnected();
+        callDisconnected(CallExtras.StatusCode.OTHER, "Disconnecting call", "Disconnecting call because Re-Inviting failed ");
         mHandler.removeCallbacks(checkNetworkLossRunnable);
     }
 
@@ -516,17 +519,49 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         CallHelper.setMute(YoSipServiceHandler.getYoApp(), yoCurrentCall, flag);
     }
 
-    public void callDisconnected() {
+    public void callDisconnected(String code, String reason, String comment) {
         setCurrentCallToNull();
         //If the call is rejected should stop rigntone
         stopDefaultRingtone();
         DialerLogs.messageE(TAG, "callDisconnected");
-        storeCallLog(phoneNumber);
+        long callduration = storeCallLog(phoneNumber);
+
+        uploadGoogleSheet(code, reason, comment, callduration);
+
+
         Util.cancelNotification(this, callNotificationId);
         if (sipServiceHandler != null) {
             sipServiceHandler.callDisconnected();
         } else {
             DialerLogs.messageE(TAG, "SipServiceHandler is null");
+        }
+    }
+
+    public void uploadGoogleSheet(String code, String reason, String comment, long callduration) {
+        if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
+
+            try {
+                UploadModel model = new UploadModel();
+                PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
+                model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
+                model.setCallee(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
+                model.setCaller(phoneNumber);
+                model.setDuration(callduration + "");
+                if (callType == 1) {
+                    model.setCallType("Incoming");
+                } else if (callType == 2) {
+                    model.setCallType("Outgoing");
+
+                } else {
+                    model.setCallType("Missed Call");
+                }
+                model.setStatusCode(code);
+                model.setStatusReason(reason);
+                model.setComments(comment);
+                UploadCallDetails.postDataFromApi(model);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -633,7 +668,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
             try {
                 yoCurrentCall.hangup(prm);
-                callDisconnected();
+                callDisconnected(CallExtras.StatusCode.OTHER, "Application killed", "May be while call is going on application got killed, so sending hangup to callee");
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "Call is terminated because app got killed.");
             }
@@ -658,7 +693,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     }
 
-    private void storeCallLog(String mobileNumber) {
+    private long storeCallLog(String mobileNumber) {
         long currentTime = System.currentTimeMillis();
         long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
         if (callStarted == 0 || callType == -1) {
@@ -690,8 +725,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             }
             pstnorapp = CallLog.Calls.APP_TO_PSTN_CALL;
         }
+
         CallLog.Calls.addCall(info, getBaseContext(), mobileNumber, callType, callStarted, callDuration, pstnorapp);
         callStarted = 0;
+        return callDuration;
     }
 
     public void handleBusy(YoCall yoCall) {

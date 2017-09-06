@@ -2,13 +2,18 @@ package com.yo.dialer.yopj;
 
 import android.content.Context;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.OpponentDetails;
+import com.yo.android.util.Constants;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.CallStateHandler;
+import com.yo.dialer.DialerConfig;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.YoSipService;
+import com.yo.dialer.googlesheet.UploadCallDetails;
+import com.yo.dialer.googlesheet.UploadModel;
 
 import org.pjsip.pjsua2.BuddyInfo;
 import org.pjsip.pjsua2.CallInfo;
@@ -70,7 +75,7 @@ public class YoCallObserver implements YoAppObserver {
             }
         } else if (code == PJSIP_SC_REQUEST_TIMEOUT) {
             yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, CallExtras.StatusCode.YO_REQUEST_TIME_OUT);
-            yoSipService.callDisconnected();
+            yoSipService.callDisconnected(CallExtras.StatusCode.YO_NEXGE_SERVER_DOWN, "Registration request timeout", "This may be nexge issue, as registration requst timeout. Reason = " + reason + ", Code is " + code);
         } else {
             yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, 0);
         }
@@ -91,6 +96,7 @@ public class YoCallObserver implements YoAppObserver {
 
             if (yoCall != null) {
                 DialerLogs.messageI(TAG, "notifyIncomingCall=========Make it missed call " + call.getInfo().getRemoteUri());
+                ((YoSipService) mContext).uploadGoogleSheet(CallExtras.StatusCode.BUSY, "Busy", "Already user is in call with" + yoCall.getInfo().getRemoteUri() + ", So sending Busy to " + call.getInfo().getRemoteUri() + ", Call-Id " + call.getInfo().getCallIdString(), 0);
                 ((YoSipService) mContext).handleBusy(call);
                 return;
             } else {
@@ -119,7 +125,7 @@ public class YoCallObserver implements YoAppObserver {
     public void notifyCallState(YoCall call) {
         try {
             CallInfo info = call.getInfo();
-            DialerLogs.messageI(TAG, "notifyCallState===========State =" + info.getState() + ",Reason" + info.getLastReason()+info.getStateText());
+            DialerLogs.messageI(TAG, "notifyCallState===========State =" + info.getState() + ",Reason" + info.getLastReason() + info.getStateText());
             YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
             CallStateHandler.verify(yoSipService, info);
         } catch (Exception e) {

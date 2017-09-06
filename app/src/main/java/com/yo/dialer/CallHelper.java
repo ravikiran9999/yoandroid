@@ -52,7 +52,7 @@ public class CallHelper {
                         e.printStackTrace();
                         call.delete();
                         DialerLogs.messageE(TAG, "makeCall==========" + e.getMessage());
-                        sipService.callDisconnected();
+                        sipService.callDisconnected(CallExtras.StatusCode.OTHER + "", e.getMessage(), "While making call got an exception and message is " + e.getMessage() + ", So that call is going to disconnecting.");
                         sipService.setYoAccount(null);
                         sipService.register();
                         return null;
