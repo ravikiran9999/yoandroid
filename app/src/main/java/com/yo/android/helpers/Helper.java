@@ -15,6 +15,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -241,7 +243,7 @@ public class Helper {
 
         Bitmap rotatedBitmap = null;
 
-        switch(orientation) {
+        switch (orientation) {
 
             case ExifInterface.ORIENTATION_ROTATE_90:
                 rotatedBitmap = rotateImage(bitmap, 90);
@@ -443,10 +445,23 @@ public class Helper {
         }
     }
 
-    public static String getContactName(Context context, String phoneNumber) {
+    public static String getContactName(Context context, @NonNull String phoneNumber) {
         String contactName = null;
-        String phNumber = phoneNumber;
+        //String phNumber = phoneNumber;
         Cursor cursor = null;
+        String mPhoneNumber;
+
+
+        if (TextUtils.isEmpty(phoneNumber)) {
+            return phoneNumber;
+        }
+
+        if (phoneNumber != null && !phoneNumber.startsWith(context.getString(R.string.plus))) {
+            mPhoneNumber = context.getString(R.string.plus_number, phoneNumber);
+        } else {
+            mPhoneNumber = phoneNumber;
+        }
+
         try {
             ContentResolver cr = context.getContentResolver();
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
@@ -458,7 +473,8 @@ public class Helper {
                 contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
             }
 
-           if(contactName ==null){
+           //Todo changes from server
+           /*if(contactName ==null){
                try {
                    PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
                    Phonenumber.PhoneNumber numberProto = phoneUtil.parse("+" + phoneNumber, "");
@@ -474,7 +490,7 @@ public class Helper {
                }catch (Exception e){
 
                }
-           }
+           }*/
         } catch (RuntimeException e) {
             e.printStackTrace();
         } finally {
@@ -482,15 +498,18 @@ public class Helper {
                 cursor.close();
             }
         }
+        return contactName != null ? contactName : mPhoneNumber;
 
         //return contactName != null? contactName:phoneNumber;
-        if (phoneNumber != null && phoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
+
+        //Todo changes from server
+        /*if (phoneNumber != null && phoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
             return contactName != null? contactName:phoneNumber;
         } else {
             return contactName != null ? contactName : "+" + phNumber;
-        }
+        }*/
     }
-    public static Contact getContactPSTN(Context context,int countrycode, String pstnnumber) {
+    /*public static Contact getContactPSTN(Context context,int countrycode, String pstnnumber) {
         if (pstnnumber != null) {
             Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
             Cursor c = context.getContentResolver().query(uri, ContactsSyncManager.PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE + "= '" + countrycode + "' and " + YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + " = '" + pstnnumber + "'", null, null);
@@ -501,7 +520,7 @@ public class Helper {
             }
         }
         return null;
-    }
+    }*/
 
     private static void scaleAndSaveImageInternal(Bitmap bitmap, int w, int h, float photoW, float photoH, float scaleFactor, int quality, boolean cache, boolean scaleAnyway) throws Exception {
         Bitmap scaledBitmap;

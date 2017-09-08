@@ -16,6 +16,7 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.TimeZoneUtils;
 import com.yo.android.util.Util;
 
@@ -290,6 +291,7 @@ public class CallLog {
             } else {
                 currentDate = new Date(start);
             }
+
             values.put(NUMBER, number);
 
 
@@ -350,18 +352,20 @@ public class CallLog {
          * string if none exist yet.
          */
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getCallLog(Context context) {
-            final ContentResolver resolver = context.getContentResolver();
-            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
 
+            ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
             LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
             Cursor c = null;
-            try {
+            if (context != null) {
+                final ContentResolver resolver = context.getContentResolver();
                 c = resolver.query(
                         CONTENT_URI,
                         null,
                         null,
                         null,
                         DEFAULT_SORT_ORDER);
+            }
+            try {
                 if (c == null || !c.moveToFirst()) {
                     return callerInfos;
                 } else {
@@ -375,7 +379,7 @@ public class CallLog {
                         info.setDialnumber(voxuser);
                         info.setCallType(c.getInt(c.getColumnIndex(Calls.CALLTYPE)));
                         info.setStime(c.getString(c.getColumnIndex(Calls.DATE)));
-                        String tempDate = Util.getDate(c.getString(c.getColumnIndex(Calls.DATE)));
+                        String tempDate = DateUtil.getDate(c.getString(c.getColumnIndex(Calls.DATE)));
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
                         if (phoneName != null && !phoneName.equalsIgnoreCase(voxuser)) {
@@ -410,18 +414,19 @@ public class CallLog {
          * string if none exist yet.
          */
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getPSTNCallLog(Context context) {
-            final ContentResolver resolver = context.getContentResolver();
             ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
             LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
-
             Cursor c = null;
-            try {
+            if (context != null) {
+                final ContentResolver resolver = context.getContentResolver();
                 c = resolver.query(
                         CONTENT_URI,
                         null,
                         Calls.APP_OR_PSTN + " = " + APP_TO_PSTN_CALL,
                         null,
                         DEFAULT_SORT_ORDER);
+            }
+            try {
                 if (c == null || !c.moveToFirst()) {
                     return callerInfos;
                 } else {
@@ -470,17 +475,20 @@ public class CallLog {
          * string if none exist yet.
          */
         public static ArrayList<Map.Entry<String, List<CallLogsResult>>> getAppToAppCallLog(Context context) {
-            final ContentResolver resolver = context.getContentResolver();
+            Cursor c = null;
             ArrayList<Map.Entry<String, List<CallLogsResult>>> callerInfos = new ArrayList<>();
             LinkedHashMap<String, List<CallLogsResult>> hashMap = new LinkedHashMap<String, List<CallLogsResult>>();
-            Cursor c = null;
-            try {
+
+            if (context != null) {
+                final ContentResolver resolver = context.getContentResolver();
                 c = resolver.query(
                         CONTENT_URI,
                         null,
                         Calls.APP_OR_PSTN + " = " + APP_TO_APP_CALL,
                         null,
                         DEFAULT_SORT_ORDER);
+            }
+            try {
                 if (c == null || !c.moveToFirst()) {
                     return callerInfos;
                 } else {
@@ -497,7 +505,7 @@ public class CallLog {
                         info.setStime(date);
                         String duration = c.getString(c.getColumnIndex(Calls.DURATION));
                         info.setDuration(duration);
-                        String tempDate = Util.getDate(date);
+                        String tempDate = DateUtil.getDate(date);
                         info.setDestination_name(c.getString(c.getColumnIndex(Calls.CACHED_NAME)));
                         info.setAppOrPstn(c.getInt(c.getColumnIndex(Calls.APP_OR_PSTN)));
                         info.setImage(getImagePath(context, voxuser));

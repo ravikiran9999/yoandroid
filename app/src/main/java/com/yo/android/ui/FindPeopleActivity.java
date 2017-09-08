@@ -4,7 +4,14 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,9 +28,12 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.FindPeopleAdapter;
+import com.yo.android.adapters.MagazinesTabHeaderAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.FindPeople;
 import com.yo.android.util.Constants;
+import com.yo.android.util.YODialogs;
+import com.yo.android.widgets.ScrollTabHolder;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
@@ -31,6 +41,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,66 +50,86 @@ import retrofit2.Response;
 /**
  * This activity is used to display all the Yo App users
  */
-public class FindPeopleActivity extends BaseActivity {
+public class FindPeopleActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
-    private ListView lvFindPeople;
-    private FindPeopleAdapter findPeopleAdapter;
+
+    /*@Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.viewpager)
+    protected ViewPager viewPager;*/
+    @Bind(R.id.lv_find_people)
+    ListView lvFindPeople;
+    @Bind(R.id.imv_empty_followings)
+    ImageView imvEmptyFindPeople;
+    @Bind(R.id.no_data)
+    TextView noData;
+    @Bind(R.id.ll_no_people)
+    LinearLayout llNoPeople;
+    @Bind(R.id.network_failure)
+    TextView networkFailureText;
+
+    /*@Bind(R.id.tablayout)
+    TabLayout tabLayout;*/
+    /*@Bind(R.id.header)
+    LinearLayout headerLayout;*/
+    /*@Bind(R.id.collapse_toolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;*/
+
     @Inject
     YoApi.YoService yoService;
+
+    private FindPeopleAdapter findPeopleAdapter;
     private int pageCount = 1;
-    private TextView noData;
-    private LinearLayout llNoPeople;
     private List<FindPeople> originalList;
     private Menu menu1;
     private int pos;
     private SearchView searchView;
     private Call<List<FindPeople>> call;
-    private ImageView imvEmptyFindPeople;
-    private TextView networkFailureText;
+    public int mMinHeaderTranslation;
+    public int mHeaderHeight;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_people);
+        ButterKnife.bind(this);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initToolbar();
+        // Todo uncomment while implementing tabs
+        /*setupTabPager();
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        collapsingToolbarLayout.setTitleEnabled(false);
+        mHeaderHeight = getResources().getDimensionPixelSize(R.dimen.header_full_height);
+        mMinHeaderTranslation = -mHeaderHeight + getResources().getDimensionPixelSize(R.dimen.tablayout_height);*/
 
-        String title = getString(R.string.find_people);
-
-        getSupportActionBar().setTitle(title);
 
         findPeopleAdapter = new FindPeopleAdapter(this);
-        lvFindPeople = (ListView) findViewById(R.id.lv_find_people);
-        noData = (TextView) findViewById(R.id.no_data);
-        llNoPeople = (LinearLayout) findViewById(R.id.ll_no_people);
         lvFindPeople.setAdapter(findPeopleAdapter);
         lvFindPeople.setOnScrollListener(onScrollListener());
-        imvEmptyFindPeople = (ImageView) findViewById(R.id.imv_empty_followings);
         imvEmptyFindPeople.setImageResource(R.drawable.ic_empty_find_people);
-        networkFailureText = (TextView) findViewById(R.id.network_failure);
         originalList = new ArrayList<>();
+        //swipeRefreshContainer.setOnRefreshListener(this);
+        lvFindPeople.setOnItemClickListener(this);
+    }
 
-        lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                pos = position;
-                if(findPeopleAdapter.getCount() > position) {
-                    FindPeople item = findPeopleAdapter.getItem(position);
-                    if(item != null) {
-                        Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
-                        otherProfileIntent.putExtra(Constants.USER_ID, item.getId());
-                        otherProfileIntent.putExtra("PersonName", item.getFirst_name() + " " + item.getLast_name());
-                        otherProfileIntent.putExtra("PersonPic", item.getAvatar());
-                        otherProfileIntent.putExtra("PersonIsFollowing", item.getIsFollowing());
-                        otherProfileIntent.putExtra("MagazinesCount", item.getMagzinesCount());
-                        otherProfileIntent.putExtra("FollowersCount", item.getFollowersCount());
-                        otherProfileIntent.putExtra("LikedArticlesCount", item.getLikedArticlesCount());
-                        startActivityForResult(otherProfileIntent, 8);
-                    }
-                }
-            }
-        });
+    private void initToolbar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.find_people);
+        }
+    }
+
+    private void setupTabPager() {
+        String[] titles = getResources().getStringArray(R.array.yo_people_tabs_titles);
+        MagazinesTabHeaderAdapter viewPagerAdapter =
+                new MagazinesTabHeaderAdapter(getSupportFragmentManager(), titles);
+        //viewPager.addOnPageChangeListener(this);
+        //viewPager.setAdapter(viewPagerAdapter);
+        //viewPager.setOffscreenPageLimit(2);
+        //tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -106,29 +138,39 @@ public class FindPeopleActivity extends BaseActivity {
         if(searchView != null) {
             if (searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                 pageCount = 1;
-                callFindPeopleService();
+                callFindPeopleService(null);
             } else {
                 callSearchingService(searchView.getQuery().toString());
             }
         } else {
-            callFindPeopleService();
+            callFindPeopleService(null);
         }
     }
 
     /**
      * Getting the Yo app users
      */
-    private void callFindPeopleService() {
-        showProgressDialog();
+    private void callFindPeopleService(final SwipeRefreshLayout swipeRefreshContainer) {
+        if (swipeRefreshContainer != null) {
+            swipeRefreshContainer.setRefreshing(false);
+        } else {
+            showProgressDialog();
+        }
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                dismissProgressDialog();
+                if (swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
                 if (response.body() != null && response.body().size() > 0) {
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.clearAll();
                     findPeopleAdapter.addItemsAll(findPeopleList);
+
+                    // Todo comment below lines
                     lvFindPeople.setVisibility(View.VISIBLE);
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.GONE);
@@ -136,6 +178,7 @@ public class FindPeopleActivity extends BaseActivity {
                     networkFailureText.setVisibility(View.GONE);
 
                 } else {
+                    // Todo comment below lines
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.VISIBLE);
                     lvFindPeople.setVisibility(View.GONE);
@@ -145,7 +188,13 @@ public class FindPeopleActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
-                dismissProgressDialog();
+                //Todo uncomment
+                /*if (swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }*/
+                // Todo comment below lines
                 noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.GONE);
                 lvFindPeople.setVisibility(View.GONE);
@@ -162,7 +211,8 @@ public class FindPeopleActivity extends BaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private boolean isMoreLoading=false;
+    private boolean isMoreLoading = false;
+
     private AbsListView.OnScrollListener onScrollListener() {
         return new AbsListView.OnScrollListener() {
             @Override
@@ -170,7 +220,7 @@ public class FindPeopleActivity extends BaseActivity {
                 int threshold = 1;
                 int count = lvFindPeople.getCount();
                 if (scrollState == SCROLL_STATE_IDLE) {
-                    if (isMoreLoading==false && lvFindPeople.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
+                    if (isMoreLoading == false && lvFindPeople.getLastVisiblePosition() >= count - threshold && searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                         doPagination();
                     }
                 }
@@ -270,6 +320,7 @@ public class FindPeopleActivity extends BaseActivity {
                 Util.hideKeyboard(FindPeopleActivity.this, FindPeopleActivity.this.getCurrentFocus());
                 findPeopleAdapter.clearAll();
                 findPeopleAdapter.addItemsAll(originalList);
+
                 lvFindPeople.setVisibility(View.VISIBLE);
                 noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.GONE);
@@ -309,12 +360,15 @@ public class FindPeopleActivity extends BaseActivity {
                         List<FindPeople> findPeopleList = response.body();
                         findPeopleAdapter.clearAll();
                         findPeopleAdapter.addItemsAll(findPeopleList);
+
+                        // Todo comment below lines
                         lvFindPeople.setVisibility(View.VISIBLE);
                         noData.setVisibility(View.GONE);
                         llNoPeople.setVisibility(View.GONE);
                         networkFailureText.setVisibility(View.GONE);
 
                     } else {
+                        // Todo comment below lines
                         noData.setVisibility(View.VISIBLE);
                         llNoPeople.setVisibility(View.VISIBLE);
                         lvFindPeople.setVisibility(View.GONE);
@@ -325,6 +379,7 @@ public class FindPeopleActivity extends BaseActivity {
                 @Override
                 public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                     dismissProgressDialog();
+                    // Todo comment below lines
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.GONE);
                     lvFindPeople.setVisibility(View.GONE);
@@ -348,7 +403,7 @@ public class FindPeopleActivity extends BaseActivity {
      * Refreshes the list of Yo app users
      */
     public void refresh() {
-        callFindPeopleService();
+        callFindPeopleService(null);
         pageCount = 1;
         findPeopleAdapter.clearAll();
         findPeopleAdapter.addItemsAll(originalList);
@@ -357,6 +412,35 @@ public class FindPeopleActivity extends BaseActivity {
             noData.setVisibility(View.GONE);
             llNoPeople.setVisibility(View.GONE);
             networkFailureText.setVisibility(View.GONE);
+        }
+    }
+
+    //@Override
+    public void onRefresh() {
+        //callFindPeopleService(swipeRefreshContainer);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
+        if (renewalStatus) {
+            pos = position;
+            if (findPeopleAdapter.getCount() > position) {
+                FindPeople item = findPeopleAdapter.getItem(position);
+                if (item != null) {
+                    Intent otherProfileIntent = new Intent(FindPeopleActivity.this, OthersProfileActivity.class);
+                    otherProfileIntent.putExtra(Constants.USER_ID, item.getId());
+                    otherProfileIntent.putExtra("PersonName", item.getFirst_name() + " " + item.getLast_name());
+                    otherProfileIntent.putExtra("PersonPic", item.getAvatar());
+                    otherProfileIntent.putExtra("PersonIsFollowing", item.getIsFollowing());
+                    otherProfileIntent.putExtra("MagazinesCount", item.getMagzinesCount());
+                    otherProfileIntent.putExtra("FollowersCount", item.getFollowersCount());
+                    otherProfileIntent.putExtra("LikedArticlesCount", item.getLikedArticlesCount());
+                    startActivityForResult(otherProfileIntent, 8);
+                }
+            }
+        } else {
+            YODialogs.renewMagazine(this, null, getString(R.string.renewal_message), preferenceEndPoint);
         }
     }
 }

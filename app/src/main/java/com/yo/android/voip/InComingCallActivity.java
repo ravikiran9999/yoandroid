@@ -6,16 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -23,6 +26,7 @@ import com.google.common.eventbus.Subscribe;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.WebserviceUsecase;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
@@ -34,6 +38,7 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.NewDailerActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.util.Constants;
+import com.yo.android.util.ErrorCode;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
@@ -77,27 +82,29 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private View mReceivedCallHeader;
     private View mInComingHeader;
 
+    private SeekBar seekBar;
     private SipBinder sipBinder;
 
     private Handler mHandler = new Handler();
 
     @Inject
     protected BalanceHelper mBalanceHelper;
-
     @Inject
     ConnectivityHelper mHelper;
-
-    private static final int KEEP_ON_HOLD = 100;
-    private static final int KEEP_ON_HOLD_RESUME = 101;
-
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
-
-    private boolean selfReject;
-
     @Inject
     ContactsSyncManager mContactsSyncManager;
+    @Inject
+    WebserviceUsecase webserviceUsecase;
+
+
+    private static final int KEEP_ON_HOLD = 100;
+    private static final int KEEP_ON_HOLD_RESUME = 101;
+    private boolean selfReject;
+
+
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -134,6 +141,10 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         initViews();
+
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        Util.initBar(seekBar, audioManager, AudioManager.STREAM_VOICE_CALL);
+
         callModel = new SipCallModel();
         bus.register(this);
 
@@ -197,14 +208,16 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         mReceivedCallHeader.setVisibility(View.GONE);
         //
         callerName = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_name);
+        callerNumber = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_number);
+
         callerName2 = (TextView) mInComingHeader.findViewById(R.id.tv_caller_name);
-        callerNumber = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
-        callerNumber2 = (TextView) mReceivedCallHeader.findViewById(R.id.tv_caller_number);
+        callerNumber2 = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
+
         callDuration = (TextView) mReceivedCallHeader.findViewById(R.id.tv_call_duration);
         callerImageView = (ImageView) mReceivedCallHeader.findViewById(R.id.imv_caller_pic);
         mReceivedConnectionStatus = (TextView) mReceivedCallHeader.findViewById(R.id.connection_status);
         // mInComingHeaderConnectionStatus = (TextView) mReceivedCallHeader.findViewById(R.id.connection_status);
-
+        seekBar = (SeekBar) findViewById(R.id.seek_bar);
     }
 
     @Override
@@ -382,7 +395,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
             OpponentDetails object1 = (OpponentDetails) object;
             object1.setSelfReject(selfReject);
             selfReject = false;
-            Util.showErrorMessages(bus, object1, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
+            ErrorCode.showErrorMessages(bus, object1, this, mToastFactory, mBalanceHelper, preferenceEndPoint, mHelper);
         } else if (object instanceof Integer) {
             // while incoming call is going on if default incoming call comes should put on hold
             int hold = (int) object;
@@ -471,5 +484,19 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
 
     private boolean isPanelShown() {
         return dialPadView.getVisibility() == View.VISIBLE;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            int index = seekBar.getProgress();
+            seekBar.setProgress(index - 1);
+            return true;
+        } else if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+            int index = seekBar.getProgress();
+            seekBar.setProgress(index + 1);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

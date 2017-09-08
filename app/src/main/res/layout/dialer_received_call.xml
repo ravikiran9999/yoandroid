@@ -12,6 +12,7 @@
         <include layout="@layout/dialer_incoming_call_header" />
 
         <include layout="@layout/dialer_received_call_header" />
+
     </FrameLayout>
 
 

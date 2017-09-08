@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Network;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,39 +16,25 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yo.android.R;
-import com.yo.android.adapters.MoreListAdapter;
+import com.yo.android.adapters.BalanceAdapter;
 import com.yo.android.api.YoApi;
-import com.yo.android.chat.ui.LoginActivity;
-import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
-import com.yo.android.helpers.MenuViewHolder;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
-import com.yo.android.model.FindPeople;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.denominations.Denominations;
 import com.yo.android.pjsip.YoSipService;
-import com.yo.android.provider.YoAppContactContract;
-import com.yo.android.ui.MoreSettingsActivity;
-import com.yo.android.ui.NotificationsActivity;
-import com.yo.android.ui.TabsHeaderActivity;
+import com.yo.android.ui.TransferBalanceActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
-import com.yo.android.voip.VoipConstants;
 import com.yo.android.BuildConfig;
+import com.yo.android.vox.BalanceHelper;
 
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,75 +42,38 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by Ramesh on 24/7/16.
- */
-public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, AdapterView.OnItemClickListener {
+public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, BalanceAdapter.MoreItemListener {
 
     private static final String TAG = CreditAccountFragment.class.getSimpleName();
-    @Bind(R.id.txt_balance)
-    TextView txt_balance;
-
-    private MoreListAdapter menuAdapter;
-    @Inject
-    YoApi.YoService yoService;
-
-    private String balance;
+    private static final int OPEN_ADD_BALANCE_RESULT = 1000;
 
     @Bind(R.id.lv_settings)
-    protected ListView menuListView;
-
+    protected RecyclerView menuRecyclerView;
     @Bind(R.id.txtEmpty)
     protected TextView txtEmpty;
-    private static final int OPEN_ADD_BALANCE_RESULT = 1000;
+
+    @Inject
+    YoApi.YoService yoService;
+    @Inject
+    BalanceHelper balanceHelper;
+
+
     private EditText voucherNumberEdit;
+    private BalanceAdapter balanceAdapter;
+    private ArrayList<Object> denominationData = new ArrayList<>();
+    private ArrayList<Object> data = new ArrayList<>();
 
     @Override
     public void onResume() {
         super.onResume();
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        Call<List<Denominations>> call = yoService.getDenominations(accessToken);
-        call.enqueue(new Callback<List<Denominations>>() {
-            @Override
-            public void onResponse(Call<List<Denominations>> call, Response<List<Denominations>> response) {
-                if (response.body() != null && response.body().size() > 0) {
-                    txtEmpty.setVisibility(View.GONE);
-                    List<Denominations> demonimations = response.body();
-                    prepareCreditAccountList(demonimations);
-                    if (demonimations != null && demonimations.size() > 0) {
-                        preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
-                        txt_balance.setText(String.format("%s %s", MoreFragment.currencySymbolDollar, balance));
-                    } else {
-                        txtEmpty.setVisibility(View.VISIBLE);
-                        FragmentActivity activity = getActivity();
-                        if (activity != null) {
-                            txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
-                        }
-                    }
-                } else {
-                    txtEmpty.setVisibility(View.VISIBLE);
-                    FragmentActivity activity = getActivity();
-                    if (activity != null) {
-                        txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Denominations>> call, Throwable t) {
-                Log.w(TAG, "Data Failed to load currenncy");
-                txtEmpty.setVisibility(View.VISIBLE);
-
-
-            }
-        });
+        prepareMenuList(denominationData);
+        balanceHelper.checkBalance(null);
     }
 
     @Override
@@ -142,15 +91,19 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        balanceAdapter = new BalanceAdapter(getActivity(), data, denominationData, CreditAccountFragment.this);
+        balanceAdapter.setMoreItemListener(this);
+        menuRecyclerView.setAdapter(balanceAdapter);
+        menuRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        balance = mBalanceHelper.getCurrentBalance();
-        String currencySymbol = mBalanceHelper.getCurrencySymbol();
-        NumberFormat formatter = new DecimalFormat("#0.00");
-        //Util.checkPlayServices(getActivity());
+
+        retrieveDenominations();
+
     }
 
     /**
@@ -166,10 +119,15 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             getActivity().setResult(resultcode);
             getActivity().finish();
         }
+        if (getArguments() != null && getArguments().getBoolean(Constants.RENEWAL, false)) {
+            getActivity().setResult(1001);
+            getActivity().finish();
+            de.greenrobot.event.EventBus.getDefault().post(Constants.RENEWAL);
+        }
     }
 
 
-    private void addGooglePlayBalance(String sku, float price) {
+    public void addGooglePlayBalance(String sku, float price) {
         final Intent intent = new Intent(getActivity(), UnManageInAppPurchaseActivity.class);
         intent.putExtra("sku", sku);// "com.yo.products.credit.TEN"
         intent.putExtra("price", price);//10f
@@ -182,16 +140,14 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (mBalanceHelper != null && requestCode == 11 && resultCode == Activity.RESULT_OK) {
+        if (mBalanceHelper != null && (requestCode == 11 || requestCode == 22) && resultCode == Activity.RESULT_OK) {
             showProgressDialog();
             mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     dismissProgressDialog();
                     try {
-                        DecimalFormat df = new DecimalFormat("0.000");
-                        String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
-                        preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
+                        preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
                     } catch (IllegalArgumentException e) {
                         mLog.w(TAG, "getCurrentBalance", e);
                     }
@@ -205,9 +161,8 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             });
         } else if (mBalanceHelper != null && resultCode == Activity.RESULT_OK) {
             try {
-                DecimalFormat df = new DecimalFormat("0.000");
-                String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
-                preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
+                preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
+
             } catch (IllegalArgumentException e) {
                 mLog.w(TAG, "getCurrentBalance", e);
             }
@@ -221,54 +176,18 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
-            balance = mBalanceHelper.getCurrentBalance();
-            String currencySymbol = mBalanceHelper.getCurrencySymbol();
-            txt_balance.setText(String.format("%s%s", MoreFragment.currencySymbolDollar, balance));
+            prepareMenuList(denominationData);
         }
     }
 
     /**
      * Prepares the Credit Account list
      *
-     * @param demonimations
+     * @param denominations
      */
-    public void prepareCreditAccountList(final List<Denominations> demonimations) {
-        final CurrencyListAdapter adapter = prepareCurrencyAdapter();
-        menuAdapter = new MoreListAdapter(getActivity()) {
-            @Override
-            public int getLayoutId() {
-                return R.layout.item_with_options;
-            }
-
-            @Override
-            public void bindView(int position, MenuViewHolder holder, MoreData item) {
-                NonScrollableGridView viewById = (NonScrollableGridView) holder.getRootView().findViewById(R.id.add_google_play_items);
-                viewById.setAdapter(adapter);
-                adapter.addItems(demonimations);
-                if (position == 0) {
-                    viewById.setVisibility(View.VISIBLE);
-                } else {
-                    viewById.setVisibility(View.GONE);
-                }
-                super.bindView(position, holder, item);
-            }
-        };
-        menuAdapter.addItems(getMenuList());
-        menuListView.setAdapter(menuAdapter);
-        menuListView.setOnItemClickListener(this);
-    }
-
-    private CurrencyListAdapter prepareCurrencyAdapter() {
-        return new CurrencyListAdapter(getActivity()) {
-            @Override
-            public void bindView(int position, CurrencyViewHolder holder, Denominations item) {
-                Button viewById = holder.getButtonView();
-                viewById.setText(item.getCurrencySymbol() + " " + item.getDenomination());
-                viewById.setTag(R.id.btn1, item);
-                viewById.setOnClickListener(payBtnListener);
-            }
-        };
-
+    public void prepareCreditAccountList(final List<Denominations> denominations) {
+        denominationData.add(denominations);
+        prepareMenuList(denominationData);
     }
 
     /**
@@ -276,80 +195,31 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
      *
      * @return
      */
-    public List<MoreData> getMenuList() {
-        List<MoreData> menuDataList = new ArrayList<>();
+    public void prepareMenuList(ArrayList<Object> denominationsList) {
+        String balance = mBalanceHelper.getCurrentBalance();
+
+        //Todo remove these lines as we are not using
+        String mSBalance = mBalanceHelper.getSwitchBalance();
+        String mWBalance = mBalanceHelper.getWalletBalance();
+
+        data = new ArrayList<>();
         FragmentActivity activity = getActivity();
-        if (activity != null) {
-            menuDataList.add(new MoreData(activity.getString(R.string.add_balance_from_google_play), false));
-            menuDataList.add(new MoreData(activity.getString(R.string.add_balance_from_voucher), true));
+
+        if (activity != null && denominationsList != null) {
+            data.add(new MoreData(activity.getString(R.string.your_total_balance), false, balance));
+            data.add(new MoreData(activity.getString(R.string.add_balance_from_google_play), false, null));
+            data.addAll(denominationsList);
+            data.add(new MoreData(activity.getString(R.string.add_balance_from_voucher), true, null));
             if (getArguments() == null) {
-                menuDataList.add(new MoreData(activity.getString(R.string.transfer_balance), true));
+                data.add(new MoreData(activity.getString(R.string.transfer_balance), true, null));
             }
         }
-        return menuDataList;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            if (name.equalsIgnoreCase(activity.getString(R.string.add_balance_from_voucher))) {
-                Bundle arguments = getArguments();
-                if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
-                    showVoucherDialog();
-                } else {
-                    showInternalBuildMessage();
-                }
-            } else if (name.equalsIgnoreCase(activity.getString(R.string.transfer_balance))) {
-                //TODO: Need to implement allow balance transfer even in out going call.
-                if (YoSipService.currentCall != null && YoSipService.outgoingCallUri != null) {
-                    mToastFactory.showToast(getActivity().getResources().getString(R.string.balance_transfer_not_allowed));
-                } else {
-                    String balance = mBalanceHelper.getCurrentBalance();
-                    String currencySymbol = mBalanceHelper.getCurrencySymbol();
-                    Intent intent = new Intent(activity, TransferBalanceSelectContactActivity.class);
-                    intent.putExtra("balance", balance);
-                    intent.putExtra("currencySymbol", currencySymbol);
-                    startActivityForResult(intent, 11);
-                }
-
-            }
-        }
+        balanceAdapter.addItems(data);
     }
 
     private void showInternalBuildMessage() {
         mToastFactory.showToast(R.string.internal_build_cant_add_balance);
     }
-
-    private OnClickListener payBtnListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            Bundle arguments = getArguments();
-            if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
-                Denominations item = (Denominations) v.getTag(R.id.btn1);
-                addGooglePlayBalance(item.getProductID(), item.getDenomination());
-            } else {
-                showInternalBuildMessage();
-            }
-
-            //Bundle arguments = getArguments();
-            //if (arguments != null) {
-            //if (Double.valueOf(balance) < 5.000 && arguments.getBoolean(Constants.OPEN_ADD_BALANCE)) {
-           /* if (Double.valueOf(balance) < 5.000) {
-
-            } else {
-                addGooglePlayBalance(item.getProductID(), item.getDenomination());
-            }*/
-                    /*} else {
-                        mToastFactory.showToast(R.string.disabled);
-                    }*/
-            /*} else {
-                mToastFactory.showToast(R.string.disabled);
-            }*/
-        }
-    };
 
     public void showVoucherDialog() {
 
@@ -472,4 +342,71 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         closeActivityAddBalance(Activity.RESULT_CANCELED, null);
     }
 
+    @Override
+    public void onRowSelected(int position) {
+        FragmentActivity activity = getActivity();
+        if (activity != null && data.get(position) instanceof MoreData) {
+            String name = ((MoreData) data.get(position)).getName();
+            if (name.equalsIgnoreCase(activity.getString(R.string.add_balance_from_voucher))) {
+                Bundle arguments = getArguments();
+                if (!BuildConfig.INTERNAL_MTUITY_RELEASE || (arguments != null && arguments.getBoolean(Constants.OPEN_ADD_BALANCE))) {
+                    showVoucherDialog();
+                } else {
+                    showInternalBuildMessage();
+                }
+            } else if (name.equalsIgnoreCase(activity.getString(R.string.transfer_balance))) {
+                //TODO: Need to implement allow balance transfer even in out going call.
+                if (YoSipService.currentCall != null && YoSipService.outgoingCallUri != null) {
+                    mToastFactory.showToast(getActivity().getResources().getString(R.string.balance_transfer_not_allowed));
+                } else {
+                    String balance = mBalanceHelper.getCurrentBalance();
+                    String currencySymbol = mBalanceHelper.getCurrencySymbol();
+                    boolean userType = preferenceEndPoint.getBooleanPreference(Constants.USER_TYPE, false);
+                    if(userType) {
+                        TransferBalanceActivity.start(activity, currencySymbol, balance, true);
+                    } else {
+                        TransferBalanceSelectContactActivity.start(activity, balance, false);
+                    }
+                }
+
+            }
+        }
+    }
+
+    private void retrieveDenominations() {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        Call<List<Denominations>> call = yoService.getDenominations(accessToken);
+        call.enqueue(new Callback<List<Denominations>>() {
+            @Override
+            public void onResponse(Call<List<Denominations>> call, Response<List<Denominations>> response) {
+                if (response.body() != null && response.body().size() > 0) {
+                    txtEmpty.setVisibility(View.GONE);
+                    List<Denominations> demonimations = response.body();
+                    prepareCreditAccountList(demonimations);
+                    if (demonimations != null && demonimations.size() > 0) {
+                        preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
+
+                    } else {
+                        txtEmpty.setVisibility(View.VISIBLE);
+                        FragmentActivity activity = getActivity();
+                        if (activity != null) {
+                            txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
+                        }
+                    }
+                } else {
+                    txtEmpty.setVisibility(View.VISIBLE);
+                    FragmentActivity activity = getActivity();
+                    if (activity != null) {
+                        txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Denominations>> call, Throwable t) {
+                Log.w(TAG, "Data Failed to load currenncy");
+                txtEmpty.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 }

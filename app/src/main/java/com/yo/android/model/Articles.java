@@ -25,6 +25,7 @@ public class Articles implements Parcelable {
     private String topicId;
     private String topicFollowing;
     private String updated;
+    private String video_url;
 
     public Articles() {
     }
@@ -45,6 +46,7 @@ public class Articles implements Parcelable {
         topicId = in.readString();
         topicFollowing = in.readString();
         updated = in.readString();
+        video_url = in.readString();
     }
 
     public static final Creator<Articles> CREATOR = new Creator<Articles>() {
@@ -179,12 +181,23 @@ public class Articles implements Parcelable {
         this.updated = updated;
     }
 
+    public String getVideo_url() {
+        return video_url;
+    }
+
+    public void setVideo_url(String video_url) {
+        this.video_url = video_url;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
     }
 
+
     @Override
+
     public void writeToParcel(Parcel dest, int flags) {
 
         dest.writeString(id);
@@ -202,6 +215,7 @@ public class Articles implements Parcelable {
         dest.writeString(topicId);
         dest.writeString(topicFollowing);
         dest.writeString(updated);
+        dest.writeString(video_url);
     }
 
     public int hashCode() {

@@ -14,6 +14,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcelable;
@@ -38,6 +41,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -239,82 +243,6 @@ public class Util {
             }
         }
         return (index == length - 1) ? str : str.substring(0, index + 1);
-    }
-
-    public static String parseDate(String s) {
-        try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
-            String timeStamp = DateUtils.getRelativeTimeSpanString(date.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-            return timeStamp;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return s;
-    }
-
-    public static long getTime(String str) {
-        try {
-            SimpleDateFormat sourceFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sourceFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = sourceFormat.parse(str);
-            return date.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    public static String getChatListTimeFormat(@NonNull final Context context, long time) {
-        if (context == null) {
-            return null;
-
-        }
-        Calendar smsTime = Calendar.getInstance();
-        smsTime.setTimeInMillis(time);
-        Calendar now = Calendar.getInstance();
-        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
-            return getTimeFormat(context, time);
-        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
-            return context.getString(R.string.yesterday);
-        } else {
-            SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
-            return format.format(new Date(time));
-//            Format format = android.text.format.DateFormat.getDateFormat(context);
-//            return format.format(new Date(time));
-        }
-    }
-
-    public static String getTimeFormat(@NonNull final Context context, long time) {
-        SimpleDateFormat sFormat;
-        String currentTime;
-        try {
-            if (DateFormat.is24HourFormat(context.getApplicationContext())) {
-                sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            } else {
-                sFormat = new SimpleDateFormat("KK:mm aa", Locale.getDefault());
-            }
-            currentTime = sFormat.format(new Date(time));
-            return currentTime;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return new SimpleDateFormat("hh:mm a").format(new Date(time));
-    }
-
-    public static String getTimeFormatForChat(@NonNull final Context context, long time) {
-        SimpleDateFormat sFormat;
-        String currentTime;
-        try {
-            sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            currentTime = sFormat.format(new Date(time));
-            return currentTime;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return new SimpleDateFormat("hh:mm").format(new Date(time));
     }
 
     public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView) {
@@ -655,30 +583,6 @@ public class Util {
         });
     }
 
-    public static String getChatListTimeFormat(long time) {
-        try {
-
-            Calendar smsTime = Calendar.getInstance(TimeZone.getDefault());
-            smsTime.setTimeInMillis(time);
-            Calendar now = Calendar.getInstance(TimeZone.getDefault());
-            if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
-                return "Today";
-            } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
-                return "Yesterday";
-            } else {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd, yyyy");
-                simpleDateFormat.setTimeZone(TimeZone.getDefault());
-                String date = simpleDateFormat.format(new Date(time));
-                if (!date.equalsIgnoreCase("Jan 01, 1970")) {
-                    return date;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
     public static void changeSearchProperties(Menu menu) {
         SearchView search = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         search.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
@@ -719,7 +623,7 @@ public class Util {
 
         try {
             // get available share intents
-            List<Intent> targets = new ArrayList<Intent>();
+            List<Intent> targets = new ArrayList<>();
             Intent template = new Intent(Intent.ACTION_SEND);
             template.setType("image/*");
             List<ResolveInfo> candidates = view.getContext().getPackageManager().
@@ -780,45 +684,6 @@ public class Util {
                     Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
-    }
-
-    public static Date convertUtcToGmt(String time) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date gmtTime = sdf.parse(time);
-            return gmtTime;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static String parseConvertUtcToGmt(String time) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getDefault());
-            Date gmtTime = sdf.parse(time);
-            String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-            return timeStamp;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return time;
-    }
-
-    public static String getDate(String time) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            sdf.setTimeZone(TimeZone.getDefault());
-            // Date gmtTime = sdf.parse(time);
-            return sdf.format(sdf.parse(time));
-            // String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-            // return timeStamp;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return time;
     }
 
     public static void saveUserDetails(Response<UserProfileInfo> response, PreferenceEndPoint preferenceEndPoint) {
@@ -1024,69 +889,6 @@ public class Util {
         }
     }
 
-    public static void showErrorMessages(final EventBus bus, final OpponentDetails details, final Context context, final ToastFactory mToastFactory, final BalanceHelper mBalanceHelper, final PreferenceEndPoint mPreferenceEndPoint, final ConnectivityHelper mHelper) {
-        if (context instanceof Activity) {
-            ((Activity) context).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    int statusCode = details.getStatusCode();
-                    switch (statusCode) {
-                        case StatusCodes.TWO_THOUSAND_ONE:
-                            break;
-                        case 408:
-                            if (!details.isSelfReject()) {
-                                mToastFactory.showToast(R.string.no_answer);
-                            }
-                            break;
-                        case 603:
-                        case 486:
-                            if (!details.isSelfReject()) {
-                                mToastFactory.showToast(R.string.busy);
-                            }
-                            break;
-                        case 404:
-                            mToastFactory.showToast(R.string.calls_no_network);
-                            break;
-                        case 503:
-                            if (!mHelper.isConnected()) {
-                                mToastFactory.showToast(R.string.calls_no_network);
-                                ((Activity) context).finish();
-                            } /*else {
-                                if (details != null && details.getVoxUserName() != null && details.getVoxUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
-                                    YODialogs.redirectToPSTN(bus, (Activity) context, details, mPreferenceEndPoint, mBalanceHelper, mToastFactory);
-                                }
-                            }*/
-                            break;
-                        case 487:
-                            //Missed call
-                            break;
-                        case 181:
-                            mToastFactory.showToast(R.string.call_forwarded);
-                            break;
-                        case 182:
-                        case 480:
-                            mToastFactory.showToast(R.string.no_answer);
-                            break;
-                        case 180:
-                            mToastFactory.showToast(R.string.ringing);
-                            break;
-                        case 600:
-                            mToastFactory.showToast(R.string.all_busy);
-                            break;
-                        case 403:
-                            mToastFactory.showToast(R.string.unknown_error);
-                            break;
-
-                    }
-                    if (statusCode != 503) {
-                        bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                        ((Activity) context).finish();
-                    }
-                }
-            });
-        }
-    }
-
     public static void sendMediaButton(Context context, int keyCode) {
         KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
         Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
@@ -1127,9 +929,14 @@ public class Util {
     public static String numberFromNexgeFormat(String string) {
         try {
             if (string != null) {
-                return string.replaceAll("[^0-9]", "");
+                String number = string.replaceAll("[^0-9]", "");
+                if (!number.startsWith("+")) {
+                    return "+" + number;
+                } else {
+                    return number;
+                }
             } else {
-                return "1234567890";
+                return "+1234567890";
             }
         } catch (NumberFormatException e) {
             return string;
@@ -1157,6 +964,20 @@ public class Util {
             return String.format("%02d mins %02d secs", minutes, seconds);
         } else {
             return String.format("%02d h %02d mins %02d secs", hours, minutes, seconds);
+        }
+    }
+
+    public static String addDenomination(String amount, String amountWithDenomination) {
+        try {
+
+            if (amountWithDenomination != null) {
+                String denomination = amountWithDenomination.replaceAll("[0-9]", "");
+                return String.format("%s %s", denomination, amount);
+            } else {
+                return String.format("%s %s", "IN Rs", amount);
+            }
+        } catch (Exception e) {
+            return String.format("%s %s", "IN Rs", amount);
         }
     }
 
@@ -1193,5 +1014,27 @@ public class Util {
         }
 
         return true;
+    }
+
+    public static void initBar(SeekBar bar, final AudioManager audioManager, final int stream) {
+        bar.setMax(audioManager.getStreamMaxVolume(stream));
+        bar.setProgress(audioManager.getStreamVolume(stream));
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
+                audioManager.setStreamVolume(stream, progress, AudioManager.FLAG_PLAY_SOUND);
+            }
+
+            public void onStartTrackingTouch(SeekBar bar) {
+            }
+
+            public void onStopTrackingTouch(SeekBar bar) {
+            }
+        });
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return (netInfo != null && netInfo.isConnected());
     }
 }

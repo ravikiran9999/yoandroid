@@ -14,12 +14,14 @@ import com.yo.android.adapters.AbstractViewHolder;
 public class MenuViewHolder extends AbstractViewHolder {
 
     protected TextView titleView;
+    protected TextView tvBalance;
 
     protected ImageView imageView;
 
     public MenuViewHolder(View view) {
         super(view);
         titleView = (TextView) view.findViewById(R.id.title);
+        tvBalance = (TextView) view.findViewById(R.id.tv_balance);
         imageView = (ImageView) view.findViewById(R.id.image);
     }
 
@@ -31,4 +33,7 @@ public class MenuViewHolder extends AbstractViewHolder {
         return imageView;
     }
 
+    public TextView getTvBalance() {
+        return tvBalance;
+    }
 }

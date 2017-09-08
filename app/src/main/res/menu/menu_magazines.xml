@@ -10,14 +10,6 @@
         app:showAsAction="always|collapseActionView" />
 
     <item
-        android:id="@+id/menu_followers"
-        android:title="@string/followers"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/menu_followings"
-        android:title="@string/followings"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/menu_find_people"
         android:title="@string/find_people"
         app:showAsAction="never" />
@@ -33,4 +25,15 @@
         android:id="@+id/menu_create_magazines"
         android:title="@string/my_magazines"
         app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/menu_followers"
+        android:title="@string/followers"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_followings"
+        android:title="@string/followings"
+        app:showAsAction="never" />
+
 </menu>

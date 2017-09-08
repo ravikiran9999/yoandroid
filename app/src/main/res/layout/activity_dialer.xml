@@ -135,7 +135,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/balance_txt_size" />
 
-                <TextView
+                <me.grantland.widget.AutofitTextView
                     android:id="@+id/txt_balance"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
@@ -148,6 +148,7 @@
                     android:textSize="@dimen/balance_txt_size"
                     android:singleLine="true"
                     android:ellipsize="end"/>
+
 
                 <TextView
                     android:id="@+id/add_balance"

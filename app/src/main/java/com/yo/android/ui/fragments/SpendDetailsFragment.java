@@ -1,6 +1,5 @@
 package com.yo.android.ui.fragments;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,17 +18,16 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
-import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.dialer.SubscribersList;
 import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import java.io.InputStreamReader;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +48,9 @@ import retrofit2.Response;
 public class SpendDetailsFragment extends BaseFragment implements Callback<ResponseBody> {
 
     private static final String PSTN = "PSTN";
+    public static final String BALANCE_TRANSFER = "BalanceTransfer";
+    public static final String MAGAZINES = "Magzines";
+
     @Bind(R.id.txtEmpty)
     TextView txtEmpty;
 
@@ -64,7 +65,6 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
     private SpentDetailsAdapter adapter;
 
-    public static final String BALANCE_TRANSFER = "BalanceTransfer";
 
     public static final String AUTHORITY = YoAppContactContract.CONTENT_AUTHORITY;
 
@@ -78,6 +78,10 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     public static final Uri CONTENT_URI =
             Uri.parse("content://" + AUTHORITY + "/callLogs");
 
+
+    public static SpendDetailsFragment newInstance() {
+        return new SpendDetailsFragment();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,10 +123,12 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     if (detailResponseList != null && !detailResponseList.isEmpty()) {
                         List<SubscribersList> removedFreeSpents = new ArrayList<>();
                         for (SubscribersList item : detailResponseList) {
-                            if (item.getCalltype().equals(PSTN) || item.getCalltype().equals(BALANCE_TRANSFER)) {
-                                if (Float.valueOf(item.getCallcost()) != 0f) {
+                            if (item.getCalltype().equals(PSTN) || item.getCalltype().equals(BALANCE_TRANSFER) || item.getCalltype().equals(MAGAZINES)) {
+                                /*if (Float.valueOf(item.getCallcost()) != 0f) {
                                     removedFreeSpents.add(item);
-                                }
+                                }*/
+                                if (!TextUtils.isEmpty(item.getCallcost()))
+                                    removedFreeSpents.add(item);
                             }
                         }
                         adapter.addItems(removedFreeSpents);
@@ -174,10 +180,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             Context context = parent.getContext();
             LayoutInflater inflater = LayoutInflater.from(context);
 
-            // Inflate the custom layout
             View contactView = inflater.inflate(R.layout.frag_spent_list_row_item, parent, false);
-
-            // Return a new holder instance
             SpendDetailsViewHolder viewHolder = new SpendDetailsViewHolder(contactView);
             return viewHolder;
         }
@@ -186,52 +189,48 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         public void onBindViewHolder(SpendDetailsViewHolder holder, int position) {
             final SubscribersList item = mSubscribersList.get(position);
 
-            // Set item views based on your views and data model
-            //holder.getDate().setText(item.getTime());
             String modifiedTime = item.getTime().substring(0, item.getTime().lastIndexOf("."));
-            holder.getDate().setText(modifiedTime);
-            //                Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
-            Date date = Util.convertUtcToGmt(modifiedTime);
-            holder.getDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(date));
+            //holder.getDate().setText(modifiedTime);
+            Date date = DateUtil.convertUtcToGmt(modifiedTime);
+            holder.getDate().setText(new SimpleDateFormat(DateUtil.DATE_FORMAT8).format(date));
+
+
             if (item.getDuration() != null) {
-                if(item.getDuration().contains(":")) {
+                if (item.getDuration().contains(":")) {
                     String[] tokens = item.getDuration().split(":");
                     int hours = Integer.parseInt(tokens[0]);
                     int minutes = Integer.parseInt(tokens[1]);
                     int seconds = Integer.parseInt(tokens[2]);
                     String duration = "";
-                    /*if (seconds > 30) {
-                        minutes++;
-                    }
-                    if (hours == 0) {
-                        duration = String.format("%02d mins", minutes);
-                    } else {
-                        duration = String.format("%02d hrs %02d mins", hours, minutes);
-                    }*/
 
-                    if(hours == 0 && minutes == 0) {
+                    if (hours == 0 && minutes == 0) {
                         duration = String.format("%02d secs", seconds);
                     } else if (hours == 0 && seconds == 0) {
                         duration = String.format("%02d mins", minutes, seconds);
                     } else if (hours == 0) {
                         duration = String.format("%02d mins %02d secs", minutes, seconds);
-                    }  else {
+                    } else {
                         duration = String.format("%02d hrs %02d mins %02d secs", hours, minutes, seconds);
                     }
                     holder.getDuration().setText(duration);
-                } else {
+                } else if (!item.getCalltype().equals(MAGAZINES)) {
                     String duration = "";
                     duration = Util.convertSecToHMmSs(Long.parseLong(item.getDuration()));
                     holder.getDuration().setText(duration);
+
+                } else {
+                    holder.getDuration().setText("");
                 }
             } else {
                 holder.getDuration().setText(item.getDuration());
             }
+
             String phoneName = Helper.getContactName(mContext, item.getDestination());
             if (phoneName != null) {
                 holder.getTxtPhone().setText(phoneName);
             } else {
-                final ContentResolver resolver = mContext.getContentResolver();
+                // Todo remove this code as we are not using
+                /*final ContentResolver resolver = mContext.getContentResolver();
                 Cursor c = null;
                 try {
                     c = resolver.query(
@@ -257,33 +256,11 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                     }
                 } finally {
                     if (c != null) c.close();
-                }
+                }*/
             }
-            holder.getTxtPrice().setText("US $ " + item.getCallcost());
+            //holder.getTxtPrice().setText("US $ " + item.getCallcost());
+            holder.getTxtPrice().setText(item.getCallcost());
             holder.getTxtReason().setText(item.getCalltype());
-
-            try {
-                DecimalFormat df = new DecimalFormat("0.000");
-                String format = df.format(Double.valueOf(item.getCallcost()));
-                holder.getTxtPrice().setText("US $ " + format);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            /*holder.getArrow().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    item.setArrowDown(!item.isArrowDown());
-                    notifyDataSetChanged();
-                }
-            });
-            if (item.isArrowDown()) {
-                holder.getArrow().setImageResource(R.drawable.ic_downarrow);
-                holder.getDurationContainer().setVisibility(View.VISIBLE);
-            } else {
-                holder.getArrow().setImageResource(R.drawable.ic_uparrow);
-                holder.getDurationContainer().setVisibility(View.GONE);
-            }*/
         }
 
         @Override
@@ -291,7 +268,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             return mSubscribersList.size();
         }
 
-        public void addItems(List<SubscribersList> detailResponseList){
+        public void addItems(List<SubscribersList> detailResponseList) {
             mSubscribersList.addAll(detailResponseList);
             notifyDataSetChanged();
         }
@@ -328,7 +305,5 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
             return contactName;
         }
-
     }
-
 }

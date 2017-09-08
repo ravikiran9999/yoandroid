@@ -47,6 +47,7 @@ import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
@@ -74,7 +75,7 @@ import de.greenrobot.event.EventBus;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
+public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "ChatFragment";
 
@@ -84,22 +85,21 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     ImageView emptyImageView;
     @Bind(R.id.no_search_results)
     protected TextView noSearchResult;
-    /*@Bind(R.id.swipeContainer)
-    protected SwipeRefreshLayout swipeRefreshContainer;*/
+    @Bind(R.id.swipeContainer)
+    protected SwipeRefreshLayout swipeRefreshContainer;
 
     private ArrayList<Room> arrayOfUsers;
     private ChatRoomListAdapter chatRoomListAdapter;
     private Menu menu;
     private Room room;
-    private String voxUserName;
     private Room mPRoom;
+    private String voxUserName;
     private List<String> roomIdList;
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss z");
     private Activity activity;
     private int executed;
     private int activeCount;
     private Room tempRoom;
-
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -150,7 +150,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         getActiveSavedRooms();
         listView.setOnItemClickListener(this);
         emptyImageView.setVisibility(View.GONE);
-        //swipeRefreshContainer.setOnRefreshListener(this);
+        swipeRefreshContainer.setOnRefreshListener(this);
         return view;
     }
 
@@ -407,7 +407,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         room.setImages(false);
                     }
                     room.setTime(chatMessage.getTime());
-                    room.setTimeStamp(Util.getChatListTimeFormat(activity, chatMessage.getTime()));
+                    room.setTimeStamp(DateUtil.getChatListTimeFormat(activity, chatMessage.getTime()));
                     if (!arrayOfUsers.contains(room)) {
                         arrayOfUsers.add(room);
                     } else {
@@ -445,8 +445,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -455,7 +454,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     if (dataSnapshot.hasChildren()) {
                         room.setLastChat("");
                         room.setImages(false);
-                        room.setTimeStamp(Util.getChatListTimeFormat(activity, chatMessage.getTime()));
+                        room.setTimeStamp(DateUtil.getChatListTimeFormat(activity, chatMessage.getTime()));
                     }
                     if (chatRoomListAdapter != null) {
                         chatRoomListAdapter.notifyDataSetChanged();
@@ -466,8 +465,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -484,10 +482,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     }
 
-    /*@Override
+    @Override
     public void onRefresh() {
         isRoomsExist(swipeRefreshContainer);
-    }*/
+    }
 
     private class FirebaseAsync extends AsyncTask<Object, Void, List<String>> {
         Firebase databaseReference = null;

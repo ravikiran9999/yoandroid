@@ -25,12 +25,13 @@
         tools:background="@color/black"
         android:orientation="horizontal">
 
-        <me.grantland.widget.AutofitTextView
+        <TextView
             android:id="@+id/tv_phone_number"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:maxLines="1"
+            android:ellipsize="end"
             android:paddingLeft="5dp"
             android:paddingStart="5dp"
             android:textColor="@color/white"

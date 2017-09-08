@@ -20,6 +20,7 @@ import com.yo.android.calllogs.CallLog;
 import com.yo.android.model.dialer.CallLogsResult;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.util.Constants;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 
 import java.text.DateFormat;
@@ -183,7 +184,7 @@ public class CallLogDetailsActivity extends BaseActivity {
             try {
                 String mDate = null;
                 String day = dateFormat2.format(formatterDate.parse(item.getStime()));
-                String currentDate = Util.getChatListTimeFormat(convertDateFormatLong(item.getStime()));
+                String currentDate = DateUtil.getChatListTimeFormat(convertDateFormatLong(item.getStime()));
                 if (currentDate.equalsIgnoreCase(Constants.TODAY) || currentDate.equalsIgnoreCase(Constants.YESTERDAY)) {
                     mDate = currentDate;
                 } else {

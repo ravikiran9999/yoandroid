@@ -13,10 +13,12 @@ public class Constants {
     public static final String OPPONENT_ID = "opponentId";
     public static final String CHAT_ROOM_ID = "chatRoomId";
     public static final String CHAT_FORWARD = "forward";
+    public static final String CHAT_SHARE = "share";
 
     public static final String LOGED_IN_USER_ID = "logedInUserId";
     public static final String TYPE = "type";
     public static final String TEXT = "text";
+    public static final String TEXT_PLAIN = "text/plain";
     public static final String IMAGE = "image";
     public static final String PHOTO = "Photo";
     public static final String IMAGE_PATH = "image_path";
@@ -42,19 +44,26 @@ public class Constants {
     public static final String YESTERDAY = "Yesterday";
 
     //Preference
+
+    //UserProfile
     public static final String USER_ID = "user_id";
-    public static final String FIREBASE_USER_ID = "firebase_user_id";
     public static final String USER_AVATAR = "user_avatar";
+    public static final String USER_STATUS = "user_status";
+    public static final String FIREBASE_USER_ID = "firebase_user_id";
     public static final String USER_NAME = "first_name";
+    public static final String USER_TYPE = "user_type";
+
+
     public static final String VOX_USER_NAME = "vox_user_name";
     public static final String PASSWORD = "password";
     public static final String CALLINGCARDNUMBER = "calling_card_number";
     public static final String LAST_CONTACTS_SYNC_TIME = "last_contacts_sync_time";
 
 
-    public static final String USER_STATUS = "user_status";
     public static final String PHONE_NUMBER = "phone";
     public static final String CURRENT_BALANCE = "current_balance";
+    public static final String WALLET_BALANCE = "wallet_balance";
+    public static final String SWITCH_BALANCE = "switch_balance";
     public static final String CURRENCY_SYMBOL = "currency_symbol";
     public static final String SUBSCRIBER_ID = "subscriber_id";
     public static final String DIALER_FILTER = "dialer_filter";
@@ -117,7 +126,8 @@ public class Constants {
     public static final int ADD_IMAGE_CAPTURE = 1;
     public static final int ADD_SELECT_PICTURE = 2;
 
-
+    public static final String AUTO_RENEWAL_SUBSCRIPTION = "autorenwal_subscription";
+    public static final String RENEWAL = "renewal";
     public static String DELETE_MAGAZINE_ACTION = "com.edit.magazine.DELETE";
     public static String EDIT_MAGAZINE_ACTION = "com.edit.magazine.EDIT";
     public static String SESSION_EXPIRE = "SESSION_EXPIRE";
@@ -146,6 +156,7 @@ public class Constants {
 
     public static final String NOTIFICATION_COUNT = "notification_count";
     public static final String IS_IN_APP = "isInApp";
+    public static final String LAUNCH_APP = "launchApp";
     public static final String POPUP_NOTIFICATION = "popupNotification";
 
     public static final String ID = "id";
@@ -171,7 +182,16 @@ public class Constants {
 
     public static final String FAILED = "FAILED";
     public static final String BALANCE = "Balance";
+    public static final String S_BALANCE = "SwitchBalance";
+    public static final String W_BALANCE = "WalletBalance";
     public static final String LOW_BALANCE_NOTIFICATION_TIME = "low_bal_time";
     public static final long LOW_BALANCE_NOTIFICATION_FREQUENCY = 24 * 60 * 60 * 1000;
     public static final String FLURRY_API_KEY = "VZPC24G2HP8Q7V74Z25Y";
+
+    public static final String MAGAZINE_LOCK = "magazine_lock";
+    public static final String DIALER_LOCK = "dialer_lock";
+    public static final String APP_LOCK = "app_lock";
+    public static final String TERMS_CONDITIONS = "terms_conditions";
+
+    public static final String VIDEO_URL = "video_url";
 }

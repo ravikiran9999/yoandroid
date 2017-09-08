@@ -48,6 +48,7 @@ import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
 import com.yo.android.util.Util;
+import com.yo.android.video.InAppVideoActivity;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -446,12 +447,17 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                    String videoUrl = data.getVideo_url();
+                    if(videoUrl != null) {
+                        InAppVideoActivity.start((Activity) context, videoUrl);
+                    } else {
+                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+                        intent.putExtra("Title", data.getTitle());
+                        intent.putExtra("Image", data.getUrl());
+                        intent.putExtra("Article", data);
+                        intent.putExtra("Position", position);
+                        magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                    }
                 }
             });
         }

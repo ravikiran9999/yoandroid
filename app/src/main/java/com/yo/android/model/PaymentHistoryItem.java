@@ -15,6 +15,7 @@ public class PaymentHistoryItem {
     private String existing_credit;
 
     private String currencySymbol;
+    private String currencyCode;
 
     private String convertedAddedCredit;
 
@@ -79,9 +80,17 @@ public class PaymentHistoryItem {
         this.existing_credit = existing_credit;
     }
 
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
     @Override
     public String toString() {
-        return "ClassPojo [current_credit = " + current_credit + ", updated_at = " + updated_at + ", added_credit = " + added_credit + ", status = " + status + ", existing_credit = " + existing_credit + ", message = " + message + "]";
+        return "ClassPojo [current_credit = " + current_credit + ", updated_at = " + updated_at + ", added_credit = " + added_credit + ", status = " + status + ", existing_credit = " + existing_credit + ", currencySymbol = " + currencySymbol + ",currencyCode = " + currencyCode + ", message = " + message + "]";
     }
 
     public boolean isArrowDown() {

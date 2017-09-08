@@ -7,6 +7,7 @@ import java.util.List;
  */
 public class LandingArticles {
 
+    private int code;
     private List<Articles> followed_topic_articles;
     private List<Articles> random_articles;
 
@@ -24,5 +25,13 @@ public class LandingArticles {
 
     public void setRandom_articles(List<Articles> random_articles) {
         this.random_articles = random_articles;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

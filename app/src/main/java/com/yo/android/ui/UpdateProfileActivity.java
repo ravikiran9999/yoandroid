@@ -224,6 +224,7 @@ public class UpdateProfileActivity extends BaseActivity {
                     preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     preferenceEndPoint.saveStringPreference(Constants.FIREBASE_USER_ID, response.body().getFirebaseUserId());
+                    preferenceEndPoint.saveBooleanPreference(Constants.USER_TYPE, response.body().isRepresentative());
                     uploadFile(imgFile);
                 } else {
                     toastFactory.showToast(getResources().getString(R.string.unable_to_fetch));

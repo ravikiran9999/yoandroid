@@ -28,6 +28,7 @@ import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
+import com.yo.android.model.Share;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -53,6 +54,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     private ArrayList<ChatMessage> forwardChatMessages;
     private AppContactsListAdapter appContactsListAdapter;
     private List<Contact> tempList = new ArrayList<>();
+    private Share share;
     private Menu menu;
     private Activity activity;
 
@@ -103,8 +105,10 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        if (getArguments() != null) {
+        if (getArguments() != null && getArguments().getParcelableArrayList(Constants.CHAT_FORWARD) != null) {
             forwardChatMessages = getArguments().getParcelableArrayList(Constants.CHAT_FORWARD);
+        } else if(getArguments() != null && getArguments().getParcelable(Constants.CHAT_SHARE) != null) {
+            share = getArguments().getParcelable(Constants.CHAT_SHARE);
         }
         if (activity != null) {
             appContactsListAdapter = new AppContactsListAdapter(activity.getApplicationContext());
@@ -186,11 +190,14 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             }
 
             if (position == 0 && contact.getNexgieUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null && activity != null) {
-                Intent intent = new Intent(activity, CreateGroupActivity.class);
+                startActivityForResult(new Intent(activity, CreateGroupActivity.class), CREATE_GROUP_RESULT);
+                /*Intent intent = new Intent(activity, CreateGroupActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivityForResult(intent, CREATE_GROUP_RESULT);
-            } else if (activity != null && contact.getNexgieUserName() != null) {
+                startActivityForResult(intent, CREATE_GROUP_RESULT);*/
+            } else if (activity != null && contact.getNexgieUserName() != null && forwardChatMessages != null) {
                 ChatActivity.start(activity, contact, forwardChatMessages);
+            } else {
+                ChatActivity.start(activity, contact, share);
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             e.printStackTrace();

@@ -37,6 +37,8 @@ import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.model.CountryCode;
 import com.yo.android.model.Response;
 import com.yo.android.ui.NewOTPActivity;
+import com.yo.android.ui.PlainActivity;
+import com.yo.android.ui.fragments.GeneralWebViewFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.CountryCodeHelper;
 import com.yo.android.util.Util;
@@ -65,10 +67,12 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     private static final String TAG = "LoginActivity";
     private static final int READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS = 123;
     private static final String FRAGMENT_TAG = "OTPFragment";
+    public static final String URL = BuildConfig.BASE_URL + "T&C/YO_PRIVACY_POLICY.html";
 
 
     @Bind(R.id.et_enter_phone)
     protected EditText mPhoneNumberView;
+
 
 //    @Bind(R.id.spCountrySpinner)
 //    protected NiceSpinner spCountrySpinner;
@@ -77,22 +81,19 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     @Bind(R.id.et_country_code)
     protected EditText mCountryCode;
 
-
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     @Inject
     VoxFactory voxFactory;
     @Inject
     YoApi.YoService yoService;
-
     @Inject
     CountryCodeHelper mCountryCodeHelper;
-
-    private List<CountryCode> mList;
     @Inject
     ConnectivityHelper mHelper;
-    private static final int SELECTED_OK = 101;
 
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final int SELECTED_OK = 101;
+    private List<CountryCode> mList;
     private MenuItem searchMenuItem;
     private EventBus bus = EventBus.getDefault();
 
@@ -150,17 +151,17 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         mCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Util.hideKeyboard(LoginActivity.this, view);
+                Util.hideKeyboard(LoginActivity.this,view);
                 Intent intent = new Intent(LoginActivity.this, CountryCodeActivity.class);
                 startActivityForResult(intent, SELECTED_OK);
 
             }
         });
 
-        mCountryCode.setOnTouchListener(new View.OnTouchListener() {
+        mCountryCode.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Util.hideKeyboard(LoginActivity.this, v);
+                Util.hideKeyboard(LoginActivity.this,v);
                 return false;
             }
         });
@@ -241,6 +242,15 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
             showMessageDialog(phoneNumber);
 
         }
+    }
+
+    @OnClick(R.id.tc_link)
+    public void termAndConditions() {
+
+        Bundle args = new Bundle();
+        args.putString(GeneralWebViewFragment.KEY_URL, URL);
+        PlainActivity.start(this, Constants.TERMS_CONDITIONS, args);
+
     }
 
     private void performLogin(String phoneNumber) {

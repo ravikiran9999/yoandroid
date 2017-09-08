@@ -14,15 +14,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.yo.android.R;
-import com.yo.android.adapters.AbstractBaseAdapter;
-import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.RechargeDetailsViewHolder;
-import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.PaymentHistoryItem;
-import com.yo.android.model.dialer.SubscribersList;
 import com.yo.android.util.Constants;
-import com.yo.android.util.Util;
+import com.yo.android.util.DateUtil;
 import com.yo.android.vox.BalanceHelper;
 
 import java.text.SimpleDateFormat;
@@ -54,6 +50,10 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
     @Inject
     BalanceHelper mBalanceHelper;
     private RechargeDetailsAdapter adapter;
+
+    public static RechargeDetailsFragment newInstance() {
+        return new RechargeDetailsFragment();
+    }
 
     @Override
     public void onDestroy() {
@@ -156,15 +156,18 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
             String modifiedTime = item.getUpdatedAt().substring(0, item.getUpdatedAt().lastIndexOf("."));
             holder.getTxtPhone().setText(modifiedTime);
             //                Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(modifiedTime);
-            Date date = Util.convertUtcToGmt(modifiedTime);
-            holder.getTxtPhone().setText(new SimpleDateFormat("dd/MM/yyyy hh:mm a").format(date));
+            Date date = DateUtil.convertUtcToGmt(modifiedTime);
+            holder.getTxtPhone().setText(new SimpleDateFormat(DateUtil.DATE_FORMAT2).format(date));
 
             holder.getTxtPulse().setText(item.getStatus());
-            holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.dial_green));
+
             if(mContext.getResources().getString(R.string.voucher_failed).equals(item.getAddedCredit())) {
                 holder.getTxtPrice().setText(item.getMessage());
+                holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
             } else {
-                holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
+                //holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
+                holder.getTxtPrice().setText(String.format("%s %s%s", item.getCurrencyCode(), item.getCurrencySymbol(), item.getConvertedAddedCredit()));
+                holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.dial_green));
             }
             holder.getArrow().setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -11,31 +11,41 @@
         android:layout_gravity="center_horizontal"
         android:padding="30dp"
         android:text="@string/connectivity_network_settings"
-        android:visibility="gone"
-        android:textColor="@color/black"/>
-
-    <ListView
-        android:id="@+id/lv_notifications"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@android:color/transparent"
+        android:textColor="@color/black"
         android:visibility="gone" />
-    <LinearLayout android:id="@+id/ll_no_notifications"
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/lv_notifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:visibility="gone" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_no_notifications"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone">
-    <TextView
-        android:id="@+id/no_data"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_text"
-        android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/no_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_text"
+            android:visibility="gone" />
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_empty_notifications"/>
+            android:src="@drawable/ic_empty_notifications" />
     </LinearLayout>
 
 </LinearLayout>

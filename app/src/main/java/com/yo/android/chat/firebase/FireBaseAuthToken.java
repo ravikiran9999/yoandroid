@@ -75,6 +75,7 @@ public class FireBaseAuthToken {
                         if (response.body() != null) {
                             jsonObject = new JSONObject(response.body().string());
                             String firebaseToken = jsonObject.getString("firebase_token");
+                            //String firebaseToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDQwMjYzMTUsInYiOjAsImlhdCI6MTUwNDAwNDcyMCwiZCI6eyJwcm92aWRlciI6Inlvc2VydmVyIiwidWlkIjoiLUtzZ1ppRF9WbzRRRjRoVzFhUDgifX0.6yNQjuTPT1PpumA2RH15ahUpX7g3ZDkj1HQO_js0Dcg";
                             Log.i(TAG, "New token generated " + firebaseToken);
                             loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, firebaseToken);
                             listener.onSuccess();

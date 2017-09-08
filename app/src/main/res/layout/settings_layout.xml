@@ -117,12 +117,13 @@
             </RelativeLayout>
 
             <TextView
+                android:id="@+id/tc_link"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="20dp"
                 android:padding="10dp"
-                android:text="@string/terms_and_conditions"
+                android:text="@string/tc"
                 android:textColor="#111111" />
 
             <RelativeLayout

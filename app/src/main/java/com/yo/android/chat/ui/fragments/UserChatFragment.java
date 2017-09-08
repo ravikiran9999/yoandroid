@@ -9,7 +9,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -71,9 +70,8 @@ import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.Contact;
-import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
+import com.yo.android.model.Share;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.ShowPhotoActivity;
@@ -92,13 +90,9 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.greenrobot.event.EventBus;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 import static com.yo.android.util.Util.copyFile;
@@ -139,6 +133,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String opponentImg;
     private int retryMessageCount = 0;
     private int falureCount = 0;
+    private Share share;
+
 
     @Bind(R.id.emojiView)
     ImageView emoji;
@@ -186,6 +182,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         storageReference = storage.getReferenceFromUrl(BuildConfig.STORAGE_BUCKET);
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
+        share = bundle.getParcelable(Constants.CHAT_SHARE);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         chatMessageArray = new ArrayList<>();
@@ -200,7 +197,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
         ButterKnife.bind(this, view);
-
         roomType = getArguments().getString(Constants.TYPE);
         listView.setDivider(null);
         listView.setDividerHeight(0);
@@ -208,7 +204,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatMessageHashMap = new HashMap<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
-        listView.smoothScrollToPosition(userChatAdapter.getCount());
+        //listView.smoothScrollToPosition(userChatAdapter.getCount());
+        setSmoothScrollPosition(userChatAdapter, listView);
         listView.setVerticalScrollBarEnabled(true);
         listView.setClipToPadding(false);
         listView.setPadding(0, Helper.dp(getActivity(), 4), 0, Helper.dp(getActivity(), 3));
@@ -216,6 +213,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         listView.setStackFromBottom(true);
 
         chatText.addTextChangedListener(this);
+        chatText.setOnClickListener(this);
         listView.setOnItemClickListener(this);
         popup = new EmojiconsPopup(rootView, getActivity());
         send.setOnClickListener(this);
@@ -261,12 +259,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             if (chatForwards != null) {
                 forwardInt = chatForwards.size() + 1;
                 receiveForward(chatForwards);
+            }else if(share != null && share.getType().equals(Constants.IMAGE)) {
+                addSelectPicture(share.getUri());
+            } else if(share != null && share.getType().equals(Constants.TEXT)) {
+                sendChatMessage(share.getText(), share.getType());
             }
         }
 
         if ((childRoomId == null) && (chatForwards != null)) {
             //createRoom("Message", null);
         }
+
+
 
         return view;
     }
@@ -276,6 +280,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         try {
+            listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
             listView.setStackFromBottom(false);
             listView.setOnScrollListener(new AbsListView.OnScrollListener() {
                                              @Override
@@ -510,6 +515,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         } else if (v.getId() == R.id.cameraView) {
             takePicture();
+        } else if(v.getId() == R.id.chat_text) {
+            setSmoothScrollPosition(userChatAdapter, listView);
         }
     }
 
@@ -586,7 +593,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
                     chatMessageArray.add(chatMessage);
                     userChatAdapter.addItems(chatMessageArray);
-                    listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                    //listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                    setSmoothScrollPosition(userChatAdapter, listView);
                     chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
                 }
             }
@@ -711,7 +719,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
             case ADD_SELECT_PICTURE:
                 if (data != null) {
-                    addSelectPicture(data);
+                    addSelectPicture(data.getData());
                 }
 
                 break;
@@ -720,8 +728,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    private void addSelectPicture(Intent data) {
-        Uri targetUri = data.getData();
+    private void addSelectPicture(Uri targetUri) {
+        //Uri targetUri = data.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         try {
             Cursor cursor = getActivity().getContentResolver().query(targetUri,
@@ -919,7 +927,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
                 chatMessageArray.add(chatMessage);
                 userChatAdapter.addItems(chatMessageArray);
-                listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                setSmoothScrollPosition(userChatAdapter, listView);
+
 
                 if ((!chatMessage.getSenderID().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) && (chatMessage.getDelivered() == 0) && getActivity() instanceof ChatActivity) {
                     long timestamp = System.currentTimeMillis();
@@ -945,7 +954,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     }
                 }
                 userChatAdapter.addItems(chatMessageArray);
-                listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
+                setSmoothScrollPosition(userChatAdapter, listView);
+                //listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1006,53 +1016,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         }
         forwardInt = 0;
-    }
-
-    // Todo remove this method as we are not creating
-    private void createRoom(final String message, final ChatMessage chatMessage) {
-        String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-        List<String> selectedUsers = new ArrayList<>();
-        selectedUsers.add(opponentId);
-        showProgressDialog();
-        yoService.getRoomAPI(access, selectedUsers).enqueue(new Callback<Room>() {
-            @Override
-            public void onResponse(Call<Room> call, Response<Room> response) {
-                dismissProgressDialog();
-                if (response.isSuccessful()) {
-                    Room room = response.body();
-                    if (room.getFirebaseRoomId() != null) {
-                        roomExist = 1;
-                        roomCreationProgress = 0;
-                        roomReference = authReference.child(Constants.ROOMS).child(room.getFirebaseRoomId()).child(Constants.CHATS);
-                        registerChildEventListener(roomReference);
-                        childRoomId = room.getFirebaseRoomId();
-                        if (chatForwards != null) {
-                            receiveForward(chatForwards);
-                        } else if (chatMessage != null && childRoomId != null && !TextUtils.isEmpty(childRoomId)) {
-                            chatMessage.setRoomId(childRoomId);
-                            sendChatMessage(chatMessage);
-                        } else {
-                            mToastFactory.showToast(getString(R.string.room_id_not_created));
-                        }
-                        update(opponentNumber, room.getFirebaseRoomId());
-                        EventBus.getDefault().post(Constants.CHAT_ROOM_REFRESH);
-                    }
-                } else {
-                    if (chatText != null) {
-                        //Restore the message if room fails
-                        chatText.setText(message);
-                        roomCreationProgress = 0;
-                        roomExist = 0;
-                        mToastFactory.showToast("Chat initiation failed! Please try again.");
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Room> call, Throwable t) {
-                dismissProgressDialog();
-            }
-        });
     }
 
     public void update(String voxUsername, String roomId) {
@@ -1129,8 +1092,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         Intent alarmIntent = new Intent(getActivity().getApplicationContext(), FirebaseService.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        int interval = 2 * 60 * 1000; // 10 minutes interval
+        int interval = 2 * 60 * 1000; // 2 minutes interval
 
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+    }
+
+    private void setSmoothScrollPosition(UserChatAdapter chatAdapter, StickyListHeadersListView listView) {
+        listView.setVerticalScrollBarEnabled(false);
+        int count = chatAdapter.getCount() - 1;
+        Log.i(TAG, String.valueOf(count));
+        listView.setSelection(count);
     }
 }

@@ -2,6 +2,7 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,24 +34,29 @@ import retrofit2.Response;
 /**
  * This activity is used to display the user's created magazines in a GridView
  */
-public class CreateMagazineActivity extends BaseActivity {
+public class CreateMagazineActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+
+    @Bind(R.id.swipeContainer)
+    protected SwipeRefreshLayout swipeRefreshContainer;
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchResults;
+    @Bind(R.id.create_magazines_gridview)
+    protected GridView gridView;
 
     @Inject
     YoApi.YoService yoService;
-    CreateMagazinesAdapter createMagazinesAdapter;
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
-    private GridView gridView;
-    private String addArticleMagazineId = null;
 
-    protected TextView noSearchResults;
+    CreateMagazinesAdapter createMagazinesAdapter;
+    private String addArticleMagazineId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_magazine);
-
+        ButterKnife.bind(this);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -59,45 +66,18 @@ public class CreateMagazineActivity extends BaseActivity {
 
         EventBus.getDefault().register(this);
 
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra(Constants.MAGAZINE_ADD_ARTICLE_ID)) {
-            addArticleMagazineId = intent.getStringExtra(Constants.MAGAZINE_ADD_ARTICLE_ID);
+        if (getIntent() != null && getIntent().hasExtra(Constants.MAGAZINE_ADD_ARTICLE_ID)) {
+            addArticleMagazineId = getIntent().getStringExtra(Constants.MAGAZINE_ADD_ARTICLE_ID);
         }
-
-        gridView = (GridView) findViewById(R.id.create_magazines_gridview);
-        noSearchResults = (TextView) findViewById(R.id.no_search_results);
 
         createMagazinesAdapter = new CreateMagazinesAdapter(CreateMagazineActivity.this);
         gridView.setAdapter(createMagazinesAdapter);
-        showProgressDialog();
-        final String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getMagazinesAPI(accessToken).enqueue(new Callback<List<OwnMagazine>>() {
-            @Override
-            public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
-                dismissProgressDialog();
-                List<OwnMagazine> ownMagazineList;
-                ownMagazineList = new ArrayList<OwnMagazine>();
-                OwnMagazine ownMagazine = new OwnMagazine();
-                ownMagazine.setName("+ New Magazine");
-                ownMagazine.setImage("");
-                ownMagazineList.add(ownMagazine);
+        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
+        if(renewalStatus) {
+            createMagazine(null);
+        }
 
-                if (response == null || response.body() == null) {
-                    return;
-                }
-                for (int i = 0; i < response.body().size(); i++) {
-                    ownMagazineList.add(response.body().get(i));
-                }
-                createMagazinesAdapter.addItems(ownMagazineList);
-
-            }
-
-            @Override
-            public void onFailure(Call<List<OwnMagazine>> call, Throwable t) {
-               dismissProgressDialog();
-            }
-        });
-
+        swipeRefreshContainer.setOnRefreshListener(this);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -109,7 +89,7 @@ public class CreateMagazineActivity extends BaseActivity {
                 } else if (addArticleMagazineId != null) {
                     List<String> articlesList = new ArrayList<>();
                     articlesList.add(addArticleMagazineId);
-
+                    final String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.addArticleMagazineApi(accessToken, ownMagazine.getId(), articlesList).enqueue(new Callback<com.yo.android.model.Response>() {
                         @Override
                         public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
@@ -136,6 +116,49 @@ public class CreateMagazineActivity extends BaseActivity {
                     intent.putExtra("MagazineDesc", ownMagazine.getDescription());
                     intent.putExtra("MagazinePrivacy", ownMagazine.getPrivacy());
                     startActivityForResult(intent, 2);
+                }
+            }
+        });
+    }
+
+    private void createMagazine(final SwipeRefreshLayout swipeRefreshContainer) {
+        if(swipeRefreshContainer != null) {
+            swipeRefreshContainer.setRefreshing(false);
+        } else {
+            showProgressDialog();
+        }
+        final String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.getMagazinesAPI(accessToken).enqueue(new Callback<List<OwnMagazine>>() {
+            @Override
+            public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
+                List<OwnMagazine> ownMagazineList;
+                ownMagazineList = new ArrayList<OwnMagazine>();
+                OwnMagazine ownMagazine = new OwnMagazine();
+                ownMagazine.setName("+ New Magazine");
+                ownMagazine.setImage("");
+                ownMagazineList.add(ownMagazine);
+
+                if (response == null || response.body() == null) {
+                    return;
+                }
+                for (int i = 0; i < response.body().size(); i++) {
+                    ownMagazineList.add(response.body().get(i));
+                }
+                createMagazinesAdapter.addItems(ownMagazineList);
+
+            }
+
+            @Override
+            public void onFailure(Call<List<OwnMagazine>> call, Throwable t) {
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
                 }
             }
         });
@@ -219,5 +242,10 @@ public class CreateMagazineActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.menu_search, menu);
         Util.prepareSearch(this, menu, createMagazinesAdapter, noSearchResults, null, gridView);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onRefresh() {
+        createMagazine(swipeRefreshContainer);
     }
 }

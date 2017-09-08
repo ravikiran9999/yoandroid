@@ -32,6 +32,10 @@ public class MoreListAdapter extends AbstractBaseAdapter<MoreData, MenuViewHolde
     @Override
     public void bindView(int position, MenuViewHolder holder, MoreData item) {
         holder.getTitleView().setText(item.getName());
+        /*if(item.getBalance() != null) {
+            holder.getTvBalance().setText(item.getBalance());
+        }*/
+
         if (item.isHasOptions()) {
             holder.getImageView().setVisibility(View.VISIBLE);
         } else {

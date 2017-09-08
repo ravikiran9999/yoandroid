@@ -30,6 +30,7 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 
 import java.util.Map;
@@ -56,21 +57,21 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private ContactsSyncManager mContactsSyncManager;
     private LayoutInflater inflater;
 
-    public UserChatAdapter(Activity context) {
+    /*public UserChatAdapter(Activity context) {
         super(context);
         this.context = context.getBaseContext();
-    }
+    }*/
 
     public UserChatAdapter(Activity context, String userId, String type,
                            ContactsSyncManager mContactsSyncManager) {
         super(context);
+        this.context = context;
         inflater = LayoutInflater.from(context);
-        this.context = context.getBaseContext();
         this.userId = userId;
         this.mSelectedItemsIds = new SparseBooleanArray();
         this.roomType = type;
         this.mContactsSyncManager = mContactsSyncManager;
-        this.inflater = LayoutInflater.from(this.context);
+
     }
 
 
@@ -119,6 +120,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         try {
             if (userId.equals(item.getSenderID())) {
                 holder.getLinearLayout().setGravity(Gravity.END);
+                holder.getLinearLayout().setPadding(0,0,10,0);
                 if (item.getType().equals(Constants.TEXT)) {
                     newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
@@ -126,6 +128,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 }
             } else {
                 holder.getLinearLayout().setGravity(Gravity.START);
+                holder.getLinearLayout().setPadding(10,0,0,0);
                 if (item.getType().equals(Constants.TEXT)) {
                     newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
@@ -171,7 +174,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 profileNameLayout.setVisibility(View.GONE);
             }
             if (item.getDeliveredTime() != 0) {
-                String seen = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
+                String seen = DateUtil.getTimeFormatForChat(item.getDeliveredTime());
                 time.setText(seen);
             }
             senderNameOrNumber.setTextColor(mColorGenerator.getRandomColor());
@@ -184,7 +187,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             img.setBounds(Helper.dp(context, 1), Helper.dp(context, 2), Helper.dp(context, 10), Helper.dp(context, 10));
             time.setCompoundDrawables(null, null, img, null);
             time.setCompoundDrawablePadding(10);
-            String sent = Util.getTimeFormatForChat(mContext, item.getTime());
+            String sent = DateUtil.getTimeFormatForChat(item.getTime());
             time.setText(sent);
 
             if (item.getSent() == 1) {
@@ -265,7 +268,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             }
             seenLayout.setVisibility(View.GONE);
             if (item.getDeliveredTime() != 0) {
-                String seenText = Util.getTimeFormatForChat(mContext, item.getDeliveredTime());
+                String seenText = DateUtil.getTimeFormatForChat(item.getDeliveredTime());
                 time.setText(seenText);
                 time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
 
@@ -278,7 +281,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
             img.setBounds(Helper.dp(context, 1), Helper.dp(context, 2), Helper.dp(context, 10), Helper.dp(context, 10));
             time.setCompoundDrawables(null, null, img, null);
-            String sentText = Util.getTimeFormatForChat(mContext, item.getTime());
+            String sentText = DateUtil.getTimeFormatForChat(item.getTime());
             time.setPadding(0, 4, 8, 0);
             time.setText(sentText);
             if (item.getSent() == 1) {

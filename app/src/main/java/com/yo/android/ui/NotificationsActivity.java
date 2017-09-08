@@ -2,6 +2,7 @@ package com.yo.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -25,6 +26,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -34,78 +37,46 @@ import retrofit2.Response;
 /**
  * This activity is used to display the list of Notifications
  */
-public class NotificationsActivity extends BaseActivity {
+public class NotificationsActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener{
+
+    @Bind(R.id.lv_notifications)
+    protected ListView lvNotifications;
+    @Bind(R.id.no_data)
+    protected TextView noData;
+    @Bind(R.id.ll_no_notifications)
+    protected LinearLayout llNoNotifications;
+    @Bind(R.id.network_failure)
+    protected TextView networkFailureText;
+    @Bind(R.id.swipeContainer)
+    protected SwipeRefreshLayout swipeRefreshContainer;
 
     @Inject
     YoApi.YoService yoService;
-
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
-    private ListView lvNotifications;
     private NotificationsAdapter notificationsAdapter;
-    private TextView noData;
-    private LinearLayout llNoNotifications;
-    private TextView networkFailureText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
-
+        ButterKnife.bind(this);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String title = "Notifications";
-
         getSupportActionBar().setTitle(title);
-
         EventBus.getDefault().register(this);
 
         preferenceEndPoint.saveBooleanPreference("isNotifications", true);
 
         notificationsAdapter = new NotificationsAdapter(this);
-        lvNotifications = (ListView) findViewById(R.id.lv_notifications);
-        noData = (TextView) findViewById(R.id.no_data);
-        llNoNotifications = (LinearLayout) findViewById(R.id.ll_no_notifications);
-        networkFailureText = (TextView) findViewById(R.id.network_failure);
         lvNotifications.setAdapter(notificationsAdapter);
 
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        showProgressDialog();
-        yoService.getNotifications(accessToken).enqueue(new Callback<List<Notification>>() {
-            @Override
-            public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
-                dismissProgressDialog();
-                if (response == null || response.body() == null || response.body().isEmpty()) {
-                    lvNotifications.setVisibility(View.GONE);
-                    noData.setVisibility(View.GONE);
-                    llNoNotifications.setVisibility(View.VISIBLE);
-                    networkFailureText.setVisibility(View.GONE);
-                    return;
-                }
-                if (response != null && response.body().size() > 0) {
-                    preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
-                    NotificationCache.clearNotifications();
-                    List<Notification> notificationList = response.body();
-                    notificationsAdapter.addItems(notificationList);
-                    lvNotifications.setVisibility(View.VISIBLE);
-                    noData.setVisibility(View.GONE);
-                    llNoNotifications.setVisibility(View.GONE);
-                    networkFailureText.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Notification>> call, Throwable t) {
-                dismissProgressDialog();
-                lvNotifications.setVisibility(View.GONE);
-                noData.setVisibility(View.GONE);
-                llNoNotifications.setVisibility(View.GONE);
-                networkFailureText.setVisibility(View.VISIBLE);
-            }
-        });
-
+        getNotifications(null);
+        swipeRefreshContainer.setOnRefreshListener(this);
         lvNotifications.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -191,6 +162,56 @@ public class NotificationsActivity extends BaseActivity {
         });
     }
 
+    private void getNotifications(final SwipeRefreshLayout swipeRefreshContainer) {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        if(swipeRefreshContainer != null) {
+            swipeRefreshContainer.setRefreshing(false);
+        } else {
+            showProgressDialog();
+        }
+        yoService.getNotifications(accessToken).enqueue(new Callback<List<Notification>>() {
+            @Override
+            public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
+
+                if (response == null || response.body() == null || response.body().isEmpty()) {
+                    lvNotifications.setVisibility(View.GONE);
+                    noData.setVisibility(View.GONE);
+                    llNoNotifications.setVisibility(View.VISIBLE);
+                    networkFailureText.setVisibility(View.GONE);
+                    return;
+                }
+                if (response != null && response.body().size() > 0) {
+                    preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
+                    NotificationCache.clearNotifications();
+                    List<Notification> notificationList = response.body();
+                    notificationsAdapter.addItems(notificationList);
+                    lvNotifications.setVisibility(View.VISIBLE);
+                    noData.setVisibility(View.GONE);
+                    llNoNotifications.setVisibility(View.GONE);
+                    networkFailureText.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Notification>> call, Throwable t) {
+                if(swipeRefreshContainer != null) {
+                    swipeRefreshContainer.setRefreshing(false);
+                } else {
+                    dismissProgressDialog();
+                }
+                lvNotifications.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
+                llNoNotifications.setVisibility(View.GONE);
+                networkFailureText.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -249,5 +270,10 @@ public class NotificationsActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         lvNotifications.setEnabled(true);
+    }
+
+    @Override
+    public void onRefresh() {
+        getNotifications(swipeRefreshContainer);
     }
 }

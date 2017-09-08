@@ -41,8 +41,8 @@ android {
     productFlavors {
 
         dev {
-            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
             buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -77,6 +77,19 @@ android {
             buildConfigField "String", "FIREBASE_URL", "\"https://yowatsup-4342.firebaseio.com/\""
 
         }
+
+        enhancement {
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"yowltuser\""
+            buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""
+            buildConfigField "String", "CLIENT_ID", "\"385e29bdabe89c20ec32cae501b556554a8ece1605142b58ab6966cfee0635be\""
+            buildConfigField "String", "CLIENT_SECRET", "\"5262628e450e5e356561753f712196d678acc0a994058935bc2dcbc351aa2fee\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://enhancement-94ccd.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://enhancement-94ccd.firebaseio.com\""
+            minSdkVersion 18
+        }
+
     }
     buildTypes {
         release {
@@ -84,9 +97,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
-             productFlavors.dev.signingConfig signingConfigs.devconfig
-             productFlavors.stage.signingConfig signingConfigs.stageconfig
+            productFlavors.dev.signingConfig signingConfigs.devconfig
+            productFlavors.stage.signingConfig signingConfigs.stageconfig
+            productFlavors.enhancement.signingConfig signingConfigs.devconfig
         }
+
 
     }
     lintOptions {
@@ -160,7 +175,6 @@ dependencies {
     compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.isseiaoki:simplecropview:1.1.4'
     compile 'com.flurry.android:analytics:7.0.0@aar'
-
 
     //For uploading data to google sheet
     //https://developers.google.com/sheets/api/quickstart/android

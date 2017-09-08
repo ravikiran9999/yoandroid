@@ -35,6 +35,7 @@ import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.Room;
+import com.yo.android.model.Share;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.CallDisconnectedListner;
 import com.yo.android.pjsip.SipBinder;
@@ -82,6 +83,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         activity.finish();
     }
 
+    public static void start(Activity activity, Contact contact, Share share) {
+        Intent intent = createIntent(activity, contact, share);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+
     public static void start(Activity activity, Room room) {
         Intent intent = new Intent(activity, ChatActivity.class);
         intent.putExtra(Constants.ROOM, room);
@@ -97,6 +104,14 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         if (forward != null && forward.size() > 0) {
             intent.putParcelableArrayListExtra(Constants.CHAT_FORWARD, forward);
         }
+        return intent;
+    }
+
+    private static Intent createIntent(Activity activity, Contact contact, Share share) {
+        Intent intent = new Intent(activity, ChatActivity.class);
+        intent.putExtra(Constants.CONTACT, contact);
+        intent.putExtra(Constants.TYPE, Constants.CONTACT);
+        intent.putExtra(Constants.CHAT_SHARE, share);
         return intent;
     }
 
@@ -346,8 +361,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
     private void callUserChat(Bundle args, UserChatFragment userChatFragment) {
         try {
+            Share share = getIntent().getParcelableExtra(Constants.CHAT_SHARE);
             if (getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD) != null) {
                 args.putParcelableArrayList(Constants.CHAT_FORWARD, getIntent().getParcelableArrayListExtra(Constants.CHAT_FORWARD));
+            } else if (share != null) {
+                args.putParcelable(Constants.CHAT_SHARE, share);
             }
             userChatFragment.setArguments(args);
             getSupportFragmentManager()

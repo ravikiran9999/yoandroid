@@ -35,6 +35,7 @@ import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.CallLogDetailsActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 import com.yo.android.voip.OutGoingCallActivity;
 
@@ -57,7 +58,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     private static int updateViewPosition = -1;
     Context mContext;
 
-    protected DateFormat dateFormat1 = new SimpleDateFormat("MM/dd");
+    protected DateFormat dateFormat1 = new SimpleDateFormat(DateUtil.DATE_FORMAT8);
     protected DateFormat dateFormat2 = new SimpleDateFormat("EEE");
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -201,18 +202,21 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getHeader().setText(item.getValue().get(0).getHeaderTitle());
         } else if (item.getValue().get(0).getCallType() == CallLog.Calls.MISSED_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_missed_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
         } else if (item.getValue().get(0).getCallType() == CallLog.Calls.INCOMING_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_incoming_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
         } else if (item.getValue().get(0).getCallType() == CallLog.Calls.OUTGOING_TYPE) {
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_outgoing_holo_dark, 0, 0, 0);
-            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+        } else if (item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
         } else if (item.getValue().get(0).getDialedstatus()!=null && item.getValue().get(0).getDialedstatus().equalsIgnoreCase("NOT ANSWER")) {
-            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_redarrowdown, 0, 0, 0);
         } else {
-            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(Util.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
+            holder.getTimeStamp().setText(numberOfCallsPerDay.concat(DateUtil.parseConvertUtcToGmt(item.getValue().get(0).getStime())));
             holder.getTimeStamp().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_greenarrowup, 0, 0, 0);
         }
         holder.getDateTimeStamp().setText(currentDate(item.getValue().get(0).getStime()));
@@ -224,7 +228,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             @Override
             public void onClick(View v) {
                 Map.Entry<String, List<CallLogsResult>> item = (Map.Entry<String, List<CallLogsResult>>) v.getTag();
-                boolean isPSTN = item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_PSTN_CALL ? true : false;
+                boolean isPSTN = item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_PSTN_CALL;
                 SipHelper.makeCall(mContext, item.getValue().get(0).getDialnumber(), isPSTN);
             }
         });
@@ -305,7 +309,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         try {
             if (mTime != null) {
                 String day = dateFormat2.format(formatterDate.parse(mTime));
-                String currentDate = Util.getChatListTimeFormat(convertDateFormatLong(mTime));
+                String currentDate = DateUtil.getChatListTimeFormat(convertDateFormatLong(mTime));
                 if (currentDate.equalsIgnoreCase(Constants.TODAY) || currentDate.equalsIgnoreCase(Constants.YESTERDAY)) {
                     mDate = currentDate;
                 } else {

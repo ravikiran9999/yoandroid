@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="10dp"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:weightSum="5">
+
+    <ImageView
+        android:id="@+id/mute_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_volume_mute_black" />
+
+    <SeekBar
+        android:id="@+id/seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/loud_icon"
+        android:layout_toRightOf="@+id/mute_icon"
+        android:max="100"
+        android:maxHeight="12dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/seekbar_progressbar"
+        android:splitTrack="false"
+        android:thumb="@drawable/custom_thumb"
+        android:thumbTintMode="multiply" />
+
+    <ImageView
+        android:id="@+id/loud_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_volume_up_black" />
+</RelativeLayout>

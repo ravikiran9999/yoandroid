@@ -43,6 +43,7 @@ import com.yo.android.ui.WishListActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
+import com.yo.android.util.YODialogs;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -68,6 +69,11 @@ import retrofit2.Response;
  */
 public class MagazinesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
+    @Bind(R.id.no_search_results)
+    protected TextView noSearchResults;
+    @Bind(R.id.bottom)
+    protected FrameLayout layout;
+
     @Inject
     YoApi.YoService yoService;
     @Inject
@@ -75,22 +81,13 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     protected PreferenceEndPoint preferenceEndPoint;
 
     private List<Topics> topicsList;
-
     private Menu menu;
     public static List<Topics> unSelectedTopics;
     FilterWithSpaceAdapter<String> mAdapter;
     private boolean isAlreadyShown;
     List<String> topicsNames;
     private List<Topics> topicsNewList;
-
-    @Bind(R.id.no_search_results)
-    protected TextView noSearchResults;
-
-    @Bind(R.id.bottom)
-    protected FrameLayout layout;
-
     private List<String> topicNamesList = new ArrayList<String>();
-
     private boolean isSharedPreferenceShown;
 
     private boolean isEventLogged;
@@ -196,7 +193,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     public void update() {
         if (mMagazineFlipArticlesFragment != null) {
-            Log.d("MagazinesFragment", "In update() MagazinesFragment");
             mMagazineFlipArticlesFragment.update();
         }
     }
@@ -267,15 +263,23 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         prepareTopicsSearch(menu);
-
+        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
         switch (item.getItemId()) {
             case R.id.menu_create_magazines:
-                Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
-                startActivity(createMagazinesIntent);
+                if (renewalStatus) {
+                    Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
+                    startActivity(createMagazinesIntent);
+                } else {
+                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                }
                 break;
             case R.id.menu_my_collections:
-                Intent myCollectionsIntent = new Intent(getActivity(), MyCollections.class);
-                startActivity(myCollectionsIntent);
+                if (renewalStatus) {
+                    Intent myCollectionsIntent = new Intent(getActivity(), MyCollections.class);
+                    startActivity(myCollectionsIntent);
+                } else {
+                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                }
                 break;
 
             case R.id.menu_find_people:
@@ -283,16 +287,28 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 startActivity(findPeopleIntent);
                 break;
             case R.id.menu_followers:
-                Intent followersIntent = new Intent(getActivity(), FollowersActivity.class);
-                startActivity(followersIntent);
+                if (renewalStatus) {
+                    Intent followersIntent = new Intent(getActivity(), FollowersActivity.class);
+                    startActivity(followersIntent);
+                } else {
+                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                }
                 break;
             case R.id.menu_wish_list:
-                Intent wishListIntent = new Intent(getActivity(), WishListActivity.class);
-                startActivity(wishListIntent);
+                if (renewalStatus) {
+                    Intent wishListIntent = new Intent(getActivity(), WishListActivity.class);
+                    startActivity(wishListIntent);
+                } else {
+                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                }
                 break;
             case R.id.menu_followings:
-                Intent followingstIntent = new Intent(getActivity(), FollowingsActivity.class);
-                startActivity(followingstIntent);
+                if (renewalStatus) {
+                    Intent followingstIntent = new Intent(getActivity(), FollowingsActivity.class);
+                    startActivity(followingstIntent);
+                } else {
+                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                }
                 break;
             default:
                 break;
@@ -363,7 +379,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     tagIds.add(topicId);
                     if (mMagazineFlipArticlesFragment != null) {
                         MagazineFlipArticlesFragment.lastReadArticle = 0;
-                        mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                        mMagazineFlipArticlesFragment.loadArticles(tagIds, false);
                     }
 
                     return;
@@ -409,7 +425,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         tagIds.add(topicId);
                         if (mMagazineFlipArticlesFragment != null) {
                             MagazineFlipArticlesFragment.lastReadArticle = 0;
-                            mMagazineFlipArticlesFragment.loadArticles(tagIds);
+                            mMagazineFlipArticlesFragment.loadArticles(tagIds, false);
                         }
                     }
                     return true;

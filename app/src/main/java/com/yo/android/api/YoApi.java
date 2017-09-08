@@ -7,6 +7,7 @@ import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
 import com.yo.android.model.LandingArticles;
+import com.yo.android.model.Lock;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.Notification;
 import com.yo.android.model.OTPResponse;
@@ -18,6 +19,7 @@ import com.yo.android.model.Subscriber;
 import com.yo.android.model.Topics;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.model.Wallet;
 import com.yo.android.model.denominations.Denominations;
 
 import org.json.JSONObject;
@@ -281,7 +283,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/user/balance_transfer.json")
-        Call<Response> balanceTransferAPI(@Field("access_token") String access_token, @Field("receiver_id") String receiver_id, @Field("credit") String credit);
+        Call<Response> balanceTransferAPI(@Field("access_token") String access_token, @Field("phone_no") String receiver_id, @Field("credit") String credit);
 
         @GET("api/user/receiver_search.json")
         Call<List<FindPeople>> searchInBalanceTransferContacts(@Query("access_token") String access_token, @Query("search_item") String search_item, @Query("page") int page, @Query("limit") int limit);
@@ -317,10 +319,15 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/articles/dashboard.json")
-        Call<LandingArticles> getDashboardArticlesAPI(@Field("access_token") String access_token, @Field("read_article_ids[]") List<String> read_article_ids, @Field("unread_article_ids[]") List<String> unread_article_ids);
+        Call<LandingArticles> getDashboardArticlesAPI(@Field("access_token") String access_token, @Field("read_article_ids[]") List<String> read_article_ids, @Field("unread_article_ids[]") List<String> unread_article_ids, @Field("autorenwal_subscription") boolean autorenwal_subscription, @Field("autorenewal") boolean autorenewal);
 
         @GET("api/categories.json")
         Call<List<Categories>> categoriesAPI(@Query("access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST("api/user/user_magzines_info.json")
+        Call<Lock> lockAPI(@Field("access_token") String access_token);
+
     }
 
     public interface YoRefreshTokenService {

@@ -3,11 +3,14 @@ package com.yo.android.util;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,10 +23,12 @@ import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
+import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
@@ -37,6 +42,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -47,7 +53,6 @@ public class YODialogs {
 
 
     public static void clearHistory(final Activity activity, final DialerFragment.CallLogClearListener callLogClearListener) {
-
 
         if (activity != null) {
 
@@ -127,9 +132,9 @@ public class YODialogs {
 
             if (!TextUtils.isEmpty(popup.getData().getLive_from()) && !TextUtils.isEmpty(popup.getData().getLive_to())) {
                 String liveFromTime = popup.getData().getLive_from().substring(0, popup.getData().getLive_from().lastIndexOf("."));
-                Date liveFromDate = Util.convertUtcToGmt(liveFromTime);
+                Date liveFromDate = DateUtil.convertUtcToGmt(liveFromTime);
                 String liveToTime = popup.getData().getLive_to().substring(0, popup.getData().getLive_to().lastIndexOf("."));
-                Date liveToDate = Util.convertUtcToGmt(liveToTime);
+                Date liveToDate = DateUtil.convertUtcToGmt(liveToTime);
                 tvLiveFrom.setVisibility(View.VISIBLE);
                 tvLiveTo.setVisibility(View.VISIBLE);
                 tvLiveFrom.setText("Live From: " + liveFromDate);
@@ -289,5 +294,74 @@ public class YODialogs {
         } else {
             txtBalance.setVisibility(View.GONE);
         }
+    }
+
+    public static void renewMagazine(final Activity activity, final Fragment fragment, String description, final PreferenceEndPoint preferenceEndPoint) {
+        LayoutInflater layoutInflater = LayoutInflater.from(activity);
+        final View view = layoutInflater.inflate(R.layout.dialog_with_check_box, null);
+        final CheckBox checkBox = (CheckBox) view.findViewById(R.id.auto_renew_checkbox);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setView(view);
+        builder.setMessage(description);
+        checkBox.setChecked(true);
+        builder.setPositiveButton(activity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (checkBox.isChecked()) {
+                    preferenceEndPoint.saveBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, checkBox.isChecked());
+                }
+
+                dialog.dismiss();
+                if (fragment != null && fragment instanceof MagazineFlipArticlesFragment) {
+                    ((MagazineFlipArticlesFragment) fragment).llNoArticles.setVisibility(View.GONE);
+                    ((MagazineFlipArticlesFragment) fragment).loadArticles(null, true);
+
+                }
+
+            }
+        });
+        builder.setNegativeButton(activity.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+
+    public static void addBalance(final Context context, String description, final PreferenceEndPoint preferenceEndPoint) {
+        boolean appLockStatus = preferenceEndPoint.getBooleanPreference(Constants.APP_LOCK, false);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        builder.setMessage(description);
+        builder.setPositiveButton(context.getResources().getString(R.string.add), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Intent intent = new Intent(context, TabsHeaderActivity.class);
+                intent.putExtra(Constants.RENEWAL, true);
+                ((Activity) context).startActivityForResult(intent, 1001);
+
+            }
+        });
+        if (!appLockStatus) {
+            builder.setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+        builder.setCancelable(false);
+        AlertDialog alertDialog = builder.create();
+        if (!alertDialog.isShowing()) {
+            alertDialog.show();
+        } else {
+            alertDialog.dismiss();
+        }
+
     }
 }

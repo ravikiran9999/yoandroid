@@ -15,6 +15,7 @@ import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.util.Constants;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
@@ -102,7 +103,7 @@ public class PopupHelper {
             case MAGAZINES:
                 if (!TextUtils.isEmpty(p.getData().getLive_to())) {
                     String liveToTime1 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
-                    Date liveToDate = Util.convertUtcToGmt(liveToTime1);
+                    Date liveToDate = DateUtil.convertUtcToGmt(liveToTime1);
                     long currentTime = System.currentTimeMillis();
                     Date currentDate = new Date(currentTime);
                     if (fragment instanceof MagazinesFragment && liveToDate.after(currentDate)) {
@@ -119,7 +120,7 @@ public class PopupHelper {
             case CHATS:
                 if (!TextUtils.isEmpty(p.getData().getLive_to())) {
                     String liveToTime2 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
-                    Date liveToDate = Util.convertUtcToGmt(liveToTime2);
+                    Date liveToDate = DateUtil.convertUtcToGmt(liveToTime2);
                     long currentTime = System.currentTimeMillis();
                     Date currentDate = new Date(currentTime);
                     if (fragment instanceof ChatFragment && liveToDate.after(currentDate)) {
@@ -136,7 +137,7 @@ public class PopupHelper {
             case DIALER:
                 if (!TextUtils.isEmpty(p.getData().getLive_to())) {
                     String liveToTime3 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
-                    Date liveToDate = Util.convertUtcToGmt(liveToTime3);
+                    Date liveToDate = DateUtil.convertUtcToGmt(liveToTime3);
                     long currentTime = System.currentTimeMillis();
                     Date currentDate = new Date(currentTime);
                     if (fragment instanceof DialerFragment && liveToDate.after(currentDate)) {
@@ -153,7 +154,7 @@ public class PopupHelper {
             case CONTACTS:
                 if (!TextUtils.isEmpty(p.getData().getLive_to())) {
                     String liveToTime4 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
-                    Date liveToDate = Util.convertUtcToGmt(liveToTime4);
+                    Date liveToDate = DateUtil.convertUtcToGmt(liveToTime4);
                     long currentTime = System.currentTimeMillis();
                     Date currentDate = new Date(currentTime);
                     if (fragment instanceof ContactsFragment && liveToDate.after(currentDate)) {
@@ -170,7 +171,7 @@ public class PopupHelper {
             case MORE:
                 if (!TextUtils.isEmpty(p.getData().getLive_to())) {
                     String liveToTime5 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
-                    Date liveToDate = Util.convertUtcToGmt(liveToTime5);
+                    Date liveToDate = DateUtil.convertUtcToGmt(liveToTime5);
                     long currentTime = System.currentTimeMillis();
                     Date currentDate = new Date(currentTime);
                     if (fragment instanceof MoreFragment && liveToDate.after(currentDate)) {
@@ -187,7 +188,7 @@ public class PopupHelper {
             case YOCREDIT:
                 if (!TextUtils.isEmpty(p.getData().getLive_to())) {
                     String liveToTime6 = p.getData().getLive_to().substring(0, p.getData().getLive_to().lastIndexOf("."));
-                    Date liveToDate = Util.convertUtcToGmt(liveToTime6);
+                    Date liveToDate = DateUtil.convertUtcToGmt(liveToTime6);
                     long currentTime = System.currentTimeMillis();
                     Date currentDate = new Date(currentTime);
                     if (fragment == null && liveToDate.after(currentDate)) {

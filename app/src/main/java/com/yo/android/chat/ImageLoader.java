@@ -11,7 +11,9 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -155,6 +157,10 @@ public class ImageLoader {
         }
 
         width = maxWidth;
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+        imageView.setLayoutParams(layoutParams);
+
         Glide.with(context)
                 .load(file)
                 .listener(new RequestListener<File, GlideDrawable>() {
@@ -171,7 +177,6 @@ public class ImageLoader {
                     }
                 })
                 .priority(Priority.HIGH)
-                .override(width, height)
                 .dontAnimate()
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)

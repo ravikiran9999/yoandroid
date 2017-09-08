@@ -16,6 +16,8 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +36,7 @@ import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
+import com.yo.android.adapters.BalanceAdapter;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.calllogs.CallLog;
@@ -87,14 +90,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//import com.squareup.picasso.Picasso;
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
+public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, BalanceAdapter.MoreItemListener {
 
     private MoreListAdapter menuAdapter;
+    private BalanceAdapter balanceAdapter;
 
     @Inject
     @Named("login")
@@ -276,7 +278,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     /**
      * Prepares the Settings list
      */
-    public void prepareSettingsList() {
+    /*public void prepareSettingsList() {
         menuAdapter = new MoreListAdapter(getActivity()) {
             @Override
             public int getLayoutId() {
@@ -290,6 +292,23 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         menuListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         menuListView.setSelection(0);
         menuListView.setOnItemClickListener(this);
+    }*/
+    public void prepareSettingsList() {
+        /*menuAdapter = new MoreListAdapter(getActivity()) {
+            @Override
+            public int getLayoutId() {
+                return R.layout.item_with_options;
+            }
+        };*/
+        ArrayList<Object> data = new ArrayList<>();
+        data.addAll(getMenuList());
+        balanceAdapter = new BalanceAdapter(getActivity(), data, null, MoreFragment.this);
+        balanceAdapter.setMoreItemListener(this);
+        RecyclerView menuListView = (RecyclerView) getView().findViewById(R.id.lv_settings);
+        menuListView.setAdapter(balanceAdapter);
+        menuListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        balanceAdapter.notifyDataSetChanged();
+
     }
 
     /**
@@ -305,15 +324,17 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         // menuDataList.add(new MoreData(phone, false));
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
-        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbolDollarNoSpace, balance), true));
-        menuDataList.add(new MoreData(getString(R.string.accountdetails), true));
-        menuDataList.add(new MoreData(getString(R.string.invitefriends), true));
-        menuDataList.add(new MoreData(getString(R.string.morenotifications), true));
-        menuDataList.add(new MoreData(getString(R.string.settings), true));
-        menuDataList.add(new MoreData(getString(R.string.signout), false));
+        //menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbolDollarNoSpace, balance), true));
+        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), balance), true, null));
+        menuDataList.add(new MoreData(getString(R.string.accountdetails), true, null));
+        menuDataList.add(new MoreData(getString(R.string.invitefriends), true, null));
+        menuDataList.add(new MoreData(getString(R.string.morenotifications), true, null));
+        menuDataList.add(new MoreData(getString(R.string.settings), true, null));
+        menuDataList.add(new MoreData(getString(R.string.signout), false, null));
         return menuDataList;
     }
 
+    //Todo remove this as we are not using
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String name = ((MoreData) parent.getAdapter().getItem(position)).getName();
@@ -326,7 +347,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
         } else if (name.contains(getString(R.string.morenotifications))) {
             startActivity(new Intent(getActivity(), NotificationsActivity.class));
-        } else if (getString(R.string.settings).equals(name)) {
+        } else if (name.equals(getString(R.string.settings))) {
             Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
             startActivityForResult(intent, Constants.GO_TO_SETTINGS);
         } else if (name.equalsIgnoreCase(getString(R.string.accountdetails))) {
@@ -367,6 +388,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
                         if (getActivity() != null) {
                             Util.cancelAllNotification(getActivity());
+                            preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
                             //  23	Data is missing in dialer screen once user logouts & login again  - Fixed
                             //  CallLog.Calls.clearCallHistory(getActivity());
                         }
@@ -397,8 +419,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                     if (getActivity() != null) {
                                         getActivity().stopService(serviceIntent);
                                     }
-                                    alarmManager.cancel(BottomTabsActivity.pintent);
-
+                                    try {
+                                        alarmManager.cancel(BottomTabsActivity.pintent);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                     //stop firebase service
                                     //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
 
@@ -513,10 +538,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         if (key.equals(Constants.CURRENT_BALANCE)) {
             String balance = mBalanceHelper.getCurrentBalance();
             //String currencySymbol = mBalanceHelper.getCurrencySymbol();
-            if (menuAdapter != null) {
-                //menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbol, balance));
-                menuAdapter.getItem(0).setName(String.format("Yo Credit (%s%s)", currencySymbolDollarNoSpace, balance));
-                menuAdapter.notifyDataSetChanged();
+            if (balanceAdapter != null) {
+                balanceAdapter.getItem(0).setName(String.format("Yo Credit %s", balance));
+                balanceAdapter.notifyDataSetChanged();
             }
         } else if (key.equals(Constants.USER_NAME)) {
             String username = preferenceEndPoint.getStringPreference(Constants.USER_NAME);
@@ -667,4 +691,29 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         preferenceEndPoint.saveStringPreference(Constants.PHONE_NO_TEMP, phoneNo);
     }
 
+    @Override
+    public void onRowSelected(int keyIndex) {
+        switch (keyIndex) {
+            case 0:
+                startActivity(new Intent(getActivity(), TabsHeaderActivity.class));
+                break;
+            case 1:
+                startActivity(new Intent(getActivity(), AccountDetailsActivity.class));
+                break;
+            case 2:
+                startActivity(new Intent(getActivity(), InviteActivity.class));
+                break;
+            case 3:
+                startActivity(new Intent(getActivity(), NotificationsActivity.class));
+                break;
+            case 4:
+                Intent intent = new Intent(getActivity(), MoreSettingsActivity.class);
+                startActivityForResult(intent, Constants.GO_TO_SETTINGS);
+                break;
+            case 5:
+                showLogoutDialog();
+                break;
+
+        }
+    }
 }

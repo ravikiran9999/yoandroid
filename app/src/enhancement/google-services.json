@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "666825786281",
+    "firebase_url": "https://enhancement-94ccd.firebaseio.com",
+    "project_id": "enhancement-94ccd",
+    "storage_bucket": "enhancement-94ccd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666825786281:android:8fc8840d3a4d2322",
+        "android_client_info": {
+          "package_name": "com.yowatsup.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666825786281-oju7ki0mf8cg4i1b21g8uc873aaqbbc4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDI5BH0D8t0Z41qTgB3ynvpA7iG_ZfIKFA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

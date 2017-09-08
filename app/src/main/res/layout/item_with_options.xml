@@ -43,22 +43,18 @@
                 android:src="@drawable/ic_right_arrow"
                 android:visibility="gone" />
 
-            <com.yo.android.ui.fragments.NonScrollableGridView
-                android:id="@+id/add_google_play_items"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/title"
-                android:background="@color/light_gray"
-                android:columnWidth="90dp"
-                android:gravity="center"
-                android:horizontalSpacing="10dp"
-                android:numColumns="3"
-                android:paddingTop="5dp"
-                android:stretchMode="columnWidth"
-                android:verticalSpacing="10dp"
-                android:visibility="visible">
+            <TextView
+                android:id="@+id/text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="Large Text"
+                android:paddingRight="15dp"
+                android:textSize="17sp"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
 
-            </com.yo.android.ui.fragments.NonScrollableGridView>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

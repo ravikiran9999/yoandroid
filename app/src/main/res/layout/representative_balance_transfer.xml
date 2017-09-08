@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/et_enter_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        android:inputType="number"
+        android:ems="10"
+        android:hint="Enter mobile number"
+        android:imeOptions="actionDone"
+        android:padding="13dp"
+        android:singleLine="true" />
+
+
+</LinearLayout>

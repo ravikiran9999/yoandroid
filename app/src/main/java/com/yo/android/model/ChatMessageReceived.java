@@ -11,6 +11,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.j256.ormlite.field.DatabaseField;
 import com.yo.android.util.Constants;
+import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 
 import java.util.HashMap;
@@ -186,7 +187,7 @@ public class ChatMessageReceived implements Parcelable {
 
 
     public static String getStickeyHeader(long time) {
-        return Util.getChatListTimeFormat(time);
+        return DateUtil.getChatListTimeFormat(time);
     }
 
     public int getDelivered() {

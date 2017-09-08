@@ -5,24 +5,21 @@ import android.text.TextUtils;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.yo.android.R;
+import com.yo.android.WebserviceUsecase;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,11 +38,14 @@ import retrofit2.Response;
 public class BalanceHelper {
     private static final String TAG = "BalanceHelper";
     private Set<String> sCountryCodes;
-    VoxFactory voxFactory;
-    YoApi.YoService yoService;
-    PreferenceEndPoint prefs;
-    Log mLog;
-    Context context;
+    private VoxFactory voxFactory;
+    private YoApi.YoService yoService;
+    private PreferenceEndPoint prefs;
+    private Log mLog;
+    private Context context;
+
+    @Inject
+    WebserviceUsecase webserviceUsecase;
 
     @Inject
     public BalanceHelper(Context context, Log log, VoxFactory voxFactory, YoApi.YoService yoService, @Named("login") PreferenceEndPoint preferenceEndPoint) {
@@ -72,17 +72,20 @@ public class BalanceHelper {
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
                         String balance = jsonObject.getString(Constants.BALANCE);
+                        String switchBalance = jsonObject.getString(Constants.S_BALANCE);
+                        String walletBalance = jsonObject.getString(Constants.W_BALANCE);
                         try {
-                            DecimalFormat df = new DecimalFormat("0.000");
-                            String format = df.format(Double.valueOf(balance));
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                            prefs.saveStringPreference(Constants.SWITCH_BALANCE, switchBalance);
+                            prefs.saveStringPreference(Constants.WALLET_BALANCE, walletBalance);
                             EventBus.getDefault().post(Constants.BALANCE_UPDATED_ACTION);
-                            double val = Double.parseDouble(balance.trim());
+
+                            //Todo low balance notification will come from server
+                            /*double val = Double.parseDouble(balance.trim());
                             if(val <=2) {
                                 mLog.w(TAG, "Current balance is less than or equal to $2");
                                 Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
-                                //Util.showLowBalanceNotification(context, prefs);
-                            }
+                            }*/
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
@@ -135,14 +138,18 @@ public class BalanceHelper {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     try {
+
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
                         String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.BALANCE);
+                        String mSwitchBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.S_BALANCE);
+                        String mWalletBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.W_BALANCE);
 
                         try {
-                            DecimalFormat df = new DecimalFormat("0.000");
-                            String format = df.format(Double.valueOf(balance));
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                            prefs.saveStringPreference(Constants.SWITCH_BALANCE, mSwitchBalance);
+                            prefs.saveStringPreference(Constants.WALLET_BALANCE, mWalletBalance);
+                            webserviceUsecase.appStatus(null);
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
@@ -449,17 +456,17 @@ public class BalanceHelper {
     }
 
     public String getCurrentBalance() {
-        String balance = prefs.getStringPreference(Constants.CURRENT_BALANCE, "0");
-        try {
-            DecimalFormat df = new DecimalFormat("0.000");
-            String format = df.format(Double.valueOf(balance));
-            return format;
-        } catch (IllegalArgumentException e) {
-            mLog.w(TAG, "getCurrentBalance", e);
-        }
-
-        return balance;
+        return prefs.getStringPreference(Constants.CURRENT_BALANCE, "0");
     }
+
+    public String getSwitchBalance() {
+        return prefs.getStringPreference(Constants.SWITCH_BALANCE, "0");
+    }
+
+    public String getWalletBalance() {
+        return prefs.getStringPreference(Constants.WALLET_BALANCE, "0");
+    }
+
 
     public String getCurrencySymbol() {
         return prefs.getStringPreference(Constants.CURRENCY_SYMBOL, "US $");
