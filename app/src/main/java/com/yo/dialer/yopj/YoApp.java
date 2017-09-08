@@ -1,10 +1,12 @@
 package com.yo.dialer.yopj;
 
+import com.yo.android.pjsip.MyBuddy;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.model.SipProperties;
 
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AudioMedia;
+import org.pjsip.pjsua2.BuddyConfig;
 import org.pjsip.pjsua2.CodecInfo;
 import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.Endpoint;
@@ -18,6 +20,8 @@ import org.pjsip.pjsua2.pjmedia_aud_dev_route;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 
 import java.util.ArrayList;
+
+import static java.lang.System.err;
 
 
 /**
@@ -166,7 +170,20 @@ public class YoApp {
         }
 
         accList.add(acc);
+        createBuddy(acc, cfg);
         return acc;
+    }
+
+    private void createBuddy(YoAccount acc, AccountConfig acfg) {
+        try {
+            BuddyConfig cfg = new BuddyConfig();
+            cfg.setUri("\"919154512365\"<sip:youser919490570720D@173.82.147.172:6000>");
+            YoBuddy buddy = new YoBuddy();
+            buddy.create(acc, cfg);
+            buddy.subscribePresence(true);
+        } catch (Exception e) {
+            DialerLogs.messageE(TAG, "While creating Buddy getting exception.");
+        }
     }
 
     public void delAcc(YoAccount acc) {

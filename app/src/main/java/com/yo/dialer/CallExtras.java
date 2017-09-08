@@ -27,8 +27,11 @@ public interface CallExtras {
     public static final String NO_ROUTE_TO_HOST = "No route to host";//CODE PJSIP_SC_SERVICE_UNAVAILABLE
     public static final String DISPLAY_NUMBER = "display_number";
     public static final String REGISTRATION_STATUS = "registration_status";
+    public static final String REGISTRATION_STATUS_MESSAGE = "registration_status_message";
+
     public static final String CALL_STATE = "call_state";
     public static final String RE_REGISTERING = "re-registering";
+    public static final String GOOGLE_DATA = "google_data";
 
 
     public interface StatusCode {
@@ -36,7 +39,7 @@ public interface CallExtras {
         public static final int YO_CALL_MEDIA_REMOTE_HOLD = 1;
         public static final int YO_CALL_MEDIA_ACTIVE = 2; //Media active mean its unhold or connected.
         public static final int YO_INV_STATE_CONNECTED = 3;
-        public static final int YO_INV_STATE_DISCONNECTED = 4; //Reason  - Service unavailable,Not found,Not Acceptable Here
+        public static final int YO_INV_STATE_DISCONNECTED = 4; //Reason  - Service unavailable,Not found,Not Acceptable Here,Forbidden
         public static final int YO_INV_STATE_SC_RINGING = 5;
         public static final int YO_INV_STATE_SC_CALLING = 6;
         public static final int YO_INV_STATE_SC_RE_CONNECTING = 7;
@@ -46,6 +49,19 @@ public interface CallExtras {
         public static final int YO_INV_STATE_SC_NO_ANSWER = 11;
         public static final int YO_INV_STATE_CALLEE_NOT_ONLINE = 12;
         public static final int YO_REQUEST_TIME_OUT = 13;
+        public static final int YO_BUSY_HERE = 14;
+
+        //Google data codes
+        public static final String OTHER = "999";
+        public static final String USER_NOT_FOUND_SERVICE_NOT_AVAILABLE = "1000";
+        public static final String NO_ANSWER_NOT_ACCEPTABLE = "1001";
+        public static final String YO_NEXGE_SERVER_DOWN = "1002";
+        public static final String BUSY = "1003";
+
+
+        public static final int YO_NORMAL_PHONE_INCOMING_CALL = 50;//put yo call on hold
+        public static final int YO_NORMAL_PHONE_INCOMING_CALL_DISCONNECTED = 51;//put yo call on hold
+
 
     }
 
@@ -57,6 +73,7 @@ public interface CallExtras {
         public static final String YO_NEXGE_SERVER_DOWN = "Connection refused";
         public static final String YO_NOT_ACCEPTABLE_HERE = "Not Acceptable Here";
         public static final String YO_NETWORK_IS_UNREACHABLE = "Network is unreachable";
+        public static final String YO_BUSY_HERE = "Busy Here";
 
 
     }

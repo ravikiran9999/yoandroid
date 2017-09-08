@@ -57,7 +57,7 @@ class CallBaseActivity extends BaseActivity {
     //to stop timer
     protected boolean isCallStopped = true;
 
-    protected AudioManager am;
+    protected static AudioManager am;
 
     protected static SipBinder sipBinder;
 
@@ -141,7 +141,9 @@ class CallBaseActivity extends BaseActivity {
             bindService(new Intent(this, com.yo.dialer.YoSipService.class), connection, BIND_AUTO_CREATE);
         }
         registerForcallActions();
-        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        if(am == null) {
+            am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
@@ -171,6 +173,18 @@ class CallBaseActivity extends BaseActivity {
 
     protected void toggleSpeaker(View v) {
         CallControls.toggleSpeaker(am, v);
+    }
+
+    protected void loadPrevMicSettings(View v) {
+        CallControls.loadPrevMicSettings(sipBinder, v);
+    }
+
+    protected void loadPrevSpeakerSettings(View v) {
+        CallControls.loadPrevSpeakerSettings(am, v);
+    }
+
+    protected void toggleRecSpeaker(View v) {
+        CallControls.toggleRecSpeaker(am, v);
     }
 
     protected void rejectCall() {
@@ -240,6 +254,8 @@ class CallBaseActivity extends BaseActivity {
     public void callDisconnected() {
         mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
         CallControls.getCallControlsModel().setCallAccepted(false);
+        CallControls.getCallControlsModel().setSpeakerOn(false);
+        am.setSpeakerphoneOn(false);
         DialerLogs.messageI(TAG, "callDisconnected Before finishing..");
         finish();
     }
@@ -302,6 +318,10 @@ class CallBaseActivity extends BaseActivity {
         showEndAndMessage();
         CallControls.getCallControlsModel().setCallAccepted(true);
 
+        if(CallControls.getCallControlsModel().isSpeakerOn() && CallControls.getCallControlsModel().isCallAccepted()) {
+            toggleRecSpeaker(callSpeakerView);
+        }
+
         // } catch (IllegalArgumentException exe) {
         // DialerLogs.messageI(TAG, "YO====changeToAcceptedCallUI====" + exe.getMessage());
         //}
@@ -320,10 +340,11 @@ class CallBaseActivity extends BaseActivity {
         CallControlsModel callControlsModel = CallControls.getCallControlsModel();
         if (callControlsModel != null) {
             if (callControlsModel.isMicOn()) {
-                toggleMic(callMuteView);
+                loadPrevMicSettings(callMuteView);
             }
             if (callControlsModel.isSpeakerOn()) {
-                toggleSpeaker(callSpeakerView);
+                loadPrevSpeakerSettings(callSpeakerView);
+                loadPrevSpeakerSettings(callSpeakerBtn);
             }
             DialerLogs.messageI(TAG, "YO====changeToAcceptedCallUI====" + callControlsModel.isHoldOn());
 
@@ -334,12 +355,13 @@ class CallBaseActivity extends BaseActivity {
                 connectionStatusTxtView.setText(getResources().getString(R.string.call_on_hold_status));
             }
             if (callControlsModel.isMicOn()) {
-                callMuteView.setTag(false);
-                toggleHold(callMuteView);
+                callMuteView.setTag(true);
+                //toggleHold(callMuteView);
             }
             if (callControlsModel.isSpeakerOn()) {
-                callSpeakerView.setTag(false);
-                toggleHold(callSpeakerView);
+                callSpeakerView.setTag(true);
+                callSpeakerBtn.setTag(true);
+                //toggleHold(callSpeakerView);
             }
             if (callControlsModel.isChatOpened()) {
                 //TODO: NEED TO OPEN CHAT

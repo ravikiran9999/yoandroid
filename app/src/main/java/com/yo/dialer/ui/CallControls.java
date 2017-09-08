@@ -117,4 +117,51 @@ class CallControls {
             }
         });
     }
+
+    public static boolean loadPrevMicSettings(SipBinder sipBinder, View v) {
+        if (sipBinder != null && sipBinder.getYOHandler() != null) {
+            if (v.getTag() != null) {
+                Boolean flag = Boolean.valueOf(v.getTag().toString());
+                changeSelection(v, flag);
+                if (flag) {
+                    callControlsModel.setMicOn(true);
+                } else {
+                    callControlsModel.setMicOn(false);
+                }
+                sipBinder.getYOHandler().setMic(flag);
+                v.setTag(flag);
+                return flag;
+            } else {
+                DialerLogs.messageE(TAG, "YO====toggleMic == v.getTag null");
+            }
+        } else {
+            DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
+        }
+        return false;
+    }
+
+    public static boolean loadPrevSpeakerSettings(AudioManager am, View v) {
+        if (v.getTag() != null) {
+            Boolean flag = Boolean.valueOf(v.getTag().toString());
+            DialerLogs.messageE(TAG, "toggleSpeaker == v.getTag = " + flag);
+            changeSelection(v, flag);
+            if (flag) {
+                callControlsModel.setSpeakerOn(true);
+            } else {
+                callControlsModel.setSpeakerOn(false);
+            }
+            am.setSpeakerphoneOn(flag);
+            v.setTag(flag);
+            return flag;
+        } else {
+            DialerLogs.messageE(TAG, "YO====toggleSpeaker == null && sipBinder.getYOHandler() ==NULL");
+        }
+        return false;
+    }
+
+    public static void toggleRecSpeaker(AudioManager am, View v) {
+            changeSelection(v, true);
+            v.setTag(true);
+
+    }
 }

@@ -13,7 +13,9 @@ import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.Media;
+import org.pjsip.pjsua2.SendInstantMessageParam;
 import org.pjsip.pjsua2.SendTypingIndicationParam;
+import org.pjsip.pjsua2.SipTxOption;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsua_call_media_status;
@@ -50,7 +52,7 @@ public class CallHelper {
                         e.printStackTrace();
                         call.delete();
                         DialerLogs.messageE(TAG, "makeCall==========" + e.getMessage());
-                        sipService.callDisconnected();
+                        sipService.callDisconnected(CallExtras.StatusCode.OTHER + "", e.getMessage(), "While making call got an exception and message is " + e.getMessage() + ", So that call is going to disconnecting.");
                         sipService.setYoAccount(null);
                         sipService.register();
                         return null;
@@ -90,11 +92,13 @@ public class CallHelper {
         }
     }
 
+
     public static void rejectCall(YoCall yoCurrentCall) {
         endCall(yoCurrentCall);
     }
 
     public static void endCall(YoCall yoCurrentCall) {
+        DialerLogs.messageI(TAG, "Sending Hangup  Call...");
         CallOpParam param = new CallOpParam();
         param.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
         try {

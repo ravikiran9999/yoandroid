@@ -28,4 +28,5 @@ public class DialerConfig {
     //public static final String USERNAME = "abzlute01";
     public static final String USERNAME = "turn123";
     public static final String PASSWORD = USERNAME;
+    public static final boolean UPLOAD_REPORTS_GOOGLE_SHEET = true;
 }

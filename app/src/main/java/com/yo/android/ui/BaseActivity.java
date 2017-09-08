@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +14,9 @@ import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.Job.Builder;
 import com.firebase.jobdispatcher.Trigger;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.ValueRange;
 import com.orion.android.common.util.ResourcesHelper;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -21,6 +25,14 @@ import com.yo.android.chat.ui.ParentActivity;
 import com.yo.android.di.AwsLogsCallBack;
 import com.yo.android.di.JobsModule;
 import com.yo.android.vox.VoxFactory;
+import com.yo.dialer.CallExtras;
+import com.yo.dialer.DialerLogs;
+import com.yo.dialer.googlesheet.UploadCallDetails;
+import com.yo.dialer.googlesheet.UploadModel;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -48,13 +60,17 @@ public class BaseActivity extends ParentActivity {
     private boolean enableBack;
 
     private boolean isDestroyed;
+    private static final String TAG = BaseActivity.class.getSimpleName();
     //private FirebaseJobDispatcher firebaseJobDispatcher;
+
+    private static Activity activity;
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        activity = this;
         mAwsLogsCallBack.onCalled(getBaseContext(), getIntent());
         /*Intent intent = new Intent(this, FirebaseService.class);
         startService(intent);*/
@@ -117,5 +133,46 @@ public class BaseActivity extends ParentActivity {
     private int getNotificationIcon() {
         boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
         return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
+    }
+
+    /**
+     * Fetch a list of names and majors of students in a sample spreadsheet:
+     * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
+     *
+     * @return List of names and majors
+     * @throws IOException
+     */
+    public static void getDataFromApi(Sheets sheets, UploadModel model) throws IOException {
+        final String spreadsheetId = "1OIkQq2O3en-x0ChsIAy2DX0YPS6n9sMzFQr_-xVy1Qs";
+        final String range = "Report!A:H";
+        DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+        //Name	Caller	Callee	StatusCode	Reason	Duration	CallType	Comment
+        List<List<Object>> values = Arrays.asList(
+                Arrays.asList((Object) model.getName(), model.getCaller(), model.getCallee(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDateTime(), model.getComments()
+
+                )
+        );
+        ValueRange valueRange = new ValueRange()
+                .setValues(values);
+        try {
+            if (sheets != null && valueRange != null) {
+                DialerLogs.messageE(TAG, "Google upload START " + valueRange.get(UploadCallDetails.COMMENT));
+
+                sheets.spreadsheets().values()
+                        .append(spreadsheetId,
+                                range,
+                                valueRange
+                        ).setValueInputOption("USER_ENTERED").execute();
+            } else {
+                DialerLogs.messageE(TAG, "Updated Columns Sheets object is null");
+            }
+        } catch (UserRecoverableAuthIOException e) {
+            e.printStackTrace();
+            DialerLogs.messageE(TAG, "Updated Columns Sheets object is null" + e.getMessage());
+
+            Intent intent = e.getIntent();
+            intent.putExtra(CallExtras.GOOGLE_DATA, model);
+            activity.startActivityForResult(intent, UploadCallDetails.COMPLETE_AUTHORIZATION_REQUEST_CODE);
+        }
     }
 }

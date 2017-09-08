@@ -59,6 +59,7 @@ public class CallLogDetailsActivity extends BaseActivity {
     protected DateFormat dateFormat1 = new SimpleDateFormat("MM/dd");
     protected DateFormat dateFormat2 = new SimpleDateFormat("EEE");
     protected SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    protected SimpleDateFormat formatterNewDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private ArrayList<CallLogsResult> callLogsDetails;
 
@@ -190,7 +191,8 @@ public class CallLogDetailsActivity extends BaseActivity {
                     mDate = dateFormat1.format(formatterDate.parse(item.getStime())).concat(",").concat(" " + day);
                 }
                 holder.date.setText(mDate);
-                holder.time.setText(dateFormat.format(formatterDate.parse(item.getStime())));
+                //holder.time.setText(dateFormat.format(formatterDate.parse(item.getStime())));
+                holder.time.setText(dateFormat.format(formatterNewDate.parse(item.getStime())));
                 holder.duration.setText(Util.convertSecToHMmSs(Long.valueOf(item.getDuration())));
             } catch (ParseException e) {
                 mLog.w("", e);
