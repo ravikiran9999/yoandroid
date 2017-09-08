@@ -75,7 +75,6 @@ android {
             buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yowatsup-4342.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yowatsup-4342.firebaseio.com/\""
-
         }
 
         enhancement {
@@ -133,7 +132,6 @@ dependencies {
     compile "com.android.support:design:${supportDesignVersion}"
     compile "com.android.support:cardview-v7:${supportCardViewVersion}"
     compile "com.android.support:recyclerview-v7:${supportRecyclerViewVersion}"
-    // ormlite
     // firebase
     compile project(':flip')
     compile project(':tagview')

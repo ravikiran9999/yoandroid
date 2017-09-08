@@ -129,8 +129,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     private TextView profileStatus;
     private boolean isSharedPreferenceShown;
 
-    public static final String currencySymbolDollar = " US $";
-    private static final String currencySymbolDollarNoSpace = "US $";
     private boolean isEventLogged;
 
     public MoreFragment() {
@@ -509,7 +507,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 } catch (Exception e) {
                     // mLog.w("MoreFragment", e);
                 }
-                //}
                 break;
 
             case Constants.ADD_SELECT_PICTURE: {

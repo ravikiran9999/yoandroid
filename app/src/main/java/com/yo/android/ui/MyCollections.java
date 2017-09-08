@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.yo.android.model.Collections;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
+import com.yo.android.video.InAppVideoActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,6 +159,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     /**
      * Dismisses the contextual menu
+     *
      * @return
      */
     private boolean dismissContextualMenu() {
@@ -191,14 +194,18 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 intent.putExtra("From", "MyCollections");
                 startActivityForResult(intent, 2);
             } else {
-                Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
-                intent.putExtra("TopicId", collections.getId());
-                intent.putExtra("TopicName", collections.getName());
-                intent.putExtra("Type", collections.getType());
-                startActivityForResult(intent, 6);
+                String videoUrl = collections.getVideo_url();
+                if (videoUrl != null) {
+                    InAppVideoActivity.start(MyCollections.this, videoUrl, collections.getName());
+                } else {
+                    Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
+                    intent.putExtra("TopicId", collections.getId());
+                    intent.putExtra("TopicName", collections.getName());
+                    intent.putExtra("Type", collections.getType());
+                    startActivityForResult(intent, 6);
+                }
             }
         }
-
     }
 
     @Override
@@ -242,6 +249,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     /**
      * Shows the confirmation dialog when unfollowing a topic
      */
+
     private void showDeleteAlert() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 

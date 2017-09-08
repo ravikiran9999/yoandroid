@@ -188,8 +188,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 } else {
 
                     String contactId = contact.getId() == null ? mContact.getId() : contact.getId();
+                    String firebaseRoomId = contact.getFirebaseRoomId() == null ? mContact.getFirebaseRoomId() : contact.getFirebaseRoomId();
                     args.putString(Constants.OPPONENT_ID, contactId);
-                    args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
+                    //args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
+                    args.putString(Constants.CHAT_ROOM_ID, firebaseRoomId);
                     args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                     //args.putParcelable(Constants.CONTACT, contact);
                     callUserChat(args, userChatFragment);

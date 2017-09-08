@@ -1,15 +1,24 @@
 package com.yo.android.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
@@ -26,20 +35,33 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.gson.Gson;
+import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.adapters.GroupActionAdapter;
 import com.yo.android.adapters.ProfileMembersAdapter;
+import com.yo.android.api.YOUserInfo;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.NonScrollListView;
+import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
+import com.yo.android.model.GroupAction;
 import com.yo.android.model.GroupMembers;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.model.UserProfile;
+import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.android.ui.uploadphoto.ImagePickHelper;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,10 +75,19 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserProfileActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, ValueEventListener, AdapterView.OnItemClickListener {
 
     private static final String TAG = UserProfileActivity.class.getSimpleName();
+    private static final int WRITE_CONTACT_PERMISSIONS = 50;
+    private static final int PICK_CONTACT_REQUEST = 101;
+
     @Bind(R.id.profile_image)
     CircleImageView profileImage;
     @Bind(R.id.profile_call)
@@ -73,6 +104,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     TextView numberTitle;
     @Bind(R.id.name_card_view)
     CardView cardView;
+
     private ProfileMembersAdapter profileMembersAdapter;
     private NonScrollListView membersList;
     private Contact contact;
@@ -84,13 +116,19 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private Firebase authReference;
     private List<GroupMembers> groupMembersList;
     private String roomName;
+    private String value;
 
     HashMap<String, GroupMembers> groupMembersHashMap;
-    @Inject
-    ContactsSyncManager mContactsSyncManager;
 
     @Inject
+    ContactsSyncManager mContactsSyncManager;
+    @Inject
     FireBaseHelper fireBaseHelper;
+    @Inject
+    ImagePickHelper cameraIntent;
+    @Inject
+    YoApi.YoService yoService;
+
 
     public static void start(Activity activity, String opponentNumberTrim, String opponentNumber, String opponentImg, String opponentName, String fromChat, String chatRoomId) {
         Intent intent = createIntent(activity, opponentNumberTrim, opponentNumber, opponentImg, opponentName, fromChat, chatRoomId);
@@ -240,7 +278,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             if (mContact != null) {
                 String numberTrim = numberFromNexgeFormat(mContact.getNexgieUserName(), mContact.getPhoneNo());
                 String mName = mContact.getName().replaceAll("\\s+", "");
-                if(name.equalsIgnoreCase(getString(R.string.group_name))) {
+                if (name.equalsIgnoreCase(getString(R.string.group_name))) {
                     profileNameTitle.setText(name);
                     profileName.setText(contact.getName());
                 } else if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !isSame(mName, numberTrim)) {
@@ -349,8 +387,12 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         } else {
             Toast.makeText(this, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
         }
-
     }
+
+    /*@OnClick(R.id.profile_image)
+    void changeProfilePic() {
+        cameraIntent.showDialog();
+    }*/
 
     private void navigateToChatScreen(Contact contact) {
         Intent intent = new Intent(this, ChatActivity.class);
@@ -383,7 +425,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
-                                 String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber());
+                                String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(userProfile.getPhoneNumber());
                                 if (userProfile != null && !TextUtils.isEmpty(userProfile.getMobileNumber()) && userProfile.getPhoneNumber().equalsIgnoreCase(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                                     userProfile.setFullName(getString(R.string.you));
                                 } else if (userProfile != null && !TextUtils.isEmpty(userProfile.getPhoneNumber())) {
@@ -472,30 +514,193 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String name = ((TextView) view.findViewById(R.id.tv_name)).getText().toString();
-        ArrayAdapter<String> userAdapter = createAdapter(name);
+        UserProfile userProfile = groupMembersList.get(position).getUserProfile();
+        GroupActionAdapter userAdapter = new GroupActionAdapter(this);
+        userAdapter.addItems(createAdapter(userProfile));
         userActionFromGroup(userAdapter);
     }
 
-    public void userActionFromGroup(final ArrayAdapter<String> displayUserAdapter) {
+    public void userActionFromGroup(final GroupActionAdapter displayUserAdapter) {
         // Creating and Building the Dialog
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(this);
         builderSingle.setAdapter(displayUserAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String strName = displayUserAdapter.getItem(which);
+                String strName = displayUserAdapter.getItem(which).getType();
+                value = displayUserAdapter.getItem(which).getValue();
+                if (strName.startsWith(Constants.MESSAGE)) {
+                    UserProfile mValue = new Gson().fromJson(value, UserProfile.class);
+                    Contact mContact = contactMapper(mValue);
+                    navigateToChatScreen(mContact);
+
+                } else if (strName.startsWith(Constants.CALL)) {
+                    SipHelper.makeCall(UserProfileActivity.this, value, false);
+                } else if (strName.startsWith(Constants.Add_CONTACT)) {
+                    checkForPermissions();
+                }
             }
         });
         builderSingle.show();
     }
 
-    private ArrayAdapter<String> createAdapter(String selectedUser) {
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item);
-        arrayAdapter.add(String.format(getString(R.string.format_message), selectedUser));
-        arrayAdapter.add(String.format(getString(R.string.format_call), selectedUser));
-        if (TextUtils.isDigitsOnly(selectedUser)) {
-            arrayAdapter.add(getString(R.string.format_add));
+    private ArrayList<GroupAction> createAdapter(UserProfile mUserProfile) {
+        String selectedUser = mUserProfile.getFullName();
+        String selectedNexgeUserName = mUserProfile.getNexgeUserName();
+        ArrayList<GroupAction> arrayAdapter = new ArrayList<>();
+        arrayAdapter.add(new GroupAction(Constants.MESSAGE, String.format(getString(R.string.format_message), selectedUser), new Gson().toJson(mUserProfile)));
+        arrayAdapter.add(new GroupAction(Constants.CALL, String.format(getString(R.string.format_call), selectedUser), selectedNexgeUserName));
+        if (selectedUser.startsWith("+") || TextUtils.isDigitsOnly(selectedUser.replaceAll("\\s+", ""))) {
+            arrayAdapter.add(new GroupAction(Constants.Add_CONTACT, getString(R.string.format_add), selectedUser));
         }
         return arrayAdapter;
+    }
+
+    /**
+     * Add contact to phonebook
+     * @param phoneNumber
+     */
+    private void addContacts(String phoneNumber) {
+
+        Intent i = new Intent(Intent.ACTION_INSERT);
+        i.setType(ContactsContract.Contacts.CONTENT_TYPE);
+        i.putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber);
+        if (Integer.valueOf(Build.VERSION.SDK) > 14)
+            i.putExtra("finishActivityOnSaveCompleted", true); // Fix for 4.0.3 +
+        startActivityForResult(i, PICK_CONTACT_REQUEST);
+    }
+
+    private Contact contactMapper(UserProfile userProfile) {
+        contact = new Contact();
+        contact.setPhoneNo(userProfile.getMobileNumber());
+        contact.setName(userProfile.getFullName());
+        contact.setNexgieUserName(userProfile.getNexgeUserName());
+        contact.setImage(userProfile.getImage());
+        contact.setYoAppUser(true);
+        return contact;
+    }
+
+
+    // Image crop
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_CANCELED) {
+            return;
+        }
+        switch (requestCode) {
+            case Helper.CROP_ACTIVITY:
+                if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
+                    Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
+                    if (imagePath != null) {
+                        if (mHelper != null && !mHelper.isConnected()) {
+                            mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
+                            return;
+                        } else {
+                            uploadFile(new File(imagePath.getPath()), preferenceEndPoint, yoService);
+                        }
+
+                    }
+                }
+                break;
+            case Constants.ADD_IMAGE_CAPTURE:
+                try {
+                    String imagePath = ImagePickHelper.mFileTemp.getPath();
+                    File file = new File(imagePath);
+                    Uri uri = Uri.fromFile(file);
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(BottomTabsActivity.activity.getContentResolver(), uri);
+                        if (imagePath != null) {
+                            if (BottomTabsActivity.activity != null) {
+                                Helper.setSelectedImage(this, imagePath, true, bitmap, true);
+                            }
+                        }
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } catch (Exception e) {
+                    // mLog.w("MoreFragment", e);
+                }
+                break;
+
+            case Constants.ADD_SELECT_PICTURE:
+                if (data != null) {
+                    try {
+                        String imagePath = ImagePickHelper.getGalleryImagePath(BottomTabsActivity.activity, data);
+                        Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true, null, false);
+                    } catch (Exception e) {
+                        mLog.w("MoreFragment", e);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    //Tested and image update is working
+    //Make a prompt for pick a image from gallery/camera
+    public void uploadFile(final File file, final PreferenceEndPoint preferenceEndPoint, YoApi.YoService yoService) {
+
+        if (preferenceEndPoint != null && yoService != null) {
+            showProgressDialog();
+            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+            // create RequestBody instance from file
+            RequestBody requestFile =
+                    RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+            // MultipartBody.Part is used to send also the actual file name
+            MultipartBody.Part body =
+                    MultipartBody.Part.createFormData("user[avatar]", file.getName(), requestFile);
+            String access = "Bearer " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+            yoService.updateProfile(userId, access, null, null, null, null, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
+                @Override
+                public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
+                    dismissProgressDialog();
+                    if (response.body() != null) {
+                        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    }
+                    //loadImage();
+                }
+
+                @Override
+                public void onFailure(Call<UserProfileInfo> call, Throwable t) {
+                    dismissProgressDialog();
+                }
+            });
+        }
+    }
+
+    private void checkForPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{"android.permission.WRITE_CONTACTS"}, WRITE_CONTACT_PERMISSIONS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == WRITE_CONTACT_PERMISSIONS) {
+
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                addContacts(value);
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CONTACTS)) {
+                    //Show an explanation to the user *asynchronously*
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+                    builder.setMessage(getString(R.string.add_contact_message))
+                            .setTitle(getString(R.string.important_title_message));
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ActivityCompat.requestPermissions(UserProfileActivity.this, new String[]{Manifest.permission.WRITE_CONTACTS}, WRITE_CONTACT_PERMISSIONS);
+                        }
+                    });
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_CONTACTS}, WRITE_CONTACT_PERMISSIONS);
+                } else {
+                    //Never ask again and handle your app without permission.
+                }
+            }
+
+        }
     }
 }

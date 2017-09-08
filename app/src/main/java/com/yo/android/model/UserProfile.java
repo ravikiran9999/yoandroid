@@ -14,17 +14,21 @@ public class UserProfile {
     private String countryCode;
     private String phoneNumber;
     private String image;
+    private String firebaseRoomId;
+    private String nexgeUserName;
 
     public UserProfile() {
         // empty default constructor, necessary for Firebase to be able to deserialize
     }
 
-    public UserProfile(String fullName, String mobileNumber, String countryCode, String phoneNumber, String image) {
+    public UserProfile(String fullName, String mobileNumber, String countryCode, String phoneNumber, String image, String firebaseRoomId, String nexgeUserName) {
         this.fullName = fullName;
         this.mobileNumber = mobileNumber;
         this.countryCode = countryCode;
         this.phoneNumber = phoneNumber;
         this.image = image;
+        this.firebaseRoomId = firebaseRoomId;
+        this.nexgeUserName = nexgeUserName;
     }
 
     public String getFullName() {
@@ -61,5 +65,13 @@ public class UserProfile {
 
     public String getImage() {
         return image;
+    }
+
+    public String getFirebaseRoomId() {
+        return firebaseRoomId;
+    }
+
+    public String getNexgeUserName() {
+        return nexgeUserName;
     }
 }

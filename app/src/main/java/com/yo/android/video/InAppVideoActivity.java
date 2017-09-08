@@ -1,34 +1,49 @@
 package com.yo.android.video;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.WindowManager;
+import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.yo.android.R;
+import com.yo.android.util.Constants;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.yo.android.util.Constants.VIDEO_URL;
 
-public class InAppVideoActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener  {
+public class InAppVideoActivity extends YouTubeFailureRecoveryActivity implements
+        YouTubePlayer.OnFullscreenListener {
 
     private static final String TAG = InAppVideoActivity.class.getSimpleName();
     private static final int RECOVERY_DIALOG_REQUEST = 1;
-    //https://www.youtube.com/watch?v=<VIDEO_ID>
 
+    @Bind(R.id.layout)
+    LinearLayout baseLayout;
+    @Bind(R.id.player)
+    YouTubePlayerView playerView;
+
+    //https://www.youtube.com/watch?v=<VIDEO_ID>
     private String mVideoUrl;
 
+    private boolean fullscreen;
 
-    public static void start(Activity activity, String youtubeUrl) {
+    public static void start(Activity activity, String youtubeUrl, String title) {
         Intent intent = new Intent(activity, InAppVideoActivity.class);
+        intent.putExtra(Constants.TITLE, title);
         intent.putExtra(VIDEO_URL, youtubeUrl);
         activity.startActivityForResult(intent, 500);
     }
@@ -37,26 +52,35 @@ public class InAppVideoActivity extends YouTubeBaseActivity implements YouTubePl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+        ButterKnife.bind(this);
 
-        final String API_KEY = getString(R.string.google_api_key);
+        playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);
         mVideoUrl = getIntent().getStringExtra(VIDEO_URL);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        initActionbar();
+        doLayout();
 
-        // Initializing YouTube player view
-        YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player_view);
-        youTubePlayerView.initialize(API_KEY, this);
+    }
+
+    private void initActionbar() {
+        ActionBar actionBar = getActionBar();
+        if(actionBar != null) {
+            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(getIntent().getStringExtra(Constants.TITLE));
+        }
     }
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
 
+        // Specify that we want to handle fullscreen behavior ourselves.
+        youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
+        youTubePlayer.setOnFullscreenListener(this);
+
         if (!b) {
-
             // loadVideo() will auto play video
-            youTubePlayer.loadVideo(getVideoId(mVideoUrl));
-
-            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+            youTubePlayer.cueVideo(getVideoId(mVideoUrl));
         }
     }
 
@@ -69,6 +93,54 @@ public class InAppVideoActivity extends YouTubeBaseActivity implements YouTubePl
 
             Toast.makeText(this, youTubeInitializationResult.toString(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected YouTubePlayer.Provider getYouTubePlayerProvider() {
+        return playerView;
+    }
+
+    private void doLayout() {
+        LinearLayout.LayoutParams playerParams =
+                (LinearLayout.LayoutParams) playerView.getLayoutParams();
+        if (fullscreen) {
+            playerParams.width = LinearLayout.LayoutParams.MATCH_PARENT;
+            playerParams.height = LinearLayout.LayoutParams.MATCH_PARENT;
+        } else {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                playerParams.width = MATCH_PARENT;
+                playerParams.height = WRAP_CONTENT;
+                playerParams.weight = 1;
+                baseLayout.setOrientation(LinearLayout.HORIZONTAL);
+            } else {
+                playerParams.width = MATCH_PARENT;
+                playerParams.height = WRAP_CONTENT;
+                playerParams.weight = 0;
+                baseLayout.setOrientation(LinearLayout.VERTICAL);
+            }
+        }
+    }
+
+    @Override
+    public void onFullscreen(boolean isFullscreen) {
+        fullscreen = isFullscreen;
+        doLayout();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        doLayout();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            setResult(RESULT_OK);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private String getVideoId(String youtubeUrl) {
