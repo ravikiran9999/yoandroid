@@ -527,10 +527,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         stopDefaultRingtone();
         DialerLogs.messageE(TAG, "callDisconnected");
         long callduration = storeCallLog(phoneNumber);
-
         uploadGoogleSheet(code, reason, comment, callduration);
-
-
         Util.cancelNotification(this, callNotificationId);
         if (sipServiceHandler != null) {
             sipServiceHandler.callDisconnected();

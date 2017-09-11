@@ -32,7 +32,7 @@ public class YoAccount extends Account {
         super.onRegState(prm);
         DialerLogs.messageI(TAG, "onRegState " + prm.getReason());
         YoApp.observer.notifyRegState(prm.getCode(), prm.getReason(),
-                prm.getExpiration());
+                prm.getExpiration(),prm.getRdata().getWholeMsg());
     }
 
     @Override

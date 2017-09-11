@@ -2,18 +2,10 @@ package com.yo.dialer.yopj;
 
 import android.content.Context;
 
-import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.yo.android.calllogs.CallLog;
-import com.yo.android.model.Contact;
-import com.yo.android.model.dialer.OpponentDetails;
-import com.yo.android.util.Constants;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.CallStateHandler;
-import com.yo.dialer.DialerConfig;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.YoSipService;
-import com.yo.dialer.googlesheet.UploadCallDetails;
-import com.yo.dialer.googlesheet.UploadModel;
 
 import org.pjsip.pjsua2.BuddyInfo;
 import org.pjsip.pjsua2.CallInfo;
@@ -25,12 +17,8 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
-import de.greenrobot.event.EventBus;
-
 import static org.pjsip.pjsua2.pjrpid_activity.PJRPID_ACTIVITY_BUSY;
-import static org.pjsip.pjsua2.pjsip_status_code.PJSIP_SC_NOT_FOUND;
 import static org.pjsip.pjsua2.pjsip_status_code.PJSIP_SC_REQUEST_TIMEOUT;
-import static org.pjsip.pjsua2.pjsip_status_code.PJSIP_SC_SERVICE_UNAVAILABLE;
 import static org.pjsip.pjsua2.pjsua_buddy_status.PJSUA_BUDDY_STATUS_ONLINE;
 
 /**
@@ -51,7 +39,7 @@ public class YoCallObserver implements YoAppObserver {
     }
 
     @Override
-    public void notifyRegState(pjsip_status_code code, String reason, int expiration) {
+    public void notifyRegState(pjsip_status_code code, String reason, int expiration, String wholeMsg) {
         DialerLogs.messageI(TAG, "notifyRegState===========" + reason + ",CODE " + code);
 
         String registrationStatus;
@@ -75,7 +63,7 @@ public class YoCallObserver implements YoAppObserver {
             }
         } else if (code == PJSIP_SC_REQUEST_TIMEOUT) {
             yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, CallExtras.StatusCode.YO_REQUEST_TIME_OUT);
-            yoSipService.callDisconnected(CallExtras.StatusCode.YO_NEXGE_SERVER_DOWN, "Registration request timeout", "This may be nexge issue, as registration requst timeout. Reason = " + reason + ", Code is " + code);
+            yoSipService.callDisconnected(CallExtras.StatusCode.YO_NEXGE_SERVER_DOWN, "Registration request timeout", "This may be nexge issue, as registration requst timeout. Reason = " + reason + ", Code is " + code + ", Whole msg  =" + wholeMsg);
         } else {
             yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, 0);
         }

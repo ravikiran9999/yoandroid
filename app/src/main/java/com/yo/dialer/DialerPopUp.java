@@ -46,7 +46,7 @@ public class DialerPopUp {
         if (isVisibleToUser) {
             if (mainActivity.getActivity() instanceof BottomTabsActivity) {
                 BottomTabsActivity activity = (BottomTabsActivity) mainActivity.getActivity();
-                if (activity.getFragment() instanceof DialerFragment) {
+                if (activity.getFragment() instanceof NewDialerFragment) {
                     if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
                         Type type = new TypeToken<List<Popup>>() {
                         }.getType();

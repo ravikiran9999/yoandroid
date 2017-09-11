@@ -55,7 +55,7 @@ public class CallStateHandler {
                 yoSipService.callDisconnected(BUSY, "Busy", "Getting Busy here, " + info.getCallIdString());
             } else {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
-                yoSipService.callDisconnected(OTHER, "Call got disconnected", "Call got disconnected because of " + info.getLastReason());
+                yoSipService.callDisconnected(OTHER, "Call got disconnected", "Call got disconnected because of " + info.getLastReason()+", "+info.getCallIdString());
             }
             isRinging = false;
         } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {
