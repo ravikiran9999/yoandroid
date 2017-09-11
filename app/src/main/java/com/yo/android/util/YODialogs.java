@@ -182,7 +182,7 @@ public class YODialogs {
     }
 
     public static void redirectToPSTN(final EventBus bus, final Activity activity, final OpponentDetails details, PreferenceEndPoint preferenceEndPoint, BalanceHelper mBalanceHelper, final ToastFactory mToastFactory) {
-        DialerLogs.messageI(TAG, "redirectToPSTN Dailog");
+        DialerLogs.messageI(TAG, "redirectToPSTN Dailog " + activity);
 
         if (activity != null) {
 
