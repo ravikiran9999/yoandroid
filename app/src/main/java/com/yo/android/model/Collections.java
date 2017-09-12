@@ -11,6 +11,7 @@ public class Collections {
     private String type;
     private boolean select;
     private int articlesCount;
+    private String video_url;
 
     public int getArticlesCount() {
         return articlesCount;
@@ -64,4 +65,11 @@ public class Collections {
         return select = !select;
     }
 
+    public String getVideo_url() {
+        return video_url;
+    }
+
+    public void setVideo_url(String video_url) {
+        this.video_url = video_url;
+    }
 }

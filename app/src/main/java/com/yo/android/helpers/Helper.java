@@ -30,15 +30,20 @@ import android.widget.TextView;
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AlphabetAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.crop.Bitmaps;
 import com.yo.android.crop.MainImageCropActivity;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
+import com.yo.android.model.UserProfileInfo;
 import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.util.Constants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -57,6 +62,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by rajesh on 20/9/16.
@@ -77,7 +89,6 @@ public class Helper {
     private static HashMap<Integer, File> mediaDirs = null;
     public static Bitmap finalRotatedBitmap;
     public static boolean IS_FROM_CAMERA_BITMAP;
-
 
     public static void createNewContactWithPhoneNumber(Activity activity, String phoneNumber) {
         Intent i = new Intent(Intent.ACTION_INSERT);

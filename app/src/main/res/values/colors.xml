@@ -62,4 +62,6 @@
     <color name="underline_grey">#B6C6CE</color>
     <color name="resend_white">#C82121</color>
 
+    <color name="light_green">#00FF00</color>
+
 </resources>

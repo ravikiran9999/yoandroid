@@ -86,11 +86,12 @@ public class BalanceHelper {
                                 mLog.w(TAG, "Current balance is less than or equal to $2");
                                 Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
                             }*/
+
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
-                        String subscriberId = jsonObject.getString("Subscriber");
-                        prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);
+                        /*String subscriberId = jsonObject.getString("Subscriber");
+                        prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);*/
                         mLog.i(TAG, "loadBalance: balance -  %s", balance);
                         if (callback != null) {
                             callback.onResponse(call, response);
@@ -147,8 +148,8 @@ public class BalanceHelper {
 
                         try {
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
-                            prefs.saveStringPreference(Constants.SWITCH_BALANCE, mSwitchBalance);
-                            prefs.saveStringPreference(Constants.WALLET_BALANCE, mWalletBalance);
+                            //prefs.saveStringPreference(Constants.SWITCH_BALANCE, mSwitchBalance);
+                            //prefs.saveStringPreference(Constants.WALLET_BALANCE, mWalletBalance);
                             webserviceUsecase.appStatus(null);
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);

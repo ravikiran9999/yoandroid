@@ -268,6 +268,7 @@ public class ContactSyncHelper {
                 if (pCur.getCount() > 0) {
                     while (pCur.moveToNext()) {
                         String number = pCur.getString(1);
+                        number = number.replaceAll("\\s+", "");
                         if (number == null || number.length() == 0) {
                             continue;
                         }
