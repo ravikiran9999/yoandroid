@@ -145,9 +145,9 @@ public class BaseActivity extends ParentActivity {
     public static void getDataFromApi(Sheets sheets, UploadModel model, String type) throws IOException {
         final String spreadsheetId = "1OIkQq2O3en-x0ChsIAy2DX0YPS6n9sMzFQr_-xVy1Qs";
         if(type.equals("Calls")) {
-            final String range = "Report!A:J";
+            final String range = "Report!A:K";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
-            //Name	Caller	Callee	StatusCode	Reason	Duration	CallType	Comment
+            //Name	Caller	Callee	StatusCode	Reason	Duration	CallType	Date    Comments    Balance     Time
             List<List<Object>> values = Arrays.asList(
                     Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDate(), model.getComments(), model.getCurrentBalance(), model.getTime()
 
@@ -180,9 +180,9 @@ public class BaseActivity extends ParentActivity {
                 e.printStackTrace();
             }
         } else if(type.equals("Notifications")) {
-            final String range = "Notifications!A:F";
+            final String range = "Notifications!A:G";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
-            //Name	Caller	Callee	StatusCode	Reason	Duration	CallType	Comment
+            //Caller	Name	Notification Type	Notification Details	Date	Time	Registration Id
             List<List<Object>> values = Arrays.asList(
                     Arrays.asList((Object) model.getCaller(), (Object) model.getName(), model.getNotificationType(), model.getNotificationDetails(), model.getDate(), model.getTime(), model.getRegId()
 
@@ -196,6 +196,42 @@ public class BaseActivity extends ParentActivity {
                     DialerLogs.messageE(TAG, "Google upload START Notification Details" + valueRange.getValues().get(0).get(3));
                     DialerLogs.messageE(TAG, "Google upload START NAME " + valueRange.getValues().get(0).get(1));
                     DialerLogs.messageE(TAG, "Google upload START Reg Id " + valueRange.getValues().get(0).get(6));
+
+                    sheets.spreadsheets().values()
+                            .append(spreadsheetId,
+                                    range,
+                                    valueRange
+                            ).setValueInputOption("USER_ENTERED").execute();
+                } else {
+                    DialerLogs.messageE(TAG, "Updated Columns Sheets object is null");
+                }
+            } catch (UserRecoverableAuthIOException e) {
+                e.printStackTrace();
+                DialerLogs.messageE(TAG, "Updated Columns Sheets object is null" + e.getMessage());
+
+                Intent intent = e.getIntent();
+                intent.putExtra(CallExtras.GOOGLE_DATA, model);
+                activity.startActivityForResult(intent, UploadCallDetails.COMPLETE_AUTHORIZATION_REQUEST_CODE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if(type.equals("Magazines")) {
+            final String range = "Magazines!A:F";
+            DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+            //Caller	Name	Topic Name	Article Title	Date	Time
+            List<List<Object>> values = Arrays.asList(
+                    Arrays.asList((Object) model.getCaller(), (Object) model.getName(), model.getNotificationType(), model.getNotificationDetails(), model.getDate(), model.getTime()
+
+                    )
+            );
+            ValueRange valueRange = new ValueRange()
+                    .setValues(values);
+            try {
+                if (sheets != null && valueRange != null) {
+
+                    DialerLogs.messageE(TAG, "Google upload START Article title" + valueRange.getValues().get(0).get(3));
+                    DialerLogs.messageE(TAG, "Google upload START NAME " + valueRange.getValues().get(0).get(1));
+                    DialerLogs.messageE(TAG, "Google upload START Topic Name " + valueRange.getValues().get(0).get(2));
 
                     sheets.spreadsheets().values()
                             .append(spreadsheetId,
