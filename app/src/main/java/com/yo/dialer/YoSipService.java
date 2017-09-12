@@ -550,7 +550,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 UploadModel model = new UploadModel();
                 PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
                 model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
-                model.setCaller(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
+                model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
                 model.setCallee(phoneNumber);
                 model.setDuration(callduration + "");
                 if (callType == 1) {

@@ -82,7 +82,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         }
 
         UploadModel model = new UploadModel();
-        model.setCaller(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
+        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
         model.setNotificationType(data.get("tag"));
         model.setNotificationDetails(data.get("message"));
