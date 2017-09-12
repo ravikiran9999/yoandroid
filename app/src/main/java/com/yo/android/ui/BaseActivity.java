@@ -149,7 +149,7 @@ public class BaseActivity extends ParentActivity {
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             //Name	Caller	Callee	StatusCode	Reason	Duration	CallType	Comment
             List<List<Object>> values = Arrays.asList(
-                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDateTime(), model.getComments(), model.getCurrentBalance()
+                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDate(), model.getComments(), model.getCurrentBalance(), model.getTime()
 
                     )
             );
@@ -184,7 +184,7 @@ public class BaseActivity extends ParentActivity {
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             //Name	Caller	Callee	StatusCode	Reason	Duration	CallType	Comment
             List<List<Object>> values = Arrays.asList(
-                    Arrays.asList((Object) model.getCaller(), (Object) model.getName(), model.getNotificationType(), model.getNotificationDetails(), model.getDateTime(), model.getRegId()
+                    Arrays.asList((Object) model.getCaller(), (Object) model.getName(), model.getNotificationType(), model.getNotificationDetails(), model.getDate(), model.getTime(), model.getRegId()
 
                     )
             );

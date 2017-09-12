@@ -49,6 +49,8 @@ import org.pjsip.pjsua2.pjsip_status_code;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -562,8 +564,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 model.setStatusCode(code);
                 model.setStatusReason(reason);
                 model.setComments(comment);
-                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-                model.setDateTime(currentDateTimeString);
+                //String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                String formattedDate = df.format(c.getTime());
+                model.setDate(formattedDate);
+                Date d=new Date();
+                SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
+                String currentDateTimeString = sdf.format(d);
+                model.setTime(currentDateTimeString);
                 String balance = mBalanceHelper.getCurrentBalance();
                 model.setCurrentBalance(balance);
                 UploadCallDetails.postDataFromApi(model, "Calls");

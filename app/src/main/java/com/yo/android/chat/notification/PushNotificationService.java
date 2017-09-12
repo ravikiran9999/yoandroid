@@ -31,7 +31,9 @@ import com.yo.dialer.googlesheet.UploadModel;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +66,7 @@ public class PushNotificationService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-bu
+
         Map data = remoteMessage.getData();
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
@@ -84,8 +86,15 @@ bu
         model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
         model.setNotificationType(data.get("tag"));
         model.setNotificationDetails(data.get("message"));
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        model.setDateTime(currentDateTimeString);
+        //String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = df.format(c.getTime());
+        model.setDate(formattedDate);
+        Date d=new Date();
+        SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
+        String currentDateTimeString = sdf.format(d);
+        model.setTime(currentDateTimeString);
         String regId = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
         model.setRegId(regId);
 

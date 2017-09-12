@@ -35,6 +35,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.YODialogs;
 import com.yo.android.widgets.ScrollTabHolder;
 import com.yo.android.util.Util;
+import com.yo.dialer.DialerLogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +113,9 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         originalList = new ArrayList<>();
         //swipeRefreshContainer.setOnRefreshListener(this);
         lvFindPeople.setOnItemClickListener(this);
+
+        String regId = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        DialerLogs.messageI("FindPeopleActivity", "The fcm token is " + regId);
     }
 
     private void initToolbar() {
