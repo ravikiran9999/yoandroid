@@ -392,4 +392,7 @@
     <string name="important_title_message">Important permission required</string>
     <string name="add_contact_message">This permission is important to add a contact.</string>
 
+    <string name="buy">BUY</string>
+    <string name="item_package">PACKAGE</string>
+
 </resources>
