@@ -11,9 +11,12 @@ import com.yo.android.R;
 import com.yo.android.helpers.BalanceViewHolder;
 import com.yo.android.helpers.DenominationViewHolder;
 import com.yo.android.helpers.EmptyViewHolder;
+import com.yo.android.helpers.ItemPackageViewHolder;
+import com.yo.android.helpers.SeperatorViewHolder;
 import com.yo.android.model.MoreData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rdoddapaneni on 6/20/2017.
@@ -23,6 +26,8 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private static final int VIEW_TYPE_MORE_ITEMS = 1;
     private static final int VIEW_TYPE_DENOMINATION_ITEMS = 2;
+    private static final int VIEW_TYPE_SEPERATOR = 3;
+    private static final int VIEW_TYPE_PACKAGE_ITEMS = 4;
 
     private Context mContext;
     private ArrayList<Object> mData;
@@ -48,6 +53,10 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 return new BalanceViewHolder(mInflater.inflate(R.layout.item_with_options, parent, false));
             case VIEW_TYPE_DENOMINATION_ITEMS:
                 return new DenominationViewHolder(mContext, mInflater.inflate(R.layout.item_inner_recycler_view, parent, false), mFragment);
+            case VIEW_TYPE_SEPERATOR:
+                return new SeperatorViewHolder(mInflater.inflate(R.layout.line_margin_medium, parent, false));
+            /*case VIEW_TYPE_PACKAGE_ITEMS:
+                return new ItemPackageViewHolder(mContext, mInflater.inflate(R.layout.item_inner_recycler_view, parent, false), mFragment);*/
             default:
                 return new EmptyViewHolder(mInflater.inflate(R.layout.empty_view, parent, false));
         }
@@ -92,6 +101,8 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     });
                 }
                 break;
+
+
         }
     }
 
@@ -107,6 +118,10 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return VIEW_TYPE_MORE_ITEMS;
         } else if (item instanceof ArrayList) {
             return VIEW_TYPE_DENOMINATION_ITEMS;
+        } else if(item instanceof Integer) {
+            return VIEW_TYPE_SEPERATOR;
+        } else if(item instanceof List) {
+            return VIEW_TYPE_PACKAGE_ITEMS;
         }
         return super.getItemViewType(position); // Will never fall under this
     }
