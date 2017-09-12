@@ -26,8 +26,13 @@ import com.yo.android.model.NotificationCount;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
+import com.yo.dialer.googlesheet.UploadCallDetails;
+import com.yo.dialer.googlesheet.UploadModel;
 
+import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +64,7 @@ public class PushNotificationService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
+bu
         Map data = remoteMessage.getData();
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
@@ -72,6 +77,22 @@ public class PushNotificationService extends FirebaseMessagingService {
             EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION);
         } else if (data.get("tag").equals("POPUP")) {
             PopupHelper.handlePop(preferenceEndPoint, data);
+        }
+
+        UploadModel model = new UploadModel();
+        model.setCaller(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
+        model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
+        model.setNotificationType(data.get("tag"));
+        model.setNotificationDetails(data.get("message"));
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        model.setDateTime(currentDateTimeString);
+        String regId = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        model.setRegId(regId);
+
+        try {
+            UploadCallDetails.postDataFromApi(model, "Notifications");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         //if(preferenceEndPoint.getBooleanPreference("isNotifications")) {

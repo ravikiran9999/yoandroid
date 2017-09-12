@@ -34,6 +34,7 @@ import com.yo.android.pjsip.SipBinder;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.vox.BalanceHelper;
 import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
 import com.yo.dialer.ui.IncomingCallActivity;
@@ -80,6 +81,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private Vibrator mVibrator;
     private Uri mRingtoneUri;
     private static final long[] VIBRATOR_PATTERN = {0, 1000, 1000};
+    @Inject
+    BalanceHelper mBalanceHelper;
 
 
     public boolean isLocalHold() {
@@ -545,8 +548,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 UploadModel model = new UploadModel();
                 PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
                 model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
-                model.setCallee(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
-                model.setCaller(phoneNumber);
+                model.setCaller(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
+                model.setCallee(phoneNumber);
                 model.setDuration(callduration + "");
                 if (callType == 1) {
                     model.setCallType("Incoming");
@@ -561,7 +564,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 model.setComments(comment);
                 String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
                 model.setDateTime(currentDateTimeString);
-                UploadCallDetails.postDataFromApi(model);
+                String balance = mBalanceHelper.getCurrentBalance();
+                model.setCurrentBalance(balance);
+                UploadCallDetails.postDataFromApi(model, "Calls");
             } catch (IOException e) {
                 e.printStackTrace();
             }
