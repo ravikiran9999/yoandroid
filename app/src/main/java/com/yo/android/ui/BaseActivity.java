@@ -195,7 +195,7 @@ public class BaseActivity extends ParentActivity {
 
                     DialerLogs.messageE(TAG, "Google upload START Notification Details" + valueRange.getValues().get(0).get(3));
                     DialerLogs.messageE(TAG, "Google upload START NAME " + valueRange.getValues().get(0).get(1));
-                    DialerLogs.messageE(TAG, "Google upload START Reg Id " + valueRange.getValues().get(0).get(5));
+                    DialerLogs.messageE(TAG, "Google upload START Reg Id " + valueRange.getValues().get(0).get(6));
 
                     sheets.spreadsheets().values()
                             .append(spreadsheetId,
