@@ -39,6 +39,7 @@ import com.yo.android.voip.DialPadView;
 import com.yo.android.vox.BalanceHelper;
 
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.inject.Inject;
 
@@ -222,8 +223,10 @@ public class NewDailerActivity extends BaseActivity {
 
     private void loadCurrentBalance() {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        //double val = Double.parseDouble(balance.trim());
-        double val = Double.parseDouble(Util.numberFromNexgeFormat(balance.trim()));
+        StringTokenizer balanceOBJ = new StringTokenizer(balance.trim(), " ");
+        balanceOBJ.nextToken(); // Dont remove this, bad logic
+        balanceOBJ.nextToken();
+        double val = Double.parseDouble(balanceOBJ.nextToken());
         if (val <= 2) {
             mLog.w(TAG, "Current balance is less than or equal to $2");
             Util.setBigStyleNotificationForBalance(this, "Credit", getString(R.string.low_balance), "Credit", "");
