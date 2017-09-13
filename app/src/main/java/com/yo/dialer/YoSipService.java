@@ -48,6 +48,7 @@ import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.pjsip_status_code;
 
 import java.io.IOException;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -82,7 +83,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private Vibrator mVibrator;
     private Uri mRingtoneUri;
     private static final long[] VIBRATOR_PATTERN = {0, 1000, 1000};
-
 
     public boolean isLocalHold() {
         return isLocalHold;
@@ -560,12 +560,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 model.setStatusCode(code);
                 model.setStatusReason(reason);
                 model.setComments(comment);
+
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
                 String formattedDate = df.format(c.getTime());
                 model.setDate(formattedDate);
-                Date d=new Date();
-                SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
+                Date d = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
                 String currentDateTimeString = sdf.format(d);
                 model.setTime(currentDateTimeString);
                 String balance = mBalanceHelper.getCurrentBalance();

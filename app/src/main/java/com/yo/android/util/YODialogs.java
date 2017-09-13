@@ -278,11 +278,12 @@ public class YODialogs {
 
     private static void loadCurrentBalance(PreferenceEndPoint preferenceEndPoint, BalanceHelper mBalanceHelper, Context context, TextView txtBalance) {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        double val = Double.parseDouble(balance.trim());
+        // notification should be triggered from server
+        /*double val = Double.parseDouble(balance.trim());
         if (val <= 2) {
             Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
             //Util.showLowBalanceNotification(context, preferenceEndPoint);
-        }
+        }*/
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
                 txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));

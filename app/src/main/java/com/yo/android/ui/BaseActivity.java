@@ -196,6 +196,7 @@ public class BaseActivity extends ParentActivity {
             activity.startActivityForResult(intent, UploadCallDetails.COMPLETE_AUTHORIZATION_REQUEST_CODE);
         } catch (Exception e) {
             e.printStackTrace();
+
         }
     }
 }

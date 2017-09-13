@@ -205,9 +205,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         articleReadParams.put("ArticleTitle", title);
 
         FlurryAgent.logEvent("Reading article", articleReadParams);
-
         UploadModel model = new UploadModel(preferenceEndPoint);
-
         if(data != null) {
             // Topic Name
             model.setNotificationType(data.getTopicName());
