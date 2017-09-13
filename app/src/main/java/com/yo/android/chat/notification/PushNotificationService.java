@@ -26,8 +26,15 @@ import com.yo.android.model.NotificationCount;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
+import com.yo.dialer.googlesheet.UploadCallDetails;
+import com.yo.dialer.googlesheet.UploadModel;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -72,6 +79,29 @@ public class PushNotificationService extends FirebaseMessagingService {
             EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION);
         } else if (data.get("tag").equals("POPUP")) {
             PopupHelper.handlePop(preferenceEndPoint, data);
+        }
+
+        UploadModel model = new UploadModel();
+        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+        model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
+        model.setNotificationType(data.get("tag"));
+        model.setNotificationDetails(data.get("message"));
+        //String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = df.format(c.getTime());
+        model.setDate(formattedDate);
+        Date d=new Date();
+        SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
+        String currentDateTimeString = sdf.format(d);
+        model.setTime(currentDateTimeString);
+        String regId = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        model.setRegId(regId);
+
+        try {
+            UploadCallDetails.postDataFromApi(model, "Notifications");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         //if(preferenceEndPoint.getBooleanPreference("isNotifications")) {

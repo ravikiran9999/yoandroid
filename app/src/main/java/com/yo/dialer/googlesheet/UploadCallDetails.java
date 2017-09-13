@@ -74,10 +74,10 @@ public class UploadCallDetails {
      * @return List of names and majors
      * @throws IOException
      */
-    public static void postDataFromApi(UploadModel model) throws IOException {
+    public static void postDataFromApi(UploadModel model, String type) throws IOException {
 
 
-        new MakeRequestTask(BottomTabsActivity.mCredential).execute(model);
+        new MakeRequestTask(BottomTabsActivity.mCredential, type).execute(model);
     }
 
     /**
@@ -95,7 +95,7 @@ public class UploadCallDetails {
         } else if (!isDeviceOnline(context)) {
 
         } else {
-            new MakeRequestTask(credential).execute();
+            new MakeRequestTask(credential, "").execute();
         }
     }
 
@@ -200,8 +200,10 @@ public class UploadCallDetails {
     private static class MakeRequestTask extends AsyncTask<UploadModel, Void, Void> {
         private com.google.api.services.sheets.v4.Sheets mService = null;
         private Exception mLastError = null;
+        private String type;
 
-        MakeRequestTask(GoogleAccountCredential credential) {
+        MakeRequestTask(GoogleAccountCredential credential, String type) {
+            this.type = type;
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.sheets.v4.Sheets.Builder(
@@ -218,7 +220,7 @@ public class UploadCallDetails {
         @Override
         protected Void doInBackground(UploadModel... params) {
             try {
-                BaseActivity.getDataFromApi(mService, params[0]);
+                BaseActivity.getDataFromApi(mService, params[0], type);
             } catch (Exception e) {
                 mLastError = e;
                 DialerLogs.messageE(TAG, e.getMessage());

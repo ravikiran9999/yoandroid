@@ -15,17 +15,60 @@ public class UploadModel implements Serializable {
     private String comments;
     private String duration;
     private String callType;
-    private String dateTime;
+    private String date;
+    private String currentBalance;
+    private Object notificationType;
+    private Object notificationDetails;
+    private String regId;
+    private String time;
 
-    public String getDateTime() {
-        return dateTime;
+    public String getDate() {
+        return date;
     }
 
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+    public void setDate(String date) {
+        this.date = date;
     }
 
+    public String getTime() {
+        return time;
+    }
 
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getRegId() {
+        return regId;
+    }
+
+    public void setRegId(String regId) {
+        this.regId = regId;
+    }
+
+    public Object getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(Object notificationType) {
+        this.notificationType = notificationType;
+    }
+
+    public Object getNotificationDetails() {
+        return notificationDetails;
+    }
+
+    public void setNotificationDetails(Object notificationDetails) {
+        this.notificationDetails = notificationDetails;
+    }
+
+    public String getCurrentBalance() {
+        return currentBalance;
+    }
+
+    public void setCurrentBalance(String currentBalance) {
+        this.currentBalance = currentBalance;
+    }
 
     public String getCallType() {
         return callType;
