@@ -2,6 +2,7 @@ package com.yo.dialer;
 
 
 import android.os.Handler;
+import android.os.Looper;
 
 import com.yo.dialer.yopj.YoCall;
 import com.yo.feedback.AppFailureReport;
@@ -38,25 +39,26 @@ public class CheckStatus {
         handler.postDelayed(runnable, DELAY);
     }
 
-    public static void callStateBasedOnRTP(YoSipService yoSipService) {
+    public static void callStateBasedOnRTP(final YoSipService yoSipService) {
         if (yoSipService != null) {
-            final YoCall yoCurrentCall = yoSipService.getYoCurrentCall();
             Runnable statsCheckRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    DialerLogs.messageE(TAG, "Call State Based on RTP  runnable triggered.");
-                    try {
-                        if (yoCurrentCall != null) {
+                    final YoCall yoCurrentCall = yoSipService.getYoCurrentCall();
+                    DialerLogs.messageE(TAG, "Call State Based on RTP  runnable triggered." + yoCurrentCall);
+                    if (yoCurrentCall != null && yoCurrentCall.isActive()) {
+                        try {
                             long rxStatBytes = yoCurrentCall.getStreamStat(0).getRtcp().getRxStat().getBytes();
                             long txStatBytes = yoCurrentCall.getStreamStat(0).getRtcp().getTxStat().getBytes();
                             DialerLogs.messageW(TAG, "Incoming packets = " + rxStatBytes);
-                            DialerLogs.messageW(TAG, "Outgoing packets = " + rxStatBytes);
-                        } else {
-                            handler.removeCallbacks(this);
-                            AppFailureReport.sendDetails("While checking Call state alive or not based on RTP papckets, yo current call object is null, nothing doing further. May be call disconnected. Removing triggering stats check again after 5sec.");
+                            DialerLogs.messageW(TAG, "Outgoing packets = " + txStatBytes);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+                    } else {
+                        handler.removeCallbacks(this);
+                        AppFailureReport.sendDetails("While checking Call state alive or not based on RTP papckets, yo current call object is null, nothing doing further. May be call disconnected. Removing triggering stats check again after 5sec.");
                     }
 
                 }

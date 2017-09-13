@@ -31,6 +31,7 @@ import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -142,21 +143,43 @@ public class BaseActivity extends ParentActivity {
      * @return List of names and majors
      * @throws IOException
      */
-    public static void getDataFromApi(Sheets sheets, UploadModel model) throws IOException {
+
+    public static void getDataFromApi(Sheets sheets, UploadModel model, String type) throws IOException {
         final String spreadsheetId = "1OIkQq2O3en-x0ChsIAy2DX0YPS6n9sMzFQr_-xVy1Qs";
-        final String range = "Report!A:H";
-        DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
-        //Name	Caller	Callee	StatusCode	Reason	Duration	CallType	Comment
-        List<List<Object>> values = Arrays.asList(
-                Arrays.asList(model.getName(), (Object) model.getCaller(), model.getCallee(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDateTime(), model.getComments()
-                )
-        );
+        List<List<Object>> values = new ArrayList<>();
+        String range = " ";
+        if (type.equals("Calls")) {
+            range = "Report!A:K";
+            DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+            values = Arrays.asList(
+                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDate(), model.getComments(), model.getCurrentBalance(), model.getTime()
+                    )
+            );
+        } else if (type.equals("Notifications")) {
+            range = "Notifications!A:G";
+            DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+            values = Arrays.asList(
+                    Arrays.asList((Object) model.getCaller(), (Object) model.getName(), model.getNotificationType(), model.getNotificationDetails(), model.getDate(), model.getTime(), model.getRegId()
+                    )
+            );
+        } else if (type.equals("Magazines")) {
+            range = "Magazines!A:F";
+            DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+            //Caller Name Topic Name Article Title Date Time
+            values = Arrays.asList(
+                    Arrays.asList((Object) model.getCaller(), (Object) model.getName(), model.getNotificationType(), model.getNotificationDetails(), model.getDate(), model.getTime()
+                    )
+            );
+        }
+        sendToGoogleDrive(sheets, model, spreadsheetId, range, values);
+    }
+
+    private static void sendToGoogleDrive(Sheets sheets, UploadModel model, String spreadsheetId, String range, List<List<Object>> values) {
         ValueRange valueRange = new ValueRange()
                 .setValues(values);
         try {
             if (sheets != null && valueRange != null) {
-                DialerLogs.messageE(TAG, "Google upload START " + valueRange.get(UploadCallDetails.COMMENT));
-
+                DialerLogs.messageE(TAG, "Google upload START NAME " + valueRange.getValues().get(0).get(0));
                 sheets.spreadsheets().values()
                         .append(spreadsheetId,
                                 range,
@@ -168,10 +191,11 @@ public class BaseActivity extends ParentActivity {
         } catch (UserRecoverableAuthIOException e) {
             e.printStackTrace();
             DialerLogs.messageE(TAG, "Updated Columns Sheets object is null" + e.getMessage());
-
             Intent intent = e.getIntent();
             intent.putExtra(CallExtras.GOOGLE_DATA, model);
             activity.startActivityForResult(intent, UploadCallDetails.COMPLETE_AUTHORIZATION_REQUEST_CODE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

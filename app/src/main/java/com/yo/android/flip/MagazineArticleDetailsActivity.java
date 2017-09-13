@@ -206,9 +206,8 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
 
         FlurryAgent.logEvent("Reading article", articleReadParams);
 
-        UploadModel model = new UploadModel();
-        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
-        model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
+        UploadModel model = new UploadModel(preferenceEndPoint);
+
         if(data != null) {
             // Topic Name
             model.setNotificationType(data.getTopicName());

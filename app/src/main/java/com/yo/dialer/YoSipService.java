@@ -34,6 +34,7 @@ import com.yo.android.pjsip.SipBinder;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.vox.BalanceHelper;
 import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
 import com.yo.dialer.ui.IncomingCallActivity;
@@ -47,7 +48,8 @@ import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.pjsip_status_code;
 
 import java.io.IOException;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -122,6 +124,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
+
+    @Inject
+    BalanceHelper mBalanceHelper;
+
     //Media Manager to handle audio related events.
     private MediaManager mediaManager;
     //Maintain current makeCall Object
@@ -512,7 +518,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
                 //Disconnect the call;
-                updateDisconnectStatus();
+                //updateDisconnectStatus();
             }
         }
     }
@@ -539,11 +545,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void uploadGoogleSheet(String code, String reason, String comment, long callduration) {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
             try {
-                UploadModel model = new UploadModel();
                 PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
-                model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
-                model.setCallee(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
-                model.setCaller(phoneNumber);
+                UploadModel model = new UploadModel(preferenceEndPoint);
+                model.setCallee(phoneNumber);
                 model.setDuration(callduration + "");
                 if (callType == 1) {
                     model.setCallType("Incoming");
@@ -556,9 +560,17 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 model.setStatusCode(code);
                 model.setStatusReason(reason);
                 model.setComments(comment);
-                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-                model.setDateTime(currentDateTimeString);
-                UploadCallDetails.postDataFromApi(model);
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                String formattedDate = df.format(c.getTime());
+                model.setDate(formattedDate);
+                Date d=new Date();
+                SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
+                String currentDateTimeString = sdf.format(d);
+                model.setTime(currentDateTimeString);
+                String balance = mBalanceHelper.getCurrentBalance();
+                model.setCurrentBalance(balance);
+                UploadCallDetails.postDataFromApi(model, "Calls");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -676,6 +688,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     protected synchronized void stopDefaultRingtone() {
+
         mVibrator.cancel();
         if (mRingTone != null) {
             try {

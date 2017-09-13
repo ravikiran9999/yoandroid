@@ -109,6 +109,7 @@ public class YoSipServiceHandler implements SipServicesListener {
 
     @Override
     public void setHold(boolean flag) {
+        DialerLogs.messageE(TAG, mContext + " Setting call hold " + flag);
         if (mContext != null) {
             if (mContext instanceof YoSipService) {
                 ((YoSipService) mContext).setHold(flag);

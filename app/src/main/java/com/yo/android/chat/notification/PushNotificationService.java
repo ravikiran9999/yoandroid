@@ -81,9 +81,7 @@ public class PushNotificationService extends FirebaseMessagingService {
             PopupHelper.handlePop(preferenceEndPoint, data);
         }
 
-        UploadModel model = new UploadModel();
-        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
-        model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
+        UploadModel model = new UploadModel(preferenceEndPoint);
         model.setNotificationType(data.get("tag"));
         model.setNotificationDetails(data.get("message"));
         //String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
@@ -117,27 +115,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         setBigStyleNotification(data.get("title").toString(), data.get("message").toString(), data.get("tag").toString(), data.get("id").toString());
     }
 
-    /*public void createNotification(String title, String message) {
 
-        Intent destinationIntent = new Intent(this, NotificationsActivity.class);
-
-        int notificationId = title.hashCode();
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);
-
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(getNotificationIcon())
-                .setContentTitle(title)
-                .setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_SOUND)
-                .setContentText(message)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(message)).setContentIntent(pendingIntent);
-        mNotificationManager.notify((int) System.currentTimeMillis(), notification.build());
-
-
-    }
-*/
     private int getNotificationIcon() {
         boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
         return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
@@ -158,7 +136,6 @@ public class PushNotificationService extends FirebaseMessagingService {
         NotificationBuilderObject notificationsInboxData = prepareNotificationData(title, message);
         UserData data = new UserData();
         data.setDescription(message);
-        //List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
         List<UserData> notificationList = new ArrayList<>();
         notificationList.add(data);
         notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, false);
@@ -172,8 +149,6 @@ public class PushNotificationService extends FirebaseMessagingService {
         notificationData.setNotificationText(message);
         notificationData.setNotificationLargeIconDrawable(R.mipmap.ic_launcher);
         notificationData.setNotificationInfo("3");
-        //notificationData.setNotificationLargeiconUrl(chatMessage.getImagePath());
-        //notificationData.setNotificationLargeText("Hello Every one ....Welcome to Notifications Demo..we are very glade to meet you here.Android Developers ");
         return notificationData;
     }
 }

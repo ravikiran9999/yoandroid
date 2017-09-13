@@ -510,6 +510,8 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     @Override
+
+
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         DialerLogs.messageI(TAG, requestCode + " Permissions while requesting " + grantResults[2]);
        /* mCredential = GoogleAccountCredential.usingOAuth2(
