@@ -383,4 +383,16 @@
     <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="selection_default">Default</string>
     <string name="selection_disabled">Disabled</string>
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+
+    <string name="minVersion">minVersion</string>
+    <string name="isLaunchableActivity">isLaunchableActivity</string>
+
+    <!--Permission message-->
+    <string name="important_title_message">Important permission required</string>
+    <string name="add_contact_message">This permission is important to add a contact.</string>
+
+    <string name="buy">BUY</string>
+    <string name="item_package">PACKAGE</string>
+
 </resources>

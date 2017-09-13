@@ -95,6 +95,8 @@ import com.yo.android.util.FetchNewArticlesService;
 import com.yo.android.util.ReCreateService;
 import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
+import com.yo.android.video.InAppVideoActivity;
+import com.yo.android.video.YouTubeFailureRecoveryActivity;
 import com.yo.android.voip.DialPadView;
 import com.yo.android.voip.InComingCallActivity;
 import com.yo.android.voip.OutGoingCallActivity;
@@ -177,6 +179,8 @@ import dagger.Provides;
                 NewOTPActivity.class,
                 IncomingCallActivity.class,
                 OutgoingCallActivity.class,
+                InAppVideoActivity.class,
+                YouTubeFailureRecoveryActivity.class,
 
                 //Fragments
                 ContactsFragment.class,

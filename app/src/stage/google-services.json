@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "618560320180",
-    "firebase_url": "https://yowatsup-4342.firebaseio.com",
-    "project_id": "yowatsup-4342",
-    "storage_bucket": "yowatsup-4342.appspot.com"
+    "project_number": "978324396478",
+    "firebase_url": "yo-android-staging.firebaseio.com",
+    "project_id": "yo-android-staging",
+    "storage_bucket": "yo-android-staging.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:618560320180:android:5e9fd7bb07b64c8d",
+        "mobilesdk_app_id": "1:978324396478:android:5e9fd7bb07b64c8d",
         "android_client_info": {
-          "package_name": "com.yowatsup.android"
+          "package_name": "com.yowatsup.android.stage"
         }
       },
       "oauth_client": [
         {
-          "client_id": "618560320180-s537l4o6k99hdersonc9vunslp5psadi.apps.googleusercontent.com",
+          "client_id": "978324396478-s537l4o6k99hdersonc9vunslp5psadi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.yowatsup.android",
@@ -23,7 +23,7 @@
           }
         },
         {
-          "client_id": "618560320180-0jsmqgpqnh8mdpeqi15svur4bmn5djbt.apps.googleusercontent.com",
+          "client_id": "978324396478-0jsmqgpqnh8mdpeqi15svur4bmn5djbt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "618560320180-0jsmqgpqnh8mdpeqi15svur4bmn5djbt.apps.googleusercontent.com",
+              "client_id": "978324396478-0jsmqgpqnh8mdpeqi15svur4bmn5djbt.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

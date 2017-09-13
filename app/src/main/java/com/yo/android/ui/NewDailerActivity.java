@@ -25,9 +25,8 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
-import com.yo.android.R;
 import com.yo.android.BuildConfig;
-
+import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.dialer.CallRateDetail;
@@ -39,7 +38,6 @@ import com.yo.android.voip.DialPadView;
 import com.yo.android.vox.BalanceHelper;
 
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.inject.Inject;
 
@@ -223,10 +221,8 @@ public class NewDailerActivity extends BaseActivity {
 
     private void loadCurrentBalance() {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        StringTokenizer balanceOBJ = new StringTokenizer(balance.trim(), " ");
-        balanceOBJ.nextToken(); // Dont remove this, bad logic
-        balanceOBJ.nextToken();
-        double val = Double.parseDouble(balanceOBJ.nextToken());
+        String[] balanceArray = balance.trim().split("");
+        double val = Double.parseDouble(balanceArray[balanceArray.length - 1]);
         if (val <= 2) {
             mLog.w(TAG, "Current balance is less than or equal to $2");
             Util.setBigStyleNotificationForBalance(this, "Credit", getString(R.string.low_balance), "Credit", "");

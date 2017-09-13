@@ -40,7 +40,7 @@ public class DenominationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final DenominationItemViewHolder denominationItemViewHolder = (DenominationItemViewHolder) holder;
         denominationItemViewHolder.bind((Denominations) mData.get(position));
-        denominationItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        denominationItemViewHolder.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = denominationItemViewHolder.getAdapterPosition();
@@ -63,4 +63,6 @@ public class DenominationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void setDenominationItemListener(DenominationItemListener listener) {
         denominationItemListener = listener;
     }
+
+
 }

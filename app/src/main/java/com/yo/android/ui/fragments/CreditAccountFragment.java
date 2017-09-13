@@ -51,6 +51,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
     private static final String TAG = CreditAccountFragment.class.getSimpleName();
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
+    public static final int SEPERATOR = 1;
 
     @Bind(R.id.lv_settings)
     protected RecyclerView menuRecyclerView;
@@ -213,6 +214,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             if (getArguments() == null) {
                 data.add(new MoreData(activity.getString(R.string.transfer_balance), true, null));
             }
+
+            data.add(SEPERATOR);
+
         }
         balanceAdapter.addItems(data);
     }
