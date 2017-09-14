@@ -547,6 +547,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             try {
                 PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
                 UploadModel model = new UploadModel(preferenceEndPoint);
+                model.setCallee(phoneNumber);
                 String callee = model.getCallee();
                 if (callee.contains(BuildConfig.RELEASE_USER_TYPE)) {
                     model.setCallMode("App to App");
