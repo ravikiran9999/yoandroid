@@ -152,7 +152,7 @@ public class BaseActivity extends ParentActivity {
             range = "Report!A:K";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             values = Arrays.asList(
-                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDate(), model.getComments(), model.getCurrentBalance(), model.getTime()
+                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getCallMode(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDate(), model.getTime(), model.getComments(), model.getCurrentBalance()
                     )
             );
         } else if (type.equals("Notifications")) {
