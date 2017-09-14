@@ -1,7 +1,9 @@
 package com.yo.dialer;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -10,6 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -56,6 +59,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -158,6 +163,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     private Contact calleeContact;
 
+    private LocalBroadcastManager mLocalBroadcastManager; // for while gettin normal phone call, current call state should change
+
     public YoSipServiceHandler getSipServiceHandler() {
         return sipServiceHandler;
     }
@@ -214,7 +221,34 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         parseIntentInfo(intent);
         initializeMediaPalyer();
         CheckStatus.registration(this);
+        registerBroadCast();
         return START_STICKY;
+    }
+
+    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL)) {
+                setHold(true);
+            } else if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL_DISCONNECTED)) {
+                setHold(false);
+            }
+        }
+    };
+
+    private void registerBroadCast() {
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL);
+        mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL_DISCONNECTED);
+        mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, mIntentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+        super.onDestroy();
     }
 
     private void initializeMediaPalyer() {

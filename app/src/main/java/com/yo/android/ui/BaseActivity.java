@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.view.MenuItem;
 
 import com.firebase.jobdispatcher.Constraint;
@@ -151,6 +152,9 @@ public class BaseActivity extends ParentActivity {
         if (type.equals("Calls")) {
             range = "Calls17.3.1.2!A:L";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+            if (TextUtils.isEmpty(model.getCallee())) {
+                model.setCallee("Unknow..");
+            }
             values = Arrays.asList(
                     Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getCallMode(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDate(), model.getTime(), model.getComments(), model.getCurrentBalance()
                     )

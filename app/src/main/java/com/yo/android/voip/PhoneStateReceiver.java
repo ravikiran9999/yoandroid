@@ -3,6 +3,7 @@ package com.yo.android.voip;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
             EventBus.getDefault().post(CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL);
             isDefaultCall = true;
+            sendAction(context, new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL));
             // Getting call
             //Toast.makeText(context, "Ringing State Number is -" + incomingNumber, Toast.LENGTH_SHORT).show();
         }
@@ -35,10 +37,15 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         }
         if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
             isDefaultCall = false;
-            EventBus.getDefault().post(CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL_DISCONNECTED);
-
+            sendAction(context, new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL_DISCONNECTED));
             // Toast.makeText(context, "Idle State", Toast.LENGTH_SHORT).show();
             //Call disconnected
         }
+    }
+
+    private void sendAction(Context mContext, Intent action) {
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
+                .getInstance(mContext);
+        localBroadcastManager.sendBroadcast(action);
     }
 }

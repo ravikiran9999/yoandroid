@@ -83,5 +83,8 @@ public interface CallExtras {
         public static final String COM_YO_ACTION_CALL_ACCEPTED = "com.yo.action.CALL_ACCEPTED";
         public static final String COM_YO_ACTION_CALL_UPDATE_STATUS = "com.yo.action.CALL_UPDATE_STATUS";
         public static final String COM_YO_ACTION_CALL_NO_NETWORK = "com.yo.action.CALL_NO_NETWORK";
+        public static final String COM_YO_ACTION_CALL_NORMAL_CALL = "com.yo.action.CALL_NORMAL_CALL";
+        public static final String COM_YO_ACTION_CALL_NORMAL_CALL_DISCONNECTED = "com.yo.action.CALL_NORMAL_CALL_DISCONNECTED";
+
     }
 }

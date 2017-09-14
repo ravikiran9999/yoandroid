@@ -21,11 +21,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.yo.android.R;
-import com.yo.android.model.Contact;
-import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.ui.BaseActivity;
-import com.yo.android.util.YODialogs;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
@@ -141,7 +138,7 @@ class CallBaseActivity extends BaseActivity {
             bindService(new Intent(this, com.yo.dialer.YoSipService.class), connection, BIND_AUTO_CREATE);
         }
         registerForcallActions();
-        if(am == null) {
+        if (am == null) {
             am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
@@ -151,6 +148,7 @@ class CallBaseActivity extends BaseActivity {
         calleImageUrl = getIntent().getStringExtra(CallExtras.IMAGE);
         calleName = getIntent().getStringExtra(CallExtras.NAME);
         isPstn = getIntent().getBooleanExtra(CallExtras.IS_PSTN, false);
+        EventBus.getDefault().register(this);
     }
 
     private void registerForcallActions() {
@@ -197,9 +195,20 @@ class CallBaseActivity extends BaseActivity {
         }
     }
 
+    public void onEventMainThread(int type) {
+        if (type == CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL) {
+            sipBinder.getYOHandler().setHold(true);
+            CallControls.getCallControlsModel().setHoldOn(true);
+        } else if (type == CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL_DISCONNECTED) {
+            sipBinder.getYOHandler().setHold(false);
+            CallControls.getCallControlsModel().setHoldOn(false);
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
+        EventBus.getDefault().unregister(this);
         if (sipBinder != null) {
             try {
                 unbindService(connection);
@@ -216,7 +225,7 @@ class CallBaseActivity extends BaseActivity {
 
     protected void loadCalleeName(TextView textView, String name) {
 
-        if(!TextUtils.isEmpty(name)) {
+        if (!TextUtils.isEmpty(name)) {
             textView.setText(name);
             DialerLogs.messageI(TAG, "YO====loadCalleeName====" + name);
         } else {
@@ -318,7 +327,7 @@ class CallBaseActivity extends BaseActivity {
         showEndAndMessage();
         CallControls.getCallControlsModel().setCallAccepted(true);
 
-        if(CallControls.getCallControlsModel().isSpeakerOn() && CallControls.getCallControlsModel().isCallAccepted()) {
+        if (CallControls.getCallControlsModel().isSpeakerOn() && CallControls.getCallControlsModel().isCallAccepted()) {
             toggleRecSpeaker(callSpeakerView);
         }
 
