@@ -28,7 +28,6 @@ public class UploadModel implements Serializable {
 
     public UploadModel(PreferenceEndPoint preferenceEndPoint) {
         setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
-        setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
     }
 
     public String getCallMode() {

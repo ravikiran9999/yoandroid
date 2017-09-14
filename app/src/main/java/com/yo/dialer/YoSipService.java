@@ -547,7 +547,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             try {
                 PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
                 UploadModel model = new UploadModel(preferenceEndPoint);
-                model.setCallee(phoneNumber);
                 String callee = model.getCallee();
                 if (callee.contains(BuildConfig.RELEASE_USER_TYPE)) {
                     model.setCallMode("App to App");
@@ -557,16 +556,16 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 model.setDuration(callduration + "");
                 if (callType == 1) {
                     model.setCallType("Incoming");
+                    model.setCaller(phoneNumber);
+                    model.setCallee(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
                 } else if (callType == 2) {
                     model.setCallType("Outgoing");
-
+                    model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+                    model.setCallee(phoneNumber);
                 } else {
                     model.setCallType("Missed Call");
-                }
-                if (missedCallNumber != null) {
                     model.setCaller(missedCallNumber);
                     model.setCallee(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
-
                 }
                 model.setStatusCode(code);
                 model.setStatusReason(reason);
