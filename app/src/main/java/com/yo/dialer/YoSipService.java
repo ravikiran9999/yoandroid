@@ -533,7 +533,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         stopDefaultRingtone();
         DialerLogs.messageE(TAG, "callDisconnected");
         long callduration = storeCallLog(phoneNumber);
-        uploadGoogleSheet(code, reason, comment, callduration);
+        uploadGoogleSheet(code, reason, comment, callduration, null);
         Util.cancelNotification(this, callNotificationId);
         if (sipServiceHandler != null) {
             sipServiceHandler.callDisconnected();
@@ -542,14 +542,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
-    public void uploadGoogleSheet(String code, String reason, String comment, long callduration) {
+    public void uploadGoogleSheet(String code, String reason, String comment, long callduration, String missedCallNumber) {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
             try {
                 PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
                 UploadModel model = new UploadModel(preferenceEndPoint);
                 model.setCallee(phoneNumber);
                 String callee = model.getCallee();
-                if(callee.contains(BuildConfig.RELEASE_USER_TYPE)) {
+                if (callee.contains(BuildConfig.RELEASE_USER_TYPE)) {
                     model.setCallMode("App to App");
                 } else {
                     model.setCallMode("App to PSTN");
@@ -562,6 +562,11 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
                 } else {
                     model.setCallType("Missed Call");
+                }
+                if (missedCallNumber != null) {
+                    model.setCaller(missedCallNumber);
+                    model.setCallee(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+
                 }
                 model.setStatusCode(code);
                 model.setStatusReason(reason);

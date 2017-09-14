@@ -149,7 +149,7 @@ public class BaseActivity extends ParentActivity {
         List<List<Object>> values = new ArrayList<>();
         String range = " ";
         if (type.equals("Calls")) {
-            range = "Report!A:K";
+            range = "Calls17.3.1.2!A:L";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             values = Arrays.asList(
                     Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getCallMode(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDate(), model.getTime(), model.getComments(), model.getCurrentBalance()
