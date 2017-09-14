@@ -134,15 +134,18 @@ public class YoApp {
 	/* Start. */
         try {
             ep.libStart();
+
             ep.codecSetPriority("*", (short) 0);
-            ep.codecSetPriority("opus", (short) 1);
+            CodecInfoVector vector = ep.codecEnum();
+
+
             ep.codecSetPriority("PCMA/8000", (short) 1);
             ep.codecSetPriority("PCMU/8000", (short) 1);
-            CodecInfoVector vector = ep.codecEnum();
             for (int i = 0; i < vector.size(); i++) {
                 CodecInfo codecInfo = vector.get(i);
                 DialerLogs.messageI(TAG, "YO=====ID=" + codecInfo.getCodecId() + ",Desc=" + codecInfo.getDesc() + ",Priority=" + codecInfo.getPriority());
             }
+            ep.codecSetPriority("opus", (short) 1);
 
             /*ep.codecSetPriority("PCMA/8000", (short) 2);
             ep.codecSetPriority("PCMU/8000", (short) 3);

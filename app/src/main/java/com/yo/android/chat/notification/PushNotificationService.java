@@ -84,7 +84,6 @@ public class PushNotificationService extends FirebaseMessagingService {
         UploadModel model = new UploadModel(preferenceEndPoint);
         model.setNotificationType(data.get("tag"));
         model.setNotificationDetails(data.get("message"));
-        //String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String formattedDate = df.format(c.getTime());
@@ -95,14 +94,12 @@ public class PushNotificationService extends FirebaseMessagingService {
         model.setTime(currentDateTimeString);
         String regId = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
         model.setRegId(regId);
-
         try {
             UploadCallDetails.postDataFromApi(model, "Notifications");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        //if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
 
         if (preferenceEndPoint.getBooleanPreference(Constants.IS_IN_APP)) {
             if (!data.get("tag").equals("POPUP")) {
