@@ -24,10 +24,19 @@ public class UploadModel implements Serializable {
     private Object notificationDetails;
     private String regId;
     private String time;
+    private String callMode;
 
     public UploadModel(PreferenceEndPoint preferenceEndPoint) {
         setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
         setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+    }
+
+    public String getCallMode() {
+        return callMode;
+    }
+
+    public void setCallMode(String callMode) {
+        this.callMode = callMode;
     }
 
     public String getDate() {
