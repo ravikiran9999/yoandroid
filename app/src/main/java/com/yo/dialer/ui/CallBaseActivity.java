@@ -26,6 +26,7 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
+import com.yo.dialer.Dialogs;
 
 import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -102,7 +103,8 @@ class CallBaseActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CLOSE)) {
-                callDisconnected();
+                String reason = intent.getStringExtra("Reason");
+                callDisconnected(reason);
             } else if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_UPDATE_STATUS)) {
                 updateWithCallStatus(intent.getIntExtra(CallExtras.CALL_STATE, 0));
             } else if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_ACCEPTED)) {
@@ -260,13 +262,17 @@ class CallBaseActivity extends BaseActivity {
         loadCalleeName(calleNameTxt, calleName);
     }
 
-    public void callDisconnected() {
+    public void callDisconnected(String reason) {
         mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
         CallControls.getCallControlsModel().setCallAccepted(false);
         CallControls.getCallControlsModel().setSpeakerOn(false);
         am.setSpeakerphoneOn(false);
         DialerLogs.messageI(TAG, "callDisconnected Before finishing..");
-        finish();
+        if("Forbidden".equals(reason)) {
+            Dialogs.recharge(this);
+        } else {
+            finish();
+        }
     }
 
     public void callAccepted() {
