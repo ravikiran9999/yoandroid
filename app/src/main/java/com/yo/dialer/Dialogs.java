@@ -40,6 +40,7 @@ public class Dialogs {
                 public void onClick(View v) {
                     alertDialog.dismiss();
                     activity.startActivity(new Intent(activity, TabsHeaderActivity.class));
+                    activity.finish();
                 }
             });
 
@@ -48,6 +49,7 @@ public class Dialogs {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
+                    activity.finish();
                 }
             });
         }

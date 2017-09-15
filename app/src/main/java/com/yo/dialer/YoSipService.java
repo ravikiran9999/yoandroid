@@ -414,8 +414,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
         if (calleeNumber == null) {
-            callDisconnected(CallExtras.StatusCode.OTHER, "Unfortunately callee number got null " + calleeNumber, "Sending that no network, this may be request registration request timeout.");
-            sipServiceHandler.callDisconnected();
+            String errorMsg = "Unfortunately callee number got null " + calleeNumber;
+            String comment = "Sending that no network, this may be request registration request timeout.";
+            callDisconnected(CallExtras.StatusCode.OTHER, errorMsg, comment);
+            sipServiceHandler.callDisconnected(errorMsg + comment);
             sipServiceHandler.sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_NO_NETWORK));
             return;
         }
@@ -556,12 +558,12 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         setCurrentCallToNull();
         //If the call is rejected should stop rigntone
         stopDefaultRingtone();
-        DialerLogs.messageE(TAG, "callDisconnected");
+        DialerLogs.messageE(TAG, "callDisconnected" + reason);
         long callduration = storeCallLog(phoneNumber);
         uploadGoogleSheet(code, reason, comment, callduration, null);
         Util.cancelNotification(this, callNotificationId);
         if (sipServiceHandler != null) {
-            sipServiceHandler.callDisconnected();
+            sipServiceHandler.callDisconnected(reason);
         } else {
             DialerLogs.messageE(TAG, "SipServiceHandler is null");
         }
