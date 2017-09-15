@@ -40,6 +40,7 @@ public class YoApp {
                     "don't need video.");
         }
         System.loadLibrary("pjsua2");
+
         System.out.println("Library loaded");
     }
 

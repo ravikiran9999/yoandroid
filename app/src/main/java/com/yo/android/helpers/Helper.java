@@ -278,14 +278,13 @@ public class Helper {
         }
 
 
-
-        if(activity != null) {
+        if (activity != null) {
             Intent intent = new Intent(activity, MainImageCropActivity.class);
-            if(!isFromCameraBitmap) {
+            if (!isFromCameraBitmap) {
                 intent.putExtra(GALLERY_IMAGE_ITEM, path);
                 finalRotatedBitmap = null;
             }
-            if(rotatedBitmap != null) {
+            if (rotatedBitmap != null) {
                 finalRotatedBitmap = rotatedBitmap;
             }
             if (isFromCam) {
@@ -298,7 +297,7 @@ public class Helper {
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
-        if(source != null) {
+        if (source != null) {
             Matrix matrix = new Matrix();
             matrix.postRotate(angle);
             return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
@@ -467,7 +466,7 @@ public class Helper {
             return phoneNumber;
         }
 
-        if (phoneNumber != null && !phoneNumber.startsWith(context.getString(R.string.plus))) {
+        if (phoneNumber != null && !phoneNumber.startsWith(context.getString(R.string.plus)) && !phoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
             mPhoneNumber = context.getString(R.string.plus_number, phoneNumber);
         } else {
             mPhoneNumber = phoneNumber;
@@ -484,7 +483,7 @@ public class Helper {
                 contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
             }
 
-           //Todo changes from server
+            //Todo changes from server
            /*if(contactName ==null){
                try {
                    PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();

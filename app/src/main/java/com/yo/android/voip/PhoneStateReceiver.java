@@ -24,7 +24,6 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         //Toast.makeText(context, state + incomingNumber, Toast.LENGTH_SHORT).show();
 
         if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
-            EventBus.getDefault().post(CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL);
             isDefaultCall = true;
             sendAction(context, new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL));
             // Getting call
@@ -32,6 +31,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         }
         if ((state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK))) {
             isDefaultCall = true;
+            sendAction(context, new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL));
             //call accepted
             //Toast.makeText(context, "Received State", Toast.LENGTH_SHORT).show();
         }

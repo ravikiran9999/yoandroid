@@ -517,13 +517,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
-    private void updateDisconnectStatus() {
-        rejectCall();
-        isReconnecting = false;
-        callDisconnected(CallExtras.StatusCode.OTHER, "Disconnecting call", "Disconnecting call because Re-Inviting failed ");
-        mHandler.removeCallbacks(checkNetworkLossRunnable);
-    }
-
     public int getCallDurationInSec() {
         if (yoCurrentCall != null) {
             try {
@@ -551,8 +544,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 CallHelper.unHoldCall(yoCurrentCall);
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
-                //Disconnect the call;
-                //updateDisconnectStatus();
             }
         }
     }
