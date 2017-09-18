@@ -57,7 +57,7 @@ android {
 
         stage {
             applicationIdSuffix ".stage"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"

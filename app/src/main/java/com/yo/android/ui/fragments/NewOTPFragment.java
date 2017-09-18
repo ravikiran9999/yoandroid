@@ -904,7 +904,8 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             mPinFirstDigitEditText.setText("");
 
         if (mPinHiddenEditText.length() > 0)
-            mPinHiddenEditText.setText(mPinHiddenEditText.getText().subSequence(0, mPinHiddenEditText.length() - 1));
+           // mPinHiddenEditText.setText(mPinHiddenEditText.getText().subSequence(0, mPinHiddenEditText.length() - 1));
+        mPinHiddenEditText.setText("");
     }
 
 }
