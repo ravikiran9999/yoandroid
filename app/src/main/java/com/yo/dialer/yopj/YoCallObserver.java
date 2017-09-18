@@ -55,22 +55,27 @@ public class YoCallObserver implements YoAppObserver {
             registrationStatus += " failed: " + reason;
         }
         YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
-        yoSipService.getYoAccount().setRegistrationPending(false);
-        if (reason != null && reason.equalsIgnoreCase(CallExtras.NETWORK_NOT_REACHABLE)) {
-            if (yoSipService instanceof YoSipService) {
-                yoSipService.setCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
-                yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
+
+        YoAccount yoAccount = yoSipService.getYoAccount();
+        if(yoAccount != null) {
+            yoAccount.setRegistrationPending(false);
+
+            if (reason != null && reason.equalsIgnoreCase(CallExtras.NETWORK_NOT_REACHABLE)) {
+                if (yoSipService instanceof YoSipService) {
+                    yoSipService.setCallStatus(CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
+                    yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, CallExtras.StatusCode.YO_CALL_NETWORK_NOT_REACHABLE);
+                }
+            } else if (code == PJSIP_SC_REQUEST_TIMEOUT) {
+                yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, CallExtras.StatusCode.YO_REQUEST_TIME_OUT);
+                yoSipService.callDisconnected(CallExtras.StatusCode.YO_NEXGE_SERVER_DOWN, "Registration request timeout", "This may be nexge issue, as registration requst timeout. Reason = " + reason + ", Code is " + code + ", Whole msg  =" + wholeMsg);
+            } else {
+                yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, 0);
             }
-        } else if (code == PJSIP_SC_REQUEST_TIMEOUT) {
-            yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, CallExtras.StatusCode.YO_REQUEST_TIME_OUT);
-            yoSipService.callDisconnected(CallExtras.StatusCode.YO_NEXGE_SERVER_DOWN, "Registration request timeout", "This may be nexge issue, as registration requst timeout. Reason = " + reason + ", Code is " + code + ", Whole msg  =" + wholeMsg);
-        } else {
-            yoSipService.getPreferenceEndPoint().saveIntPreference(CallExtras.REGISTRATION_STATUS, 0);
+            yoSipService.getPreferenceEndPoint().saveStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE, registrationStatus);
+            DialerLogs.messageI(TAG, "Registration Status " + registrationStatus);
+            DialerLogs.messageI(TAG, "notifyRegState>>>> " + registrationStatus);
+            updateBuddyState(yoSipService);
         }
-        yoSipService.getPreferenceEndPoint().saveStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE, registrationStatus);
-        DialerLogs.messageI(TAG, "Registration Status " + registrationStatus);
-        DialerLogs.messageI(TAG, "notifyRegState>>>> " + registrationStatus);
-        updateBuddyState(yoSipService);
     }
 
     @Override

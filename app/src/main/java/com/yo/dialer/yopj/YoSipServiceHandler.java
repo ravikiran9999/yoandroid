@@ -118,8 +118,10 @@ public class YoSipServiceHandler implements SipServicesListener {
     }
 
     @Override
-    public void callDisconnected() {
-        sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CLOSE));
+    public void callDisconnected(String reason) {
+        Intent action = new Intent(CallExtras.Actions.COM_YO_ACTION_CLOSE);
+        action.putExtra("Reason", reason);
+        sendAction(action);
     }
 
     public void sendAction(Intent action) {
