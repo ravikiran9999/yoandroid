@@ -8,7 +8,8 @@ public class DialerConfig {
     public static final boolean ENABLE_LOGS = true;
     public static final boolean SHOW_POPUPS = true;
 
-    public static final String NEXGE_SERVER_IP = "173.82.147.172";
+    //public static final String NEXGE_SERVER_IP = "173.82.147.172";
+    public static final String NEXGE_SERVER_IP = "185.106.240.205";
     public static final String STUN_SERVER = "34.232.154.97:3478";
     //public static final String STUN_SERVER = "stun.pjsip.org:5080";
     //public static final String TURN_SERVER = "turn.pjsip.org:33478";

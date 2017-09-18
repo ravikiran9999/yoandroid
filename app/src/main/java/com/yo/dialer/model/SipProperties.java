@@ -33,7 +33,8 @@ public class SipProperties {
     }
 
     private String sipPassword;
-    private String register = "173.82.147.172:6000";
+    //private String register = "173.82.147.172:6000";
+    private String register = "185.106.240.205:6000";
 
 
     private SipProperties() {
