@@ -162,7 +162,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         sipCallState = new SipCallState();
         //TODO:Store in shared prefs and retrieve it
         //domain = "209.239.120.239";
-        domain = "173.82.147.172";
+        //domain = "173.82.147.172";
+        domain = "185.106.240.205";
         mediaManager = new MediaManager(this);
     }
 
@@ -661,7 +662,8 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         SipProfile sipProfile = new SipProfile.Builder()
                 .withUserName(username == null ? "" : username)
                 .withPassword(password)
-                .withServer("173.82.147.172")
+                //.withServer("173.82.147.172")
+                .withServer("185.106.240.205")
 
                 // .withServer("pjsip.org")
                 .build();

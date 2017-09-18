@@ -181,7 +181,8 @@ public class YoApp {
     private void createBuddy(YoAccount acc, AccountConfig acfg) {
         try {
             BuddyConfig cfg = new BuddyConfig();
-            cfg.setUri("\"919154512365\"<sip:youser919490570720D@173.82.147.172:6000>");
+            //cfg.setUri("\"919154512365\"<sip:youser919490570720D@173.82.147.172:6000>");
+            cfg.setUri("\"919154512365\"<sip:youser919490570720D@185.106.240.205:6000>");
             YoBuddy buddy = new YoBuddy();
             buddy.create(acc, cfg);
             buddy.subscribePresence(true);
