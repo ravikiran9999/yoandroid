@@ -33,15 +33,11 @@ public class YoApp {
 
     static {
         try {
-            System.loadLibrary("openh264");
+            System.loadLibrary("pjsua2");
+            System.out.println("Library loaded");
         } catch (UnsatisfiedLinkError e) {
-            System.out.println("UnsatisfiedLinkError: " + e.getMessage());
-            System.out.println("This could be safely ignored if you " +
-                    "don't need video.");
+            DialerLogs.messageE(TAG, " UnsatisfiedLinkError: " + e.getMessage());
         }
-        System.loadLibrary("pjsua2");
-
-        System.out.println("Library loaded");
     }
 
     public static Endpoint ep = new Endpoint();
@@ -138,15 +134,14 @@ public class YoApp {
 
             ep.codecSetPriority("*", (short) 0);
             CodecInfoVector vector = ep.codecEnum();
-
-
-            ep.codecSetPriority("PCMA/8000", (short) 1);
-            ep.codecSetPriority("PCMU/8000", (short) 1);
             for (int i = 0; i < vector.size(); i++) {
                 CodecInfo codecInfo = vector.get(i);
                 DialerLogs.messageI(TAG, "YO=====ID=" + codecInfo.getCodecId() + ",Desc=" + codecInfo.getDesc() + ",Priority=" + codecInfo.getPriority());
             }
             ep.codecSetPriority("opus", (short) 1);
+            ep.codecSetPriority("PCMA/8000", (short) 1);
+            ep.codecSetPriority("PCMU/8000", (short) 1);
+
 
             /*ep.codecSetPriority("PCMA/8000", (short) 2);
             ep.codecSetPriority("PCMU/8000", (short) 3);
