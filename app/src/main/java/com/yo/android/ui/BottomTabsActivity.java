@@ -821,12 +821,12 @@ public class BottomTabsActivity extends BaseActivity {
             yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                   Log.i(TAG, "FCM token updated successfully");
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                    Log.i(TAG, "FCM token failure : " + t.getMessage());
                 }
             });
         }

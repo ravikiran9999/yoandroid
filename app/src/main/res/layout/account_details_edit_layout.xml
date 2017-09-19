@@ -20,24 +20,24 @@
                 android:layout_height="wrap_content" />
 
             <EditText
-            android:id="@+id/edit_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:layout_margin="20dp"/>
+                android:id="@+id/edit_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:maxLines="1"
+                android:singleLine="true" />
 
-        <EditText
-            android:focusable="false"
-            android:id="@+id/birth"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:drawablePadding="10dp"
-            android:layout_margin="20dp"
-            android:drawableTint="@color/colorPrimary"
-            android:editable="false"
-            android:visibility="gone"
-            android:textColor="@android:color/black"/>
+            <EditText
+                android:id="@+id/birth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/colorPrimary"
+                android:editable="false"
+                android:focusable="false"
+                android:textColor="@android:color/black"
+                android:visibility="gone" />
 
         </FrameLayout>
     </ScrollView>

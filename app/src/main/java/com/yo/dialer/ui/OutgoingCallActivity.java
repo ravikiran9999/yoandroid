@@ -5,17 +5,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
+import com.yo.android.util.Util;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 
@@ -29,6 +33,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class OutgoingCallActivity extends CallBaseActivity implements View.OnClickListener {
     private static final String TAG = OutgoingCallActivity.class.getSimpleName();
+
+    private SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +69,10 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
             loadPreviousSettings();
         }
         updateCallType();
+
+        // volume controller
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        Util.initBar(seekBar, audioManager, AudioManager.STREAM_VOICE_CALL);
 
     }
 
@@ -116,6 +126,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         callHoldView.setTag(callControlsModel != null ? callControlsModel.isHoldOn() : false);
         registerListerners();
 
+        seekBar = (SeekBar) findViewById(R.id.seek_bar);
     }
 
     private void registerListerners() {
@@ -168,5 +179,19 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
                 break;
         }
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            int index = seekBar.getProgress();
+            seekBar.setProgress(index - 1);
+            return true;
+        } else if ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+            int index = seekBar.getProgress();
+            seekBar.setProgress(index + 1);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
