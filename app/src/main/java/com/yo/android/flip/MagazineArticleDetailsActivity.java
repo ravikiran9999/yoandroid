@@ -217,6 +217,8 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String formattedDate = df.format(c.getTime());
         model.setDate(formattedDate);
+        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+
         Date d=new Date();
         SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
         String currentDateTimeString = sdf.format(d);
