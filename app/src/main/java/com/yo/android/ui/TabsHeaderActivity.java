@@ -225,11 +225,12 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     public void onPageSelected(int position) {
         Fragment fragment = adapter.getItem(position);
 
-        if (fragment instanceof SpendDetailsFragment) {
+        // menu in spend details screen
+        /*if (fragment instanceof SpendDetailsFragment) {
             getMenuInflater().inflate(R.menu.filter, menu);
         } else {
             menu.clear();
-        }
+        }*/
     }
 
     @Override
