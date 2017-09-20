@@ -131,7 +131,6 @@ public class YoApp {
 	/* Start. */
         try {
             ep.libStart();
-
             ep.codecSetPriority("*", (short) 0);
             CodecInfoVector vector = ep.codecEnum();
             for (int i = 0; i < vector.size(); i++) {
@@ -139,19 +138,9 @@ public class YoApp {
                 DialerLogs.messageI(TAG, "YO=====ID=" + codecInfo.getCodecId() + ",Desc=" + codecInfo.getDesc() + ",Priority=" + codecInfo.getPriority());
             }
             ep.codecSetPriority("opus", (short) 1);
-            ep.codecSetPriority("PCMA/8000", (short) 1);
-            ep.codecSetPriority("PCMU/8000", (short) 1);
-
-
-            /*ep.codecSetPriority("PCMA/8000", (short) 2);
+            ep.codecSetPriority("PCMA/8000", (short) 2);
             ep.codecSetPriority("PCMU/8000", (short) 3);
-            ep.codecSetPriority("G722/8000", (short) 4);
-            ep.codecSetPriority("iLBC/8000", (short) 5);
-            ep.codecSetPriority("GSM/8000", (short) 6);*/
-
-            //ep.codecSetPriority("G711/8000", (short) 1);
             ep.audDevManager().setInputRoute(pjmedia_aud_dev_route.PJMEDIA_AUD_DEV_ROUTE_CUSTOM);
-            // ep.audDevManager().setVad(sipProperties.isVad());
 
         } catch (Exception e) {
             DialerLogs.messageE(TAG, "YO== Initialization of codecs Failed==" + e.getMessage());

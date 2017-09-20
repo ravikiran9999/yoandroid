@@ -82,14 +82,15 @@ public class PushNotificationService extends FirebaseMessagingService {
         }
 
         UploadModel model = new UploadModel(preferenceEndPoint);
+        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         model.setNotificationType(data.get("tag"));
         model.setNotificationDetails(data.get("message"));
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String formattedDate = df.format(c.getTime());
         model.setDate(formattedDate);
-        Date d=new Date();
-        SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
+        Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
         String currentDateTimeString = sdf.format(d);
         model.setTime(currentDateTimeString);
         String regId = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
