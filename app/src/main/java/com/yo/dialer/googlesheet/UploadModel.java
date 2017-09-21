@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class UploadModel implements Serializable {
     private String name;
     private String caller;
-    private String callee;
+    private String callee = "";
     private String statusCode;
     private String statusReason;
     private String comments;
