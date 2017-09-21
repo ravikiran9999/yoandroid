@@ -1031,9 +1031,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         unreadArticleIds.removeAll(readIdsList);
 
         List<String> followedIds = new ArrayList<>();
-        for (Articles followedArticle : followedArticlesList) {
-            if(followedArticle != null) {
-                followedIds.add(followedArticle.getId());
+        if(followedArticlesList != null) {
+            for (Articles followedArticle : followedArticlesList) {
+                if (followedArticle != null) {
+                    followedIds.add(followedArticle.getId());
+                }
             }
         }
 

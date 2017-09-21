@@ -55,10 +55,12 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         updateCalled = 0;
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
         setSupportActionBar(toolbar);
-        if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
-            getSupportActionBar().setTitle(R.string.add_balance_title);
-        } else {
-            getSupportActionBar().setTitle(R.string.yo_credit);
+        if(getSupportActionBar() != null) {
+            if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
+                getSupportActionBar().setTitle(R.string.add_balance_title);
+            } else {
+                getSupportActionBar().setTitle(R.string.yo_credit);
+            }
         }
         isRenewal = getIntent().getBooleanExtra(Constants.RENEWAL, false);
         enableBack();
