@@ -559,7 +559,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         //If the call is rejected should stop rigntone
         stopDefaultRingtone();
         DialerLogs.messageE(TAG, "callDisconnected" + reason);
-        long callduration = storeCallLog(phoneNumber);
+        long callduration = storeCallLog(phoneNumber, callType);
         uploadGoogleSheet(code, reason, comment, callduration, null);
         Util.cancelNotification(this, callNotificationId);
         if (sipServiceHandler != null) {
@@ -745,7 +745,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     }
 
-    private long storeCallLog(String mobileNumber) {
+    private long storeCallLog(String mobileNumber, int callType) {
         long currentTime = System.currentTimeMillis();
         long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
         if (callStarted == 0 || callType == -1) {
@@ -789,8 +789,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 String source = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
                 sendBusyHereToIncomingCall(yoCall);
                 Util.createNotification(this, source, getResources().getString(R.string.missed_call), BottomTabsActivity.class, new Intent(), false);
-                callType = CallLog.Calls.MISSED_TYPE;
-                storeCallLog(source);
+                storeCallLog(source, CallLog.Calls.MISSED_TYPE);
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, e.getMessage());
             }
