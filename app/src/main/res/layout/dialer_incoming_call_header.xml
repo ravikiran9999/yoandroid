@@ -12,7 +12,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <TextView
@@ -31,8 +31,8 @@
             android:layout_height="100dp"
             android:layout_below="@+id/tv_incoming_call"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/dialer_default_avatar" />
 
         <TextView
@@ -41,8 +41,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/imv_caller_pic"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginBottom="5dp"
+            android:text="YO!"
             android:textColor="@android:color/white"
             android:textSize="26sp" />
 
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_caller_name"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_caller_number"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="10dp"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
