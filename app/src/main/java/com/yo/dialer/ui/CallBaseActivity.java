@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.yo.android.R;
 import com.yo.android.pjsip.SipBinder;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.BaseActivity;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerHelper;
@@ -105,12 +106,14 @@ class CallBaseActivity extends BaseActivity {
             if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CLOSE)) {
                 String reason = intent.getStringExtra("Reason");
                 callDisconnected(reason);
+                SipHelper.isAlreadyStarted = false; // not allowing to do more than one call at the same time.
             } else if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_UPDATE_STATUS)) {
                 updateWithCallStatus(intent.getIntExtra(CallExtras.CALL_STATE, 0));
             } else if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_ACCEPTED)) {
                 callAccepted();
             } else if (intent.getAction().equalsIgnoreCase(CallExtras.Actions.COM_YO_ACTION_CALL_NO_NETWORK)) {
                 showToast(context, context.getResources().getString(R.string.calls_no_network));
+                SipHelper.isAlreadyStarted = false; // not allowing to do more than one call at the same time.
             }
         }
     };
@@ -268,7 +271,7 @@ class CallBaseActivity extends BaseActivity {
         CallControls.getCallControlsModel().setSpeakerOn(false);
         am.setSpeakerphoneOn(false);
         DialerLogs.messageI(TAG, "callDisconnected Before finishing..");
-        if("Forbidden".equals(reason)) {
+        if ("Forbidden".equals(reason)) {
             Dialogs.recharge(this);
         } else {
             finish();

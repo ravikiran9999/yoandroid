@@ -34,6 +34,7 @@ import com.yo.android.networkmanager.NetworkStateChangeListener;
 import com.yo.android.networkmanager.NetworkStateListener;
 import com.yo.android.pjsip.MediaManager;
 import com.yo.android.pjsip.SipBinder;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -559,7 +560,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         //If the call is rejected should stop rigntone
         stopDefaultRingtone();
         DialerLogs.messageE(TAG, "callDisconnected" + reason);
-        long callduration = storeCallLog(phoneNumber, callType);
+        long callduration = storeCallLog(phoneNumber, callType, callStarted);
         uploadGoogleSheet(code, reason, comment, callduration, null);
         Util.cancelNotification(this, callNotificationId);
         if (sipServiceHandler != null) {
@@ -567,6 +568,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         } else {
             DialerLogs.messageE(TAG, "SipServiceHandler is null");
         }
+        callStarted = 0;
     }
 
     public void uploadGoogleSheet(String code, String reason, String comment, long callduration, String missedCallNumber) {
@@ -745,7 +747,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     }
 
-    private long storeCallLog(String mobileNumber, int callType) {
+    private long storeCallLog(String mobileNumber, int callType, long callStarted) {
         long currentTime = System.currentTimeMillis();
         long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
         if (callStarted == 0 || callType == -1) {
@@ -779,7 +781,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
 
         CallLog.Calls.addCall(info, getBaseContext(), mobileNumber, callType, callStarted, callDuration, pstnorapp);
-        callStarted = 0;
         return callDuration;
     }
 
@@ -789,7 +790,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 String source = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
                 sendBusyHereToIncomingCall(yoCall);
                 Util.createNotification(this, source, getResources().getString(R.string.missed_call), BottomTabsActivity.class, new Intent(), false);
-                storeCallLog(source, CallLog.Calls.MISSED_TYPE);
+                storeCallLog(source, CallLog.Calls.MISSED_TYPE, 0);
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, e.getMessage());
             }
