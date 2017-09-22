@@ -229,7 +229,7 @@ public class NewDailerActivity extends BaseActivity {
             //Util.showLowBalanceNotification(this, preferenceEndPoint);
         }
         if (mBalanceHelper != null) {
-            if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
+            if (mBalanceHelper.getCurrentBalance() != null) {
                 //txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
                 //txtBalance.setText(String.format("%s %s", currencySymbolDollar, mBalanceHelper.getCurrentBalance()));
                 txtBalance.setText(String.format("%s", mBalanceHelper.getCurrentBalance()));
