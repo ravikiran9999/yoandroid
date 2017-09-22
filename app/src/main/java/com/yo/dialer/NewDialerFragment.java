@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -93,6 +94,8 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
     @Inject
     ContactsSyncManager mContactsSyncManager;
 
+    public static final int REFRESH_CALL_LOGS_TIME = 1000;
+
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> appCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
     private ArrayList<Map.Entry<String, List<CallLogsResult>>> paidCalls = new ArrayList<Map.Entry<String, List<CallLogsResult>>>();
 
@@ -141,7 +144,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
             searchView.setQuery(searchView.getQuery(), false);
         } else {
             readCallLogs();
-            //TODO: refreshCallLogsIfNotUpdated();
+            refreshCallLogsIfNotUpdated();
         }
     }
 
@@ -323,7 +326,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
                         @Override
                         public void run() {
                             readCallLogs();
-                            //TODO: refreshCallLogsIfNotUpdated();
+                            refreshCallLogsIfNotUpdated();
                             mBalanceHelper.checkBalance(null);
                         }
                     });
@@ -385,5 +388,14 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
         } catch (Exception e) {
             mLog.w(TAG, e);
         }
+    }
+
+    private void refreshCallLogsIfNotUpdated() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                readCallLogs();
+            }
+        }, REFRESH_CALL_LOGS_TIME);
     }
 }
