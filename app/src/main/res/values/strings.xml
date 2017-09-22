@@ -275,7 +275,8 @@
     <string name="my_magazines">My Magazines</string>
     <string name="participants">Participants</string>
     <string name="name">Name</string>
-    <string name="group_name">Group Name</string>
+    <string name="group_name">Group Name</string>j
+    <string name="group_subject_error">Group name change failed. Please try again</string>
     <string name="select_country_name">Select Country Name</string>
     <string name="recent_county_code">Recent Countries/regions</string>
     <string name="all_county_code">All Countries/regions</string>
@@ -393,6 +394,6 @@
     <string name="add_contact_message">This permission is important to add a contact.</string>
 
     <string name="buy">BUY</string>
-    <string name="item_package">PACKAGE</string>
+    <string name="item_package_price">$5</string>
 
 </resources>

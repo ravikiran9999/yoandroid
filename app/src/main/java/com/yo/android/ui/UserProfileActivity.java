@@ -31,10 +31,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -50,6 +52,8 @@ import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.GroupAction;
 import com.yo.android.model.GroupMembers;
+import com.yo.android.model.GroupSubject;
+import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.model.UserProfile;
 import com.yo.android.model.UserProfileInfo;
@@ -74,6 +78,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -82,11 +87,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.yo.android.ui.EditGroupSubjectActivity.GROUP_SUBJECT;
+
 public class UserProfileActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, ValueEventListener, AdapterView.OnItemClickListener {
 
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private static final int WRITE_CONTACT_PERMISSIONS = 50;
     private static final int PICK_CONTACT_REQUEST = 101;
+    private static final int GROUP_SUBJECT_REQUEST = 102;
 
     @Bind(R.id.profile_image)
     CircleImageView profileImage;
@@ -104,6 +112,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     TextView numberTitle;
     @Bind(R.id.name_card_view)
     CardView cardView;
+    @Bind(R.id.edit_subject)
+    ImageView editSubjectView;
 
     private ProfileMembersAdapter profileMembersAdapter;
     private NonScrollListView membersList;
@@ -217,6 +227,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
                 setDataFromPreferences();
 
+                // Group name
                 if (intent.hasExtra(Constants.CHAT_ROOM_ID)) {
                     String firebaseRoomId = intent.getStringExtra(Constants.CHAT_ROOM_ID);
                     if (firebaseRoomId != null) {
@@ -281,12 +292,15 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (name.equalsIgnoreCase(getString(R.string.group_name))) {
                     profileNameTitle.setText(name);
                     profileName.setText(contact.getName());
+                    editSubjectView.setVisibility(View.VISIBLE);
                 } else if (mContact.getName() != null && !TextUtils.isEmpty(mContact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(checkPlusSign(mContact.getName()));
+                    editSubjectView.setVisibility(View.GONE);
                 } else {
                     cardView.setVisibility(View.GONE);
+                    editSubjectView.setVisibility(View.GONE);
                 }
                 if (mContact.getPhoneNo() != null) {
                     if (mContact.getCountryCode() != null) {
@@ -303,12 +317,15 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 if (name.equalsIgnoreCase(getString(R.string.group_name))) {
                     profileNameTitle.setText(name);
                     profileName.setText(contact.getName());
+                    editSubjectView.setVisibility(View.VISIBLE);
                 } else if (contact.getName() != null && !TextUtils.isEmpty(contact.getName()) && !isSame(mName, numberTrim)) {
                     cardView.setVisibility(View.VISIBLE);
                     profileNameTitle.setText(name);
                     profileName.setText(checkPlusSign(contact.getName()));
+                    editSubjectView.setVisibility(View.GONE);
                 } else {
                     cardView.setVisibility(View.GONE);
+                    editSubjectView.setVisibility(View.GONE);
                 }
                 if (contact.getPhoneNo() != null) {
                     if (contact.getCountryCode() != null) {
@@ -393,6 +410,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     void changeProfilePic() {
         cameraIntent.showDialog();
     }*/
+
+    @OnClick(R.id.edit_subject)
+    public void editSubject() {
+        Intent subjectIntent = new Intent(this, EditGroupSubjectActivity.class);
+        subjectIntent.putExtra(GROUP_SUBJECT, profileName.getText().toString());
+        startActivityForResult(subjectIntent, GROUP_SUBJECT_REQUEST);
+    }
 
     private void navigateToChatScreen(Contact contact) {
         Intent intent = new Intent(this, ChatActivity.class);
@@ -636,6 +660,30 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     }
                 }
                 break;
+
+            case GROUP_SUBJECT_REQUEST:
+                if(data != null) {
+                    showProgressDialog();
+                    final String subject = data.getStringExtra(GROUP_SUBJECT);
+                    String firebaseRoomId = getIntent().getStringExtra(Constants.CHAT_ROOM_ID);
+                    try {
+                        authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO).child("name").setValue(subject, new Firebase.CompletionListener() {
+                            @Override
+                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                if (firebaseError != null) {
+                                    Toast.makeText(UserProfileActivity.this, getString(R.string.group_subject_error), Toast.LENGTH_LONG).show();
+                                } else {
+                                    profileName.setText(subject);
+                                    EventBus.getDefault().post(new GroupSubject(subject));
+                                }
+                                dismissProgressDialog();
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
             default:
                 break;
         }
@@ -703,4 +751,5 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
         }
     }
+
 }

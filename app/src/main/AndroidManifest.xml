@@ -47,7 +47,6 @@
         android:name="android.hardware.microphone"
         android:required="false" />
 
-
     <application
         android:name=".app.BaseApp"
         android:allowBackup="true"
@@ -420,10 +419,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="InAppVideoActivity"
             android:screenOrientation="sensor"
-            android:theme="@style/YoutubeTheme"
-            >
-        </activity>
-
+            android:theme="@style/YoutubeTheme"></activity>
         <activity
             android:name=".ui.PlainActivity"
             android:label=""
@@ -441,8 +437,11 @@
         <service android:name="com.yo.services.BackgroundServices" />
         <service android:name="com.yo.dialer.YoSipService" />
 
-        <meta-data android:name="firebase_performance_logcat_enabled" android:value="true" />
+        <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="true" />
 
+        <activity android:name=".ui.EditGroupSubjectActivity"></activity>
     </application>
 
 </manifest>
