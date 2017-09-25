@@ -200,4 +200,6 @@ public class Constants {
     public static final String Add_CONTACT = "Add to contacts";
     public static final String CHAT = "Message";
     public static final String CALL = "Call";
+    public static final String ADDFRIENDS = "AddFriends";
+    public static final String ADDBALANCE = "AddBalance";
 }

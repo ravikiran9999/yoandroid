@@ -231,14 +231,18 @@ public class BottomTabsActivity extends BaseActivity {
         int index = 0;
         for (TabsData data : dataList) {
             final TabLayout.Tab tab = tabLayout.getTabAt(index);
-            tab.setCustomView(setTabs(data.getTitle(), data.getDrawable()));
+            if(tab != null) {
+                tab.setCustomView(setTabs(data.getTitle(), data.getDrawable()));
+            }
             index++;
         }
 
         customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
-        getSupportActionBar().setCustomView(customActionBar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setCustomView(customActionBar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayShowCustomEnabled(true);
+        }
 
         notificationCount = (Button) customActionBar.findViewById(R.id.notif_count);
         notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
@@ -460,10 +464,10 @@ public class BottomTabsActivity extends BaseActivity {
                         startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
                         finish();
                     } else if ("Broadcast".equals(tag) || "Tip".equals(tag) || "PriceUpdate".equals(tag)) {
-                        if (redirectId.equals("AddFriends")) {
+                        if (Constants.ADDFRIENDS.equals(redirectId)) {
                             startActivity(new Intent(BottomTabsActivity.this, InviteActivity.class));
                             finish();
-                        } else if (redirectId.equals("AddBalance")) {
+                        } else if (Constants.ADDBALANCE.equals(redirectId)) {
                             startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
                             finish();
                         }
