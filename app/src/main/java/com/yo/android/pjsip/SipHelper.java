@@ -23,27 +23,31 @@ public class SipHelper {
         actualNumber = number;
     }
 
+    public static boolean isAlreadyStarted = false;
+
     public static void makeCall(Context mContext, String number, boolean isPSTN) {
+        if (!isAlreadyStarted) {
+            isAlreadyStarted = true;
+            Intent intent;
+            DialerLogs.messageI(TAG, "Phone Number while making call " + number);
 
-        Intent intent;
-        DialerLogs.messageI(TAG, "Phone Number while making call " + number);
+            if (DialerConfig.IS_NEW_SIP) {
+                intent = new Intent(CallExtras.MAKE_CALL, null, mContext, com.yo.dialer.YoSipService.class);
+                intent.putExtra(CallExtras.CALLER_NO, number);
+                intent.putExtra(CallExtras.IS_PSTN, isPSTN);
+            } else {
+                intent = new Intent(VoipConstants.CALL_ACTION_OUT_GOING, null, mContext, YoSipService.class);
+                intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
+                intent.putExtra(VoipConstants.PSTN, isPSTN);
+            }
 
-        if (DialerConfig.IS_NEW_SIP) {
-            intent = new Intent(CallExtras.MAKE_CALL, null, mContext, com.yo.dialer.YoSipService.class);
-            intent.putExtra(CallExtras.CALLER_NO, number);
-            intent.putExtra(CallExtras.IS_PSTN, isPSTN);
-        } else {
-            intent = new Intent(VoipConstants.CALL_ACTION_OUT_GOING, null, mContext, YoSipService.class);
-            intent.putExtra(OutGoingCallActivity.CALLER_NO, number);
-            intent.putExtra(VoipConstants.PSTN, isPSTN);
+            if (actualNumber == null) {
+                actualNumber = number;
+            }
+            intent.putExtra(OutGoingCallActivity.DISPLAY_NUMBER, actualNumber);
+            //actualNumber = null;
+            mContext.startService(intent);
         }
-
-        if (actualNumber == null) {
-            actualNumber = number;
-        }
-        intent.putExtra(OutGoingCallActivity.DISPLAY_NUMBER, actualNumber);
-        //actualNumber = null;
-        mContext.startService(intent);
 
     }
 }
