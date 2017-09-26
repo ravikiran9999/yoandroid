@@ -3,6 +3,7 @@ package com.yo.dialer;
 import android.content.Intent;
 import android.util.Log;
 
+import com.yo.android.pjsip.SipHelper;
 import com.yo.dialer.yopj.YoAccount;
 import com.yo.dialer.yopj.YoApp;
 import com.yo.dialer.yopj.YoCall;
@@ -57,6 +58,7 @@ public class CallHelper {
                         sipService.callDisconnected(CallExtras.StatusCode.OTHER + "", e.getMessage(), "While making call got an exception and message is " + e.getMessage() + ", So that call is going to disconnecting." + callId);
                         sipService.setYoAccount(null);
                         sipService.register();
+                        SipHelper.isAlreadyStarted = false;
                         return null;
                     }
                 } catch (Exception e) {
