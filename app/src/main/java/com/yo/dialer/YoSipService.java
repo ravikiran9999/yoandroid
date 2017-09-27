@@ -44,6 +44,7 @@ import com.yo.dialer.googlesheet.UploadModel;
 import com.yo.dialer.ui.IncomingCallActivity;
 import com.yo.dialer.ui.OutgoingCallActivity;
 import com.yo.dialer.yopj.YoAccount;
+import com.yo.dialer.yopj.YoApp;
 import com.yo.dialer.yopj.YoCall;
 import com.yo.dialer.yopj.YoSipServiceHandler;
 import com.yo.feedback.AppFailureReport;
@@ -352,6 +353,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             handleBusy(yoCall);
         } else {
             yoCurrentCall = yoCall;
+            YoApp yoApp = YoSipServiceHandler.getYoApp();
+            if(yoApp!=null){
+                yoApp.setEchoOptions();
+            }
             startRingtone(); // to play caller ringtone
             DialerLogs.messageE(TAG, "On Incoming call current call call obj==" + yoCurrentCall);
             triggerNoAnswerIfNotRespond();

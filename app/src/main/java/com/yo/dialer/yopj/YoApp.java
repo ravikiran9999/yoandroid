@@ -5,6 +5,7 @@ import com.yo.dialer.DialerLogs;
 import com.yo.dialer.model.SipProperties;
 
 import org.pjsip.pjsua2.AccountConfig;
+import org.pjsip.pjsua2.AudDevManager;
 import org.pjsip.pjsua2.AudioMedia;
 import org.pjsip.pjsua2.BuddyConfig;
 import org.pjsip.pjsua2.CodecInfo;
@@ -209,5 +210,20 @@ public class YoApp {
         AudioMedia play_med = ep.audDevManager().getPlaybackDevMedia();
         AudioMedia cap_med = ep.audDevManager().getCaptureDevMedia();
         cap_med.startTransmit(play_med);
+    }
+
+    public void setEchoOptions() {
+        if (ep != null) {
+            try {
+                AudDevManager audDevManager = ep.audDevManager();
+                if (audDevManager != null) {
+                    audDevManager.setEcOptions(200, 3);
+                } else {
+                    DialerLogs.messageE(TAG, "While setting Eco options to incoming call audDevManager is null.");
+                }
+            } catch (Exception e) {
+                DialerLogs.messageE(TAG, "Filed to set Eco options to incoming call.");
+            }
+        }
     }
 }
