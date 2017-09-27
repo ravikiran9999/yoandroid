@@ -267,6 +267,7 @@ class CallBaseActivity extends BaseActivity {
 
     public void callDisconnected(String reason) {
         mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
+        SipHelper.isAlreadyStarted = false;
         CallControls.getCallControlsModel().setCallAccepted(false);
         CallControls.getCallControlsModel().setSpeakerOn(false);
         am.setSpeakerphoneOn(false);

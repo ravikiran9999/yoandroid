@@ -4,6 +4,7 @@ import com.yo.android.BuildConfig;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.OpponentDetails;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.dialer.yopj.YoCallObserver;
 
 import org.pjsip.pjsua2.CallInfo;
@@ -26,6 +27,7 @@ public class CallStateHandler {
 
     public static void verify(YoSipService yoSipService, CallInfo info) {
         if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+            SipHelper.isAlreadyStarted = false;
             yoSipService.setCallAccepted(false);
             if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_ACCEPTABLE_HERE)) {
                 checkMissedCall(yoSipService);
