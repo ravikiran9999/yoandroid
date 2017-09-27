@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.CallLogsAdapter;
@@ -38,6 +39,7 @@ import com.yo.dialer.model.CallLog;
 import com.yo.services.BackgroundServices;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -356,6 +358,17 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser) {
+            if (preferenceEndPoint != null) {
+                // Capture user id
+                Map<String, String> dialerParams = new HashMap<String, String>();
+                String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+                //param keys and values have to be of String type
+                dialerParams.put("UserId", userId);
+
+                FlurryAgent.logEvent("Dialer", dialerParams, true);
+            }
+        }
         if (DialerConfig.SHOW_POPUPS) {
             DialerPopUp.showPopUp(this, isVisibleToUser, preferenceEndPoint, isAlreadyShownABoolean, isSharedPreferenceShown);
         }
