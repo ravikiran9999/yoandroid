@@ -1,9 +1,12 @@
 package com.yo.dialer;
 
 import android.content.Intent;
-import android.util.Log;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.dialer.googlesheet.UploadCallDetails;
+import com.yo.dialer.googlesheet.UploadModel;
 import com.yo.dialer.yopj.YoAccount;
 import com.yo.dialer.yopj.YoApp;
 import com.yo.dialer.yopj.YoCall;
@@ -14,9 +17,6 @@ import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallMediaInfo;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.Media;
-import org.pjsip.pjsua2.SendInstantMessageParam;
-import org.pjsip.pjsua2.SendTypingIndicationParam;
-import org.pjsip.pjsua2.SipTxOption;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsua_call_media_status;
@@ -25,6 +25,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Rajesh Babu on 18/7/17.
@@ -189,13 +191,15 @@ public class CallHelper {
         }
     }
 
-    public static void holdCall(YoCall currentCall) {
+    public static void holdCall(YoCall currentCall, PreferenceEndPoint preferenceEndPoint, String phoneNumber) {
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam(true);
             try {
                 currentCall.setHold(prm);
+                uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold On");
             } catch (Exception e) {
                 e.printStackTrace();
+                uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold On failed because of " + e.getMessage());
             }
         } else {
             DialerLogs.messageE(TAG, "Current call is null so call not hold");
@@ -209,6 +213,34 @@ public class CallHelper {
             currentCall.reinvite(prm);
         } else {
             DialerLogs.messageE(TAG, "Current call is null so call not unhold");
+        }
+    }
+
+    public static void uploadToGoogleSheet(PreferenceEndPoint preferenceEndPoint, String phoneNumber, String comments) {
+        if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
+            try {
+                UploadModel model = new UploadModel(preferenceEndPoint);
+                model.setCallee(phoneNumber);
+                String callee = model.getCallee();
+                if (callee != null && callee.contains(BuildConfig.RELEASE_USER_TYPE)) {
+                    model.setCallMode("App to App");
+                } else {
+                    model.setCallMode("App to PSTN");
+                }
+
+                model.setComments(comments);
+
+                Calendar c = Calendar.getInstance();
+                String formattedDate = YoSipService.df.format(c.getTime());
+                model.setDate(formattedDate);
+                Date d = new Date();
+                String currentDateTimeString = YoSipService.sdf.format(d);
+                model.setTime(currentDateTimeString);
+
+                UploadCallDetails.postDataFromApi(model, "Hold");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
