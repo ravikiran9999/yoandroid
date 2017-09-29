@@ -179,6 +179,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         YoSipService.yoCurrentCall = yoCurrentCall;
     }
 
+    public static SimpleDateFormat df;
+    public static SimpleDateFormat sdf;
+
+
+    static {
+        df = new SimpleDateFormat("dd-MM-yyyy");
+        sdf = new SimpleDateFormat("hh:mm a");
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -210,7 +219,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                     DialerLogs.messageI(TAG, "YO========Previous registration request is in pending state==");
                 }
             } catch (Exception e) {
-                String failedMessage = "Acccount registration renewal Failed, No further logic to re-register." + e.getMessage();
+                yoAccount.delete();
+                yoAccount = null;
+                register();
+
+                String formattedDate = df.format(System.currentTimeMillis());
+                Date d = new Date();
+                String currentDateTimeString = sdf.format(d);
+                String failedMessage = formattedDate + " - " + currentDateTimeString + " Acccount registration renewal Failed, deleted existing account registration and doing new registration." + e.getMessage();
                 DialerLogs.messageI(TAG, failedMessage);
                 AppFailureReport.sendDetails(failedMessage);
             }
@@ -354,7 +370,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         } else {
             yoCurrentCall = yoCall;
             YoApp yoApp = YoSipServiceHandler.getYoApp();
-            if(yoApp!=null){
+            if (yoApp != null) {
                 yoApp.setEchoOptions();
             }
             startRingtone(); // to play caller ringtone
