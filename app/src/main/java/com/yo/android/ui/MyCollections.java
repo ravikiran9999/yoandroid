@@ -195,7 +195,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 startActivityForResult(intent, 2);
             } else {
                 String videoUrl = collections.getVideo_url();
-                if (videoUrl != null) {
+                if (videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
                     InAppVideoActivity.start(MyCollections.this, videoUrl, collections.getName());
                 } else {
                     Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
