@@ -50,6 +50,7 @@ public interface CallExtras {
         public static final int YO_INV_STATE_CALLEE_NOT_ONLINE = 12;
         public static final int YO_REQUEST_TIME_OUT = 13;
         public static final int YO_BUSY_HERE = 14;
+        public static final int YO_FORBIDDEN = 15;
 
         //Google data codes
         public static final String OTHER = "999";
@@ -57,6 +58,7 @@ public interface CallExtras {
         public static final String NO_ANSWER_NOT_ACCEPTABLE = "1001";
         public static final String YO_NEXGE_SERVER_DOWN = "1002";
         public static final String BUSY = "1003";
+        public static final String FORBIDDEN = "1004";
 
 
         public static final int YO_NORMAL_PHONE_INCOMING_CALL = 50;//put yo call on hold
@@ -74,6 +76,7 @@ public interface CallExtras {
         public static final String YO_NOT_ACCEPTABLE_HERE = "Not Acceptable Here";
         public static final String YO_NETWORK_IS_UNREACHABLE = "Network is unreachable";
         public static final String YO_BUSY_HERE = "Busy Here";
+        public static final String YO_FORBIDDEN = "Forbidden";
 
 
     }
@@ -83,5 +86,8 @@ public interface CallExtras {
         public static final String COM_YO_ACTION_CALL_ACCEPTED = "com.yo.action.CALL_ACCEPTED";
         public static final String COM_YO_ACTION_CALL_UPDATE_STATUS = "com.yo.action.CALL_UPDATE_STATUS";
         public static final String COM_YO_ACTION_CALL_NO_NETWORK = "com.yo.action.CALL_NO_NETWORK";
+        public static final String COM_YO_ACTION_CALL_NORMAL_CALL = "com.yo.action.CALL_NORMAL_CALL";
+        public static final String COM_YO_ACTION_CALL_NORMAL_CALL_DISCONNECTED = "com.yo.action.CALL_NORMAL_CALL_DISCONNECTED";
+
     }
 }

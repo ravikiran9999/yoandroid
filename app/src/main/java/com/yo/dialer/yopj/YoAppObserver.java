@@ -8,7 +8,7 @@ import org.pjsip.pjsua2.pjsip_status_code;
 
 public interface YoAppObserver {
     abstract void notifyRegState(pjsip_status_code code, String reason,
-                                 int expiration);
+                                 int expiration, String wholeMsg);
 
     abstract void notifyIncomingCall(YoCall call);
 

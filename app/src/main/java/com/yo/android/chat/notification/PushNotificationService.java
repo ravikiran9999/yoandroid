@@ -26,8 +26,16 @@ import com.yo.android.model.NotificationCount;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
+import com.yo.dialer.YoSipService;
+import com.yo.dialer.googlesheet.UploadCallDetails;
+import com.yo.dialer.googlesheet.UploadModel;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -74,7 +82,24 @@ public class PushNotificationService extends FirebaseMessagingService {
             PopupHelper.handlePop(preferenceEndPoint, data);
         }
 
-        //if(preferenceEndPoint.getBooleanPreference("isNotifications")) {
+        UploadModel model = new UploadModel(preferenceEndPoint);
+        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+        model.setNotificationType(data.get("tag"));
+        model.setNotificationDetails(data.get("message"));
+        Calendar c = Calendar.getInstance();
+        String formattedDate = YoSipService.df.format(c.getTime());
+        model.setDate(formattedDate);
+        Date d = new Date();
+        String currentDateTimeString = YoSipService.sdf.format(d);
+        model.setTime(currentDateTimeString);
+        String regId = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        model.setRegId(regId);
+        try {
+            UploadCallDetails.postDataFromApi(model, "Notifications");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         if (preferenceEndPoint.getBooleanPreference(Constants.IS_IN_APP)) {
             if (!data.get("tag").equals("POPUP")) {
@@ -87,27 +112,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         setBigStyleNotification(data.get("title").toString(), data.get("message").toString(), data.get("tag").toString(), data.get("id").toString());
     }
 
-    /*public void createNotification(String title, String message) {
 
-        Intent destinationIntent = new Intent(this, NotificationsActivity.class);
-
-        int notificationId = title.hashCode();
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);
-
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(getNotificationIcon())
-                .setContentTitle(title)
-                .setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_SOUND)
-                .setContentText(message)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(message)).setContentIntent(pendingIntent);
-        mNotificationManager.notify((int) System.currentTimeMillis(), notification.build());
-
-
-    }
-*/
     private int getNotificationIcon() {
         boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
         return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
@@ -128,7 +133,6 @@ public class PushNotificationService extends FirebaseMessagingService {
         NotificationBuilderObject notificationsInboxData = prepareNotificationData(title, message);
         UserData data = new UserData();
         data.setDescription(message);
-        //List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
         List<UserData> notificationList = new ArrayList<>();
         notificationList.add(data);
         notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, false);
@@ -142,8 +146,6 @@ public class PushNotificationService extends FirebaseMessagingService {
         notificationData.setNotificationText(message);
         notificationData.setNotificationLargeIconDrawable(R.mipmap.ic_launcher);
         notificationData.setNotificationInfo("3");
-        //notificationData.setNotificationLargeiconUrl(chatMessage.getImagePath());
-        //notificationData.setNotificationLargeText("Hello Every one ....Welcome to Notifications Demo..we are very glade to meet you here.Android Developers ");
         return notificationData;
     }
 }

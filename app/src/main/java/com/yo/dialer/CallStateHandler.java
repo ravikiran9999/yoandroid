@@ -4,6 +4,7 @@ import com.yo.android.BuildConfig;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.model.Contact;
 import com.yo.android.model.dialer.OpponentDetails;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.dialer.yopj.YoCallObserver;
 
 import org.pjsip.pjsua2.CallInfo;
@@ -12,6 +13,7 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 import de.greenrobot.event.EventBus;
 
 import static com.yo.dialer.CallExtras.StatusCode.BUSY;
+import static com.yo.dialer.CallExtras.StatusCode.FORBIDDEN;
 import static com.yo.dialer.CallExtras.StatusCode.OTHER;
 import static com.yo.dialer.CallExtras.StatusCode.YO_NEXGE_SERVER_DOWN;
 
@@ -25,6 +27,7 @@ public class CallStateHandler {
 
     public static void verify(YoSipService yoSipService, CallInfo info) {
         if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+            SipHelper.isAlreadyStarted = false;
             yoSipService.setCallAccepted(false);
             if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NOT_ACCEPTABLE_HERE)) {
                 checkMissedCall(yoSipService);
@@ -53,9 +56,11 @@ public class CallStateHandler {
             } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_BUSY_HERE)) {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_BUSY_HERE);
                 yoSipService.callDisconnected(BUSY, "Busy", "Getting Busy here, " + info.getCallIdString());
+            } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_FORBIDDEN)) {
+                yoSipService.callDisconnected(FORBIDDEN, "Forbidden", "Forbidden " + info.getCallIdString());
             } else {
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
-                yoSipService.callDisconnected(OTHER, "Call got disconnected", "Call got disconnected because of " + info.getLastReason());
+                yoSipService.callDisconnected(OTHER, "Call got disconnected", "Call got disconnected because of " + info.getLastReason()+", "+info.getCallIdString());
             }
             isRinging = false;
         } else if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED) {

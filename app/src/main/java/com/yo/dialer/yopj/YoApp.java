@@ -5,6 +5,7 @@ import com.yo.dialer.DialerLogs;
 import com.yo.dialer.model.SipProperties;
 
 import org.pjsip.pjsua2.AccountConfig;
+import org.pjsip.pjsua2.AudDevManager;
 import org.pjsip.pjsua2.AudioMedia;
 import org.pjsip.pjsua2.BuddyConfig;
 import org.pjsip.pjsua2.CodecInfo;
@@ -33,14 +34,11 @@ public class YoApp {
 
     static {
         try {
-            System.loadLibrary("openh264");
+            System.loadLibrary("pjsua2");
+            System.out.println("Library loaded");
         } catch (UnsatisfiedLinkError e) {
-            System.out.println("UnsatisfiedLinkError: " + e.getMessage());
-            System.out.println("This could be safely ignored if you " +
-                    "don't need video.");
+            DialerLogs.messageE(TAG, " UnsatisfiedLinkError: " + e.getMessage());
         }
-        System.loadLibrary("pjsua2");
-        System.out.println("Library loaded");
     }
 
     public static Endpoint ep = new Endpoint();
@@ -135,24 +133,15 @@ public class YoApp {
         try {
             ep.libStart();
             ep.codecSetPriority("*", (short) 0);
-            ep.codecSetPriority("opus", (short) 1);
-            ep.codecSetPriority("PCMA/8000", (short) 1);
-            ep.codecSetPriority("PCMU/8000", (short) 1);
             CodecInfoVector vector = ep.codecEnum();
             for (int i = 0; i < vector.size(); i++) {
                 CodecInfo codecInfo = vector.get(i);
                 DialerLogs.messageI(TAG, "YO=====ID=" + codecInfo.getCodecId() + ",Desc=" + codecInfo.getDesc() + ",Priority=" + codecInfo.getPriority());
             }
-
-            /*ep.codecSetPriority("PCMA/8000", (short) 2);
+            ep.codecSetPriority("opus", (short) 1);
+            ep.codecSetPriority("PCMA/8000", (short) 2);
             ep.codecSetPriority("PCMU/8000", (short) 3);
-            ep.codecSetPriority("G722/8000", (short) 4);
-            ep.codecSetPriority("iLBC/8000", (short) 5);
-            ep.codecSetPriority("GSM/8000", (short) 6);*/
-
-            //ep.codecSetPriority("G711/8000", (short) 1);
             ep.audDevManager().setInputRoute(pjmedia_aud_dev_route.PJMEDIA_AUD_DEV_ROUTE_CUSTOM);
-            // ep.audDevManager().setVad(sipProperties.isVad());
 
         } catch (Exception e) {
             DialerLogs.messageE(TAG, "YO== Initialization of codecs Failed==" + e.getMessage());
@@ -177,7 +166,8 @@ public class YoApp {
     private void createBuddy(YoAccount acc, AccountConfig acfg) {
         try {
             BuddyConfig cfg = new BuddyConfig();
-            cfg.setUri("\"919154512365\"<sip:youser919490570720D@173.82.147.172:6000>");
+            //cfg.setUri("\"919154512365\"<sip:youser919490570720D@173.82.147.172:6000>");
+            cfg.setUri("\"919154512365\"<sip:youser919490570720D@185.106.240.205:6000>");
             YoBuddy buddy = new YoBuddy();
             buddy.create(acc, cfg);
             buddy.subscribePresence(true);
@@ -220,5 +210,20 @@ public class YoApp {
         AudioMedia play_med = ep.audDevManager().getPlaybackDevMedia();
         AudioMedia cap_med = ep.audDevManager().getCaptureDevMedia();
         cap_med.startTransmit(play_med);
+    }
+
+    public void setEchoOptions() {
+        if (ep != null) {
+            try {
+                AudDevManager audDevManager = ep.audDevManager();
+                if (audDevManager != null) {
+                    audDevManager.setEcOptions(200, 3);
+                } else {
+                    DialerLogs.messageE(TAG, "While setting Eco options to incoming call audDevManager is null.");
+                }
+            } catch (Exception e) {
+                DialerLogs.messageE(TAG, "Filed to set Eco options to incoming call.");
+            }
+        }
     }
 }

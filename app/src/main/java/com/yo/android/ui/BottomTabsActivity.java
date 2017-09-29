@@ -35,7 +35,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -45,7 +44,6 @@ import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.WebserviceUsecase;
 import com.yo.android.adapters.TabsPagerAdapter;
-import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.firebase.FirebaseService;
@@ -60,7 +58,6 @@ import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.Articles;
 import com.yo.android.model.FindPeople;
-import com.yo.android.model.Lock;
 import com.yo.android.model.NotificationCount;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.pjsip.SipBinder;
@@ -87,7 +84,6 @@ import com.yo.restartapp.YOExceptionHandler;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,7 +99,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import pub.devrel.easypermissions.EasyPermissions;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -236,14 +231,18 @@ public class BottomTabsActivity extends BaseActivity {
         int index = 0;
         for (TabsData data : dataList) {
             final TabLayout.Tab tab = tabLayout.getTabAt(index);
-            tab.setCustomView(setTabs(data.getTitle(), data.getDrawable()));
+            if(tab != null) {
+                tab.setCustomView(setTabs(data.getTitle(), data.getDrawable()));
+            }
             index++;
         }
 
         customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
-        getSupportActionBar().setCustomView(customActionBar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setCustomView(customActionBar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayShowCustomEnabled(true);
+        }
 
         notificationCount = (Button) customActionBar.findViewById(R.id.notif_count);
         notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
@@ -465,10 +464,10 @@ public class BottomTabsActivity extends BaseActivity {
                         startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
                         finish();
                     } else if ("Broadcast".equals(tag) || "Tip".equals(tag) || "PriceUpdate".equals(tag)) {
-                        if (redirectId.equals("AddFriends")) {
+                        if (Constants.ADDFRIENDS.equals(redirectId)) {
                             startActivity(new Intent(BottomTabsActivity.this, InviteActivity.class));
                             finish();
-                        } else if (redirectId.equals("AddBalance")) {
+                        } else if (Constants.ADDBALANCE.equals(redirectId)) {
                             startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
                             finish();
                         }
@@ -515,6 +514,8 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     @Override
+
+
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         DialerLogs.messageI(TAG, requestCode + " Permissions while requesting " + grantResults[2]);
        /* mCredential = GoogleAccountCredential.usingOAuth2(
@@ -633,7 +634,7 @@ public class BottomTabsActivity extends BaseActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     DialerLogs.messageI(TAG, "Google App is authorized, you can go back to sending the API request");
                     try {
-                        UploadCallDetails.postDataFromApi((UploadModel) data.getSerializableExtra(CallExtras.GOOGLE_DATA));
+                        UploadCallDetails.postDataFromApi((UploadModel) data.getSerializableExtra(CallExtras.GOOGLE_DATA), "Notifications");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

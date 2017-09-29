@@ -25,9 +25,8 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
-import com.yo.android.R;
 import com.yo.android.BuildConfig;
-
+import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.dialer.CallRateDetail;
@@ -222,15 +221,15 @@ public class NewDailerActivity extends BaseActivity {
 
     private void loadCurrentBalance() {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        //double val = Double.parseDouble(balance.trim());
-        double val = Double.parseDouble(Util.numberFromNexgeFormat(balance.trim()));
+        String[] balanceArray = balance.trim().split("");
+        double val = Double.parseDouble(balanceArray[balanceArray.length - 1]);
         if (val <= 2) {
             mLog.w(TAG, "Current balance is less than or equal to $2");
             Util.setBigStyleNotificationForBalance(this, "Credit", getString(R.string.low_balance), "Credit", "");
             //Util.showLowBalanceNotification(this, preferenceEndPoint);
         }
         if (mBalanceHelper != null) {
-            if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
+            if (mBalanceHelper.getCurrentBalance() != null) {
                 //txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
                 //txtBalance.setText(String.format("%s %s", currencySymbolDollar, mBalanceHelper.getCurrentBalance()));
                 txtBalance.setText(String.format("%s", mBalanceHelper.getCurrentBalance()));

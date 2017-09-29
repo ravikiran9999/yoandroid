@@ -1,7 +1,9 @@
 package com.yo.dialer;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -10,6 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -31,14 +34,17 @@ import com.yo.android.networkmanager.NetworkStateChangeListener;
 import com.yo.android.networkmanager.NetworkStateListener;
 import com.yo.android.pjsip.MediaManager;
 import com.yo.android.pjsip.SipBinder;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.vox.BalanceHelper;
 import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
 import com.yo.dialer.ui.IncomingCallActivity;
 import com.yo.dialer.ui.OutgoingCallActivity;
 import com.yo.dialer.yopj.YoAccount;
+import com.yo.dialer.yopj.YoApp;
 import com.yo.dialer.yopj.YoCall;
 import com.yo.dialer.yopj.YoSipServiceHandler;
 import com.yo.feedback.AppFailureReport;
@@ -47,12 +53,16 @@ import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.pjsip_status_code;
 
 import java.io.IOException;
-import java.text.DateFormat;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -80,7 +90,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     private Vibrator mVibrator;
     private Uri mRingtoneUri;
     private static final long[] VIBRATOR_PATTERN = {0, 1000, 1000};
-
 
     public boolean isLocalHold() {
         return isLocalHold;
@@ -122,6 +131,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
+
+    @Inject
+    BalanceHelper mBalanceHelper;
+
     //Media Manager to handle audio related events.
     private MediaManager mediaManager;
     //Maintain current makeCall Object
@@ -152,6 +165,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     private Contact calleeContact;
 
+    private LocalBroadcastManager mLocalBroadcastManager; // for while gettin normal phone call, current call state should change
+
     public YoSipServiceHandler getSipServiceHandler() {
         return sipServiceHandler;
     }
@@ -162,6 +177,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     public static void setYoCurrentCall(YoCall yoCurrentCall) {
         YoSipService.yoCurrentCall = yoCurrentCall;
+    }
+
+    public static SimpleDateFormat df;
+    public static SimpleDateFormat sdf;
+
+
+    static {
+        df = new SimpleDateFormat("dd-MM-yyyy");
+        sdf = new SimpleDateFormat("hh:mm a");
     }
 
     @Nullable
@@ -195,7 +219,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                     DialerLogs.messageI(TAG, "YO========Previous registration request is in pending state==");
                 }
             } catch (Exception e) {
-                String failedMessage = "Acccount registration renewal Failed, No further logic to re-register." + e.getMessage();
+                yoAccount.delete();
+                yoAccount = null;
+                register();
+
+                String formattedDate = df.format(System.currentTimeMillis());
+                Date d = new Date();
+                String currentDateTimeString = sdf.format(d);
+                String failedMessage = formattedDate + " - " + currentDateTimeString + " Acccount registration renewal Failed, deleted existing account registration and doing new registration." + e.getMessage();
                 DialerLogs.messageI(TAG, failedMessage);
                 AppFailureReport.sendDetails(failedMessage);
             }
@@ -208,7 +239,34 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         parseIntentInfo(intent);
         initializeMediaPalyer();
         CheckStatus.registration(this);
+        registerBroadCast();
         return START_STICKY;
+    }
+
+    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL)) {
+                setHold(true);
+            } else if (intent.getAction().equals(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL_DISCONNECTED)) {
+                setHold(false);
+            }
+        }
+    };
+
+    private void registerBroadCast() {
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL);
+        mIntentFilter.addAction(CallExtras.Actions.COM_YO_ACTION_CALL_NORMAL_CALL_DISCONNECTED);
+        mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, mIntentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+        super.onDestroy();
     }
 
     private void initializeMediaPalyer() {
@@ -311,6 +369,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             handleBusy(yoCall);
         } else {
             yoCurrentCall = yoCall;
+            YoApp yoApp = YoSipServiceHandler.getYoApp();
+            if (yoApp != null) {
+                yoApp.setEchoOptions();
+            }
             startRingtone(); // to play caller ringtone
             DialerLogs.messageE(TAG, "On Incoming call current call call obj==" + yoCurrentCall);
             triggerNoAnswerIfNotRespond();
@@ -374,8 +436,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         String calleeNumber = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
         if (calleeNumber == null) {
-            callDisconnected(CallExtras.StatusCode.OTHER, "Unfortunately callee number got null " + calleeNumber, "Sending that no network, this may be request registration request timeout.");
-            sipServiceHandler.callDisconnected();
+            String errorMsg = "Unfortunately callee number got null " + calleeNumber;
+            String comment = "Sending that no network, this may be request registration request timeout.";
+            callDisconnected(CallExtras.StatusCode.OTHER, errorMsg, comment);
+            sipServiceHandler.callDisconnected(errorMsg + comment);
             sipServiceHandler.sendAction(new Intent(CallExtras.Actions.COM_YO_ACTION_CALL_NO_NETWORK));
             return;
         }
@@ -477,13 +541,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
-    private void updateDisconnectStatus() {
-        rejectCall();
-        isReconnecting = false;
-        callDisconnected(CallExtras.StatusCode.OTHER, "Disconnecting call", "Disconnecting call because Re-Inviting failed ");
-        mHandler.removeCallbacks(checkNetworkLossRunnable);
-    }
-
     public int getCallDurationInSec() {
         if (yoCurrentCall != null) {
             try {
@@ -511,8 +568,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 CallHelper.unHoldCall(yoCurrentCall);
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
-                //Disconnect the call;
-                updateDisconnectStatus();
             }
         }
     }
@@ -525,43 +580,59 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         setCurrentCallToNull();
         //If the call is rejected should stop rigntone
         stopDefaultRingtone();
-        DialerLogs.messageE(TAG, "callDisconnected");
-        long callduration = storeCallLog(phoneNumber);
-
-        uploadGoogleSheet(code, reason, comment, callduration);
-
-
+        DialerLogs.messageE(TAG, "callDisconnected" + reason);
+        long callduration = storeCallLog(phoneNumber, callType, callStarted);
+        uploadGoogleSheet(code, reason, comment, callduration, null);
         Util.cancelNotification(this, callNotificationId);
         if (sipServiceHandler != null) {
-            sipServiceHandler.callDisconnected();
+            sipServiceHandler.callDisconnected(reason);
         } else {
             DialerLogs.messageE(TAG, "SipServiceHandler is null");
         }
+        callStarted = 0;
     }
 
-    public void uploadGoogleSheet(String code, String reason, String comment, long callduration) {
+    public void uploadGoogleSheet(String code, String reason, String comment, long callduration, String missedCallNumber) {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
             try {
-                UploadModel model = new UploadModel();
                 PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
-                model.setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
-                model.setCallee(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
-                model.setCaller(phoneNumber);
+                UploadModel model = new UploadModel(preferenceEndPoint);
+                model.setCallee(phoneNumber);
+                String callee = model.getCallee();
+                if (callee != null && callee.contains(BuildConfig.RELEASE_USER_TYPE)) {
+                    model.setCallMode("App to App");
+                } else {
+                    model.setCallMode("App to PSTN");
+                }
                 model.setDuration(callduration + "");
                 if (callType == 1) {
                     model.setCallType("Incoming");
+                    model.setCaller(phoneNumber);
+                    model.setCallee(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
                 } else if (callType == 2) {
                     model.setCallType("Outgoing");
-
+                    model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+                    model.setCallee(phoneNumber);
                 } else {
                     model.setCallType("Missed Call");
+                    model.setCaller(missedCallNumber);
+                    model.setCallee(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
                 }
                 model.setStatusCode(code);
                 model.setStatusReason(reason);
                 model.setComments(comment);
-                String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-                model.setDateTime(currentDateTimeString);
-                UploadCallDetails.postDataFromApi(model);
+
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                String formattedDate = df.format(c.getTime());
+                model.setDate(formattedDate);
+                Date d = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+                String currentDateTimeString = sdf.format(d);
+                model.setTime(currentDateTimeString);
+                String balance = mBalanceHelper.getCurrentBalance();
+                model.setCurrentBalance(balance);
+                UploadCallDetails.postDataFromApi(model, "Calls");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -679,6 +750,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     protected synchronized void stopDefaultRingtone() {
+
         mVibrator.cancel();
         if (mRingTone != null) {
             try {
@@ -696,7 +768,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     }
 
-    private long storeCallLog(String mobileNumber) {
+    private long storeCallLog(String mobileNumber, int callType, long callStarted) {
         long currentTime = System.currentTimeMillis();
         long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
         if (callStarted == 0 || callType == -1) {
@@ -730,7 +802,6 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
 
         CallLog.Calls.addCall(info, getBaseContext(), mobileNumber, callType, callStarted, callDuration, pstnorapp);
-        callStarted = 0;
         return callDuration;
     }
 
@@ -740,8 +811,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 String source = DialerHelper.getInstance(YoSipService.this).getPhoneNumber(yoCall);
                 sendBusyHereToIncomingCall(yoCall);
                 Util.createNotification(this, source, getResources().getString(R.string.missed_call), BottomTabsActivity.class, new Intent(), false);
-                callType = CallLog.Calls.MISSED_TYPE;
-                storeCallLog(source);
+                storeCallLog(source, CallLog.Calls.MISSED_TYPE, 0);
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, e.getMessage());
             }

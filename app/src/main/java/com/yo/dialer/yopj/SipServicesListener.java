@@ -19,7 +19,7 @@ public interface SipServicesListener {
 
     void setHold(boolean flag);
 
-    void callDisconnected();
+    void callDisconnected(String reason);
 
     void updateWithCallStatus(int callState);
 

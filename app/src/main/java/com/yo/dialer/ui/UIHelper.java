@@ -1,5 +1,6 @@
 package com.yo.dialer.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -77,7 +78,6 @@ class UIHelper {
             connectionStatusTxtView.setText(context.getResources().getString(R.string.connecting_status));
             tvCallStatus.setText(context.getResources().getString(R.string.connecting_status));
         } else if (callStatus == CallExtras.StatusCode.YO_BUSY_HERE) {
-
             Toast.makeText(context, context.getResources().getString(R.string.busy), Toast.LENGTH_LONG).show();
         } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_SC_UNKNOWN) {
             if (isIncoming) {
@@ -87,6 +87,9 @@ class UIHelper {
                 connectionStatusTxtView.setText(context.getResources().getString(R.string.calling));
                 tvCallStatus.setText(context.getResources().getString(R.string.calling));
             }
+        } else if (callStatus == CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED) {
+            CallControls.getCallControlsModel().setCallAccepted(false);
+            ((Activity) context).finish();
         }
     }
 }

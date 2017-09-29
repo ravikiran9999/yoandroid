@@ -22,7 +22,13 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.dialer.googlesheet.UploadCallDetails;
+import com.yo.dialer.googlesheet.UploadModel;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -199,6 +205,30 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         articleReadParams.put("ArticleTitle", title);
 
         FlurryAgent.logEvent("Reading article", articleReadParams);
+        UploadModel model = new UploadModel(preferenceEndPoint);
+        if(data != null) {
+            // Topic Name
+            model.setNotificationType(data.getTopicName());
+        }
+        // Article Title
+        model.setNotificationDetails(title);
+        //String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = df.format(c.getTime());
+        model.setDate(formattedDate);
+        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+
+        Date d=new Date();
+        SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
+        String currentDateTimeString = sdf.format(d);
+        model.setTime(currentDateTimeString);
+
+        try {
+            UploadCallDetails.postDataFromApi(model, "Magazines");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

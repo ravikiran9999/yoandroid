@@ -187,7 +187,7 @@ public class YODialogs {
     }
 
     public static void redirectToPSTN(final EventBus bus, final Activity activity, final OpponentDetails details, PreferenceEndPoint preferenceEndPoint, BalanceHelper mBalanceHelper, final ToastFactory mToastFactory) {
-        DialerLogs.messageI(TAG, "redirectToPSTN Dailog");
+        DialerLogs.messageI(TAG, "redirectToPSTN Dailog " + activity);
 
         if (activity != null) {
 
@@ -220,7 +220,7 @@ public class YODialogs {
                             pulse = "sec";
                         }
 
-                        String callRate = " $" + cRate + "/" + pulse;
+                        String callRate = " " + cRate + "/" + pulse;
                         txtCallRate.setText(callRate);
                         break;
                     }
@@ -285,8 +285,8 @@ public class YODialogs {
             //Util.showLowBalanceNotification(context, preferenceEndPoint);
         }*/
         if (mBalanceHelper != null) {
-            if (mBalanceHelper.getCurrentBalance() != null && mBalanceHelper.getCurrencySymbol() != null) {
-                txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
+            if (mBalanceHelper.getCurrentBalance() != null) {
+                txtBalance.setText(String.format("%s", mBalanceHelper.getCurrentBalance()));
             } else {
                 txtBalance.setVisibility(View.GONE);
             }

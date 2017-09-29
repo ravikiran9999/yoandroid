@@ -403,6 +403,9 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         }
         otpReceived = true;
         stopTimer();
+        if (mPinHiddenEditText.length() > 0) {
+            clearOTP();
+        }
         String otp = IncomingSmsReceiver.extractOTP(bundle);
         if (otp != null) {
 
@@ -869,6 +872,40 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
 
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
         imm.showSoftInput(editText, 0);
+    }
+
+    private void clearOTP() {
+        if (mPinHiddenEditText.getText().length() == 6) {
+            mPinSixthDigitEditText.setText("");
+            mPinFifthDigitEditText.setText("");
+            mPinForthDigitEditText.setText("");
+            mPinThirdDigitEditText.setText("");
+            mPinSecondDigitEditText.setText("");
+            mPinFirstDigitEditText.setText("");
+        } else if (mPinHiddenEditText.getText().length() == 5) {
+            mPinFifthDigitEditText.setText("");
+            mPinForthDigitEditText.setText("");
+            mPinThirdDigitEditText.setText("");
+            mPinSecondDigitEditText.setText("");
+            mPinFirstDigitEditText.setText("");
+        } else if (mPinHiddenEditText.getText().length() == 4) {
+            mPinForthDigitEditText.setText("");
+            mPinThirdDigitEditText.setText("");
+            mPinSecondDigitEditText.setText("");
+            mPinFirstDigitEditText.setText("");
+        } else if (mPinHiddenEditText.getText().length() == 3) {
+            mPinThirdDigitEditText.setText("");
+            mPinSecondDigitEditText.setText("");
+            mPinFirstDigitEditText.setText("");
+        } else if (mPinHiddenEditText.getText().length() == 2) {
+            mPinSecondDigitEditText.setText("");
+            mPinFirstDigitEditText.setText("");
+        } else if (mPinHiddenEditText.getText().length() == 1)
+            mPinFirstDigitEditText.setText("");
+
+        if (mPinHiddenEditText.length() > 0)
+           // mPinHiddenEditText.setText(mPinHiddenEditText.getText().subSequence(0, mPinHiddenEditText.length() - 1));
+        mPinHiddenEditText.setText("");
     }
 
 }
