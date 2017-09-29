@@ -154,7 +154,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
         appCalls.clear();
         paidCalls.clear();
         final String filter = preferenceEndPoint.getStringPreference(Constants.DIALER_FILTER, Filter.ALL_CALLS);
-        FilterData filterData = Filter.getFilterType(filter, getActivity(), appCalls, paidCalls);
+        FilterData filterData = Filter.getFilterType(filter, activity, appCalls, paidCalls);
         CallLogs.load(activity, new CallLogCompleteLister() {
             @Override
             public void callLogsCompleted(CallLog callLog) {

@@ -562,12 +562,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void setHold(boolean isHold) {
         DialerLogs.messageE(TAG, "Call HOld" + isHold);
         if (isHold) {
-            CallHelper.holdCall(yoCurrentCall);
+            CallHelper.holdCall(yoCurrentCall, preferenceEndPoint, phoneNumber);
         } else {
             try {
                 CallHelper.unHoldCall(yoCurrentCall);
+                CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off");
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
+                CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off failed because of " + e.getMessage());
             }
         }
     }

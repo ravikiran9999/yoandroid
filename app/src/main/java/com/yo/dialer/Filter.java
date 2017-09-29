@@ -64,17 +64,29 @@ public class Filter {
             filterType = CallLogs.TOTAL_CALL_LOG;
             filterData.setFilterType(filterType);
             filterData.setFilterData(CallLog.Calls.getCallLog(activity));
-            filterData.setFilterTitle(activity.getString(R.string.all_calls));
+            if(activity == null){
+                filterData.setFilterTitle("All Calls");
+            } else {
+                filterData.setFilterTitle(activity.getString(R.string.all_calls));
+            }
         } else if (filter.equalsIgnoreCase(APP_CALLS)) {
             filterType = CallLogs.APP_TO_APP_CALL_LOG;
             filterData.setFilterType(filterType);
             filterData.setFilterData(appCalls);
-            filterData.setFilterTitle(activity.getString(R.string.free_calls));
+            if(activity == null){
+                filterData.setFilterTitle("Free Calls");
+            } else {
+                filterData.setFilterTitle(activity.getString(R.string.free_calls));
+            }
         } else if (filter.equalsIgnoreCase(PAID_CALLS)) {
             filterType = CallLogs.APP_TO_PSTN_CALL_LOG;
             filterData.setFilterType(filterType);
             filterData.setFilterData(paidCalls);
-            filterData.setFilterTitle(activity.getString(R.string.paid_calls));
+            if(activity == null){
+                filterData.setFilterTitle("Paid Calls");
+            } else {
+                filterData.setFilterTitle(activity.getString(R.string.paid_calls));
+            }
         }
         return filterData;
     }
