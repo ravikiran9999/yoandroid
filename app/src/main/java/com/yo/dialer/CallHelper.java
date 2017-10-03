@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.android.util.Constants;
 import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
 import com.yo.dialer.yopj.YoAccount;
@@ -220,6 +221,7 @@ public class CallHelper {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
             try {
                 UploadModel model = new UploadModel(preferenceEndPoint);
+                model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
                 model.setCallee(phoneNumber);
                 String callee = model.getCallee();
                 if (callee != null && callee.contains(BuildConfig.RELEASE_USER_TYPE)) {

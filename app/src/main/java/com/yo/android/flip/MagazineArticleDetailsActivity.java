@@ -22,6 +22,8 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.dialer.DialerConfig;
+import com.yo.dialer.YoSipService;
 import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
 
@@ -205,29 +207,28 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         articleReadParams.put("ArticleTitle", title);
 
         FlurryAgent.logEvent("Reading article", articleReadParams);
-        UploadModel model = new UploadModel(preferenceEndPoint);
-        if(data != null) {
-            // Topic Name
-            model.setNotificationType(data.getTopicName());
-        }
-        // Article Title
-        model.setNotificationDetails(title);
-        //String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        String formattedDate = df.format(c.getTime());
-        model.setDate(formattedDate);
-        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+        if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
+            UploadModel model = new UploadModel(preferenceEndPoint);
+            if (data != null) {
+                // Topic Name
+                model.setNotificationType(data.getTopicName());
+            }
+            // Article Title
+            model.setNotificationDetails(title);
+            //String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+            model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+            Calendar c = Calendar.getInstance();
+            String formattedDate = YoSipService.df.format(c.getTime());
+            model.setDate(formattedDate);
+            Date d = new Date();
+            String currentDateTimeString = YoSipService.sdf.format(d);
+            model.setTime(currentDateTimeString);
 
-        Date d=new Date();
-        SimpleDateFormat sdf=new SimpleDateFormat("hh:mm a");
-        String currentDateTimeString = sdf.format(d);
-        model.setTime(currentDateTimeString);
-
-        try {
-            UploadCallDetails.postDataFromApi(model, "Magazines");
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                UploadCallDetails.postDataFromApi(model, "Magazines");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
