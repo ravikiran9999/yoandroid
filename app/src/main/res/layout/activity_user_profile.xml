@@ -96,18 +96,32 @@
                                 android:textSize="16sp"
                                 tool:text="Name" />
 
-                            <TextView
-                                android:id="@+id/profile_name"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_toLeftOf="@+id/phone_number"
-                                android:gravity="left"
-                                android:maxLines="1"
-                                android:padding="15dp"
-                                android:textColor="@android:color/black"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                tool:text="Yo!" />
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/profile_name"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:maxLines="1"
+                                    android:padding="15dp"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    tool:text="Yo!" />
+                                <ImageView
+                                    android:id="@+id/edit_subject"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_margin="10dp"
+                                    android:visibility="gone"
+                                    android:src="@drawable/pencil_edit_button"
+                                    />
+                            </RelativeLayout>
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
@@ -130,7 +144,7 @@
                                 android:paddingStart="15dp"
                                 android:paddingTop="15dp"
                                 android:textColor="@android:color/darker_gray"
-                                tool:text="@string/participants" />
+                                tool:text="@string/mobile_number_title" />
 
                             <TextView
                                 android:id="@+id/profile_number"

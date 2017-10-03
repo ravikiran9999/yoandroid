@@ -142,12 +142,20 @@ dependencies {
     compile project(':emojilib')
     //Butter knife - view injector
     compile "com.android.support:support-v4:${supportAppcompatVersion}"
-    testCompile 'junit:junit:4.12'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
     compile "com.android.support:palette-v7:${supportAppcompatVersion}"
     compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '8.5.1'
     compile "com.github.hotchemi:permissionsdispatcher:${permissionsDispatcherVersion}"
     apt "com.github.hotchemi:permissionsdispatcher-processor:${permissionsDispatcherVersion}"
+
+    //For uploading data to google sheet
+    //https://developers.google.com/sheets/api/quickstart/android
+    compile('com.google.api-client:google-api-client-android:1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    compile('com.google.apis:google-api-services-sheets:v4-rev483-1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.google.firebase:firebase-messaging:9.8.0'
@@ -176,18 +184,11 @@ dependencies {
     compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.isseiaoki:simplecropview:1.1.4'
     compile 'com.flurry.android:analytics:7.0.0@aar'
-
-    //For uploading data to google sheet
-    //https://developers.google.com/sheets/api/quickstart/android
     compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'pub.devrel:easypermissions:0.3.0'
-    compile('com.google.api-client:google-api-client-android:1.22.0') {
-        exclude group: 'org.apache.httpcomponents'
-    }
-    compile('com.google.apis:google-api-services-sheets:v4-rev483-1.22.0') {
-        exclude group: 'org.apache.httpcomponents'
-    }
-
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
 }
 apply plugin: 'com.google.gms.google-services'
 

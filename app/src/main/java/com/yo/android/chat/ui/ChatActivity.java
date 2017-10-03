@@ -33,6 +33,7 @@ import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
+import com.yo.android.model.GroupSubject;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.Room;
 import com.yo.android.model.Share;
@@ -73,6 +74,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
     private SipBinder sipBinder;
 
+
+    private TextView customTitle;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -120,6 +123,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         final UserChatFragment userChatFragment = new UserChatFragment();
         final Bundle args = new Bundle();
 
@@ -235,7 +239,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
             View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
             LinearLayout titleView = ButterKnife.findById(customView, R.id.title_view);
-            TextView customTitle = ButterKnife.findById(customView, R.id.tv_phone_number);
+            customTitle = ButterKnife.findById(customView, R.id.tv_phone_number);
             final ImageView imageView = ButterKnife.findById(customView, R.id.imv_contact_pic);
 
             if (mContact != null) {
@@ -409,10 +413,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     };
 
     private void bindCallService() {
-
-
         bindService(new Intent(this, YoSipService.class), connection, Context.BIND_AUTO_CREATE);
-
     }
 
 
@@ -466,6 +467,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().post(new NotificationCountReset(0));
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -473,5 +475,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         super.onPause();
         progressLayout.setVisibility(View.GONE);
         unbindService(connection);
+    }
+
+    public void onEventMainThread(GroupSubject groupSubject) {
+        customTitle.setText(groupSubject.getUpdatedSubject());
     }
 }

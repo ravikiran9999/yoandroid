@@ -448,7 +448,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 @Override
                 public void onClick(View v) {
                     String videoUrl = data.getVideo_url();
-                    if(videoUrl != null) {
+                    if(videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
                         InAppVideoActivity.start((Activity) context, videoUrl, data.getTitle());
                     } else {
                         Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);

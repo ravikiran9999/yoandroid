@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -445,7 +446,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                mToastFactory.newToast("room subject updated", Toast.LENGTH_LONG);
+            }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -610,6 +613,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                                 Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
                                 firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(mPRoom));
+                                firebaseRoomReference.keepSynced(true);
                             }
                         }
 
@@ -645,6 +649,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             Firebase firebaseRoomReference = authReference.child(Constants.ROOMS).child(dataSnapshot.getKey()).child(Constants.CHATS);
             firebaseRoomReference.limitToLast(1).addChildEventListener(createChildEventListener(mPRoom));
+            firebaseRoomReference.keepSynced(true);
             if (!arrayOfUsers.contains(mPRoom)) {
                 return mPRoom;
             }

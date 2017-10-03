@@ -32,6 +32,10 @@ public class RoomInfo {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getCreated_at() {
         return created_at;
     }
