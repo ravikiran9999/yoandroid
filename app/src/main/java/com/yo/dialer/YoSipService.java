@@ -625,12 +625,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 model.setComments(comment);
 
                 Calendar c = Calendar.getInstance();
-                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-                String formattedDate = df.format(c.getTime());
+                String formattedDate = YoSipService.df.format(c.getTime());
                 model.setDate(formattedDate);
                 Date d = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                String currentDateTimeString = sdf.format(d);
+                String currentDateTimeString = YoSipService.sdf.format(d);
                 model.setTime(currentDateTimeString);
                 String balance = mBalanceHelper.getCurrentBalance();
                 model.setCurrentBalance(balance);
