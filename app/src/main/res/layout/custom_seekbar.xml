@@ -29,6 +29,7 @@
         android:max="100"
         android:maxHeight="12dp"
         android:progress="0"
+        android:layout_centerVertical="true"
         android:progressDrawable="@drawable/seekbar_progressbar"
         android:splitTrack="false"
         android:thumb="@drawable/custom_thumb"
