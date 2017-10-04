@@ -219,9 +219,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                     DialerLogs.messageI(TAG, "YO========Previous registration request is in pending state==");
                 }
             } catch (Exception e) {
-                yoAccount.delete();
+               /* yoAccount.delete();
                 yoAccount = null;
-                register();
+                register();*/
 
                 String formattedDate = df.format(System.currentTimeMillis());
                 Date d = new Date();
