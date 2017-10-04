@@ -31,6 +31,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="FabTheme">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
     <style name="AppTheme.Switch">
         <item name="colorAccent">@color/colorAccent</item>
     </style>

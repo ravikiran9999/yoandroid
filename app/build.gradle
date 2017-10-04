@@ -140,6 +140,7 @@ dependencies {
     compile project(':tagview')
     compile project(':yopjsip2.6')
     compile project(':emojilib')
+    compile project(':topsnackbar')
     //Butter knife - view injector
     compile "com.android.support:support-v4:${supportAppcompatVersion}"
     compile "com.android.support:palette-v7:${supportAppcompatVersion}"
