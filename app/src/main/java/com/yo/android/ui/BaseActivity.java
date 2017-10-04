@@ -174,6 +174,16 @@ public class BaseActivity extends ParentActivity {
                     Arrays.asList((Object) model.getCaller(), (Object) model.getName(), model.getNotificationType(), model.getNotificationDetails(), model.getDate(), model.getTime()
                     )
             );
+        } else if (type.equals("Hold")) {
+            range = "Hold!A:G";
+            DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+            if (TextUtils.isEmpty(model.getCallee().trim())) {
+                model.setCallee("Unknow..");
+            }
+            values = Arrays.asList(
+                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getCallMode(), model.getDate(), model.getTime(), model.getComments()
+                    )
+            );
         }
         sendToGoogleDrive(sheets, model, spreadsheetId, range, values);
     }

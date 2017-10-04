@@ -562,12 +562,14 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void setHold(boolean isHold) {
         DialerLogs.messageE(TAG, "Call HOld" + isHold);
         if (isHold) {
-            CallHelper.holdCall(yoCurrentCall);
+            CallHelper.holdCall(yoCurrentCall, preferenceEndPoint, phoneNumber);
         } else {
             try {
                 CallHelper.unHoldCall(yoCurrentCall);
+                CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off");
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
+                CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off failed because of " + e.getMessage());
             }
         }
     }
@@ -623,12 +625,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 model.setComments(comment);
 
                 Calendar c = Calendar.getInstance();
-                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-                String formattedDate = df.format(c.getTime());
+                String formattedDate = YoSipService.df.format(c.getTime());
                 model.setDate(formattedDate);
                 Date d = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-                String currentDateTimeString = sdf.format(d);
+                String currentDateTimeString = YoSipService.sdf.format(d);
                 model.setTime(currentDateTimeString);
                 String balance = mBalanceHelper.getCurrentBalance();
                 model.setCurrentBalance(balance);

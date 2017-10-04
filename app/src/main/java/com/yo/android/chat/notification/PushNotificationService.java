@@ -26,6 +26,7 @@ import com.yo.android.model.NotificationCount;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
+import com.yo.dialer.DialerConfig;
 import com.yo.dialer.YoSipService;
 import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
@@ -82,22 +83,24 @@ public class PushNotificationService extends FirebaseMessagingService {
             PopupHelper.handlePop(preferenceEndPoint, data);
         }
 
-        UploadModel model = new UploadModel(preferenceEndPoint);
-        model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
-        model.setNotificationType(data.get("tag"));
-        model.setNotificationDetails(data.get("message"));
-        Calendar c = Calendar.getInstance();
-        String formattedDate = YoSipService.df.format(c.getTime());
-        model.setDate(formattedDate);
-        Date d = new Date();
-        String currentDateTimeString = YoSipService.sdf.format(d);
-        model.setTime(currentDateTimeString);
-        String regId = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
-        model.setRegId(regId);
-        try {
-            UploadCallDetails.postDataFromApi(model, "Notifications");
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
+            UploadModel model = new UploadModel(preferenceEndPoint);
+            model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+            model.setNotificationType(data.get("tag"));
+            model.setNotificationDetails(data.get("message"));
+            Calendar c = Calendar.getInstance();
+            String formattedDate = YoSipService.df.format(c.getTime());
+            model.setDate(formattedDate);
+            Date d = new Date();
+            String currentDateTimeString = YoSipService.sdf.format(d);
+            model.setTime(currentDateTimeString);
+            String regId = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+            model.setRegId(regId);
+            try {
+                UploadCallDetails.postDataFromApi(model, "Notifications");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
