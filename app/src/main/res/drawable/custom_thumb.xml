@@ -2,13 +2,17 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <gradient
+   <!-- <gradient
         android:angle="180"
         android:endColor="#ea0a1c"
-        android:startColor="#ea0a1c" />
+        android:startColor="#ea0a1c" />-->
 
     <size
-        android:width="30dp"
-        android:height="30dp" />
+        android:width="20dp"
+        android:height="20dp" />
+
+    <stroke android:width="18dp" android:color="@color/colorPrimary"/>
+    <solid android:color="@color/colorPrimaryDark" />
+    <corners android:radius="1dp" />
 
 </shape>

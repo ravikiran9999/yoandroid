@@ -1,15 +1,19 @@
 package com.yo.dialer.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.androidadvance.topsnackbar.TSnackbar;
 import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.AppContactsActivity;
 import com.yo.android.util.Util;
@@ -26,7 +30,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class IncomingCallActivity extends CallBaseActivity implements View.OnClickListener {
     private static final String TAG = InComingCallActivity.class.getSimpleName();
 
+    private RelativeLayout relative_layout_main;
     private SeekBar seekBar;
+    private TSnackbar mSnackbar;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,9 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         setContentView(R.layout.dialer_received_call);
         setIncoming(true);
         DialerLogs.messageI(TAG, "YO==== Callee Number====" + callePhoneNumber);
+
+        //relative_layout_main = (LinearLayout) findViewById(R.id.relative_layout_main);
+
         initViews();
         loadUserDetails();
         loadCallePhoneNumber(callePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
@@ -48,10 +58,6 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
             loadPreviousSettings();
         }
         updateCallType();
-
-        // volume controller
-        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        Util.initBar(seekBar, audioManager, AudioManager.STREAM_VOICE_CALL);
 
     }
 
@@ -100,7 +106,9 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         callHoldView = (ImageView) findViewById(R.id.btnHold);
         callHoldView.setTag(callControlsModel != null ? callControlsModel.isHoldOn() : false);
 
-        seekBar = (SeekBar) findViewById(R.id.seek_bar);
+        //seekBar = (SeekBar) findViewById(R.id.seek_bar);
+        relative_layout_main = (RelativeLayout) findViewById(R.id.relative_layout_main);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
 
         registerListerners();
     }
@@ -118,8 +126,8 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         callMuteView.setOnClickListener(this);
         callSpeakerView.setOnClickListener(this);
         callEndBtn.setOnClickListener(this);
+        floatingActionButton.setOnClickListener(this);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -146,6 +154,9 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
             case R.id.btnHold:
                 toggleHold(v);
                 break;
+            case R.id.fab:
+                init();
+                break;
         }
     }
 
@@ -168,6 +179,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        init();
         if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
             int index = seekBar.getProgress();
             seekBar.setProgress(index - 1);
@@ -178,5 +190,34 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void init() {
+
+        if(mSnackbar == null) {
+            mSnackbar = TSnackbar.make(relative_layout_main, "", TSnackbar.LENGTH_LONG);
+        }
+
+        mSnackbar.setActionTextColor(Color.WHITE);
+        mSnackbar.setMaxWidth(3000);
+
+        final TSnackbar.SnackbarLayout layout = (TSnackbar.SnackbarLayout) mSnackbar.getView();
+        layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+
+        // Inflate our custom view
+        View snackView = getLayoutInflater().inflate(R.layout.custom_seekbar, null);
+        seekBar = (SeekBar)snackView.findViewById(R.id.seek_bar);
+        layout.addView(snackView, 0);
+        mSnackbar.show();
+        mSnackbar.setCallback(new TSnackbar.Callback() {
+            @Override
+            public void onDismissed(TSnackbar snackbar, @DismissEvent int event) {
+                super.onDismissed(snackbar, event);
+                mSnackbar = null;
+            }
+        });
+        // volume controller
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        Util.initBar(seekBar, audioManager, AudioManager.STREAM_VOICE_CALL);
     }
 }
