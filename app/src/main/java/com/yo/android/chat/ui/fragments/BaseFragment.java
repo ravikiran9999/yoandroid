@@ -98,4 +98,10 @@ public class BaseFragment extends Fragment {
             ((BottomTabsActivity) getActivity()).showOrHideTabs(show);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        dismissProgressDialog();
+    }
 }

@@ -27,7 +27,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "17.3.2.3"
+        versionName "17.4.1.0"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -140,6 +140,7 @@ dependencies {
     compile project(':tagview')
     compile project(':yopjsip2.6')
     compile project(':emojilib')
+    compile project(':topsnackbar')
     //Butter knife - view injector
     compile "com.android.support:support-v4:${supportAppcompatVersion}"
     compile "com.android.support:palette-v7:${supportAppcompatVersion}"
