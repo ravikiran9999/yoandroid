@@ -92,6 +92,8 @@ public class Notifications {
                 if (!isDialer) {
                     if (!AppRunningState.isRunning(mContext)) {
                         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                    } else if(notificationBuilderObject != null && notificationBuilderObject.getNotificationTitle().equals(com.yo.android.util.Constants.RECHARGE_SUCCESSFUL)) {
+                        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
                     }
                 } else {
                     mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
