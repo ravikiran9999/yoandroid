@@ -203,4 +203,6 @@ public class Constants {
     public static final String CALL = "Call";
     public static final String ADDFRIENDS = "AddFriends";
     public static final String ADDBALANCE = "AddBalance";
+
+    public static final String RECHARGE_SUCCESSFUL = "Payment Successful";
 }
