@@ -307,7 +307,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
                         finish();
                     }
 
-                    preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                    preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                 }
 
                 @Override
