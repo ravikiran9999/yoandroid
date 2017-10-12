@@ -56,6 +56,7 @@ public class YoApp {
     public void init(SipProperties sipProperties, YoAppObserver obs, String app_dir) {
         this.sipProperties = sipProperties;
         isInitialized = true;
+        DialerLogs.messageE(TAG, " Initialization of YOAPP: ");
         init(obs, app_dir, false, sipProperties);
 
     }
@@ -67,8 +68,12 @@ public class YoApp {
 
 	/* Create endpoint */
         try {
+            if (ep == null) {
+                ep = new Endpoint();
+            }
             ep.libCreate();
         } catch (Exception e) {
+            e.printStackTrace();
             return;
         }
 

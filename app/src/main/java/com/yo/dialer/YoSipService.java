@@ -202,18 +202,19 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         this.yoAccount = yoAccount;
     }
 
-    public void register() {
+    public void register(Intent intent) {
         mediaManager = new MediaManager(this);
-        if (yoAccount == null) {
+        String stringPreference = preferenceEndPoint.getStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE);
+        if (TextUtils.isEmpty(stringPreference) || yoAccount == null) {
             sipServiceHandler = YoSipServiceHandler.getInstance(this, preferenceEndPoint);
+            sipServiceHandler.setYoAccount(null);
             yoAccount = sipServiceHandler.addAccount(this);
-            DialerLogs.messageI(TAG, "Adding account.");
+            DialerLogs.messageI(TAG, "Adding account. yoaccount object is " + yoAccount);
         } else {
-            String stringPreference = preferenceEndPoint.getStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE);
             DialerLogs.messageI(TAG, "Acccount is already registered====Previsous state is=======" + stringPreference);
             try {
-                DialerLogs.messageI(TAG, "Acccount is already registered===========So doing renew");
-                if (!yoAccount.isRegistrationPending()) {
+                if (yoAccount != null && !yoAccount.isRegistrationPending()) {
+                    DialerLogs.messageI(TAG, "Acccount is already registered===========So doing renew");
                     yoAccount.setRegistration(true);
                 } else {
                     DialerLogs.messageI(TAG, "YO========Previous registration request is in pending state==");
@@ -231,6 +232,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 AppFailureReport.sendDetails(failedMessage);
             }
         }
+        if (intent != null) {
+            makeCall(intent);
+        }
     }
 
     @Override
@@ -238,7 +242,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         NetworkStateListener.registerNetworkState(listener);
         parseIntentInfo(intent);
         initializeMediaPalyer();
-        CheckStatus.registration(this);
+        CheckStatus.registration(this,preferenceEndPoint);
         registerBroadCast();
         return START_STICKY;
     }
@@ -283,11 +287,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
                 //   if (sipServiceHandler == null || (sipServiceHandler != null && sipServiceHandler.getRegistersCount() == 0)) {
                 DialerLogs.messageI(TAG, "Registering Account===========");
-                register();
+                setYoAccount(null);
+                register(null);
                 //   }
             } else if (CallExtras.UN_REGISTER.equals(intent.getAction())) {
                 if (sipServiceHandler != null && sipServiceHandler.getRegistersCount() > 0) {
                     sipServiceHandler.deleteAccount(yoAccount);
+                    getPreferenceEndPoint().saveStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE, null);
+                    setYoAccount(null);
+                    stopSelf();
                 }
             } else if (CallExtras.MAKE_CALL.equals(intent.getAction())) {
                 makeCall(intent);
@@ -338,12 +346,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 } else {
                     AppFailureReport.sendDetails("Problem with Current call object, so deleting account and re-register and calling agian.:" + username);
                     if (yoAccount != null) {
-                        yoAccount.delete();
+                        sipServiceHandler.deleteAccount(yoAccount);
                         yoAccount = null;
-                        register();
                         if (intent != null) {
                             intent.putExtra(CallExtras.RE_REGISTERING, true);
                         }
+                        sipServiceHandler.setYoAccount(null);
+                        register(intent);
                         makeCall(intent);
                     } else {
                         AppFailureReport.sendDetails("While Making call failed to create Account object and Call Object :" + username);
@@ -669,7 +678,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                             e.printStackTrace();
                         }
                     } else {
-                        register();
+                        register(null);
                     }
 
                     //To check ongoing call.

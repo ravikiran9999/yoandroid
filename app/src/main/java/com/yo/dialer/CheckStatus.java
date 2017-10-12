@@ -4,6 +4,8 @@ package com.yo.dialer;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.util.Constants;
 import com.yo.dialer.yopj.YoCall;
 import com.yo.feedback.AppFailureReport;
 
@@ -20,14 +22,16 @@ public class CheckStatus {
 
     private static final String TAG = CheckStatus.class.getSimpleName();
 
-    public static void registration(final YoSipService yoSipService) {
+    public static void registration(final YoSipService yoSipService, final PreferenceEndPoint preferenceEndPoint) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if (yoSipService != null) {
+                String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
+
+                if (yoSipService != null && username != null) {
                     String registrationStatus = yoSipService.getPreferenceEndPoint().getStringPreference(CallExtras.REGISTRATION_STATUS_MESSAGE);
                     if (!registrationStatus.equalsIgnoreCase(CallExtras.REGISTRATION_SUCCESS)) {
-                        yoSipService.register();
+                        yoSipService.register(null);
                     }
                     long time = System.currentTimeMillis();
                     int seconds = new Date(time).getSeconds();
