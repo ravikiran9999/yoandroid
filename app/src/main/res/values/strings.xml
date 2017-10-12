@@ -173,6 +173,7 @@
     <string name="no_result_found">No search results found</string>
     <string name="no">NO</string>
     <string name="yes">YES</string>
+    <string name="retry">RETRY</string>
     <string name="select_contact">Select Contact</string>
     <string name="sign_out">Sign Out</string>
     <string name="signout_text">Are you sure you want to Sign Out ?</string>
@@ -270,6 +271,7 @@
     <string name="followers">Followers</string>
     <string name="followings">Followings</string>
     <string name="find_people">Yo! People</string>
+    <string name="move_to_top">Back to Top</string>
     <string name="liked_articles">Liked Articles</string>
     <string name="my_topics">My Collections</string>
     <string name="my_magazines">My Magazines</string>
@@ -370,7 +372,8 @@
     <string name="app_call">APP CALL</string>
 
     <string name="auto_renewal">Enable auto-renewal</string>
-    <string name="renewal_message">Please renew to see magazines </string>
+    <string name="renewal_message">Please renew to see magaziwnes </string>
+    <string name="renewal_error_message">Uh! something went wrong. Please try again </string>
     <string name="no_sufficient_bal_wallet">You don\'t have sufficient balance in wallet. Please add balance.</string>
     <string name="add">ADD</string>
 
@@ -395,5 +398,8 @@
 
     <string name="buy">BUY</string>
     <string name="item_package_price">$5</string>
+
+    <!--error messages-->
+    <string name="like_unlike_error_message">Something went wrong. Please try again</string>
 
 </resources>
