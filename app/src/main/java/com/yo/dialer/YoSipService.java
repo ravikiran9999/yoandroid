@@ -588,6 +588,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     public void callDisconnected(String code, String reason, String comment) {
+        SipHelper.isAlreadyStarted = false;
         setCurrentCallToNull();
         //If the call is rejected should stop rigntone
         stopDefaultRingtone();
@@ -743,6 +744,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
+        SipHelper.isAlreadyStarted = false;
         Util.cancelNotification(this, callNotificationId);
         DialerLogs.messageE(TAG, "KILLING YO APPLICATION.");
         sendBroadcast(new Intent("YouWillNeverKillMe"));

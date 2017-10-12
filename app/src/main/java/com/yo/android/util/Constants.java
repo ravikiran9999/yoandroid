@@ -43,7 +43,6 @@ public class Constants {
     public static final String TODAY = "Today";
     public static final String YESTERDAY = "Yesterday";
 
-    //Preference
 
     //UserProfile
     public static final String USER_ID = "user_id";
@@ -203,4 +202,10 @@ public class Constants {
     public static final String CALL = "Call";
     public static final String ADDFRIENDS = "AddFriends";
     public static final String ADDBALANCE = "AddBalance";
+
+    // Recharge
+    public static final String RECHARGE_SUCCESSFUL = "Payment Successful";
+
+    //Magazine
+    public static final String MAGAZINE_TAGS = "magazine_tags";
 }

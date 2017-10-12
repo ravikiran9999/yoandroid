@@ -615,8 +615,8 @@ public class TopicsDetailActivity extends BaseActivity {
 
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     final List<String> followedTopicsIdsList = new ArrayList<String>();
-                    if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
-                        String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
+                    if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS))) {
+                        String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS), ",");
                         for (int i = 0; i < prefTags.length; i++) {
                             followedTopicsIdsList.add(prefTags[i]);
                         }
@@ -636,7 +636,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                 MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateFollowTopicStatus(topic, Constants.FOLLOW_TOPIC_EVENT);
                             }
 
-                            preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                            preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                         }
 
                         @Override

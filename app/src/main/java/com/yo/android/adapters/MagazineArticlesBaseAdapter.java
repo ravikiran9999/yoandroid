@@ -26,6 +26,9 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -432,6 +435,18 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 if (!((BaseActivity) context).hasDestroyed()) {
                     Glide.with(context)
                             .load(data.getImage_filename())
+                            .listener(new RequestListener<String, GlideDrawable>() {
+                                @Override
+                                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                    mToastFactory.newToast(e.getMessage(), Toast.LENGTH_SHORT);
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                    return false;
+                                }
+                            })
                             .placeholder(R.drawable.img_placeholder)
                             //Image size will be reduced 50%
                             .thumbnail(0.5f)

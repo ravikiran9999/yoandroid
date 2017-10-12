@@ -138,7 +138,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         isShowDefault = false;
         synchronized (this) {
             isRoomsExist(null);
-            isRoomsExists(null);
         }
     }
 
@@ -447,7 +446,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                mToastFactory.newToast("room subject updated", Toast.LENGTH_LONG);
+                //mToastFactory.newToast("room subject updated", Toast.LENGTH_LONG);
             }
 
             @Override

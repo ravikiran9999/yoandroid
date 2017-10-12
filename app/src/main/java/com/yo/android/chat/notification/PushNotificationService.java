@@ -125,7 +125,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         Notifications notification = new Notifications();
 
         Intent notificationIntent = new Intent(this, BottomTabsActivity.class);
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
         notificationIntent.putExtra("title", title);
         notificationIntent.putExtra("message", message);

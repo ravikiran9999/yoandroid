@@ -34,9 +34,7 @@ android {
         buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
         buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
         buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
-        buildConfigField "boolean", "NEW_DIALER", "true"
-
-        multiDexEnabled true
+        buildConfigField "boolean", "NEW_DIALER", "true"        multiDexEnabled true
     }
     productFlavors {
 

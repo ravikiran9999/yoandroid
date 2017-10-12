@@ -220,7 +220,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 topicsList.clear();
                 topicsList.addAll(response.body());
                 topicsNewList = topicsList;
-                if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
+                if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS))) {
                     List<String> followedTopicsIdsList = new ArrayList<String>();
                     for (int k = 0; k < topicsList.size(); k++) {
                         if (topicsList.get(k).isSelected()) {
@@ -228,7 +228,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         }
 
                     }
-                    preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                    preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                 }
                 topicNamesList = new ArrayList<String>();
                 for (int i = 0; i < topicsList.size(); i++) {
@@ -576,7 +576,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
                     callApiSearchTopics();
                 }
-                preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                preferenceEndPoint.saveStringPreference("Constants.MAGAZINE_TAGS", TextUtils.join(",", followedTopicsIdsList));
                 if (followedTopicsIdsList.isEmpty()) {
                     mMagazineFlipArticlesFragment.getLandingCachedArticles();
                 }

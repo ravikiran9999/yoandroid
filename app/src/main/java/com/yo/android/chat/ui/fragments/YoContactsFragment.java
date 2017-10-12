@@ -194,9 +194,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 /*Intent intent = new Intent(activity, CreateGroupActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivityForResult(intent, CREATE_GROUP_RESULT);*/
-            } else if (activity != null && contact.getNexgieUserName() != null && forwardChatMessages != null) {
+            } else if (activity != null && contact.getNexgieUserName() != null && forwardChatMessages != null && contact.getYoAppUser()) {
                 ChatActivity.start(activity, contact, forwardChatMessages);
-            } else {
+            } else if (activity != null && contact.getNexgieUserName() != null && contact.getYoAppUser()) {
                 ChatActivity.start(activity, contact, share);
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {

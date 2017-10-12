@@ -11,12 +11,15 @@ import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
 import com.yo.android.R;
 import com.yo.android.model.Categories;
+import com.yo.android.model.Collections;
 import com.yo.android.model.Topics;
 import com.yo.android.sectionheaders.CategorizedList;
 import com.yo.android.sectionheaders.CategoryAdapter;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -68,6 +71,14 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
                     initialTags.add(tag);
                     ((FollowMoreTopicsActivity) context).initialTags.add(tag);
                 }
+                //ArrayList<Tag> cacheTags = new ArrayList<>(initialTags);
+                java.util.Collections.sort(initialTags, new Comparator<Tag>() {
+                    @Override
+                    public int compare(Tag lhs, Tag rhs) {
+                        return lhs.getText().toLowerCase().compareTo(rhs.getText().toLowerCase());
+                    }
+                });
+
                 categoriesHashMap.put(categories.getName(), initialTags);
             }
         }

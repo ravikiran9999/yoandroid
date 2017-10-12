@@ -310,6 +310,7 @@
         <activity
             android:name=".ui.TabsHeaderActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".inapp.UnManageInAppPurchaseActivity"
@@ -419,7 +420,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="InAppVideoActivity"
             android:screenOrientation="sensor"
-            android:theme="@style/YoutubeTheme"></activity>
+            android:theme="@style/YoutubeTheme"/>
         <activity
             android:name=".ui.PlainActivity"
             android:label=""

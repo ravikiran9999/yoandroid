@@ -299,7 +299,7 @@ public class MagazineDashboardHelper {
      * @param preferenceEndPoint The PreferenceEndPoint object
      * @param key The key
      */
-    public void removeArticlesFromCache(Context context, final PreferenceEndPoint preferenceEndPoint, String key) {
+    public static void removeArticlesFromCache(Context context, final PreferenceEndPoint preferenceEndPoint, String key) {
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         if (context != null) {
             SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
@@ -341,8 +341,8 @@ public class MagazineDashboardHelper {
                     }
                     addArticles(id, magazineFlipArticlesFragment, totalArticles, unreadOtherFollowedArticles, followedArticlesList);
                     break;
-                case 401:
-                case 403:
+                case 401: // auto renewal failed. Please try again
+                case 403: // You should do auto renewal to access Magazines
                     preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
                     if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {
                         YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, activity.getString(R.string.renewal_message), preferenceEndPoint);
@@ -356,6 +356,7 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
                     break;
+                // no sufficient balance in wallet
                 case 405:
                     preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
                     if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {

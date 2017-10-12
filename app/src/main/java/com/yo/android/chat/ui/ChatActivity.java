@@ -153,7 +153,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
-            // Util.cancelAllNotification(this);
+            Util.cancelAllNotification(this);
             callUserChat(args, userChatFragment);
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             final Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
@@ -201,7 +201,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     callUserChat(args, userChatFragment);
                 }
 
-                // Util.cancelAllNotification(this);
+                Util.cancelAllNotification(this);
 
             }
 

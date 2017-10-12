@@ -13,6 +13,7 @@ import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.SuggestionsViewHolder;
 import com.yo.android.model.Topics;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,8 +70,8 @@ public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsV
                 }
                 String accessToken = preferenceEndPoint.getStringPreference("access_token");
                 final List<String> followedTopicsIdsList = new ArrayList<String>();
-                if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("magazine_tags"))) {
-                    String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference("magazine_tags"), ",");
+                if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS))) {
+                    String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS), ",");
                     for(int i=0; i<prefTags.length; i++) {
                         followedTopicsIdsList.add(prefTags[i]);
                     }
@@ -85,7 +86,7 @@ public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsV
 
                         EventBus.getDefault().post(item.getId());
 
-                        preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                        preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                     }
 
                     @Override

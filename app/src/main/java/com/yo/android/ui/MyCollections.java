@@ -328,7 +328,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             for (int i = 0; i < collectionsList.size(); i++) {
                                 followedTopicsIdsList.add(collectionsList.get(i).getId());
                             }
-                            preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                            preferenceEndPoint.saveStringPreference("Constants.MAGAZINE_TAGS", TextUtils.join(",", followedTopicsIdsList));
 
                         }
 
@@ -373,7 +373,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             for (int i = 0; i < collectionsList.size(); i++) {
                                 followedTopicsIdsList.add(collectionsList.get(i).getId());
                             }
-                            preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                            preferenceEndPoint.saveStringPreference("Constants.MAGAZINE_TAGS", TextUtils.join(",", followedTopicsIdsList));
 
                         }
 
@@ -473,7 +473,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                     for (int i = 0; i < collectionsList.size(); i++) {
                         followedTopicsIdsList.add(collectionsList.get(i).getId());
                     }
-                    preferenceEndPoint.saveStringPreference("magazine_tags", TextUtils.join(",", followedTopicsIdsList));
+                    preferenceEndPoint.saveStringPreference("Constants.MAGAZINE_TAGS", TextUtils.join(",", followedTopicsIdsList));
 
                 }
 
