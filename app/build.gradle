@@ -34,7 +34,8 @@ android {
         buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
         buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
         buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
-        buildConfigField "boolean", "NEW_DIALER", "true"        multiDexEnabled true
+        buildConfigField "boolean", "NEW_DIALER", "true"
+        multiDexEnabled true
     }
     productFlavors {
 
@@ -136,7 +137,7 @@ dependencies {
     // firebase
     compile project(':flip')
     compile project(':tagview')
-    compile project(':yopjsip2.6')
+    compile project(':yowatsuppjsip2.7')
     compile project(':emojilib')
     compile project(':topsnackbar')
     //Butter knife - view injector

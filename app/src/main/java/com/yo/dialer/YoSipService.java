@@ -242,7 +242,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         NetworkStateListener.registerNetworkState(listener);
         parseIntentInfo(intent);
         initializeMediaPalyer();
-        CheckStatus.registration(this,preferenceEndPoint);
+        CheckStatus.registration(this, preferenceEndPoint);
         registerBroadCast();
         return START_STICKY;
     }
@@ -311,6 +311,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         stopDefaultRingtone();
         DialerLogs.messageE(TAG, "rejectCall==" + yoCurrentCall);
         if (yoCurrentCall != null) {
+            SipHelper.isAlreadyStarted = false;
             CallHelper.rejectCall(yoCurrentCall);
         }
     }
@@ -342,6 +343,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 if (intent != null && intent.hasExtra(CallExtras.RE_REGISTERING)) {
                     //Re-tried but agian problem.
                     AppFailureReport.sendDetails("Making call failed, try to delete account but still issue, restart app required. :" + username);
+                    SipHelper.isAlreadyStarted = false;
                     return;
                 } else {
                     AppFailureReport.sendDetails("Problem with Current call object, so deleting account and re-register and calling agian.:" + username);
@@ -356,6 +358,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                         makeCall(intent);
                     } else {
                         AppFailureReport.sendDetails("While Making call failed to create Account object and Call Object :" + username);
+                        SipHelper.isAlreadyStarted = false;
                     }
                 }
             }
@@ -520,7 +523,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             @Override
             public void run() {
                 if (yoCurrentCall != null) {
-                    DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread..." + isRemoteHold);
+                    DialerLogs.messageE(TAG, "YO===Re-Inviting from Thread...Remote Hold= " + isRemoteHold + ", isLocalHold = " + isLocalHold());
                     if (!isRemoteHold() && !isLocalHold() && isCallAccepted()) {
                         reInviteToCheckCalleStatus();
                     }

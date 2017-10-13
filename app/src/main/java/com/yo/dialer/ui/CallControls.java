@@ -29,7 +29,7 @@ class CallControls {
 
     private static CallControlsModel callControlsModel = new CallControlsModel();
 
-    public static void toggleHold(SipBinder sipBinder, View v) {
+    public static boolean toggleHold(SipBinder sipBinder, View v) {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             if (v.getTag() != null) {
                 Boolean flag = Boolean.valueOf(v.getTag().toString());
@@ -43,11 +43,14 @@ class CallControls {
                 }
                 v.setTag(!flag);
                 DialerLogs.messageE(TAG, "toggleHold Changing ==" + !flag);
+                return flag;
             } else {
                 DialerLogs.messageE(TAG, "YO====toggleHold == v.getTag null");
+                return false;
             }
         } else {
             DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
+            return false;
         }
     }
 
@@ -93,13 +96,14 @@ class CallControls {
         return false;
     }
 
-    private static void changeSelection(View v, Boolean flag) {
+    public static void changeSelection(View v, Boolean flag) {
         if (flag) {
             v.setBackgroundResource(R.drawable.mute_selector);
         } else {
             v.setBackgroundResource(0);
         }
     }
+
     public static void loadFullImage(Context context, String imagePath, final RelativeLayout fullImageLayout) {
         int myWidth = 512;
         int myHeight = 384;
@@ -160,8 +164,8 @@ class CallControls {
     }
 
     public static void toggleRecSpeaker(AudioManager am, View v) {
-            changeSelection(v, true);
-            v.setTag(true);
+        changeSelection(v, true);
+        v.setTag(true);
 
     }
 }

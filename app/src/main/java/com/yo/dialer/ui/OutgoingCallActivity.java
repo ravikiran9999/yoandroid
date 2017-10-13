@@ -157,6 +157,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         callRejectBtn.setVisibility(View.GONE);
     }
 
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -176,7 +177,14 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
                 toggleMic(v);
                 break;
             case R.id.btnHold:
-                toggleHold(v);
+                boolean isHold = toggleHold(v);
+                if (!isHold) {
+                    sipBinder.getYOHandler().setMic(false);
+                    CallControls.changeSelection(callMicBtn, false);
+                } else {
+                    sipBinder.getYOHandler().setMic(CallControls.getCallControlsModel().isMicOn());
+                    CallControls.changeSelection(callMicBtn, CallControls.getCallControlsModel().isMicOn());
+                }
                 break;
             case R.id.btnSpeaker:
                 toggleSpeaker(v);
@@ -207,7 +215,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
     }
 
     private void init() {
-        if(mSnackbar == null) {
+        if (mSnackbar == null) {
             mSnackbar = TSnackbar.make(relative_layout_main, "", TSnackbar.LENGTH_LONG);
         }
         mSnackbar.setActionTextColor(Color.WHITE);
@@ -218,7 +226,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
 
         // Inflate our custom view
         View snackView = getLayoutInflater().inflate(R.layout.custom_seekbar, null);
-        seekBar = (SeekBar)snackView.findViewById(R.id.seek_bar);
+        seekBar = (SeekBar) snackView.findViewById(R.id.seek_bar);
         layout.addView(snackView, 0);
         mSnackbar.show();
         mSnackbar.setCallback(new TSnackbar.Callback() {
