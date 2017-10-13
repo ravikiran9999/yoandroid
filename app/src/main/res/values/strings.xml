@@ -395,5 +395,7 @@
 
     <string name="buy">BUY</string>
     <string name="item_package_price">$5</string>
+    <string name="contacts_all">ALL</string>
+    <string name="contacts_yo">YO</string>
 
 </resources>

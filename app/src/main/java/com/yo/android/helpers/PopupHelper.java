@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.ContactsFragment;
 import com.yo.android.model.Popup;
@@ -14,6 +15,7 @@ import com.yo.android.model.PopupData;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.ui.fragments.NewContactsFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.DateUtil;
 import com.yo.android.util.PopupDialogListener;
@@ -157,14 +159,28 @@ public class PopupHelper {
                     Date liveToDate = DateUtil.convertUtcToGmt(liveToTime4);
                     long currentTime = System.currentTimeMillis();
                     Date currentDate = new Date(currentTime);
-                    if (fragment instanceof ContactsFragment && liveToDate.after(currentDate)) {
-                        YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
-                    } else if (!liveToDate.after(currentDate)) {
-                        preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
+                    if (BuildConfig.NEW_CONTACTS_SCREEN) {
+                        if (fragment instanceof NewContactsFragment && liveToDate.after(currentDate)) {
+                            YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                        } else if (!liveToDate.after(currentDate)) {
+                            preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
+                        }
+                    } else {
+                        if (fragment instanceof ContactsFragment && liveToDate.after(currentDate)) {
+                            YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                        } else if (!liveToDate.after(currentDate)) {
+                            preferenceEndPoint.saveStringPreference(Constants.POPUP_NOTIFICATION, new Gson().toJson(tempPopupList));
+                        }
                     }
                 } else {
-                    if (fragment instanceof ContactsFragment) {
-                        YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                    if (BuildConfig.NEW_CONTACTS_SCREEN) {
+                        if (fragment instanceof NewContactsFragment) {
+                            YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                        }
+                    } else {
+                        if (fragment instanceof ContactsFragment) {
+                            YODialogs.showPopup(preferenceEndPoint, activity, p, listener);
+                        }
                     }
                 }
                 break;
