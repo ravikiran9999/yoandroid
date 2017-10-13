@@ -3,6 +3,7 @@ package com.yo.android.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.StringRes;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -343,7 +344,7 @@ public class MagazineDashboardHelper {
                     break;
                 case 401: // auto renewal failed. Please try again
                 case 403: // You should do auto renewal to access Magazines
-                    preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
+                    /*preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
                     if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {
                         YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, activity.getString(R.string.renewal_message), preferenceEndPoint);
                     }
@@ -354,7 +355,11 @@ public class MagazineDashboardHelper {
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
+                    magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);*/
+                    renewMagazines(R.string.renewal_message, activity, id, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, unreadOtherFollowedArticles, followedArticlesList);
+                    break;
+                case 702:
+                    renewMagazines(R.string.renewal_error_message, activity, id, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, unreadOtherFollowedArticles, followedArticlesList);
                     break;
                 // no sufficient balance in wallet
                 case 405:
@@ -415,5 +420,20 @@ public class MagazineDashboardHelper {
     private void addDashboardArticlesForDailyService(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles) {
         articlesFragment.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles);
         articlesFragment.handleMoreDashboardResponse(totalArticles, false);
+    }
+
+    private void renewMagazines(@StringRes int message, Activity activity, int id, PreferenceEndPoint preferenceEndPoint, MagazineFlipArticlesFragment magazineFlipArticlesFragment, List<Articles> totalArticles, final List<Articles> unreadOtherFollowedArticles, List<Articles> followedArticlesList) {
+        preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
+        if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {
+            YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, message, preferenceEndPoint);
+        }
+        removeArticlesFromCache(activity, preferenceEndPoint, "followed_cached_magazines");
+        removeArticlesFromCache(activity, preferenceEndPoint, "random_cached_magazines");
+        if (magazineFlipArticlesFragment.mProgress != null) {
+            magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
+        }
+        magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
+        magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
+        magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);
     }
 }

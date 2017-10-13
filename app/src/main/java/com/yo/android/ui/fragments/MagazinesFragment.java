@@ -265,12 +265,16 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         prepareTopicsSearch(menu);
         boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
         switch (item.getItemId()) {
+            case R.id.menu_move_to_first :
+
+                mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                break;
             case R.id.menu_create_magazines:
                 if (renewalStatus) {
                     Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
                     startActivity(createMagazinesIntent);
                 } else {
-                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                    YODialogs.renewMagazine(getActivity(), null, R.string.renewal_message, preferenceEndPoint);
                 }
                 break;
             case R.id.menu_my_collections:
@@ -278,7 +282,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     Intent myCollectionsIntent = new Intent(getActivity(), MyCollections.class);
                     startActivity(myCollectionsIntent);
                 } else {
-                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                    YODialogs.renewMagazine(getActivity(), null, R.string.renewal_message, preferenceEndPoint);
                 }
                 break;
 
@@ -291,7 +295,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     Intent followersIntent = new Intent(getActivity(), FollowersActivity.class);
                     startActivity(followersIntent);
                 } else {
-                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                    YODialogs.renewMagazine(getActivity(), null, R.string.renewal_message, preferenceEndPoint);
                 }
                 break;
             case R.id.menu_wish_list:
@@ -299,7 +303,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     Intent wishListIntent = new Intent(getActivity(), WishListActivity.class);
                     startActivity(wishListIntent);
                 } else {
-                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                    YODialogs.renewMagazine(getActivity(), null, R.string.renewal_message, preferenceEndPoint);
                 }
                 break;
             case R.id.menu_followings:
@@ -307,7 +311,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     Intent followingstIntent = new Intent(getActivity(), FollowingsActivity.class);
                     startActivity(followingstIntent);
                 } else {
-                    YODialogs.renewMagazine(getActivity(), null, getString(R.string.renewal_message), preferenceEndPoint);
+                    YODialogs.renewMagazine(getActivity(), null, R.string.renewal_message, preferenceEndPoint);
                 }
                 break;
             default:
@@ -576,7 +580,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
                     callApiSearchTopics();
                 }
-                preferenceEndPoint.saveStringPreference("Constants.MAGAZINE_TAGS", TextUtils.join(",", followedTopicsIdsList));
+                preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                 if (followedTopicsIdsList.isEmpty()) {
                     mMagazineFlipArticlesFragment.getLandingCachedArticles();
                 }
