@@ -53,6 +53,10 @@ import com.yo.android.util.MagazineOtherPeopleReflectListener;
 import com.yo.android.util.Util;
 import com.yo.android.video.InAppVideoActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -268,6 +272,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
                                 ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -1231,6 +1236,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                likeUnlikeErrorMessage(response);
                                 ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -1289,6 +1295,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                likeUnlikeErrorMessage(response);
                                 ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
@@ -2082,6 +2089,20 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
             editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
             editor.commit();
+        }
+    }
+
+    private void likeUnlikeErrorMessage(Response<ResponseBody> response) {
+        try {
+            if((new JSONObject(response.body().string())).get("code") == 422) {
+                mToastFactory.showToast(R.string.like_unlike_error_message);
+                return;
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
