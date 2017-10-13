@@ -1,6 +1,8 @@
 package com.yo.android.app;
 
+import android.content.Context;
 import android.os.StrictMode;
+import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -65,6 +67,7 @@ public class BaseApp extends MultiDexApplication {
         objectGraph.inject(this);
     }
 
+
     @Override
     public Object getSystemService(String name) {
         if (Injector.matchesService(name)) {
@@ -88,5 +91,10 @@ public class BaseApp extends MultiDexApplication {
                 .withLogLevel(Log.VERBOSE)
                 .withListener(flurryAgentListener)
                 .build(this, Constants.FLURRY_API_KEY);
+    }
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

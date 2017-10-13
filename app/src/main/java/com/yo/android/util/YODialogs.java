@@ -297,7 +297,7 @@ public class YODialogs {
         }
     }
 
-    public static void renewMagazine(final Activity activity, final Fragment fragment, String description, final PreferenceEndPoint preferenceEndPoint) {
+    public static void renewMagazine(final Activity activity, final Fragment fragment, int description, final PreferenceEndPoint preferenceEndPoint) {
         LayoutInflater layoutInflater = LayoutInflater.from(activity);
         final View view = layoutInflater.inflate(R.layout.dialog_with_check_box, null);
         final CheckBox checkBox = (CheckBox) view.findViewById(R.id.auto_renew_checkbox);
@@ -305,7 +305,9 @@ public class YODialogs {
         builder.setView(view);
         builder.setMessage(description);
         checkBox.setChecked(true);
-        builder.setPositiveButton(activity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+        int buttonMessage = description == R.string.renewal_error_message  ? R.string.retry : R.string.yes;
+        //builder.setPositiveButton(activity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(buttonMessage, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (checkBox.isChecked()) {

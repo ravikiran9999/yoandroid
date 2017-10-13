@@ -11,6 +11,7 @@ import com.yo.dialer.DialerLogs;
 import com.yo.dialer.model.SipProperties;
 
 import org.pjsip.pjsua2.AccountConfig;
+import org.pjsip.pjsua2.AccountSipConfig;
 import org.pjsip.pjsua2.AuthCredInfo;
 import org.pjsip.pjsua2.AuthCredInfoVector;
 import org.pjsip.pjsua2.StringVector;
@@ -24,7 +25,7 @@ public class YoPJRegConfig {
     private static Context mContext;
 
     public static YoAccount buildAccount(Context context, SipProperties properties, YoAccount myAccount, YoApp yoApp, String id, String msg) throws UnsatisfiedLinkError {
-        DialerLogs.messageI(TAG, "YO========buildAccount===========");
+        DialerLogs.messageI(TAG, "YO========buildAccount===========" + myAccount);
         mContext = context;
         if (myAccount != null) {
             return myAccount;
@@ -41,7 +42,10 @@ public class YoPJRegConfig {
             startSipService(context, yoApp, properties);
         }
 
-        return yoApp.addAcc(accCfg);
+        YoAccount yoAccount = yoApp.addAcc(accCfg);
+        DialerLogs.messageI(TAG, "YO========buildAccount return yo account as===========" + myAccount);
+
+        return yoAccount;
     }
 
     private static boolean startSipService(Context context, YoApp yoApp, SipProperties properties) {
@@ -54,15 +58,24 @@ public class YoPJRegConfig {
 
     public static void updateSIPConfig(YoAccount yoAccount, SipProperties properties) {
         String id = DialerHelper.getInstance(mContext).getURI(properties.getDisplayName(), properties.getSipUsername(), properties.getSipServer());
-
         if (yoAccount != null) {
             DialerLogs.messageI(TAG, "YO======updateSIPConfig Sip URI " + id);
-            configAccount(yoAccount.cfg, id, properties);
-            try {
-                yoAccount.cfg.getRegConfig().setTimeoutSec(com.yo.android.pjsip.YoSipService.EXPIRE);
-                yoAccount.modify(yoAccount.cfg);
-            } catch (Exception e) {
-                DialerLogs.messageE(TAG, e.getMessage());
+            AccountConfig cfg = yoAccount.cfg;
+            if (properties != null && properties.getSipUsername() != null) {
+                configAccount(cfg, id, properties);
+                try {
+                    if (cfg != null && cfg.getRegConfig() != null) {
+                        cfg.getRegConfig().setTimeoutSec(com.yo.android.pjsip.YoSipService.EXPIRE);
+                        DialerLogs.messageI(TAG, "YO======Crash point" + id);
+                        yoAccount.modify(cfg);
+                        DialerLogs.messageI(TAG, "YO======After Crash point" + id);
+
+                    }
+                } catch (Exception e) {
+                    DialerLogs.messageE(TAG, e.getMessage());
+                }
+            } else {
+                DialerLogs.messageE(TAG, "USer name is null so wrong call.");
             }
         } else {
             DialerLogs.messageE(TAG, "Created account object is null");
@@ -79,7 +92,8 @@ public class YoPJRegConfig {
         DialerLogs.messageI(TAG, "YO======Register:" + registrar);
 
         accCfg.getRegConfig().setRegistrarUri(registrar);
-        AuthCredInfoVector creds = accCfg.getSipConfig().getAuthCreds();
+        AccountSipConfig sipConfig = accCfg.getSipConfig();
+        AuthCredInfoVector creds = sipConfig.getAuthCreds();
         creds.clear();
         if (username != null && !username.isEmpty() && username.length() != 0) {
             creds.add(new AuthCredInfo("Digest", "*", username, 0, password));
@@ -88,11 +102,15 @@ public class YoPJRegConfig {
 
         String proxyServer = DialerConfig.SIP + properties.getProxyServer();
         DialerLogs.messageI(TAG, "YO======Proxy Server:" + proxyServer);
-
-        proxies.add(proxyServer);
-        accCfg.getSipConfig().setProxies(proxies);
+        if (proxies != null) {
+            proxies.add(proxyServer);
+            if (sipConfig != null) {
+                sipConfig.setProxies(proxies);
+            }
+        }
 
         /* Enable ICE */
+        DialerLogs.messageI(TAG, "YO======Settings ICE:" + properties.isICE());
         accCfg.getNatConfig().setIceEnabled(properties.isICE());
     }
 

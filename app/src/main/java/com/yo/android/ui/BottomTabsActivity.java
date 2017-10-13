@@ -378,7 +378,7 @@ public class BottomTabsActivity extends BaseActivity {
         mContactSyncHelper.init();
         mContactSyncHelper.checkContacts();
 
-            bindService(new Intent(BottomTabsActivity.this, YoSipService.class),connection,BIND_AUTO_CREATE);
+        bindService(new Intent(BottomTabsActivity.this, YoSipService.class),connection,BIND_AUTO_CREATE);
         EventBus.getDefault().
 
             register(this);

@@ -444,7 +444,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
                 }
             }
         } else {
-            YODialogs.renewMagazine(this, null, getString(R.string.renewal_message), preferenceEndPoint);
+            YODialogs.renewMagazine(this, null, R.string.renewal_message, preferenceEndPoint);
         }
     }
 }

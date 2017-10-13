@@ -60,7 +60,7 @@ public class CallHelper {
                         DialerLogs.messageE(TAG, "makeCall==========" + e.getMessage());
                         sipService.callDisconnected(CallExtras.StatusCode.OTHER + "", e.getMessage(), "While making call got an exception and message is " + e.getMessage() + ", So that call is going to disconnecting." + callId);
                         sipService.setYoAccount(null);
-                        sipService.register();
+                        sipService.register(null);
                         SipHelper.isAlreadyStarted = false;
                         return null;
                     }
@@ -112,11 +112,12 @@ public class CallHelper {
             if (yoCurrentCall != null) {
                 storeDump(yoCurrentCall);
                 yoCurrentCall.hangup(param);
-
+                YoSipService.setYoCurrentCall(null);
             } else {
                 DialerLogs.messageI(TAG, "Current Call Object is null====");
             }
         } catch (Exception exc) {
+            YoSipService.setYoCurrentCall(null);
             DialerLogs.messageE(TAG, "While End call====" + exc.getMessage());
         }
     }

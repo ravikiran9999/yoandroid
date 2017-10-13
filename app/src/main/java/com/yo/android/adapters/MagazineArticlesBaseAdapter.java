@@ -53,6 +53,10 @@ import com.yo.android.util.MagazineOtherPeopleReflectListener;
 import com.yo.android.util.Util;
 import com.yo.android.video.InAppVideoActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -268,6 +272,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
                                 ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -463,7 +468,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 @Override
                 public void onClick(View v) {
                     String videoUrl = data.getVideo_url();
-                    if(videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
+                    if (videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
                         InAppVideoActivity.start((Activity) context, videoUrl, data.getTitle());
                     } else {
                         Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
@@ -621,9 +626,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Used to follow an article
-     * @param data The Articles object
+     *
+     * @param data        The Articles object
      * @param finalHolder The view holder object
-     * @param follow The follow button
+     * @param follow      The follow button
      */
     private void followArticle(final Articles data, final ViewHolder finalHolder, final Button follow) {
         if (!"true".equals(data.getIsFollowing())) {
@@ -689,9 +695,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Shows unfollow confirmation dialog
-     * @param data The articles object
+     *
+     * @param data        The articles object
      * @param finalHolder The view holder object
-     * @param follow The follow button
+     * @param follow      The follow button
      */
     private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder, final Button follow) {
 
@@ -788,6 +795,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Adds the items to the list
+     *
      * @param articlesList The list of articles
      */
     public void addItems(List<Articles> articlesList) {
@@ -815,6 +823,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Adds all the items to the list
+     *
      * @param list The articles list
      */
     public void addItemsAll(List<Articles> list) {
@@ -841,6 +850,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Updates the Follow and Like status of the articles
+     *
      * @param data The articles object
      * @param type Whether it is Follow or Like
      */
@@ -914,13 +924,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Populates the top article
-     * @param layout The view object
-     * @param holder The view holder object
-     * @param data The articles object
+     *
+     * @param layout   The view object
+     * @param holder   The view holder object
+     * @param data     The articles object
      * @param position The position
      */
     private void populateTopArticle(View layout, ViewHolder holder, final Articles data, final int position) {
-       // Log.d("ArticlesBaseAdapter", "In populateTopArticle");
+        // Log.d("ArticlesBaseAdapter", "In populateTopArticle");
         if (holder.magazineLikeTop != null) {
             holder.magazineLikeTop.setTag(position);
         }
@@ -1181,8 +1192,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Populates the left article
-     * @param holder The view holder object
-     * @param data The articles object
+     *
+     * @param holder   The view holder object
+     * @param data     The articles object
      * @param position The position
      */
     private void populateLeftArticle(ViewHolder holder, final Articles data, final int position) {
@@ -1231,6 +1243,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                likeUnlikeErrorMessage(response);
                                 ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
@@ -1289,6 +1302,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                likeUnlikeErrorMessage(response);
                                 ((BaseActivity) context).dismissProgressDialog();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
@@ -1476,12 +1490,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Populates the right article
-     * @param holder The view holder object
-     * @param data The articles object
+     *
+     * @param holder   The view holder object
+     * @param data     The articles object
      * @param position The position
      */
     private void populateRightArticle(ViewHolder holder, final Articles data, final int position) {
-      //  Log.d("ArticlesBaseAdapter", "In populateRightArticle");
+        //  Log.d("ArticlesBaseAdapter", "In populateRightArticle");
         if (holder.magazineLikeRight != null) {
             holder.magazineLikeRight.setVisibility(View.VISIBLE);
             holder.magazineLikeRight.setTag(position);
@@ -1770,6 +1785,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Populates the empty left article
+     *
      * @param holder The view holder object
      */
     private void populateEmptyLeftArticle(ViewHolder holder) {
@@ -1808,6 +1824,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Populates the empty right article
+     *
      * @param holder The view holder object
      */
     private void populateEmptyRightArticle(ViewHolder holder) {
@@ -1846,7 +1863,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Updates the topic follow status
-     * @param data The articles object
+     *
+     * @param data   The articles object
      * @param follow The follow string
      */
     @Override
@@ -1954,9 +1972,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Updates the topic follow
-     * @param isFollowing isFollowing or not
-     * @param topic The articles object
-     * @param position The position
+     *
+     * @param isFollowing  isFollowing or not
+     * @param topic        The articles object
+     * @param position     The position
      * @param articlePlace The article's placement
      */
     public void updateTopic(boolean isFollowing, Articles topic, int position, String articlePlace) {
@@ -1986,9 +2005,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Updates the articles
-     * @param isLiked isLiked article or not
-     * @param articles The Articles object
-     * @param position The position
+     *
+     * @param isLiked      isLiked article or not
+     * @param articles     The Articles object
+     * @param position     The position
      * @param articlePlace The article placement
      */
     public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
@@ -2009,6 +2029,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Gets all the articles
+     *
      * @return The articles list
      */
     public List<Articles> getAllItems() {
@@ -2026,6 +2047,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Removes the articles from the list
+     *
      * @param articlesList The articles list which needs to be removed
      */
     public void removeItems(List<Articles> articlesList) {
@@ -2035,6 +2057,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Gets the cached magazines list
+     *
      * @return The list of articles
      */
     private List<Articles> getCachedMagazinesList() {
@@ -2063,6 +2086,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     /**
      * Saves the cached magazines list
+     *
      * @param cachedMagazinesList The list of articles to be cached
      */
     private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
@@ -2082,6 +2106,21 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
             editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
             editor.commit();
+        }
+    }
+
+    private void likeUnlikeErrorMessage(Response<ResponseBody> response) {
+        try {
+            String code = (String) (new JSONObject(response.body().string())).get("code");
+            if (Integer.parseInt(code) == 422) {
+                mToastFactory.showToast(R.string.like_unlike_error_message);
+                return;
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

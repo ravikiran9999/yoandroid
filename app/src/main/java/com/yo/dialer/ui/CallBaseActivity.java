@@ -166,8 +166,8 @@ class CallBaseActivity extends BaseActivity {
         mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, mIntentFilter);
     }
 
-    protected void toggleHold(View v) {
-        CallControls.toggleHold(sipBinder, v);
+    protected boolean toggleHold(View v) {
+        return CallControls.toggleHold(sipBinder, v);
     }
 
     protected void toggleMic(View v) {

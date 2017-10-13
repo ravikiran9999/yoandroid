@@ -227,7 +227,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                         }
                     }
                 } else {
-                    YODialogs.renewMagazine((Activity) context, null, context.getString(R.string.renewal_message), preferenceEndPoint);
+                    YODialogs.renewMagazine((Activity) context, null, R.string.renewal_message, preferenceEndPoint);
                 }
             }
         });
