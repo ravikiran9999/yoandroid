@@ -180,10 +180,10 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
                 boolean isHold = toggleHold(v);
                 if (!isHold) {
                     sipBinder.getYOHandler().setMic(false);
-                    CallControls.changeSelection(callMicBtn, false);
+                    CallControls.changeSelection(v, false);
                 } else {
                     sipBinder.getYOHandler().setMic(CallControls.getCallControlsModel().isMicOn());
-                    CallControls.changeSelection(callMicBtn, CallControls.getCallControlsModel().isMicOn());
+                    CallControls.changeSelection(v, CallControls.getCallControlsModel().isMicOn());
                 }
                 break;
             case R.id.btnSpeaker:
