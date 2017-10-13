@@ -84,6 +84,7 @@ import com.yo.android.ui.fragments.InviteActivity;
 import com.yo.android.ui.fragments.InviteFriendsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.ui.fragments.NewContactsFragment;
 import com.yo.android.ui.fragments.NewOTPFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
@@ -208,6 +209,7 @@ import dagger.Provides;
                 WebViewFragment.class,
                 NewOTPFragment.class,
                 NewDialerFragment.class,
+                NewContactsFragment.class,
 
                 //Managers
                 RetrieveContactsManager.class,

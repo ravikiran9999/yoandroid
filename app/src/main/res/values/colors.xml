@@ -63,5 +63,7 @@
     <color name="resend_white">#C82121</color>
 
     <color name="light_green">#00FF00</color>
+    <color name="contacts_selected_red">#ff0000</color>
+    <color name="contacts_unselected_red">#ff9999</color>
 
 </resources>
