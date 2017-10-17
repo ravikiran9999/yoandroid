@@ -67,6 +67,7 @@ import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
+import com.yo.android.ui.fragments.NewContactsFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
 import com.yo.android.util.FetchNewArticlesService;
@@ -218,7 +219,11 @@ public class BottomTabsActivity extends BaseActivity {
         } else {
             mAdapter.addFragment(new DialerFragment(), null);
         }
-        mAdapter.addFragment(new ContactsFragment(), null);
+        if (BuildConfig.NEW_CONTACTS_SCREEN) {
+            mAdapter.addFragment(new NewContactsFragment(), null);
+        } else {
+            mAdapter.addFragment(new ContactsFragment(), null);
+        }
         mAdapter.addFragment(new MoreFragment(), null);
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(mAdapter);
@@ -373,7 +378,7 @@ public class BottomTabsActivity extends BaseActivity {
         mContactSyncHelper.init();
         mContactSyncHelper.checkContacts();
 
-            bindService(new Intent(BottomTabsActivity.this, YoSipService.class),connection,BIND_AUTO_CREATE);
+        bindService(new Intent(BottomTabsActivity.this, YoSipService.class),connection,BIND_AUTO_CREATE);
         EventBus.getDefault().
 
             register(this);
@@ -750,8 +755,8 @@ public class BottomTabsActivity extends BaseActivity {
                 menu.clear();
             }
             menu = ((ChatFragment) getFragment()).getMenu();
-        } else if (getFragment() instanceof ContactsFragment) {
-            menu = ((ContactsFragment) getFragment()).getMenu();
+        } else if (getFragment() instanceof NewContactsFragment) {
+            menu = ((NewContactsFragment) getFragment()).getMenu();
         } else if (getFragment() instanceof DialerFragment) {
             menu = ((DialerFragment) getFragment()).getMenu();
         } else if (getFragment() instanceof MagazinesFragment) {

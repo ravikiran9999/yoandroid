@@ -1,6 +1,5 @@
 package com.yo.dialer.yopj;
 
-import com.yo.android.pjsip.MyBuddy;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.model.SipProperties;
 
@@ -21,8 +20,6 @@ import org.pjsip.pjsua2.pjmedia_aud_dev_route;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 
 import java.util.ArrayList;
-
-import static java.lang.System.err;
 
 
 /**
@@ -59,6 +56,7 @@ public class YoApp {
     public void init(SipProperties sipProperties, YoAppObserver obs, String app_dir) {
         this.sipProperties = sipProperties;
         isInitialized = true;
+        DialerLogs.messageE(TAG, " Initialization of YOAPP: ");
         init(obs, app_dir, false, sipProperties);
 
     }
@@ -70,8 +68,12 @@ public class YoApp {
 
 	/* Create endpoint */
         try {
+            if (ep == null) {
+                ep = new Endpoint();
+            }
             ep.libCreate();
         } catch (Exception e) {
+            e.printStackTrace();
             return;
         }
 

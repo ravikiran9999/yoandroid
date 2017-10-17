@@ -25,6 +25,15 @@ public class YoSipServiceHandler implements SipServicesListener {
     public static final String START = "Start";
 
     private static YoSipServiceHandler instance;
+
+    public YoAccount getYoAccount() {
+        return yoAccount;
+    }
+
+    public void setYoAccount(YoAccount yoAccount) {
+        this.yoAccount = yoAccount;
+    }
+
     private YoAccount yoAccount;
 
     public static YoApp getYoApp() {
@@ -38,6 +47,7 @@ public class YoSipServiceHandler implements SipServicesListener {
 
     public static YoSipServiceHandler getInstance(Context context, PreferenceEndPoint preferenceEndPoints) {
         mContext = context;
+        DialerLogs.messageI(TAG, "YO======== YoSipServiceHandler getInstance===========" + instance);
         if (instance == null) {
             instance = new YoSipServiceHandler();
             instance.preferenceEndPoint = preferenceEndPoints;
@@ -51,22 +61,25 @@ public class YoSipServiceHandler implements SipServicesListener {
 
     @Override
     public YoAccount addAccount(Context context) {
-        DialerLogs.messageI(TAG, "YO========addAccount===========");
         SipProperties properties = getSIPProperties();
-        if (properties.isDisplayName()) {
-            displayname = DialerHelper.getInstance(mContext).parsePhoneNumber(properties.getSipUsername());
-        } else {
-            displayname = properties.getSipUsername();
+        if (properties != null && properties.getSipUsername() != null) {
+            DialerLogs.messageI(TAG, "YO========addAccount===========");
+            if (properties.isDisplayName()) {
+                displayname = DialerHelper.getInstance(mContext).parsePhoneNumber(properties.getSipUsername());
+            } else {
+                displayname = properties.getSipUsername();
+            }
+            String id = DialerHelper.getInstance(mContext).getURI(displayname, properties.getSipUsername(), properties.getSipServer());
+            DialerLogs.messageI(TAG, "YO========While adding account, new URI format " + id);
+            try {
+                yoAccount = YoPJRegConfig.buildAccount(context, properties, yoAccount, yoApp, id, START);
+                YoPJRegConfig.updateSIPConfig(yoAccount, properties);
+            } catch (Exception | UnsatisfiedLinkError e) {
+                DialerLogs.messageE(TAG, e.getMessage());
+            }
+            return yoAccount;
         }
-        String id = DialerHelper.getInstance(mContext).getURI(displayname, properties.getSipUsername(), properties.getSipServer());
-        DialerLogs.messageI(TAG, "YO========While adding account, new URI format " + id);
-        try {
-            yoAccount = YoPJRegConfig.buildAccount(context, properties, yoAccount, yoApp, id, START);
-            YoPJRegConfig.updateSIPConfig(yoAccount, properties);
-        } catch (Exception | UnsatisfiedLinkError e) {
-            DialerLogs.messageE(TAG, e.getMessage());
-        }
-        return yoAccount;
+        return null;
     }
 
     @Override
@@ -188,8 +201,10 @@ public class YoSipServiceHandler implements SipServicesListener {
 
     public void deleteAccount(YoAccount account) {
         DialerLogs.messageI(TAG, "UN-REGISTER ACCOUNT===========");
+        instance = null;
         yoApp.delAcc(account);
         yoApp.deinit();
+        DialerLogs.messageI(TAG, "Acccount is deleting==========");
     }
 
 

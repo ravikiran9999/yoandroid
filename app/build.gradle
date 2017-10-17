@@ -27,15 +27,15 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "17.4.1.1"
+        versionName "17.4.1.2"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
         buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
         buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
         buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
+        buildConfigField "boolean", "NEW_CONTACTS_SCREEN", "true"
         buildConfigField "boolean", "NEW_DIALER", "true"
-
         multiDexEnabled true
     }
     productFlavors {
@@ -47,6 +47,7 @@ android {
             buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
             buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
             buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
+            buildConfigField "boolean", "NEW_CONTACTS_SCREEN", "true"
             buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
             buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
             buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
@@ -63,6 +64,7 @@ android {
             buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
             buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
             buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
+            buildConfigField "boolean", "NEW_CONTACTS_SCREEN", "true"
 
 
             buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
@@ -70,7 +72,6 @@ android {
             buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-production.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yo-production.firebaseio.com/\""
-
 
             //Same as Dev
             /*buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
@@ -138,7 +139,7 @@ dependencies {
     // firebase
     compile project(':flip')
     compile project(':tagview')
-    compile project(':yopjsip2.6')
+    compile project(':yowatsuppjsip2.7')
     compile project(':emojilib')
     compile project(':topsnackbar')
     //Butter knife - view injector
@@ -188,6 +189,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'pub.devrel:easypermissions:0.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:support-v4:25.2.0'
     testCompile 'junit:junit:4.12'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
 }
