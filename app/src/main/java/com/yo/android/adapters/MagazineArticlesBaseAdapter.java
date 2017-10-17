@@ -2094,7 +2094,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     private void likeUnlikeErrorMessage(Response<ResponseBody> response) {
         try {
-            if((new JSONObject(response.body().string())).get("code") == 422) {
+            int code = (new JSONObject(response.body().string())).getInt("code");
+            if (code == 422) {
                 mToastFactory.showToast(R.string.like_unlike_error_message);
                 return;
             }

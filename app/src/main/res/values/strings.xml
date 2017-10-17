@@ -401,5 +401,5 @@
 
     <!--error messages-->
     <string name="like_unlike_error_message">Something went wrong. Please try again</string>
-
+    <string name="nexge_register_error">Failed to register user with nexge</string>
 </resources>

@@ -264,7 +264,7 @@ public class TransferBalanceActivity extends BaseActivity {
 
                     if (response.code() == 200) {
                         try {
-                            int statusCode = Integer.parseInt(response.body().getCode());
+                            int statusCode = response.body().getCode();
                             switch (statusCode) {
                                 case 200:
                                     String mName = name != null ? name : phoneNo;

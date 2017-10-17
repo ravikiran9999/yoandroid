@@ -8,7 +8,7 @@ public class Response {
 
     private Object data;
 
-    private String code;
+    private int code;
 
     private String balance;
 
@@ -32,12 +32,12 @@ public class Response {
         this.data = data;
     }
 
-    public String getCode ()
+    public int getCode ()
     {
         return code;
     }
 
-    public void setCode (String code)
+    public void setCode (int code)
     {
         this.code = code;
     }
@@ -50,9 +50,9 @@ public class Response {
         this.balance = balance;
     }
 
-    @Override
+    /*@Override
     public String toString()
     {
         return "ClassPojo [response = "+response+", data = "+data+", code = "+code+", balance = "+balance+"]";
-    }
+    }*/
 }

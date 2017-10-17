@@ -2,6 +2,7 @@ package com.yo.android.vox;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -124,7 +125,7 @@ public class BalanceHelper {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                    mLog.w(TAG, "loadBalance", t.getMessage());
                 }
             });
         } else {
@@ -142,24 +143,29 @@ public class BalanceHelper {
 
                         String str = Util.toString(response.body().byteStream());
                         JSONObject jsonObject = new JSONObject(str);
-                        String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.BALANCE);
-                        String mSwitchBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.S_BALANCE);
-                        String mWalletBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.W_BALANCE);
+                        int responseCode = jsonObject.getInt("code");
 
-                        try {
-                            prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
-                            //prefs.saveStringPreference(Constants.SWITCH_BALANCE, mSwitchBalance);
-                            //prefs.saveStringPreference(Constants.WALLET_BALANCE, mWalletBalance);
-                            webserviceUsecase.appStatus(null);
-                        } catch (IllegalArgumentException e) {
-                            mLog.w(TAG, "getCurrentBalance", e);
+                        if(responseCode == 707) {
+                            String errorMessage = jsonObject.getString("data");
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                            onFailure(call, new Throwable(errorMessage));
+                        } else {
+                            String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.BALANCE);
+                            //String mSwitchBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.S_BALANCE);
+                            //String mWalletBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.W_BALANCE);
+
+                            try {
+                                prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+                                //prefs.saveStringPreference(Constants.SWITCH_BALANCE, mSwitchBalance);
+                                //prefs.saveStringPreference(Constants.WALLET_BALANCE, mWalletBalance);
+                                webserviceUsecase.appStatus(null);
+                            } catch (IllegalArgumentException e) {
+                                mLog.w(TAG, "getCurrentBalance", e);
+                            }
+                            mLog.i(TAG, "loadBalance: balance -  %s", balance);
                         }
-                        mLog.i(TAG, "loadBalance: balance -  %s", balance);
-                    } catch (IOException e) {
+                    } catch (IOException | JSONException e) {
                         mLog.w(TAG, "loadBalance", e);
-                    } catch (JSONException e) {
-                        mLog.w(TAG, "loadBalance", e);
-
                     }
                 }
                 if (callback != null) {
