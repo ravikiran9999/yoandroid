@@ -201,23 +201,27 @@ public class TransferBalanceActivity extends BaseActivity {
         String amount = etAmount.getText().toString();
         String phoneNumber = enteredPhoneNumber.getText().toString();
         String mPhoneNumber = phoneNo != null ? phoneNo : phoneNumber;
-        if (!TextUtils.isEmpty(amount.trim())) {
-            double val = Double.parseDouble(amount.trim());
-            if (val != 0) {
-                if (Double.parseDouble(Util.numberFromNexgeFormat(mBalanceHelper.getCurrentBalance())) > Double.parseDouble(Util.numberFromNexgeFormat(amount))) {
+        try {
+            if (!TextUtils.isEmpty(amount.trim())) {
+                double val = Double.parseDouble(amount.trim());
+                if (val != 0) {
+                    if (mBalanceHelper.removeDenomination(mBalanceHelper.getCurrentBalance()) > mBalanceHelper.removeDenomination(amount)) {
 
-                    showMessageDialog(amount, mBalanceHelper.getCurrentBalance(), mPhoneNumber);
+                        showMessageDialog(amount, mBalanceHelper.getCurrentBalance(), mPhoneNumber);
 
-                } else if(Double.parseDouble(mBalanceHelper.getCurrentBalance()) == Double.parseDouble(amount)) {
-                    showBalanceDialog();
+                    } else if (mBalanceHelper.removeDenomination(mBalanceHelper.getCurrentBalance()) == mBalanceHelper.removeDenomination(amount)) {
+                        showBalanceDialog();
+                    } else {
+                        mToastFactory.showToast(R.string.insufficient_amount);
+                    }
                 } else {
-                    mToastFactory.showToast(R.string.insufficient_amount);
+                    mToastFactory.showToast(getResources().getString(R.string.enter_valid_amount));
                 }
             } else {
-                mToastFactory.showToast(getResources().getString(R.string.enter_valid_amount));
+                mToastFactory.showToast(getResources().getString(R.string.enter_amount_to_transfer));
             }
-        } else {
-            mToastFactory.showToast(getResources().getString(R.string.enter_amount_to_transfer));
+        }catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -295,6 +299,9 @@ public class TransferBalanceActivity extends BaseActivity {
                                     mToastFactory.showToast(response.body().getData().toString());
                                     break;
                                 case 614:
+                                    mToastFactory.showToast(response.body().getData().toString());
+                                    break;
+                                case 615:
                                     mToastFactory.showToast(response.body().getData().toString());
                                     break;
                                 case 616:

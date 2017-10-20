@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.amazonaws.util.StringUtils;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.WebserviceUsecase;
@@ -477,5 +478,10 @@ public class BalanceHelper {
 
     public String getCurrencySymbol() {
         return prefs.getStringPreference(Constants.CURRENCY_SYMBOL, "US $");
+    }
+
+    public double removeDenomination(String amountWithDenomination) {
+        String val = amountWithDenomination.replaceAll("[^\\d.]", "");
+        return Double.parseDouble(val);
     }
 }
