@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.JsonElement;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Contact;
@@ -127,7 +128,18 @@ public class ContactsSyncManager {
         }
 
         //Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute().body();
-         yoService.syncContactsWithNameAPI(access, nameAndNumber).execute();
+        //Asynchronoss call, which will not get stuck UI.
+        yoService.syncContactsWithNameAPI(access, nameAndNumber).enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonElement> call, Throwable t) {
+
+            }
+        });
 
     }
 
@@ -326,7 +338,7 @@ public class ContactsSyncManager {
 
     private static String getName(String name, String number) {
         String formatedName = name.replaceAll("\\s+", "");
-        if(!formatedName.equalsIgnoreCase(number)) {
+        if (!formatedName.equalsIgnoreCase(number)) {
             return name;
         }
         return "";

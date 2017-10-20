@@ -26,6 +26,7 @@ import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
@@ -46,6 +47,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
@@ -96,6 +99,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int COLUMN_VOX_USERNAME = 7;
     public static final int COLUMN_COUNTRY_CODE = 8;
 
+    private List<Contact> contacts;
 
     /**
      * Constructor. Obtains handle to content resolver for later use.
@@ -130,33 +134,49 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
      */
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
-                              ContentProviderClient provider, SyncResult syncResult) {
-     //   Log.i(TAG, "Beginning network synchronization");
-        List<Contact> contacts = null;
-        try {
-            String access = loginPrefs == null ? "" : loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
-            if (TextUtils.isEmpty(access)) {
-                return;
-            }
-            Response<List<Contact>> list = mYoService.getContacts(access).execute();
-            if (list.isSuccessful()) {
-                contacts = list.body();
-            } else {
-                contacts = mContactsSyncManager.getCachContacts();
-            }
-            //Store them in cache
-            mContactsSyncManager.setContacts(contacts);
-            updateLocalFeedData(getContext(), contacts, syncResult);
-
-        } catch (IOException e) {
-            syncResult.stats.numIoExceptions++;
-            return;
-        } catch (RemoteException | OperationApplicationException e) {
-            Log.e(TAG, "Error updating database: " + e.toString());
-            syncResult.databaseError = true;
+                              ContentProviderClient provider, final SyncResult syncResult) {
+        //   Log.i(TAG, "Beginning network synchronization");
+        contacts = null;
+        String access = loginPrefs == null ? "" : loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
+        if (TextUtils.isEmpty(access)) {
             return;
         }
-      //  Log.i(TAG, "Network synchronization complete");
+
+        mYoService.getContacts(access).enqueue(new Callback<List<Contact>>() {
+            @Override
+            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> list) {
+                if (list.isSuccessful()) {
+                    contacts = list.body();
+                } else {
+                    contacts = mContactsSyncManager.getCachContacts();
+                }
+                //Store them in cache
+                mContactsSyncManager.setContacts(contacts);
+                new AsyncTask<Void, Void, Void>() {
+
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        try {
+                            updateLocalFeedData(getContext(), contacts, syncResult);
+                        } catch (RemoteException | OperationApplicationException e) {
+                            Log.e(TAG, "Error updating database: " + e.toString());
+                            syncResult.databaseError = true;
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                };
+            }
+
+            @Override
+            public void onFailure(Call<List<Contact>> call, Throwable t) {
+                t.printStackTrace();
+                Log.e(TAG, "Error Get Contacts: " + t.getMessage());
+            }
+        });
+
+
+        //  Log.i(TAG, "Network synchronization complete");
     }
 
     /**
@@ -181,7 +201,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     public static synchronized void updateLocalFeedData(Context context, List<Contact> contacts, final SyncResult syncResult) throws RemoteException, OperationApplicationException {
         final ContentResolver contentResolver = context.getContentResolver();
         ContentResolver mContentResolver = context.getContentResolver();
-       // Log.i(TAG, "Parsing stream as Atom feed");
+        // Log.i(TAG, "Parsing stream as Atom feed");
         final List<Entry> entries = prepareEntries(contacts);
         //Log.i(TAG, "Parsing complete. Found " + entries.size() + " entries");
 
@@ -195,11 +215,11 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         // Get list of all items
-      //  Log.i(TAG, "Fetching local entries for merge");
+        //  Log.i(TAG, "Fetching local entries for merge");
         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI; // Get all entries
         Cursor c = contentResolver.query(uri, PROJECTION, null, null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
         assert c != null;
-       // Log.i(TAG, "Found " + c.getCount() + " local entries. Computing merge solution...");
+        // Log.i(TAG, "Found " + c.getCount() + " local entries. Computing merge solution...");
 
         // Find stale data
         int id;
@@ -240,7 +260,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                         (match.countryCode != null && !match.countryCode.equals(countryCode))
                         ) {
                     // Update existing record
-                //    Log.i(TAG, "Scheduling update: " + existingUri);
+                    //    Log.i(TAG, "Scheduling update: " + existingUri);
                     batch.add(ContentProviderOperation.newUpdate(existingUri)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME, match.name)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE, match.image)
@@ -255,7 +275,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                 // Entry doesn't exist. Remove it from the database.
                 Uri deleteUri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI.buildUpon()
                         .appendPath(Integer.toString(id)).build();
-               // Log.i(TAG, "Scheduling delete: " + deleteUri);
+                // Log.i(TAG, "Scheduling delete: " + deleteUri);
                 batch.add(ContentProviderOperation.newDelete(deleteUri).build());
                 syncResult.stats.numDeletes++;
             }
