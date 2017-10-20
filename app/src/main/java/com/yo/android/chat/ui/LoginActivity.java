@@ -293,29 +293,33 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                     dismissProgressDialog();
                     if (response.isSuccessful()) {
                         Response response1 = response.body();
-                        if (response1 != null) {
-                            boolean isNewUser = (boolean) ((LinkedTreeMap) response1.getData()).get("isNewUser");
-                            String userId = (String) ((LinkedTreeMap) response1.getData()).get("id");
-                            preferenceEndPoint.saveStringPreference(Constants.USER_ID, userId);
-                            preferenceEndPoint.saveBooleanPreference("isNewUser", isNewUser);
-                            boolean balanceAdded = (boolean) ((LinkedTreeMap) response1.getData()).get("balanceAdded");
-                            preferenceEndPoint.saveBooleanPreference("balanceAdded", balanceAdded);
-                        }
-                        if (!BuildConfig.NEW_OTP_SCREEN) {
-                            OTPFragment otpFragment = new OTPFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
-                            otpFragment.setArguments(bundle);
-                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
-                            transaction.disallowAddToBackStack();
-                            transaction.commit();
+                        if (response1.getCode() == 701) {
+                            appError(response1.getCode());
                         } else {
-                            Intent intent = new Intent(LoginActivity.this, NewOTPActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
+                            if (response1 != null) {
+                                boolean isNewUser = (boolean) ((LinkedTreeMap) response1.getData()).get("isNewUser");
+                                String userId = (String) ((LinkedTreeMap) response1.getData()).get("id");
+                                preferenceEndPoint.saveStringPreference(Constants.USER_ID, userId);
+                                preferenceEndPoint.saveBooleanPreference("isNewUser", isNewUser);
+                                boolean balanceAdded = (boolean) ((LinkedTreeMap) response1.getData()).get("balanceAdded");
+                                preferenceEndPoint.saveBooleanPreference("balanceAdded", balanceAdded);
+                            }
+                            if (!BuildConfig.NEW_OTP_SCREEN) {
+                                OTPFragment otpFragment = new OTPFragment();
+                                Bundle bundle = new Bundle();
+                                bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
+                                otpFragment.setArguments(bundle);
+                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.add(android.R.id.content, otpFragment, FRAGMENT_TAG);
+                                transaction.disallowAddToBackStack();
+                                transaction.commit();
+                            } else {
+                                Intent intent = new Intent(LoginActivity.this, NewOTPActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putString(Constants.PHONE_NUMBER, phoneNumber);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                            }
                         }
                     } else {
                         mToastFactory.showToast("Please enter valid phone number.");
@@ -459,6 +463,14 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                 }
             }
 
+        }
+    }
+
+    public void appError(int code) {
+        switch (code) {
+            case 701:
+                mToastFactory.showToast(R.string.nexge_register_error);
+                break;
         }
     }
 }
