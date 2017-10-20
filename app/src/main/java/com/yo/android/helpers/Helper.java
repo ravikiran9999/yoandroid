@@ -125,7 +125,7 @@ public class Helper {
                     listview.setSelection(0);
                 } else {
                     try {
-                        listview.setSelection(((Integer) mapIndex.get(indexList.get(position).substring(0, 1))) + 1);
+                        listview.setSelection(((Integer) mapIndex.get(indexList.get(position).substring(0, 1))));
                     } catch (ArrayIndexOutOfBoundsException e) {
                         listview.setSelection(((Integer) mapIndex.get(indexList.get(position).substring(0, 1))));
 
