@@ -80,6 +80,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public FrameLayout flipContainer;
     @Bind(R.id.network_failure)
     public TextView networkFailureText;
+    @Bind(R.id.server_failure)
+    public TextView serverFailureText;
     @Bind(R.id.progress)
     public ProgressBar mProgress;
     @Bind(R.id.flip_view)

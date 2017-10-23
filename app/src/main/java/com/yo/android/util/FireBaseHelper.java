@@ -4,6 +4,7 @@ package com.yo.android.util;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.firebase.client.AuthData;
@@ -75,7 +76,7 @@ public class FireBaseHelper {
         //Url from Firebase dashboard
 
         AuthData authData = ref.getAuth();
-        if (authData == null) {
+        if (authData == null && !TextUtils.isEmpty(authToken)) {
             ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {

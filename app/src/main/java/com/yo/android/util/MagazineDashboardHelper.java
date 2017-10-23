@@ -86,7 +86,11 @@ public class MagazineDashboardHelper {
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
+                    if(t.getMessage().equalsIgnoreCase("timeout")) {
+                        magazineFlipArticlesFragment.serverFailureText.setVisibility(View.VISIBLE);
+                    } else {
+                        magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
+                    }
                 }
             });
         }

@@ -14,6 +14,15 @@
         android:textColor="@color/black"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/server_failure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="30dp"
+        android:text="@string/socket_time_out"
+        android:textColor="@color/black"
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/article_root_layout"

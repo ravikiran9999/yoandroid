@@ -115,6 +115,7 @@
     </string-array>
     <string name="title_activity_magazine_article_details">MagazineArticleDetailsActivity</string>
     <string name="connectivity_network_settings">Unable to connect, Please check your network connection.</string>
+    <string name="socket_time_out">Uh! something went wrong. Please retry.</string>
     <string name="enter_mobile_number_started">Enter your mobile number to get started!</string>
     <string name="no_call_history">No call logs history available</string>
     <string name="no_history">No %s history available.</string>
