@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
@@ -265,7 +266,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_CONTACT_REQUEST) {
-           
+            Toast.makeText(getActivity(), "Contect added", Toast.LENGTH_LONG).show();
         }
     }
 

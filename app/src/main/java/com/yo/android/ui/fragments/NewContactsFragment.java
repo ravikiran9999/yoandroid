@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -14,6 +15,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,13 +28,16 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.Helper;
@@ -45,6 +50,9 @@ import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -61,7 +69,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class NewContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
+    private static final String TAG = NewContactsFragment.class.getSimpleName();
     @Inject
     ConnectivityHelper mHelper;
 
@@ -96,6 +106,9 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     private Menu menu;
     @Inject
     ContactsSyncManager mSyncManager;
+    @Inject
+    protected YoApi.YoService yoService;
+
     private static final int PICK_CONTACT_REQUEST = 100;
 
     private boolean CONTACT_SYNC = true;
@@ -205,10 +218,10 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     public void onResume() {
         super.onResume();
         if (mHelper.isConnected()) {
-            if(searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
+            if (searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
                 searchView.setQuery(searchView.getQuery(), false);
             } else {
-                if(btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
+                if (btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
                     syncContacts(false);
                 } else {
                     syncContacts(true);
@@ -216,7 +229,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             }
         } else if (!mHelper.isConnected()) {
             List<Contact> cacheContactsList = mSyncManager.getCachContacts();
-            if(btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
+            if (btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
                 loadAlphabetOrder(cacheContactsList, false);
             } else {
                 loadAlphabetOrder(cacheContactsList, true);
@@ -233,7 +246,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
                     list.add(contact);
                 } while (c.moveToNext());
             }
-            if(btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
+            if (btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
                 loadAlphabetOrder(list, false);
             } else {
                 loadAlphabetOrder(list, true);
@@ -245,8 +258,8 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
 
     private void loadAlphabetOrder(List<Contact> list, boolean isYoUser) {
 
-        if(list != null) {
-            if(isYoUser && btnYoContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
+        if (list != null) {
+            if (isYoUser && btnYoContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
                 List<Contact> yoList = new ArrayList<>();
                 for (Contact contact : list) {
                     if (contact.getYoAppUser()) {
@@ -313,7 +326,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
                 layout.setVisibility(View.VISIBLE);
                 llTabsLayout.setVisibility(View.VISIBLE);
                 getActivity().invalidateOptionsMenu();
-                if(btnYoContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
+                if (btnYoContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
                     setYoContacts(true);
                 }
                 return true;
@@ -336,8 +349,9 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_CONTACT_REQUEST) {
-
+        if (requestCode == PICK_CONTACT_REQUEST && data != null) {
+            String nameAndNumber = uploadContact(data.getData());
+            Toast.makeText(getActivity(), "Contect added " + nameAndNumber, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -477,7 +491,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         if (popup != null) {
-            if(!isSharedPreferenceShown) {
+            if (!isSharedPreferenceShown) {
                 Collections.reverse(popup);
             }
             List<Popup> tempPopup = new ArrayList<>(popup);
@@ -494,9 +508,9 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
 
     public void onEventMainThread(String action) {
         if (Constants.CONTACTS_REFRESH.equals(action)) {
-            if(btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
+            if (btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
                 syncContacts(false);
-            } else  {
+            } else {
                 syncContacts(true);
             }
         }
@@ -515,5 +529,81 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             }
 
         }
+    }
+
+    private String uploadContact(Uri uri) {
+        Cursor cursor;  // Cursor object
+        String mime;    // MIME type
+        int dataIdx;    // Index of DATA1 column
+        int mimeIdx;    // Index of MIMETYPE column
+        int nameIdx;    // Index of DISPLAY_NAME column
+        String contactName = null;
+        String contactPhoneNumber = null;
+        // Get the name
+        cursor = getActivity().getContentResolver().query(uri,
+                new String[]{ContactsContract.Contacts.DISPLAY_NAME},
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            nameIdx = cursor.getColumnIndex(
+                    ContactsContract.Contacts.DISPLAY_NAME);
+            contactName = cursor.getString(nameIdx);
+            // Set up the projection
+            String[] projection = {
+                    ContactsContract.Data.DISPLAY_NAME,
+                    ContactsContract.Contacts.Data.DATA1,
+                    ContactsContract.Contacts.Data.MIMETYPE};
+
+            // Query ContactsContract.Data
+            cursor = getActivity().getContentResolver().query(
+                    ContactsContract.Data.CONTENT_URI, projection,
+                    ContactsContract.Data.DISPLAY_NAME + " = ?",
+                    new String[]{contactName},
+                    null);
+
+            if (cursor.moveToFirst()) {
+                // Get the indexes of the MIME type and data
+                mimeIdx = cursor.getColumnIndex(
+                        ContactsContract.Contacts.Data.MIMETYPE);
+                dataIdx = cursor.getColumnIndex(
+                        ContactsContract.Contacts.Data.DATA1);
+
+                // Match the data to the MIME type, store in variables
+                do {
+                    mime = cursor.getString(mimeIdx);
+                    if (ContactsContract.CommonDataKinds.Email
+                            .CONTENT_ITEM_TYPE.equalsIgnoreCase(mime)) {
+                        String email = cursor.getString(dataIdx);
+                    }
+                    if (ContactsContract.CommonDataKinds.Phone
+                            .CONTENT_ITEM_TYPE.equalsIgnoreCase(mime)) {
+                        String phone = cursor.getString(dataIdx);
+                        contactPhoneNumber = PhoneNumberUtils.formatNumber(phone);
+                    }
+                } while (cursor.moveToNext());
+            }
+        }
+
+        String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+        List<JSONObject> nameAndNumber = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(Constants.NUMBER, contactPhoneNumber);
+            jsonObject.put(Constants.NAME, contactName);
+            nameAndNumber.add(jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        yoService.syncContactsWithNameAPI(access, nameAndNumber).enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonElement> call, Throwable t) {
+
+            }
+        });
+        return contactName + " - " + contactPhoneNumber;
     }
 }
