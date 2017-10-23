@@ -179,7 +179,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                             args.putString(Constants.OPPONENT_CONTACT_IMAGE, yoUserInfo.getAvatar());
                             args.putString(Constants.OPPONENT_ID, yoUserInfo.getId());
                             args.putParcelable(Constants.CONTACT, contact);
-                            callUserChat(args, userChatFragment);
+                            if(yoUserInfo.getFirebaseRoomId()!= null && !TextUtils.isEmpty(yoUserInfo.getFirebaseRoomId())) {
+                                callUserChat(args, userChatFragment);
+                            } else {
+                                mToastFactory.showToast(R.string.chat_room_id_error);
+                            }
+                            //callUserChat(args, userChatFragment);
                         }
 
                         @Override
@@ -198,7 +203,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     args.putString(Constants.CHAT_ROOM_ID, firebaseRoomId);
                     args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                     //args.putParcelable(Constants.CONTACT, contact);
-                    callUserChat(args, userChatFragment);
+                    if(firebaseRoomId!= null && !TextUtils.isEmpty(firebaseRoomId)) {
+                        callUserChat(args, userChatFragment);
+                    } else {
+                        mToastFactory.showToast(R.string.chat_room_id_error);
+                    }
                 }
 
                 Util.cancelAllNotification(this);
@@ -228,7 +237,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 args.putString(Constants.TYPE, groupName);
                 args.putString(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
             }
-            callUserChat(args, userChatFragment);
+            if (chatRoomId != null && !TextUtils.isEmpty(chatRoomId)) {
+                callUserChat(args, userChatFragment);
+            } else {
+                mToastFactory.showToast(R.string.chat_room_id_error);
+            }
         }
 
         enableBack();

@@ -123,7 +123,8 @@ public class DateUtil {
         smsTime.setTimeInMillis(time);
         Calendar now = Calendar.getInstance();
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
-            return getTimeFormat(context, time);
+            //return getTimeFormat(context, time);
+            return getTimeFormatForChat(context, time);
         } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
             return context.getString(R.string.yesterday);
         } else {
@@ -153,11 +154,15 @@ public class DateUtil {
         return new SimpleDateFormat("hh:mm a").format(new Date(time));
     }
 
-    public static String getTimeFormatForChat(long time) {
+    public static String getTimeFormatForChat(@NonNull final Context context,long time) {
         SimpleDateFormat sFormat;
         String currentTime;
         try {
-            sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            if (DateFormat.is24HourFormat(context.getApplicationContext())) {
+                sFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            } else {
+                sFormat = new SimpleDateFormat("KK:mm", Locale.getDefault());
+            }
             currentTime = sFormat.format(new Date(time));
             return currentTime;
         } catch (Exception e) {

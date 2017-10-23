@@ -298,6 +298,11 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                                                     mToastFactory.showToast(response.body().getData().toString());
                                                     closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                     break;
+                                                case 708:
+                                                    Util.hideKeyboard(getActivity(), voucherNumberEdit);
+                                                    mToastFactory.showToast(response.body().getData().toString());
+                                                    closeActivityAddBalance(Activity.RESULT_CANCELED, null);
+                                                    break;
                                                 default:
                                                     showMessage(R.string.invalid_voucher);
                                                     break;
