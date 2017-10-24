@@ -109,6 +109,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.ShowPhotoActivity"
+            android:theme="@style/PhotoAppTheme"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.NavigationDrawerActivity"
@@ -365,7 +366,9 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+<!--
         <service android:name=".pjsip.YoSipService" />
+-->
 
         <activity
             android:name=".ui.TopicsDetailActivity"

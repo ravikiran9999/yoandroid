@@ -9,10 +9,8 @@ import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -144,7 +142,7 @@ public class GroupContactsActivity extends BaseActivity {
                 List<Contact> contactList = new ArrayList<>();
                 if (response.body() != null) {
                     for (int i = 0; i < response.body().size(); i++) {
-                        if (response.body().get(i).getYoAppUser()) {
+                        if (response.body().get(i).isYoAppUser()) {
                             contactList.add(response.body().get(i));
                         }
                     }

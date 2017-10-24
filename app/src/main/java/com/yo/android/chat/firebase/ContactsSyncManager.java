@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -25,7 +24,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -180,7 +178,7 @@ public class ContactsSyncManager {
             Collections.sort(cacheList, new Comparator<Contact>() {
                 @Override
                 public int compare(Contact lhs, Contact rhs) {
-                    return Boolean.valueOf(rhs.getYoAppUser()).compareTo(lhs.getYoAppUser());
+                    return Boolean.valueOf(rhs.isYoAppUser()).compareTo(lhs.isYoAppUser());
                 }
             });
         }

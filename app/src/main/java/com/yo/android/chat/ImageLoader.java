@@ -137,7 +137,8 @@ public class ImageLoader {
     };
 
     private static void getImageHeightAndWidth(Context context, final File file, ImageView imageView, final ProgressBar progressBar) {
-        float ratio = 1;
+        NewImageCompress.getImage(context, file, imageView, progressBar);
+        /*float ratio = 1;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int maxWidth = display.getWidth() * 2 / 3;
@@ -151,7 +152,7 @@ public class ImageLoader {
 
         if (height > width) {
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            height = maxWidth;
+            height = display.getWidth() * 2 / 3;
         } else {
             height = (int) (height / ratio);
         }
@@ -159,6 +160,7 @@ public class ImageLoader {
         width = maxWidth;
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+        layoutParams.setMargins(5, 5, 5, 5);
         imageView.setLayoutParams(layoutParams);
 
         Glide.with(context)
@@ -181,5 +183,6 @@ public class ImageLoader {
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(imageView);
+                */
     }
 }
