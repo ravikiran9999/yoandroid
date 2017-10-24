@@ -47,6 +47,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.yo.android.ui.BottomTabsActivity.activity;
+
 public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, BalanceAdapter.MoreItemListener {
 
     private static final String TAG = CreditAccountFragment.class.getSimpleName();
@@ -215,7 +217,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 data.add(new MoreData(activity.getString(R.string.transfer_balance), true, null));
             }
 
-            data.add(SEPERATOR);
+            //data.add(SEPERATOR);
 
         }
         balanceAdapter.addItems(data);
@@ -370,12 +372,12 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 } else {
                     String balance = mBalanceHelper.getCurrentBalance();
                     String currencySymbol = mBalanceHelper.getCurrencySymbol();
-                    boolean userType = preferenceEndPoint.getBooleanPreference(Constants.USER_TYPE, false);
-                    if(userType) {
+                    /*boolean userType = preferenceEndPoint.getBooleanPreference(Constants.USER_TYPE, false);
+                    if (userType) {
                         TransferBalanceActivity.start(activity, currencySymbol, balance, true);
                     } else {
                         TransferBalanceSelectContactActivity.start(activity, balance, false);
-                    }
+                    }*/
                 }
 
             }

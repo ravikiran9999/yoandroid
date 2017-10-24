@@ -42,7 +42,7 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
-import com.yo.android.WebserviceUsecase;
+import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;

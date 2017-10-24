@@ -6,15 +6,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.widget.ImageView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
-import com.yo.android.WebserviceUsecase;
+import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.api.ApiCallback;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.model.Lock;
-import com.yo.android.pjsip.YoSipService;
 import com.yo.android.util.Constants;
 
 import javax.inject.Inject;
@@ -95,6 +93,11 @@ public class SplashScreenActivity extends BaseActivity {
                     @Override
                     public void onResult(Lock result) {
                         return;
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+
                     }
                 });
             }

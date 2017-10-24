@@ -34,7 +34,7 @@ import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
-import com.yo.android.WebserviceUsecase;
+import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.calllogs.CallerInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -62,7 +62,6 @@ import org.pjsip.pjsua2.Endpoint;
 import org.pjsip.pjsua2.OnIncomingCallParam;
 import org.pjsip.pjsua2.StreamStat;
 import org.pjsip.pjsua2.StringVector;
-import org.pjsip.pjsua2.pj_turn_tp_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_status_code;
 

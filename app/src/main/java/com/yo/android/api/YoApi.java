@@ -17,6 +17,7 @@ import com.yo.android.model.Response;
 import com.yo.android.model.Room;
 import com.yo.android.model.Subscriber;
 import com.yo.android.model.Topics;
+import com.yo.android.model.TransferBalanceDenomination;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.model.Wallet;
@@ -327,6 +328,9 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/user/user_magzines_info.json")
         Call<Lock> lockAPI(@Field("access_token") String access_token);
+
+        @GET("api/balance_transfer_denominations.json")
+        Call<List<TransferBalanceDenomination>> transferBalanceDenominationAPI(@Query("access_token") String access_token);
 
     }
 
