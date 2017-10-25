@@ -6,6 +6,7 @@ import com.yo.dialer.CallExtras;
 import com.yo.dialer.CallStateHandler;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.YoSipService;
+import com.yo.dialer.ui.CallControls;
 
 import org.pjsip.pjsua2.BuddyInfo;
 import org.pjsip.pjsua2.CallInfo;
@@ -130,6 +131,7 @@ public class YoCallObserver implements YoAppObserver {
     @Override
     public void notifyCallMediaState(YoCall call) {
         try {
+            DialerLogs.messageI(TAG, "notifyCallMediaState===========");
             YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
             YoCall yoCurrentCall = yoSipService.getYoCurrentCall();
             if (yoCurrentCall != null) {
@@ -142,17 +144,23 @@ public class YoCallObserver implements YoAppObserver {
                 for (int i = 0; i < media.size(); i++) {
                     CallMediaInfo mediaInfo = media.get(i);
                     if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_REMOTE_HOLD) {
+                        DialerLogs.messageI(TAG, "notifyCallMediaState RemoteHold===========");
                         yoSipService.setRemoteHold(true);
                         if (mContext instanceof YoSipService) {
                             yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_CALL_MEDIA_REMOTE_HOLD);
                         }
                     } else if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE) {
+                        DialerLogs.messageI(TAG, "notifyCallMediaState MediaActive===========");
                         yoSipService.setRemoteHold(false);
                         yoSipService.setLocalHold(false);
+                        if (CallControls.getCallControlsModel().isMicOn()) {
+                            yoSipService.getSipServiceHandler().setMic(true);
+                        }
                         if (mContext instanceof YoSipService) {
                             yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_CONNECTED);
                         }
                     } else if (mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_LOCAL_HOLD) {
+                        DialerLogs.messageI(TAG, "notifyCallMediaState LocalHold===========");
                         yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_CALL_MEDIA_LOCAL_HOLD);
                         yoSipService.setLocalHold(true);
                         if (!yoSipService.isRemoteHold()) {

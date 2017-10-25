@@ -184,6 +184,20 @@ public class BaseActivity extends ParentActivity {
                     Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getCallMode(), model.getDate(), model.getTime(), model.getComments()
                     )
             );
+        } else if (type.equals("BalanceFailures")) {
+            range = "BalanceFailures!A:G";
+            DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+            if (TextUtils.isEmpty(model.getCallee().trim())) {
+                model.setCallee("Unknown");
+            }
+
+            if (TextUtils.isEmpty(model.getToName().trim())) {
+                model.setToName("Unknown");
+            }
+            values = Arrays.asList(
+                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getToName(), model.getCallee(), model.getDate(), model.getTime(), model.getComments()
+                    )
+            );
         }
         sendToGoogleDrive(sheets, model, spreadsheetId, range, values);
     }
