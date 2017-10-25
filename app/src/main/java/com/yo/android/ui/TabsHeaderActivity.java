@@ -14,26 +14,32 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Popup;
 import com.yo.android.ui.fragments.CreditAccountFragment;
+import com.yo.android.ui.fragments.NewCreditAccountFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
+import com.yo.android.vox.BalanceHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import static com.yo.android.flip.MagazineFlipArticlesFragment.updateCalled;
 
@@ -47,15 +53,26 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     private TabsPagerAdapter adapter;
     private Menu menu;
 
+    @Inject
+    BalanceHelper mBalanceHelper;
+
+    TextView balanceText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.actvity_yo_credit);
+        if (!BuildConfig.NEW_YO_CREDIT_SCREEN) {
+            setContentView(R.layout.actvity_yo_credit);
+        } else {
+            setContentView(R.layout.new_yo_credit_screen);
+            balanceText = (TextView) findViewById(R.id.your_available_amount);
+            balanceText.setText(String.format(getString(R.string.your_yo_balance), mBalanceHelper.getCurrentBalance()));
+        }
         updateCalled = 0;
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
                 getSupportActionBar().setTitle(R.string.add_balance_title);
             } else {
@@ -71,22 +88,26 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.htab_collapse_toolbar);
-        collapsingToolbarLayout.setTitleEnabled(false);
+        // Collapsing toolbar
+        if(!BuildConfig.NEW_YO_CREDIT_SCREEN) {
+            final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.htab_collapse_toolbar);
+            collapsingToolbarLayout.setTitleEnabled(false);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-                R.drawable.patan);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.patan);
 
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-            @SuppressWarnings("ResourceType")
-            @Override
-            public void onGenerated(Palette palette) {
-                int vibrantColor = palette.getVibrantColor(R.color.primary_500);
-                int vibrantDarkColor = palette.getDarkVibrantColor(R.color.primary_700);
-                collapsingToolbarLayout.setContentScrimColor(vibrantColor);
-                collapsingToolbarLayout.setStatusBarScrimColor(vibrantDarkColor);
-            }
-        });
+            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                @SuppressWarnings("ResourceType")
+                @Override
+                public void onGenerated(Palette palette) {
+                    int vibrantColor = palette.getVibrantColor(R.color.primary_500);
+                    int vibrantDarkColor = palette.getDarkVibrantColor(R.color.primary_700);
+                    collapsingToolbarLayout.setContentScrimColor(vibrantColor);
+                    collapsingToolbarLayout.setStatusBarScrimColor(vibrantDarkColor);
+                }
+            });
+
+        }
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -110,7 +131,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
         NotificationCache.clearNotifications();
 
-        if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
             Type type = new TypeToken<List<Popup>>() {
             }.getType();
             List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
@@ -138,7 +159,12 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
 
     private void setupViewPager(ViewPager viewPager) {
         adapter = new TabsPagerAdapter(getSupportFragmentManager());
-        Fragment fragment = new CreditAccountFragment();
+        Fragment fragment;
+        if (!BuildConfig.NEW_YO_CREDIT_SCREEN) {
+            fragment = new CreditAccountFragment();
+        } else {
+            fragment = new NewCreditAccountFragment();
+        }
         if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.OPEN_ADD_BALANCE, true);
@@ -161,23 +187,23 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                Type type = new TypeToken<List<Popup>>() {
-                }.getType();
-                List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                if (popup != null) {
-                    for (Popup p : popup) {
-                        if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
-                            if (!isAlreadyShown) {
-                                PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
-                                isAlreadyShown = true;
-                                isSharedPreferenceShown = true;
-                                break;
-                            }
+        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+            Type type = new TypeToken<List<Popup>>() {
+            }.getType();
+            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+            if (popup != null) {
+                for (Popup p : popup) {
+                    if (p.getPopupsEnum() == PopupHelper.PopupsEnum.YOCREDIT) {
+                        if (!isAlreadyShown) {
+                            PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.YOCREDIT, p, this, preferenceEndPoint, null, this, popup);
+                            isAlreadyShown = true;
+                            isSharedPreferenceShown = true;
+                            break;
                         }
                     }
                 }
             }
+        }
     }
 
     @Override
@@ -192,7 +218,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         }.getType();
         List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
         if (popup != null) {
-            if(!isSharedPreferenceShown) {
+            if (!isSharedPreferenceShown) {
                 Collections.reverse(popup);
             }
             List<Popup> tempPopup = new ArrayList<>(popup);
@@ -237,5 +263,11 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
 
     @Override
     public void onPageScrollStateChanged(int state) {
+    }
+
+    public void onEventMainThread(String action) {
+        if (Constants.BALANCE_UPDATED_ACTION.equals(action) && balanceText != null) {
+            balanceText.setText(String.format(getString(R.string.your_yo_balance), mBalanceHelper.getCurrentBalance()));
+        }
     }
 }

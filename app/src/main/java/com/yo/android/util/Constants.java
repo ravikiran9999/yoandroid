@@ -64,6 +64,7 @@ public class Constants {
     public static final String WALLET_BALANCE = "wallet_balance";
     public static final String SWITCH_BALANCE = "switch_balance";
     public static final String CURRENCY_SYMBOL = "currency_symbol";
+    public static final String TRANSFER_AMOUNT = "transfer_amount";
     public static final String SUBSCRIBER_ID = "subscriber_id";
     public static final String DIALER_FILTER = "dialer_filter";
     public static final String FCM_REFRESH_TOKEN = "fcm_refresh_token";

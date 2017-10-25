@@ -120,7 +120,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         try {
             if (userId.equals(item.getSenderID())) {
                 holder.getLinearLayout().setGravity(Gravity.END);
-                holder.getLinearLayout().setPadding(0,0,10,0);
+                holder.getLinearLayout().setPadding(0, 0, 10, 0);
                 if (item.getType().equals(Constants.TEXT)) {
                     newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
@@ -128,7 +128,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 }
             } else {
                 holder.getLinearLayout().setGravity(Gravity.START);
-                holder.getLinearLayout().setPadding(10,0,0,0);
+                holder.getLinearLayout().setPadding(10, 0, 0, 0);
                 if (item.getType().equals(Constants.TEXT)) {
                     newTextAddView(item, holder);
                 } else if (item.getType().equals(Constants.IMAGE)) {
@@ -184,7 +184,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             gravityLayout.setBackgroundResource(R.drawable.msg_out_photo);
             Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
             //img.setBounds(10, 0, 30, 50);
-            img.setBounds(Helper.dp(context, 1), Helper.dp(context, 2), Helper.dp(context, 10), Helper.dp(context, 10));
+            img.setBounds(Helper.dp(context, 1), Helper.dp(context, 2), Helper.dp(context, 60), Helper.dp(context, 610));
             time.setCompoundDrawables(null, null, img, null);
             time.setCompoundDrawablePadding(10);
             String sent = DateUtil.getTimeFormatForChat(context, item.getTime());
@@ -212,8 +212,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private LinearLayout newTextAddView(@NonNull final ChatMessage item, @NonNull final UserChatViewHolder holder) {
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
-        PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-        LinearLayout secretChatPlaceholder = new LinearLayout(context);
+        LinearLayout secretChatPlaceholder = (LinearLayout) inflater.inflate(R.layout.balloon, null);
         secretChatPlaceholder.setOrientation(LinearLayout.HORIZONTAL);
         boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
 
@@ -223,21 +222,15 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(10, 0, 20, 0);
 
-        EmojiconTextView emojiTextView = new EmojiconTextView(context);
-        emojiTextView.setEmojiconSize(Helper.dp(context, 20));
-        emojiTextView.setLayoutParams(lp);
-        emojiTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-        emojiTextView.setGravity(Gravity.LEFT);
-        int maxWidth = Helper.dp(context, 260);
-        emojiTextView.setMaxWidth(maxWidth);
-        emojiTextView.setTextColor(Color.BLACK);
+        TextView emojiTextView = (TextView) secretChatPlaceholder.findViewById(R.id.chat_msg);
+        LinearLayout.LayoutParams  rlp = new LinearLayout.LayoutParams (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        rlp.setMargins(0, 0, 40, 0);
         emojiTextView.setText(item.getMessage());
 
 
-        RelativeLayout mainLayout = (RelativeLayout) inflater.inflate(R.layout.chat_message, null);
-        TextView time = (TextView) mainLayout.findViewById(R.id.time);
+        LinearLayout mainLayout = (LinearLayout) secretChatPlaceholder.findViewById(R.id.lytStatusContainer);
+        TextView time = (TextView) mainLayout.findViewById(R.id.date_view);
 
-        RelativeLayout seenLayout = (RelativeLayout) mainLayout.findViewById(R.id.seen_layout);
         TextView sent = (TextView) mainLayout.findViewById(R.id.sent_txt);
         sent.setGravity(Gravity.BOTTOM);
         if (!isRTL) {
@@ -266,7 +259,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
                 linearLayout1.addView(senderId);
             }
-            seenLayout.setVisibility(View.GONE);
+            //   seenLayout.setVisibility(View.GONE);
             if (item.getDeliveredTime() != 0) {
                 String seenText = DateUtil.getTimeFormatForChat(context, item.getDeliveredTime());
                 time.setText(seenText);
@@ -295,24 +288,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 time.setCompoundDrawables(null, null, img, null);
             }
         }
-        linearLayout1.addView(emojiTextView);
 
         secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, isRTL ? 0 : 7, 0, 1, 0));
-        secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, Gravity.BOTTOM, 5, 2, 5, 0));
-        holder.getLl().addView(secretChatPlaceholder);
+        //   secretChatPlaceholder.addView(mainLayout, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, Gravity.BOTTOM, 5, 2, 5, 0));
+        holder.getLl().addView(secretChatPlaceholder,rlp);
         return secretChatPlaceholder;
     }
-
-    private int getPx(int dp) {
-        Resources r = mContext.getResources();
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp,
-                r.getDisplayMetrics()
-        );
-    }
-
-
     private boolean isValidMobile(String phone) {
         try {
             return android.util.Patterns.PHONE.matcher(phone).matches();
@@ -342,7 +323,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     return convertView;
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             // catch Exception
         }
         return new View(parent.getContext());
@@ -358,7 +339,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                     return timeStamp.subSequence(0, timeStamp.length()).hashCode();
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
         }
         return 0;
     }

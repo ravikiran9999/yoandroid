@@ -137,8 +137,13 @@ public class ImageLoader {
     };
 
     private static void getImageHeightAndWidth(Context context, final File file, ImageView imageView, final ProgressBar progressBar) {
-        NewImageCompress.getImage(context, file, imageView, progressBar);
-        /*float ratio = 1;
+        //NewImageCompress.getImage(context, file, imageView, progressBar);
+        oldImageProcess(context, file, imageView, progressBar);
+
+    }
+
+    private static void oldImageProcess(Context context, File file, ImageView imageView, final ProgressBar progressBar) {
+        float ratio = 1;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int maxWidth = display.getWidth() * 2 / 3;
@@ -183,6 +188,5 @@ public class ImageLoader {
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(imageView);
-                */
     }
 }

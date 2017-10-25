@@ -1,42 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yo.android.ui.TransferBalanceActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.yo.android.ui.TransferBalanceActivity">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="1dp">
 
-    <RelativeLayout
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="Your Current Balance"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/txt_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/colorPrimary" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <EditText
+        android:id="@+id/et_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:padding="10dp">
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:hint="Enter amount to transfer"
+        android:inputType="numberDecimal"
+        android:paddingLeft="20dp"
+        android:singleLine="true" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="Your Current Balance"
-            android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/transfer_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:paddingLeft="20dp"
+        android:singleLine="true"
+        android:textSize="20sp"
+        tools:text="@string/transfer_amount" />
 
-        <TextView
-            android:id="@+id/txt_balance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:textColor="@color/colorPrimary" />
-    </RelativeLayout>
-</android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
         android:id="@+id/row_container"
@@ -46,18 +72,17 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="15dp"
-        card_view:cardPreventCornerOverlap="false"
         card_view:cardCornerRadius="3dp"
         card_view:cardElevation="1sp"
-        >
+        card_view:cardPreventCornerOverlap="false">
 
         <RelativeLayout
             android:id="@+id/enter_contact_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/white"
-            android:visibility="gone"
-            >
+            android:visibility="gone">
+
             <EditText
                 android:id="@+id/et_enter_phone"
                 android:layout_width="match_parent"
@@ -65,10 +90,10 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="10dp"
                 android:background="@android:color/white"
-                android:inputType="number"
                 android:ems="10"
                 android:hint="Enter mobile number"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 android:padding="13dp"
                 android:singleLine="true" />
         </RelativeLayout>
@@ -92,9 +117,9 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_toLeftOf="@+id/iv_message_type"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/iv_message_type"
                 android:layout_toRightOf="@+id/imv_contact_pic"
                 android:orientation="vertical"
                 android:padding="10dp">
@@ -134,27 +159,17 @@
     </android.support.v7.widget.CardView>
 
 
-    <EditText android:id="@+id/et_amount"
+    <Button
+        android:id="@+id/btn_transfer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter amount to transfer"
-        android:singleLine="true"
-        android:layout_marginTop="15dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:inputType="numberDecimal"
-        android:paddingLeft="20dp"/>
-
-    <Button android:id="@+id/btn_transfer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:background="@drawable/ic_magazine_follow"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
         android:text="Transfer"
-        android:textColor="@color/white"
         android:textAllCaps="false"
-        android:textSize="18sp"
-        android:layout_marginTop="20dp"/>
+        android:textColor="@color/white"
+        android:textSize="18sp" />
 
 </LinearLayout>

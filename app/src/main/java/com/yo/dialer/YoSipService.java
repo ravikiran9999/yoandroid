@@ -592,6 +592,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     public void callDisconnected(String code, String reason, String comment) {
         SipHelper.isAlreadyStarted = false;
+
         setCurrentCallToNull();
         //If the call is rejected should stop rigntone
         stopDefaultRingtone();

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/balloon"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="15dp"
+    android:baselineAligned="false"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_weight="1"
+        android:gravity="right">
+
+        <com.yo.android.chat.YoChatMessageBox
+            android:id="@+id/msg_layout"
+            style="@style/BalloonMessageLayoutRight"
+            android:layout_width="272dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="@dimen/d5"
+            android:layout_marginLeft="@dimen/d5"
+            android:layout_marginTop="@dimen/d5"
+            android:gravity="left|center_vertical"
+            android:padding="@dimen/d5"
+            app:viewPartMain="@+id/chat_msg"
+            app:viewPartSlave="@+id/lytStatusContainer">
+
+            <TextView
+                android:id="@+id/chat_msg"
+                style="@style/BalloonMessageRightTextItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|bottom"
+                android:focusableInTouchMode="false"
+                android:gravity="left|top"
+                android:text="hjjfg" />
+
+            <LinearLayout
+                android:id="@+id/lytStatusContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:gravity="right"
+                android:minWidth="60dp">
+
+                <TextView
+                    android:id="@+id/date_view"
+                    style="@style/BallonMessageTimeText"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="right|bottom"
+                    android:layout_marginRight="5dp"
+                    android:gravity="right"
+                    android:maxLines="1" />
+
+                <include
+                    android:id="@+id/lytStatus"
+                    layout="@layout/layout_im_message_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginRight="5dp"
+                    android:minWidth="40dp" />
+
+            </LinearLayout>
+
+        </com.yo.android.chat.YoChatMessageBox>
+        >
+    </LinearLayout>
+</LinearLayout>
