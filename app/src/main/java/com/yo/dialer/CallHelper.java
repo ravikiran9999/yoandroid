@@ -153,12 +153,15 @@ public class CallHelper {
     }
 
     public static void setMute(YoApp yoapp, YoCall currentCall, boolean mute) {
+        DialerLogs.messageE(TAG, "setMute first line");
         if (yoapp != null) {
             if (currentCall != null) {
                 CallInfo info;
                 try {
+                    DialerLogs.messageE(TAG, "setMute try block");
                     info = currentCall.getInfo();
                 } catch (Exception exc) {
+                    DialerLogs.messageE(TAG, "setMute catch block");
                     return;
                 }
 
@@ -166,10 +169,13 @@ public class CallHelper {
                     Media media = currentCall.getMedia(i);
                     CallMediaInfo mediaInfo = info.getMedia().get(i);
 
+                    DialerLogs.messageE(TAG, "setMute mediaInfo " + mediaInfo.getType() + media + mediaInfo.getStatus());
+
                     if (mediaInfo.getType() == pjmedia_type.PJMEDIA_TYPE_AUDIO
-                            && media != null
-                            && mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE) {
+                            && media != null && mediaInfo.getStatus() == pjsua_call_media_status.PJSUA_CALL_MEDIA_ACTIVE) {
                         AudioMedia audioMedia = AudioMedia.typecastFromMedia(media);
+
+                        DialerLogs.messageE(TAG, "setMute mediaInfo if audioMedia " + audioMedia);
 
                         // connect or disconnect the captured audio
                         try {
@@ -177,11 +183,14 @@ public class CallHelper {
 
                             if (mute) {
                                 mgr.getCaptureDevMedia().stopTransmit(audioMedia);
+                                DialerLogs.messageE(TAG, "Setting mute on");
                             } else {
                                 mgr.getCaptureDevMedia().startTransmit(audioMedia);
+                                DialerLogs.messageE(TAG, "Setting mute off");
                             }
 
                         } catch (Exception exc) {
+                            DialerLogs.messageE(TAG, "Exception while setting mute " + exc.getMessage());
                         }
                     }
                 }
@@ -197,10 +206,19 @@ public class CallHelper {
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam(true);
             try {
-                currentCall.setHold(prm);
-                uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold On");
+                if(!currentCall.isPendingReInvite()) {
+                    currentCall.setHold(prm);
+                    currentCall.setPendingReInvite(true);
+                    uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold On");
+                } else {
+                    DialerLogs.messageE(TAG, "Reinvite pending so can't set onhold");
+                    currentCall.setPendingReInvite(true);
+                    YoSipService.changeHoldUI = false;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
+                currentCall.setPendingReInvite(true);
+                YoSipService.changeHoldUI = false;
                 uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold On failed because of " + e.getMessage());
             }
         } else {
@@ -212,7 +230,14 @@ public class CallHelper {
         CallOpParam prm = new CallOpParam(true);
         prm.getOpt().setFlag(1);
         if (currentCall != null) {
-            currentCall.reinvite(prm);
+            if(!currentCall.isPendingReInvite()) {
+                currentCall.reinvite(prm);
+                currentCall.setPendingReInvite(true);
+            } else {
+                DialerLogs.messageE(TAG, "Reinvite pending so can't set unhold");
+                currentCall.setPendingReInvite(true);
+                YoSipService.changeHoldUI = false;
+            }
         } else {
             DialerLogs.messageE(TAG, "Current call is null so call not unhold");
         }
@@ -241,6 +266,30 @@ public class CallHelper {
                 model.setTime(currentDateTimeString);
 
                 UploadCallDetails.postDataFromApi(model, "Hold");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void uploadToGoogleSheetBalanceFail(PreferenceEndPoint preferenceEndPoint, String phoneNumber, String name, String comments) {
+        if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
+            try {
+                UploadModel model = new UploadModel(preferenceEndPoint);
+                model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+                model.setCallee(phoneNumber);
+                model.setToName(name);
+
+                model.setComments(comments);
+
+                Calendar c = Calendar.getInstance();
+                String formattedDate = YoSipService.df.format(c.getTime());
+                model.setDate(formattedDate);
+                Date d = new Date();
+                String currentDateTimeString = YoSipService.sdf.format(d);
+                model.setTime(currentDateTimeString);
+
+                UploadCallDetails.postDataFromApi(model, "BalanceFailures");
             } catch (IOException e) {
                 e.printStackTrace();
             }

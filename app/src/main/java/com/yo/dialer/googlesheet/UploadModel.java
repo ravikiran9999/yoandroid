@@ -25,6 +25,7 @@ public class UploadModel implements Serializable {
     private String regId;
     private String time;
     private String callMode;
+    private String toName;
 
     public UploadModel(PreferenceEndPoint preferenceEndPoint) {
         setName(preferenceEndPoint.getStringPreference(Constants.FIRST_NAME));
@@ -149,5 +150,13 @@ public class UploadModel implements Serializable {
 
     public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public String getToName() {
+        return toName;
+    }
+
+    public void setToName(String toName) {
+        this.toName = toName;
     }
 }

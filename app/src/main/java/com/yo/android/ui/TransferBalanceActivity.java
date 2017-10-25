@@ -30,6 +30,7 @@ import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
+import com.yo.dialer.CallHelper;
 
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
@@ -289,40 +290,37 @@ public class TransferBalanceActivity extends BaseActivity {
                                     showAlertDialog(response.body().getBalance(), getString(R.string.successful_transfer, mName));
                                     break;
                                 case 606:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 607:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 608:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 609:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 610:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 611:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 612:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 613:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 614:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 615:
-                                    mToastFactory.showToast(response.body().getData().toString());
-                                    break;
+
                                 case 616:
                                     mToastFactory.showToast(response.body().getData().toString());
+                                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance because of " + response.body().getData().toString());
                                     break;
                                 default:
-                                    mToastFactory.showToast(R.string.transfer_balance_failed);
+                                    if(response.body().getData() != null) {
+                                        mToastFactory.showToast(response.body().getData().toString());
+                                        CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance because of " + response.body().getData().toString());
+                                    } else {
+                                        mToastFactory.showToast(R.string.transfer_balance_failed);
+                                        CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance");
+                                    }
                                     break;
                             }
                         } catch (ClassCastException e) {
@@ -330,9 +328,11 @@ public class TransferBalanceActivity extends BaseActivity {
                         }
                     } else {
                         mToastFactory.showToast(R.string.transfer_balance_failed);
+                        CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance");
                     }
                 } else {
                     mToastFactory.showToast(R.string.transfer_balance_failed);
+                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance");
                 }
             }
 
@@ -341,7 +341,7 @@ public class TransferBalanceActivity extends BaseActivity {
                 dismissProgressDialog();
 
                 mToastFactory.showToast(R.string.transfer_balance_failed);
-
+                CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance");
             }
         });
     }
