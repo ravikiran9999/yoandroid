@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.yo.android.api.YoApi;
 import com.yo.android.usecase.DenominationsUsecase;
-import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.ApiCallback;
 import com.yo.android.chat.ui.fragments.BaseFragment;
@@ -39,15 +37,12 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-import static com.yo.android.ui.BottomTabsActivity.activity;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class NewCreditAccountFragment extends BaseFragment {
 
     @Bind(R.id.avi_first)
@@ -62,8 +57,6 @@ public class NewCreditAccountFragment extends BaseFragment {
     protected TextView tvSecond;
     @Bind(R.id.tv_third)
     protected TextView tvThird;
-
-
 
     @Inject
     DenominationsUsecase denominationsUsecase;
@@ -152,13 +145,11 @@ public class NewCreditAccountFragment extends BaseFragment {
     }
 
     public void transferBalance(String transferAmount) {
-
         if (YoSipService.currentCall != null && YoSipService.outgoingCallUri != null) {
             mToastFactory.showToast(getActivity().getResources().getString(R.string.balance_transfer_not_allowed));
         } else {
             String balance = mBalanceHelper.getCurrentBalance();
-
-            TransferBalanceActivity.start(activity, balance, transferAmount, true);
+            navigateToTransferBalance(balance, transferAmount, true);
 
         }
     }
@@ -303,12 +294,12 @@ public class NewCreditAccountFragment extends BaseFragment {
         closeActivityAddBalance(Activity.RESULT_CANCELED, null);
     }
 
-    private void closeActivityAddBalance(int resultcode, Intent data) {
-        if (resultcode == Activity.RESULT_CANCELED) {
+    private void closeActivityAddBalance(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_CANCELED) {
             return;
         }
         if (getArguments() != null && getArguments().getBoolean(Constants.OPEN_ADD_BALANCE, false)) {
-            getActivity().setResult(resultcode);
+            getActivity().setResult(resultCode);
             getActivity().finish();
         }
         if (getArguments() != null && getArguments().getBoolean(Constants.RENEWAL, false)) {
@@ -316,5 +307,47 @@ public class NewCreditAccountFragment extends BaseFragment {
             getActivity().finish();
             de.greenrobot.event.EventBus.getDefault().post(Constants.RENEWAL);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (mBalanceHelper != null && (requestCode == 11 || requestCode == 22) && resultCode == Activity.RESULT_OK) {
+
+            // Available balance after transaction
+            if (data != null) {
+                String currentAvailableAmount = data.getStringExtra(Constants.CURRENT_BALANCE);
+                preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, currentAvailableAmount);
+                EventBus.getDefault().post(Constants.BALANCE_UPDATED_ACTION);
+            } else {
+                showProgressDialog();
+                mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                        dismissProgressDialog();
+                        preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        dismissProgressDialog();
+
+                    }
+                });
+            }
+        } else if (mBalanceHelper != null && resultCode == Activity.RESULT_OK) {
+            preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
+        }
+
+        closeActivityAddBalance(resultCode, data);
+    }
+
+    private void navigateToTransferBalance(String availableBalance, String transferAmount, boolean userType) {
+
+        Intent intent = new Intent(getActivity(), TransferBalanceActivity.class);
+        intent.putExtra(Constants.CURRENT_BALANCE, availableBalance);
+        intent.putExtra(Constants.USER_TYPE, userType);
+        intent.putExtra(Constants.TRANSFER_AMOUNT, transferAmount);
+        startActivityForResult(intent, 11);
     }
 }

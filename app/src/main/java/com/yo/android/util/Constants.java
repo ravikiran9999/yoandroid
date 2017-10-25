@@ -206,6 +206,8 @@ public class Constants {
 
     // Recharge
     public static final String RECHARGE_SUCCESSFUL = "Payment Successful";
+    public static final String SELECTED_CONTACT_TO_TRANSFER = "selectedContact";
+
 
     //Magazine
     public static final String MAGAZINE_TAGS = "magazine_tags";

@@ -1,175 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.yo.android.ui.TransferBalanceActivity">
 
-    <android.support.v7.widget.CardView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        app:cardCornerRadius="1dp">
+        android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/balance_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="center"
+            android:background="@color/dark_red_bg"
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/current_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:text="Your Current Balance"
-                android:textColor="@color/black" />
+                android:layout_marginStart="12dp"
+                android:text="$500"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/txt_balance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:textColor="@color/colorPrimary" />
         </RelativeLayout>
-    </android.support.v7.widget.CardView>
 
-    <EditText
-        android:id="@+id/et_amount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
-        android:hint="Enter amount to transfer"
-        android:inputType="numberDecimal"
-        android:paddingLeft="20dp"
-        android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/select_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/balance_layout"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/select_contacts_bg"
+            android:drawableTop="@drawable/contacts_icon"
+            android:gravity="center"
+            android:text="@string/contact"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/transfer_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:paddingLeft="20dp"
-        android:singleLine="true"
-        android:textSize="20sp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="30dp"
+        android:textSize="16sp"
         tools:text="@string/transfer_amount" />
 
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/row_container"
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="15dp"
-        card_view:cardCornerRadius="3dp"
-        card_view:cardElevation="1sp"
-        card_view:cardPreventCornerOverlap="false">
-
-        <RelativeLayout
-            android:id="@+id/enter_contact_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:visibility="gone">
-
-            <EditText
-                android:id="@+id/et_enter_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="10dp"
-                android:background="@android:color/white"
-                android:ems="10"
-                android:hint="Enter mobile number"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                android:padding="13dp"
-                android:singleLine="true" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/contact_view"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/listPreferredItemHeight"
-            android:background="@android:color/white"
-            android:orientation="vertical">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/imv_contact_pic"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="16dp"
-                android:src="@drawable/dynamic_profile" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/iv_message_type"
-                android:layout_toRightOf="@+id/imv_contact_pic"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/tv_phone_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:gravity="center_vertical"
-                    android:maxLines="1"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-
-                    android:visibility="gone"
-                    tools:text="YO!" />
-
-                <TextView
-                    android:id="@+id/tv_contact_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_phone_number"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toLeftOf="@+id/iv_message_type"
-                    android:layout_toRightOf="@+id/imv_contact_pic"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:textColor="@android:color/black"
-                    android:textSize="14sp"
-                    tools:text="9490590000" />
-            </LinearLayout>
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/horizontal_separater" />
 
 
-    <Button
-        android:id="@+id/btn_transfer"
+    <EditText
+        android:id="@+id/et_enter_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:hint="@string/mobile_number_hint"
+        android:imeOptions="actionDone"
+        android:inputType="number|phone"
+        android:padding="13dp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/ic_magazine_follow"
-        android:text="Transfer"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="18sp" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/cancel_red_btn"
+            android:text="@string/cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_transfer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/cancel_red_btn"
+            android:text="@string/transfer"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </LinearLayout>

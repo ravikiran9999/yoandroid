@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -57,24 +58,24 @@ public class TransferBalanceActivity extends BaseActivity {
     private String phoneNo;
     String profilePic;
 
-    @Bind(R.id.enter_contact_view)
-    RelativeLayout enterNumberView;
-    @Bind(R.id.et_amount)
-    EditText etAmount;
+
     @Bind(R.id.et_enter_phone)
     EditText enteredPhoneNumber;
-    @Bind(R.id.txt_balance)
+    @Bind(R.id.current_balance)
     TextView tvBalance;
     @Bind(R.id.transfer_amount)
     TextView tvTransferAmount;
-    @Bind(R.id.contact_view)
-    RelativeLayout contactNumberView;
-    @Bind(R.id.tv_phone_number)
-    TextView tvPhoneNumber;
-    @Bind(R.id.tv_contact_email)
+
+
+    /*@Bind(R.id.contact_view)
+    RelativeLayout contactNumberView;*/
+
+    /*@Bind(R.id.tv_phone_number)
+    TextView tvPhoneNumber;*/
+    /*@Bind(R.id.tv_contact_email)
     TextView tvContactMail;
     @Bind(R.id.imv_contact_pic)
-    CircleImageView imvProfilePic;
+    CircleImageView imvProfilePic;*/
 
 
     @Inject
@@ -84,13 +85,8 @@ public class TransferBalanceActivity extends BaseActivity {
     private String mTransferAmount;
 
     public static void start(Activity activity, String currencySymbol, String availableBalance, String fullName, String phoneNo, String userAvatar, String userId, boolean userType) {
-        Intent intent = createIntent(activity, currencySymbol, availableBalance, fullName, phoneNo, userAvatar, userId,  userType);
+        Intent intent = createIntent(activity, currencySymbol, availableBalance, fullName, phoneNo, userAvatar, userId, userType);
         activity.startActivityForResult(intent, 22);
-    }
-
-    public static void start(Activity activity, String availableBalance, String transferAmount, boolean userType) {
-        Intent intent = createIntent(activity, availableBalance, transferAmount, userType);
-        activity.startActivityForResult(intent, 11);
     }
 
     private static Intent createIntent(Activity activity, String currencySymbol, String availableBalance, String fullName, String phoneNo, String userAvatar, String userId, boolean userType) {
@@ -103,15 +99,6 @@ public class TransferBalanceActivity extends BaseActivity {
         intent.putExtra(Constants.PHONE_NUMBER, phoneNo);
         intent.putExtra("profilePic", userAvatar);
         intent.putExtra("id", userId);
-        return intent;
-    }
-
-    private static Intent createIntent(Activity activity, String availableBalance, String transferAmount, boolean userType) {
-
-        Intent intent = new Intent(activity, TransferBalanceActivity.class);
-        intent.putExtra(Constants.CURRENT_BALANCE, availableBalance);
-        intent.putExtra(Constants.USER_TYPE, userType);
-        intent.putExtra(Constants.TRANSFER_AMOUNT, transferAmount);
         return intent;
     }
 
@@ -131,7 +118,7 @@ public class TransferBalanceActivity extends BaseActivity {
         boolean userType = getIntent().getBooleanExtra(Constants.USER_TYPE, false);
         mTransferAmount = getIntent().getStringExtra(Constants.TRANSFER_AMOUNT);
 
-        enterNumberView.setVisibility(View.VISIBLE);
+        /*enterNumberView.setVisibility(View.VISIBLE);
         contactNumberView.setVisibility(View.GONE);
 
         if(!BuildConfig.NEW_YO_CREDIT_SCREEN) {
@@ -147,16 +134,17 @@ public class TransferBalanceActivity extends BaseActivity {
             enterNumberView.setVisibility(View.VISIBLE);
             contactNumberView.setVisibility(View.GONE);
             etAmount.setVisibility(View.GONE);
-            tvTransferAmount.setText(String.format(getString(R.string.transfer_amount), mTransferAmount));
-        }
-        tvBalance.setText(String.format("%s", balance));
+
+        }*/
+        tvTransferAmount.setText(String.format(getString(R.string.transfer_amount), mTransferAmount));
+        tvBalance.setText(String.format(getString(R.string.your_yo_balance_without_line_break), balance));
 
         EventBus.getDefault().register(this);
 
 
     }
 
-    private void userSelectedFromContacts() {
+    /*private void userSelectedFromContacts() {
 
         name = getIntent().getStringExtra(Constants.USER_NAME);
         phoneNo = getIntent().getStringExtra(Constants.PHONE_NUMBER);
@@ -206,17 +194,14 @@ public class TransferBalanceActivity extends BaseActivity {
         } else {
             loadAvatarImage(imvProfilePic);
         }
-    }
+    }*/
 
     @OnClick(R.id.btn_transfer)
     public void balanceTransfer() {
-        //Check current balance and call is going on cases before transfer.
-        //String amount = etAmount.getText().toString();
         String phoneNumber = enteredPhoneNumber.getText().toString();
         String mPhoneNumber = phoneNo != null ? phoneNo : phoneNumber;
         try {
-            //if (!TextUtils.isEmpty(amount.trim())) {
-                //double val = Double.parseDouble(amount.trim());
+            if (!TextUtils.isEmpty(mPhoneNumber.trim())) {
                 double val = mBalanceHelper.removeCurrencyCode(mTransferAmount);
                 if (val != 0) {
                     if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) > val) {
@@ -231,16 +216,29 @@ public class TransferBalanceActivity extends BaseActivity {
                 } else {
                     mToastFactory.showToast(getResources().getString(R.string.enter_valid_amount));
                 }
-            /*} else {
-                mToastFactory.showToast(getResources().getString(R.string.enter_amount_to_transfer));
-            }*/
-        }catch (Exception e) {
+            } else {
+                mToastFactory.showToast(getResources().getString(R.string.valid_phone));
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
+    @OnClick(R.id.btn_cancel)
+    public void cancelTransfer() {
+        finish();
+    }
+
+
+    @OnClick(R.id.select_contact)
+    public void openContactView() {
+        TransferBalanceSelectContactActivity.start(this);
+    }
+
     /**
      * Loads the user's avatar image
+     *
      * @param imvProfilePic The CircleImageView
      */
     private void loadAvatarImage(CircleImageView imvProfilePic) {
@@ -268,6 +266,7 @@ public class TransferBalanceActivity extends BaseActivity {
 
     /**
      * Transfers the balance to the other user
+     *
      * @param amount The amount to be transferred
      */
     private void transferBalance(String amount, final String phoneNo) {
@@ -286,40 +285,41 @@ public class TransferBalanceActivity extends BaseActivity {
                             switch (statusCode) {
                                 case 200:
                                     String mName = name != null ? name : phoneNo;
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.successful_transfer, mName));
+                                    showAlertDialog(response.body().getBalance(),getString(R.string.transfer_success), getString(R.string.successful_transfer, mName), R.drawable.right_icon, true);
                                     break;
                                 case 606:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
+
                                     break;
                                 case 607:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 case 608:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 case 609:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 case 610:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 case 611:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 case 612:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 case 613:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 case 614:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 case 615:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 case 616:
-                                    mToastFactory.showToast(response.body().getData().toString());
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     break;
                                 default:
                                     mToastFactory.showToast(R.string.transfer_balance_failed);
@@ -349,7 +349,8 @@ public class TransferBalanceActivity extends BaseActivity {
 
     /**
      * Shows the confirmation dialog to transfer the balance
-     * @param amount The amount to be transferred
+     *
+     * @param amount      The amount to be transferred
      * @param phoneNumber The phone number of the user to whom the balance needs to be transferred to
      */
     private void showMessageDialog(final String amount, final String amountWithDenomination, final String phoneNumber) {
@@ -363,9 +364,9 @@ public class TransferBalanceActivity extends BaseActivity {
         String mAmount = Util.addDenomination(amount, amountWithDenomination);
         String confirmationText;
 
-        if(name != null) {
+        if (name != null) {
             confirmationText = getString(R.string.transfer_balance_alert, mAmount, name, phoneNumber);
-        } else{
+        } else {
             confirmationText = getString(R.string.transfer_balance_alert_number, mAmount, phoneNumber);
         }
 
@@ -375,10 +376,12 @@ public class TransferBalanceActivity extends BaseActivity {
         Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
         yesBtn.setText(getResources().getString(R.string.yes));
         Button noBtn = (Button) view.findViewById(R.id.no_btn);
-
+        noBtn.setText(getResources().getString(R.string.cancel));
+        noBtn.setVisibility(View.VISIBLE);
 
         final AlertDialog alertDialog = builder.create();
         alertDialog.setCancelable(false);
+        alertDialog.getWindow().setBackgroundDrawable(new BitmapDrawable());
         alertDialog.show();
 
 
@@ -447,22 +450,26 @@ public class TransferBalanceActivity extends BaseActivity {
      */
     private void showBalanceDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.cannot_transfer_full_balance)
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View view = layoutInflater.inflate(R.layout.custom_dialog, null);
+        builder.setView(view);
+        TextView textView = (TextView) view.findViewById(R.id.dialog_content);
+        textView.setText(R.string.cannot_transfer_full_balance);
+
+        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+        yesBtn.setText(getResources().getString(R.string.ok));
+
         AlertDialog alert = builder.create();
+        alert.setCancelable(false);
+        alert.getWindow().setBackgroundDrawable(new BitmapDrawable());
         alert.show();
     }
 
-    private void showAlertDialog(String value, String titleMsg) {
+    private void showAlertDialog(final String value, String titleMsg, String contentMsg, int drawable, final boolean success) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(TransferBalanceActivity.this);
 
         LayoutInflater layoutInflater = LayoutInflater.from(TransferBalanceActivity.this);
-        final View view = layoutInflater.inflate(R.layout.transfer_balance_dialog, null);
+        final View view = layoutInflater.inflate(R.layout.custom_dialog, null);
         builder.setView(view);
 
         Button okBtn = (Button) view.findViewById(R.id.yes_btn);
@@ -470,24 +477,37 @@ public class TransferBalanceActivity extends BaseActivity {
         TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
 
         tvTitle.setText(titleMsg);
-        if(value != null) {
-            String remainingBalance = "\"Your Remaining Balance is " + value + "\"";
-            final SpannableString text = new SpannableString(remainingBalance);
-            text.setSpan(new ForegroundColorSpan(Color.RED), 27, text.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvDesc.setText(text);
-        }
+        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setCompoundDrawablesWithIntrinsicBounds(drawable, 0, 0, 0);
+        tvTitle.setCompoundDrawablePadding(5);
+        tvDesc.setText(contentMsg);
+        okBtn.setText(R.string.ok);
 
         final AlertDialog alertDialog = builder.create();
         alertDialog.setCancelable(false);
+        alertDialog.getWindow().setBackgroundDrawable(new BitmapDrawable());
         alertDialog.show();
 
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-                setResult(RESULT_OK);
+                if (success) {
+                    Intent intent = new Intent();
+                    intent.putExtra(Constants.CURRENT_BALANCE, value);
+                    setResult(RESULT_OK, intent);
+                }
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 33 && resultCode == Activity.RESULT_OK) {
+            String selectedContactToTransfer = data.getStringExtra(Constants.SELECTED_CONTACT_TO_TRANSFER);
+            enteredPhoneNumber.setText(selectedContactToTransfer);
+        }
     }
 }

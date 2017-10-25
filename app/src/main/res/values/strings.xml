@@ -244,7 +244,7 @@
     <string name="exceed_message">Message exceeds maximum limit</string>
     <string name="crop_image">Crop Image</string>
     <string name="enter_mobile_number_error">Please enter a valid number </string>
-    <string name="Dialog_text">Please confirm if %s number is correct.</string>
+    <string name="dialog_text">Please confirm if %s number is correct.</string>
     <string name="Cancel">Cancel</string>
     <string name="Ok">ok</string>
     <string name="Dialog_title">Confirm</string>
@@ -261,6 +261,7 @@
     <string name="your_total_balance">Your yo balance</string>
 
     <string name="your_yo_balance">Your\n YO! balance\n %1$s</string>
+    <string name="your_yo_balance_without_line_break">Your YO! balance %1$s</string>
     <string name="transfer_balance">Transfer Balance</string>
     <string name="add_voucher_balance">Add Balance from Voucher</string>
     <string name="offers">Offers</string>
@@ -270,6 +271,11 @@
     <string name="twenty">$ 20</string>
     <string name="currency_code_with_denomination">%1$s %2$s </string>
     <string name="transfer_amount">Amount To Transfer %1$s</string>
+    <string name="mobile_number_hint">Enter mobile number</string>
+    <string name="transfer">Transfer</string>
+    <string name="transfer_success">Transfer Successful</string>
+    <string name="transfer_failure">Sorry, Your transaction failed</string>
+    <string name="transfer_failure_reason">%1$s please try again</string>
 
 
     <string name="invalid_request">Invalid Request.</string>
@@ -392,7 +398,7 @@
 
     <string name="transfer_balance_alert">Are you sure you want to transfer %1$s balance to %2$s with number %3$s ?</string>
     <string name="transfer_balance_alert_number">Are you sure you want to transfer %1$s balance to %2$s ?</string>
-    <string name="successful_transfer">"Balance has been transferred successfully to %1$s.</string>
+    <string name="successful_transfer">Your fund transfer to %1$s was successfully done.</string>
 
 
     <!--video-->
