@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.helpers.Settings;
 import com.yo.android.photo.TextDrawable;
@@ -64,6 +65,8 @@ public class TransferBalanceActivity extends BaseActivity {
     EditText enteredPhoneNumber;
     @Bind(R.id.txt_balance)
     TextView tvBalance;
+    @Bind(R.id.transfer_amount)
+    TextView tvTransferAmount;
     @Bind(R.id.contact_view)
     RelativeLayout contactNumberView;
     @Bind(R.id.tv_phone_number)
@@ -78,14 +81,15 @@ public class TransferBalanceActivity extends BaseActivity {
     protected BalanceHelper mBalanceHelper;
 
     private String currencySymbol;
+    private String mTransferAmount;
 
     public static void start(Activity activity, String currencySymbol, String availableBalance, String fullName, String phoneNo, String userAvatar, String userId, boolean userType) {
         Intent intent = createIntent(activity, currencySymbol, availableBalance, fullName, phoneNo, userAvatar, userId,  userType);
         activity.startActivityForResult(intent, 22);
     }
 
-    public static void start(Activity activity, String currencySymbol, String availableBalance, boolean userType) {
-        Intent intent = createIntent(activity, currencySymbol, availableBalance, userType);
+    public static void start(Activity activity, String availableBalance, String transferAmount, boolean userType) {
+        Intent intent = createIntent(activity, availableBalance, transferAmount, userType);
         activity.startActivityForResult(intent, 11);
     }
 
@@ -102,12 +106,12 @@ public class TransferBalanceActivity extends BaseActivity {
         return intent;
     }
 
-    private static Intent createIntent(Activity activity, String currencySymbol, String availableBalance, boolean userType) {
+    private static Intent createIntent(Activity activity, String availableBalance, String transferAmount, boolean userType) {
 
         Intent intent = new Intent(activity, TransferBalanceActivity.class);
         intent.putExtra(Constants.CURRENT_BALANCE, availableBalance);
         intent.putExtra(Constants.USER_TYPE, userType);
-        intent.putExtra("currencySymbol", currencySymbol);
+        intent.putExtra(Constants.TRANSFER_AMOUNT, transferAmount);
         return intent;
     }
 
@@ -124,18 +128,27 @@ public class TransferBalanceActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         String balance = getIntent().getStringExtra(Constants.CURRENT_BALANCE);
-        currencySymbol = getIntent().getStringExtra("currencySymbol");
         boolean userType = getIntent().getBooleanExtra(Constants.USER_TYPE, false);
+        mTransferAmount = getIntent().getStringExtra(Constants.TRANSFER_AMOUNT);
 
-        if(userType) {
+        enterNumberView.setVisibility(View.VISIBLE);
+        contactNumberView.setVisibility(View.GONE);
+
+        if(!BuildConfig.NEW_YO_CREDIT_SCREEN) {
+            if (userType) {
+                enterNumberView.setVisibility(View.VISIBLE);
+                contactNumberView.setVisibility(View.GONE);
+            } else {
+                enterNumberView.setVisibility(View.GONE);
+                contactNumberView.setVisibility(View.VISIBLE);
+                userSelectedFromContacts();
+            }
+        } else {
             enterNumberView.setVisibility(View.VISIBLE);
             contactNumberView.setVisibility(View.GONE);
-        } else {
-            enterNumberView.setVisibility(View.GONE);
-            contactNumberView.setVisibility(View.VISIBLE);
-            userSelectedFromContacts();
+            etAmount.setVisibility(View.GONE);
+            tvTransferAmount.setText(String.format(getString(R.string.transfer_amount), mTransferAmount));
         }
-
         tvBalance.setText(String.format("%s", balance));
 
         EventBus.getDefault().register(this);
@@ -198,18 +211,19 @@ public class TransferBalanceActivity extends BaseActivity {
     @OnClick(R.id.btn_transfer)
     public void balanceTransfer() {
         //Check current balance and call is going on cases before transfer.
-        String amount = etAmount.getText().toString();
+        //String amount = etAmount.getText().toString();
         String phoneNumber = enteredPhoneNumber.getText().toString();
         String mPhoneNumber = phoneNo != null ? phoneNo : phoneNumber;
         try {
-            if (!TextUtils.isEmpty(amount.trim())) {
-                double val = Double.parseDouble(amount.trim());
+            //if (!TextUtils.isEmpty(amount.trim())) {
+                //double val = Double.parseDouble(amount.trim());
+                double val = mBalanceHelper.removeCurrencyCode(mTransferAmount);
                 if (val != 0) {
-                    if (mBalanceHelper.removeDenomination(mBalanceHelper.getCurrentBalance()) > mBalanceHelper.removeDenomination(amount)) {
+                    if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) > val) {
+                        String tranferVal = String.valueOf(val);
+                        showMessageDialog(tranferVal, mBalanceHelper.getCurrentBalance(), mPhoneNumber);
 
-                        showMessageDialog(amount, mBalanceHelper.getCurrentBalance(), mPhoneNumber);
-
-                    } else if (mBalanceHelper.removeDenomination(mBalanceHelper.getCurrentBalance()) == mBalanceHelper.removeDenomination(amount)) {
+                    } else if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) == val) {
                         showBalanceDialog();
                     } else {
                         mToastFactory.showToast(R.string.insufficient_amount);
@@ -217,9 +231,9 @@ public class TransferBalanceActivity extends BaseActivity {
                 } else {
                     mToastFactory.showToast(getResources().getString(R.string.enter_valid_amount));
                 }
-            } else {
+            /*} else {
                 mToastFactory.showToast(getResources().getString(R.string.enter_amount_to_transfer));
-            }
+            }*/
         }catch (Exception e) {
             e.printStackTrace();
         }

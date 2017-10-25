@@ -1,4 +1,4 @@
-package com.yo.android;
+package com.yo.android.usecase;
 
 import android.util.Log;
 

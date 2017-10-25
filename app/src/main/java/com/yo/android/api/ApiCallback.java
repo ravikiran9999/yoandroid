@@ -6,4 +6,5 @@ package com.yo.android.api;
 
 public interface ApiCallback<T> {
     void onResult(T result);
+    void onFailure(String message);
 }

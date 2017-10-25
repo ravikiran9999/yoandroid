@@ -4,10 +4,9 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.amazonaws.util.StringUtils;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.yo.android.WebserviceUsecase;
+import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.util.Constants;
@@ -480,7 +479,7 @@ public class BalanceHelper {
         return prefs.getStringPreference(Constants.CURRENCY_SYMBOL, "US $");
     }
 
-    public double removeDenomination(String amountWithDenomination) {
+    public double removeCurrencyCode(String amountWithDenomination) {
         String val = amountWithDenomination.replaceAll("[^\\d.]", "");
         return Double.parseDouble(val);
     }

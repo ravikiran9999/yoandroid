@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.helpers.BalanceViewHolder;
 import com.yo.android.helpers.DenominationViewHolder;
@@ -51,8 +52,11 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch (viewType) {
             case VIEW_TYPE_MORE_ITEMS:
                 return new BalanceViewHolder(mInflater.inflate(R.layout.item_with_options, parent, false));
+
             case VIEW_TYPE_DENOMINATION_ITEMS:
-                return new DenominationViewHolder(mContext, mInflater.inflate(R.layout.item_inner_recycler_view, parent, false), mFragment);
+                if (!BuildConfig.NEW_YO_CREDIT_SCREEN) {
+                    return new DenominationViewHolder(mContext, mInflater.inflate(R.layout.item_inner_recycler_view, parent, false), mFragment);
+                }
             case VIEW_TYPE_SEPERATOR:
                 return new SeperatorViewHolder(mInflater.inflate(R.layout.line_margin_medium, parent, false));
             /*case VIEW_TYPE_PACKAGE_ITEMS:
@@ -118,9 +122,9 @@ public class BalanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return VIEW_TYPE_MORE_ITEMS;
         } else if (item instanceof ArrayList) {
             return VIEW_TYPE_DENOMINATION_ITEMS;
-        } else if(item instanceof Integer) {
+        } else if (item instanceof Integer) {
             return VIEW_TYPE_SEPERATOR;
-        } else if(item instanceof List) {
+        } else if (item instanceof List) {
             return VIEW_TYPE_PACKAGE_ITEMS;
         }
         return super.getItemViewType(position); // Will never fall under this

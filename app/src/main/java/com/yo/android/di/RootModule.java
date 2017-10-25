@@ -2,7 +2,8 @@ package com.yo.android.di;
 
 import android.content.Context;
 
-import com.yo.android.WebserviceUsecase;
+import com.yo.android.usecase.DenominationsUsecase;
+import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.CountryCodeListAdapter;
 import com.yo.android.adapters.FindPeopleAdapter;
@@ -85,6 +86,7 @@ import com.yo.android.ui.fragments.InviteFriendsFragment;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.ui.fragments.MoreFragment;
 import com.yo.android.ui.fragments.NewContactsFragment;
+import com.yo.android.ui.fragments.NewCreditAccountFragment;
 import com.yo.android.ui.fragments.NewOTPFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
@@ -95,7 +97,6 @@ import com.yo.android.ui.fragments.findpeople.FollowingsFragment;
 import com.yo.android.util.FetchNewArticlesService;
 import com.yo.android.util.ReCreateService;
 import com.yo.android.util.Util;
-import com.yo.android.util.YODialogs;
 import com.yo.android.video.InAppVideoActivity;
 import com.yo.android.video.YouTubeFailureRecoveryActivity;
 import com.yo.android.voip.DialPadView;
@@ -200,6 +201,7 @@ import dagger.Provides;
                 GroupContactsActivity.class,
                 InviteFriendsFragment.class,
                 CreditAccountFragment.class,
+                NewCreditAccountFragment.class,
                 SpendDetailsFragment.class,
                 RechargeDetailsFragment.class,
                 FindPeopleFragment.class,
@@ -240,7 +242,8 @@ import dagger.Provides;
                 DialerHelper.class,
 
                 //usecases
-                WebserviceUsecase.class
+                WebserviceUsecase.class,
+                DenominationsUsecase.class
         },
         includes = {
                 AppModule.class,
